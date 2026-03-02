@@ -1,0 +1,166 @@
+{
+  "topicId": "congestion-control",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between flow control and congestion control in TCP.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Flow control is end-to-end, prevents receiver overwhelm using sliding window",
+        "Congestion control is network-wide, prevents network overwhelm using cwnd",
+        "Flow control uses receiver's advertised window",
+        "Congestion control uses network feedback (timeouts, duplicate ACKs)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the four phases of TCP congestion control with a brief explanation of each.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Slow Start: cwnd starts at 1 MSS, doubles every RTT until ssthresh",
+        "Congestion Avoidance: cwnd increases linearly (1/cwnd per ACK) after reaching ssthresh",
+        "Fast Retransmit: Retransmit on 3 duplicate ACKs without waiting for timeout",
+        "Fast Recovery: Continue sending after fast retransmit, reduce cwnd to ssthresh/2"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is Random Early Detection (RED) algorithm? Explain its working with the three threshold parameters.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "RED is Active Queue Management (AQM) technique",
+        "minthresh: below this, no drops occur",
+        "maxthresh: above this, all packets are dropped",
+        "Between thresholds: drop probability increases linearly with queue length",
+        "Purpose: provide early congestion notification to senders"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between Leaky Bucket and Token Bucket algorithms for traffic shaping.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Leaky Bucket: outputs at constant rate, converts bursty to uniform flow",
+        "Token Bucket: allows bursts up to bucket capacity, enforces average rate",
+        "Leaky Bucket: no burst tolerance - excess traffic dropped",
+        "Token Bucket: burst tolerance - can accumulate tokens for larger bursts",
+        "Both used for traffic policing and shaping"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain AIMD (Additive Increase Multiplicative Decrease) algorithm used in TCP congestion control.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "AIMD is the fundamental principle of TCP congestion control",
+        "Additive Increase: during normal operation, cwnd increases linearly (1 MSS per RTT)",
+        "Multiplicative Decrease: when congestion detected, cwnd is halved",
+        "This sawtooth pattern ensures fair bandwidth sharing and network stability",
+        "Converges to optimal operating point over time"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is congestion collapse? What are the main causes and how can it be prevented?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Congestion collapse: excessive unnecessary packets in network causing severe degradation",
+        "Causes: packet retransmissions without awareness of dropped packets, feedback delays",
+        "Prevention: proper congestion control algorithms, timeout calculations, limit retransmissions",
+        "TCP's congestion control mechanisms help prevent this"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the working of TCP Reno with respect to Fast Recovery mechanism.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "TCP Reno builds upon TCP Tahoe by adding Fast Recovery",
+        "When 3 duplicate ACKs received: set ssthresh = cwnd/2, cwnd = ssthresh + 3*MSS",
+        "Perform Fast Retransmit for missing segment",
+        "Enter Fast Recovery phase: continue sending new data with reduced cwnd",
+        "After recovery, enter Congestion Avoidance with new cwnd"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe in detail the TCP congestion control algorithm. Explain how Slow Start, Congestion Avoidance, Fast Retransmit, and Fast Recovery work together with appropriate diagrams and cwnd behavior.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Initial cwnd = 1 MSS, ssthresh = 65535 bytes",
+        "Slow Start: cwnd doubles every RTT (increases by 1 MSS per ACK)",
+        "When cwnd >= ssthresh, enter Congestion Avoidance: cwnd increases by 1 per RTT",
+        "On timeout: ssthresh = cwnd/2, cwnd = 1, restart Slow Start",
+        "On 3 duplicate ACKs: Fast Retransmit, set ssthresh = cwnd/2, cwnd = ssthresh + 3, Fast Recovery",
+        "After Fast Recovery, enter Congestion Avoidance with new cwnd",
+        "Diagram showing sawtooth pattern of cwnd"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the Token Bucket algorithm for traffic shaping. How does it differ from Leaky Bucket? Provide suitable diagrams and applications of both algorithms.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Token Bucket: tokens added at constant rate r, bucket capacity b max tokens",
+        "To send packet of size n, n tokens must be consumed",
+        "If insufficient tokens, packet waits or is dropped",
+        "Allows bursts up to bucket capacity (b tokens)",
+        "Leaky Bucket: constant output rate regardless of input",
+        "No burst tolerance - excess input dropped or queued",
+        "Token Bucket used for traffic shaping with burst allowance",
+        "Leaky Bucket used for strict rate limiting",
+        "Applications: VoIP traffic policing, network traffic management, QoS"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the Random Early Detection (RED) algorithm in detail. How does it provide early congestion notification? Compare it with traditional drop-tail queue management.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "RED is Active Queue Management algorithm",
+        "Calculates average queue size using exponential weighted moving average",
+        "Three parameters: minthresh, maxthresh, maxP",
+        "If avg < minthresh: no drops",
+        "If minthresh < avg < maxthresh: drop probability = maxP × (avg - minthresh)/(maxthresh - minthresh)",
+        "If avg > maxthresh: drop all packets",
+        "Advantages over drop-tail: prevents global synchronization, early notification, reduced average queueing delay",
+        "Disadvantages: parameter sensitivity, may not work well with bursty traffic"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare TCP Tahoe, TCP Reno, and TCP NewReno congestion control algorithms. Explain their differences in handling packet loss and recovery.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "TCP Tahoe: Slow Start, Congestion Avoidance, Fast Retransmit; on loss: cwnd = 1, ssthresh = cwnd/2, restart Slow Start",
+        "TCP Reno: Adds Fast Recovery; on 3 duplicate ACKs: cwnd = ssthresh + 3, fast retransmit, continue sending; on timeout: same as Tahoe",
+        "TCP NewReno: Improves Reno to handle multiple packet losses in one window; enters Fast Recovery until all losses acknowledged",
+        "NewReno distinguishes between partial ACKs and full ACKs during recovery",
+        "Performance: NewReno > Reno > Tahoe under multiple loss scenarios",
+        "All use AIMD principle for congestion control"
+      ]
+    }
+  ]
+}

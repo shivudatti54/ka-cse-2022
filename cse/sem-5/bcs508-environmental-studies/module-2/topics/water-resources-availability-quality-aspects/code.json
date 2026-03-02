@@ -1,0 +1,35 @@
+{
+  "topicId": "water-resources-availability-quality-aspects",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Calculate River Discharge (Q = A \u00d7 V)",
+      "description": "Algorithm to compute discharge using area-velocity method",
+      "explanation": "Stream discharge is calculated by dividing river cross-section into segments, measuring velocity at each point, computing area of each segment, and summing Q = \u03a3(Ai \u00d7 Vi)",
+      "code": "BEGIN\n INPUT number_of_verticals\n total_discharge = 0\n FOR i = 1 TO number_of_verticals\n INPUT depth_at_vertical[i]\n INPUT velocity_at_vertical[i]\n width = measure_width_between_verticals(i)\n area_segment = depth_at_vertical[i] * width\n discharge_segment = area_segment * velocity_at_vertical[i]\n total_discharge = total_discharge + discharge_segment\n END FOR\n OUTPUT total_discharge\nEND",
+      "timeComplexity": "O(n) where n = number of verticals",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Water Quality Index (WQI) Calculation",
+      "description": "Simplified algorithm to compute WQI from multiple parameters",
+      "explanation": "WQI aggregates multiple water quality parameters (pH, DO, BOD, TDS) into a single number (0-100). Each parameter gets a sub-index (si), is weighted (wi), then combined: WQI = \u03a3(si \u00d7 wi) / \u03a3wi",
+      "code": "BEGIN\n INPUT parameters: pH, DO, BOD, TDS\n // Define sub-index functions (simplified)\n IF pH >= 6.5 AND pH <= 8.5 THEN\n si_pH = 100 - ABS(7 - pH) * 20\n ELSE\n si_pH = 50\n END IF\n \n // DO: higher is better (up to saturation)\n si_DO = min(100, DO * 20)\n \n // BOD: lower is better\n si_BOD = max(0, 100 - BOD * 2)\n \n // TDS: lower is better\n si_TDS = max(0, 100 - (TDS - 100) * 0.1)\n \n // Weights\n w_pH = 1; w_DO = 2; w_BOD = 3; w_TDS = 1\n \n WQI = (si_pH*w_pH + si_DO*w_DO + si_BOD*w_BOD + si_TDS*w_TDS) / (w_pH+w_DO+w_BOD+w_TDS)\n OUTPUT WQI\nEND",
+      "timeComplexity": "O(1) - constant operations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Rainwater Harvesting Yield Estimation",
+      "description": "Calculate potential water collection from rooftop rainwater harvesting system",
+      "explanation": "Annual water yield = Catchment area \u00d7 Annual rainfall \u00d7 Runoff coefficient. Runoff coefficient accounts for losses due to evaporation, spillage, and initial wetting.",
+      "code": "BEGIN\n INPUT catchment_area_sqm // Roof area in square meters\n INPUT annual_rainfall_mm // Annual rainfall in millimeters\n INPUT runoff_coefficient // Typical: 0.8 for roofs\n \n // Convert mm to meters\n rainfall_m = annual_rainfall_mm / 1000\n \n // Calculate annual yield\n annual_yield_cubic_m = catchment_area_sqm * rainfall_m * runoff_coefficient\n annual_yield_liters = annual_yield_cubic_m * 1000\n \n OUTPUT \"Annual water yield:\", annual_yield_cubic_m, \"cubic meters\"\n OUTPUT \"Equivalent to:\", annual_yield_liters, \"liters\"\n \n // Example: 100 sqm roof, 1000mm rainfall, 0.8 coefficient\n // Yield = 100 \u00d7 1 \u00d7 0.8 = 80 cubic meters = 80,000 liters\nEND",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

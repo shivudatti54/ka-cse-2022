@@ -1,0 +1,380 @@
+{
+  "topicId": "nested-try-statements",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Consider the following code:\ntry {\n try {\n int[] arr = {1, 2};\n System.out.println(arr[5]);\n } catch (ArrayIndexOutOfBoundsException e) {\n System.out.println(\"Inner catch\");\n throw new RuntimeException(\"error\");\n }\n} catch (RuntimeException e) {\n System.out.println(\"Outer catch: \" + e.getMessage());\n}\nWhat is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Inner catch\nOuter catch: error"
+        },
+        {
+          "key": "B",
+          "text": "Inner catch only"
+        },
+        {
+          "key": "C",
+          "text": "Outer catch: error only"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The inner try throws ArrayIndexOutOfBoundsException which is caught by inner catch, prints 'Inner catch'. Then it throws RuntimeException which propagates to outer catch, printing 'Outer catch: error'.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What will be printed when the following code executes?\ntry {\n System.out.println(\"A\");\n try {\n System.out.println(\"B\");\n throw new NullPointerException();\n } catch (NullPointerException e) {\n System.out.println(\"C\");\n }\n System.out.println(\"D\");\n} catch (Exception e) {\n System.out.println(\"E\");\n}\nSystem.out.println(\"F\");",
+      "options": [
+        {
+          "key": "A",
+          "text": "A B C D F"
+        },
+        {
+          "key": "B",
+          "text": "A B C E F"
+        },
+        {
+          "key": "C",
+          "text": "A B C F"
+        },
+        {
+          "key": "D",
+          "text": "A B E F"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "A prints, B prints, NullPointerException is caught by inner catch, C prints, D prints (exception was caught), then F prints. No exception reaches outer catch.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Given:\ntry {\n try {\n throw new Exception(\"X\");\n } catch (IOException e) {\n System.out.println(\"1\");\n }\n} catch (Exception e) {\n System.out.println(\"2\");\n}\nWhat is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "1 2"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Exception(\"X\") is not an IOException, so inner catch doesn't handle it. It propagates to outer catch which catches Exception (parent of all), printing '2'.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "How many times will \"Executed\" be printed?\ntry {\n try {\n throw new Exception();\n } finally {\n System.out.println(\"Executed\");\n }\n} catch (Exception e) {\n System.out.println(\"Caught\");\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "0 times"
+        },
+        {
+          "key": "B",
+          "text": "1 time"
+        },
+        {
+          "key": "C",
+          "text": "2 times"
+        },
+        {
+          "key": "D",
+          "text": "3 times"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The finally block in inner try always executes (once), printing 'Executed'. Then the exception propagates to outer catch which prints 'Caught'. Total: 1 time.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the output?\ntry {\n try {\n throw new IllegalArgumentException(\"test\");\n } catch (IllegalArgumentException e) {\n System.out.println(\"Caught: \" + e.getMessage());\n throw e;\n } finally {\n System.out.println(\"Finally\");\n }\n} catch (Exception e) {\n System.out.println(\"Outer: \" + e.getClass().getSimpleName());\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "Caught: test\nFinally\nOuter: IllegalArgumentException"
+        },
+        {
+          "key": "B",
+          "text": "Caught: test\nFinally\nOuter: Exception"
+        },
+        {
+          "key": "C",
+          "text": "Caught: test\nOuter: IllegalArgumentException\nFinally"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Inner catch prints message, throws the same exception. Finally ALWAYS executes after catch (before propagation), printing 'Finally'. Outer catch handles it and prints the class name.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What happens if an exception occurs in the finally block of a nested try?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The original exception is lost and only the finally exception propagates"
+        },
+        {
+          "key": "B",
+          "text": "The original exception is preserved and both exceptions propagate"
+        },
+        {
+          "key": "C",
+          "text": "The program terminates immediately without any handling"
+        },
+        {
+          "key": "D",
+          "text": "The code does not compile"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "If an exception is thrown in a finally block, any exception that was being handled is lost. To preserve both, you need to use chained exceptions with initCause() or the Throwable constructors that accept a cause.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Consider:\ntry {\n System.out.println(\"1\");\n int x = 10/0;\n} catch (ArithmeticException e) {\n System.out.println(\"2\");\n try {\n System.out.println(\"3\");\n int[] a = new int[5];\n a[10] = 100;\n } catch (ArrayIndexOutOfBoundsException ae) {\n System.out.println(\"4\");\n }\n System.out.println(\"5\");\n}\nSystem.out.println(\"6\");",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 2 3 4 5 6"
+        },
+        {
+          "key": "B",
+          "text": "1 2 3 6"
+        },
+        {
+          "key": "C",
+          "text": "1 2 5 6"
+        },
+        {
+          "key": "D",
+          "text": "1 2 3 4 6"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "1 prints, ArithmeticException caught, prints 2. Inner try executes: 3 prints, ArrayIndexOutOfBoundsException caught, prints 4. After inner catch, 5 prints. After outer catch, 6 prints.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the primary advantage of nested try statements over single try-catch?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Better performance"
+        },
+        {
+          "key": "B",
+          "text": "Ability to handle exceptions at different levels with different recovery strategies"
+        },
+        {
+          "key": "C",
+          "text": "Required by Java language specification"
+        },
+        {
+          "key": "D",
+          "text": "Compiles to smaller bytecode"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Nested try statements allow handling exceptions at multiple granularities. Different code sections can have different exception handling strategies and recovery mechanisms.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-9",
+      "question": "What will be the output?\ntry {\n try {\n System.out.println(\"try1\");\n } finally {\n System.out.println(\"finally1\");\n }\n} finally {\n System.out.println(\"finally2\");\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "try1 finally1 finally2"
+        },
+        {
+          "key": "B",
+          "text": "try1 finally2 finally1"
+        },
+        {
+          "key": "C",
+          "text": "finally1 finally2 try1"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Inner try executes, inner finally runs, then outer finally runs. Output: try1 finally1 finally2. No exception was thrown so no catch block executes.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "In a nested try structure, if both inner and outer try blocks have catch handlers for the same exception type, which catch block executes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The outer catch block always executes"
+        },
+        {
+          "key": "B",
+          "text": "The inner catch block always executes"
+        },
+        {
+          "key": "C",
+          "text": "Both catch blocks execute simultaneously"
+        },
+        {
+          "key": "D",
+          "text": "It depends on where the exception occurs"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The JVM searches for a catch from innermost to outermost. The first matching catch handles the exception. The outer catch only executes if no inner catch matches or if the inner try throws an exception not caught internally.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is the output?\ntry {\n throw new ExceptionA();\n} catch (ExceptionA e) {\n System.out.println(\"A\");\n try {\n throw new ExceptionB();\n } catch (ExceptionB e2) {\n System.out.println(\"B\");\n }\n System.out.println(\"C\");\n}\nSystem.out.println(\"D\");\n\nclass ExceptionA extends Exception {}\nclass ExceptionB extends Exception {}",
+      "options": [
+        {
+          "key": "A",
+          "text": "A B C D"
+        },
+        {
+          "key": "B",
+          "text": "A B D C"
+        },
+        {
+          "key": "C",
+          "text": "A D B C"
+        },
+        {
+          "key": "D",
+          "text": "A C B D"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "ExceptionA caught, prints A. Inner try throws ExceptionB, caught, prints B. After inner catch, prints C. After outer catch, prints D. Program completes normally.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "Which scenario best justifies the use of nested try statements?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When you only need to catch one type of exception"
+        },
+        {
+          "key": "B",
+          "text": "When different levels of code need different exception handling strategies with independent recovery options"
+        },
+        {
+          "key": "C",
+          "text": "When the code has no potential exceptions"
+        },
+        {
+          "key": "D",
+          "text": "When you want to avoid using finally blocks"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Nested try is best used when different code sections require different exception handling approaches with independent recovery strategies, such as handling file operations where file access and data parsing need separate handling.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What will happen?\ntry {\n int result = 10 / 0;\n} catch (Exception e) {\n System.out.println(\"1\");\n try {\n String s = null;\n System.out.println(s.length());\n } catch (NullPointerException npe) {\n System.out.println(\"2\");\n }\n System.out.println(\"3\");\n}\nSystem.out.println(\"4\");\n\n(Assume no other exceptions)",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 2 3 4"
+        },
+        {
+          "key": "B",
+          "text": "1 4 2 3"
+        },
+        {
+          "key": "C",
+          "text": "1 3 2 4"
+        },
+        {
+          "key": "D",
+          "text": "1 2 4 3"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "ArithmeticException caught in outer, prints 1. Inner try: NullPointerException caught, prints 2. After inner catch, prints 3. After outer catch, prints 4.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-14",
+      "question": "How can you preserve the original exception when throwing a new one in a catch block of nested try?",
+      "options": [
+        {
+          "key": "A",
+          "text": "You cannot preserve it; it's automatically lost"
+        },
+        {
+          "key": "B",
+          "text": "Use the 'chained exception' feature with initCause() or the constructor Throwable(Throwable cause)"
+        },
+        {
+          "key": "C",
+          "text": "Store it in a static variable"
+        },
+        {
+          "key": "D",
+          "text": "Print it before throwing new exception"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Java provides exception chaining via initCause() method or constructors that accept a cause parameter. This preserves the original exception's stack trace and message.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What is the output?\ntry {\n System.out.println(\"A\");\n throw new java.io.IOException();\n} catch (java.io.IOException e) {\n System.out.println(\"B\");\n try {\n System.out.println(\"C\");\n } catch (Exception ex) {\n System.out.println(\"D\");\n }\n} finally {\n System.out.println(\"E\");\n}\nSystem.out.println(\"F\");",
+      "options": [
+        {
+          "key": "A",
+          "text": "A B C E F"
+        },
+        {
+          "key": "B",
+          "text": "A B E F C"
+        },
+        {
+          "key": "C",
+          "text": "A B C D E F"
+        },
+        {
+          "key": "D",
+          "text": "A E B C F"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "A prints, IOException caught in outer, prints B. Inner try executes, prints C (no exception). Finally executes, prints E. After try-catch-finally, F prints. No D since inner try has no exception.",
+      "difficulty": "medium"
+    }
+  ]
+}

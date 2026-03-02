@@ -1,0 +1,45 @@
+{
+  "topicId": "digital-authentication-password-based",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Secure Password Hashing with bcrypt",
+      "description": "Demonstrates secure password hashing using bcrypt with salting and key stretching",
+      "code": "import bcrypt\n\ndef hash_password(password):\n    # Generate salt with work factor (12 is standard secure)\n    salt = bcrypt.gensalt(rounds=12)\n    # Hash password with salt (automatically includes salt in hash)\n    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)\n    return hashed\n\ndef verify_password(password, stored_hash):\n    # Verify by rehashing password and comparing\n    hashed = bcrypt.hashpw(password.encode('utf-8'), stored_hash)\n    return hashed == stored_hash\n\n# Example usage\npassword = \"SecureP@ssw0rd!\"\nhashed = hash_password(password)\nprint(f\"Hashed password: {hashed}\")\n\n# Verification\nis_valid = verify_password(password, hashed)\nprint(f\"Password valid: {is_valid}\")",
+      "explanation": "This code demonstrates secure password storage using bcrypt. It automatically generates a unique salt for each password and uses key stretching (12 rounds) to make hashing computationally expensive. The verify_password function compares the computed hash with the stored hash without ever storing the plain text password.",
+      "timeComplexity": "O(2^r) where r is the work factor (12)",
+      "spaceComplexity": "O(n) where n is password length"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Simple Password Hashing in C",
+      "description": "Demonstrates basic password hashing concept using a simple hash function",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <stdlib.h>\n\n// Simple hash function (for educational purposes - not secure)\nunsigned long simple_hash(char *str) {\n    unsigned long hash = 5381;\n    int c;\n    while (c = *str++) {\n        hash = ((hash << 5) + hash) + c; // hash * 33 + c\n    }\n    return hash;\n}\n\n// Generate random salt\nvoid generate_salt(char *salt, int length) {\n    const char charset[] = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\n    for (int i = 0; i < length; i++) {\n        salt[i] = charset[rand() % (sizeof(charset) - 1)];\n    }\n    salt[length] = '\\0';\n}\n\nint main() {\n    char password[100];\n    char salt[17];\n    char salted_password[117];\n    \n    printf(\"Enter password: \");\n    scanf(\"%s\", password);\n    \n    // Generate 16-character salt\n    generate_salt(salt, 16);\n    \n    // Create salted password\n    strcpy(salted_password, salt);\n    strcat(salted_password, password);\n    \n    // Hash the salted password\n    unsigned long hash = simple_hash(salted_password);\n    \n    printf(\"Salt: %s\\n\", salt);\n    printf(\"Hash: %lu\\n\", hash);\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates the basic concept of salting and hashing. It generates a random salt, combines it with the password, and produces a hash. Note: This is for educational purposes - in production, use established libraries like bcrypt or OpenSSL.",
+      "timeComplexity": "O(n) where n is password length",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Login Authentication Algorithm",
+      "description": "Complete login authentication process with security measures",
+      "code": "ALGORITHM SecureLogin\nINPUT: username, password\nOUTPUT: Access granted/denied\n\nBEGIN\n  // Rate limiting check\n  IF failed_attempts[username] >= MAX_ATTEMPTS THEN\n    RETURN \"Account locked - too many failed attempts\"\n  END IF\n  \n  // Retrieve user record from database\n  user = get_user_from_db(username)\n  IF user NOT FOUND THEN\n    increment_failed_attempts(username)\n    RETURN \"Invalid username or password\"\n  END IF\n  \n  // Get stored hash and salt\n  stored_hash = user.password_hash\n  salt = user.salt\n  \n  // Hash input password with stored salt\n  input_hash = hash_password(password, salt)\n  \n  // Constant-time comparison to prevent timing attacks\n  IF constant_time_compare(input_hash, stored_hash) THEN\n    // Successful login\n    reset_failed_attempts(username)\n    log_successful_login(username)\n    RETURN \"Access granted\"\n  ELSE\n    // Failed login\n    increment_failed_attempts(username)\n    log_failed_login(username)\n    RETURN \"Invalid username or password\"\n  END IF\nEND",
+      "explanation": "This pseudocode shows a secure login process with multiple security features: rate limiting (account lockout after failed attempts), salted password hashing, constant-time comparison (prevents timing attacks), and logging for audit trails. This represents industry-standard authentication practices.",
+      "timeComplexity": "O(n) for hashing + O(1) for lookups",
+      "spaceComplexity": "O(1) plus O(n) for failed attempts tracking"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Password Strength Validator",
+      "description": "Validates password against security policy requirements",
+      "code": "import re\n\ndef validate_password_strength(password):\n    \"\"\"Validate password against security policy\"\"\"\n    errors = []\n    \n    # Check minimum length\n    if len(password) < 8:\n        errors.append(\"Password must be at least 8 characters\")\n    \n    # Check for uppercase\n    if not re.search(r\"[A-Z]\", password):\n        errors.append(\"Password must contain uppercase letter\")\n    \n    # Check for lowercase\n    if not re.search(r\"[a-z]\", password):\n        errors.append(\"Password must contain lowercase letter\")\n    \n    # Check for digits\n    if not re.search(r\"\\d\", password):\n        errors.append(\"Password must contain a digit\")\n    \n    # Check for special characters\n    if not re.search(r\"[!@#$%^&*(),.?\\\":{}|<>]\", password):\n        errors.append(\"Password must contain special character\")\n    \n    # Check common passwords list\n    common_passwords = [\"password\", \"12345678\", \"qwerty\", \"admin\", \"letmein\"]\n    if password.lower() in common_passwords:\n        errors.append(\"Password is too common\")\n    \n    if errors:\n        return False, errors\n    return True, [\"Password meets all requirements\"]\n\n# Example usage\ntest_passwords = [\"weak\", \"Password1\", \"Str0ng!Pass\", \"P@ssw0rd123\"]\nfor pwd in test_passwords:\n    valid, messages = validate_password_strength(pwd)\n    print(f\"Password: {pwd} -> Valid: {valid}, {messages}\")",
+      "explanation": "This code implements a password strength validator that enforces common security policy requirements. It checks for minimum length, uppercase, lowercase, digits, special characters, and common passwords. This is useful for implementing password policies at registration or password change time.",
+      "timeComplexity": "O(n) where n is password length",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

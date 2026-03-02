@@ -1,0 +1,25 @@
+{
+  "topicId": "entities-attributes-relationships",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Converting E-R to Relational Schema",
+      "description": "Algorithm to convert E-R model entities and relationships to database tables",
+      "code": "// ENTITY CONVERSION\nFUNCTION ConvertEntityToTable(Entity E)\nBEGIN\n  CREATE TABLE E.EntityName\n  FOR EACH attribute a IN E.attributes\n    ADD COLUMN a.name a.dataType\n  IF E has composite attributes THEN\n    FOR EACH composite a IN E.compositeAttributes\n      ADD all simple sub-attributes as columns\n  IF E has multivalued attribute m THEN\n    CREATE TABLE EntityName_MultivaluedAttr\n      ADD PRIMARY KEY (Entity_Key, Multivalued_Attr_ID)\n      ADD FOREIGN KEY REFERENCES Entity\nEND\n\n// RELATIONSHIP CONVERSION  \nFUNCTION ConvertRelationshipToTable(Relationship R)\nBEGIN\n  IF cardinality = 1:1 THEN\n    ADD foreign key to either entity table\n  ELSE IF cardinality = 1:N THEN\n    ADD foreign key to 'N' side entity table\n  ELSE IF cardinality = M:N THEN\n    CREATE TABLE RelationshipName\n      ADD foreign keys to all participating entities\n      ADD primary key as combination of foreign keys\n      ADD relationship attributes if any\nEND",
+      "explanation": "This pseudocode shows how to transform E-R diagram components into relational database schema. Entities become tables, attributes become columns, and relationships are converted based on cardinality type.",
+      "timeComplexity": "O(n + m) where n=entities, m=relationships",
+      "spaceComplexity": "O(k) where k=total attributes"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "E-R Model Python Class Representation",
+      "description": "Python classes to represent E-R model components with attributes",
+      "code": "class Entity:\n    def __init__(self, name, is_weak=False):\n        self.name = name\n        self.is_weak = is_weak\n        self.attributes = {}\n        self.primary_key = None\n    \n    def add_attribute(self, attr_name, attr_type, is_key=False, \n                      is_composite=False, is_multivalued=False, is_derived=False):\n        self.attributes[attr_name] = {\n            'type': attr_type,\n            'is_key': is_key,\n            'is_composite': is_composite,\n            'is_multivalued': is_multivalued,\n            'is_derived': is_derived\n        }\n        if is_key:\n            self.primary_key = attr_name\n\nclass Relationship:\n    def __init__(self, name, participating_entities, cardinality):\n        self.name = name\n        self.participants = participating_entities  # List of Entity objects\n        self.cardinality = cardinality  # '1:1', '1:N', 'M:N'\n        self.participation = {}  # 'total' or 'partial' for each entity\n        self.attributes = {}\n\n# Example: Create Student entity\nstudent = Entity(\"Student\", is_weak=False)\nstudent.add_attribute(\"Student_ID\", \"VARCHAR(10)\", is_key=True)\nstudent.add_attribute(\"Name\", \"VARCHAR(100)\", is_composite=True)\nstudent.add_attribute(\"Age\", \"INT\", is_derived=True)\nstudent.add_attribute(\"Emails\", \"VARCHAR(100)\", is_multivalued=True)\n\n# Create Course entity  \ncourse = Entity(\"Course\", is_weak=False)\ncourse.add_attribute(\"Course_ID\", \"VARCHAR(10)\", is_key=True)\ncourse.add_attribute(\"Course_Name\", \"VARCHAR(50)\")\ncourse.add_attribute(\"Credits\", \"INT\")\n\n# Create Enrolls relationship (M:N)\nenrolls = Relationship(\"Enrolls\", [student, course], \"M:N\")\nenrolls.attributes[\"Grade\"] = \"CHAR(2)\"\nenrolls.attributes[\"Semester\"] = \"VARCHAR(20)\"",
+      "explanation": "This Python code demonstrates object-oriented representation of E-R model components. It defines Entity and Relationship classes with support for all attribute types, cardinalities, and participation constraints.",
+      "timeComplexity": "O(1) for basic operations",
+      "spaceComplexity": "O(n) where n=number of entities and relationships created"
+    }
+  ]
+}

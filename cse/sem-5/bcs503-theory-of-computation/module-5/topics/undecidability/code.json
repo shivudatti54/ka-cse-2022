@@ -1,0 +1,35 @@
+{
+  "topicId": "undecidability",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Universal Turing Machine Simulation",
+      "description": "Simplified pseudocode showing how a UTM simulates any TM M on input w",
+      "code": "UNIVERSAL_TM(M_description, w):\n // M_description is encoded TM\n // w is input string\n \n Parse M_description to extract:\n - States Q\n - Alphabet Σ\n - Transition function δ\n - Start state q0\n - Accept state q_accept\n - Reject state q_reject\n \n current_state ← q0\n current_tape ← w\n \n WHILE current_state ≠ q_accept AND current_state ≠ q_reject:\n // Find transition for current state and current symbol\n symbol ← read_tape(current_tape)\n \n IF δ(current_state, symbol) is defined:\n (new_state, new_symbol, direction) ← δ(current_state, symbol)\n write_tape(current_tape, new_symbol)\n move_head(current_tape, direction)\n current_state ← new_state\n ELSE:\n // No transition - halt in reject\n current_state ← q_reject\n \n IF current_state = q_accept:\n RETURN \"ACCEPT\"\n ELSE:\n RETURN \"REJECT\"",
+      "explanation": "The Universal Turing Machine takes an encoding of any TM M and an input w, simulates M step-by-step, and returns whether M accepts or rejects. This is the foundation for the halting problem proof - we can treat M's description as data that a TM can process.",
+      "timeComplexity": "O(2^n) - exponential in worst case",
+      "spaceComplexity": "O(n) - tape content"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Halting Problem Decider (Proof by Contradiction)",
+      "description": "Pseudocode showing the structure used to prove Halting Problem is undecidable",
+      "code": "// Assume for contradiction that H exists\n// H(M, w) returns whether TM M halts on input w\n\nDECIDER_H(M_description, w):\n // This is assumed to exist (but doesn't really!)\n SIMULATE M on w\n IF M halts:\n RETURN \"YES\"\n ELSE:\n RETURN \"NO\"\n\n// Using H, construct paradoxical machine D\nPARADOX_MACHINE(D_description):\n // D takes any TM description as input\n result ← DECIDER_H(D_description, D_description)\n \n IF result = \"YES\" THEN:\n // If H says halts, we loop forever\n LOOP_FOREVER()\n ELSE:\n // If H says loops, we halt\n HALT()\n\n// Now apply paradox machine to itself\nMAIN:\n // Run paradox on its own description\n PARADOX_MACHINE(PARADOX_MACHINE_description)\n \n // Analysis:\n // - If paradox halts → H said YES → paradox loops\n // - If paradox loops → H said NO → paradox halts\n // CONTRADICTION! Hence H cannot exist.",
+      "explanation": "This shows Turing's diagonalization proof. The key insight is creating a machine that does the opposite of what its 'decider' says. When applied to itself, it creates a logical paradox proving no such decider can exist.",
+      "timeComplexity": "N/A - theoretical proof only",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Rice's Theorem Decision Procedure",
+      "description": "Template showing why any non-trivial property of languages is undecidable",
+      "code": "// Rice's Theorem: Non-trivial property P of L(M) is undecidable\n// Template for proving a specific problem undecidable\n\n// Step 1: Define property P\nPROPERTY_P(M):\n // e.g., Is L(M) empty? Is L(M) regular?\n RETURN boolean_value // depends on property\n\n// Step 2: Show property is non-trivial\n// Need to find:\n// - TM M1 where PROPERTY_P(M1) = TRUE\n// - TM M2 where PROPERTY_P(M2) = FALSE\n\n// Example for Emptiness Problem:\nM1_ALWAYS_REJECTS:\n // L(M1) = ∅ (empty)\n REJECT all inputs\n\nM2_ACCEPTS_SOME:\n // L(M2) ≠ ∅ (accepts 'a')\n IF input = 'a': ACCEPT\n ELSE: REJECT\n\n// Step 3: Reduction from known undecidable problem\n// Assume we can decide P\nDECIDE_PROPERTY_P(M):\n // Hypothetical decider for property P\n RETURN \"YES\" or \"NO\"\n\n// Use it to solve Halting Problem\nSOLVE_HALTING(M_description, w):\n // Construct M_w that runs M on w then acts based on result\n CONSTRUCT M_w: \n Run M on w\n If M halts: ACCEPT // or perform P-fulfilling action\n If M loops: perform P-breaking action\n \n RETURN DECIDE_PROPERTY_P(M_w)",
+      "explanation": "This template shows how Rice's Theorem is applied. We identify a non-trivial property of the language (like emptiness, finiteness, regularity), show we can reduce the Halting Problem to deciding this property, and thus prove the property undecidable.",
+      "timeComplexity": "N/A - theoretical",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

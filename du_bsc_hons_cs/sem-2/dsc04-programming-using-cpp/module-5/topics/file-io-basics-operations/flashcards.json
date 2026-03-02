@@ -1,0 +1,45 @@
+{
+  "topicId": "file-io-basics-operations",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What are the three main file stream classes in C++ and when should each be used?",
+      "back": "ifstream (input file stream) is used for reading from files, ofstream (output file stream) is used for writing to files, and fstream (file stream) supports both reading and writing. Choose based on whether you need input, output, or both operations on the file."
+    },
+    {
+      "id": "fc-2",
+      "front": "Explain the difference between ios::app and ios::trunc file modes in C++.",
+      "back": "ios::app (append mode) positions the write pointer at the end of the file before each write operation, preserving existing data and adding new content. ios::trunc (truncate mode) deletes all existing content in the file when opened, starting fresh. Always use ios::app when you want to preserve and add to existing file data."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the purpose of ios::binary mode in file operations?",
+      "back": "ios::binary mode opens a file in binary mode, preventing the compiler from translating newline characters (\\n to \\r\\n on Windows). This is essential for reading/writing binary data like images, audio files, or structured data using read()/write() functions without any character conversion."
+    },
+    {
+      "id": "fc-4",
+      "front": "Why is it important to close a file after operations in C++?",
+      "back": "Closing a file ensures all buffered data is flushed to the physical file, prevents data loss, releases system resources (file handles), and signals to the OS that the file is no longer in use. Always use fileStream.close() or declare the stream within a scope where it auto-closes."
+    },
+    {
+      "id": "fc-5",
+      "front": "How do seekg() and seekp() functions work in C++ file handling?",
+      "back": "seekg() moves the get (read) pointer to a specific position, while seekp() moves the put (write) pointer. Both accept an offset and seek direction: ios::beg (from beginning), ios::cur (from current position), or ios::end (from end). For example, file.seekg(0, ios::end) positions the read pointer at the end to determine file size."
+    },
+    {
+      "id": "fc-6",
+      "front": "What methods are available for error handling when working with file streams in C++?",
+      "back": "Use fail(), bad(), and eof() member functions to check stream state: fail() returns true if an I/O operation failed, bad() indicates fatal error (like disk failure), and eof() signals end-of-file reached. Additionally, check if the file opened successfully with if(!file.is_open()) before performing operations."
+    },
+    {
+      "id": "fc-7",
+      "front": "Write a C++ code snippet to write and read binary data from a file.",
+      "back": "To write binary: ofstream out(\"data.bin\", ios::binary); int num = 42; out.write(reinterpret_cast<char*>(&num), sizeof(num)); out.close(); To read binary: ifstream in(\"data.bin\", ios::binary); int num; in.read(reinterpret_cast<char*>(&num), sizeof(num)); in.close(); The reinterpret_cast converts the address to char* for the read/write functions."
+    },
+    {
+      "id": "fc-8",
+      "front": "How would you append data to an existing file while reading its current content in C++?",
+      "back": "Use fstream with ios::in | ios::app modes: fstream file(\"log.txt\", ios::in | ios::app); To read, use seekg() to reposition to beginning: file.seekg(0, ios::beg); string line; while(getline(file, line)) { process(line); } For writing, the pointer is already at end. This allows both reading existing content and appending new data to the same file."
+    }
+  ]
+}

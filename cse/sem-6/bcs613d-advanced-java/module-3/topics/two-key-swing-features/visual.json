@@ -1,0 +1,132 @@
+{
+  "topicId": "two-key-swing-features",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "MVC Architecture in Swing Components",
+      "description": "A block diagram showing the Model-View-Controller architecture as implemented in Swing components, illustrating how data, UI, and logic are separated but communicate through defined interfaces.",
+      "elements": [
+        "Rectangular box labeled 'Model' at top-left with sub-components: Data (state), ListModel/TableModel interface, fire methods",
+        "Rectangular box labeled 'View' (Component) at center with label 'JTable/JList/JTree'",
+        "Rectangular box labeled 'Controller' at right with label 'Listeners, Event Handling'",
+        "Arrow from Model to View labeled 'getValueAt()' with dashed line showing data retrieval",
+        "Arrow from View to Model labeled 'setValueAt()' with solid line showing data update",
+        "Arrow from View to Controller labeled 'user events'",
+        "Arrow from Controller to Model labeled 'update state'",
+        "Bidirectional arrow between View and Controller labeled 'Selection, Focus'",
+        "Note box: 'Loose Coupling - View and Model can exist independently'"
+      ],
+      "purpose": "Students learn how Swing achieves separation of concerns through MVC, enabling flexible UI development where the same data model can have multiple views and the UI can be changed without modifying business logic."
+    },
+    {
+      "id": "diagram-2",
+      "title": "Pluggable Look and Feel Architecture",
+      "description": "A layered architecture diagram showing how Swing's Pluggable Look and Feel (PL&F) system works through UIManager and UI delegates.",
+      "elements": [
+        "Top layer: 'Application Code' rectangle containing user-written Swing components (JButton, JFrame)",
+        "Second layer: 'Swing Components (JComponent)' rectangle with label 'contains UI delegate (ComponentUI)'",
+        "Third layer: 'UIManager' rectangle with methods: setLookAndFeel(), getLookAndFeelClassName(), getSystemLookAndFeelClassName()",
+        "Fourth layer: 'Look and Feel Packages' with four boxes: 'MetalLookAndFeel', 'NimbusLookAndFeel', 'WindowsLookAndFeel', 'MotifLookAndFeel'",
+        "Bottom layer: 'Native OS' rectangle with platform-specific UI elements",
+        "Vertical arrows between layers showing dependency flow",
+        "Dashed box around 'Look and Feel Packages' labeled 'Pluggable - can be swapped at runtime'"
+      ],
+      "purpose": "Students understand how Swing achieves platform-independent UI development by allowing runtime switching of visual appearance while maintaining consistent functionality across different operating systems."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Event Delegation Model in Swing",
+      "description": "A flowchart showing how events flow from user actions through event dispatch mechanism to application handlers in the Delegation Event Model.",
+      "elements": [
+        "Start oval: 'User Action (click, keypress)'",
+        "Rectangle: 'Event Source Component (e.g., JButton)'",
+        "Arrow to rectangle: 'Generates Event Object'",
+        "Arrow to diamond: 'Event Dispatch Thread (EDT)'",
+        "Diamond shape: 'Event Dispatcher checks for registered listeners'",
+        "Two arrows from diamond: 'Yes' path to rectangle 'Listener Method invoked (actionPerformed)'",
+        "Arrow from 'Listener Method' to rectangle: 'Application Code handles event'",
+        "Arrow from diamond: 'No' path back to 'Event Dispatcher' with label 'Event ignored'",
+        "Arrow from 'Application Code' to end oval: 'UI Updated'"
+      ],
+      "purpose": "Students learn the event-driven paradigm fundamental to Swing, understanding how user interactions trigger specific handler code through the delegation model, which is essential for responsive GUI applications."
+    },
+    {
+      "id": "diagram-4",
+      "title": "Swing Component UI Delegate Pattern",
+      "description": "A UML-style class diagram showing the relationship between Swing component classes and their corresponding UI delegate classes in the MVC pattern.",
+      "elements": [
+        "Class box 'JButton' with label 'extends JComponent' and '-ui' field of type ButtonUI",
+        "Class box 'JLabel' with label 'extends JComponent' and '-ui' field of type LabelUI",
+        "Class box 'ButtonUI' abstract class with methods: paint(), installDefaults(), uninstallDefaults()",
+        "Class box 'MetalButtonUI' extending 'ButtonUI' with implementation of paint() method",
+        "Class box 'WindowsButtonUI' extending 'ButtonUI' with implementation of paint() method",
+        "Aggregation relationship: JButton has-a ButtonUI (1..1)",
+        "Inheritance arrows: MetalButtonUI -> ButtonUI, WindowsButtonUI -> ButtonUI",
+        "Note: 'One UI class per L&F per component type'"
+      ],
+      "purpose": "Students understand how Swing implements the View part of MVC through UI delegate classes, enabling different Look and Feel implementations while keeping component logic separate."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Look and Feel Switching Flow",
+      "description": "A step-by-step sequence diagram showing how a Swing application changes its visual appearance at runtime using UIManager.",
+      "elements": [
+        "Vertical swimlane 'Application': call to UIManager.setLookAndFeel()",
+        "Vertical swimlane 'UIManager': validates L&F class, initializes LookAndFeel, updates defaults",
+        "Vertical swimlane 'ComponentTree': SwingUtilities.updateComponentTreeUI() traverses all components",
+        "Numbered steps: 1. Application calls setLookAndFeel with class name string",
+        "Step 2: UIManager loads class using Class.forName()",
+        "Step 3: UIManager creates instance of LookAndFeel subclass",
+        "Step 4: initialize() called on LookAndFeel object",
+        "Step 5: Component tree updated - each component gets new UI delegate",
+        "Step 6: revalidate() and repaint() called on root pane",
+        "End: All visible components display new appearance"
+      ],
+      "purpose": "Students learn the practical implementation of Pluggable Look and Feel, understanding both the API usage and the internal mechanism that allows dynamic UI theme switching."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "MVC Components and Responsibilities",
+      "content": "Comparison table with three columns: 'Component', 'Responsibility', 'Swing Implementation Examples'. Row 1: Model - manages data and business logic - DefaultTableModel, ListModel, TreeModel. Row 2: View - displays data to user - JTable, JList, JTree rendering. Row 3: Controller - handles user input - Event listeners, Action objects. Key insight: Swing combines View and Controller into UI delegates."
+    },
+    {
+      "type": "comparison",
+      "title": "Look and Feel Types in Java Swing",
+      "content": "Comparison table showing four main Look and Feel options: 1) Metal (MetalLookAndFeel) - Java's cross-platform default, consistent across all OS; 2) Nimbus (NimbusLookAndFeel) - Modern, Java 6+, smooth gradients, cross-platform; 3) Windows (WindowsLookAndFeel) - Native Windows appearance, requires Windows OS; 4) Motif (MotifLookAndFeel) - CDE/Motif style, Unix systems. Columns: Name, Class, Platform, Visual Style."
+    },
+    {
+      "type": "flowchart",
+      "title": "Event Handling Process in Swing",
+      "content": "Flowchart with five decision steps: 1) User interacts with component → 2) Component creates Event object → 3) Event posted to EventQueue → 4) EventDispatchThread processes → 5) Find registered listeners → For each listener: invoke appropriate method → Execute handler code → Update UI if needed → Return to waiting state."
+    },
+    {
+      "type": "table",
+      "title": "Swing vs AWT: Look and Feel Comparison",
+      "content": "Comparison table with rows: 1) Appearance - AWT uses native OS components (heavyweight), Swing uses lightweight components with custom painting; 2) Consistency - AWT varies by platform, Swing consistent across platforms with pluggable L&F; 3) Customization - AWT limited to OS defaults, Swing fully customizable; 4) Performance - AWT faster (native), Swing slightly slower but more flexible; 5) Look and Feel - AWT cannot change, Swing can change at runtime."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Two Key Swing Features",
+      "branches": [
+        "Branch 1: Pluggable Look and Feel (PL&F)",
+        "Sub-branch 1.1: UIManager class - setLookAndFeel(), getSystemLookAndFeelClassName()",
+        "Sub-branch 1.2: L&F Types - Metal, Nimbus, Windows, Motif",
+        "Sub-branch 1.3: Benefits - Cross-platform consistency, Runtime switching, User preference",
+        "Sub-branch 1.4: UI Delegates - ComponentUI subclasses, paint() implementation",
+        "Branch 2: Model-View-Controller (MVC) Architecture",
+        "Sub-branch 2.1: Model - Data, business logic, notification (fireXXX methods)",
+        "Sub-branch 2.2: View - Rendering, visual representation, JComponent subclasses",
+        "Sub-branch 2.3: Controller - Event handling, user input processing",
+        "Sub-branch 2.4: Swing adaptation - UI delegates combine V+C",
+        "Branch 3: Event-Driven Architecture",
+        "Sub-branch 3.1: Delegation Event Model - Source, Event, Listener",
+        "Sub-branch 3.2: EventDispatchThread - EDT, SwingUtilities.invokeLater()",
+        "Sub-branch 3.3: Common listeners - ActionListener, KeyListener, MouseListener"
+      ],
+      "purpose": "Provides a comprehensive overview connecting the two key Swing features (PL&F and MVC) with their supporting mechanisms (event handling), helping students understand how these features work together to create flexible, maintainable GUI applications."
+    }
+  ]
+}

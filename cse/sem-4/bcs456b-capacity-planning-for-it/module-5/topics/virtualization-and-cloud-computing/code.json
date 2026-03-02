@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Virtual Machine Provisioning Algorithm",
+    "description": "Algorithm for provisioning VMs based on resource requirements",
+    "code": "PROCEDURE ProvisionVM(resourceRequirements)\nBEGIN\n FOR each host IN availableHosts:\n IF CheckResources(host, resourceRequirements) THEN\n IF CheckCompatibility(host, VMType) THEN\n AllocateResources(host, resourceRequirements)\n CreateVMImage(host)\n StartVM()\n RETURN success\n END IF\n END IF\n END FOR\n RETURN failure - No suitable host\nEND\n\nFUNCTION CheckResources(host, requirements)\nBEGIN\n availableCPU = host.totalCPU - host.usedCPU\n availableRAM = host.totalRAM - host.usedRAM\n availableDisk = host.totalDisk - host.usedDisk\n \n RETURN (availableCPU >= requirements.minCPU AND\n availableRAM >= requirements.minRAM AND\n availableDisk >= requirements.minDisk)\nEND",
+    "explanation": "This algorithm selects a suitable host server for provisioning a new VM by checking resource availability and compatibility.",
+    "complexity": {
+      "time": "O(n) where n is number of hosts",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Cloud Auto-Scaling Algorithm",
+    "description": "Algorithm for elastic scaling based on workload",
+    "code": "PROCEDURE AutoScale(metrics, thresholds)\nBEGIN\n avgCPU = CalculateAverage(metrics.cpuUsage)\n avgMemory = CalculateAverage(metrics.memoryUsage)\n currentInstances = metrics.activeInstances\n \n IF avgCPU > thresholds.upperThreshold THEN\n // Scale out\n newInstances = currentInstances + 1\n LaunchInstances(newInstances)\n UpdateLoadBalancer()\n ELSE IF avgCPU < thresholds.lowerThreshold THEN\n // Scale in\n IF currentInstances > thresholds.minInstances THEN\n newInstances = currentInstances - 1\n TerminateInstances(newInstances)\n UpdateLoadBalancer()\n END IF\n END IF\n \n RETURN scalingAction\nEND",
+    "explanation": "This algorithm monitors CPU usage and automatically adds or removes instances to handle demand fluctuations, ensuring cost efficiency.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Hypervisor Resource Scheduler",
+    "description": "CPU scheduling algorithm for multiple VMs on a hypervisor",
+    "code": "PROCEDURE ScheduleVMs(vmQueue, availableCPUs)\nBEGIN\n readyQueue = SortByPriority(vmQueue)\n timeSlice = DEFAULT_TIME_SLICE\n \n FOR each vm IN readyQueue:\n IF vm.remainingTime > 0 THEN\n // Allocate CPU to VM\n ExecuteVM(vm, timeSlice)\n vm.remainingTime = vm.remainingTime - timeSlice\n \n // Check for preemption\n IF vm.remainingTime > 0 THEN\n AddToQueue(vm)\n ELSE\n ReleaseResources(vm)\n END IF\n END IF\n END FOR\n \n RETURN scheduleComplete\nEND",
+    "explanation": "This algorithm implements CPU scheduling for VMs, allocating CPU time slices based on priority and ensuring fair sharing of physical CPU resources.",
+    "complexity": {
+      "time": "O(n log n) for sorting",
+      "space": "O(n) for queue"
+    }
+  }
+]

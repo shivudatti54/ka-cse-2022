@@ -1,0 +1,55 @@
+{
+  "topicId": "the-principle-of-inclusion-and-exclusion",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "PIE for Union of 2 Sets",
+      "description": "Algorithm to compute cardinality of union of 2 sets",
+      "code": "FUNCTION Union2Sets(A, B):\n // A and B are arrays/collections\n countA = SIZE(A)\n countB = SIZE(B)\n countIntersection = SIZE(A ∩ B)\n RETURN countA + countB - countIntersection",
+      "explanation": "Simple application of |A ∪ B| = |A| + |B| - |A ∩ B|",
+      "timeComplexity": "O(min(|A|,|B|)) for intersection + O(1) for formula",
+      "spaceComplexity": "O(min(|A|,|B|))"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "PIE for 3 Sets",
+      "description": "Algorithm to compute cardinality of union of 3 sets",
+      "code": "FUNCTION Union3Sets(A, B, C):\n // Count individual sets\n sum1 = SIZE(A) + SIZE(B) + SIZE(C)\n \n // Count pairwise intersections (subtract)\n sum2 = SIZE(A ∩ B) + SIZE(A ∩ C) + SIZE(B ∩ C)\n \n // Count triple intersection (add back)\n sum3 = SIZE(A ∩ B ∩ C)\n \n RETURN sum1 - sum2 + sum3",
+      "explanation": "Follows PIE formula: add singles, subtract pairs, add triple",
+      "timeComplexity": "O(|A| + |B| + |C| + pairwise + triple)",
+      "spaceComplexity": "O(min sizes for intersections)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "General PIE Algorithm",
+      "description": "General algorithm for n sets using combinatorial summation",
+      "code": "FUNCTION PIE_union(sets[1..n]):\n result = 0\n \n FOR k FROM 1 TO n:\n // Get all C(n,k) k-wise intersections\n intersections = allKIntersections(sets, k)\n sumK = SUM(intersections)\n \n IF k IS ODD:\n result = result + sumK // Add\n ELSE:\n result = result - sumK // Subtract\n \n RETURN result\n\nFUNCTION allKIntersections(sets, k):\n // Returns sum of sizes of all C(n,k) k-wise intersections\n // Uses recursion or combinatorial iteration",
+      "explanation": "General PIE formula: sum over all k-level intersections with alternating signs",
+      "timeComplexity": "O(2^n × n) - exponential in n",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Derangement Count using PIE",
+      "description": "Calculate number of derangements Dₙ",
+      "code": "FUNCTION Derangement(n):\n // Method 1: Direct formula\n sum = 0\n FOR k FROM 0 TO n:\n term = (-1)^k / FACTORIAL(k)\n sum = sum + term\n RETURN FACTORIAL(n) × sum\n\n// Alternative: Recursive with memoization\nFUNCTION DerangeDP(n, memo):\n IF n == 0: RETURN 1\n IF n == 1: RETURN 0\n IF n IN memo: RETURN memo[n]\n \n memo[n] = (n-1) × (DerangeDP(n-1) + DerangeDP(n-2))\n RETURN memo[n]",
+      "explanation": "Dₙ = n! × Σ(-1)ᵏ/k! from k=0 to n, or use recurrence Dₙ = (n-1)(Dₙ₋₁ + Dₙ₋₂)",
+      "timeComplexity": "O(n) for DP, O(n) for formula with factorial",
+      "spaceComplexity": "O(n) or O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Counting Multiples using PIE",
+      "description": "Count integers ≤ N divisible by at least one of given numbers",
+      "code": "FUNCTION CountMultiples(N, numbers[1..m]):\n result = 0\n \n // Generate all non-empty subsets of numbers\n FOR subset FROM 1 TO (2^m - 1):\n // Find LCM of numbers in this subset\n lcmVal = LCM_of_subset(numbers, subset)\n count = N / lcmVal // floor division\n \n // Determine sign based on subset size\n k = popcount(subset) // number of elements in subset\n IF k IS ODD:\n result = result + count\n ELSE:\n result = result - count\n \n RETURN result\n\nFUNCTION LCM_of_subset(numbers, subsetMask):\n // Compute LCM only for numbers where bit is set",
+      "explanation": "Uses PIE: add counts for each divisor, subtract for pairwise LCMs, add for triple LCMs, etc.",
+      "timeComplexity": "O(2^m × m × log(max))",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

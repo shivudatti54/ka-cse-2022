@@ -1,0 +1,43 @@
+{
+  "topicId": "relational-model-concepts",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Selection Operation in Relational Algebra",
+      "description": "Demonstrates how to select tuples from Chapters relation based on a condition",
+      "code": "ALGORITHM Selection(Relation R, Condition C)\nBEGIN\n  Result \u2190 empty set\n  FOR EACH tuple t IN R DO\n    IF t satisfies condition C THEN\n      Add t to Result\n    END IF\n  END FOR\n  RETURN Result\nEND\n\n// Example: \u03c3(Pages > 30)(Chapters)\n// Returns all chapters with more than 30 pages",
+      "explanation": "Selection (\u03c3) is a unary operation that extracts rows (tuples) from a relation that satisfy a specified condition. It acts as a horizontal filter, keeping only qualifying tuples.",
+      "timeComplexity": "O(n) where n is number of tuples in relation",
+      "spaceComplexity": "O(k) where k is number of qualifying tuples"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Projection Operation in Relational Algebra",
+      "description": "Demonstrates how to select specific columns from Chapters relation",
+      "code": "ALGORITHM Projection(Relation R, AttributeList L)\nBEGIN\n  Result \u2190 empty set\n  FOR EACH tuple t IN R DO\n    newTuple \u2190 extract attributes L from t\n    Add newTuple to Result\n  END FOR\n  // Remove duplicate tuples if required\n  Result \u2190 DISTINCT(Result)\n  RETURN Result\nEND\n\n// Example: \u03c0(ChapterTitle, Pages)(Chapters)\n// Returns only chapter titles and page counts",
+      "explanation": "Projection (\u03c0) is a unary operation that selects specific columns (attributes) from a relation, creating a vertical subset. It removes duplicate tuples from the result.",
+      "timeComplexity": "O(n) where n is number of tuples",
+      "spaceComplexity": "O(n) for storing result tuples"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Natural Join Operation",
+      "description": "Demonstrates join operation to combine Chapters and Books tables based on BookID",
+      "code": "# Python-like pseudocode for Natural Join\n# Tables represented as lists of dictionaries\n\nchapters = [\n    {'ChapterID': 1, 'ChapterTitle': 'Introduction', 'Pages': 25, 'BookID': 101},\n    {'ChapterID': 2, 'ChapterTitle': 'Data Models', 'Pages': 40, 'BookID': 101},\n    {'ChapterID': 3, 'ChapterTitle': 'SQL Basics', 'Pages': 35, 'BookID': 102}\n]\n\nbooks = [\n    {'BookID': 101, 'Title': 'Database Systems', 'Author': 'Chen'},\n    {'BookID': 102, 'Title': 'SQL Guide', 'Author': 'Smith'}\n]\n\ndef natural_join(R, S, common_attrs):\n    result = []\n    for t1 in R:\n        for t2 in S:\n            match = True\n            for attr in common_attrs:\n                if t1[attr] != t2[attr]:\n                    match = False\n                    break\n            if match:\n                merged = {**t1, **t2}\n                result.append(merged)\n    return result\n\n# Execute: Join chapters with books on BookID\njoined_result = natural_join(chapters, books, ['BookID'])\n# Output: Combined chapter and book information",
+      "explanation": "Natural Join combines two relations based on common attribute names (BookID in this case). Each chapter is paired with its corresponding book information where BookID matches.",
+      "timeComplexity": "O(n \u00d7 m) where n and m are sizes of input relations",
+      "spaceComplexity": "O(n \u00d7 m) in worst case for result"
+    },
+    {
+      "id": "code-4",
+      "language": "sql",
+      "title": "SQL Implementation of Relational Operations",
+      "description": "Demonstrates Selection, Projection, and Join using SQL on Chapters and Books tables",
+      "code": "-- Create Chapters table with constraints\nCREATE TABLE Chapters (\n    ChapterID INTEGER PRIMARY KEY,\n    ChapterTitle VARCHAR(100) NOT NULL,\n    Pages INTEGER,\n    BookID INTEGER,\n    FOREIGN KEY (BookID) REFERENCES Books(BookID)\n);\n\n-- Selection: Get all chapters with more than 30 pages\nSELECT * \nFROM Chapters \nWHERE Pages > 30;\n\n-- Projection: Get only chapter titles and page counts\nSELECT ChapterTitle, Pages \nFROM Chapters;\n\n-- Join: Get chapters with their book information\nSELECT C.ChapterID, C.ChapterTitle, C.Pages, B.Title AS BookTitle, B.Author\nFROM Chapters C\nINNER JOIN Books B ON C.BookID = B.BookID;\n\n-- Union: Get all chapter IDs and book IDs (union-compatible)\nSELECT ChapterID FROM Chapters\nUNION\nSELECT BookID FROM Books;",
+      "explanation": "SQL implements relational algebra operations: SELECT implements \u03c3 (selection/project), FROM defines the relation, WHERE implements conditions, and JOIN implements \u22c8 operation. The code shows practical SQL equivalents of theoretical relational algebra."
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "topicId": "data-types",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between getDate() and getTimestamp() methods in JDBC with suitable examples.",
+      "keyPoints": [
+        "getDate() returns only date portion (year, month, day) as java.sql.Date",
+        "getTimestamp() returns date + time + nanoseconds as java.sql.Timestamp",
+        "Use getDate() when only date matters (e.g., birth_date)",
+        "Use getTimestamp() for precise timing (e.g., transaction_time)",
+        "Timestamp truncates to database precision, Date truncates time component"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "How does JDBC handle NULL values for primitive data types? What are the potential issues and solutions?",
+      "keyPoints": [
+        "Primitive getters (getInt, getDouble) return 0/false for NULL - cannot distinguish from actual zero",
+        "wasNull() method must be called immediately after getter to check if last value was NULL",
+        "Alternative: use getObject() which returns Java null for SQL NULL",
+        "Wrapper classes (Integer, Double) can also be used with getObject() then unbox safely"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the JDBC type mapping for DECIMAL/NUMERIC columns. Why is getBigDecimal() preferred over getDouble()?",
+      "keyPoints": [
+        "DECIMAL maps to java.math.BigDecimal in Java",
+        "getDouble() uses IEEE 754 floating-point causing precision loss",
+        "BigDecimal stores exact decimal representation using BigInteger + scale",
+        "Example: 123.456 stored exactly in BigDecimal but approximated in double",
+        "Use getBigDecimal(precision, scale) for controlled precision in retrieval"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Write a code snippet to insert a BLOB (image) into a database using PreparedStatement.",
+      "keyPoints": [
+        "Use setBinaryStream() for streaming large binary data",
+        "Alternatively use setBytes() for smaller blobs",
+        "Close streams properly after execution",
+        "Use try-with-resources for automatic cleanup",
+        "Example: pstmt.setBinaryStream(1, inputStream, fileLength)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the purpose of java.sql.Types class in JDBC? List at least 5 type constants and their Java mappings.",
+      "keyPoints": [
+        "Types class defines JDBC type constants matching SQL data types",
+        "VARCHAR \u2192 String (getString/setString)",
+        "INTEGER \u2192 int (getInt/setInt)",
+        "BIGINT \u2192 long (getLong/setLong)",
+        "DATE \u2192 java.sql.Date (getDate/setDate)",
+        "TIMESTAMP \u2192 java.sql.Timestamp (getTimestamp/setTimestamp)",
+        "BLOB \u2192 byte[] (getBytes/setBytes)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How do you handle date values in JDBC when inserting data? Explain the conversion required from java.util.Date.",
+      "keyPoints": [
+        "java.sql.Date extends java.util.Date but only stores date portion",
+        "Conversion required: new java.sql.Date(utilDate.getTime())",
+        "Time component in java.util.Date gets truncated in conversion",
+        "For time-only columns, use java.sql.Time",
+        "For timestamp, use new java.sql.Timestamp(utilDate.getTime())"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the difference between setString(), setCharacterStream(), and setClob() for inserting large text data.",
+      "keyPoints": [
+        "setString() - limited by driver for very large strings (usually 64KB limit)",
+        "setCharacterStream() - streams large text from Reader without loading entirely in memory",
+        "setClob() - accepts Clob object, provides methods for reading/writing large text",
+        "For very large CLOB, prefer setCharacterStream() for memory efficiency",
+        "setClob() may use temporary files depending on driver implementation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Develop a complete JDBC program that demonstrates retrieval of different data types from a ResultSet, handling NULL values appropriately, and explaining the type conversion process.",
+      "keyPoints": [
+        "Create Connection using DriverManager",
+        "Execute SELECT query returning various column types",
+        "Demonstrate getString(), getInt(), getDouble(), getDate(), getTimestamp(), getBigDecimal()",
+        "Show NULL handling with wasNull() check",
+        "Show proper date handling by converting between java.util.Date and java.sql.Date",
+        "Include try-catch for SQLException",
+        "Proper resource cleanup in finally block or try-with-resources"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a solution for storing and retrieving a large JSON document in a database using JDBC. Consider different approaches and their trade-offs.",
+      "keyPoints": [
+        "Store as VARCHAR/TEXT - simple but limited size, use getString/setString",
+        "Store as CLOB - handles large text, use Clob API or CharacterStream",
+        "Store as Types.OTHER or database-specific JSON type - requires driver support",
+        "Retrieve using getString() for VARCHAR, getClob() or getCharacterStream() for CLOB",
+        "Consider: driver limitations, database JSON support, size requirements",
+        "Show PreparedStatement with setCharacterStream for insertion",
+        "Show retrieval with getClob().getCharacterStream() for large JSON"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare and contrast all numeric type mappings in JDBC. Create a decision guide for choosing the appropriate getter method based on data characteristics.",
+      "keyPoints": [
+        "TINYINT \u2192 byte (getByte) - 8-bit signed integer",
+        "SMALLINT \u2192 short (getShort) - 16-bit signed",
+        "INTEGER/INT \u2192 int (getInt) - 32-bit signed",
+        "BIGINT \u2192 long (getLong) - 64-bit signed",
+        "REAL \u2192 float (getFloat) - 32-bit floating point",
+        "FLOAT/DOUBLE \u2192 double (getDouble) - 64-bit floating point",
+        "NUMERIC/DECIMAL \u2192 BigDecimal (getBigDecimal) - exact precision",
+        "Decision factors: size, precision needed, NULLability, performance"
+      ],
+      "marks": 10
+    }
+  ]
+}

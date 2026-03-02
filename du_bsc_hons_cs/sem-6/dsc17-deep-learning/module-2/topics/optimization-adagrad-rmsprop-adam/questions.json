@@ -1,0 +1,53 @@
+{
+  "topicId": "optimization-adagrad-rmsprop-adam",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the problem Adagrad solves in training deep neural networks. Write its weight update equation and explain the role of each variable including the accumulator Gt.",
+      "keyPoints": [
+        "Adagrad adapts learning rate per parameter based on historical gradients",
+        "Update: θt+1 = θt - η/√(Gt + ε) * gt",
+        "Gt accumulates squared gradients: Gt = Gt-1 + gt²",
+        "Problem solved: sparse features get larger updates, frequent features get smaller updates"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain the four main hyperparameters of the Adam optimizer along with their recommended default values and the effect of changing each.",
+      "keyPoints": [
+        "α (learning rate): default 0.001, controls step size",
+        "β1 (first moment decay): default 0.9, controls exponential moving average of gradients",
+        "β2 (second moment decay): default 0.999, controls exponential moving average of squared gradients",
+        "ε (numerical stability): default 10⁻⁸, prevents division by zero in denominator"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Derive the RMSProp algorithm by explaining the exponentially decaying moving average of squared gradients. Write its complete weight update equation. Compare RMSProp with Adagrad, highlighting the key modification that prevents the learning rate from becoming too small during training.",
+      "keyPoints": [
+        "RMSProp uses E[g²]t = β * E[g²]t-1 + (1-β) * gt² to track moving average",
+        "Update: θt+1 = θt - η/√(E[g²]t + ε) * gt",
+        "Key difference: Adagrad accumulates all past gradients (G increases monotonically), RMSProp uses decay to keep recent gradients dominant",
+        "This prevents learning rate decay that makes Adagrad stop learning in later epochs"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Write complete pseudocode for the Adam optimizer including bias correction for both first and second moment estimates. Explain how Adam combines ideas from RMSProp and momentum. Discuss practical implementation considerations including: (a) when to prefer Adam over SGD with momentum, (b) the issue of learning rate decay in Adam, and (c) when Adam may underperform.",
+      "keyPoints": [
+        "Pseudocode includes: mt = β1*mt-1 + (1-β1)*gt, vt = β2*vt-1 + (1-β2)*gt², m̂ = mt/(1-β1^t), v̂ = vt/(1-β2^t), update θt+1 = θt - α*m̂/(√v̂ + ε)",
+        "Combines momentum (first moment mt) for direction and RMSProp (second moment vt) for adaptive learning rates",
+        "Prefer Adam: default choice for most problems, works well with default hyperparameters, good for sparse gradients",
+        "Underperformance cases: when trainable parameters are very large, in some GANs and RL problems, or when generalization matters more than fast convergence"
+      ],
+      "marks": 10
+    }
+  ]
+}

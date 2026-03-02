@@ -1,0 +1,134 @@
+{
+  "topicId": "race-conditions",
+  "visuals": [
+    {
+      "id": "v1",
+      "type": "animated-svg",
+      "title": "Race Conditions in Unix System Programming",
+      "ref": "assets/race-conditions.svg",
+      "description": "An animated visual explaining race conditions, fork() races, TOCTOU vulnerabilities, and prevention techniques in Unix."
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "Race Condition Flow: fork() Example",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Process calls fork()"
+          },
+          {
+            "id": "n2",
+            "label": "Kernel creates child process (copy of parent)"
+          },
+          {
+            "id": "n3",
+            "label": "Scheduler decides execution order"
+          },
+          {
+            "id": "n4",
+            "label": "Parent runs first OR Child runs first (non-deterministic)"
+          },
+          {
+            "id": "n5",
+            "label": "Both access shared resources (files, variables)"
+          },
+          {
+            "id": "n6",
+            "label": "Race condition: outcome depends on who runs first"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" },
+          { "from": "n5", "to": "n6" }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "TOCTOU Attack Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Process checks file permission with access()"
+          },
+          {
+            "id": "n2",
+            "label": "Context switch occurs (process preempted)"
+          },
+          {
+            "id": "n3",
+            "label": "Attacker replaces file with symlink to /etc/passwd"
+          },
+          {
+            "id": "n4",
+            "label": "Process resumes and calls open() on now-changed file"
+          },
+          {
+            "id": "n5",
+            "label": "Process writes to /etc/passwd (security breach)"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2", "label": "Window of vulnerability" },
+          { "from": "n2", "to": "n3", "label": "Attacker exploits gap" },
+          { "from": "n3", "to": "n4", "label": "Stale check result" },
+          { "from": "n4", "to": "n5", "label": "Privilege escalation" }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Race Condition Prevention Decision Tree",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Shared resource accessed by multiple processes/threads?"
+          },
+          {
+            "id": "n2",
+            "label": "Is it file-based access?"
+          },
+          {
+            "id": "n3",
+            "label": "Is it shared memory/variable?"
+          },
+          {
+            "id": "n4",
+            "label": "Use fcntl() file locking or atomic open with O_EXCL"
+          },
+          {
+            "id": "n5",
+            "label": "Use mutex/semaphore for critical section"
+          },
+          {
+            "id": "n6",
+            "label": "Involves signal handlers?"
+          },
+          {
+            "id": "n7",
+            "label": "Use sigprocmask() to mask signals; use only async-signal-safe functions"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2", "label": "Yes" },
+          { "from": "n1", "to": "n3", "label": "Yes" },
+          { "from": "n2", "to": "n4", "label": "Yes" },
+          { "from": "n3", "to": "n5", "label": "Yes" },
+          { "from": "n3", "to": "n6", "label": "Check" },
+          { "from": "n6", "to": "n7", "label": "Yes" }
+        ]
+      }
+    }
+  ]
+}

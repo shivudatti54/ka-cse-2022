@@ -1,0 +1,45 @@
+{
+  "topicId": "connectionless-and-connection-oriented",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "TCP Three-Way Handshake Pseudocode",
+      "description": "Demonstrates the connection establishment process in TCP",
+      "code": "// TCP Client Side\nFUNCTION connect_to_server(server_ip, port):\n CREATE socket\n GENERATE random initial_sequence_number(seq_num)\n \n // Step 1: Send SYN\n SEND TCP_PACKET(flags=SYN, seq=seq_num)\n \n // Step 2: Receive SYN-ACK\n RECEIVE packet\n IF packet.flags == SYN-ACK THEN\n server_seq = packet.seq + 1\n SEND TCP_PACKET(flags=ACK, seq=seq_num+1, ack=server_seq)\n STATE = ESTABLISHED\n END IF\n\n// TCP Server Side\nFUNCTION accept_connection():\n LISTEN on socket\n \n // Step 1: Receive SYN\n RECEIVE packet\n IF packet.flags == SYN THEN\n client_seq = packet.seq\n GENERATE server_sequence_number(srv_seq)\n \n // Step 2: Send SYN-ACK\n SEND TCP_PACKET(flags=SYN-ACK, seq=srv_seq, ack=client_seq+1)\n END IF\n \n // Step 3: Receive ACK\n RECEIVE packet\n IF packet.flags == ACK THEN\n STATE = ESTABLISHED\n END IF",
+      "explanation": "The three-way handshake ensures both client and server agree on initial sequence numbers and establish connection state. SYN carries initial sequence number, SYN-ACK acknowledges client's sequence and carries server's sequence, ACK confirms server's sequence.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) - fixed 3 packet exchange",
+      "spaceComplexity": "O(1) - fixed state per connection"
+    },
+    {
+      "id": "code-2",
+      "title": "UDP Send-Receive Pseudocode",
+      "description": "Demonstrates simple connectionless communication using UDP",
+      "code": "// UDP Sender\nFUNCTION send_datagram(data, dest_ip, dest_port):\n CREATE socket (SOCK_DGRAM)\n \n // No connection establishment needed\n CREATE packet WITH:\n - Source Port (assigned by OS)\n - Destination Port\n - Length\n - Data\n - Checksum (optional)\n \n SEND packet TO dest_ip:dest_port\n CLOSE socket\n\n// UDP Receiver\nFUNCTION receive_datagram():\n CREATE socket (SOCK_DGRAM)\n BIND socket TO local_port\n \n // Receive any incoming datagram\n packet = RECEIVE FROM socket\n \n // Process packet (no ACK sent automatically)\n PROCESS packet.data\n CLOSE socket",
+      "explanation": "UDP requires no connection setup. Each datagram is independent with minimal overhead. No state is maintained between packets. The receiver must handle any reliability requirements at application layer if needed.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) per packet",
+      "spaceComplexity": "O(1) per packet"
+    },
+    {
+      "id": "code-3",
+      "title": "TCP Data Transfer with Sequence Numbers",
+      "description": "Demonstrates reliable ordered data transfer using sequence numbers and acknowledgments",
+      "code": "// TCP Sender\nFUNCTION send_data_with_reliability(data, connection):\n segment_size = 1000 // bytes\n current_seq = connection.next_seq\n \n FOR each chunk OF data IN segment_size:\n SEND TCP_PACKET(\n seq=current_seq,\n data=chunk,\n flags=ACK_EXPECTED\n )\n current_seq = current_seq + chunk.length\n \n // Wait for ACK with timeout\n ack_received = WAIT_FOR_ACK(timeout=100ms)\n IF NOT ack_received THEN\n // Retransmit last segment\n RETRANSMIT last_segment\n END IF\n END FOR\n\n// TCP Receiver\nFUNCTION receive_data(connection):\n buffer = EMPTY\n expected_seq = connection.expected_seq\n \n WHILE TRUE:\n packet = RECEIVE FROM connection\n \n IF packet.seq == expected_seq THEN\n APPEND packet.data TO buffer\n expected_seq = expected_seq + packet.data.length\n \n // Send cumulative ACK\n SEND TCP_PACKET(flags=ACK, ack=expected_seq)\n ELSE IF packet.seq > expected_seq THEN\n // Out of order - send ACK for last received\n SEND TCP_PACKET(flags=ACK, ack=expected_seq)\n END IF\n END WHILE",
+      "explanation": "Sequence numbers track data ordering. ACKs confirm receipt. If ACK not received within timeout, sender retransmits. Receiver buffers out-of-order segments and delivers in order.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) where n is data size with retransmissions",
+      "spaceComplexity": "O(window_size) for buffering"
+    },
+    {
+      "id": "code-4",
+      "title": "TCP Connection Termination Pseudocode",
+      "description": "Demonstrates graceful connection termination using four-way handshake",
+      "code": "// Connection Termination (Four-Way Handshake)\nFUNCTION close_connection(connection):\n // Step 1: Client initiates closure\n SEND TCP_PACKET(flags=FIN, seq=connection.client_seq)\n STATE = FIN_WAIT_1\n \n // Step 2: Server acknowledges\n RECEIVE ACK FROM server\n STATE = FIN_WAIT_2\n \n // Server sends FIN when done sending\n RECEIVE packet FROM server\n IF packet.flags == FIN THEN\n SEND ACK TO server\n STATE = TIME_WAIT\n \n // Wait for max segment lifetime (2MSL)\n WAIT for 2 minutes\n \n // Step 3 & 4: Connection closed\n STATE = CLOSED\n END IF\n\n// Server Side Termination\nFUNCTION server_close(connection):\n // Receive FIN from client\n RECEIVE packet\n IF packet.flags == FIN THEN\n SEND ACK TO client\n \n // Close when application calls close\n APPLICATION calls close()\n SEND TCP_PACKET(flags=FIN)\n \n RECEIVE ACK FROM client\n STATE = CLOSED\n END IF",
+      "explanation": "Four-way handshake ensures all data is transmitted before closing. FIN indicates no more data to send. TIME_WAIT state ensures delayed packets are processed before completely closing.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) - fixed 4 packet exchange",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

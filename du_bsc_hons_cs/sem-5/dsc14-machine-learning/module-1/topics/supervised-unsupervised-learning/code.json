@@ -1,0 +1,45 @@
+{
+  "topicId": "supervised-unsupervised-learning",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Linear Regression (Supervised)",
+      "description": "Demonstrates supervised learning for regression - predicting continuous values",
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\n\n# Sample data: House sizes and prices\nX = np.array([[1000], [1500], [2000], [2500], [3000]])  # Features (size)\ny = np.array([200000, 280000, 350000, 420000, 500000])  # Labels (price)\n\n# Create and train model\nmodel = LinearRegression()\nmodel.fit(X, y)\n\n# Predict for new house size\nnew_size = np.array([[1800]])\npredicted_price = model.predict(new_size)\nprint(f\"Predicted price: ${predicted_price[0]:,.2f}\")\nprint(f\"Coefficient (slope): {model.coef_[0]}\")\nprint(f\"Intercept: {model.intercept_}\")",
+      "explanation": "Linear Regression learns the relationship between house size (feature) and price (label) to predict prices for new sizes.",
+      "timeComplexity": "O(nd\u00b2) where n=samples, d=features",
+      "spaceComplexity": "O(d)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "K-Means Clustering (Unsupervised)",
+      "description": "Demonstrates unsupervised learning for clustering - grouping similar data points",
+      "code": "import numpy as np\nfrom sklearn.cluster import KMeans\nimport matplotlib.pyplot as plt\n\n# Customer data: Annual Income and Spending Score\nX = np.array([[15, 39], [15, 81], [16, 6], [16, 77],\n              [17, 40], [17, 76], [18, 6], [18, 94],\n              [19, 3], [19, 72], [20, 14], [20, 86]])\n\n# Apply K-Means with 3 clusters\nkmeans = KMeans(n_clusters=3, random_state=42, n_init=10)\nkmeans.fit(X)\n\n# Get cluster labels and centroids\nlabels = kmeans.labels_\ncentroids = kmeans.cluster_centers_\n\nprint(\"Cluster labels:\", labels)\nprint(\"Cluster centroids:\", centroids)\n\n# Predict cluster for new customer\nnew_customer = np.array([[18, 50]])\npredicted_cluster = kmeans.predict(new_customer)\nprint(f\"New customer belongs to cluster: {predicted_cluster[0]}\")",
+      "explanation": "K-Means groups customers into clusters based on income and spending behavior without predefined labels.",
+      "timeComplexity": "O(nki) where n=samples, k=clusters, i=iterations",
+      "spaceComplexity": "O(nk)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Decision Tree Classification (Supervised)",
+      "description": "Demonstrates supervised classification - predicting discrete categories",
+      "code": "from sklearn.tree import DecisionTreeClassifier\nfrom sklearn.preprocessing import LabelEncoder\n\n# Sample data: Weather conditions and Play decision\n# Features: Outlook (sunny, overcast, rainy), Humidity (high, normal)\ntraining_data = [\n    ['sunny', 'high', 'no'],\n    ['sunny', 'high', 'no'],\n    ['overcast', 'high', 'yes'],\n    ['rainy', 'high', 'yes'],\n    ['rainy', 'normal', 'yes'],\n    ['rainy', 'normal', 'no'],\n    ['overcast', 'normal', 'yes'],\n    ['sunny', 'high', 'no'],\n    ['sunny', 'normal', 'yes'],\n    ['rainy', 'normal', 'yes']\n]\n\n# Encode categorical variables\nle_outlook = LabelEncoder()\nle_humidity = LabelEncoder()\nle_play = LabelEncoder()\n\n# Prepare features and labels\nX = [[row[0], row[1]] for row in training_data]\nX_encoded = [[le_outlook.fit_transform([x[0]])[0], \n              le_humidity.fit_transform([x[1]])[0]] for x in X]\ny = le_play.fit_transform([row[2] for row in training_data])\n\n# Train decision tree classifier\nclf = DecisionTreeClassifier()\nclf.fit(X_encoded, y)\n\n# Predict: New day with sunny and normal humidity\nnew_day = [[le_outlook.transform(['sunny'])[0], \n            le_humidity.transform(['normal'])[0]]]\nprediction = clf.predict(new_day)\nprint(f\"Play decision: {'Yes' if prediction[0] == 1 else 'No'}\")",
+      "explanation": "Decision Tree classifies whether to play based on weather features using learned rules from labeled data.",
+      "timeComplexity": "O(nd log n) for training, O(d) for prediction",
+      "spaceComplexity": "O(nd)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "PCA Dimensionality Reduction (Unsupervised)",
+      "description": "Demonstrates unsupervised dimensionality reduction for feature compression",
+      "code": "import numpy as np\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\n\n# Sample data: 4 features (will reduce to 2 principal components)\nX = np.array([\n    [2.5, 2.4, 0.5, 0.7],\n    [0.5, 0.7, 2.4, 2.6],\n    [2.2, 2.9, 0.2, 0.5],\n    [1.9, 2.2, 0.8, 0.8],\n    [3.1, 3.0, 1.1, 1.2],\n    [2.3, 2.7, 0.9, 0.9],\n    [2.0, 1.6, 1.5, 1.0],\n    [1.0, 1.1, 0.5, 0.6]\n])\n\n# Standardize features (important before PCA)\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Apply PCA: reduce from 4 to 2 dimensions\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)\n\nprint(\"Original shape:\", X.shape)\nprint(\"Reduced shape:\", X_pca.shape)\nprint(\"Explained variance ratio:\", pca.explained_variance_ratio_)\nprint(\"Total variance explained:\", sum(pca.explained_variance_ratio_))\nprint(\"\\nReduced data:\\n\", X_pca)",
+      "explanation": "PCA reduces 4-dimensional data to 2 principal components while preserving maximum variance in the data.",
+      "timeComplexity": "O(min(nd\u00b2) + d\u00b3)",
+      "spaceComplexity": "O(d\u00b2 + nd)"
+    }
+  ]
+}

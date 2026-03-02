@@ -1,0 +1,62 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Budget Allocation Algorithm",
+    "description": "Algorithm for allocating IT budget based on priority and capacity needs",
+    "code": "PROCEDURE AllocateBudget(totalBudget, capacityRequests)\nBEGIN\n SORT capacityRequests BY priority DESC\n SORT capacityRequests BY urgency DESC\n allocatedBudget = 0\n remainingBudget = totalBudget\n \n FOR each request IN capacityRequests\n BEGIN\n IF remainingBudget >= request.cost THEN\n request.approved = TRUE\n allocatedBudget = allocatedBudget + request.cost\n remainingBudget = remainingBudget - request.cost\n ELSE\n request.approved = FALSE\n request.deferredToNextYear = TRUE\n ENDIF\n END FOR\n \n RETURN allocationReport\nEND",
+    "explanation": "This algorithm prioritizes requests by urgency and priority, allocating budget sequentially until depleted. Requests not funded are marked for potential carryover.",
+    "complexity": {
+      "time": "O(n log n) due to sorting",
+      "space": "O(n) for request storage"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Budget Variance Calculator",
+    "description": "Calculate and categorize budget variance for IT capacity planning review",
+    "code": "PROCEDURE CalculateVariance(plannedBudget, actualSpend)\nBEGIN\n variance = actualSpend - plannedBudget\n variancePercent = (variance / plannedBudget) * 100\n \n IF variancePercent > 10 THEN\n category = \"SIGNIFICANT_OVERRUN\"\n ELSIF variancePercent > 0 THEN\n category = \"SLIGHT_OVERRUN\"\n ELSIF variancePercent < -10 THEN\n category = \"SIGNIFICANT_UNDERSPEND\"\n ELSIF variancePercent < 0 THEN\n category = \"SLIGHT_UNDERSPEND\"\n ELSE\n category = \"ON_TARGET\"\n ENDIF\n \n RETURN {variance, variancePercent, category}\nEND",
+    "explanation": "Calculates budget variance and categorizes it to help identify patterns that may indicate planning issues or the effects of Use It or Lose It pressure.",
+    "complexity": {
+      "time": "O(1) constant time",
+      "space": "O(1) constant space"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Carryover Fund Manager",
+    "description": "Manage funds that can be carried over to next fiscal year",
+    "code": "PROCEDURE ManageCarryover(unspentBudget, plannedProjects)\nBEGIN\n carryoverAmount = 0\n maxCarryoverPercent = 0.20\n \n IF unspentBudget > 0 THEN\n carryoverAmount = unspentBudget * maxCarryoverPercent\n \n FOR each project IN plannedProjects\n BEGIN\n IF project.approved AND project.nextYear THEN\n project.allocation = carryoverAmount\n carryoverAmount = carryoverAmount - project.allocation\n ENDIF\n END FOR\n ENDIF\n \n RETURN allocatedCarryover\nEND",
+    "explanation": "Manages carryover funds within policy limits, allocating them to approved projects planned for the next fiscal year.",
+    "complexity": {
+      "time": "O(n) linear",
+      "space": "O(n) for project storage"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "pseudocode",
+    "title": "Capacity-Based Budget Estimator",
+    "description": "Estimate budget needed based on capacity requirements",
+    "code": "PROCEDURE EstimateBudget(capacityNeeds, historicalCosts)\nBEGIN\n baseBudget = 0\n \n FOR each need IN capacityNeeds\n BEGIN\n costPerUnit = historicalCosts[need.type]\n estimatedCost = need.units * costPerUnit\n growthFactor = 1 + (need.growthRate / 100)\n estimatedCost = estimatedCost * growthFactor\n baseBudget = baseBudget + estimatedCost\n END FOR\n \n contingency = baseBudget * 0.10\n totalBudget = baseBudget + contingency\n \n RETURN totalBudget\nEND",
+    "explanation": "Estimates required budget based on capacity needs, historical costs, projected growth, and a contingency buffer.",
+    "complexity": {
+      "time": "O(n) linear",
+      "space": "O(1) constant"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "python",
+    "title": "IT Budget Tracker Class",
+    "description": "Python class to track and analyze IT budget utilization",
+    "code": "class ITBudgetTracker:\n def __init__(self, annual_budget):\n self.annual_budget = annual_budget\n self.spent = 0\n self.allocated = 0\n self.projects = []\n \n def add_project(self, name, cost, quarter):\n project = {\n 'name': name,\n 'cost': cost,\n 'quarter': quarter,\n 'status': 'planned'\n }\n self.projects.append(project)\n self.allocated += cost\n \n def get_utilization(self):\n return (self.spent / self.annual_budget) * 100\n \n def get_variance(self):\n return self.annual_budget - self.spent\n \n def predict_year_end_spending(self):\n current_month = 9 # Example: end of Q3\n months_passed = 9\n avg_monthly = self.spent / months_passed\n projected_total = avg_monthly * 12\n return projected_total",
+    "explanation": "Python class that tracks IT budget, calculates utilization, determines variance, and predicts year-end spending patterns to identify Use It or Lose It issues.",
+    "complexity": {
+      "time": "O(1) for basic operations, O(n) for project iteration",
+      "space": "O(n) for storing projects"
+    }
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "topicId": "input-buffering",
+  "examples": [
+    {
+      "id": "pseudocode-input-buffering",
+      "title": "Pseudocode: Input Buffering",
+      "description": "Demonstrates the basic two-buffer scheme with sentinels",
+      "language": "pseudocode",
+      "code": "FUNCTION get_next_char():\n IF forward_ptr >= buffer_end:\n SWITCH TO OTHER BUFFER\n RELOAD EXHAUSTED BUFFER\n RESET forward_ptr TO START OF NEW BUFFER\n RETURN character AT forward_ptr++",
+      "explanation": "This pseudocode illustrates the basic logic for switching between two buffers and reloading the exhausted buffer when necessary."
+    },
+    {
+      "id": "c-input-buffering",
+      "title": "C: Input Buffering Implementation",
+      "description": "A simplified implementation of the two-buffer scheme with sentinels in C",
+      "language": "c",
+      "code": "#define BUFFER_SIZE 4096\n#define SENTINEL '\\0'\n\nchar buffer1[BUFFER_SIZE];\nchar buffer2[BUFFER_SIZE];\nchar *current_buffer = buffer1;\nchar *forward_ptr = buffer1;\nint current_buffer_num = 1;\n\nchar get_next_char() {\n if (*forward_ptr == SENTINEL) {\n // Switch buffers\n if (current_buffer_num == 1) {\n load_buffer(buffer2);\n current_buffer = buffer2;\n current_buffer_num = 2;\n forward_ptr = buffer2;\n } else {\n load_buffer(buffer1);\n current_buffer = buffer1;\n current_buffer_num = 1;\n forward_ptr = buffer1;\n }\n }\n return *forward_ptr++;\n}\n\nvoid load_buffer(char *buffer) {\n // Read from input file into buffer\n // Add sentinel at the end\n bytes_read = read(input_file, buffer, BUFFER_SIZE - 1);\n buffer[bytes_read] = SENTINEL;\n}",
+      "explanation": "This C implementation demonstrates the two-buffer scheme with sentinels. It uses two character arrays as buffers and switches between them when necessary.",
+      "timeComplexity": "O(1) for get_next_char(), O(n) for load_buffer() where n is the buffer size",
+      "spaceComplexity": "O(n) where n is the buffer size"
+    },
+    {
+      "id": "python-input-buffering",
+      "title": "Python: Input Buffering Implementation",
+      "description": "A simplified implementation of the two-buffer scheme with sentinels in Python",
+      "language": "python",
+      "code": "BUFFER_SIZE = 4096\nSENTINEL = '\\0'\n\nbuffer1 = bytearray(BUFFER_SIZE)\nbuffer2 = bytearray(BUFFER_SIZE)\ncurrent_buffer = buffer1\nforward_ptr = 0\ncurrent_buffer_num = 1\n\n\ndef get_next_char():\n global forward_ptr, current_buffer, current_buffer_num\n if current_buffer[forward_ptr] == ord(SENTINEL):\n # Switch buffers\n if current_buffer_num == 1:\n load_buffer(buffer2)\n current_buffer = buffer2\n current_buffer_num = 2\n forward_ptr = 0\n else:\n load_buffer(buffer1)\n current_buffer = buffer1\n current_buffer_num = 1\n forward_ptr = 0\n char = chr(current_buffer[forward_ptr])\n forward_ptr += 1\n return char\n\n\ndef load_buffer(buffer):\n # Read from input file into buffer\n # Add sentinel at the end\n with open('input_file', 'rb') as f:\n bytes_read = f.readinto(buffer)\n buffer[bytes_read] = ord(SENTINEL)\n",
+      "explanation": "This Python implementation demonstrates the two-buffer scheme with sentinels. It uses two bytearray objects as buffers and switches between them when necessary.",
+      "timeComplexity": "O(1) for get_next_char(), O(n) for load_buffer() where n is the buffer size",
+      "spaceComplexity": "O(n) where n is the buffer size"
+    }
+  ]
+}

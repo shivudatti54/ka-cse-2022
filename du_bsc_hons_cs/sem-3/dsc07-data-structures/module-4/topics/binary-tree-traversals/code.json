@@ -1,0 +1,45 @@
+{
+  "topicId": "binary-tree-traversals",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Recursive Inorder Traversal",
+      "description": "Python implementation of recursive inorder traversal visiting left-root-right",
+      "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef inorder(root):\n    if root is None:\n        return []\n    result = []\n    result.extend(inorder(root.left))    # Left\n    result.append(root.val)               # Root\n    result.extend(inorder(root.right))   # Right\n    return result\n\n# Example usage:\n#     15\n#    /  \\\n#  10    25\n# Output: [5, 10, 12, 15, 20, 25, 30]",
+      "explanation": "Recursively visits left subtree, processes current node, then right subtree. For BST produces sorted output.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h) - recursion stack, h = height"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Iterative Level-Order Traversal",
+      "description": "Java implementation using queue for breadth-first traversal",
+      "code": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left, right;\n    TreeNode(int val) { this.val = val; }\n}\n\nclass Solution {\n    public List<Integer> levelOrder(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        if (root == null) return result;\n        \n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        \n        while (!queue.isEmpty()) {\n            TreeNode node = queue.poll();\n            result.add(node.val);\n            \n            if (node.left != null) \n                queue.offer(node.left);\n            if (node.right != null) \n                queue.offer(node.right);\n        }\n        return result;\n    }\n}\n// Output for tree 15-10-25: [15, 10, 25, 5, 12, 20, 30]",
+      "explanation": "Uses FIFO queue. Enqueue root, then process node and enqueue its children. Processes level by level from left to right.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(w) - max width of tree, worst case O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Morris Inorder Traversal",
+      "description": "Constant space inorder traversal using threaded binary tree concept",
+      "code": "ALGORITHM MorrisInorder(root)\nBEGIN\n    current \u2190 root\n    result \u2190 []\n    \n    WHILE current \u2260 NULL DO\n        IF current.left = NULL THEN\n            // No left subtree, visit current\n            result.append(current.val)\n            current \u2190 current.right\n        ELSE\n            // Find inorder predecessor\n            pre \u2190 current.left\n            WHILE pre.right \u2260 NULL AND pre.right \u2260 current DO\n                pre \u2190 pre.right\n            END WHILE\n            \n            // Create temporary thread\n            IF pre.right = NULL THEN\n                pre.right \u2190 current\n                current \u2190 current.left\n            ELSE\n                // Thread exists, visit current\n                result.append(current.val)\n                pre.right \u2190 NULL  // Remove thread\n                current \u2190 current.right\n            END IF\n        END IF\n    END WHILE\n    RETURN result\nEND",
+      "explanation": "Morris traversal creates temporary links to inorder predecessor to find path back. No stack or recursion needed. Restores tree after traversal.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Recursive Post-Order Traversal",
+      "description": "C implementation for post-order (Left-Right-Root) traversal used in tree deletion",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    int data;\n    struct Node *left, *right;\n};\n\nstruct Node* createNode(int val) {\n    struct Node* node = (struct Node*)malloc(sizeof(struct Node));\n    node->data = val;\n    node->left = node->right = NULL;\n    return node;\n}\n\nvoid postorder(struct Node* root) {\n    if (root == NULL) return;\n    \n    postorder(root->left);   // Traverse left subtree\n    postorder(root->right);  // Traverse right subtree\n    printf(\"%d \", root->data); // Visit root (process)\n}\n\nvoid deleteTree(struct Node* root) {\n    if (root == NULL) return;\n    deleteTree(root->left);   // Delete left subtree\n    deleteTree(root->right);  // Delete right subtree\n    free(root);              // Delete current node\n}\n\n// Example: Tree 15->10,25->5,12,20,30\n// Output: 5 12 10 20 30 25 15",
+      "explanation": "Post-order is essential for tree deletion - must free children before parent to prevent memory leaks and dangling pointers.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h)"
+    }
+  ]
+}

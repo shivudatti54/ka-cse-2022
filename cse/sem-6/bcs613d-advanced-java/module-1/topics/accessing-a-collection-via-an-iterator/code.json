@@ -1,0 +1,35 @@
+{
+  "topicId": "accessing-a-collection-via-an-iterator",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "java",
+      "title": "Safe Element Removal Using Iterator",
+      "description": "Correct way to remove elements matching condition during iteration",
+      "code": "public static void removeEvens(List<Integer> list) {\n Iterator<Integer> it = list.iterator();\n while(it.hasNext()) {\n Integer num = it.next();\n if(num % 2 == 0) {\n it.remove(); // Safe removal\n }\n }\n}",
+      "explanation": "Creates iterator, checks hasNext() before each next(), uses iterator's remove() method instead of collection's remove(). This prevents ConcurrentModificationException.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "ListIterator Bidirectional Traversal",
+      "description": "Demonstrates forward and backward navigation with ListIterator",
+      "code": "public static void demonstrateListIterator(List<String> list) {\n ListIterator<String> it = list.listIterator();\n \n // Forward traversal\n System.out.println(\"Forward: \");\n while(it.hasNext()) {\n System.out.println(it.nextIndex() + \": \" + it.next());\n }\n \n // Backward traversal\n System.out.println(\"Backward: \");\n while(it.hasPrevious()) {\n System.out.println(it.previousIndex() + \": \" + it.previous());\n }\n \n // Add element\n it = list.listIterator();\n it.next();\n it.add(\"X\"); // Inserts before current position\n System.out.println(\"After add: \" + list);\n}",
+      "explanation": "ListIterator from list.listIterator() starts at position 0. nextIndex() returns upcoming element index, previousIndex() returns index of element to the left. add() inserts before cursor.",
+      "timeComplexity": "O(n) for full traversal",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Iterator with forEachRemaining (Java 8+)",
+      "description": "Modern iterator usage with lambda expressions",
+      "code": "public static void iterateModern(Collection<Integer> col) {\n Iterator<Integer> it = col.iterator();\n \n // Traditional approach\n while(it.hasNext()) {\n System.out.println(it.next());\n }\n \n // Java 8+ forEachRemaining\n it = col.iterator();\n it.forEachRemaining(System.out::println);\n \n // Using forEach directly (uses iterator internally)\n col.forEach(System.out::println);\n}",
+      "explanation": "forEachRemaining() is a default method in Iterator (since Java 8) that performs the given action for each remaining element. More efficient than manual loop as it can use internal array. forEach() in Collection also uses iterator but wraps exceptions.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

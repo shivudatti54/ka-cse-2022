@@ -1,0 +1,35 @@
+{
+  "topicId": "stacks-adt-implementations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Stack Implementation using Python List",
+      "description": "Basic Stack ADT implementation using Python's built-in list with essential operations: push, pop, peek, isEmpty, and size",
+      "code": "class Stack:\n    def __init__(self):\n        self.items = []\n    \n    def is_empty(self):\n        return len(self.items) == 0\n    \n    def push(self, item):\n        self.items.append(item)\n    \n    def pop(self):\n        if self.is_empty():\n            raise IndexError(\"Pop from empty stack\")\n        return self.items.pop()\n    \n    def peek(self):\n        if self.is_empty():\n            raise IndexError(\"Peek from empty stack\")\n        return self.items[-1]\n    \n    def size(self):\n        return len(self.items)\n\n# Demonstration\nstack = Stack()\nstack.push(10)\nstack.push(20)\nstack.push(30)\nprint(f\"Stack size: {stack.size()}\")\nprint(f\"Top element: {stack.peek()}\")\nprint(f\"Popped: {stack.pop()}\")\nprint(f\"Popped: {stack.pop()}\")\nprint(f\"Is empty: {stack.is_empty()}\")",
+      "explanation": "1. __init__ initializes an empty list as the underlying storage\n2. is_empty checks if list has no elements (O(1))\n3. push appends item to end of list (O(1) amortized)\n4. pop removes and returns last item (O(1) amortized)\n5. peek returns last item without removing (O(1))\n6. size returns number of items (O(1))",
+      "timeComplexity": "O(1) for all operations (amortized for push/pop)",
+      "spaceComplexity": "O(n) where n is number of elements"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Stack Implementation using Linked List",
+      "description": "Stack ADT implemented from scratch using a custom Linked List node, demonstrating dynamic memory allocation and pointer manipulation",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass LinkedStack:\n    def __init__(self):\n        self.top = None\n        self._size = 0\n    \n    def is_empty(self):\n        return self.top is None\n    \n    def push(self, data):\n        new_node = Node(data)\n        new_node.next = self.top\n        self.top = new_node\n        self._size += 1\n    \n    def pop(self):\n        if self.is_empty():\n            raise IndexError(\"Pop from empty stack\")\n        data = self.top.data\n        self.top = self.top.next\n        self._size -= 1\n        return data\n    \n    def peek(self):\n        if self.is_empty():\n            raise IndexError(\"Peek from empty stack\")\n        return self.top.data\n    \n    def size(self):\n        return self._size\n\n# Demonstration\nstack = LinkedStack()\nstack.push('A')\nstack.push('B')\nstack.push('C')\nprint(f\"Stack size: {stack.size()}\")\nprint(f\"Top element: {stack.peek()}\")\nprint(f\"Popped: {stack.pop()}\")\nprint(f\"Popped: {stack.pop()}\")\nprint(f\"Is empty: {stack.is_empty()}\")",
+      "explanation": "1. Node class creates individual elements with data and next pointer\n2. push creates new node, points it to current top, updates top (O(1))\n3. pop saves top data, moves top to next node, decrements size (O(1))\n4. peek returns top data without modification (O(1))\n5. This implementation grows and shrinks dynamically unlike array-based\n6. No memory wastage as nodes are created/destroyed as needed",
+      "timeComplexity": "O(1) for all operations",
+      "spaceComplexity": "O(n) where n is number of elements (each node stores data + pointer)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Practical Application: Balanced Parentheses Checker",
+      "description": "Real-world application of Stack ADT - checking if parentheses, brackets, and braces are balanced in an expression using stack operations",
+      "code": "class Stack:\n    def __init__(self):\n        self.items = []\n    \n    def is_empty(self):\n        return len(self.items) == 0\n    \n    def push(self, item):\n        self.items.append(item)\n    \n    def pop(self):\n        if self.is_empty():\n            return None\n        return self.items.pop()\n    \n    def peek(self):\n        if self.is_empty():\n            return None\n        return self.items[-1]\n\ndef is_balanced(expression):\n    stack = Stack()\n    opening = {'(', '[', '{'}\n    closing = {')': '(', ']': '[', '}': '{'}\n    \n    for char in expression:\n        if char in opening:\n            stack.push(char)\n        elif char in closing:\n            top = stack.pop()\n            if top != closing[char]:\n                return False\n    \n    return stack.is_empty()\n\n# Test cases\ntest_cases = [\n    \"(a + b)\",\n    \"((a + b)\",\n    \"{[()]}\",\n    \"{[(])}\",\n    \"((((()))))\",\n    \"(a + b) * (c - d)\",\n    \"if (x > 0) { for (i=0; i<10; i++) { arr[i] = i; } }\",\n    \"({[]})\"\n]\n\nprint(\"Balanced Parentheses Checker\\n\" + \"=\"*40)\nfor expr in test_cases:\n    result = is_balanced(expr)\n    status = \"✓ Balanced\" if result else \"✗ Unbalanced\"\n    print(f\"{expr:45} -> {status}\")",
+      "explanation": "1. Stack stores opening brackets as they appear\n2. When closing bracket encountered, pop from stack and verify it matches\n3. Expression is balanced if stack is empty at end (all brackets matched)\n4. Uses dictionary for O(1) bracket pair lookup\n5. Demonstrates practical use: syntax validation, expression evaluation\n6. Time: O(n) where n is expression length - single pass through input",
+      "timeComplexity": "O(n) where n is length of expression",
+      "spaceComplexity": "O(n) in worst case (all opening brackets, e.g., \"(((((\")"
+    }
+  ]
+}

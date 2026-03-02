@@ -1,0 +1,53 @@
+{
+  "topicId": "combinational-sequential-circuits",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "A synchronous sequential circuit uses a 10 MHz clock. Each flip-flop in the circuit has a propagation delay (t_PHL = t_PLH) of 8 ns, setup time of 4 ns, and hold time of 2 ns. The combinational logic between flip-flops has a maximum propagation delay of 15 ns. Calculate the maximum operating frequency of this circuit and determine if a race condition (setup time violation) will occur. Show your calculations with proper reasoning.",
+      "keyPoints": [
+        "Clock period must be greater than sum of propagation delay + setup time of all stages in the critical path",
+        "Maximum frequency = 1 / minimum clock period; calculate t_critical = t_ff + t_logic + t_setup",
+        "Compare calculated minimum period with actual clock period (100 ns for 10 MHz) to check for violations",
+        "Hold time violations occur when t_comb + t_hold < t_clock_skew or when data changes too quickly"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Draw the state diagrams for both Mealy and Moore machines that detect the overlapping sequence '1101' from a serial input. Clearly indicate the output conditions on transitions (for Mealy) and states (for Moore). Compare the number of states required and explain why one might be preferred over the other in terms of output timing and hardware complexity.",
+      "keyPoints": [
+        "Mealy machine output depends on current state AND input; output changes immediately with input",
+        "Moore machine output depends only on current state; output is synchronized with clock cycle",
+        "Mealy typically uses fewer states but output is not delayed; Moore has greater latency but glitch-free output",
+        "Show state encoding, transition conditions, and output assignment for both machine types"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Design a modulo-6 synchronous up-counter with states: 000, 001, 010, 011, 100, 101 (skipping 110 and 111) using JK flip-flops. (a) Derive the state table and excitation table. (b) Obtain the excitation equations for J and K inputs of each flip-flop using K-maps. (c) Draw the complete circuit diagram showing all interconnections. (d) Analyze what happens when the counter reaches state '101' and the next clock pulse arrives. (e) If a glitch occurs on the J input of FF0 during the transition from 011 to 100, analyze the possible failure modes and suggest a solution to mitigate such hazards.",
+      "keyPoints": [
+        "State table shows present state, next state, and required flip-flop excitations; excitation table maps state changes to J/K inputs using JK flip-flop characteristic equation",
+        "K-map minimization for J and K inputs of each flip-flop considering don't care conditions for unused states (110, 111)",
+        "Hardware implementation requires 3 JK flip-flots, AND/OR gates for excitation logic, and proper clock distribution",
+        "Static-0 or static-1 hazards in combinational logic can cause glitches; solution includes redundant gates or synchronous design with enable signals"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Consider the timing diagram below for a 4-bit shift register (initially storing 1011) with parallel load capability, driven by a clock signal. At t=0: Q = [Q3 Q2 Q1 Q0] = [1 0 1 1], Serial Input (SI) = 0, Load = 0. At t=T (first rising edge): Load = 1, Parallel Input (PI) = [1 0 0 1]. At t=2T: Load = 0, SI = 1. At t=3T: Load = 0, SI = 0. (a) Determine the contents of the shift register at each clock pulse. (b) Explain the difference between parallel load and shift operations with respect to timing. (c) If the clock has a 40% duty cycle with HIGH = 60ns and LOW = 40ns, and each flip-flop has t_CO (clock-to-output) = 5ns and t_SU = 10ns, determine the minimum time available for parallel data to stabilize before the active clock edge. (d) Analyze the effect of a 3ns clock skew between the first and last flip-flops during parallel load operation.",
+      "keyPoints": [
+        "Shift register behavior: parallel load loads PI directly on clock edge when Load=1; shift operation shifts data right/left with SI on each clock when Load=0",
+        "Parallel load requires data stable for t_SU before clock edge; shift operation requires SI stable considering setup/hold and propagation through flip-flops",
+        "Setup time constraint: data must be stable t_SU before clock edge; with 40% duty cycle at 100MHz, HIGH time is 60ns, so parallel data must settle at least 10ns before rising edge",
+        "Clock skew can cause race conditions: if skew > propagation delay, flip-flops may see different clock edges, causing data corruption; solution includes proper clock distribution and hold time margin analysis"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "encoder",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "4-to-2 Binary Encoder",
+      "description": "Simple binary encoder implementation assuming single active input",
+      "code": "ALGORITHM BinaryEncoder\nINPUTS: D[0..3]  // 4 input lines\nOUTPUTS: Y[0..1] // 2 output lines\nBEGIN\n  IF D[0] = 1 THEN\n    Y[1] \u2190 0, Y[0] \u2190 0    // Output: 00\n  ELSE IF D[1] = 1 THEN\n    Y[1] \u2190 0, Y[0] \u2190 1    // Output: 01\n  ELSE IF D[2] = 1 THEN\n    Y[1] \u2190 1, Y[0] \u2190 0    // Output: 10\n  ELSE IF D[3] = 1 THEN\n    Y[1] \u2190 1, Y[0] \u2190 1    // Output: 11\n  ELSE\n    Y[1] \u2190 0, Y[0] \u2190 0    // Output: 00 (no input)\n  END IF\nEND",
+      "explanation": "This algorithm implements a basic 4-to-2 binary encoder. It checks each input in sequence and produces corresponding binary output. Limitation: incorrect output if multiple inputs are HIGH.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "4-to-2 Priority Encoder Implementation",
+      "description": "Python implementation of priority encoder handling multiple inputs",
+      "code": "def priority_encoder(inputs):\n    # inputs: list of 4 bits [D0, D1, D2, D3]\n    # D3 has highest priority\n    # returns: [Y1, Y0, V] where V=1 if valid input\n    \n    if inputs[3] == 1:    # Highest priority\n        return [1, 1, 1]\n    elif inputs[2] == 1:\n        return [1, 0, 1]\n    elif inputs[1] == 1:\n        return [0, 1, 1]\n    elif inputs[0] == 1:\n        return [0, 0, 1]\n    else:\n        return [0, 0, 0]   # No valid input\n\n# Test cases\nprint(priority_encoder([0, 0, 0, 1]))  # Output: [1, 1, 1]\nprint(priority_encoder([0, 0, 1, 0]))  # Output: [1, 0, 1]\nprint(priority_encoder([0, 1, 0, 0]))  # Output: [0, 1, 1]\nprint(priority_encoder([1, 0, 0, 0]))  # Output: [0, 0, 1]\nprint(priority_encoder([0, 0, 0, 0]))  # Output: [0, 0, 0]",
+      "explanation": "Priority encoder handles multiple simultaneous inputs by checking from highest priority (D3) to lowest (D0). First found active input determines output. V output indicates if any input was active.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "8-to-3 Priority Encoder in C",
+      "description": "C program implementing 8-to-3 priority encoder with highest priority to I7",
+      "code": "#include <stdio.h>\n\nvoid priorityEncoder(int input[]) {\n    // input[0] = I0 (lowest), input[7] = I7 (highest)\n    // Output: Y2Y1Y0\n    int y0 = 0, y1 = 0, y2 = 0, v = 0;\n    \n    if (input[7]) { y2=1; y1=1; y0=1; v=1; }\n    else if (input[6]) { y2=1; y1=1; y0=0; v=1; }\n    else if (input[5]) { y2=1; y1=0; y0=1; v=1; }\n    else if (input[4]) { y2=1; y1=0; y0=0; v=1; }\n    else if (input[3]) { y2=0; y1=1; y0=1; v=1; }\n    else if (input[2]) { y2=0; y1=1; y0=0; v=1; }\n    else if (input[1]) { y2=0; y1=0; y0=1; v=1; }\n    else if (input[0]) { y2=0; y1=0; y0=0; v=1; }\n    else { v = 0; }\n    \n    printf(\"Output: Y2=%d Y1=%d Y0=%d Valid=%d\\n\", y2, y1, y0, v);\n}\n\nint main() {\n    int inputs[8] = {0, 0, 0, 0, 0, 1, 0, 0};  // I5 = 1\n    priorityEncoder(inputs);  // Output: 101 (5)\n    return 0;\n}",
+      "explanation": "8-to-3 priority encoder where I7 has highest priority. Checks inputs from highest to lowest index. When I5 is active, outputs 101 (binary 5). V=1 indicates valid input.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Decimal to BCD Encoder",
+      "description": "Java implementation of decimal to BCD encoder with 10 inputs to 4 outputs",
+      "code": "public class DecimalToBCD {\n    // 10 inputs (keys 0-9), 4 BCD outputs\n    public static int[] decimalToBCD(int[] decimalInput) {\n        // decimalInput[0] = key 0 pressed, etc.\n        // Returns 4-bit BCD output\n        int[] bcd = {0, 0, 0, 0};  // D, C, B, A (MSB to LSB)\n        \n        // D output (MSB) = OR of inputs 8, 9\n        bcd[0] = decimalInput[8] | decimalInput[9];\n        \n        // C output = OR of inputs 4, 5, 6, 7\n        bcd[1] = decimalInput[4] | decimalInput[5] | decimalInput[6] | decimalInput[7];\n        \n        // B output = OR of inputs 2, 3, 6, 7, 8, 9\n        bcd[2] = decimalInput[2] | decimalInput[3] | decimalInput[6] | decimalInput[7] | decimalInput[8] | decimalInput[9];\n        \n        // A output (LSB) = OR of inputs 1, 3, 5, 7, 9\n        bcd[3] = decimalInput[1] | decimalInput[3] | decimalInput[5] | decimalInput[7] | decimalInput[9];\n        \n        return bcd;\n    }\n    \n    public static void main(String[] args) {\n        int[] input = new int[10];\n        input[5] = 1;  // Press key 5\n        \n        int[] bcd = decimalToBCD(input);\n        System.out.print(\"BCD Output: \");\n        for (int bit : bcd) System.out.print(bit);\n        // Outputs: 0101 (BCD for 5)\n    }\n}",
+      "explanation": "Decimal-to-BCD encoder converts 10 decimal inputs to 4-bit BCD output. For input key 5, outputs 0101 (BCD code for 5). Each BCD output bit is generated by ORing specific input lines.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

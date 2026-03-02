@@ -1,0 +1,38 @@
+{
+  "topicId": "random-access",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Pure ALOHA Simulation",
+      "description": "Simulates Pure ALOHA protocol to calculate throughput for different traffic loads",
+      "algorithm": "Pure Aloha Simulation",
+      "code": "ALGORITHM PureALOHA_Simulation\nBEGIN\n INPUT: num_frames, frame_time, traffic_load G\n OUTPUT: Throughput S\n\n SET successful = 0\n SET collision = 0\n SET time_slots = num_frames * 10\n SET frame_attempts = empty list\n\n FOR i = 1 to num_frames\n SET attempt_time = RANDOM(0, time_slots)\n INSERT attempt_time INTO frame_attempts\n END FOR\n\n FOR each frame in frame_attempts\n SET vulnerable_start = frame.attempt_time - frame_time\n SET vulnerable_end = frame.attempt_time + frame_time\n\n SET has_collision = FALSE\n FOR each other_frame in frame_attempts\n IF other_frame.attempt_time != frame.attempt_time THEN\n IF other_frame.attempt_time >= vulnerable_start AND\n other_frame.attempt_time <= vulnerable_end THEN\n has_collision = TRUE\n BREAK\n END IF\n END IF\n END FOR\n\n IF has_collision = TRUE THEN\n collision = collision + 1\n ELSE\n successful = successful + 1\n END IF\n END FOR\n\n S = successful / num_frames\n PRINT \"Throughput:\", S\n PRINT \"Theoretical Max:\", 0.184, \"at G = 0.5\"\nEND",
+      "explanation": "This simulation generates random frame transmission times and checks for collisions within the vulnerable period (2T). It counts successful transmissions vs collisions to compute actual throughput. The theoretical maximum of 18.4% occurs when G=0.5 frames per frame time.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "CSMA/CD Backoff Algorithm",
+      "description": "Implements binary exponential backoff algorithm used in Ethernet after collision detection",
+      "algorithm": "CSMA CD Backoff",
+      "code": "ALGORITHM CSMA_CD_Backoff\nBEGIN\n INPUT: collision_count, max_retries\n OUTPUT: wait_time (in slot times)\n\n SET k = MIN(collision_count, 10)\n SET slot_range = 2^k - 1\n SET wait_time = RANDOM(0, slot_range)\n\n PRINT \"Collision number:\", collision_count\n PRINT \"Backoff exponent k:\", k\n PRINT \"Slot range: 0 to\", slot_range\n PRINT \"Random wait time:\", wait_time, \"slot times\"\n\n IF collision_count > max_retries THEN\n PRINT \"Frame discarded after\", max_retries, \"attempts\"\n RETURN -1\n ELSE\n WAIT(wait_time * slot_time)\n RETURN wait_time\n END IF\nEND\n\nALGORITHM Ethernet_Transmission\nBEGIN\n SET collision_count = 0\n SET max_retries = 16\n SET slot_time = 51.2 microseconds (for 10Mbps Ethernet)\n\n WHILE TRUE DO\n SENSING: Check if carrier is present\n IF carrier IS idle THEN\n TRANSMIT frame\n WHILE transmitting DO\n IF collision_detected THEN\n SEND jam_signal\n collision_count = collision_count + 1\n wait_time = CSMA_CD_Backoff(collision_count, max_retries)\n IF wait_time == -1 THEN\n BREAK\n END IF\n GOTO SENSING\n END IF\n END WHILE\n PRINT \"Frame transmitted successfully\"\n BREAK\n ELSE\n WAIT until carrier idle\n END IF\n END WHILE\nEND",
+      "explanation": "The backoff algorithm randomly selects a wait time from 0 to 2^n-1 slot times after nth collision. This doubling of range (binary exponential) reduces probability of repeated collisions. After 16 retries, the frame is discarded.",
+      "timeComplexity": "O(1) per attempt",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "CSMA/CA WiFi Access Mechanism",
+      "description": "Implements the DCF (Distributed Coordination Function) in WiFi with RTS/CTS option",
+      "algorithm": "WiFi CSMA CA",
+      "code": "ALGORITHM WiFi_Channel_Access\nBEGIN\n INPUT: frame_size, use_rts_cts\n SET DIFS = 34 microseconds (for 802.11b)\n SET SIFS = 10 microseconds\n SET slot_time = 20 microseconds\n SET CW_MIN = 31\n SET CW_MAX = 1023\n\n SENSING: Check channel idle/busy (physical + NAV)\n IF channel_busy THEN\n WAIT until channel idle\n WAIT DIFS\n SET NAV = 0\n END IF\n\n IF use_rts_cts THEN\n SEND RTS (Request to Send)\n WAIT SIFS\n IF CTS received THEN\n SEND Data\n WAIT SIFS\n SEND ACK\n ELSE\n GOTO BACKOFF\n END IF\n ELSE\n SEND Data\n WAIT SIFS\n SEND ACK\n END IF\n\n BACKOFF:\n SET CW = CW_MIN\n SET backoff_slots = RANDOM(0, CW)\n\n WHILE backoff_slots > 0 DO\n IF channel_idle THEN\n WAIT slot_time\n backoff_slots = backoff_slots - 1\n ELSE\n WAIT until channel idle\n WAIT DIFS\n backoff_slots = backoff_slots - 1\n END IF\n END WHILE\n\n TRANSMIT\nEND\n\nALGORITHM NAV_SetFromRTS\nBEGIN\n INPUT: rts_frame\n SET duration = rts_frame.duration\n SET my_NAV = duration\n PRINT \"NAV set to:\", duration, \"(from RTS)\"\n DECREMENT NAV over time\nEND",
+      "explanation": "WiFi uses CSMA/CA with random backoff after DIFS. For large frames, RTS/CTS exchange reserves channel. NAV (Network Allocation Vector) is set from duration fields in RTS/CTS/DATA/ACK frames, allowing stations to know when channel will be busy without hearing all transmissions.",
+      "timeComplexity": "O(n) where n is backoff window",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

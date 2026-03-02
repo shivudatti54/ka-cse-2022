@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is a 'hint' in the context of a distributed data processing framework like Apache Spark? Briefly explain its primary purpose and provide one simple example of its use.",
+    "expectedPoints": [
+      "A hint is a suggestion or directive provided to the query optimizer/planner.",
+      "Its purpose is to influence the execution plan for a data join operation to improve performance.",
+      "Example: Using a BROADCAST hint to suggest replicating a small table to all worker nodes."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast the use of the BROADCAST hint and the MERGE hint in Spark SQL. Explain the specific scenarios where each hint is most effectively applied and the potential performance implications of using them incorrectly.",
+    "expectedPoints": [
+      "BROADCAST hint: Used when one dataset is small enough to be copied to all nodes; optimizes performance by avoiding large shuffles for joins.",
+      "MERGE hint: Suggests a sort-merge join; effective when both datasets are large and already partitioned/sorted in a compatible way.",
+      "Scenario for BROADCAST: Joining a large fact table with a small dimension table (e.g., country codes).",
+      "Scenario for MERGE: Joining two large datasets that are filtered and sorted by the join key.",
+      "Implication of misuse: Broadcasting a large table can cause out-of-memory errors; forcing a sort-merge on unsorted data adds expensive sorting overhead."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Critically evaluate the role of hints in modern big data query optimization. Discuss the advantages of using hints for performance tuning, but also elaborate on the significant drawbacks and risks. Conclude by describing the ideal scenario for using a hint versus relying on the optimizer's default statistics-based strategies.",
+    "expectedPoints": [
+      "Advantages: Provide direct control to overcome suboptimal optimizer choices; essential for performance tuning specific, known problem queries based on expert knowledge of the data.",
+      "Drawbacks/Risks: Make code brittle and tied to a specific data state or engine version; bypass the optimizer which may have more information later; require deep expertise to use correctly.",
+      "The ideal scenario for a hint: After identifying a performance bottleneck through profiling, and when the optimizer lacks accurate statistics (e.g., data size, skew) to make the best decision.",
+      "Conclusion: Hints are a powerful 'escape hatch' for experts but should not be the first approach. The default strategy should be to rely on the optimizer by providing it with accurate table statistics and configurations."
+    ],
+    "marks": 10
+  }
+]

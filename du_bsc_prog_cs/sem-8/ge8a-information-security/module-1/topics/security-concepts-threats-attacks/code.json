@@ -1,0 +1,45 @@
+{
+  "topicId": "security-concepts-threats-attacks",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Caesar Cipher for Confidentiality",
+      "description": "Demonstrates basic encryption to maintain confidentiality of messages",
+      "code": "def caesar_cipher(text, shift):\n    result = \"\"\n    for char in text:\n        if char.isalpha():\n            ascii_offset = 65 if char.isupper() else 97\n            result += chr((ord(char) - ascii_offset + shift) % 26 + ascii_offset)\n        else:\n            result += char\n    return result\n\n# Example usage\nmessage = \"SECRET\"\nshift = 3\nencrypted = caesar_cipher(message, shift)\ndecrypted = caesar_cipher(encrypted, -shift)\nprint(f\"Original: {message}\")\nprint(f\"Encrypted: {encrypted}\")\nprint(f\"Decrypted: {decrypted}\")",
+      "explanation": "This Caesar cipher demonstrates basic encryption for maintaining confidentiality. It shifts each letter by a fixed number in the alphabet. Modern systems use more complex algorithms like AES for stronger encryption.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Password Authentication Check",
+      "description": "Demonstrates basic authentication mechanism for system access",
+      "code": "import hashlib\nimport secrets\n\n# Simulating password storage with hashing\ndef hash_password(password):\n    salt = secrets.token_hex(16)\n    hashed = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)\n    return salt + hashed.hex()\n\ndef verify_password(stored_password, input_password):\n    salt = stored_password[:32]\n    stored_hash = stored_password[32:]\n    input_hash = hashlib.pbkdf2_hmac('sha256', input_password.encode(), salt.encode(), 100000)\n    return stored_hash == input_hash.hex()\n\n# Example usage\npassword = \"SecurePass123!\"\nstored = hash_password(password)\nprint(f\"Stored password hash: {stored[:50]}...\")\nprint(f\"Verification result: {verify_password(stored, password)}\")",
+      "explanation": "This code demonstrates secure password storage using PBKDF2 with salt. The salt prevents rainbow table attacks, and multiple iterations make brute-force attacks computationally expensive.",
+      "timeComplexity": "O(n) for hashing",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Basic Firewall Rule Processing",
+      "description": "Demonstrates how firewalls filter network traffic based on rules",
+      "code": "ALGORITHM FirewallFilter\nBEGIN\n    INPUT: packet, rule_set\n    OUTPUT: decision (ALLOW/DROP)\n    \n    FOR each rule IN rule_set DO\n        IF packet.source_ip WITHIN rule.source_range AND\n           packet.dest_ip WITHIN rule.dest_range AND\n           packet.port EQUALS rule.port AND\n           packet.protocol EQUALS rule.protocol THEN\n            \n            IF rule.action EQUALS \"ALLOW\" THEN\n                RETURN \"ALLOW\"\n            ELSE\n                RETURN \"DROP\"\n            END IF\n        END IF\n    END FOR\n    \n    // Default deny if no rule matches\n    RETURN \"DROP\"\nEND ALGORITHM",
+      "explanation": "This pseudocode demonstrates basic firewall filtering logic. It checks incoming packets against a set of rules (source/destination IP, port, protocol) and makes allow/deny decisions. Most firewalls use this principle with additional features like stateful inspection.",
+      "timeComplexity": "O(n) where n is number of rules",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Simple File Integrity Check using Hashing",
+      "description": "Demonstrates integrity verification of files using cryptographic hashes",
+      "code": "import hashlib\nimport os\n\ndef calculate_file_hash(file_path, algorithm='sha256'):\n    hash_func = hashlib.new(algorithm)\n    \n    with open(file_path, 'rb') as f:\n        while chunk := f.read(8192):\n            hash_func.update(chunk)\n    \n    return hash_func.hexdigest()\n\ndef verify_integrity(original_hash, file_path):\n    current_hash = calculate_file_hash(file_path)\n    return original_hash == current_hash\n\n# Example usage (simulated)\ntest_content = b\"Important document content\"\nwith open('test.txt', 'wb') as f:\n    f.write(test_content)\n\noriginal_hash = calculate_file_hash('test.txt')\nprint(f\"Original hash: {original_hash}\")\n\n# Modify file\nwith open('test.txt', 'ab') as f:\n    f.write(b\" malicious\")\n\nis_valid = verify_integrity(original_hash, 'test.txt')\nprint(f\"Integrity check: {'PASSED' if is_valid else 'FAILED'}\")\n\nos.remove('test.txt')",
+      "explanation": "This code demonstrates file integrity checking using cryptographic hashes. Hash functions like SHA-256 produce unique digests for different content - any modification changes the hash, alerting to potential integrity violations.",
+      "timeComplexity": "O(n) where n is file size",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

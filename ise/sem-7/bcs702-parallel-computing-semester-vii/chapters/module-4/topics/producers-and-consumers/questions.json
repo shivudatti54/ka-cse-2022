@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the fundamental problem that the Producer-Consumer pattern solves in parallel computing. Describe the role of the shared buffer in this pattern.",
+    "expectedPoints": [
+      "Solves the synchronization problem between threads/processes that generate data (producers) and those that use that data (consumers).",
+      "Manages differing speeds of production and consumption to prevent a fast producer from overwhelming a slow consumer, or vice versa.",
+      "The shared buffer acts as a temporary storage queue, decoupling the producers from the consumers."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the conditions that lead to a race condition in a naive implementation of the Producer-Consumer problem. Detail the purpose and function of both a mutex and a condition variable in the standard solution.",
+    "expectedPoints": [
+      "A race condition occurs when multiple producers/consumers access and update the shared buffer and its counters (e.g., 'count') without synchronization.",
+      "The mutex (lock) ensures mutually exclusive access to the shared buffer, preventing simultaneous insertions or removals that could corrupt the data structure.",
+      "Condition variables (e.g., 'full' and 'empty') are used to block threads and efficiently wait for a condition to be met (e.g., buffer not empty for a consumer, buffer not full for a producer), thus avoiding busy-waiting."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the Bounded and Unbounded Producer-Consumer problem variants. Implement a complete solution in pseudocode for the Bounded buffer problem using semaphores, explaining the initial value and operation (wait/signal) for each semaphore used.",
+    "expectedPoints": [
+      "Bounded: Has a finite-size buffer, requiring synchronization for both 'buffer full' and 'buffer empty' conditions.",
+      "Unbounded: Assumes an infinite buffer, eliminating the need to synchronize for a 'full' condition.",
+      "Pseudocode implementation includes: semaphore 'mutex' (initial 1) for mutual exclusion, 'empty' (initial N) counting empty slots, and 'full' (initial 0) counting full slots.",
+      "Producer: wait(empty); wait(mutex); enqueue(); signal(mutex); signal(full);",
+      "Consumer: wait(full); wait(mutex); dequeue(); signal(mutex); signal(empty);"
+    ],
+    "marks": 10
+  }
+]

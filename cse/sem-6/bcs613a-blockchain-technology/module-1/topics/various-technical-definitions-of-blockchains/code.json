@@ -1,0 +1,33 @@
+{
+  "topicId": "various-technical-definitions-of-blockchains",
+  "examples": [
+    {
+      "id": "pseudocode-blockchain-hash",
+      "title": "Pseudocode: Blockchain Hashing",
+      "description": "Demonstrates how blockchain uses hashing to create a tamper-evident chain",
+      "language": "pseudocode",
+      "code": "FUNCTION hash(data)\n RETURN unique_alphanumeric_string\n\nFUNCTION create_block(data, previous_hash)\n hash_value = hash(data)\n RETURN block = {data, hash_value, previous_hash}\n\nFUNCTION add_block(blockchain, new_block)\n IF new_block.previous_hash == blockchain.last_block.hash_value\n blockchain.add(new_block)\n ELSE\n THROW Error('Invalid previous hash')",
+      "explanation": "This pseudocode shows how each block in the blockchain contains a hash of the previous block, creating a chain. If an attacker tries to change a block, the hash will change, invalidating all subsequent blocks."
+    },
+    {
+      "id": "python-blockchain-class",
+      "title": "Python: Blockchain Class",
+      "description": "A basic implementation of a blockchain in Python",
+      "language": "python",
+      "code": "import hashlib\n\nclass Block:\n def __init__(self, data, previous_hash):\n self.data = data\n self.hash_value = self._hash(data)\n self.previous_hash = previous_hash\n\n def _hash(self, data):\n return hashlib.sha256(data.encode()).hexdigest()\n\nclass Blockchain:\n def __init__(self):\n self.chain = [self._create_genesis_block()]\n\n def _create_genesis_block(self):\n return Block('Genesis Block', '0')\n\n def add_block(self, data):\n previous_hash = self.chain[-1].hash_value\n new_block = Block(data, previous_hash)\n self.chain.append(new_block)\n\n# Example usage\nblockchain = Blockchain()\nblockchain.add_block('Transaction 1')\nblockchain.add_block('Transaction 2')",
+      "explanation": "This Python code defines a `Block` class and a `Blockchain` class. The `Blockchain` class has methods to add new blocks to the chain, and each block contains a hash of the previous block.",
+      "timeComplexity": "O(1) for adding a block, O(n) for verifying the chain",
+      "spaceComplexity": "O(n) for storing the chain"
+    },
+    {
+      "id": "c-blockchain-struct",
+      "title": "C: Blockchain Struct",
+      "description": "A basic implementation of a blockchain in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <openssl/sha.h>\n\ntypedef struct Block {\n char data[256];\n unsigned char hash[SHA256_DIGEST_LENGTH];\n unsigned char previous_hash[SHA256_DIGEST_LENGTH];\n} Block;\n\ntypedef struct Blockchain {\n Block* chain;\n int length;\n} Blockchain;\n\nvoid hash_data(const char* data, unsigned char* hash) {\n SHA256_CTX sha256;\n SHA256_Init(&sha256);\n SHA256_Update(&sha256, data, strlen(data));\n SHA256_Final(hash, &sha256);\n}\n\nvoid add_block(Blockchain* blockchain, const char* data) {\n Block new_block;\n strcpy(new_block.data, data);\n hash_data(data, new_block.hash);\n memcpy(new_block.previous_hash, blockchain->chain[blockchain->length - 1].hash, SHA256_DIGEST_LENGTH);\n blockchain->chain[blockchain->length++] = new_block;\n}\n\nint main() {\n Blockchain blockchain;\n blockchain.chain = malloc(sizeof(Block) * 10);\n blockchain.length = 0;\n add_block(&blockchain, 'Transaction 1');\n add_block(&blockchain, 'Transaction 2');\n return 0;\n}",
+      "explanation": "This C code defines a `Block` struct and a `Blockchain` struct. The `Blockchain` struct has a method to add new blocks to the chain, and each block contains a hash of the previous block.",
+      "timeComplexity": "O(1) for adding a block, O(n) for verifying the chain",
+      "spaceComplexity": "O(n) for storing the chain"
+    }
+  ]
+}

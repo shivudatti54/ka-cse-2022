@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between a structure and a union in C. How does the memory allocation for each differ?",
+    "expectedPoints": [
+      "A structure allocates separate memory for each of its members, allowing all members to hold values simultaneously.",
+      "A union allocates a single shared memory block large enough to hold its largest member, meaning only one member can hold a value at any given time.",
+      "This difference makes structures suitable for storing a record of multiple related items, while unions are used for memory efficiency when only one item from a set is needed at a time."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe a practical scenario where using a union would be more advantageous than using a structure. Detail the problem it solves and the memory savings achieved.",
+    "expectedPoints": [
+      "A common scenario is implementing a variant type or a value that can hold different data types (e.g., an integer, a float, or a string) but only one at a time, such as in an interpreter for a programming language.",
+      "The union solves the problem of needing to represent multiple data types without wasting memory by allocating a single block for the largest possible type instead of a block large enough to hold all types simultaneously as a structure would.",
+      "The memory savings are significant when dealing with large arrays of these items, as the size of a union is the size of its largest member, while a structure would be the sum of all member sizes (plus potential padding)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A programmer creates a large array of data elements where each element can be either a complex number (represented by two doubles) or a string (represented by a char pointer). Analyze the memory implications of implementing this using a structure versus a union. Propose and justify the most efficient implementation using a combination of a union and a tag (discriminated union).",
+    "expectedPoints": [
+      "Using a naive structure containing both a struct of two doubles and a char* would be highly inefficient, as each array element would allocate memory for all members (e.g., 16 bytes for the two doubles and 8 bytes for the pointer, plus padding), regardless of which type is actually stored.",
+      "Using a pure union without a tag would save memory (the size would be the larger of the two members: likely 16 bytes for the two doubles), but there would be no way to determine which member is currently valid, leading to potential logic errors.",
+      "The most efficient and correct implementation is a discriminated union: a struct containing a union (for the value) and an additional tag field (e.g., an enum) to indicate which member of the union is currently in use. This adds a small overhead for the tag (e.g., 4 bytes), but the overall memory usage is dramatically lower than the naive structure approach and the program can safely determine how to interpret the union's value."
+    ],
+    "marks": 10
+  }
+]

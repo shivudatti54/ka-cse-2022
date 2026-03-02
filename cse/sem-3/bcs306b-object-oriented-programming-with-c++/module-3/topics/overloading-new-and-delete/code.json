@@ -1,0 +1,55 @@
+{
+  "topicId": "overloading-new-and-delete",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Class-specific new and delete overloading",
+      "description": "Demonstrates how to overload new and delete for a specific class",
+      "code": "class MyClass {\nprivate:\n int data;\n static int allocationCount;\npublic:\n MyClass() : data(0) {}\n MyClass(int d) : data(d) {}\n \n // Overload new operator\n static void* operator new(size_t size) {\n allocationCount++;\n std::cout << \"Custom new: Allocating \" << size << \" bytes\\n\";\n return ::operator new(size); // Call global new\n }\n \n // Overload delete operator\n static void operator delete(void* ptr) noexcept {\n allocationCount--;\n std::cout << \"Custom delete: Deallocating memory\\n\";\n ::operator delete(ptr); // Call global delete\n }\n \n static int getAllocationCount() { return allocationCount; }\n};\n\nint MyClass::allocationCount = 0;\n\nint main() {\n MyClass* obj1 = new MyClass(10);\n MyClass* obj2 = new MyClass(20);\n \n delete obj1;\n delete obj2;\n \n std::cout << \"Allocations: \" << MyClass::getAllocationCount();\n return 0;\n}",
+      "explanation": "Shows class-specific overloaded new/delete being called instead of global versions. Tracks allocation count.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Placement New Example",
+      "description": "Shows how to use placement new to construct objects at specific memory locations",
+      "code": "#include <iostream>\n#include <new>\n\nclass Buffer {\nprivate:\n int size;\npublic:\n Buffer(int s) : size(s) {\n std::cout << \"Buffer constructed with size: \" << size << \"\\n\";\n }\n ~Buffer() {\n std::cout << \"Buffer destroyed\\n\";\n }\n void process() { std::cout << \"Processing buffer of size: \" << size << \"\\n\"; }\n};\n\nint main() {\n // Pre-allocate raw memory\n constexpr size_t bufferSize = sizeof(Buffer);\n char* rawMemory = new char[bufferSize];\n \n std::cout << \"Memory allocated at: \" << (void*)rawMemory << \"\\n\";\n \n // Use placement new to construct object at that location\n Buffer* buf = new (rawMemory) Buffer(100);\n \n buf->process();\n \n // Explicitly call destructor (don't delete - memory not from new)\n buf->~Buffer();\n \n // Free the raw memory\n delete[] rawMemory;\n \n return 0;\n}",
+      "explanation": "Demonstrates placement new for constructing objects at pre-allocated memory addresses, useful for memory pools.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Memory Pool Allocator",
+      "description": "Simple memory pool implementation for efficient object allocation",
+      "code": "#include <iostream>\n#include <memory>\n#include <vector>\n\nclass ObjectPool {\nprivate:\n std::vector<char*> freeList;\n size_t objectSize;\n \npublic:\n ObjectPool(size_t size, size_t count) : objectSize(size) {\n // Pre-allocate pool\n for (size_t i = 0; i < count; ++i) {\n freeList.push_back(new char[objectSize]);\n }\n std::cout << \"Pool created with \" << count << \" objects\\n\";\n }\n \n void* allocate() {\n if (freeList.empty()) {\n throw std::bad_alloc();\n }\n char* ptr = freeList.back();\n freeList.pop_back();\n std::cout << \"Allocated from pool\\n\";\n return ptr;\n }\n \n void deallocate(void* ptr) {\n freeList.push_back(static_cast<char*>(ptr));\n std::cout << \"Returned to pool\\n\";\n }\n \n ~ObjectPool() {\n for (auto* p : freeList) {\n delete[] p;\n }\n }\n};\n\nclass MyData {\npublic:\n int value;\n MyData(int v = 0) : value(v) {}\n};\n\nint main() {\n ObjectPool pool(sizeof(MyData), 5);\n \n MyData* d1 = static_cast<MyData*>(pool.allocate());\n new (d1) MyData(42); // Placement new to construct\n std::cout << \"Value: \" << d1->value << \"\\n\";\n \n d1->~MyData(); // Destruct\n pool.deallocate(d1); // Return to pool\n \n return 0;\n}",
+      "explanation": "Demonstrates memory pool pattern for efficient frequent allocations - reduces overhead and fragmentation.",
+      "timeComplexity": "O(1) for allocation/deallocation",
+      "spaceComplexity": "O(n) where n is pool size"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Smart Pointers for Automatic Memory Management",
+      "description": "Demonstrates RAII through smart pointers to prevent memory leaks",
+      "code": "#include <iostream>\n#include <memory>\n\nclass Resource {\npublic:\n Resource() { std::cout << \"Resource acquired\\n\"; }\n ~Resource() { std::cout << \"Resource released\\n\"; }\n void use() { std::cout << \"Resource in use\\n\"; }\n};\n\nint main() {\n // Using unique_ptr - exclusive ownership\n {\n std::unique_ptr<Resource> res1 = std::make_unique<Resource>();\n res1->use();\n // Automatically deleted when res1 goes out of scope\n }\n \n std::cout << \"---\\n\";\n \n // Using shared_ptr - shared ownership\n {\n std::shared_ptr<Resource> res2 = std::make_shared<Resource>();\n std::shared_ptr<Resource> res2_copy = res2;\n \n std::cout << \"Use count: \" << res2.use_count() << \"\\n\";\n // Deleted when last shared_ptr is destroyed\n }\n \n return 0;\n}",
+      "explanation": "Smart pointers implement RAII for automatic memory management, preventing leaks through automatic deallocation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Custom Global new/delete with Debugging",
+      "description": "Global overload for tracking all allocations in a program",
+      "code": "#include <iostream>\n#include <cstdlib>\n#include <new>\n\n// Track allocations\nstruct AllocInfo {\n void* ptr;\n size_t size;\n const char* file;\n int line;\n};\n\n// Simple tracking (for demonstration)\nstatic size_t totalAllocated = 0;\nstatic size_t totalFreed = 0;\n\n// Overload global new\nvoid* operator new(size_t size, const char* file, int line) {\n totalAllocated += size;\n void* ptr = std::malloc(size);\n if (!ptr) throw std::bad_alloc();\n std::cout << \"NEW: \" << size << \" bytes at \" << ptr \n << \" from \" << file << \":\" << line << \"\\n\";\n return ptr;\n}\n\n// Overload global delete\nvoid operator delete(void* ptr) noexcept {\n if (ptr) {\n std::cout << \"DELETE: freeing \" << ptr << \"\\n\";\n std::free(ptr);\n }\n}\n\n// Macros to track file/line\n#define new new(__FILE__, __LINE__)\n\nclass Test {\n int data[100];\npublic:\n Test() {}\n ~Test() {}\n};\n\nint main() {\n Test* t1 = new Test();\n int* arr = new int[50];\n \n delete t1;\n delete[] arr;\n \n return 0;\n}",
+      "explanation": "Global new/delete overload for debugging memory issues - tracks allocation location and total memory.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1) per allocation"
+    }
+  ]
+}

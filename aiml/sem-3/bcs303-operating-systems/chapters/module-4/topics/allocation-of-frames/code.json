@@ -1,0 +1,45 @@
+{
+  "topicId": "allocation-of-frames",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Equal Frame Allocation Algorithm",
+      "description": "Demonstrates equal allocation of frames among processes",
+      "code": "ALGORITHM EqualAllocation\nINPUT: totalFrames F, numberOfProcesses n\nOUTPUT: frames allocated to each process\n\nBEGIN\n  framesPerProcess = F / n\n  remainder = F % n\n  \n  FOR each process i FROM 1 TO n DO\n    allocated[i] = framesPerProcess\n    IF remainder > 0 THEN\n      allocated[i] = allocated[i] + 1\n      remainder = remainder - 1\n    END IF\n  END FOR\n  \n  RETURN allocated\nEND",
+      "explanation": "Divides total physical frames equally among all processes. Any remainder frames are distributed one by one to early processes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Proportional Frame Allocation",
+      "description": "Python implementation of proportional allocation based on process sizes",
+      "code": "def proportional_allocation(total_frames, processes):\n    \"\"\"\n    Allocate frames proportionally based on process size.\n    processes: list of process sizes (in KB)\n    total_frames: available physical frames\n    \"\"\"\n    total_size = sum(processes)\n    allocated = []\n    \n    for size in processes:\n        proportion = size / total_size\n        frames = int(proportion * total_frames)\n        allocated.append(frames)\n    \n    # Distribute any remaining frames\n    allocated_sum = sum(allocated)\n    remainder = total_frames - allocated_sum\n    \n    for i in range(remainder):\n        allocated[i] += 1\n    \n    return allocated\n\n# Example usage\ntotal = 100\nsizes = [10, 20, 30, 40]\nresult = proportional_allocation(total, sizes)\nprint(f\"Proportional allocation: {result}\")  # [25, 50, 75, 100] -> adjusted to [25, 25, 25, 25]?",
+      "explanation": "Calculates each process share based on its size relative to total size, then allocates integer number of frames.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Page Fault Frequency Based Allocation",
+      "description": "C program demonstrating adaptive frame allocation based on page fault rate",
+      "code": "#include <stdio.h>\n\ntypedef struct {\n    int process_id;\n    int allocated_frames;\n    double fault_rate;\n    int page_faults;\n    int references;\n} Process;\n\n#define UPPER_THRESHOLD 0.1  // 10% fault rate\n#define LOWER_THRESHOLD 0.01 // 1% fault rate\n#define FRAME_ADJUSTMENT 5\n\nvoid adjustAllocation(Process *p, int available_frames) {\n    // Calculate fault rate\n    p->fault_rate = (double)p->page_faults / p->references;\n    \n    // Adjust based on thresholds\n    if (p->fault_rate > UPPER_THRESHOLD) {\n        // Need more frames\n        if (available_frames >= FRAME_ADJUSTMENT) {\n            p->allocated_frames += FRAME_ADJUSTMENT;\n            available_frames -= FRAME_ADJUSTMENT;\n            printf(\"Process %d: High fault rate (%.2f), +%d frames\\n\",\n                   p->process_id, p->fault_rate * 100, FRAME_ADJUSTMENT);\n        }\n    } else if (p->fault_rate < LOWER_THRESHOLD && p->allocated_frames > 1) {\n        // Can give up some frames\n        p->allocated_frames -= FRAME_ADJUSTMENT;\n        available_frames += FRAME_ADJUSTMENT;\n        printf(\"Process %d: Low fault rate (%.2f), -%d frames\\n\",\n               p->process_id, p->fault_rate * 100, FRAME_ADJUSTMENT);\n    }\n    \n    // Reset counters after adjustment\n    p->page_faults = 0;\n    p->references = 0;\n}\n\nint main() {\n    Process p = {1, 10, 0.0, 0, 0};\n    // Simulate some page references and faults\n    p.page_faults = 15;\n    p.references = 100;\n    \n    adjustAllocation(&p, 90);\n    return 0;\n}",
+      "explanation": "Monitors page fault rate and adjusts frame allocation dynamically - adds frames when fault rate is too high and removes when too low.",
+      "timeComplexity": "O(1) per adjustment",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Working Set Model Frame Allocation",
+      "description": "Java implementation of working set based frame allocation",
+      "code": "import java.util.*;\n\npublic class WorkingSetAllocation {\n    private int windowSize;  // \u0394 - working set window\n    private Map<Integer, Set<Integer>> pageHistory;\n    private Map<Integer, Integer> allocatedFrames;\n    \n    public WorkingSetAllocation(int windowSize) {\n        this.windowSize = windowSize;\n        this.pageHistory = new HashMap<>();\n        this.allocatedFrames = new HashMap<>();\n    }\n    \n    // Record a page reference\n    public void recordReference(int processId, int pageNumber) {\n        pageHistory.computeIfAbsent(processId, k -> new LinkedHashSet<>());\n        Set<Integer> history = pageHistory.get(processId);\n        \n        history.add(pageNumber);\n        \n        // Keep only last 'windowSize' unique references\n        if (history.size() > windowSize) {\n            Iterator<Integer> it = history.iterator();\n            it.next();  // Remove oldest\n            it.remove();\n        }\n    }\n    \n    // Calculate working set size for a process\n    public int getWorkingSetSize(int processId) {\n        Set<Integer> ws = pageHistory.get(processId);\n        return (ws != null) ? ws.size() : 0;\n    }\n    \n    // Allocate frames based on working set\n    public int allocateFrames(int processId, int availableFrames) {\n        int wsSize = getWorkingSetSize(processId);\n        \n        // Allocate at least working set size, or available/numProcesses\n        int allocation = Math.max(wsSize, availableFrames / 10); // minimum\n        \n        allocatedFrames.put(processId, allocation);\n        return allocation;\n    }\n    \n    public static void main(String[] args) {\n        WorkingSetAllocation allocator = new WorkingSetAllocation(5);\n        \n        // Simulate process references\n        int pid = 1;\n        int[] refs = {1, 2, 3, 4, 5, 1, 2, 6, 7, 1};\n        \n        for (int page : refs) {\n            allocator.recordReference(pid, page);\n        }\n        \n        System.out.println(\"Working set size: \" + allocator.getWorkingSetSize(pid));\n        System.out.println(\"Allocated frames: \" + allocator.allocateFrames(pid, 100));\n    }\n}",
+      "explanation": "Tracks recent page references within a sliding window to determine the working set, then allocates enough frames to contain it.",
+      "timeComplexity": "O(windowSize) per reference",
+      "spaceComplexity": "O(n \u00d7 windowSize)"
+    }
+  ]
+}

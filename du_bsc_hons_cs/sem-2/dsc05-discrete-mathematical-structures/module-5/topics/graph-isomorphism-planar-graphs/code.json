@@ -1,0 +1,45 @@
+{
+  "topicId": "graph-isomorphism-planar-graphs",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Check Planarity using Edge Bound",
+      "description": "Basic necessary condition check for planarity using edge count bound",
+      "code": "FUNCTION isPlanarByEdgeCount(n, e):\n    IF n < 3 THEN\n        RETURN TRUE\n    maxEdges = 3 * n - 6\n    IF e > maxEdges THEN\n        RETURN FALSE  // Definitely non-planar\n    RETURN \"May be planar - further testing needed\"",
+      "explanation": "This provides a quick necessary condition test. If edges exceed 3n-6, the graph is definitely non-planar. However, passing this test doesn't guarantee planarity - more complex testing needed.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Degree Sequence Computation",
+      "description": "Compute degree sequence for isomorphism testing",
+      "code": "FUNCTION getDegreeSequence(adjMatrix, n):\n    degrees = []\n    FOR i = 0 to n-1:\n        degree = 0\n        FOR j = 0 to n-1:\n            degree = degree + adjMatrix[i][j]\n        APPEND degree to degrees\n    SORT degrees in descending order\n    RETURN degrees\n\n// Isomorphic graphs must have same degree sequence\nFUNCTION checkIsomorphic(degSeq1, degSeq2):\n    IF degSeq1 == degSeq2 THEN\n        RETURN \"Degree sequences match - possible isomorphism\"\n    RETURN \"Not isomorphic - degree mismatch\"",
+      "explanation": "Computes sorted degree sequence of a graph. This is a necessary condition for isomorphism - if degree sequences don't match, graphs cannot be isomorphic. However, same degree sequence doesn't guarantee isomorphism.",
+      "timeComplexity": "O(n\u00b2) for matrix, O(n log n) for sort",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "BFS-based Graph Traversal",
+      "description": "Breadth-First Search useful for analyzing graph structure",
+      "code": "FUNCTION BFS(graph, startVertex):\n    visited = SET initially empty\n    queue = QUEUE initially with startVertex\n    visited.add(startVertex)\n    \n    WHILE queue is not empty:\n        current = queue.dequeue()\n        PRINT current\n        \n        FOR each neighbor of current:\n            IF neighbor not in visited:\n                visited.add(neighbor)\n                queue.enqueue(neighbor)\n\n// Finding connected components\nFUNCTION countComponents(adjList, n):\n    visited = [FALSE] * n\n    count = 0\n    \n    FOR v = 0 to n-1:\n        IF NOT visited[v]:\n            BFS(adjList, v)\n            count = count + 1\n    \n    RETURN count",
+      "explanation": "BFS helps analyze graph structure for isomorphism testing and planarity. Finding connected components is an isomorphism invariant - isomorphic graphs must have the same number of components.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Euler's Formula Verification",
+      "description": "Python code to verify Euler's formula for a connected planar graph",
+      "code": "def euler_formula_test(v, e, f):\n    \"\"\"Test Euler's formula: v - e + f should equal 2\"\"\"\n    result = v - e + f\n    return result == 2\n\ndef max_edges_planar(n):\n    \"\"\"Maximum edges in simple planar graph with n vertices\"\"\"\n    if n < 3:\n        return n - 1  # Trees\n    return 3 * n - 6\n\ndef is_definitely_nonplanar(n, e):\n    \"\"\"Quick test: if edges exceed max, definitely non-planar\"\"\"\n    return e > max_edges_planar(n)\n\n# Example: K5 has n=5, e=10\n# max_edges = 3*5 - 6 = 9\n# 10 > 9, so definitely non-planar\nprint(f\"K5: n=5, e=10, max=9\")\nprint(f\"Definitely non-planar: {is_definitely_nonplanar(5, 10)}\")",
+      "explanation": "Demonstrates Euler's formula and the edge bound test. K5 has 10 edges exceeding the maximum of 9 for planar graphs with 5 vertices, proving K5 is non-planar without needing to attempt drawing.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

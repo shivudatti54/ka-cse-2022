@@ -1,0 +1,97 @@
+{
+  "topicId": "key-exchange-protocols",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Prove the correctness of the Diffie-Hellman key exchange protocol. Show that both parties compute the same shared secret value.",
+      "keyPoints": [
+        "Let p be a prime and g be a generator of Zp*. Alice selects private key a \u2208 Zp-1, computes A = g^a mod p and sends to Bob.",
+        "Bob selects private key b \u2208 Zp-1, computes B = g^b mod p and sends to Alice.",
+        "Alice computes shared secret S = B^a mod p = (g^b)^a mod p = g^(ab) mod p.",
+        "Bob computes shared secret S = A^b mod p = (g^a)^b mod p = g^(ab) mod p.",
+        "Since g^(ab) = g^(ba), both parties obtain the same value S."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the Man-in-the-Middle attack on Diffie-Hellman and how it can be prevented.",
+      "keyPoints": [
+        "In MITM, Eve intercepts messages between Alice and Bob and establishes separate key exchanges with both.",
+        "Eve sends her public value E to Alice, claiming to be Bob. Alice computes secret S1 = E^a mod p.",
+        "Eve sends her public value E to Bob, claiming to be Alice. Bob computes secret S2 = E^b mod p.",
+        "Alice and Bob believe they share a key, but actually share separate keys with Eve.",
+        "Prevention: Use authenticated key exchange (e.g., STS protocol with digital signatures), or pre-shared keys, or certificates to verify identities."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain how the shared secret from Diffie-Hellman key exchange can be used to seed a PRNG in a secure communication system.",
+      "keyPoints": [
+        "The DH shared secret g^(ab) mod p is a high-entropy value suitable for cryptographic use.",
+        "The raw secret is passed through a Key Derivation Function (KDF) such as HKDF.",
+        "KDF performs key expansion: derives multiple keys (encryption, MAC, IV) from the master secret.",
+        "KDF also performs cryptographic hardening: applies hash functions to prevent related-key attacks.",
+        "The derived keys then seed the PRNG for generating keystreams for encryption operations."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare RSA-based Key Transport with Diffie-Hellman Key Exchange in terms of: (a) Forward Secrecy, (b) Authentication, (c) Prior knowledge requirements.",
+      "keyPoints": [
+        "(a) Forward Secrecy: RSA Key Transport does NOT provide forward secrecy - if private key is compromised, all past session keys are compromised. DH with ephemeral keys DOES provide forward secrecy.",
+        "(b) Authentication: RSA can provide authentication if certificates are used. Basic DH provides no authentication; authenticated DH (STS) provides mutual authentication.",
+        "(c) Prior Knowledge: RSA requires sender to know recipient's public key in advance. DH allows two parties with no prior relationship to establish a shared secret."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Define the Discrete Logarithm Problem and explain its relevance to Diffie-Hellman security.",
+      "keyPoints": [
+        "DLP: Given a prime p, generator g of Zp*, and value y = g^x mod p, compute x = log_g(y).",
+        "The difficulty of DLP is exponential in the size of p (O(\u221ap) using Pollard's rho).",
+        "DH security requires that given g, p, g^a, and g^b, computing g^(ab) is computationally infeasable without knowing a or b.",
+        "This is equivalent to the DLP: if an attacker can solve DLP, they can compute a from g^a and thus compute the shared secret.",
+        "Currently, no efficient (polynomial-time) algorithm is known for DLP with properly chosen parameters."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Provide a formal security proof sketch showing that Diffie-Hellman key exchange achieves semantic security under the Decisional Diffie-Hellman (DDH) assumption.",
+      "keyPoints": [
+        "Semantic security for key exchange means an adversary cannot distinguish the session key from a random value.",
+        "DDH Assumption: Given (g, g^a, g^b, g^c) where a,b,c are random, the tuple (g, g^a, g^b, g^ab) is computationally indistinguishable from (g, g^a, g^b, g^c).",
+        "Proof sketch: Suppose an adversary A can win the key exchange security game with probability > 1/2 + \u03b5. We show how to use A to break DDH.",
+        "In the security game, the challenger generates DH parameters and gives public values to A. A outputs a guess b' for the session key.",
+        "If A can distinguish the real DH shared secret g^ab from random, then we can construct an algorithm B that solves DDH by using A as a subroutine.",
+        "When B receives DDH tuple (g, g^a, g^b, Z), it runs A with public values g^a, g^b. A outputs guess. If Z = g^ab, A behaves as in real game. If Z is random, A sees random value.",
+        "A's advantage in distinguishing directly translates to B's advantage in solving DDH. Therefore, DDH hardness implies semantic security of DH."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Describe the Station-to-Station (STS) protocol and prove that it provides protection against Man-in-the-Middle attacks.",
+      "keyPoints": [
+        "STS Protocol: (1) Alice and Bob exchange g^a and g^b as in standard DH. (2) Both parties sign their messages containing their public values using their private keys. (3) Each party verifies the other's signature before accepting the public value.",
+        "Formally: Alice \u2192 Bob: g^a, Sig_A(g^a, g^b). Bob \u2192 Alice: g^b, Sig_B(g^b, g^a).",
+        "MITM Prevention: Suppose Eve attempts a MITM attack. She can forge g^e to Alice and g^e to Bob, but she cannot forge valid signatures from Alice or Bob.",
+        "When Alice receives Sig_B(g^b, g^a), she verifies Bob's signature on the pair (g^b, g^a). Since Eve cannot produce this signature without Bob's private key, she cannot authenticate to Alice.",
+        "Similarly, Eve cannot produce Alice's valid signature on (g^a, g^b) to Bob. Thus the attack fails.",
+        "Proof: Any successful MITM attack requires Eve to produce valid signatures under Alice's or Bob's keys, which is computationally infeasible under the assumption that signature schemes are existentially unforgeable under chosen message attack (EUF-CMA)."
+      ],
+      "marks": 10
+    }
+  ]
+}

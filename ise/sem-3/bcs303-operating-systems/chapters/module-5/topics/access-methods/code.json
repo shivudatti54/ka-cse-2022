@@ -1,0 +1,45 @@
+{
+  "topicId": "access-methods",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Sequential File Read Algorithm",
+      "description": "Demonstrates sequential access method - reading records from beginning in order",
+      "code": "PROCEDURE SequentialRead(fileName)\n  OPEN fileName FOR READING\n  WHILE NOT EOF(fileName) DO\n    READ record FROM fileName\n    PROCESS record\n  END WHILE\n  CLOSE fileName\nEND PROCEDURE",
+      "explanation": "This algorithm processes records in sequential order. The access pointer starts at the beginning and moves forward only. For large files where only specific records are needed, this method becomes inefficient as all preceding records must be read first.",
+      "timeComplexity": "O(n) where n is total records, or O(k) to read k records from start",
+      "spaceComplexity": "O(1) - only one record in buffer at a time"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Direct Access Read Algorithm",
+      "description": "Demonstrates direct access method using relative record numbers",
+      "code": "PROCEDURE DirectRead(fileName, RRN)\n  RECORD_SIZE \u2190 100  // bytes\n  baseAddress \u2190 0\n  \n  // Calculate physical address\n  offset \u2190 (RRN - 1) * RECORD_SIZE\n  physicalAddress \u2190 baseAddress + offset\n  \n  // Seek directly to position and read\n  SEEK fileName TO physicalAddress\n  READ record FROM fileName\n  \n  RETURN record\nEND PROCEDURE",
+      "explanation": "Direct access calculates the exact physical location of a record using its Relative Record Number (RRN). The formula (RRN-1) \u00d7 record_size gives the byte offset from the file start. This provides O(1) access time as no searching is required.",
+      "timeComplexity": "O(1) - constant time to calculate address and read",
+      "spaceComplexity": "O(1) - single record buffer"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Simple Hash Function Implementation",
+      "description": "Demonstrates hash-based access with collision handling using linear probing",
+      "code": "class HashFile:\n    def __init__(self, size=100):\n        self.size = size\n        self.table = [None] * size\n    \n    def hash_function(self, key):\n        \"\"\"Simple hash: key mod table size\"\"\"\n        return key % self.size\n    \n    def insert(self, key, record):\n        \"\"\"Insert with linear probing for collision handling\"\"\"\n        index = self.hash_function(key)\n        original_index = index\n        \n        while self.table[index] is not None:\n            index = (index + 1) % self.size\n            if index == original_index:\n                raise Exception(\"Hash table full\")\n        \n        self.table[index] = record\n    \n    def search(self, key):\n        \"\"\"Search using same probing sequence\"\"\"\n        index = self.hash_function(key)\n        original_index = index\n        \n        while self.table[index] is not None:\n            if self.table[index]['key'] == key:\n                return self.table[index]\n            index = (index + 1) % self.size\n            if index == original_index:\n                break\n        \n        return None  # Not found",
+      "explanation": "This demonstrates hash-based direct access. The hash function maps keys to bucket addresses. When collisions occur (two keys hash to same address), linear probing finds the next available slot. This provides O(1) average-case access time.",
+      "timeComplexity": "O(1) average case, O(n) worst case",
+      "spaceComplexity": "O(n) for storage, O(1) for search operation"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Indexed Sequential Access Algorithm",
+      "description": "Demonstrates ISAM random access through hierarchical indexes",
+      "code": "PROCEDURE ISAM_Read(fileName, searchKey)\n  // Step 1: Search Primary Index\n  primaryIndex \u2190 LOAD(fileName + \".idx1\")\n  cylinderEntry \u2190 BINARY_SEARCH(primaryIndex, searchKey)\n  \n  // Step 2: Get Track Index address\n  trackIndexAddr \u2190 cylinderEntry.trackIndexPointer\n  trackIndex \u2190 LOAD(trackIndexAddr)\n  \n  // Step 3: Search Track Index\n  trackEntry \u2190 BINARY_SEARCH(trackIndex, searchKey)\n  \n  // Step 4: Read Data Block\n  dataBlockAddr \u2190 trackEntry.dataBlockPointer\n  dataBlock \u2190 LOAD(dataBlockAddr)\n  \n  // Step 5: Search within Block\n  record \u2190 LINEAR_SEARCH(dataBlock, searchKey)\n  \n  RETURN record\nEND PROCEDURE",
+      "explanation": "ISAM provides fast random access through a hierarchical index structure. The primary index points to track indexes, which point to data blocks. Each level narrows the search space, resulting in O(log n) complexity. For sequential access, records can be read sequentially from the sorted data file or by following index chains.",
+      "timeComplexity": "O(log n) for index search + O(b) for block search where b is block size",
+      "spaceComplexity": "O(1) for search, O(m) where m is index levels loaded"
+    }
+  ]
+}

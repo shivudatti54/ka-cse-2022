@@ -1,0 +1,45 @@
+{
+  "topicId": "neural-network-basics",
+  "examples": [
+    {
+      "id": "single-neuron-numpy",
+      "title": "Single Neuron Computation",
+      "description": "Implementing a single neuron with NumPy.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef sigmoid(z):\n    return 1 / (1 + np.exp(-z))\n\ndef single_neuron(inputs, weights, bias):\n    \"\"\"Compute output of a single neuron.\"\"\"\n    # Weighted sum\n    z = np.dot(weights, inputs) + bias\n    # Activation\n    output = sigmoid(z)\n    return output, z\n\n# Example: 3 inputs\ninputs = np.array([0.5, 0.3, 0.2])\nweights = np.array([0.4, 0.6, 0.8])\nbias = 0.1\n\noutput, z = single_neuron(inputs, weights, bias)\nprint(f\"Weighted sum (z): {z:.4f}\")\nprint(f\"Output (after sigmoid): {output:.4f}\")",
+      "explanation": "A neuron computes dot product of weights and inputs, adds bias, then applies activation. This is the fundamental building block of neural networks.",
+      "timeComplexity": "O(n) where n is number of inputs",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "forward-pass-layer",
+      "title": "Forward Pass Through One Layer",
+      "description": "Computing output for a full layer of neurons.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef relu(z):\n    return np.maximum(0, z)\n\ndef layer_forward(X, W, b):\n    \"\"\"\n    Forward pass through one layer.\n    X: input (n_features, batch_size)\n    W: weights (n_neurons, n_features)\n    b: bias (n_neurons, 1)\n    Returns: activation (n_neurons, batch_size)\n    \"\"\"\n    z = np.dot(W, X) + b\n    a = relu(z)\n    return a, z\n\n# Example: 4 features, 3 neurons, batch of 2\nnp.random.seed(42)\nX = np.random.randn(4, 2)      # 4 features, 2 samples\nW = np.random.randn(3, 4) * 0.1  # 3 neurons\nb = np.zeros((3, 1))\n\na, z = layer_forward(X, W, b)\nprint(f\"Input shape: {X.shape}\")\nprint(f\"Weight shape: {W.shape}\")\nprint(f\"Output shape: {a.shape}\")\nprint(f\"Parameters: {W.size + b.size}\")",
+      "explanation": "Matrix multiplication enables efficient computation across all neurons and all samples simultaneously. The output shape is (neurons, batch_size).",
+      "timeComplexity": "O(n_neurons * n_features * batch_size)",
+      "spaceComplexity": "O(n_neurons * batch_size)"
+    },
+    {
+      "id": "complete-forward-pass",
+      "title": "Complete Forward Pass (3 Layers)",
+      "description": "Full forward propagation through a 3-layer network.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef relu(z):\n    return np.maximum(0, z)\n\ndef softmax(z):\n    exp_z = np.exp(z - np.max(z, axis=0, keepdims=True))\n    return exp_z / np.sum(exp_z, axis=0, keepdims=True)\n\ndef forward_propagation(X, parameters):\n    \"\"\"\n    Complete forward pass through network.\n    \"\"\"\n    cache = {'A0': X}\n    A = X\n    L = len(parameters) // 2  # number of layers\n    \n    # Hidden layers (ReLU)\n    for l in range(1, L):\n        W = parameters[f'W{l}']\n        b = parameters[f'b{l}']\n        Z = np.dot(W, A) + b\n        A = relu(Z)\n        cache[f'Z{l}'] = Z\n        cache[f'A{l}'] = A\n    \n    # Output layer (Softmax)\n    W = parameters[f'W{L}']\n    b = parameters[f'b{L}']\n    Z = np.dot(W, A) + b\n    A = softmax(Z)\n    cache[f'Z{L}'] = Z\n    cache[f'A{L}'] = A\n    \n    return A, cache\n\n# Initialize 3-layer network: 784 -> 128 -> 64 -> 10\nnp.random.seed(42)\nparameters = {\n    'W1': np.random.randn(128, 784) * 0.01,\n    'b1': np.zeros((128, 1)),\n    'W2': np.random.randn(64, 128) * 0.01,\n    'b2': np.zeros((64, 1)),\n    'W3': np.random.randn(10, 64) * 0.01,\n    'b3': np.zeros((10, 1))\n}\n\nX = np.random.randn(784, 32)  # 32 samples\noutput, cache = forward_propagation(X, parameters)\n\nprint(f\"Input: {X.shape}\")\nprint(f\"After Layer 1: {cache['A1'].shape}\")\nprint(f\"After Layer 2: {cache['A2'].shape}\")\nprint(f\"Output: {output.shape}\")\nprint(f\"Output sums to 1: {np.allclose(output.sum(axis=0), 1)}\")",
+      "explanation": "Forward propagation flows through each layer sequentially. Hidden layers use ReLU, output uses softmax for classification. Cache stores intermediate values for backpropagation.",
+      "timeComplexity": "O(sum of layer_i * layer_i-1 * batch)",
+      "spaceComplexity": "O(sum of activations)"
+    },
+    {
+      "id": "parameter-count",
+      "title": "Counting Network Parameters",
+      "description": "Calculate total parameters in a network architecture.",
+      "language": "python",
+      "code": "def count_parameters(layer_sizes):\n    \"\"\"\n    Count total parameters in a fully connected network.\n    layer_sizes: list of layer dimensions [input, hidden1, hidden2, ..., output]\n    \"\"\"\n    total_params = 0\n    param_details = []\n    \n    for i in range(1, len(layer_sizes)):\n        weights = layer_sizes[i-1] * layer_sizes[i]\n        biases = layer_sizes[i]\n        layer_params = weights + biases\n        total_params += layer_params\n        param_details.append({\n            'layer': i,\n            'shape': f'{layer_sizes[i-1]} -> {layer_sizes[i]}',\n            'weights': weights,\n            'biases': biases,\n            'total': layer_params\n        })\n    \n    return total_params, param_details\n\n# Example architectures\narchitectures = [\n    [784, 128, 64, 10],      # Small MLP\n    [784, 512, 256, 128, 10], # Medium MLP\n    [784, 1024, 512, 256, 128, 10]  # Large MLP\n]\n\nfor arch in architectures:\n    total, details = count_parameters(arch)\n    print(f\"\\nArchitecture: {arch}\")\n    for d in details:\n        print(f\"  Layer {d['layer']}: {d['shape']} = {d['total']:,} params\")\n    print(f\"  Total: {total:,} parameters\")",
+      "explanation": "Each fully connected layer has (input_size * output_size) weights plus output_size biases. Understanding parameter counts helps estimate memory and computation requirements.",
+      "timeComplexity": "O(L) where L is number of layers",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

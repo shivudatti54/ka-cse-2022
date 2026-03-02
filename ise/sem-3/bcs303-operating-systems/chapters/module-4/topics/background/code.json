@@ -1,0 +1,45 @@
+{
+  "topicId": "background",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Base-Limit Address Translation",
+      "description": "Demonstrates how base register is used for address translation in contiguous memory allocation",
+      "code": "ALGORITHM TranslateAddress\nINPUT: logical_address, base, limit\nBEGIN\n  IF logical_address > limit THEN\n    TRAP to operating system (addressing error)\n  ELSE\n    physical_address = base + logical_address\n    RETURN physical_address\n  ENDIF\nEND",
+      "explanation": "This algorithm shows simple address translation using base register. The base is added to logical address to get physical address. The limit check ensures the process cannot access memory outside its allocated partition.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Paging Address Translation",
+      "description": "Demonstrates address translation in paging system using page table",
+      "code": "ALGORITHM PagingTranslate\nINPUT: logical_address, page_size, page_table\nBEGIN\n  page_number = logical_address / page_size\n  offset = logical_address % page_size\n  \n  IF page_number NOT IN page_table THEN\n    TRAP (page fault)\n  ELSE\n    frame_number = page_table[page_number]\n    physical_address = (frame_number * page_size) + offset\n    RETURN physical_address\n  ENDIF\nEND",
+      "explanation": "This algorithm shows how paging divides logical address into page number and offset, looks up the corresponding frame in page table, and combines frame number with offset to get physical address.",
+      "timeComplexity": "O(1) average (O(n) if TLB miss and page table in memory)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "First-Fit Memory Allocation",
+      "description": "Implements first-fit allocation algorithm for contiguous memory management",
+      "code": "class MemoryManager:\n    def __init__(self, total_size):\n        self.total_size = total_size\n        self.free_holes = [(0, total_size)]\n        self.allocated = []\n    \n    def allocate(self, process_id, size):\n        for i, (start, end) in enumerate(self.free_holes):\n            hole_size = end - start\n            if hole_size >= size:\n                allocated_start = start\n                allocated_end = start + size\n                \n                self.allocated.append({\n                    'id': process_id,\n                    'start': allocated_start,\n                    'end': allocated_end\n                })\n                \n                if hole_size == size:\n                    self.free_holes.pop(i)\n                else:\n                    self.free_holes[i] = (allocated_end, end)\n                \n                return allocated_start\n        return None\n    \n    def deallocate(self, process_id):\n        for i, block in enumerate(self.allocated):\n            if block['id'] == process_id:\n                self.allocated.pop(i)\n                self.free_holes.append((block['start'], block['end']))\n                self.free_holes.sort()\n                self.merge_holes()\n    \n    def merge_holes(self):\n        if not self.free_holes:\n            return\n        merged = [self.free_holes[0]]\n        for start, end in self.free_holes[1:]:\n            if merged[-1][1] == start:\n                merged[-1] = (merged[-1][0], end)\n            else:\n                merged.append((start, end))\n        self.free_holes = merged",
+      "explanation": "This Python implementation shows first-fit memory allocation. It maintains a list of free holes and allocates the first hole large enough to fit the requested size. It also handles deallocation and merging of adjacent free holes.",
+      "timeComplexity": "O(n) for allocation, O(n) for deallocation",
+      "spaceComplexity": "O(n) for tracking holes and allocated blocks"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Page Table Entry Structure",
+      "description": "Demonstrates the structure of a page table entry with commonly used fields",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\ntypedef struct {\n    unsigned int frame_number : 20;  // Physical frame number\n    unsigned int valid : 1;          // Page present in memory\n    unsigned int dirty : 1;          // Page modified\n    unsigned int referenced : 1;     // Recently accessed\n    unsigned int protection : 3;     // Read/Write/Execute bits\n    unsigned int : 6;                // Unused bits\n} PTE;\n\n#define PAGE_SIZE 4096\n#define MAX_PAGES 1048576  // 4GB / 4KB\n\nPTE page_table[MAX_PAGES];\n\nvoid handle_page_fault(int page_num) {\n    // Find free frame\n    // Load page from disk\n    // Update page table entry\n    // Set valid bit\n    page_table[page_num].valid = 1;\n    page_table[page_num].referenced = 1;\n}\n\nunsigned long translate_address(unsigned long logical_addr) {\n    int page_num = logical_addr / PAGE_SIZE;\n    int offset = logical_addr % PAGE_SIZE;\n    \n    if (!page_table[page_num].valid) {\n        handle_page_fault(page_num);\n    }\n    \n    unsigned long frame = page_table[page_num].frame_number;\n    page_table[page_num].referenced = 1;\n    \n    return (frame * PAGE_SIZE) + offset;\n}",
+      "explanation": "This C code demonstrates page table entry structure with commonly used fields: valid bit for presence check, dirty bit for write-back, referenced bit for replacement algorithms, and protection bits. It also shows address translation function handling page faults.",
+      "timeComplexity": "O(1) for translation with TLB, O(1) average with caching",
+      "spaceComplexity": "O(n) where n is number of virtual pages"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Check Linear Independence",
+    "description": "Algorithm to determine if set of vectors is linearly independent",
+    "code": "// INPUT: Set of m vectors in R\u207f, each of dimension n\n// OUTPUT: true if linearly independent, false otherwise\n\nFUNCTION isLinearlyIndependent(vectors[]):\n m = vectors.length\n n = vectors[0].length\n \n // Form matrix with vectors as rows or columns\n matrix A = createMatrix(vectors)\n \n // Perform Gaussian elimination\n rref = rowReduceToRREF(A)\n \n // Count pivot positions (non-zero rows)\n pivots = countPivots(rref)\n \n // Independent if pivots = number of vectors\n IF pivots == m:\n RETURN true\n ELSE:\n RETURN false",
+    "explanation": "Row reduce matrix to RREF. If number of non-zero rows equals number of vectors, they are independent. Otherwise dependent (some are linear combinations).",
+    "complexity": {
+      "time": "O(min(m,n) \u00d7 max(m,n))",
+      "space": "O(m\u00d7n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Find Basis from Spanning Set",
+    "description": "Extract a basis from a spanning set using Gaussian elimination",
+    "code": "// INPUT: Spanning set S of vectors in R\u207f\n// OUTPUT: A basis (maximally independent subset)\n\nFUNCTION extractBasis(spanningSet[]):\n matrix A = createMatrix(spanningSet) // as rows\n \n // Row reduce to echelon form\n echelon = gaussianElimination(A)\n \n // Find pivot columns\n pivotCols = findPivotColumns(echelon)\n \n // Extract corresponding vectors from original set\n basis = []\n FOR i IN pivotCols:\n basis.append(spanningSet[i])\n \n RETURN basis\n\n// Example usage:\n// spanningSet = [(1,2,3), (2,4,6), (1,1,1)]\n// basis = extractBasis(spanningSet) \u2192 [(1,2,3), (1,1,1)]",
+    "explanation": "Row reduction identifies which columns/rows are linearly independent. Pivot columns correspond to basis vectors in the original set.",
+    "complexity": {
+      "time": "O(k\u00b3) for k\u00d7k matrix",
+      "space": "O(k\u00b2)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Find Dimension of Column Space",
+    "description": "Compute dimension (rank) of column space using SVD or Gaussian elimination",
+    "code": "// INPUT: Matrix A (m\u00d7n)\n// OUTPUT: Dimension of column space (rank)\n\nFUNCTION columnSpaceDimension(A):\n // Method 1: Row reduce and count pivots\n rref = rowReduceToRREF(A)\n rank = countPivotColumns(rref)\n RETURN rank\n\n// Alternative: Using orthogonal Triangularization\nFUNCTION columnSpaceDimensionQR(A):\n Q, R = QRDecomposition(A) // Gram-Schmidt\n // R has same rank as A\n rank = countNonZeroDiagonal(R)\n RETURN rank\n\n// Example:\n// A = [[1,2,3],\n// [2,4,6],\n// [3,6,9]]\n// columnSpaceDimension(A) \u2192 1 (rank = 1)",
+    "explanation": "Dimension of column space equals rank of matrix. Can find via row reduction (pivot count), QR decomposition, or singular value decomposition.",
+    "complexity": {
+      "time": "O(min(m,n)\u00b2 \u00d7 max(m,n))",
+      "space": "O(m\u00d7n)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "pseudocode",
+    "title": "Change of Basis Coordinates",
+    "description": "Convert coordinates from one basis to another",
+    "code": "// INPUT: Vector v, old basis B, new basis C\n// OUTPUT: Coordinates of v in basis C\n\nFUNCTION changeOfBasis(v, B, C):\n // B = [b1 b2 ... bn] as columns\n // C = [c1 c2 ... cn] as columns\n \n // Matrix P = C\u207b\u00b9B transforms B-coords to standard\n // Matrix P\u207b\u00b9 = B\u207b\u00b9C transforms to C-coords\n \n P_inv = inverse(B)\n P = inverse(C)\n \n // v in B-coordinates: v_B\n // v = B \u00d7 v_B\n v_B = solve(B, v) // or P_inv \u00d7 v\n \n // Convert to C-coordinates\n v_C = P \u00d7 v_B\n \n RETURN v_C\n\n// Example:\n// v = (3,4) in standard, B = {(1,0),(0,1)}, C = {(1,1),(1,-1)}\n// v in B = [3,4], v in C = P \u00d7 [3,4] = ?",
+    "explanation": "Change of basis matrix P transforms coordinates. If C is new basis, P = B\u207b\u00b9C converts B-coords to C-coords. For standard to new basis, P = C\u207b\u00b9.",
+    "complexity": {
+      "time": "O(n\u00b3) for matrix inversion",
+      "space": "O(n\u00b2)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "pseudocode",
+    "title": "Find Null Space Basis",
+    "description": "Find basis vectors for solution space of homogeneous system Ax = 0",
+    "code": "// INPUT: Matrix A (m\u00d7n)\n// OUTPUT: Basis for null space and its dimension\n\nFUNCTION nullSpaceBasis(A):\n // Row reduce to find RREF\n R = rowReduceToRREF(A)\n \n // Identify free variables (non-pivot columns)\n pivotCols = findPivotColumns(R)\n freeCols = []\n FOR j = 0 TO n-1:\n IF j NOT IN pivotCols:\n freeCols.append(j)\n \n // For each free variable, set it to 1 (others 0), solve for pivots\n basisVectors = []\n FOR each f IN freeCols:\n // Create vector with f-th component = 1, others free = 0\n x = zeros(n)\n x[f] = 1\n \n // Solve for pivot variables from RREF equations\n FOR each p IN pivotCols:\n x[p] = -R[equationOf(p)][f] // from R\u00d7x = 0\n \n basisVectors.append(x)\n \n RETURN basisVectors\n\n// Dimension (nullity) = n - rank\n// Example: A = [[1,2,3],[2,4,6]], nullity = 3-1 = 2",
+    "explanation": "Free variables determine null space basis vectors. Each free variable produces one null space vector. Number of free variables = nullity = n - rank.",
+    "complexity": {
+      "time": "O(n\u00b3) for row reduction",
+      "space": "O(m\u00d7n)"
+    }
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "topicId": "system-v-ipc",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Message Queue Producer-Consumer",
+      "description": "Demonstrates message queue for communication between processes",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <sys/types.h>\n#include <sys/ipc.h>\n#include <sys/msg.h>\n\nstruct msgbuf {\n long mtype;\n char mtext[100];\n};\n\nint main() {\n key_t key = ftok(\"/tmp\", 'A');\n int msgid = msgget(key, IPC_CREAT | 0666);\n \n struct msgbuf msg;\n msg.mtype = 1;\n strcpy(msg.mtext, \"Hello from producer\");\n \n // Producer sends\n msgsnd(msgid, &msg, sizeof(msg.mtext), 0);\n \n // Consumer receives\n msgrcv(msgid, &msg, sizeof(msg.mtext), 1, 0);\n printf(\"Received: %s\\n\", msg.mtext);\n \n // Remove queue\n msgctl(msgid, IPC_RMID, NULL);\n return 0;\n}",
+      "explanation": "Shows message queue creation with ftok(), sending with msgsnd(), receiving with msgrcv(), and cleanup with msgctl() IPC_RMID.",
+      "timeComplexity": "O(n) message size",
+      "spaceComplexity": "O(n) message size"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Shared Memory Example",
+      "description": "Demonstrates shared memory segment between parent and child",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n\nint main() {\n key_t key = ftok(\"/tmp\", 'B');\n int shmid = shmget(key, 1024, IPC_CREAT | 0666);\n \n char *shm_ptr = (char*)shmat(shmid, NULL, 0);\n \n pid_t pid = fork();\n \n if (pid == 0) {\n // Child writes\n sprintf(shm_ptr, \"Data from child\");\n } else {\n // Parent reads\n wait(NULL);\n printf(\"Parent read: %s\\n\", shm_ptr);\n }\n \n shmdt(shm_ptr);\n shmctl(shmid, IPC_RMID, NULL);\n return 0;\n}",
+      "explanation": "Shows shared memory creation with shmget(), attachment with shmat(), data sharing between parent/child, detachment with shmdt(), cleanup with shmctl().",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n) shared memory size"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Semaphore for Process Synchronization",
+      "description": "Demonstrates binary semaphore for mutual exclusion",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <sys/types.h>\n#include <sys/ipc.h>\n#include <sys/sem.h>\n\nunion semun {\n int val;\n struct semid_ds *buf;\n unsigned short *array;\n};\n\nint main() {\n key_t key = ftok(\"/tmp\", 'C');\n int semid = semget(key, 1, IPC_CREAT | 0666);\n \n // Initialize semaphore to 1 (binary semaphore)\n union semun arg;\n arg.val = 1;\n semctl(semid, 0, SETVAL, arg);\n \n struct sembuf sb;\n sb.sem_num = 0;\n sb.sem_op = -1; // Wait (P operation)\n sb.sem_flg = 0;\n \n // Critical section\n semop(semid, &sb, 1);\n printf(\"In critical section\\n\");\n \n sb.sem_op = 1; // Signal (V operation)\n semop(semid, &sb, 1);\n \n // Remove semaphore\n semctl(semid, 0, IPC_RMID);\n return 0;\n}",
+      "explanation": "Shows semaphore creation with semget(), initialization with semctl() SETVAL, P-operation (wait) with semop(-1), V-operation (signal) with semop(1), cleanup with IPC_RMID.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

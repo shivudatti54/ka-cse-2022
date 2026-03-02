@@ -1,0 +1,55 @@
+{
+  "topicId": "concept-of-rationality",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Reflex Agent",
+      "description": "A simple reflex agent that chooses actions based on condition-action rules",
+      "code": "CLASS SimpleReflexAgent\n FUNCTION init(rules):\n this.rules = rules // Set of condition-action pairs\n \n FUNCTION decide(percept):\n FOR each rule IN this.rules:\n IF rule.condition(percept) THEN:\n RETURN rule.action\n RETURN defaultAction\n \n FUNCTION run(environment):\n WHILE True:\n percept = environment.getPercept()\n action = this.decide(percept)\n environment.execute(action)\n\n// Example: Vacuum Cleaner Reflex Agent\nrules = [\n {condition: (s) => s.dirty, action: 'suck'},\n {condition: (s) => s.leftEmpty && !s.dirty, action: 'moveLeft'},\n {condition: (s) => s.rightEmpty && !s.dirty, action: 'moveRight'}\n]",
+      "explanation": "Simple reflex agents work by matching current percept to condition-action rules. They are fast but cannot handle complex situations or plan for future outcomes.",
+      "timeComplexity": "O(r) where r = number of rules",
+      "spaceComplexity": "O(r) for storing rules"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Goal-Based Agent",
+      "description": "A goal-based agent that plans sequences of actions to achieve goals",
+      "code": "CLASS GoalBasedAgent\n FUNCTION init(goalTest, successorFn, planningAlg):\n this.goalTest = goalTest\n this.successorFn = successorFn\n this.planningAlg = planningAlg\n this.knowledge = {}\n \n FUNCTION decide(percept, currentState):\n this.knowledge.add(currentState)\n \n // Check if current state is goal\n IF this.goalTest(currentState) THEN:\n RETURN 'noAction'\n \n // Plan path to goal\n plan = this.planningAlg(currentState, this.goalTest, this.successorFn)\n \n IF plan is not empty THEN:\n RETURN plan[0] // Return first action\n RETURN 'noAction'\n \n FUNCTION run(environment):\n state = environment.getInitialState()\n WHILE True:\n percept = environment.getPercept()\n action = this.decide(percept, state)\n IF action == 'noAction' THEN: BREAK\n state = environment.execute(action, state)",
+      "explanation": "Goal-based agents search through possible action sequences to find a path to the goal state, considering future consequences unlike reflex agents.",
+      "timeComplexity": "O(b^d) where b=branching factor, d=depth to goal",
+      "spaceComplexity": "O(d) for storing plan"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Utility-Based Agent",
+      "description": "A utility-based agent that evaluates states using a utility function",
+      "code": "CLASS UtilityBasedAgent\n FUNCTION init(goalTest, successorFn, utilityFn, planningAlg):\n this.goalTest = goalTest\n this.successorFn = successorFn\n this.utilityFn = utilityFn // Maps state to numeric utility\n this.planningAlg = planningAlg\n \n FUNCTION decide(percept, currentState):\n // Find all possible future states and their utilities\n bestAction = null\n maxUtility = -infinity\n \n FOR each action IN getPossibleActions():\n nextState = this.successorFn(currentState, action)\n expectedUtility = this.calculateExpectedUtility(nextState)\n \n IF expectedUtility > maxUtility THEN:\n maxUtility = expectedUtility\n bestAction = action\n \n RETURN bestAction\n \n FUNCTION calculateExpectedUtility(state):\n // Could involve probabilistic reasoning\n // For deterministic: return utilityFn(state)\n // For stochastic: return sum(P(outcome) * utility(outcome))\n RETURN this.utilityFn(state)",
+      "explanation": "Utility-based agents use a utility function to evaluate how desirable different states are, allowing them to choose the action that maximizes expected utility.",
+      "timeComplexity": "O(a * f) where a=actions, f=evaluation cost",
+      "spaceComplexity": "O(s) where s=state space explored"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Learning Agent",
+      "description": "A learning agent that improves performance through experience",
+      "code": "CLASS LearningAgent\n FUNCTION init(performanceElement, critic, learningElement, problemGenerator):\n this.performanceElement = performanceElement // The agent that acts\n this.critic = critic // Evaluates performance\n this.learningElement = learningElement // Updates knowledge\n this.problemGenerator = problemGenerator // Generates experiences\n this.knowledge = {}\n \n FUNCTION run(environment, iterations):\n FOR i = 1 TO iterations:\n // Generate problem\n problem = this.problemGenerator.generate()\n \n // Act using performance element\n percept = environment.getPercept()\n action = this.performanceElement.decide(percept, this.knowledge)\n environment.execute(action)\n \n // Critic evaluates\n performance = this.critic.evaluate(action, percept)\n \n // Learning element updates knowledge\n this.knowledge = this.learningElement.update(\n this.knowledge, action, percept, performance\n )\n \n // After learning: performance element uses improved knowledge\n FUNCTION improve(action, result, reward):\n // Adjust action selection based on reward\n // Common algorithms: Q-learning, decision tree learning, etc.\n this.knowledge = this.learningElement.improve(\n this.knowledge, action, result, reward\n )",
+      "explanation": "Learning agents consist of four components: performance element (acts), critic (evaluates), learning element (improves), and problem generator (creates learning experiences).",
+      "timeComplexity": "Varies by learning algorithm used",
+      "spaceComplexity": "Varies by knowledge representation"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Rational Decision Making",
+      "description": "Core algorithm for rational action selection based on available knowledge",
+      "code": "FUNCTION rationalAction(percept, knowledge, performanceMeasure):\n // 1. Update knowledge with new percept\n knowledge.add(percept)\n \n // 2. Determine possible actions\n possibleActions = getActions(percept)\n \n // 3. For each action, evaluate expected performance\n bestAction = null\n bestExpectedPerformance = -infinity\n \n FOR each action IN possibleActions:\n // Get predicted outcomes for this action\n outcomes = predictOutcomes(action, knowledge)\n \n // Calculate expected performance\n expectedPerformance = 0\n FOR each outcome IN outcomes:\n probability = outcome.probability\n performance = performanceMeasure(outcome.state)\n expectedPerformance = expectedPerformance + (probability * performance)\n \n // Track best action\n IF expectedPerformance > bestExpectedPerformance THEN:\n bestExpectedPerformance = expectedPerformance\n bestAction = action\n \n RETURN bestAction\n\n// Key insight: Rationality depends on:\n// - Current percept (what agent perceives NOW)\n// - Knowledge accumulated (past percepts)\n// - Performance measure (what defines success)\n// NOT on outcomes that were unpredictable at decision time",
+      "explanation": "This algorithm shows that rational action selection maximizes expected performance based on current knowledge, not on outcomes that could not be predicted.",
+      "timeComplexity": "O(a * o) where a=actions, o=outcomes considered",
+      "spaceComplexity": "O(k) where k=knowledge base size"
+    }
+  ]
+}

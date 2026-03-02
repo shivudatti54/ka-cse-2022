@@ -1,0 +1,35 @@
+{
+  "topicId": "image-processing-basics",
+  "examples": [
+    {
+      "id": "convolution-manual",
+      "title": "Manual Convolution Implementation",
+      "description": "Understanding convolution by implementing it from scratch",
+      "language": "python",
+      "code": "import numpy as np\n\ndef convolve2d(image, kernel):\n    \"\"\"Apply 2D convolution to an image.\"\"\"\n    # Get dimensions\n    img_h, img_w = image.shape\n    k_h, k_w = kernel.shape\n    \n    # Calculate padding\n    pad_h, pad_w = k_h // 2, k_w // 2\n    \n    # Pad the image\n    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')\n    \n    # Output array\n    output = np.zeros_like(image, dtype=np.float64)\n    \n    # Perform convolution\n    for i in range(img_h):\n        for j in range(img_w):\n            # Extract region\n            region = padded[i:i+k_h, j:j+k_w]\n            # Element-wise multiply and sum\n            output[i, j] = np.sum(region * kernel)\n    \n    return np.clip(output, 0, 255).astype(np.uint8)\n\n# Example: Apply Gaussian blur\nimage = np.random.randint(0, 256, (5, 5), dtype=np.uint8)\ngaussian_kernel = np.array([[1, 2, 1],\n                            [2, 4, 2],\n                            [1, 2, 1]]) / 16\n\nblurred = convolve2d(image, gaussian_kernel)\nprint(\"Original:\\n\", image)\nprint(\"Blurred:\\n\", blurred)",
+      "explanation": "Convolution slides a kernel over the image, computing weighted sums at each position. Padding preserves output size. The kernel is flipped in true convolution but OpenCV uses correlation (no flip).",
+      "timeComplexity": "O(width * height * kernel_size^2)",
+      "spaceComplexity": "O(width * height)"
+    },
+    {
+      "id": "filtering-opencv",
+      "title": "Image Filtering with OpenCV",
+      "description": "Applying various filters using OpenCV built-in functions",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Load grayscale image\nimage = cv2.imread('photo.jpg', cv2.IMREAD_GRAYSCALE)\n\n# 1. Box/Mean blur\nbox_blur = cv2.blur(image, (5, 5))\n\n# 2. Gaussian blur\ngaussian_blur = cv2.GaussianBlur(image, (5, 5), sigmaX=1.5)\n\n# 3. Median filter (good for salt-and-pepper noise)\nmedian_blur = cv2.medianBlur(image, 5)\n\n# 4. Bilateral filter (edge-preserving)\nbilateral = cv2.bilateralFilter(image, 9, 75, 75)\n\n# 5. Custom kernel for sharpening\nsharpen_kernel = np.array([[ 0, -1,  0],\n                           [-1,  5, -1],\n                           [ 0, -1,  0]])\nsharpened = cv2.filter2D(image, -1, sharpen_kernel)\n\n# Display results\ncv2.imshow('Original', image)\ncv2.imshow('Gaussian Blur', gaussian_blur)\ncv2.imshow('Median Filter', median_blur)\ncv2.imshow('Sharpened', sharpened)\ncv2.waitKey(0)",
+      "explanation": "cv2.blur for box filter, GaussianBlur for weighted blur, medianBlur for noise removal, bilateralFilter for edge-preserving smoothing, filter2D for custom kernels.",
+      "timeComplexity": "O(width * height * kernel_size^2)",
+      "spaceComplexity": "O(width * height)"
+    },
+    {
+      "id": "morphological-operations",
+      "title": "Morphological Operations",
+      "description": "Erosion, dilation, opening, and closing operations",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Create a binary image with noise\nimage = np.zeros((200, 200), dtype=np.uint8)\ncv2.rectangle(image, (50, 50), (150, 150), 255, -1)\n# Add some noise\nimage[70:75, 70:75] = 0  # hole inside\nimage[10:15, 10:15] = 255  # noise outside\n\n# Define structuring element\nkernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))\n# Other options: MORPH_ELLIPSE, MORPH_CROSS\n\n# Erosion: Shrinks white regions\neroded = cv2.erode(image, kernel, iterations=1)\n\n# Dilation: Expands white regions\ndilated = cv2.dilate(image, kernel, iterations=1)\n\n# Opening: Erosion then Dilation (removes small noise)\nopened = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)\n\n# Closing: Dilation then Erosion (fills small holes)\nclosed = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)\n\n# Gradient: Dilation - Erosion (edge detection)\ngradient = cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)\n\nprint(\"Original has noise and hole\")\nprint(\"Opening removes noise\")\nprint(\"Closing fills holes\")",
+      "explanation": "Erosion shrinks objects, dilation expands them. Opening (erosion+dilation) removes small bright noise. Closing (dilation+erosion) fills small dark holes. Gradient highlights edges.",
+      "timeComplexity": "O(width * height * kernel_size^2)",
+      "spaceComplexity": "O(width * height)"
+    }
+  ]
+}

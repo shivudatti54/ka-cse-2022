@@ -1,0 +1,35 @@
+{
+  "topicId": "the-synthetic-camera-model",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "View Transformation Matrix Generation",
+      "description": "Algorithm to compute the view matrix from camera parameters",
+      "code": "FUNCTION ComputeViewMatrix(eye, lookAt, up)\n // Compute forward vector (normalized look direction)\n forward = normalize(lookAt - eye)\n \n // Compute right vector (perpendicular to forward and up)\n right = normalize(cross(forward, up))\n \n // Compute corrected up vector\n newUp = cross(right, forward)\n \n // Build 4x4 view matrix (column-major)\n viewMatrix = [\n right.x, newUp.x, -forward.x, 0,\n right.y, newUp.y, -forward.y, 0,\n right.z, newUp.z, -forward.z, 0,\n -dot(right, eye), -dot(newUp, eye), dot(forward, eye), 1\n ]\n \n RETURN viewMatrix\nEND FUNCTION",
+      "explanation": "The view matrix transforms world coordinates to camera space. It is constructed using the camera position (eye), look-at point, and up vector. The matrix aligns the world with the camera's coordinate system.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Perspective Projection Matrix Generation",
+      "description": "Algorithm to create perspective projection matrix",
+      "code": "FUNCTION ComputePerspectiveMatrix(fov, aspect, near, far)\n // Convert fov from degrees to radians\n fovRad = fov * (PI / 180)\n \n // Compute scale factors\n f = 1.0 / tan(fovRad / 2.0)\n \n // Build 4x4 perspective projection matrix\n projMatrix = [\n f / aspect, 0, 0, 0,\n 0, f, 0, 0,\n 0, 0, (far + near) / (near - far), -1,\n 0, 0, (2 * far * near) / (near - far), 0\n ]\n \n RETURN projMatrix\nEND FUNCTION",
+      "explanation": "The perspective projection matrix transforms camera coordinates to clip coordinates. It creates the foreshortening effect where objects appear smaller with distance. The matrix sets up the w component for perspective divide.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Frustum Culling Check",
+      "description": "Algorithm to check if a bounding box is inside the viewing frustum",
+      "code": "FUNCTION IsInFrustum(box, frustum)\n // Test all 8 corners of bounding box against each plane\n FOR each plane in frustum.planes\n outsideCount = 0\n FOR each corner in box.corners\n // Compute distance from plane\n distance = plane.normal.x * corner.x +\n plane.normal.y * corner.y +\n plane.normal.z * corner.z +\n plane.distance\n \n IF distance < 0 THEN\n outsideCount = outsideCount + 1\n END IF\n END FOR\n \n // If all corners are outside one plane, box is outside frustum\n IF outsideCount == 8 THEN\n RETURN FALSE\n END IF\n END FOR\n \n RETURN TRUE\nEND FUNCTION",
+      "explanation": "Frustum culling is an optimization technique that determines if objects are within the viewing volume before rendering. This saves GPU processing by skipping objects that wouldn't be visible anyway.",
+      "timeComplexity": "O(n) where n = number of planes × 8 corners",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

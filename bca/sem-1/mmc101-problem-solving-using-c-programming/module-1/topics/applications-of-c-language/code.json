@@ -1,0 +1,35 @@
+{
+  "topicId": "applications-of-c-language",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Simple Embedded System Application - LED Control",
+      "description": "Demonstrates C usage in embedded systems for controlling hardware peripherals",
+      "code": "// LED Control Program for Microcontroller\n// Common in embedded systems and IoT devices\n\n#include <stdio.h>\n#include <stdint.h>\n\n// Memory-mapped register addresses (typical in embedded C)\n#define LED_DIRECTION_REG ((volatile uint8_t*)0x1000)\n#define LED_OUTPUT_REG ((volatile uint8_t*)0x1001)\n#define LED_PIN_INPUT ((volatile uint8_t*)0x1002)\n\n#define LED_ON 0x01\n#define LED_OFF 0x00\n\nvoid delay(int milliseconds) {\n    // Simple software delay loop\n    for(volatile int i = 0; i < milliseconds * 1000; i++);\n}\n\nvoid ledInitialize(void) {\n    // Set LED pin as output (direction register)\n    *LED_DIRECTION_REG = 0x01;\n}\n\nvoid ledTurnOn(void) {\n    // Write to output register to turn LED on\n    *LED_OUTPUT_REG = LED_ON;\n}\n\nvoid ledTurnOff(void) {\n    // Write to output register to turn LED off\n    *LED_OUTPUT_REG = LED_OFF;\n}\n\nint main(void) {\n    ledInitialize();\n    \n    // Blink LED - common pattern in embedded systems\n    while(1) {\n        ledTurnOn();\n        delay(500);\n        ledTurnOff();\n        delay(500);\n    }\n    \n    return 0;\n}",
+      "explanation": "This code demonstrates C in embedded systems where direct hardware access through memory-mapped I/O is essential. The use of volatile pointers allows reading/writing to hardware registers at specific memory addresses.",
+      "timeComplexity": "O(1) - constant time operations",
+      "spaceComplexity": "O(1) - fixed memory usage"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "File Processing Application - Database Log Manager",
+      "description": "C commonly used for database and file processing applications requiring high performance",
+      "code": "// Database Transaction Log Manager\n// Similar to components in MySQL, PostgreSQL\n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n#define MAX_TRANSACTIONS 1000\n#define MAX_LOG_SIZE 10000\n\ntypedef struct {\n    int transactionId;\n    char operation[10];  // INSERT, UPDATE, DELETE\n    char tableName[50];\n    char timestamp[30];\n    int status;  // 0=pending, 1=committed, 2=rolled back\n} Transaction;\n\ntypedef struct {\n    Transaction transactions[MAX_TRANSACTIONS];\n    int count;\n    FILE *logFile;\n} LogManager;\n\nvoid initLogManager(LogManager *manager, const char *filename) {\n    manager->count = 0;\n    manager->logFile = fopen(filename, \"a\");\n    if (manager->logFile == NULL) {\n        printf(\"Error: Cannot open log file\\n\");\n        exit(1);\n    }\n}\n\nint logTransaction(LogManager *manager, Transaction *trans) {\n    if (manager->count >= MAX_TRANSACTIONS) {\n        // Flush buffer to disk when full\n        fflush(manager->logFile);\n        manager->count = 0;\n    }\n    \n    // Copy transaction to buffer\n    memcpy(&manager->transactions[manager->count], trans, sizeof(Transaction));\n    manager->count++;\n    \n    // Write to log file immediately (durable storage)\n    fprintf(manager->logFile, \"ID:%d|OP:%s|TABLE:%s|TIME:%s|STATUS:%d\\n\",\n            trans->transactionId, trans->operation, trans->tableName,\n            trans->timestamp, trans->status);\n    \n    return 1;\n}\n\nvoid closeLogManager(LogManager *manager) {\n    if (manager->logFile != NULL) {\n        fflush(manager->logFile);\n        fclose(manager->logFile);\n    }\n}\n\nint main() {\n    LogManager lm;\n    Transaction t1 = {1001, \"INSERT\", \"users\", \"2024-01-15 10:30:00\", 1};\n    Transaction t2 = {1002, \"UPDATE\", \"accounts\", \"2024-01-15 10:31:00\", 1};\n    \n    initLogManager(&lm, \"transaction.log\");\n    \n    logTransaction(&lm, &t1);\n    logTransaction(&lm, &t2);\n    \n    printf(\"Transactions logged successfully\\n\");\n    \n    closeLogManager(&lm);\n    \n    return 0;\n}",
+      "explanation": "This demonstrates C's role in database systems. The code shows efficient memory management, file I/O for transaction logging (critical for ACID properties in databases), and buffer management similar to real database systems like MySQL.",
+      "timeComplexity": "O(1) per transaction (amortized)",
+      "spaceComplexity": "O(n) where n = MAX_TRANSACTIONS buffer"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Python Interpreter Implementation (CPython)",
+      "description": "Shows how Python interpreter is implemented in C - demonstrating C's role in language runtimes",
+      "code": "# This is NOT C code but shows Python built using C\n# The Python interpreter (CPython) is written in C\n\n# When you write this Python code:\nresult = 10 + 20\n\n# It gets executed by the Python interpreter written in C\n# Below is conceptual C code from CPython implementation:\n\n/*\n// From ceval.c in CPython source - simplified\n\nPyObject* PyEval_EvalFrame(PyFrameObject *f) {\n    // Main interpreter loop\n    // Executes Python bytecode\n    \n    switch(opcode) {\n        case BINARY_ADD:\n            // Add two objects\n            v = POP();\n            w = POP();\n            x = PyNumber_Add(w, v);\n            Py_DECREF(w);\n            Py_DECREF(v);\n            PUSH(x);\n            break;\n            \n        case BINARY_MULTIPLY:\n            // Multiply two objects\n            v = POP();\n            w = POP();\n            x = PyNumber_Multiply(w, v);\n            // Handle errors and cleanup\n            break;\n    }\n    return value;\n}\n\n// Memory management in C for Python objects:\nvoid Py_DECREF(PyObject *op) {\n    if (--op->ob_refcnt == 0) {\n        // Free the object when reference count reaches 0\n        op->ob_type->tp_dealloc(op);\n    }\n}\n*/\n\n# Example: Running Python uses C code internally\nimport sys\nprint(f\"Python version: {sys.version}\")\nprint(\"The interpreter running this is written in C!\")",
+      "explanation": "This example demonstrates that Python itself is built using C. The CPython interpreter is written in C, showing how C serves as a foundation for other programming languages. Many scripting language interpreters (PHP, Perl, Ruby) are similarly implemented in C.",
+      "timeComplexity": "N/A - conceptual demonstration",
+      "spaceComplexity": "N/A - conceptual demonstration"
+    }
+  ]
+}

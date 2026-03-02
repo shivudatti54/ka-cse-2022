@@ -1,0 +1,45 @@
+{
+  "topicId": "file-system-mounting",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Basic Mount and Unmount Commands in Linux",
+      "description": "Common mount/umount commands used in Unix systems for attaching and detaching file systems",
+      "code": "# Mount a device to a directory\nmount /dev/sdb1 /mnt/usb\n\n# Mount with specific options (read-only, noexec)\nmount -o ro,noexec /dev/sdb1 /mnt/usb\n\n# Mount a specific file system type\nmount -t ext4 /dev/sdb1 /mnt/data\n\n# Show currently mounted file systems\nmount | grep /dev\n\n# Unmount a file system\numount /mnt/usb\n\n# Force unmount if busy\numount -f /mnt/usb\n\n# Lazy unmount\numount -l /mnt/usb\n\n# Bind mount\nmount --bind /source /target",
+      "explanation": "These commands demonstrate basic mounting operations. The mount command attaches a file system to a directory, with options controlling behavior. Umount detaches the file system after ensuring data integrity.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "Configuring Automatic Mounting in /etc/fstab",
+      "description": "Static configuration file format for automatic mounting of file systems at boot",
+      "code": "# /etc/fstab format:\n# <device> <mount point> <type> <options> <dump> <fsck>\n\n# Example entries:\n/dev/sda1   /               ext4    defaults        0       1\n/dev/sda2   /home           ext4    defaults        0       2\n/dev/sdb1   /mnt/data       ntfs-3g defaults        0       2\nserver:/share /mnt/nfs      nfs     defaults        0       0\n\n# Mount options explained:\n# defaults = rw,suid,dev,exec,auto,nouser,async\n# dump: 0 = no backup, 1 = backup\n# fsck: 0 = no check, 1 = root, 2 = other partitions",
+      "explanation": "The /etc/fstab file defines which file systems to mount automatically at boot time. Each line specifies the device, mount point, file system type, mount options, and dump/fsck order for checking.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Simulating Mount Operation in Python",
+      "description": "Pseudocode demonstrating the logical steps of a mount operation in an OS",
+      "code": "class FileSystem:\n    def __init__(self, device, mount_point, fs_type):\n        self.device = device\n        self.mount_point = mount_point\n        self.fs_type = fs_type\n        self.mounted = False\n        \ndef mount(self):\n        # Step 1: Validate device exists\n        if not self.device_exists():\n            raise Error(\"Device not found\")\n        \n        # Step 2: Read and validate superblock\n        superblock = self.read_superblock()\n        if not self.validate_superblock(superblock):\n            raise Error(\"Invalid file system\")\n        \n        # Step 3: Allocate mount structure\n        mount_struct = self.create_mount_struct(superblock)\n        \n        # Step 4: Add to mount table\n        mount_table.add_entry(self.mount_point, mount_struct)\n        \n        # Step 5: Mark as mounted\n        self.mounted = True\n        return True\n    \n    def unmount(self):\n        # Check if busy\n        if self.is_busy():\n            raise Error(\"Device busy\")\n        \n        # Flush pending writes\n        self.sync()\n        \n        # Remove from mount table\n        mount_table.remove_entry(self.mount_point)\n        \n        # Release resources\n        self.mounted = False\n        return True",
+      "explanation": "This pseudocode shows the logical steps in mounting: device validation, superblock reading and validation, structure allocation, mount table update, and finally marking as mounted. Unmounting reverses this process with additional data integrity checks.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "System Call Implementation for Mounting",
+      "description": "C pseudocode showing how mount system call interacts with kernel data structures",
+      "code": "#include <sys/mount.h>\n\n// POSIX mount() system call\nint mount(const char *source, const char *target,\n          const char *filesystemtype, unsigned long mountflags,\n          const void *data);\n\n// Example usage in C program\nint main() {\n    // Mount a USB drive\n    int result = mount(\"/dev/sdb1\", \n                      \"/mnt/usb\",\n                      \"vfat\",\n                      MS_MGC_VAL | MS_RDONLY,\n                      NULL);\n    \n    if (result == -1) {\n        perror(\"Mount failed\");\n        return 1;\n    }\n    \n    printf(\"Mount successful\\n\");\n    \n    // Later, unmount\n    umount2(\"/mnt/usb\", MNT_FORCE);\n    \n    return 0;\n}\n\n// Mount flags (from sys/mount.h):\n// MS_RDONLY   - Read-only mount\n// MS_NOSUID   - Ignore suid/sgid bits\n// MS_NODEV    - No device files\n// MS_NOEXEC   - No execution of programs\n// MS_REMOUNT  - Remount with new options\n// MS_BIND     - Bind mount operation",
+      "explanation": "The mount() system call is the kernel interface for attaching file systems. It takes source device, target mount point, filesystem type, flags, and optional data. Different flags control mount behavior like read-only or bind operations.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

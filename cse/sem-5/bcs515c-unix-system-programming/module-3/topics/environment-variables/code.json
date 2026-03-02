@@ -1,0 +1,45 @@
+{
+  "topicId": "environment-variables",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Display Environment Variables",
+      "description": "Demonstrates various commands to display environment variables",
+      "code": "#!/bin/bash\n# Display all environment variables\nenv\n\n# Display specific variable\necho \"Current USER: $USER\"\necho \"Current HOME: $HOME\"\necho \"Current PATH: $PATH\"\n\n# Using printenv\nprintenv PWD\nprintenv SHELL",
+      "explanation": "This script shows different ways to display environment variables using 'env', 'echo', and 'printenv' commands.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "Set and Export Variables",
+      "description": "Demonstrates setting shell variables vs environment variables",
+      "code": "#!/bin/bash\n# Create shell variable (local only)\nMY_VAR=\"local_only\"\n\n# Create and export environment variable\nexport ENV_VAR=\"environment_variable\"\n\n# Export existing variable\nexport ANOTHER_VAR=\"now_environment\"\n\n# Display using env command\nenv | grep -E \"(MY_VAR|ENV_VAR|ANOTHER_VAR)\"\n\n# Demonstrate child process visibility\nbash -c 'echo \"MY_VAR in child: $MY_VAR\"'\necho \"ENV_VAR in child: $ENV_VAR\"",
+      "explanation": "Shows that shell variables (MY_VAR) are not visible to child processes, while exported environment variables (ENV_VAR, ANOTHER_VAR) are inherited.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "PATH Modification Script",
+      "description": "Demonstrates modifying PATH variable to add custom directories",
+      "code": "#!/bin/bash\n# Display current PATH\necho \"Current PATH: $PATH\"\n\n# Add custom directory to PATH (temporary for this session)\nexport PATH=$PATH:/home/user/myprograms/bin\n\n# Verify new PATH\necho \"New PATH: $PATH\"\n\n# Check if command exists in new directory\nif [ -d \"/home/user/myprograms/bin\" ]; then\n echo \"Custom directory added to PATH\"\nfi\n\n# To make permanent, add to ~/.bashrc:\n# echo 'export PATH=$PATH:/home/user/myprograms/bin' >> ~/.bashrc\n# source ~/.bashrc",
+      "explanation": "Demonstrates how to temporarily modify PATH and explains how to make changes permanent by adding to .bashrc.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "bash",
+      "title": "Check Command Location",
+      "description": "Uses environment variables to locate commands in PATH",
+      "code": "#!/bin/bash\n# Function to find command location\nfind_command() {\n cmd=$1\n for dir in $(echo $PATH | tr ':' ' '); do\n if [ -x \"$dir/$cmd\" ]; then\n echo \"Found: $dir/$cmd\"\n return 0\n fi\n done\n echo \"Command '$cmd' not found in PATH\"\n return 1\n}\n\n# Find different commands\necho \"Finding 'ls':\"\nfind_command \"ls\"\n\necho \"Finding 'gcc':\"\nfind_command \"gcc\"\n\necho \"Current shell: $SHELL\"\necho \"Current directory: $PWD\"",
+      "explanation": "Demonstrates how PATH is used to locate executables and shows other important environment variables like SHELL and PWD.",
+      "timeComplexity": "O(m*n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

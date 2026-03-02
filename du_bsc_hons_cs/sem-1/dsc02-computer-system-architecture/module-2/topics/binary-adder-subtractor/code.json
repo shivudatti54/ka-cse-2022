@@ -1,0 +1,35 @@
+{
+  "topicId": "binary-adder-subtractor",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Half Adder and Full Adder Implementation",
+      "description": "Demonstrates the fundamental building blocks of binary addition: Half Adder (2 inputs) and Full Adder (3 inputs including carry-in).",
+      "code": "# Half Adder and Full Adder Implementation\n\ndef half_adder(a, b):\n    \"\"\"Half Adder: Adds two binary digits\"\"\"\n    sum_bit = a ^ b  # XOR for sum\n    carry = a & b    # AND for carry\n    return sum_bit, carry\n\ndef full_adder(a, b, cin):\n    \"\"\"Full Adder: Adds three binary digits (including carry-in)\"\"\"\n    # First half adder\n    sum1, carry1 = half_adder(a, b)\n    # Second half adder\n    sum_out, carry2 = half_adder(sum1, cin)\n    # Final carry\n    carry_out = carry1 | carry2\n    return sum_out, carry_out\n\n# Test the adders\nprint(\"=== Half Adder Truth Table ===\")\nfor a in [0, 1]:\n    for b in [0, 1]:\n        s, c = half_adder(a, b)\n        print(f\"{a} + {b} = Sum:{s}, Carry:{c}\")\n\nprint(\"\\n=== Full Adder Truth Table ===\")\nfor a in [0, 1]:\n    for b in [0, 1]:\n        for cin in [0, 1]:\n            s, c = full_adder(a, b, cin)\n            print(f\"{a} + {b} + {cin} = Sum:{s}, Carry:{c}\")",
+      "explanation": "The Half Adder adds two bits (a, b) producing a sum and carry. The Full Adder extends this by including a carry-in bit, enabling cascading for multi-bit addition. We use XOR for sum (a⊕b) and AND/OR for carry logic.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "4-bit Binary Ripple Carry Adder",
+      "description": "Implements a 4-bit binary adder by cascading four full adders, demonstrating the ripple carry concept.",
+      "code": "# 4-bit Binary Ripple Carry Adder\n\ndef half_adder(a, b):\n    sum_bit = a ^ b\n    carry = a & b\n    return sum_bit, carry\n\ndef full_adder(a, b, cin):\n    sum1, carry1 = half_adder(a, b)\n    sum_out, carry2 = half_adder(sum1, cin)\n    carry_out = carry1 | carry2\n    return sum_out, carry_out\n\ndef binary_adder_4bit(num1, num2):\n    \"\"\"Adds two 4-bit binary numbers\"\"\"\n    # Convert to 4-bit binary lists (LSB first)\n    a = [(num1 >> i) & 1 for i in range(4)]\n    b = [(num2 >> i) & 1 for i in range(4)]\n    \n    result = [0] * 4\n    carry = 0\n    \n    # Ripple carry: add bit by bit from LSB to MSB\n    for i in range(4):\n        result[i], carry = full_adder(a[i], b[i], carry)\n    \n    # Convert result to integer\n    result_int = sum(result[i] << i for i in range(4))\n    return result_int, carry\n\n# Test the 4-bit adder\nprint(\"=== 4-bit Binary Adder Tests ===\")\ntest_cases = [\n    (5, 3),    # 0101 + 0011 = 1000 (8)\n    (7, 8),    # 0111 + 1000 = 1111 (15)\n    (12, 5),   # 1100 + 0101 = 10001 (17, truncates to 1 with carry)\n    (15, 1),   # 1111 + 0001 = 10000 (16, truncates to 0 with carry)\n]\n\nfor num1, num2 in test_cases:\n    result, carry = binary_adder_4bit(num1, num2)\n    print(f\"{num1:4d} ({num1:04b}) + {num2:4d} ({num2:04b}) = {result:4d} ({result:04b}), Carry: {carry}\")",
+      "explanation": "A 4-bit ripple carry adder connects 4 full adders in series. Each full adder's carry-out becomes the next adder's carry-in. This demonstrates how hardware implements multi-bit addition - each bit is processed sequentially with propagation delay.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Binary Adder-Subtractor (2's Complement Method)",
+      "description": "Implements a unified adder-subtractor circuit using 2's complement method for subtraction, as used in actual ALU designs.",
+      "code": "# Binary Adder-Subtractor using 2's Complement\n\ndef half_adder(a, b):\n    return a ^ b, a & b\n\ndef full_adder(a, b, cin):\n    sum1, carry1 = half_adder(a, b)\n    sum_out, carry2 = half_adder(sum1, cin)\n    return sum_out, carry1 | carry2\n\ndef twos_complement(binary_num, bits=4):\n    \"\"\"Compute 2's complement for subtraction\"\"\"\n    # Invert bits and add 1\n    inverted = (~binary_num + (1 << bits)) & ((1 << bits) - 1)\n    return inverted\n\ndef binary_adder_subtractor(num1, num2, mode):\n    \"\"\"\n    Unified Adder-Subtractor using 2's complement\n    mode = 0 for addition, mode = 1 for subtraction\n    \"\"\"\n    bits = 4\n    \n    # For subtraction: compute 2's complement of num2\n    if mode == 1:  # Subtraction\n        num2_twos = twos_complement(num2, bits)\n        b = [(num2_twos >> i) & 1 for i in range(bits)]\n    else:  # Addition\n        b = [(num2 >> i) & 1 for i in range(bits)]\n    \n    a = [(num1 >> i) & 1 for i in range(bits)]\n    \n    result = [0] * bits\n    carry = mode  # SUB signal acts as initial carry for 2's complement\n    \n    for i in range(bits):\n        result[i], carry = full_adder(a[i], b[i], carry)\n    \n    result_int = sum(result[i] << i for i in range(bits))\n    \n    # Detect overflow (for signed interpretation)\n    overflow = carry ^ result[bits-1]\n    \n    return result_int, carry, overflow\n\n# Test the Adder-Subtractor\nprint(\"=== Binary Adder-Subtractor (4-bit) ===\")\nprint(\"\\n--- ADDITION (mode=0) ---\")\ntests_add = [(5, 3), (7, 8), (15, 1)]\nfor n1, n2 in tests_add:\n    result, carry, _ = binary_adder_subtractor(n1, n2, 0)\n    print(f\"{n1} + {n2} = {result} (binary: {result:04b})\")\n\nprint(\"\\n--- SUBTRACTION (mode=1) ---\")\ntests_sub = [(8, 3), (5, 5), (3, 8)]\nfor n1, n2 in tests_sub:\n    result, carry, _ = binary_adder_subtractor(n1, n2, 1)\n    print(f\"{n1} - {n2} = {result} (binary: {result:04b})\")\n\nprint(\"\\n--- Overflow Detection ---\")\noverflow_tests = [(7, 7, 0), (8, 8, 1)]  # (num1, num2, mode)\nfor n1, n2, mode in overflow_tests:\n    result, carry, ovf = binary_adder_subtractor(n1, n2, mode)\n    op = '+' if mode == 0 else '-'\n    print(f\"{n1} {op} {n2}: Result={result}, Overflow={ovf}\")",
+      "explanation": "This implements a single circuit that performs both addition and subtraction. For subtraction, we use 2's complement: invert all bits of the subtrahend and add 1 (the carry-in acts as this '1'). The mode signal controls whether we add or subtract. Overflow detection checks if the final carry XOR the MSB result is 1, indicating signed arithmetic overflow.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

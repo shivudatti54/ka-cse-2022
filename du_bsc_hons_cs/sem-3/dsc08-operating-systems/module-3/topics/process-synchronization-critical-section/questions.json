@@ -1,0 +1,154 @@
+{
+  "topicId": "process-synchronization-critical-section",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the Critical Section problem and state its three essential requirements.",
+      "keyPoints": [
+        "Critical Section: Code segment accessing shared resources",
+        "Mutual Exclusion: Only one process in CS at a time",
+        "Progress: Selection made if CS free and processes want entry",
+        "Bounded Waiting: Limit on entries after request before process gets chance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the concept of a Race Condition with an example.",
+      "keyPoints": [
+        "Race Condition: Outcome depends on timing of interleaved operations",
+        "Example: Two processes incrementing shared variable counter",
+        "If both read value 5 simultaneously, both write 6, losing one increment",
+        "Results in incorrect final value due to lack of synchronization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the Test-and-Set instruction for achieving mutual exclusion.",
+      "keyPoints": [
+        "Hardware instruction providing atomic read-modify-write",
+        "Reads current lock value, returns it, and sets lock to true in one operation",
+        "Process checks returned value - if false, lock acquired; if true, wait and retry",
+        "Enables implementation of spinlocks for mutual exclusion"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is a Semaphore? Differentiate between Binary and Counting semaphores.",
+      "keyPoints": [
+        "Semaphore: Synchronization variable with integer value and atomic wait/signal operations",
+        "Binary Semaphore: Value 0 or 1, used for mutual exclusion (like mutex)",
+        "Counting Semaphore: Value 0 to N, represents available instances of resource",
+        "Initial value equals number of resources for counting semaphore"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the difference between Busy Waiting (Spinlock) and Blocking Wait in process synchronization.",
+      "keyPoints": [
+        "Busy Waiting: Process continuously checks lock variable in loop, wastes CPU cycles",
+        "Blocking Wait: Process is put to sleep/blocked, added to queue, awakened when lock available",
+        "Spinlocks suitable for short waits, multiprocessor systems",
+        "Blocking wait efficient for long critical sections, single CPU systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the difference between Deadlock and Starvation?",
+      "explain": {
+        "keyDifference": "Deadlock: Circular wait with all processes blocked. Starvation: Process perpetually denied resource due to unfair scheduling."
+      },
+      "keyPoints": [
+        "Deadlock: Processes blocked indefinitely, waiting for each other",
+        "Starvation: Ready process never gets CPU due to priority or scheduling",
+        "Bounded waiting in CS prevents starvation but not deadlock",
+        "Deadlock involves all processes blocked; starvation can involve one process"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the Monitor construct in process synchronization.",
+      "keyPoints": [
+        "Monitor: High-level language synchronization construct",
+        "Combines shared data with procedures operating on that data",
+        "Provides automatic mutual exclusion - only one process can execute inside monitor",
+        "Contains condition variables for waiting and signaling between processes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain Peterson's solution for the Critical Section problem for two processes. Also explain why it satisfies all three requirements.",
+      "keyPoints": [
+        "Two shared variables: 'turn' and 'flag[2]','flag[i]=true means process i wants to enter CS",
+        "Entry section: Process sets flag, sets turn to other process, then waits while other wants CS and it's other's turn",
+        "Exit section: Process sets flag to false",
+        "Mutual Exclusion: Both cannot pass entry condition simultaneously",
+        "Progress: If only one wants, it enters; if both want, one waits based on turn",
+        "Bounded Waiting: After process requests, other can enter at most once before requester gets turn"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the Critical Section problem and describe any two hardware-based solutions for achieving mutual exclusion.",
+      "keyPoints": [
+        "CS Problem: Coordinate multiple processes accessing shared resources",
+        "Hardware Solutions:",
+        "1. Disable Interrupts: Prevents context switch, but not suitable for multiprocessor",
+        "2. Test-and-Set: Atomic instruction, returns old value while setting to true",
+        "3. Compare-and-Swap: Compares memory with expected, swaps if matches",
+        "4. Exchange/Swap: Atomically exchanges values of two variables",
+        "Hardware solutions simpler but can cause busy waiting",
+        "Each provides atomic operations impossible to implement in software alone"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What are semaphores? Explain the wait() and signal() operations. How are they used for solving the Critical Section problem?",
+      "keyPoints": [
+        "Semaphore: Integer variable with two atomic operations",
+        "wait(): Decrement value, block if becomes negative",
+        "signal(): Increment value, wake waiting process if any",
+        "For Mutual Exclusion: Initialize binary semaphore to 1",
+        "Process does wait() before CS, signal() after CS",
+        "If semaphore is 0 (CS occupied), process blocks",
+        "Ensures only one process in CS at any time"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the differences between Software Solutions, Hardware Solutions, and Language Constructs for process synchronization. Give examples of each.",
+      "keyPoints": [
+        "Software Solutions: Implemented purely in code using shared variables",
+        "Examples: Peterson's Algorithm, Dekker's Algorithm",
+        "Disadvantage: Complex, only work for limited processes, require careful design",
+        "Hardware Solutions: Use special CPU instructions",
+        "Examples: Test-and-Set, Compare-and-Swap, Exchange",
+        "Advantage: Simple, efficient; Disadvantage: Busy waiting possible",
+        "Language Constructs: High-level synchronization abstractions",
+        "Examples: Monitors, Conditional Critical Regions",
+        "Advantage: Cleaner, automatic enforcement; Disadvantage: Language support needed"
+      ],
+      "marks": 10
+    }
+  ]
+}

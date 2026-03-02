@@ -1,0 +1,100 @@
+{
+  "topicId": "vfork",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between fork() and vfork() system calls.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "fork() creates a copy of parent's address space for child",
+        "vfork() does NOT copy - child shares parent's address space",
+        "Parent is suspended during vfork() until child exits or calls exec()",
+        "vfork() is faster but dangerous if misused"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the return values of vfork() in parent and child processes?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Parent receives child's PID (positive integer)",
+        "Child receives 0",
+        "On error, returns -1 and sets errno"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Why is vfork() considered dangerous? What undefined behavior can occur?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Child shares parent's address space",
+        "If child modifies data without calling exec(), parent data is corrupted",
+        "If child returns from calling function, it corrupts parent's stack",
+        "Modern systems may block dangerous operations"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is copy-on-write (COW) technique used in fork()? How does it make fork() efficient?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "COW delays actual copying of pages until modification",
+        "Initially, parent and child share same pages (read-only)",
+        "When either modifies a page, a private copy is made",
+        "This makes fork() nearly as efficient as vfork() for many cases"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the typical usage pattern of vfork() in a C program.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "pid = vfork();",
+        "if (pid == 0) { // child process",
+        " // MUST call exec() here",
+        " execl(...)",
+        " _exit(1); // if exec fails",
+        "} else if (pid > 0) { // parent",
+        " wait(NULL); // wait for child",
+        "}"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Why was vfork() originally introduced in Unix? Is it still recommended for use?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Introduced when memory was expensive and limited",
+        "Avoided overhead of copying entire address space",
+        "Optimized for fork()+exec() pattern",
+        "NOT recommended now - deprecated in POSIX.1-2008",
+        "Modern COW fork() provides similar efficiency with better safety"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What happens to the parent process during vfork()? Explain why this blocking is necessary.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Parent is suspended/blocked until child exits or calls exec()",
+        "Blocking is necessary because child uses parent's address space",
+        "If parent continued, both could modify memory simultaneously",
+        "This would cause data corruption and undefined behavior"
+      ]
+    }
+  ]
+}

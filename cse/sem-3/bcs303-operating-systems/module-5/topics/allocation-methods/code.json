@@ -1,0 +1,23 @@
+{
+  "topicId": "allocation-methods",
+  "examples": [
+    {
+      "id": "allocation-methods-simulation-c",
+      "title": "C: Allocation Methods Simulation",
+      "language": "c",
+      "code": "// Simplified file allocation simulation\n#include <stdio.h>\n#define DISK_SIZE 20\n#define INDEX_SIZE 5\n\nint disk[DISK_SIZE];\n\n// Contiguous allocation\nvoid contiguous_allocate(int start, int length, int fileId) {\n for (int i = start; i < start + length; i++)\n disk[i] = fileId;\n printf(\"Contiguous: File %d at blocks %d-%d\\n\", \n fileId, start, start + length - 1);\n}\n\n// Linked allocation\ntypedef struct { int data; int next; } LinkedBlock;\nLinkedBlock linkedDisk[DISK_SIZE];\n\nvoid linked_allocate(int blocks[], int n, int fileId) {\n printf(\"Linked: File %d at blocks \", fileId);\n for (int i = 0; i < n; i++) {\n linkedDisk[blocks[i]].data = fileId;\n linkedDisk[blocks[i]].next = (i < n-1) ? blocks[i+1] : -1;\n printf(\"%d\", blocks[i]);\n if (i < n-1) printf(\" -> \");\n }\n printf(\"\\n\");\n}\n\n// Indexed allocation\nvoid indexed_allocate(int indexBlock, int dataBlocks[], int n, int fileId) {\n disk[indexBlock] = -fileId; // Negative = index block\n printf(\"Indexed: File %d, Index at %d, Data at: \", fileId, indexBlock);\n for (int i = 0; i < n; i++) {\n disk[dataBlocks[i]] = fileId;\n printf(\"%d \", dataBlocks[i]);\n }\n printf(\"\\n\");\n}\n\nint main() {\n // Contiguous\n contiguous_allocate(0, 4, 1);\n \n // Linked\n int linked[] = {5, 8, 12, 15};\n linked_allocate(linked, 4, 2);\n \n // Indexed\n int data[] = {7, 9, 11, 14};\n indexed_allocate(6, data, 4, 3);\n \n return 0;\n}"
+    },
+    {
+      "id": "allocation-methods-simulation-python",
+      "title": "Python: Allocation Methods Simulation",
+      "language": "python",
+      "code": "class DiskSimulator:\n def __init__(self, size=20):\n self.size = size\n self.disk = [None] * size\n \n def contiguous_allocate(self, file_id, start, length):\n \"\"\"Contiguous allocation\"\"\"\n for i in range(start, start + length):\n self.disk[i] = file_id\n print(f\"Contiguous: File {file_id} at blocks {start}-{start+length-1}\")\n return {'start': start, 'length': length}\n \n def linked_allocate(self, file_id, blocks):\n \"\"\"Linked allocation\"\"\"\n chain = []\n for i, block in enumerate(blocks):\n next_block = blocks[i+1] if i < len(blocks)-1 else None\n self.disk[block] = {'data': file_id, 'next': next_block}\n chain.append(block)\n print(f\"Linked: File {file_id} chain: {' -> '.join(map(str, chain))}\")\n return {'start': blocks[0], 'end': blocks[-1]}\n \n def indexed_allocate(self, file_id, index_block, data_blocks):\n \"\"\"Indexed allocation\"\"\"\n self.disk[index_block] = {'type': 'index', 'pointers': data_blocks}\n for block in data_blocks:\n self.disk[block] = file_id\n print(f\"Indexed: File {file_id}, Index at {index_block}, Data at {data_blocks}\")\n return {'index': index_block}\n\n# Demo\ndisk = DiskSimulator()\n\nprint(\"=== Allocation Methods Demo ===\")\nprint()\n\n# Contiguous\ndisk.contiguous_allocate(file_id=1, start=0, length=4)\n\n# Linked\ndisk.linked_allocate(file_id=2, blocks=[5, 8, 12, 15])\n\n# Indexed\ndisk.indexed_allocate(file_id=3, index_block=6, data_blocks=[7, 9, 11, 14])\n\nprint(\"\\nDisk state:\")\nfor i, block in enumerate(disk.disk):\n if block is not None:\n print(f\" Block {i}: {block}\")"
+    },
+    {
+      "id": "allocation-methods-simulation-java",
+      "title": "Java: Allocation Methods Simulation",
+      "language": "java",
+      "code": "import java.util.*;\n\npublic class AllocationMethods {\n static int[] disk = new int[20];\n \n static void contiguousAllocate(int fileId, int start, int length) {\n for (int i = start; i < start + length; i++)\n disk[i] = fileId;\n System.out.printf(\"Contiguous: File %d at blocks %d-%d%n\", \n fileId, start, start + length - 1);\n }\n \n static void linkedAllocate(int fileId, int[] blocks) {\n System.out.printf(\"Linked: File %d chain: \", fileId);\n for (int i = 0; i < blocks.length; i++) {\n disk[blocks[i]] = fileId;\n System.out.print(blocks[i]);\n if (i < blocks.length - 1) System.out.print(\" -> \");\n }\n System.out.println();\n }\n \n static void indexedAllocate(int fileId, int indexBlock, int[] dataBlocks) {\n disk[indexBlock] = -fileId; // Mark as index\n System.out.printf(\"Indexed: File %d, Index at %d, Data at: \", \n fileId, indexBlock);\n for (int block : dataBlocks) {\n disk[block] = fileId;\n System.out.print(block + \" \");\n }\n System.out.println();\n }\n \n public static void main(String[] args) {\n contiguousAllocate(1, 0, 4);\n linkedAllocate(2, new int[]{5, 8, 12, 15});\n indexedAllocate(3, 6, new int[]{7, 9, 11, 14});\n }\n}"
+    }
+  ]
+}

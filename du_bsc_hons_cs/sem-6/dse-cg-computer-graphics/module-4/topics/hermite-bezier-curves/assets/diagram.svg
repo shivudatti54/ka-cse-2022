@@ -1,0 +1,170 @@
+<svg width="420" height="400" viewBox="0 0 420 400" data-topic-id="hermite-bezier-curves" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4fc;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5e6f4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e6f0f4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="hermiteGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4a90d9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7b68ee;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bezierGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#50c878;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3cb371;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideInLeft {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+      }
+      @keyframes drawCurve {
+        from { stroke-dashoffset: 300; }
+        to { stroke-dashoffset: 0; }
+      }
+      .title { font-family: Georgia, serif; font-size: 22px; font-weight: bold; fill: #2c3e50; }
+      .section-title { font-family: Georgia, serif; font-size: 16px; font-weight: bold; fill: #34495e; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; fill: #2c3e50; }
+      .detail { font-family: Arial, sans-serif; font-size: 12px; fill: #555; }
+      .formula { font-family: 'Courier New', monospace; font-size: 13px; fill: #1a1a2e; }
+      .fade-in { animation: fadeIn 1s ease-out forwards; }
+      .slide-left { animation: slideInLeft 0.8s ease-out forwards; }
+      .slide-right { animation: slideInRight 0.8s ease-out forwards; }
+      .pulse { animation: pulse 2s ease-in-out infinite; transform-origin: center; }
+      .draw-anim { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawCurve 2s ease-out forwards; }
+      .delay-1 { animation-delay: 0.2s; opacity: 0; }
+      .delay-2 { animation-delay: 0.4s; opacity: 0; }
+      .delay-3 { animation-delay: 0.6s; opacity: 0; }
+      .delay-4 { animation-delay: 0.8s; opacity: 0; }
+      .delay-5 { animation-delay: 1s; opacity: 0; }
+    </style>
+  </defs>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title fade-in">Hermite &amp; Bezier Curves</text>
+  
+  <!-- Section 1: Hermite Curve -->
+  <g data-narration="Hermite curves interpolate between endpoints with specified tangent vectors">
+    <rect x="20" y="50" width="180" height="150" rx="8" fill="#fff" stroke="#4a90d9" stroke-width="2" class="fade-in delay-1"/>
+    <text x="30" y="70" class="section-title slide-left delay-2">Hermite Curve</text>
+    
+    <!-- Hermite diagram -->
+    <g transform="translate(30, 85)">
+      <!-- P0 point -->
+      <circle cx="20" cy="100" r="5" fill="#e74c3c" class="pulse delay-3"/>
+      <text x="15" y="120" class="detail slide-left delay-3">P₀</text>
+      
+      <!-- P1 point -->
+      <circle cx="130" cy="30" r="5" fill="#e74c3c" class="pulse delay-3"/>
+      <text x="125" y="25" class="detail slide-right delay-3">P₁</text>
+      
+      <!-- Tangent m0 -->
+      <line x1="20" y1="100" x2="50" y2="100" stroke="#e67e22" stroke-width="2" class="slide-left delay-4"/>
+      <polygon points="48,95 55,100 48,105" fill="#e67e22" class="slide-left delay-4"/>
+      <text x="55" y="105" class="detail slide-left delay-4">m₀</text>
+      
+      <!-- Tangent m1 -->
+      <line x1="130" y1="30" x2="130" y2="70" stroke="#e67e22" stroke-width="2" class="slide-right delay-4"/>
+      <polygon points="125,68 130,75 135,68" fill="#e67e22" class="slide-right delay-4"/>
+      <text x="140" y="55" class="detail slide-right delay-4">m₁</text>
+      
+      <!-- Hermite curve -->
+      <path d="M20,100 Q40,100 55,80 T90,60 T130,30" fill="none" stroke="url(#hermiteGradient)" stroke-width="3" class="draw-anim"/>
+    </g>
+  </g>
+  
+  <!-- Section 2: Bezier Curve -->
+  <g data-narration="Bezier curves use control points that the curve does not necessarily pass through">
+    <rect x="220" y="50" width="180" height="150" rx="8" fill="#fff" stroke="#3cb371" stroke-width="2" class="fade-in delay-1"/>
+    <text x="230" y="70" class="section-title slide-right delay-2">Bezier Curve</text>
+    
+    <!-- Bezier diagram -->
+    <g transform="translate(230, 85)">
+      <!-- P0 point -->
+      <circle cx="20" cy="100" r="5" fill="#9b59b6" class="pulse delay-3"/>
+      <text x="10" y="120" class="detail slide-left delay-3">P₀</text>
+      
+      <!-- P1 control point -->
+      <circle cx="40" cy="20" r="4" fill="#f39c12" class="pulse delay-3"/>
+      <line x1="20" y1="100" x2="40" y2="20" stroke="#bbb" stroke-width="1" stroke-dasharray="4" class="delay-3"/>
+      <text x="30" y="15" class="detail slide-left delay-3">P₁</text>
+      
+      <!-- P2 control point -->
+      <circle cx="110" cy="20" r="4" fill="#f39c12" class="pulse delay-3"/>
+      <line x1="130" y1="30" x2="110" y2="20" stroke="#bbb" stroke-width="1" stroke-dasharray="4" class="delay-3"/>
+      <text x="105" y="15" class="detail slide-right delay-3">P₂</text>
+      
+      <!-- P3 point -->
+      <circle cx="130" cy="30" r="5" fill="#9b59b6" class="pulse delay-3"/>
+      <text x="140" y="25" class="detail slide-right delay-3">P₃</text>
+      
+      <!-- Bezier curve -->
+      <path d="M20,100 C40,20 110,20 130,30" fill="none" stroke="url(#bezierGradient)" stroke-width="3" class="draw-anim"/>
+    </g>
+  </g>
+  
+  <!-- Section 3: Formula Box -->
+  <g data-narration="The mathematical formulas define how to compute points along each curve type">
+    <rect x="20" y="215" width="180" height="70" rx="8" fill="#fff9e6" stroke="#f39c12" stroke-width="2" class="fade-in delay-2"/>
+    <text x="30" y="235" class="section-title slide-left delay-3">Hermite Formula</text>
+    <text x="30" y="255" class="formula slide-left delay-3">P(t) = 2t³-3t²+1</text>
+    <text x="30" y="272" class="detail slide-left delay-4">P₀ + (-2t³+3t²)P₁</text>
+    <text x="30" y="287" class="detail slide-left delay-4">+ (t³-2t²+t)m₀ + (t³-t²)m₁</text>
+  </g>
+  
+  <!-- Section 4: Bezier Formula -->
+  <g data-narration="Bezier curves use Bernstein polynomials for smooth interpolation">
+    <rect x="220" y="215" width="180" height="70" rx="8" fill="#e6f9e6" stroke="#3cb371" stroke-width="2" class="fade-in delay-2"/>
+    <text x="230" y="235" class="section-title slide-right delay-3">Bezier Formula</text>
+    <text x="230" y="255" class="formula slide-right delay-3">B(t) = (1-t)³P₀</text>
+    <text x="230" y="272" class="detail slide-right delay-4">+ 3(1-t)²tP₁ + 3(1-t)t²P₂</text>
+    <text x="230" y="287" class="detail slide-right delay-4">+ t³P₃</text>
+  </g>
+  
+  <!-- Section 5: Key Differences -->
+  <g data-narration="Key differences: Hermite is interpolating, Bezier is approximating">
+    <rect x="20" y="300" width="380" height="85" rx="8" fill="#fff" stroke="#7f8c8d" stroke-width="2" class="fade-in delay-3"/>
+    <text x="30" y="325" class="section-title slide-left delay-4">Key Differences</text>
+    
+    <!-- Comparison items -->
+    <g transform="translate(30, 340)">
+      <circle cx="5" cy="0" r="3" fill="#4a90d9" class="pulse"/>
+      <text x="15" y="5" class="detail slide-left delay-5">Hermite: Interpolates control points (passes through)</text>
+    </g>
+    <g transform="translate(30, 360)">
+      <circle cx="5" cy="0" r="3" fill="#3cb371" class="pulse"/>
+      <text x="15" y="5" class="detail slide-left delay-5">Bezier: Approximates (curve near control points)</text>
+    </g>
+    <g transform="translate(200, 340)">
+      <circle cx="5" cy="0" r="3" fill="#e74c3c" class="pulse"/>
+      <text x="15" y="5" class="detail slide-right delay-5">Requires tangent vectors</text>
+    </g>
+    <g transform="translate(200, 360)">
+      <circle cx="5" cy="0" r="3" fill="#f39c12" class="pulse"/>
+      <text x="15" y="5" class="detail slide-right delay-5">Uses control handles only</text>
+    </g>
+  </g>
+  
+  <!-- Arrow relationships -->
+  <g data-narration="The curves are related through mathematical transformations">
+    <path d="M200,130 L220,130" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrowhead)" class="fade-in delay-4"/>
+    <text x="205" y="120" class="detail" text-anchor="middle">t∈[0,1]</text>
+  </g>
+</svg>

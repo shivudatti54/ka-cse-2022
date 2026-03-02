@@ -1,0 +1,45 @@
+{
+  "topicId": "page-replacement",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: FIFO Page Replacement",
+      "description": "Implements First-In-First-Out page replacement using queue structure",
+      "code": "ALGORITHM FIFO\nBEGIN\n Initialize queue for frames\n Initialize page_fault = 0\n \n FOR each page IN reference_string:\n IF page NOT IN queue:\n page_fault += 1\n IF queue.size() < num_frames:\n queue.enqueue(page)\n ELSE:\n queue.dequeue()\n queue.enqueue(page)\n END IF\n END IF\n END FOR\n RETURN page_fault\nEND",
+      "explanation": "1. Queue maintains insertion order\n2. Oldest page is at front of queue\n3. Page faults counted when new pages loaded",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(k) (k = number of frames)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Algorithm: Optimal Page Replacement",
+      "description": "Theoretical optimal algorithm using future knowledge of references",
+      "code": "ALGORITHM OPTIMAL\nBEGIN\n Initialize frame_set\n Initialize page_fault = 0\n \n FOR i FROM 0 TO length(reference_string)-1:\n page = reference_string[i]\n IF page NOT IN frame_set:\n page_fault += 1\n IF frame_set.size() < num_frames:\n frame_set.add(page)\n ELSE:\n farthest = -1\n victim = -1\n FOR p IN frame_set:\n next_use = INFINITY\n FOR j FROM i+1 TO length(reference_string)-1:\n IF reference_string[j] == p:\n next_use = j\n BREAK\n END IF\n END FOR\n IF next_use > farthest:\n farthest = next_use\n victim = p\n END IF\n END FOR\n frame_set.remove(victim)\n frame_set.add(page)\n END IF\n END IF\n END FOR\n RETURN page_fault\nEND",
+      "explanation": "1. For each page fault, find page with farthest next use\n2. Requires future reference string knowledge\n3. Not implementable in practice but serves as benchmark",
+      "timeComplexity": "O(n²k) (n = ref length, k = frames)",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: LRU Page Replacement",
+      "description": "Tracks least recently used pages using ordered list",
+      "code": "ALGORITHM LRU\nBEGIN\n Initialize list for frames\n Initialize page_fault = 0\n \n FOR each page IN reference_string:\n IF page IN list:\n list.remove(page)\n list.insert(0, page)\n ELSE:\n page_fault += 1\n IF list.size() < num_frames:\n list.insert(0, page)\n ELSE:\n list.remove_last()\n list.insert(0, page)\n END IF\n END IF\n END FOR\n RETURN page_fault\nEND",
+      "explanation": "1. Recently used pages moved to list head\n2. Last element is least recently used\n3. Maintains usage order through list manipulation",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Algorithm: Clock (Second Chance)",
+      "description": "Approximates LRU using circular buffer and reference bits",
+      "code": "ALGORITHM CLOCK\nBEGIN\n Initialize circular buffer of frames\n Initialize pointer = 0\n Initialize page_fault = 0\n \n FOR each page IN reference_string:\n IF page NOT IN buffer:\n page_fault += 1\n WHILE True:\n current_frame = buffer[pointer]\n IF current_frame.reference_bit == 0:\n replace current_frame with new page\n pointer = (pointer + 1) % num_frames\n BREAK\n ELSE:\n current_frame.reference_bit = 0\n pointer = (pointer + 1) % num_frames\n END IF\n END WHILE\n ELSE:\n buffer.find(page).reference_bit = 1\n END IF\n END FOR\n RETURN page_fault\nEND",
+      "explanation": "1. Circular buffer with reference bits\n2. Pages with bit=0 are replaced immediately\n3. Pages with bit=1 get second chance (bit reset to 0)\n4. Pointer cycles through frames continuously",
+      "timeComplexity": "O(n) average case",
+      "spaceComplexity": "O(k)"
+    }
+  ]
+}

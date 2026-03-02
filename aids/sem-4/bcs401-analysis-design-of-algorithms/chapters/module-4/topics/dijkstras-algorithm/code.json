@@ -1,0 +1,45 @@
+{
+  "topicId": "dijkstras-algorithm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Dijkstra's Algorithm Implementation",
+      "description": "Python implementation using adjacency list and heapq for priority queue",
+      "code": "import heapq\n\ndef dijkstra(graph, source):\n    dist = {vertex: float('inf') for vertex in graph}\n    dist[source] = 0\n    parent = {vertex: None for vertex in graph}\n    pq = [(0, source)]\n    visited = set()\n    \n    while pq:\n        current_dist, u = heapq.heappop(pq)\n        if u in visited:\n            continue\n        visited.add(u)\n        \n        for v, weight in graph[u]:\n            if v not in visited:\n                new_dist = current_dist + weight\n                if new_dist < dist[v]:\n                    dist[v] = new_dist\n                    parent[v] = u\n                    heapq.heappush(pq, (new_dist, v))\n    \n    return dist, parent\n\n# Example usage\ngraph = {\n    'A': [('B', 4), ('C', 2)],\n    'B': [('C', 1), ('D', 5)],\n    'C': [('D', 8), ('E', 10)],\n    'D': [('E', 2), ('F', 6)],\n    'E': [('F', 3)],\n    'F': []\n}\n\ndistances, parents = dijkstra(graph, 'A')\nprint(\"Shortest distances:\", distances)",
+      "explanation": "Uses heapq (binary heap) for efficient minimum extraction. The algorithm maintains a visited set to handle duplicates in priority queue. Distance updates trigger new entries in the heap.",
+      "timeComplexity": "O((V + E) log V)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Dijkstra's Algorithm in C",
+      "description": "C implementation using adjacency matrix and arrays",
+      "code": "#include <stdio.h>\n#include <limits.h>\n\n#define V 6\n\nint minDistance(int dist[], int visited[]) {\n    int min = INT_MAX, min_index = -1;\n    for (int v = 0; v < V; v++) {\n        if (!visited[v] && dist[v] < min) {\n            min = dist[v];\n            min_index = v;\n        }\n    }\n    return min_index;\n}\n\nvoid dijkstra(int graph[V][V], int src) {\n    int dist[V], visited[V], parent[V];\n    \n    for (int i = 0; i < V; i++) {\n        dist[i] = INT_MAX;\n        visited[i] = 0;\n        parent[i] = -1;\n    }\n    dist[src] = 0;\n    \n    for (int count = 0; count < V - 1; count++) {\n        int u = minDistance(dist, visited);\n        visited[u] = 1;\n        \n        for (int v = 0; v < V; v++) {\n            if (!visited[v] && graph[u][v] && \n                dist[u] != INT_MAX && \n                dist[u] + graph[u][v] < dist[v]) {\n                dist[v] = dist[u] + graph[u][v];\n                parent[v] = u;\n            }\n        }\n    }\n    \n    printf(\"Vertex\\tDistance from %c\\n\", src + 'A');\n    for (int i = 0; i < V; i++)\n        printf(\"%c\\t%d\\n\", i + 'A', dist[i]);\n}\n\nint main() {\n    int graph[V][V] = {{0, 4, 2, 0, 0, 0},\n                      {4, 0, 1, 5, 0, 0},\n                      {2, 1, 0, 8, 10, 0},\n                      {0, 5, 8, 0, 2, 6},\n                      {0, 0, 10, 2, 0, 3},\n                      {0, 0, 0, 6, 3, 0}};\n    dijkstra(graph, 0);\n    return 0;\n}",
+      "explanation": "Uses adjacency matrix and simple array scanning to find minimum distance vertex. This approach has O(V\u00b2) time complexity but is simple to implement and works well for dense graphs.",
+      "timeComplexity": "O(V\u00b2)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Dijkstra's Algorithm in Java",
+      "description": "Java implementation using PriorityQueue and adjacency list",
+      "code": "import java.util.*;\n\npublic class DijkstraAlgorithm {\n    static class Edge {\n        int destination;\n        int weight;\n        Edge(int dest, int w) {\n            destination = dest;\n            weight = w;\n        }\n    }\n    \n    static class Node implements Comparable<Node> {\n        int vertex;\n        int distance;\n        Node(int v, int d) {\n            vertex = v;\n            distance = d;\n        }\n        public int compareTo(Node other) {\n            return this.distance - other.distance;\n        }\n    }\n    \n    public static void dijkstra(List<List<Edge>> graph, int source) {\n        int V = graph.size();\n        int[] dist = new int[V];\n        int[] parent = new int[V];\n        boolean[] visited = new boolean[V];\n        \n        Arrays.fill(dist, Integer.MAX_VALUE);\n        Arrays.fill(parent, -1);\n        dist[source] = 0;\n        \n        PriorityQueue<Node> pq = new PriorityQueue<>();\n        pq.add(new Node(source, 0));\n        \n        while (!pq.isEmpty()) {\n            Node current = pq.poll();\n            int u = current.vertex;\n            \n            if (visited[u]) continue;\n            visited[u] = true;\n            \n            for (Edge edge : graph.get(u)) {\n                int v = edge.destination;\n                int weight = edge.weight;\n                \n                if (!visited[v] && dist[u] != Integer.MAX_VALUE) {\n                    int newDist = dist[u] + weight;\n                    if (newDist < dist[v]) {\n                        dist[v] = newDist;\n                        parent[v] = u;\n                        pq.add(new Node(v, newDist));\n                    }\n                }\n            }\n        }\n        \n        System.out.println(\"Shortest distances from source \" + source + \":\");\n        for (int i = 0; i < V; i++) {\n            System.out.println(\"To \" + i + \": \" + dist[i]);\n        }\n    }\n    \n    public static void main(String[] args) {\n        int V = 6;\n        List<List<Edge>> graph = new ArrayList<>();\n        for (int i = 0; i < V; i++) graph.add(new ArrayList<>());\n        \n        // Add edges (undirected)\n        addEdge(graph, 0, 1, 4); addEdge(graph, 1, 0, 4);\n        addEdge(graph, 0, 2, 2); addEdge(graph, 2, 0, 2);\n        addEdge(graph, 1, 2, 1); addEdge(graph, 2, 1, 1);\n        addEdge(graph, 1, 3, 5); addEdge(graph, 3, 1, 5);\n        addEdge(graph, 2, 3, 8); addEdge(graph, 3, 2, 8);\n        addEdge(graph, 3, 4, 2); addEdge(graph, 4, 3, 2);\n        addEdge(graph, 4, 5, 3); addEdge(graph, 5, 4, 3);\n        \n        dijkstra(graph, 0);\n    }\n    \n    static void addEdge(List<List<Edge>> graph, int u, int v, int w) {\n        graph.get(u).add(new Edge(v, w));\n    }\n}",
+      "explanation": "Java implementation using PriorityQueue with custom Comparator. The Node class implements Comparable for priority queue ordering. Uses adjacency list representation suitable for sparse graphs.",
+      "timeComplexity": "O((V + E) log V)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Dijkstra's Algorithm Pseudocode",
+      "description": "Standard pseudocode showing the core logic of Dijkstra's Algorithm",
+      "code": "ALGORITHM Dijkstra(Graph G, Vertex source)\nBEGIN\n    // Initialize distances and visited set\n    FOR each vertex v IN G.V DO\n        dist[v] \u2190 INFINITY\n        visited[v] \u2190 FALSE\n        parent[v] \u2190 NULL\n    END FOR\n    \n    dist[source] \u2190 0\n    \n    // Priority queue containing (distance, vertex) pairs\n    PQ \u2190 empty priority queue\n    INSERT(PQ, (0, source))\n    \n    WHILE PQ IS NOT EMPTY DO\n        // Extract vertex with minimum distance\n        (d, u) \u2190 EXTRACT-MIN(PQ)\n        \n        IF visited[u] = TRUE THEN\n            CONTINUE  // Skip if already processed\n        END IF\n        \n        visited[u] \u2190 TRUE\n        \n        // Relax all edges from u\n        FOR each edge (u, v, weight) IN G.adj[u] DO\n            IF visited[v] = FALSE AND dist[u] + weight < dist[v] THEN\n                dist[v] \u2190 dist[u] + weight\n                parent[v] \u2190 u\n                INSERT(PQ, (dist[v], v))\n            END IF\n        END FOR\n    END WHILE\n    \n    RETURN dist, parent\nEND\n\n// To reconstruct path from source to destination\nALGORITHM ReconstructPath(parent, destination)\nBEGIN\n    path \u2190 EMPTY LIST\n    current \u2190 destination\n    \n    WHILE current \u2260 NULL DO\n        INSERT path at beginning\n        current \u2190 parent[current]\n    END WHILE\n    \n    RETURN path\nEND",
+      "explanation": "The pseudocode shows initialization, the main loop extracting minimum distance vertex, relaxation of edges, and path reconstruction using parent pointers. The algorithm terminates when all reachable vertices are processed.",
+      "timeComplexity": "O((V + E) log V) with binary heap",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

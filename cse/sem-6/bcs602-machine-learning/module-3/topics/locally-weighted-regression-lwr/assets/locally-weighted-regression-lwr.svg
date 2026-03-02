@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" fill="#64748b">
+<polygon points="0 0, 10 3.5, 0 7"/>
+</marker>
+<marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" fill="#2563eb">
+<polygon points="0 0, 10 3.5, 0 7"/>
+</marker>
+</defs>
+<rect width="800" height="600" fill="#f8f9fa"/>
+
+<!-- Step 0: Title -->
+<g class="step" id="step0" data-narration="LWR is a non-parametric method that builds a temporary local model for each query point, giving more weight to nearby training examples.">
+<rect x="0" y="0" width="800" height="50" fill="#f8f9fa"/>
+<text x="50" y="35" font-size="22" fill="#1e293b" font-weight="bold">Locally Weighted Regression (LWR)</text>
+</g>
+
+<!-- Step 1: Introduction -->
+<g class="step" id="step1" data-narration="Instead of one global model, LWR fits local models using nearby data weighted by distance. Nearby points have high influence, distant points have low influence.">
+<rect x="50" y="58" width="700" height="130" fill="white" stroke="#cbd5e1" stroke-width="1" rx="5"/>
+<text x="70" y="80" font-size="16" fill="#1e293b" font-weight="bold">Global vs Local Model</text>
+<text x="70" y="100" font-size="12" fill="#64748b">Global regression: One model for all data</text>
+<rect x="70" y="115" width="100" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"/>
+<text x="120" y="140" font-size="11" fill="#1976d2" text-anchor="middle" font-weight="bold">Global Model</text>
+<text x="120" y="155" font-size="9" fill="#1976d2" text-anchor="middle">One straight line</text>
+<path d="M180 140 L200 140" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+<rect x="210" y="115" width="100" height="50" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"/>
+<text x="260" y="140" font-size="11" fill="#388e3c" text-anchor="middle" font-weight="bold">Local Model</text>
+<text x="260" y="155" font-size="9" fill="#388e3c" text-anchor="middle">Fits nearby points</text>
+<text x="350" y="100" font-size="12" fill="#64748b">For query x_q, weight depends on distance:</text>
+<circle cx="400" cy="140" r="20" fill="#1976d2"/>
+<text x="400" y="144" font-size="10" fill="white" text-anchor="middle" font-weight="bold">x_q</text>
+<circle cx="360" cy="140" r="12" fill="#4caf50" opacity="0.9"/>
+<text x="360" y="144" font-size="9" fill="white" text-anchor="middle">x1</text>
+<text x="325" y="165" font-size="9" fill="#388e3c">High weight</text>
+<circle cx="480" cy="140" r="8" fill="#ff9800" opacity="0.7"/>
+<text x="480" y="144" font-size="9" fill="white" text-anchor="middle">x2</text>
+<text x="500" y="165" font-size="9" fill="#f57c00">Low weight</text>
+</g>
+
+<!-- Step 2: Weight Function -->
+<g class="step" id="step2" data-narration="LWR uses Gaussian kernel: w(i) equals exp of negative distance squared over two tau squared. Tau controls locality and determines how much nearby points influence the fit.">
+<rect x="50" y="198" width="700" height="130" fill="white" stroke="#cbd5e1" stroke-width="1" rx="5"/>
+<text x="70" y="220" font-size="16" fill="#1e293b" font-weight="bold">Weight Function: Gaussian Kernel</text>
+<rect x="70" y="235" width="250" height="40" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+<text x="195" y="258" font-size="12" fill="#e65100" text-anchor="middle" font-family="monospace">w^(i) = exp( - (x^(i)-x_q)² / 2τ² )</text>
+<rect x="340" y="235" width="140" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="5"/>
+<text x="410" y="255" font-size="12" fill="#7b1fa2" text-anchor="middle" font-weight="bold">Bandwidth τ</text>
+<text x="410" y="275" font-size="10" fill="#7b1fa2" text-anchor="middle">Large τ: smooth</text>
+<text x="410" y="290" font-size="10" fill="#7b1fa2" text-anchor="middle">Small τ: wiggly</text>
+<text x="410" y="305" font-size="10" fill="#7b1fa2" text-anchor="middle">Balance needed</text>
+<text x="520" y="255" font-size="11" fill="#64748b">τ controls width of</text>
+<text x="520" y="270" font-size="11" fill="#64748b">the Gaussian bell curve.</text>
+<text x="520" y="290" font-size="11" fill="#64748b">Large τ: more global</text>
+<text x="520" y="305" font-size="11" fill="#64748b">Small τ: more local</text>
+</g>
+
+<!-- Step 3: Algorithm -->
+<g class="step" id="step3" data-narration="For each query point: compute weights, minimize weighted cost function, fit local linear model, make prediction, then discard the model.">
+<rect x="50" y="338" width="700" height="130" fill="white" stroke="#cbd5e1" stroke-width="1" rx="5"/>
+<text x="70" y="360" font-size="16" fill="#1e293b" font-weight="bold">The LWR Algorithm (per query point)</text>
+<rect x="70" y="375" width="130" height="35" fill="#e3f2fd" stroke="#1976d2" rx="4"/>
+<text x="135" y="397" font-size="11" fill="#1565c0" text-anchor="middle">1. Compute Weights</text>
+<path d="M205 392 L225 392" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+<rect x="230" y="375" width="130" height="35" fill="#e8f5e9" stroke="#388e3c" rx="4"/>
+<text x="295" y="397" font-size="11" fill="#2e7d32" text-anchor="middle">2. Minimize Weighted</text>
+<path d="M365 392 L385 392" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+<rect x="390" y="375" width="130" height="35" fill="#fff3e0" stroke="#ff9800" rx="4"/>
+<text x="455" y="397" font-size="11" fill="#ef6c00" text-anchor="middle">3. Fit Local Model</text>
+<path d="M525 392 L545 392" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+<rect x="550" y="375" width="130" height="35" fill="#fce4ec" stroke="#e91e63" rx="4"/>
+<text x="615" y="397" font-size="11" fill="#c2185b" text-anchor="middle">4. Predict y_q</text>
+<path d="M685 392 L705 392" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+<circle cx="735" cy="392" r="10" fill="#e0e0e0" stroke="#9e9e9e"/>
+<text x="735" y="396" font-size="9" fill="#757575" text-anchor="middle">θ</text>
+<text x="70" y="440" font-size="11" fill="#64748b">Weighted Cost: J(θ) = Σ w^(i) × (y^(i) - θᵀx^(i))²</text>
+<text x="70" y="460" font-size="11" fill="#64748b">After prediction, the local model parameters θ are discarded.</text>
+</g>
+
+<!-- Step 4: Key Points -->
+<g class="step" id="step4" data-narration="LWR is lazy learning: no training phase, all computation at prediction time. Trade-off: tau controls bias-variance. Cost is O(n) per prediction.">
+<rect x="50" y="478" width="700" height="108" fill="white" stroke="#cbd5e1" stroke-width="1" rx="5"/>
+<text x="70" y="500" font-size="16" fill="#1e293b" font-weight="bold">Key Takeaways</text>
+<text x="70" y="525" font-size="11" fill="#475569">• Non-parametric: No fixed parameters, model complexity grows with data size</text>
+<text x="70" y="545" font-size="11" fill="#475569">• Lazy Learning: Computation happens at prediction time, not training phase</text>
+<text x="70" y="565" font-size="11" fill="#475569">• Bandwidth τ: Large τ → underfitting (smooth), Small τ → overfitting (wiggly)</text>
+<text x="400" y="525" font-size="11" fill="#475569">• High Cost: O(n) per prediction</text>
+<text x="400" y="545" font-size="11" fill="#475569">  Must solve regression for each query</text>
+<text x="400" y="565" font-size="11" fill="#475569">• Flexible: Captures non-linear patterns</text>
+<text x="400" y="580" font-size="11" fill="#475569">  without assuming function form</text>
+</g>
+</svg>

@@ -1,0 +1,145 @@
+{
+  "topicId": "deadlock-prevention",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the four necessary conditions for deadlock formation. Can all four conditions be prevented simultaneously?",
+      "keyPoints": [
+        "Name the four conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait",
+        "Explain each condition briefly",
+        "State that preventing all four simultaneously is not necessary; preventing at least one is sufficient",
+        "Mention that practically, only one condition is targeted for prevention"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between deadlock prevention and deadlock avoidance. Which one is more restrictive and why?",
+      "keyPoints": [
+        "Prevention eliminates at least one condition at design time",
+        "Avoidance allows all conditions but makes safe allocation decisions at runtime",
+        "Prevention is more restrictive as it constrains system design",
+        "Avoidance requires advance knowledge and runtime overhead",
+        "Banker's Algorithm is an example of avoidance, not prevention"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "How does the resource ordering technique prevent circular wait? Explain with an example.",
+      "keyPoints": [
+        "Assign unique numbers to each resource type",
+        "Require processes to request resources in increasing order",
+        "This creates a partial ordering preventing circular chains",
+        "Example: If Printer=1, Tape=2, Disk=3, a process holding Disk cannot request Printer",
+        "This breaks the circular wait cycle"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are the drawbacks of preventing the Hold and Wait condition? Why is it not commonly used?",
+      "keyPoints": [
+        "Low resource utilization - processes hold resources without using them",
+        "Starvation - processes may wait indefinitely for all resources",
+        "Requires advance knowledge of maximum resource needs",
+        "Reduced system throughput as processes wait for all resources upfront",
+        "Not suitable for dynamic resource requirements"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain how the No Preemption condition can be prevented. What are the challenges in implementing this approach?",
+      "keyPoints": [
+        "If a process holding resources requests more that are unavailable, preempt all held resources",
+        "Resources are added back to the available pool",
+        "Requires checkpointing and rollback mechanisms",
+        "Process must restart from checkpoint when resources become available",
+        "Implementation complexity and overhead are high"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Why is preventing Mutual Exclusion often impractical in operating systems? Give examples of resources where this condition cannot be eliminated.",
+      "keyPoints": [
+        "Many hardware resources are inherently non-shareable",
+        "Printers, tape drives, and CD/DVD writers are exclusive-use devices",
+        "Making resources shareable requires special hardware",
+        "Software solutions like spooling work for some devices (printers) but not all",
+        "The condition is practically impossible to eliminate for certain resource types"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Describe any two methods for preventing deadlock by eliminating the Circular Wait condition. Explain how each method works and analyze its effectiveness and limitations.",
+      "keyPoints": [
+        "Method 1: Resource Ordering - assign unique numbers to resource types, require increasing order requests",
+        "Method 2: Restrict process to request only one resource at a time from each category",
+        "Explain resource ordering with example showing how it prevents circular wait",
+        "Discuss effectiveness: maintains high resource utilization, relatively easy to implement",
+        "Discuss limitations: requires global ordering, may restrict legitimate request patterns",
+        "Compare both methods in terms of throughput and implementation complexity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A system has four processes P0, P1, P2, P3 and four resource types A, B, C, D with 3, 2, 2, and 1 instances respectively. Using resource ordering A=1, B=2, C=3, D=4, explain how deadlock can be prevented if P0 holds A and B, P1 holds B and C, P2 holds C and D, and P3 requests B. Will deadlock occur? Justify your answer.",
+      "keyPoints": [
+        "Apply resource ordering rule: processes can only request resources with higher order than currently held",
+        "Analyze each process's current holdings and requests",
+        "P0 holding A(1),B(2) - can request resources with order >2",
+        "P1 holding B(2),C(3) - can request resources with order >3",
+        "P2 holding C(3),D(4) - cannot request anything (D is highest)",
+        "P3 requesting B(2) - since P3 holds nothing, it can request any resource",
+        "Check if circular wait can form - explain why it cannot",
+        "Conclude that deadlock cannot occur due to ordering constraint"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare and contrast all four methods of deadlock prevention. Which method would you recommend for a system with many printers and disk drives? Justify your choice.",
+      "keyPoints": [
+        "Mutual Exclusion: Make resources shareable - impractical for printers/drives",
+        "Hold and Wait: Request all or release before requesting - causes low utilization",
+        "No Preemption: Take resources away - requires checkpointing overhead",
+        "Circular Wait: Resource ordering - maintains good utilization, practical",
+        "For printers and disk drives: Prevent circular wait through ordering",
+        "Assign printers lower order, disks higher order",
+        "Processes must request printers before disks - prevents circular wait",
+        "Justification: Maintains high throughput, easy to implement, no resource waste"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of deadlock prevention in operating systems. Discuss why prevention is considered a better approach than avoidance in terms of runtime overhead and system design. Provide examples of scenarios where prevention might be preferred over avoidance.",
+      "keyPoints": [
+        "Prevention eliminates one Coffman condition at design time",
+        "Avoidance (Banker's Algorithm) requires runtime safe state analysis",
+        "Prevention has no runtime overhead for deadlock checking",
+        "Avoidance requires knowing maximum resource needs in advance",
+        "Prevention may restrict legitimate resource usage patterns",
+        "Avoidance allows more flexibility but with computational overhead",
+        "Prevention preferred when: resources are limited, real-time systems, simple applications",
+        "Avoidance preferred when: resource needs vary greatly, maximum needs unknown",
+        "Conclusion: Prevention is proactive, avoidance is more flexible but heavier"
+      ],
+      "marks": 10
+    }
+  ]
+}

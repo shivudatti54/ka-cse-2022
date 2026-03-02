@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Basic Two-Phase Locking Protocol",
+    "description": "Implementation demonstrating 2PL with growing and shrinking phases",
+    "code": "PROCEDURE TwoPhaseLock(transaction_id, data_item, lock_type)\nBEGIN\n IF lock_type = \"SHARED\" THEN\n IF data_item has X-lock THEN\n WAIT\n ELSE\n Grant S-lock on data_item to transaction_id\n Add lock to growing_locks[transaction_id]\n END IF\n ELSIF lock_type = \"EXCLUSIVE\" THEN\n IF data_item has S-lock OR X-lock THEN\n WAIT\n ELSE\n Grant X-lock on data_item to transaction_id\n Add lock to growing_locks[transaction_id]\n END IF\n END IF\nEND PROCEDURE\n\nPROCEDURE ReleaseLocks(transaction_id)\nBEGIN\n // Shrinking phase begins\n FOR EACH lock IN growing_locks[transaction_id] DO\n Release lock on data_item\n END FOR\n Clear growing_locks[transaction_id]\nEND PROCEDURE",
+    "explanation": "This pseudocode shows how locks are acquired during growing phase and released during shrinking phase. Shared locks allow concurrent reads, while exclusive locks serialize write operations.",
+    "complexity": {
+      "time": "O(n) where n is number of locks",
+      "space": "O(t) where t is number of transactions"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Transaction Execution with ACID Properties",
+    "description": "Pseudo-code showing transaction with commit and rollback handling",
+    "code": "PROCEDURE ExecuteTransaction(operations[])\nBEGIN\n // Begin transaction\n transaction_id = BEGIN_TRANSACTION()\n \n TRY\n // Active state\n FOR EACH operation IN operations DO\n Acquire locks as needed (Isolation)\n Execute operation\n Update undo/redo log (Atomicity)\n END FOR\n \n // Partially committed\n Write COMMIT marker to log\n Force log to stable storage (Durability)\n Release locks\n \n // Committed state\n RETURN SUCCESS\n \n EXCEPT\n // Failed state\n Rollback using undo log (Atomicity)\n Release locks\n // Aborted state\n RETURN FAILURE\n END TRY\nEND PROCEDURE",
+    "explanation": "Demonstrates how ACID properties are implemented: locks for isolation, undo logs for atomicity (rollback), redo logs for durability (commit), and constraint checks for consistency.",
+    "complexity": {
+      "time": "O(n log n) for n operations with logging",
+      "space": "O(n) for log storage"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Deadlock Detection using Wait-For Graph",
+    "description": "Algorithm to detect deadlocks in transaction processing",
+    "code": "PROCEDURE DetectDeadlock()\nBEGIN\n Initialize empty graph\n \n FOR EACH active_transaction T1 IN transactions DO\n FOR EACH lock L1 held by T1 DO\n FOR EACH waiting_transaction T2 DO\n IF T2 is waiting for lock L1 THEN\n Add edge T2 \u2192 T1 to graph\n END IF\n END FOR\n END FOR\n END FOR\n \n // Detect cycles using DFS\n FOR EACH node IN graph DO\n IF HasCycleFrom(node) THEN\n RETURN DEADLOCK_DETECTED\n END IF\n END FOR\n \n RETURN NO_DEADLOCK\nEND PROCEDURE\n\nPROCEDURE ResolveDeadlock()\nBEGIN\n victim = SelectVictim() // based on youngest/lowest priority\n Rollback(victim)\n Restart(victim) OR Kill(victim)\nEND PROCEDURE",
+    "explanation": "The wait-for graph tracks which transactions are waiting for locks held by others. A cycle indicates deadlock. The system resolves by selecting a victim transaction to abort and break the deadlock.",
+    "complexity": {
+      "time": "O(V+E) for graph traversal",
+      "space": "O(V) for graph storage"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "pseudocode",
+    "title": "Precedence Graph for Serializability Testing",
+    "description": "Algorithm to check if schedule is conflict serializable",
+    "code": "PROCEDURE CheckSerializability(schedule)\nBEGIN\n Initialize empty adjacency list\n transactions = GetAllTransactions(schedule)\n \n FOR EACH pair of operations (op1, op2) IN schedule DO\n IF op1 and op2 conflict THEN\n // op1 must come before op2 in serial order\n t1 = GetTransaction(op1)\n t2 = GetTransaction(op2)\n IF op1 occurs_before op2 IN schedule THEN\n Add edge t1 \u2192 t2\n ELSE\n Add edge t2 \u2192 t1\n END IF\n END IF\n END FOR\n \n // Check for cycles using DFS\n FOR EACH transaction IN transactions DO\n IF DetectCycleDFS(transaction, visited, recursion_stack) THEN\n RETURN NOT_SERIALIZABLE\n END IF\n END FOR\n \n RETURN SERIALIZABLE\nEND PROCEDURE",
+    "explanation": "Constructs a precedence graph where edges represent conflicts between operations. If the graph has no cycles, the schedule is conflict serializable. Cycles indicate potential data consistency problems.",
+    "complexity": {
+      "time": "O(n\u00b2) for n operations",
+      "space": "O(t) for t transactions"
+    }
+  }
+]

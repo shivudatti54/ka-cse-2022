@@ -1,0 +1,35 @@
+{
+  "topicId": "multicore-gpu",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cuda",
+      "title": "Vector Addition using CUDA",
+      "description": "Simple CUDA kernel demonstrating parallel array addition where each thread handles one element",
+      "code": "// Device kernel - executed in parallel by GPU threads\n__global__ void vectorAdd(float* A, float* B, float* C, int n) {\n    // Calculate global thread index\n    int i = blockIdx.x * blockDim.x + threadIdx.x;\n    \n    // Boundary check\n    if (i < n) {\n        C[i] = A[i] + B[i];\n    }\n}\n\n// Host code to launch kernel\nint main() {\n    int n = 1024 * 1024;  // 1M elements\n    int blockSize = 256;\n    int numBlocks = (n + blockSize - 1) / blockSize;\n    \n    // Launch kernel with 256 threads per block\n    vectorAdd<<<numBlocks, blockSize>>>(d_A, d_B, d_C, n);\n    \n    // Wait for GPU to finish\n    cudaDeviceSynchronize();\n    return 0;\n}",
+      "explanation": "Each thread calculates its global index and performs one element addition. Threads are organized into blocks (256 threads each), blocks into grid. Simple demonstration of data-parallel execution.",
+      "timeComplexity": "O(n) total work, O(n/T) per thread where T = total threads",
+      "spaceComplexity": "O(n) for input/output arrays plus O(1) per thread for registers"
+    },
+    {
+      "id": "code-2",
+      "language": "cuda",
+      "title": "Matrix Multiplication with Shared Memory",
+      "description": "Optimized matrix multiplication using shared memory for tile-based computation",
+      "code": "// Tile size for shared memory optimization\n#define TILE_SIZE 16\n\n__global__ void matrixMulShared(float* A, float* B, float* C, \n                                int M, int N, int K) {\n    // Shared memory for tiles\n    __shared__ float tileA[TILE_SIZE][TILE_SIZE];\n    __shared__ float tileB[TILE_SIZE][TILE_SIZE];\n    \n    int row = blockIdx.y * TILE_SIZE + threadIdx.y;\n    int col = blockIdx.x * TILE_SIZE + threadIdx.x;\n    \n    float sum = 0.0f;\n    \n    // Loop over tiles\n    for (int t = 0; t < (K + TILE_SIZE - 1) / TILE_SIZE; t++) {\n        // Load tiles into shared memory\n        if (row < M && t * TILE_SIZE + threadIdx.x < K)\n            tileA[threadIdx.y][threadIdx.x] = A[row * K + t * TILE_SIZE + threadIdx.x];\n        else\n            tileA[threadIdx.y][threadIdx.x] = 0.0f;\n            \n        if (col < N && t * TILE_SIZE + threadIdx.y < K)\n            tileB[threadIdx.y][threadIdx.x] = B[(t * TILE_SIZE + threadIdx.y) * N + col];\n        else\n            tileB[threadIdx.y][threadIdx.x] = 0.0f;\n        \n        __syncthreads();  // Wait for tile loading\n        \n        // Compute partial dot product\n        for (int i = 0; i < TILE_SIZE; i++)\n            sum += tileA[threadIdx.y][i] * tileB[i][threadIdx.x];\n        \n        __syncthreads();  // Wait for computation before next tile\n    }\n    \n    if (row < M && col < N)\n        C[row * N + col] = sum;\n}",
+      "explanation": "Uses shared memory to load matrix tiles, reducing global memory accesses. Each block computes a TILE_SIZE x TILE_SIZE output block. __syncthreads() ensures proper synchronization within block.",
+      "timeComplexity": "O(M*N*K/T\u00b2) with T tiles",
+      "spaceComplexity": "O(T\u00b2) shared memory per block + O(M*N + M*K + K*N) global memory"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Multicore Parallel Reduction",
+      "description": "Parallel sum reduction across multiple CPU cores using OpenMP",
+      "code": "// Parallel Reduction using OpenMP\n// Computes sum of array elements in parallel\n\nFUNCTION parallelReduction(array A, n):\n    total = 0\n    \n    // Parallel section - divide work among threads\n    PARALLEL REDUCTION(+:total)\n        // Each thread gets chunk of array\n        chunkSize = n / numThreads\n        start = threadId * chunkSize\n        end = min(start + chunkSize, n)\n        \n        // Each thread sums its portion\n        localSum = 0\n        FOR i FROM start TO end-1:\n            localSum = localSum + A[i]\n        \n        // Reduction combines all local sums\n        total = total + localSum\n    \n    RETURN total\n\n// Using OpenMP pragma\nint parallelSum(int* arr, int n) {\n    int sum = 0;\n    #pragma omp parallel for reduction(+:sum)\n    for (int i = 0; i < n; i++) {\n        sum += arr[i];\n    }\n    return sum;\n}",
+      "explanation": "Parallel reduction divides array among threads, each computes partial sum, then combines. OpenMP handles thread creation, work distribution, and reduction. Efficient for large arrays on multicore CPUs.",
+      "timeComplexity": "O(n/p + log p) where p = number of cores",
+      "spaceComplexity": "O(p) for thread-local storage + O(1) per thread for accumulation"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "structure-of-page-table",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Two-Level Page Table Lookup",
+      "description": "Hierarchical address translation using outer and inner page tables",
+      "code": "ALGORITHM TwoLevelPageLookup\nBEGIN\n Extract outer_page from virtual_address\n Extract inner_page from virtual_address\n Extract offset from virtual_address\n \n IF outer_table[outer_page] is invalid THEN\n Raise Page Fault\n END IF\n \n inner_table = outer_table[outer_page].frame\n IF inner_table[inner_page] is invalid THEN\n Raise Page Fault\n END IF\n \n physical_address = (inner_table[inner_page].frame << OFFSET_BITS) | offset\n RETURN physical_address\nEND",
+      "explanation": "1. Splits virtual address into three parts\n2. Checks validity at each level\n3. Combines frame number with offset",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(outer_size + inner_size)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Algorithm: Hashed Page Table Lookup",
+      "description": "Collision resolution using chaining in hashed page tables",
+      "code": "ALGORITHM HashedPageLookup\nBEGIN\n hash = HASH_FUNCTION(virtual_page_number)\n current = hash_table[hash]\n \n WHILE current != NULL DO\n IF current.pid == pid AND current.vpn == virtual_page_number THEN\n RETURN current.frame\n END IF\n current = current.next\n END WHILE\n \n Raise Page Fault\nEND",
+      "explanation": "1. Computes hash of virtual page number\n2. Traverses chain to find matching PID/VPN\n3. Returns frame or page fault",
+      "timeComplexity": "O(1) average, O(n) worst",
+      "spaceComplexity": "O(m) where m = number of entries"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: Inverted Page Table Search",
+      "description": "Linear search through global inverted page table",
+      "code": "ALGORITHM InvertedTableSearch\nBEGIN\n FOR each entry in inverted_table DO\n IF entry.pid == target_pid AND entry.vpn == target_vpn THEN\n RETURN entry.frame\n END IF\n END FOR\n \n Raise Page Fault\nEND",
+      "explanation": "1. Iterates through all entries\n2. Matches PID and virtual page number\n3. Returns frame or page fault",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1) per physical frame"
+    }
+  ]
+}

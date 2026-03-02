@@ -1,0 +1,45 @@
+{
+  "topicId": "flat-and-nested-distributed-transactions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Two-Phase Commit Protocol",
+      "description": "Pseudocode showing coordinator and participant roles in 2PC",
+      "code": "// COORDINATOR\nprocedure twoPhaseCommit(transaction):\n // Phase 1: Prepare\n send PREPARE to all participants\n votes = collectVotes()\n \n if all votes = YES then:\n // Phase 2: Commit\n send COMMIT to all participants\n collectAcknowledgments()\n return SUCCESS\n else:\n send ABORT to all participants\n collectAcknowledgments()\n return ABORTED\n\n// PARTICIPANT\nprocedure onPrepare(transaction):\n if canCommit(transaction) then:\n lockResources()\n writeToLog(READY)\n send VOTE_YES to coordinator\n waitForDecision()\n else:\n send VOTE_NO to coordinator\n return ABORTED\n\nprocedure onCommit():\n makeChangesPermanent()\n releaseLocks()\n send ACK to coordinator\n\nprocedure onAbort():\n rollbackChanges()\n releaseLocks()\n send ACK to coordinator",
+      "explanation": "Coordinator orchestrates the two phases: Prepare asks all participants if they can commit, and only if all vote Yes does it send Commit. Otherwise sends Abort. Participants lock resources and wait for coordinator's decision.",
+      "timeComplexity": "O(n) messages where n = number of participants",
+      "spaceComplexity": "O(n) for storing participant states"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Three-Phase Commit Protocol",
+      "description": "Pseudocode for non-blocking 3PC protocol",
+      "code": "// COORDINATOR\nprocedure threePhaseCommit(transaction):\n // Phase 1: CanCommit\n send CAN_COMMIT to all participants\n votes = collectVotes()\n \n if all votes = YES then:\n // Phase 2: PreCommit\n send PRE_COMMIT to all participants\n collectAcknowledgments()\n \n // Phase 3: DoCommit\n send DO_COMMIT to all participants\n collectAcknowledgments()\n return SUCCESS\n else:\n send ABORT to all participants\n return ABORTED\n\n// PARTICIPANT\nprocedure onCanCommit():\n if canCommit() then:\n send VOTE_YES\n waitForPreCommit()\n else:\n send VOTE_NO\n\nprocedure onPreCommit():\n writeToLog(PREPARED_TO_COMMIT)\n send ACK\n waitForDoCommit()\n\nprocedure onDoCommit():\n commit()\n send ACK\n\nprocedure onAbort():\n abort()\n send ACK",
+      "explanation": "3PC adds PreCommit phase between Prepare and Commit. If coordinator fails after PreCommit, participants know all were ready and can safely commit. This eliminates the blocking state.",
+      "timeComplexity": "O(3n) messages - three rounds of communication",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Saga Pattern Implementation",
+      "description": "Pseudocode for Saga pattern with compensating transactions",
+      "code": "// SAGA ORCHESTRATOR\nprocedure executeSaga(operations):\n completedOps = []\n \n for each operation in operations:\n try:\n result = operation.execute()\n completedOps.append(operation)\n except Exception:\n // Compensate in reverse order\n for op in reverse(completedOps):\n op.compensate()\n return FAILED\n \n return SUCCESS\n\n// EXAMPLE: Order Processing Saga\nclass OrderSaga:\n operations = [\n ReserveInventory(),\n ProcessPayment(),\n CreateShipment()\n ]\n \n def compensateReserveInventory():\n inventory.release(orderId)\n \n def compensateProcessPayment():\n payment.refund(orderId)\n \n def compensateCreateShipment():\n shipment.cancel(orderId)",
+      "explanation": "Saga executes a sequence of local transactions. If any step fails, compensating transactions (reverse operations) are executed to undo completed work. Suitable for long-running distributed transactions.",
+      "timeComplexity": "O(n) for success, O(n²) worst case with compensation",
+      "spaceComplexity": "O(n) for completed operations log"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Nested Transaction Execution",
+      "description": "Pseudocode showing parent-child transaction relationship",
+      "code": "// PARENT TRANSACTION\nprocedure parentTransaction():\n beginTransaction()\n \n try:\n // Child Transaction 1\n result1 = childTransaction1()\n \n // Child Transaction 2 (depends on result1)\n result2 = childTransaction2(result1)\n \n // Child Transaction 3 (independent)\n result3 = childTransaction3()\n \n commit() // Commits all children\n except Exception as e:\n // Compensate completed children\n compensate(childTransaction3)\n compensate(childTransaction2)\n compensate(childTransaction1)\n rollback()\n\n// CHILD TRANSACTION\nprocedure childTransaction1():\n beginTransaction() // Creates sub-transaction\n \n try:\n // Perform operations\n doWork()\n commit() // Child can commit independently\n return SUCCESS\n except Exception:\n rollback() // Child failure affects parent\n raise Exception",
+      "explanation": "Nested transactions allow sub-transactions (children) to execute and commit independently. Parent coordinates children and may need to compensate if any child fails. Provides better modularity and partial commit capability.",
+      "timeComplexity": "O(d) where d = depth of nesting",
+      "spaceComplexity": "O(d)"
+    }
+  ]
+}

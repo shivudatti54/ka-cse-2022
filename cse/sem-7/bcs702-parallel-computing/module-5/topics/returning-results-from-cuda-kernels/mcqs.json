@@ -1,0 +1,76 @@
+{
+  "topicId": "returning-results-from-cuda-kernels",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Why must CUDA kernel functions have a void return type?",
+      "options": [
+        { "key": "A", "text": "The GPU hardware does not support floating-point operations" },
+        {
+          "key": "B",
+          "text": "Thousands of threads execute simultaneously with no single caller to receive a return value"
+        },
+        { "key": "C", "text": "The CUDA compiler cannot optimize non-void functions" },
+        { "key": "D", "text": "The void type allows kernels to run faster on the GPU" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "CUDA kernels launch thousands of threads in parallel. Unlike a sequential function call where one caller awaits one return value, there is no mechanism to return individual values from each of thousands of concurrent threads. Instead, threads write results to device memory.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which cudaMemcpy direction flag is used to copy computation results from the GPU back to the CPU?",
+      "options": [
+        { "key": "A", "text": "cudaMemcpyHostToDevice" },
+        { "key": "B", "text": "cudaMemcpyDeviceToHost" },
+        { "key": "C", "text": "cudaMemcpyDeviceToDevice" },
+        { "key": "D", "text": "cudaMemcpyHostToHost" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "cudaMemcpyDeviceToHost specifies that data should be copied from GPU device memory to CPU host memory. This is the standard way to retrieve kernel results on the host side.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What is the main disadvantage of using atomicAdd to accumulate a scalar result from thousands of CUDA threads?",
+      "options": [
+        { "key": "A", "text": "atomicAdd only works with integer data types" },
+        { "key": "B", "text": "atomicAdd requires shared memory which is limited in size" },
+        {
+          "key": "C",
+          "text": "Concurrent atomic operations on the same address are serialized, creating a performance bottleneck"
+        },
+        { "key": "D", "text": "atomicAdd cannot be used inside __global__ functions" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When thousands of threads call atomicAdd on the same memory location, only one thread can succeed at a time while others must retry. This serialization creates a severe bottleneck, making it much slower than parallel reduction for large-scale accumulations.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "In the parallel reduction pattern, what must be called between each reduction step to ensure correctness?",
+      "options": [
+        { "key": "A", "text": "cudaDeviceSynchronize()" },
+        { "key": "B", "text": "__syncthreads()" },
+        { "key": "C", "text": "cudaMemcpy()" },
+        { "key": "D", "text": "atomicAdd()" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "__syncthreads() is a block-level barrier that ensures all threads in a block have completed the current reduction step before any thread proceeds to the next step. Without it, threads may read stale values from shared memory, producing incorrect results.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What function is used to allocate unified memory that is accessible from both CPU and GPU without explicit cudaMemcpy calls?",
+      "options": [
+        { "key": "A", "text": "cudaMalloc()" },
+        { "key": "B", "text": "cudaHostAlloc()" },
+        { "key": "C", "text": "cudaMallocManaged()" },
+        { "key": "D", "text": "malloc()" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "cudaMallocManaged() allocates unified memory that the CUDA runtime automatically migrates between host and device as needed. The programmer uses a single pointer without explicit cudaMemcpy, though cudaDeviceSynchronize() must be called before the host accesses the results.",
+      "difficulty": "medium"
+    }
+  ]
+}

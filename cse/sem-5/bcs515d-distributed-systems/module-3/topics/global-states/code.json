@@ -1,0 +1,35 @@
+{
+  "topicId": "global-states",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Chandy-Lamport Snapshot - Initiator Process",
+      "description": "Pseudocode for the initiator process that starts the snapshot",
+      "code": "PROCEDURE InitiateSnapshot()\n recorded := FALSE\n state := RecordLocalState()\n recorded := TRUE\n FOR each outgoing channel c DO\n SEND marker ON c\n END FOR\nEND PROCEDURE",
+      "explanation": "The initiator records its local state immediately and then sends markers on all outgoing channels. The markers propagate the snapshot request to all other processes in the system.",
+      "timeComplexity": "O(d)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Chandy-Lamport Snapshot - Receiving Process",
+      "description": "Pseudocode for a non-initiator process handling marker messages",
+      "code": "ON RECEIVE marker ON channel c:\n IF NOT recorded THEN\n // First marker - record state and start recording channel\n state := RecordLocalState()\n recorded := TRUE\n channelState[c] := [] // Start empty\n receiving := TRUE\n ELSE\n // Subsequent marker - stop recording this channel\n receiving := FALSE\n END IF\n // Forward marker to all other outgoing channels\n FOR each outgoing channel c' WHERE c' \u2260 c DO\n SEND marker ON c'\n END FOR\nEND ON\n\nON RECEIVE message m ON channel c:\n IF receiving THEN\n APPEND m TO channelState[c]\n END IF\n // Also deliver message for normal computation\n DELIVER m TO application\nEND ON",
+      "explanation": "When the first marker arrives, the process records its state and begins recording the channel. Messages arriving after the first marker but before the second are captured as in-transit. Subsequent markers stop recording.",
+      "timeComplexity": "O(m)",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Happens-Before Relation Check",
+      "description": "Algorithm to check if event a happens-before event b using vector clocks",
+      "code": "FUNCTION HappensBefore(event a, event b):\n // Returns TRUE if a \u2192 b using vector timestamps\n // Each process i has VC[i] counter\n // Event a has timestamp TA, event b has timestamp TB\n \n IF a.process = b.process THEN\n IF a.localTime < b.localTime THEN\n RETURN TRUE\n ELSE\n RETURN FALSE\n END IF\n END IF\n \n // Check if TA < TB in all components\n lessThan := TRUE\n greaterThan := FALSE\n FOR i := 1 TO n DO\n IF TA[i] > TB[i] THEN\n lessThan := FALSE\n END IF\n IF TA[i] < TB[i] THEN\n greaterThan := TRUE\n END IF\n END FOR\n \n RETURN lessThan AND greaterThan\nEND FUNCTION",
+      "explanation": "This function determines causal ordering using vector timestamps. Event a happens-before b if a's timestamp is component-wise less than b's and at least one component is strictly less. This is the foundation for determining consistent cuts.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

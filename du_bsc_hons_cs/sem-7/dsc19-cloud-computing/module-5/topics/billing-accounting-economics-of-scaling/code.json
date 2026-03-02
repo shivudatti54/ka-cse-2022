@@ -1,0 +1,45 @@
+{
+  "topicId": "billing-accounting-economics-of-scaling",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Auto-scaling Logic",
+      "description": "Demonstrates basic auto-scaling algorithm based on CPU utilization thresholds",
+      "code": "import time\n\ndef auto_scale(current_instances, cpu_utilization):\n    MIN_INSTANCES = 2\n    MAX_INSTANCES = 20\n    SCALE_UP_THRESHOLD = 70  # percent\n    SCALE_DOWN_THRESHOLD = 30  # percent\n    \n    if cpu_utilization > SCALE_UP_THRESHOLD:\n        if current_instances < MAX_INSTANCES:\n            new_instances = min(current_instances + 2, MAX_INSTANCES)\n            print(f\"Scaling UP: {current_instances} -> {new_instances} instances\")\n            return new_instances\n    elif cpu_utilization < SCALE_DOWN_THRESHOLD:\n        if current_instances > MIN_INSTANCES:\n            new_instances = max(current_instances - 1, MIN_INSTANCES)\n            print(f\"Scaling DOWN: {current_instances} -> {new_instances} instances\")\n            return new_instances\n    else:\n        print(f\"Stable: {current_instances} instances at {cpu_utilization}% CPU\")\n    return current_instances\n\n# Example simulation\ninstances = 5\nfor cpu in [25, 45, 75, 85, 90, 80, 40, 20]:\n    instances = auto_scale(instances, cpu)\n    time.sleep(1)",
+      "explanation": "This demonstrates a simple threshold-based auto-scaling mechanism that adds instances when CPU exceeds 70% and removes instances when CPU drops below 30%, with min/max bounds and hysteresis to prevent flapping.",
+      "timeComplexity": "O(n) per check",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "TCO Calculation Algorithm",
+      "description": "Algorithm to calculate Total Cost of Ownership for comparing on-premise vs cloud options",
+      "code": "ALGORITHM CalculateTCO\nBEGIN\n    INPUT: workload_hours, on_premise_config, cloud_config\n    \n    // On-Premise Costs (CapEx + OpEx over 3 years)\n    hardware_cost = on_premise_config.server_cost + on_premise_config.storage_cost\n    facility_cost = on_premise_config.datacenter_sqft * on_premise_config.cost_per_sqft * 3\n    personnel_cost = on_premise_config.admin_staff * on_premise_config.annual_salary * 3\n    maintenance_cost = hardware_cost * 0.15 * 3  // 15% annual maintenance\n    power_cooling = on_premise_config.kw_usage * on_premise_config.electricity_rate * 8760 * 3\n    \n    on_premise_tco = hardware_cost + facility_cost + personnel_cost + maintenance_cost + power_cooling\n    \n    // Cloud Costs (OpEx over 3 years)\n    compute_cost = cloud_config.hourly_rate * workload_hours * 3\n    storage_cost = cloud_config.storage_gb * cloud_config.storage_rate_per_gb * 12 * 3\n    data_transfer = cloud_config.monthly_transfer_gb * cloud_config.transfer_rate * 12 * 3\n    support_cost = cloud_config.support_tier_monthly * 12 * 3\n    \n    cloud_tco = compute_cost + storage_cost + data_transfer + support_cost\n    \n    OUTPUT: on_premise_tco, cloud_tco\n    IF cloud_tco < on_premise_tco THEN\n        savings = on_premise_tco - cloud_tco\n        PRINT \"Cloud saves Rs. \", savings\n    ELSE\n        PRINT \"On-premise is more cost-effective\"\n    ENDIF\nEND",
+      "explanation": "This algorithm compares TCO between on-premise (CapEx model with hardware, facilities, personnel, maintenance) and cloud (OpEx model with hourly compute, storage, data transfer) over a 3-year period to determine the most cost-effective option.",
+      "timeComplexity": "O(1) - constant operations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Reserved Instance Recommendation Engine",
+      "description": "Java program to recommend whether to use Reserved Instances based on usage patterns",
+      "code": "import java.util.Scanner;\n\npublic class ReservedInstanceRecommender {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        System.out.print(\"Enter hourly on-demand rate (Rs.): \");\n        double onDemandRate = scanner.nextDouble();\n        \n        System.out.print(\"Enter daily usage hours: \");\n        double dailyHours = scanner.nextDouble();\n        \n        System.out.print(\"Enter expected usage period (months): \");\n        int months = scanner.nextInt();\n        \n        // Calculate costs\n        double onDemandMonthly = onDemandRate * dailyHours * 30;\n        double onDemandTotal = onDemandMonthly * months;\n        \n        // Reserved Instance (1 year term, ~60% discount)\n        double riUpfront = onDemandRate * dailyHours * 365 * 0.40; // 40% upfront\n        double riMonthly = 0; // All upfront for 1 year\n        double riTotal = riUpfront;\n        \n        double savings = onDemandTotal - riTotal;\n        double savingsPercent = (savings / onDemandTotal) * 100;\n        \n        System.out.println(\"\\n=== Analysis ===\");\n        System.out.println(\"On-Demand Total: Rs. \" + onDemandTotal);\n        System.out.println(\"Reserved Instance Total: Rs. \" + riTotal);\n        System.out.println(\"Potential Savings: Rs. \" + savings + \" (\" + savingsPercent + \"%)\");\n        \n        if (savingsPercent > 30) {\n            System.out.println(\"RECOMMENDATION: Use Reserved Instances - High savings!\");\n        } else if (savingsPercent > 15) {\n            System.out.println(\"RECOMMENDATION: Consider Reserved Instances - Moderate savings\");\n        } else {\n            System.out.println(\"RECOMMENDATION: Use On-Demand - Low savings from RI\");\n        }\n        \n        scanner.close();\n    }\n}",
+      "explanation": "This program analyzes usage patterns to recommend whether Reserved Instances would be cost-effective. It calculates total costs for on-demand vs reserved pricing and recommends based on potential savings percentage.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Cloud Cost Budget Monitor",
+      "description": "Algorithm for monitoring cloud spending against budget thresholds and triggering alerts",
+      "code": "ALGORITHM BudgetMonitor\nBEGIN\n    INPUT: current_spend, budget_limit, alert_thresholds\n    \n    SET alert_thresholds = [0.5, 0.75, 0.90, 1.0]  // 50%, 75%, 90%, 100%\n    SET alert_messages = [\"Warning: 50% budget used\",\n                          \"Alert: 75% budget used\",\n                          \"Critical: 90% budget used\",\n                          \"Exceeded: Budget limit reached\"]\n    \n    percentage_used = (current_spend / budget_limit) * 100\n    \n    FOR i FROM 0 TO length(alert_thresholds) - 1 DO\n        threshold_percentage = alert_thresholds[i] * 100\n        \n        IF percentage_used >= threshold_percentage THEN\n            IF NOT alert_sent[threshold_percentage] THEN\n                SEND_ALERT(alert_messages[i])\n                alert_sent[threshold_percentage] = TRUE\n                \n                IF percentage_used >= 100 THEN\n                    PRINT \"URGENT: Stopping non-critical resources...\"\n                    TRIGGER_COST_CONTROLS()\n                ENDIF\n            ENDIF\n        ENDIF\n    ENDFOR\n    \n    daily_burn_rate = current_spend / days_elapsed\n    projected_monthly = daily_burn_rate * days_in_month\n    \n    IF projected_monthly > budget_limit THEN\n        PROJECTION_ALERT(\"Projected overspend: Rs.\" + (projected_monthly - budget_limit))\n    ENDIF\n    \n    OUTPUT: alert_status, projected_monthly\nEND\n\nPROCEDURE SEND_ALERT(message)\nBEGIN\n    PRINT \"[ALERT] \" + message\n    EMAIL_NOTIFICATION(admin_email, message)\n    LOG_AUDIT(message)\nEND",
+      "explanation": "This algorithm monitors cloud spending against defined budget thresholds, sending alerts at 50%, 75%, 90%, and 100% of budget utilization. It also calculates daily burn rate to project monthly spending and trigger proactive alerts.",
+      "timeComplexity": "O(n) where n is number of thresholds",
+      "spaceComplexity": "O(n) for alert tracking"
+    }
+  ]
+}

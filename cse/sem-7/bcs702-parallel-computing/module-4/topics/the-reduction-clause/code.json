@@ -1,0 +1,65 @@
+{
+  "topicId": "the-reduction-clause",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Sum of N Natural Numbers using Reduction",
+      "description": "Demonstrates basic reduction with addition operator",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nint main() {\n int n = 100;\n int sum = 0;\n \n #pragma omp parallel for reduction(+:sum)\n for (int i = 1; i <= n; i++) {\n sum += i;\n }\n \n printf(\"Sum = %d\\n\", sum); // Output: 5050\n return 0;\n}\n\n// Compile: gcc -fopenmp program.c -o program\n// Run: ./program",
+      "explanation": "Each thread gets a private copy of sum initialized to 0. Threads accumulate their portion of the loop iterations. At the end, all private copies are combined using '+' operator to produce final sum 5050.",
+      "timeComplexity": "O(n/p) where p is number of threads",
+      "spaceComplexity": "O(1) additional space per thread"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Finding Min and Max using Reduction",
+      "description": "Demonstrates min and max reduction operators",
+      "code": "#include <stdio.h>\n#include <omp.h>\n#include <limits.h>\n\nint main() {\n int arr[] = {5, 2, 9, 1, 7, 3, 8, 4, 6};\n int n = sizeof(arr) / sizeof(arr[0]);\n \n int min_val = INT_MAX;\n int max_val = INT_MIN;\n \n #pragma omp parallel for reduction(min:min_val) reduction(max:max_val)\n for (int i = 0; i < n; i++) {\n if (arr[i] < min_val) min_val = arr[i];\n if (arr[i] > max_val) max_val = arr[i];\n }\n \n printf(\"Min = %d, Max = %d\\n\", min_val, max_val);\n return 0;\n}\n// Output: Min = 1, Max = 9",
+      "explanation": "Two reduction clauses can be combined. min_val starts at largest value (INT_MAX), max_val at smallest (INT_MIN). Each thread tracks local min/max, then combines to find global minimum (1) and maximum (9).",
+      "timeComplexity": "O(n/p)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Dot Product using Reduction",
+      "description": "Computes dot product of two vectors using floating-point reduction",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nint main() {\n double a[] = {1.0, 2.0, 3.0, 4.0, 5.0};\n double b[] = {1.0, 2.0, 3.0, 4.0, 5.0};\n int n = 5;\n double dot_product = 0.0;\n \n #pragma omp parallel for reduction(+:dot_product)\n for (int i = 0; i < n; i++) {\n dot_product += a[i] * b[i];\n }\n // 1*1 + 2*2 + 3*3 + 4*4 + 5*5 = 55\n printf(\"Dot Product = %.2f\\n\", dot_product);\n return 0;\n}\n// Output: Dot Product = 55.00",
+      "explanation": "Each thread computes partial dot products for its assigned iterations. Partial results are combined using addition at the end. Note: floating-point results may vary slightly with different thread counts due to non-associativity.",
+      "timeComplexity": "O(n/p)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Bitwise AND Reduction",
+      "description": "Demonstrates bitwise AND reduction operation",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nint main() {\n int arr[] = {0xFF0F, 0xFFF0, 0xF00F, 0xFFFF};\n int n = sizeof(arr) / sizeof(arr[0]);\n int result = 0xFFFF; // Identity for &\n \n #pragma omp parallel for reduction(&:result)\n for (int i = 0; i < n; i++) {\n result &= arr[i];\n }\n \n printf(\"Result = 0x%X\\n\", result);\n return 0;\n}\n// Output: Result = 0xF000",
+      "explanation": "Bitwise AND starts with all 1s (0xFFFF). Each element is ANDed: 0xFF0F & 0xFFF0 & 0xF00F & 0xFFFF = 0xF000. The identity value for & is all bits set.",
+      "timeComplexity": "O(n/p)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Array Reduction Manual Implementation",
+      "description": "Shows manual array reduction when built-in reduction is not suitable",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nvoid array_reduction_manual() {\n int arr[] = {1, 2, 3, 4, 5, 6, 7, 8};\n int n = sizeof(arr) / sizeof(arr[0]);\n int local_sum[4] = {0}; // 4 threads\n \n #pragma omp parallel num_threads(4)\n {\n int tid = omp_get_thread_num();\n int start = tid * (n / 4);\n int end = (tid == 3) ? n : start + (n / 4);\n \n for (int i = start; i < end; i++) {\n local_sum[tid] += arr[i];\n }\n }\n \n // Combine results manually\n int total = 0;\n for (int i = 0; i < 4; i++) {\n total += local_sum[i];\n }\n \n printf(\"Total = %d\\n\", total); // Output: 36\n}\n\nint main() {\n array_reduction_manual();\n return 0;\n}",
+      "explanation": "This manual array reduction shows the concept: each thread maintains a private partial sum array. After parallel work, partial results are combined sequentially. This is similar to what OpenMP does internally for scalar reduction but applied to arrays.",
+      "timeComplexity": "O(n/p + p)",
+      "spaceComplexity": "O(p) where p is thread count"
+    },
+    {
+      "id": "code-6",
+      "language": "c",
+      "title": "Product Reduction with Initialization",
+      "description": "Demonstrates multiplication reduction",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nint main() {\n int arr[] = {1, 2, 3, 4, 5};\n int n = sizeof(arr) / sizeof(arr[0]);\n int product = 1; // Identity for multiplication\n \n #pragma omp parallel for reduction(*:product)\n for (int i = 0; i < n; i++) {\n product *= arr[i];\n }\n // 1*2*3*4*5 = 120\n printf(\"Product = %d\\n\", product);\n return 0;\n}\n// Output: Product = 120",
+      "explanation": "For multiplication reduction, the initial identity value is 1 (since 1*x = x). Each thread multiplies its assigned elements, and at the end all partial products are combined by multiplication to get final result.",
+      "timeComplexity": "O(n/p)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

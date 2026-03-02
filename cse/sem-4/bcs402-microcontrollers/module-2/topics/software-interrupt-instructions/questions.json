@@ -1,0 +1,163 @@
+{
+  "topicId": "software-interrupt-instructions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the sequence of operations performed by the microprocessor when INT n instruction is executed.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "1. Push FLAGS register onto stack",
+        "2. Push CS register onto stack",
+        "3. Push IP register onto stack",
+        "4. Clear TF and IF flags in FLAGS",
+        "5. Load CS:IP from interrupt vector table entry n (at address n×4)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between software interrupts and hardware interrupts with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Software interrupts are synchronous (initiated by program), triggered by INT/INTO instructions, e.g., INT 21h for DOS calls",
+        "Hardware interrupts are asynchronous (initiated by external events), triggered by peripheral devices, e.g., keyboard, timer",
+        "Software interrupts have predictable timing; hardware interrupts are unpredictable",
+        "Both use the same interrupt handling mechanism in 8086"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of the IRET instruction? Explain how it restores the processor state.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "IRET returns control from interrupt service routine to main program",
+        "Operations in sequence: 1) Pop IP from stack",
+        "2) Pop CS from stack",
+        "3) Pop FLAGS from stack",
+        "This restores the exact state (flags, code segment, instruction pointer) as before interrupt"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the difference between INT n and INT 3 instructions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "INT n is a 2-byte instruction: opcode 0xCD followed by interrupt type number n",
+        "INT 3 is a 1-byte opcode (0xCC) used specifically for software breakpoints",
+        "Both call the corresponding interrupt handler but INT 3 is shorter",
+        "INT 3 is commonly used by debuggers to set breakpoints"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the Interrupt Vector Table (IVT)? Explain its structure and location in memory.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "IVT is a data structure containing addresses of interrupt service routines",
+        "Located at memory address 0000:0000 in 8086",
+        "Contains 256 entries (type 0-255), each 4 bytes",
+        "Each entry contains CS (segment) and IP (offset) of ISR",
+        "Address of entry n = n × 4 bytes (or n << 2)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the INTO instruction and its operation in 8086.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "INTO is a conditional software interrupt instruction",
+        "Checks the Overflow Flag (OF) status",
+        "If OF=1, executes INT 4 (calls interrupt type 4 handler)",
+        "If OF=0, executes next instruction (no action)",
+        "Used for detecting arithmetic overflow conditions"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What happens to the Trap Flag (TF) and Interrupt Flag (IF) when an INT instruction is executed? Why is this done?",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "TF (Trap Flag) is cleared to 0",
+        "IF (Interrupt Flag) is cleared to 0",
+        "TF is cleared to prevent single-step interrupts within ISR",
+        "IF is cleared to prevent other maskable interrupts from interrupting the current ISR",
+        "This ensures atomic execution of the interrupt service routine"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the complete interrupt handling mechanism in 8086 microprocessors for software interrupts. Include the steps from INT instruction execution to IRET.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "1. INT n instruction execution: Push FLAGS, CS, IP onto stack in order",
+        "2. Clear TF and IF flags to disable single-step and maskable interrupts",
+        "3. Load CS:IP from IVT entry n (at address n×4) to transfer control to ISR",
+        "4. ISR executes: Save additional registers if needed, perform required operations",
+        "5. IRET execution: Pop IP, CS, FLAGS from stack in reverse order",
+        "6. Resume execution from interrupted point with restored state",
+        "7. IF flag restored allows hardware interrupts again"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write an assembly language program demonstrating the creation and handling of a software interrupt. Explain each step.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define ISR at specific memory location with proper segment:offset",
+        "Place ISR address (CS:IP) in IVT at appropriate vector address",
+        "Write main program that sets up DS to point to ISR segment",
+        "Execute INT n instruction to invoke the interrupt",
+        "ISR should save registers, perform task, restore registers, execute IRET",
+        "Complete working example with proper segment definitions and initialization"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the structure of the Interrupt Vector Table and how the processor determines the address of the interrupt service routine for any given interrupt type number.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "IVT located at physical address 00000h in memory",
+        "Contains 256 entries (4 bytes each), total 1024 bytes",
+        "Each entry stores CS (segment) in higher word and IP (offset) in lower word",
+        "For interrupt type n, ISR address = memory location (n × 4)",
+        "Example: INT 21h (type 33) → address = 33 × 4 = 132 (0x84)",
+        "Lower word at [n×4] = IP offset, Upper word at [n×4+2] = CS segment",
+        "Processor loads this CS:IP to transfer control to ISR"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare and contrast INT, INTO, and IRET instructions in 8086. Include their purposes, operations, and differences.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "INT: Unconditional software interrupt - pushes FLAGS/CS/IP, clears TF/IF, transfers to ISR at vector n",
+        "INTO: Conditional software interrupt - checks OF, if set calls INT 4, else continues",
+        "IRET: Returns from ISR - pops IP/CS/FLAGS, restores previous state",
+        "INT and INTO initiate interrupts; IRET terminates them",
+        "INT is 2-byte (except INT 3 which is 1-byte), INTO is 1-byte, IRET is 1-byte",
+        "All three are essential for interrupt-driven programming in 8086"
+      ]
+    }
+  ]
+}

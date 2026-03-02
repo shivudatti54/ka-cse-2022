@@ -1,0 +1,53 @@
+{
+  "mnemonics": [
+    "SAFER: Signal Action Follows These Essential Rules - A(tomic variables), S(afe functions only), F(lag setting), E(errno handling), R(eentrant code only)",
+    "ASAF: Async-Signal-Avoid Functions - Remember which functions are NOT safe to call in handlers",
+    "VSTAR: Volatile Sig_atomic_T And atomic-pseudo-mnemonic: Always Remember to combine both qualifiers when sharing variables"
+  ],
+  "acronyms": [
+    {
+      "term": "EINTR",
+      "expansion": "EINTRupted - Error returned when system call is interrupted by signal",
+      "usage": "When read()/write() returns -1, check if errno==EINTR and restart the call"
+    },
+    {
+      "term": "SA_RESTART",
+      "expansion": "Signal Action RESTART - Flag to automatically restart interrupted system calls",
+      "usage": "Use in struct sigaction: act.sa_flags = SA_RESTART;"
+    },
+    {
+      "term": "sig_atomic_t",
+      "expansion": "SIGnal ATOMIC TYPE - Type for atomic operations in signal context",
+      "usage": "volatile sig_atomic_t flag; // for signal-safe communication"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Signal Handler Flow",
+      "visualization": "Draw a timeline: [Main Program] --signal arrives--> [Handler executes quickly, sets flag] --> [Handler returns] --> [Main program checks flag and does work] --> Emphasize minimal work in handler box"
+    },
+    {
+      "concept": "Async-signal-safe functions",
+      "visualization": "Create a two-column table: LEFT = SAFE (_exit, signal, write, fflush) | RIGHT = UNSAFE (printf, malloc, fprintf, fopen). Draw a wall between them representing the signal safety barrier"
+    },
+    {
+      "concept": "volatile + sig_atomic_t",
+      "visualization": "Draw overlapping circles: one labeled 'volatile' (prevents register caching), one labeled 'sig_atomic_t' (ensures atomic read/write). The intersection = the correct declaration: volatile sig_atomic_t"
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Signal handler restrictions",
+      "analogy": "Think of a signal handler like an emergency responder arriving at an accident scene. They shouldn't try to do complex repairs (like malloc, complex I/O); they should only stabilize the patient (set a flag) and call for help (let main program do the work)."
+    },
+    {
+      "concept": "volatile sig_atomic_t",
+      "analogy": "This is like a person on a walkie-talkie in a war zone - they need both a clear channel (atomic to not be interrupted) and to speak actual words not stored thoughts (volatile to not be optimized away)."
+    },
+    {
+      "concept": "Self-pipe trick",
+      "analogy": "It's like having someone tap you on the shoulder (signal) but you're wearing noise-canceling headphones. The tap also turns on a light switch (pipe write). You see the light and know to check - converting silent tap into visible notification."
+    }
+  ],
+  "topicId": "coding-rules"
+}

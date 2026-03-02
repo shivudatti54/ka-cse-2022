@@ -1,0 +1,35 @@
+{
+  "topicId": "increased-number-of-separate-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Calculate Total Idle Power from Separate Functions",
+      "description": "Algorithm to calculate cumulative idle power consumption from multiple separate function chips in a device",
+      "code": "FUNCTION CalculateIdlePower(functions[]):\n totalIdlePower \u2190 0\n FOR EACH function IN functions:\n idlePower \u2190 GetIdlePower(function)\n totalIdlePower \u2190 totalIdlePower + idlePower\n RETURN totalIdlePower\n\nFUNCTION GetAnnualEnergyCost(idlePowerWatts, hoursPerDay, electricityRate):\n dailyEnergy \u2190 (idlePowerWatts / 1000) * hoursPerDay\n annualEnergy \u2190 dailyEnergy * 365\n annualCost \u2190 annualEnergy * electricityRate\n RETURN annualCost\n\n// Example usage:\ndeviceFunctions \u2190 [\n {name: \"CPU\", idleWatts: 5},\n {name: \"GPU\", idleWatts: 15},\n {name: \"WiFi\", idleWatts: 1},\n {name: \"Bluetooth\", idleWatts: 0.5},\n {name: \"Audio\", idleWatts: 0.5}\n]\n\ntotalIdle \u2190 CalculateIdlePower(deviceFunctions)\ncost \u2190 GetAnnualEnergyCost(totalIdle, 20, 8)\nOUTPUT \"Annual idle power cost: \u20b9\" + cost",
+      "explanation": "This code calculates the cumulative idle power drain from separate functions in a device. It demonstrates how each specialized chip contributes to total power consumption even when not actively processing data.",
+      "timeComplexity": "O(n) where n is the number of separate functions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Hardware Utilization Monitor",
+      "description": "Code to monitor and optimize hardware utilization to reduce waste from underutilized separate functions",
+      "code": "FUNCTION MonitorUtilization(servers[], threshold):\n underutilized \u2190 []\n FOR EACH server IN servers:\n utilization \u2190 CalculateCurrentUtilization(server)\n IF utilization < threshold THEN:\n underutilized.append({\n server: server.id,\n utilization: utilization,\n wastedPower: server.idlePower * (1 - utilization)\n })\n RETURN underutilized\n\nFUNCTION OptimizeResources(underutilized, workloads[]):\n // Try to migrate workloads to consolidate\n sorted \u2190 SortByUtilization(underutilized) // ascending\n FOR EACH server IN sorted:\n IF HasMigratableWorkloads(workloads) THEN:\n MigrateWorkloads(server, targetServer)\n PowerDown(server)\n\n// Main execution\nWHILE TRUE:\n servers \u2190 GetAllServers()\n underutilized \u2190 MonitorUtilization(servers, 0.30)\n workloads \u2190 GetActiveWorkloads()\n OptimizeResources(underutilized, workloads)\n Wait(300) // Check every 5 minutes",
+      "explanation": "This monitoring system identifies servers with low utilization (often due to dedicated separate functions) and consolidates workloads to allow powering down unused hardware, reducing energy waste.",
+      "timeComplexity": "O(n \u00d7 m) where n is servers and m is workloads",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Lifecycle Carbon Footprint Calculator",
+      "description": "Calculate total carbon footprint from manufacturing, use, and disposal phases for devices with different numbers of separate functions",
+      "code": "FUNCTION CalculateLifecycleCO2(deviceSpec):\n manufacturingCO2 \u2190 0\n useCO2 \u2190 0\n disposalCO2 \u2190 0\n \n // Manufacturing: embedded carbon from each function chip\n FOR EACH function IN deviceSpec.functions:\n manufacturingCO2 \u2190 manufacturingCO2 + function.embeddedCarbon\n \n // Use phase: active power + idle power over lifetime\n activeEnergy \u2190 (deviceSpec.activeWatts * deviceSpec.activeHours * 365 * deviceSpec.lifetime)\n idleEnergy \u2190 (deviceSpec.idleWatts * (24 - deviceSpec.activeHours) * 365 * deviceSpec.lifetime)\n totalEnergyKWh \u2190 (activeEnergy + idleEnergy) / 1000\n useCO2 \u2190 totalEnergyKWh * deviceSpec.gridEmissionFactor\n \n // Disposal: estimated based on total weight and recycling rate\n disposalCO2 \u2190 deviceSpec.totalWeight * (1 - deviceSpec.recyclingRate) * 0.5\n \n RETURN {\n manufacturing: manufacturingCO2,\n use: useCO2,\n disposal: disposalCO2,\n total: manufacturingCO2 + useCO2 + disposalCO2\n }\n\n// Example comparison\nbasicLaptop \u2190 {\n functions: [\n {name: \"CPU\", embeddedCarbon: 200},\n {name: \"Integrated Graphics\", embeddedCarbon: 50}\n ],\n activeWatts: 25, idleWatts: 8, activeHours: 8,\n lifetime: 5, gridEmissionFactor: 0.5,\n totalWeight: 2000, recyclingRate: 0.3\n}\n\ngamingLaptop \u2190 {\n functions: [\n {name: \"CPU\", embeddedCarbon: 200},\n {name: \"Dedicated GPU\", embeddedCarbon: 400},\n {name: \"Audio Card\", embeddedCarbon: 30}\n ],\n activeWatts: 80, idleWatts: 25, activeHours: 8,\n lifetime: 4, gridEmissionFactor: 0.5,\n totalWeight: 2500, recyclingRate: 0.3\n}\n\nresult1 \u2190 CalculateLifecycleCO2(basicLaptop)\nresult2 \u2190 CalculateLifecycleCO2(gamingLaptop)",
+      "explanation": "This program calculates the complete lifecycle carbon footprint showing how additional separate functions increase manufacturing emissions, and how higher power consumption from dedicated chips increases use-phase emissions.",
+      "timeComplexity": "O(n) where n is number of function components",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

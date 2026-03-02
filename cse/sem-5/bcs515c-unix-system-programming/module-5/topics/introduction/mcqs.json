@@ -1,0 +1,380 @@
+{
+  "topicId": "introduction",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which of the following is NOT a valid signal disposition in Unix?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Catch the signal with a custom handler"
+        },
+        {
+          "key": "B",
+          "text": "Ignore the signal"
+        },
+        {
+          "key": "C",
+          "text": "Forward the signal to another process"
+        },
+        {
+          "key": "D",
+          "text": "Default action (terminate/stop/continue)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Signals cannot be forwarded to another process. The three valid dispositions are: (1) take default action, (2) ignore the signal, or (3) catch the signal with a handler function. There is no provision for signal forwarding in Unix.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which signal cannot be caught, ignored, or blocked?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGTERM"
+        },
+        {
+          "key": "B",
+          "text": "SIGKILL"
+        },
+        {
+          "key": "C",
+          "text": "SIGSTOP"
+        },
+        {
+          "key": "D",
+          "text": "SIGINT"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "SIGKILL (signal 9) is the kill signal that unconditionally terminates a process. It cannot be caught, ignored, or blocked by any process. This ensures that administrators can always terminate a runaway process. SIGSTOP and SIGTSTP also cannot be caught or ignored, but SIGKILL is the most common example.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What happens when a process receives a signal that is currently blocked by its signal mask?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The signal is discarded"
+        },
+        {
+          "key": "B",
+          "text": "The signal is delivered immediately after being generated"
+        },
+        {
+          "key": "C",
+          "text": "The signal is held pending until unblocked"
+        },
+        {
+          "key": "D",
+          "text": "The process terminates immediately"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When a signal is blocked, it becomes pending. The kernel maintains a pending signal queue for the process. Once the process unblocks that signal (or changes the mask), the pending signal is delivered. For standard signals, only one instance of each signal type is held pending.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which of the following signals is synchronously generated?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGALRM (alarm clock)"
+        },
+        {
+          "key": "B",
+          "text": "SIGINT (terminal interrupt)"
+        },
+        {
+          "key": "C",
+          "text": "SIGSEGV (invalid memory access)"
+        },
+        {
+          "key": "D",
+          "text": "SIGHUP (hangup)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "SIGSEGV is synchronously generated because it results directly from the process's own execution - specifically when it attempts to access invalid memory. Synchronous signals are delivered immediately at the point of occurrence. SIGALRM, SIGINT, and SIGHUP are asynchronous signals.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "A process has two pending SIGUSR1 signals. How many times will the signal handler be invoked when the signal is unblocked?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Zero times"
+        },
+        {
+          "key": "B",
+          "text": "Once"
+        },
+        {
+          "key": "C",
+          "text": "Twice"
+        },
+        {
+          "key": "D",
+          "text": "Depends on handler implementation"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "For standard (non-real-time) signals, POSIX guarantees that only one instance of each signal type is held pending. Multiple occurrences of the same signal are merged into a single pending signal. Real-time signals (SIGRTMIN to SIGRTMAX) are queued, so all occurrences are delivered.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What is the signal number for SIGKILL?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "5"
+        },
+        {
+          "key": "C",
+          "text": "9"
+        },
+        {
+          "key": "D",
+          "text": "15"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "SIGKILL is signal number 9. Other important signals: SIGHUP=1, SIGINT=2, SIGQUIT=3, SIGABRT=6, SIGSEGV=11, SIGTERM=15. The exact numbers may vary slightly on some systems, but 9 is the standard for SIGKILL.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Which signal is sent to a parent process when a child process terminates?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGCLD"
+        },
+        {
+          "key": "B",
+          "text": "SIGCHLD"
+        },
+        {
+          "key": "C",
+          "text": "SIGEXIT"
+        },
+        {
+          "key": "D",
+          "text": "SIGTERM"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "SIGCHLD is the child status change signal. It is sent to the parent when a child process terminates, stops (due to STOP, TSTP, TRAP, etc.), or continues (due to CONT). The older name SIGCLD is also used on some systems but is not portable.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the default action for SIGSTOP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Terminate the process"
+        },
+        {
+          "key": "B",
+          "text": "Ignore the signal"
+        },
+        {
+          "key": "C",
+          "text": "Stop (suspend) the process"
+        },
+        {
+          "key": "D",
+          "text": "Continue a stopped process"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "SIGSTOP (signal 19) stops the process - it is a job control signal that suspends process execution. The process is placed in a stopped state and can be resumed with SIGCONT. Like SIGKILL, SIGSTOP cannot be caught or ignored.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "When a user presses Ctrl+C in a terminal, which signal is sent to the foreground process group?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGQUIT"
+        },
+        {
+          "key": "B",
+          "text": "SIGINT"
+        },
+        {
+          "key": "C",
+          "text": "SIGTSTP"
+        },
+        {
+          "key": "D",
+          "text": "SIGTERM"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "SIGINT (signal 2) is sent to the foreground process group when the user presses Ctrl+C. It is a terminal-generated interrupt signal. By default, it terminates the process, but it can be caught or ignored. SIGQUIT (Ctrl+\\) generates a core dump, SIGTSTP (Ctrl+Z) stops the process.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What happens if a process sets the disposition of SIGCHLD to SIG_IGN?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Child processes will never terminate"
+        },
+        {
+          "key": "B",
+          "text": "Child processes are automatically reaped without creating zombies"
+        },
+        {
+          "key": "C",
+          "text": "The process will receive SIGCHLD for every system call"
+        },
+        {
+          "key": "D",
+          "text": "It has no effect on child processes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a process sets SIGCHLD to SIG_IGN, the kernel automatically reaps terminated child processes - their status information is discarded and no zombie process is created. This is a common technique to avoid zombie processes in long-running servers.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "Which of the following is a characteristic of real-time signals (SIGRTMIN to SIGRTMAX)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They cannot be blocked"
+        },
+        {
+          "key": "B",
+          "text": "They are queued - multiple occurrences are all delivered"
+        },
+        {
+          "key": "C",
+          "text": "They have higher priority than standard signals"
+        },
+        {
+          "key": "D",
+          "text": "They cannot be caught by custom handlers"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Real-time signals are queued - each occurrence of the signal is delivered separately. They also have a defined ordering (lower signal numbers have higher priority). Unlike standard signals, they guarantee no signal is lost due to merging.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is the primary purpose of signals in Unix?",
+      "options": [
+        {
+          "key": "A",
+          "text": "High-bandwidth inter-process communication"
+        },
+        {
+          "key": "B",
+          "text": "Asynchronous notification of events to processes"
+        },
+        {
+          "key": "C",
+          "text": "Synchronous process synchronization"
+        },
+        {
+          "key": "D",
+          "text": "Memory management between processes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Signals provide asynchronous notification of events to processes. They are a limited form of inter-process communication used to notify processes of exceptional conditions (like user interrupts, errors, or timer expirations). They are low-bandwidth and cannot carry data payloads.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "A process is executing a system call when a signal is delivered. What happens to the system call?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The system call completes normally"
+        },
+        {
+          "key": "B",
+          "text": "The system call is restarted automatically"
+        },
+        {
+          "key": "C",
+          "text": "The system call returns -1 with errno set to EINTR"
+        },
+        {
+          "key": "D",
+          "text": "The process terminates immediately"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When a signal is delivered to a process that is blocked in a slow system call, the system call fails and returns -1 with errno set to EINTR (interrupted system call). The program must handle this by restarting the call or checking for EINTR.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "Which signal is typically used to request a process to reload its configuration?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGHUP"
+        },
+        {
+          "key": "B",
+          "text": "SIGUSR1"
+        },
+        {
+          "key": "C",
+          "text": "SIGUSR2"
+        },
+        {
+          "key": "D",
+          "text": "SIGPWR"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "SIGHUP (hangup, signal 1) is conventionally used to notify a process that its controlling terminal has been disconnected. Many daemons (like httpd, sshd) use SIGHUP to trigger configuration file reloading without restarting the process.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What is the key difference between signal() and sigaction() for setting signal handlers?",
+      "options": [
+        {
+          "key": "A",
+          "text": "signal() is more portable"
+        },
+        {
+          "key": "B",
+          "text": "sigaction() provides more control and is more reliable"
+        },
+        {
+          "key": "C",
+          "text": "signal() supports real-time signals"
+        },
+        {
+          "key": "D",
+          "text": "There is no difference"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "sigaction() provides more control over signal handling - it allows specifying flags (like SA_RESTART for automatic restart), signal masks, and provides consistent behavior across platforms. signal() behavior varies between systems. sigaction() is the POSIX standard and more reliable.",
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "na\u00efve-bayes-algorithm-for-continuous-attributes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Gaussian Na\u00efve Bayes Implementation",
+      "description": "Complete implementation of Gaussian NB with training and prediction functions",
+      "code": "import numpy as np\n\nclass GaussianNB:\n def __init__(self):\n self.classes = None\n self.mean = {} # {class: [mean_f1, mean_f2, ...]}\n self.var = {} # {class: [var_f1, var_f2, ...]}\n self.priors = {} # {class: prior_probability}\n \n def fit(self, X, y):\n n_samples, n_features = X.shape\n self.classes = np.unique(y)\n \n for c in self.classes:\n X_c = X[y == c]\n self.mean[c] = np.mean(X_c, axis=0)\n self.var[c] = np.var(X_c, axis=0) + 1e-9 # smoothing\n self.priors[c] = X_c.shape[0] / n_samples\n \n def _gaussian_pdf(self, X, mean, var):\n coeff = 1 / np.sqrt(2 * np.pi * var)\n exponent = -((X - mean) ** 2) / (2 * var)\n return coeff * np.exp(exponent)\n \n def predict(self, X):\n predictions = []\n for x in X:\n posteriors = {}\n for c in self.classes:\n # Log for numerical stability\n log_prior = np.log(self.priors[c])\n log_likelihood = np.sum(np.log(self._gaussian_pdf(x, self.mean[c], self.var[c])))\n posteriors[c] = log_prior + log_likelihood\n predictions.append(max(posteriors, key=posteriors.get))\n return np.array(predictions)",
+      "explanation": "Implementation shows: (1) Training calculates mean, variance, priors per class using MLE, (2) Gaussian PDF computes likelihood for each feature, (3) Prediction uses log-probabilities to avoid underflow, (4) Smoothing (1e-9) added to variance to prevent division by zero",
+      "timeComplexity": "Training: O(n\u00d7d), Prediction: O(d) per sample",
+      "spaceComplexity": "O(d\u00d7c) for storing parameters"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Gaussian NB Training Algorithm",
+      "description": "Pseudocode for parameter estimation in Gaussian Na\u00efve Bayes",
+      "code": "FUNCTION Train_GaussianNB(X_train, y_train):\n INPUT: X_train (n\u00d7d matrix), y_train (n vector)\n OUTPUT: Model parameters (means, variances, priors)\n \n classes \u2190 UNIQUE(y_train)\n FOR each class c IN classes:\n X_c \u2190 FILTER(X_train, y_train == c)\n n_c \u2190 ROW_COUNT(X_c)\n \n // MLE for mean: sample mean\n mean[c][j] \u2190 (1/n_c) \u00d7 \u03a3 x_i[j] FOR j = 1 to d\n \n // MLE for variance: sample variance\n var[c][j] \u2190 (1/n_c) \u00d7 \u03a3 (x_i[j] - mean[c][j])\u00b2 + \u03b5 FOR j = 1 to d\n \n // Class prior\n prior[c] \u2190 n_c / n_total\n \n RETURN (mean, var, prior)\n\nFUNCTION Predict_GaussianNB(x_test, mean, var, prior):\n FOR each class c IN classes:\n log_posterior[c] \u2190 log(prior[c])\n FOR each feature j IN 1 to d:\n // Gaussian PDF in log form\n log_likelihood[j] \u2190 -0.5 \u00d7 log(2\u03c0 \u00d7 var[c][j]) - (x_test[j] - mean[c][j])\u00b2 / (2 \u00d7 var[c][j])\n log_posterior[c] \u2190 log_posterior[c] + log_likelihood[j]\n \n RETURN argmax_c log_posterior[c]",
+      "explanation": "Training uses MLE to estimate \u03bc and \u03c3\u00b2. Classification computes log-posterior for each class by summing log-likelihoods (converts product to sum). The \u03b5 (smoothing) prevents zero variance problem.",
+      "timeComplexity": "Training: O(n\u00d7d), Testing: O(d\u00d7c)",
+      "spaceComplexity": "O(d\u00d7c)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Gaussian NB Probability Density Calculation",
+      "description": "Manual calculation of Gaussian PDF and posterior probability computation",
+      "code": "import numpy as np\nfrom scipy.stats import norm\n\ndef gaussian_pdf(x, mu, sigma_sq):\n \"\"\"Compute Gaussian probability density at x\"\"\"\n coeff = 1.0 / np.sqrt(2 * np.pi * sigma_sq)\n exponent = -((x - mu) ** 2) / (2 * sigma_sq)\n return coeff * np.exp(exponent)\n\ndef predict_with_probabilities(X_test, mu, sigma_sq, priors):\n \"\"\"\n mu, sigma_sq: dicts {class: [values per feature]}\n priors: dict {class: prior probability}\n \"\"\"\n predictions = []\n probabilities = []\n \n for x in X_test:\n posteriors = {}\n for c in priors.keys():\n # Compute log-likelihood for numerical stability\n log_likelihood = 0\n for j in range(len(x)):\n pdf_val = gaussian_pdf(x[j], mu[c][j], sigma_sq[c][j])\n log_likelihood += np.log(pdf_val + 1e-300)\n \n # Log posterior = log likelihood + log prior\n log_posterior = log_likelihood + np.log(priors[c])\n posteriors[c] = log_posterior\n \n # Normalize using log-sum-exp trick\n max_log = max(posteriors.values())\n sum_exp = sum(np.exp(v - max_log) for v in posteriors.values())\n log_normalizer = max_log + np.log(sum_exp)\n \n # Convert back from log and normalize\n probs = {c: np.exp(v - log_normalizer) for c, v in posteriors.items()}\n predictions.append(max(probs, key=probs.get))\n probabilities.append(probs)\n \n return predictions, probabilities\n\n# Example usage\nmu = {'spam': [10.0, 50.0], 'ham': [2.0, 10.0]}\nsigma_sq = {'spam': [4.0, 100.0], 'ham': [1.0, 25.0]}\npriors = {'spam': 0.3, 'ham': 0.7}\nX_test = np.array([[8, 40], [3, 15], [12, 80]])\n\npreds, probs = predict_with_probabilities(X_test, mu, sigma_sq, priors)\nprint(\"Predictions:\", preds)\nprint(\"Probabilities:\", probs)",
+      "explanation": "Shows explicit Gaussian PDF calculation and posterior computation. Includes numerical stability tricks: (1) log-space computation, (2) small epsilon to prevent log(0), (3) log-sum-exp normalization to get proper probabilities from log-posteriors.",
+      "timeComplexity": "O(n \u00d7 d \u00d7 c)",
+      "spaceComplexity": "O(c) per prediction"
+    }
+  ]
+}

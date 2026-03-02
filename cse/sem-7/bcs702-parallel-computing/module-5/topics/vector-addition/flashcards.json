@@ -1,0 +1,65 @@
+{
+  "topicId": "vector-addition",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "In CUDA vector addition, how is the global thread index calculated from threadIdx, blockIdx, blockDim, and gridDim?",
+      "back": "The global index is calculated as: `int idx = blockIdx.x * blockDim.x + threadIdx.x;`. This formula maps each thread to a unique element in the input vectors. For vectors larger than the number of threads per block, a stride equal to `blockDim.x * gridDim.x` is used in a loop."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is memory coalescing and why does it matter for vector addition?",
+      "back": "Memory coalescing occurs when consecutive threads access consecutive memory addresses. In vector addition, reading a[i] and b[i] sequentially from global memory is coalesced, achieving high memory bandwidth. Uncoalesced access can reduce bandwidth by up to 10x."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the difference between cudaMalloc and cudaMemcpy in CUDA?",
+      "back": "`cudaMalloc` allocates memory on the GPU device and returns a pointer to that memory. `cudaMemcpy` transfers data between host (CPU) and device memory. The fourth parameter specifies direction: `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, or `cudaMemcpyDeviceToDevice`."
+    },
+    {
+      "id": "fc-4",
+      "front": "Why must we copy results back from device to host using cudaMemcpy with cudaMemcpyDeviceToHost?",
+      "back": "GPU memory (device memory) is physically separate from CPU memory (host memory). The result array `c` exists only on the GPU after kernel execution. To use the results on the CPU, we must explicitly transfer them back using `cudaMemcpy(d_c, h_c, n*sizeof(float), cudaMemcpyDeviceToHost)`."
+    },
+    {
+      "id": "fc-5",
+      "front": "What happens if the number of threads launched is less than the vector length n?",
+      "back": "If grid size \u00d7 block size < n, only the first (gridDim.x \u00d7 blockDim.x) elements are processed. To handle this, the kernel uses a stride pattern: `for (int i = idx; i < n; i += blockDim.x * gridDim.x) { c[i] = a[i] + b[i]; }` ensuring all elements are processed."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the purpose of the __global__ qualifier in a CUDA kernel?",
+      "back": "The `__global__` qualifier indicates a kernel function that: (1) is callable from the host (CPU), (2) executes on the device (GPU), (3) must have void return type, and (4) cannot be called from other device functions. It marks the entry point for GPU parallel execution."
+    },
+    {
+      "id": "fc-7",
+      "front": "How do you determine the optimal block size for vector addition?",
+      "back": "Optimal block size is typically 256 or 512 threads (limited by hardware maximum of 1024). For compute capability \u22651.2, memory coalescing works best with powers of 2. The block size should maximize occupancy while respecting registers-per-thread limits. 256 threads/block is a common good choice."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the relationship between warp size and block dimension in vector addition?",
+      "back": "A warp is a group of 32 threads executing in lockstep. For optimal performance, block dimensions should be multiples of 32 (warp size). If blockDim.x = 256, this creates 8 warps per block, ensuring efficient SIMD execution on the GPU streaming multiprocessors."
+    },
+    {
+      "id": "fc-9",
+      "front": "Why is cudaDeviceSynchronize() important after kernel launch?",
+      "back": "Kernel launches are asynchronous; the host continues execution immediately without waiting for the GPU to finish. `cudaDeviceSynchronize()` forces the host to wait until all device operations complete, ensuring result availability before memory copy or analysis."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is the formula for effective memory bandwidth in vector addition?",
+      "back": "Effective bandwidth (GB/s) = (3 \u00d7 n \u00d7 sizeof(float) \u00d7 10^-9) / time_seconds, where 3 accounts for reading a[i], b[i], and writing c[i]. Peak theoretical bandwidth for PCIe 3.0 x16 is ~32 GB/s; well-optimized CUDA can achieve 80-90% of this."
+    },
+    {
+      "id": "fc-11",
+      "front": "How does thread divergence affect vector addition performance?",
+      "back": "Thread divergence occurs when threads take different execution paths. In simple vector addition with no conditional statements, there is minimal divergence. However, if boundary checking `if (i < n)` is used inside the kernel, threads beyond n idle, causing slight inefficiency but maintaining correctness."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is the purpose of cudaFree() in CUDA memory management?",
+      "back": "`cudaFree()` releases GPU memory allocated by `cudaMalloc()`. Failing to call `cudaFree()` causes memory leaks, eventually exhausting GPU memory. It should be called after all kernel operations using the allocated memory are complete."
+    }
+  ]
+}

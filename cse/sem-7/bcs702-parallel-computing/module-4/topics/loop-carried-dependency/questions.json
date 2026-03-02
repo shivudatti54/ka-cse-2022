@@ -1,0 +1,30 @@
+{
+  "topicId": "loop-carried-dependency",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Identify the type of loop-carried dependency in the following code snippet: `for (i=1; i<N; i++) { x = a[i]; a[i-1] = x + 2; }`",
+      "type": "short",
+      "keyPoints": [
+        "This is an anti-dependency (WAR).",
+        "Iteration i reads `a[i]`.",
+        "A future iteration (i-1, which has a higher index if the loop were reversed, but the logic is the same) writes to `a[i-1]`, which is the same as `a[j]` for j = i-1.",
+        "The write to `a[i-1]` must happen after the read of `a[i]` to preserve the original value for the read."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Explain why the following loop cannot be parallelized directly with `#pragma omp parallel for` and describe the correct OpenMP approach to parallelize it. Code: `int sum = 0; for(int i=0; i<1000; i++) { sum += array[i]; }`",
+      "type": "long",
+      "keyPoints": [
+        "The loop has an output dependency on the shared variable `sum`.",
+        "Multiple threads would simultaneously perform the read-modify-write operation `sum += array[i]`, leading to a race condition.",
+        "The final value of `sum` would be non-deterministic and incorrect due to lost updates.",
+        "The direct parallelization with `parallel for` alone is unsafe.",
+        "The correct approach is to use the `reduction` clause.",
+        "The directive should be: `#pragma omp parallel for reduction(+:sum)`.",
+        "The `reduction` clause creates thread-private copies of `sum`, performs the additions locally, and then combines the private sums into the global `sum` after the loop, avoiding the race condition."
+      ]
+    }
+  ]
+}

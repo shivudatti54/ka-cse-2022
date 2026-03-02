@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Define framing in the context of computer networks and explain its primary purpose.",
+    "expectedPoints": [
+      "Framing is the process in the data link layer where a stream of bits from the network layer is divided into manageable data units called frames.",
+      "Its primary purpose is to provide a way for a receiver to detect the start and end of a packet, enabling it to distinguish where one packet ends and the next begins.",
+      "It allows the receiver to synchronize with the sender and to check for transmission errors by adding headers, trailers, and sometimes delimiters around the payload."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast byte-oriented framing (like character stuffing) with bit-oriented framing (like bit stuffing).",
+    "expectedPoints": [
+      "Byte-oriented framing uses a specific byte pattern (e.g., FLAG byte like 01111110) as a delimiter and employs character stuffing to escape that same pattern if it appears in the data, which can be inefficient for arbitrary binary data.",
+      "Bit-oriented framing allows data to be any combination of bits and uses a specific bit pattern (e.g., 01111110) as the flag. It uses bit stuffing to insert a '0' after any sequence of five consecutive '1's in the data to prevent the flag pattern from occurring, making it more efficient and universal for all data types.",
+      "A key difference is their flexibility: bit-oriented protocols (like HDLC) are more efficient and robust for modern networks handling diverse data, while byte-oriented protocols (like PPP in its basic form) are simpler but can be less efficient."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A data link layer protocol uses bit stuffing with a flag sequence of '01111110'. The original data to be sent is '01101111101111110110'. Show the actual bit sequence that will be transmitted. Subsequently, explain the process the receiver uses to destuff the bits and recover the original data.",
+    "expectedPoints": [
+      "Transmitted Sequence: The sender scans the data and inserts a '0' after every five consecutive '1's. Original: 01101111101111110110 -> After stuffing: 0110111110**0**10111110**0**110. The bolded '0's are inserted. The final transmitted frame is: flag + stuffed data + flag = 01111110 01101111100101111100110 01111110.",
+      "Receiver Process: The receiver monitors the bit stream. When it detects five consecutive '1's, it checks the next bit. If the next bit is a '0', it recognizes it as a stuffed bit and discards it. If it is a '1', it checks further to see if it is a flag (followed by a '0') or an error.",
+      "Destuffing Example: The receiver receives '01101111100101111100110'. It scans and finds '11111', the next bit is '0' -> discard it. Later, it finds another '11111', the next bit is '0' -> discard it. The destuffed data is '01101111101111110110', which is the original data."
+    ],
+    "marks": 10
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "topicId": "safe-program-coding",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Secure SQL Query with Parameterized Statements",
+      "description": "Demonstrates secure database queries using parameterized statements to prevent SQL injection",
+      "code": "import sqlite3\n\n# VULNERABLE - Never do this!\ndef insecure_query(user_input):\n    conn = sqlite3.connect('app.db')\n    cursor = conn.cursor()\n    query = f\"SELECT * FROM users WHERE name = '{user_input}'\"\n    cursor.execute(query)  # SQL INJECTION POSSIBLE!\n    return cursor.fetchall()\n\n# SECURE - Using parameterized query\ndef secure_query(user_input):\n    conn = sqlite3.connect('app.db')\n    cursor = conn.cursor()\n    query = \"SELECT * FROM users WHERE name = ?\"\n    cursor.execute(query, (user_input,))  # Parameters bound safely\n    return cursor.fetchall()\n\n# SECURE - Using parameterized query with named parameters\ndef secure_query_named(user_input):\n    conn = sqlite3.connect('app.db')\n    cursor = conn.cursor()\n    query = \"SELECT * FROM users WHERE name = :name\"\n    cursor.execute(query, {\"name\": user_input})\n    return cursor.fetchall()",
+      "explanation": "The parameterized query approach treats user input as literal data, preventing attackers from manipulating the SQL structure. The '?' placeholder is bound to the parameter value, making injection impossible.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Secure Password Hashing",
+      "description": "Demonstrates secure password storage using bcrypt hashing",
+      "code": "import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;\n\npublic class PasswordSecurity {\n    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();\n    \n    // SECURE - Hashing passwords with bcrypt\n    public static String hashPassword(String plainPassword) {\n        // BCrypt automatically generates salt\n        return encoder.encode(plainPassword);\n    }\n    \n    // SECURE - Verifying passwords against hash\n    public static boolean verifyPassword(String plainPassword, String hashedPassword) {\n        return encoder.matches(plainPassword, hashedPassword);\n    }\n    \n    // VULNERABLE - Never store passwords this way!\n    public static String insecureHash(String password) {\n        // Using MD5 without salt - easily crackable\n        try {\n            MessageDigest md = MessageDigest.getInstance(\"MD5\");\n            byte[] hash = md.digest(password.getBytes());\n            return bytesToHex(hash);  // NOT SECURE!\n        } catch (NoSuchAlgorithmException e) {\n            throw new RuntimeException(e);\n        }\n    }\n}",
+      "explanation": "BCrypt automatically generates a random salt for each password and uses adaptive cost factors to make hashing computationally expensive, protecting against brute force and rainbow table attacks.",
+      "timeComplexity": "O(n) with configurable cost factor",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Safe String Handling to Prevent Buffer Overflow",
+      "description": "Demonstrates secure string operations in C to prevent buffer overflow vulnerabilities",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <stdlib.h>\n\n// VULNERABLE - No bounds checking\nvoid unsafe_copy(char *dest, char *source) {\n    strcpy(dest, source);  // Can overflow if source > dest\n}\n\n// SECURE - With bounds checking\nvoid safe_copy(char *dest, size_t dest_size, const char *source) {\n    // Use strncpy with null termination guarantee\n    strncpy(dest, source, dest_size - 1);\n    dest[dest_size - 1] = '\\0';  // Ensure null termination\n}\n\n// SECURE - Using snprintf\nvoid safer_copy(char *dest, size_t dest_size, const char *source) {\n    snprintf(dest, dest_size, \"%s\", source);\n}\n\n// SECURE - Dynamic allocation with checking\nchar* safest_copy(const char *source) {\n    size_t len = strlen(source);\n    char *dest = malloc(len + 1);  // Allocate exact size needed\n    if (dest != NULL) {\n        strcpy(dest, source);\n    }\n    return dest;\n}",
+      "explanation": "Buffer overflow occurs when data exceeds allocated memory boundaries. Safe practices include: using bounded string functions, always ensuring null termination, allocating exact needed size, and checking allocations.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "javascript",
+      "title": "XSS Prevention with Output Encoding",
+      "description": "Demonstrates proper output encoding to prevent Cross-Site Scripting attacks",
+      "code": "// VULNERABLE - Direct HTML insertion\nfunction vulnerableDisplay(userInput) {\n    document.getElementById('output').innerHTML = userInput;  // XSS POSSIBLE!\n}\n\n// SECURE - HTML Encoding\nfunction secureDisplay(userInput) {\n    // Encode special characters to HTML entities\n    const encoded = encodeHTML(userInput);\n    document.getElementById('output').textContent = encoded;\n}\n\n// HTML Entity Encoding Function\nfunction encodeHTML(str) {\n    const map = {\n        '&': '&amp;',\n        '<': '&lt;',\n        '>': '&gt;',\n        '\"': '&quot;',\n        \"'\": '&#x27;',\n        '/': '&#x2F;'\n    };\n    return str.replace(/[&<>\"'/]/g, char => map[char]);\n}\n\n// SECURE - Using DOM textContent\nfunction safestDisplay(userInput) {\n    // textContent automatically escapes HTML\n    document.getElementById('output').textContent = userInput;\n}\n\n// SECURE - Using Content Security Policy (Server-side header)\n// Content-Security-Policy: default-src 'self'; script-src 'self'",
+      "explanation": "Output encoding converts dangerous characters into safe HTML entities, preventing browsers from interpreting user input as executable code. Using textContent instead of innerHTML provides automatic encoding.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

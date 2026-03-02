@@ -1,0 +1,45 @@
+{
+  "topicId": "multithreading-models",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "POSIX Pthreads Creation and Join",
+      "description": "Demonstrates basic thread creation using Pthreads library in C",
+      "code": "#include <pthread.h>\n#include <stdio.h>\n\nvoid* thread_function(void* arg) {\n    int thread_id = *(int*)arg;\n    printf(\"Thread %d is running\\n\", thread_id);\n    return NULL;\n}\n\nint main() {\n    pthread_t threads[3];\n    int thread_args[3];\n    \n    // Create 3 threads\n    for (int i = 0; i < 3; i++) {\n        thread_args[i] = i + 1;\n        pthread_create(&threads[i], NULL, thread_function, &thread_args[i]);\n    }\n    \n    // Wait for all threads to complete\n    for (int i = 0; i < 3; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"All threads completed\\n\");\n    return 0;\n}",
+      "explanation": "pthread_create() spawns a new thread. pthread_join() waits for thread termination. This demonstrates One-to-One model where each user thread maps to a kernel thread.",
+      "timeComplexity": "O(1) per thread creation",
+      "spaceComplexity": "O(n) for n threads (stack space)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python Threading Example",
+      "description": "Demonstrates thread creation using Python's threading module",
+      "code": "import threading\nimport time\n\ndef worker(thread_id):\n    print(f\"Thread {thread_id} starting\")\n    time.sleep(1)  # Simulate work\n    print(f\"Thread {thread_id} completed\")\n\n# Create and start threads\nthreads = []\nfor i in range(3):\n    t = threading.Thread(target=worker, args=(i+1,))\n    threads.append(t)\n    t.start()\n\n# Wait for all threads\nfor t in threads:\n    t.join()\n\nprint(\"All threads finished\")",
+      "explanation": "Python's threading module creates user-level threads (Many-to-One on CPython due to GIL). Threads run concurrently but GIL limits true parallel execution for CPU-bound tasks.",
+      "timeComplexity": "O(n) for n threads to complete",
+      "spaceComplexity": "O(n) stack space"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Round Robin Scheduling Simulation",
+      "description": "Simulates Round Robin CPU scheduling with time quantum",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\nstruct Process {\n    int pid;\n    int burst_time;\n    int remaining_time;\n    int waiting_time;\n    int turnaround_time;\n};\n\nvoid roundRobin(struct Process processes[], int n, int quantum) {\n    int time = 0;\n    int completed = 0;\n    \n    while (completed < n) {\n        bool all_done = true;\n        \n        for (int i = 0; i < n; i++) {\n            if (processes[i].remaining_time > 0) {\n                all_done = false;\n                \n                if (processes[i].remaining_time > quantum) {\n                    // Execute for quantum time\n                    time += quantum;\n                    processes[i].remaining_time -= quantum;\n                } else {\n                    // Last execution\n                    time += processes[i].remaining_time;\n                    processes[i].waiting_time = time - processes[i].burst_time;\n                    processes[i].turnaround_time = time;\n                    processes[i].remaining_time = 0;\n                    completed++;\n                }\n            }\n        }\n        \n        if (all_done) break;\n    }\n}\n\n// Example usage with processes [P1:10, P2:5, P3:8], quantum=4",
+      "explanation": "This simulates Round Robin where each process gets quantum time slice. Shows how waiting and turnaround times are calculated. Processes are cycled through until all complete.",
+      "timeComplexity": "O(n \u00d7 burst_time/quantum)",
+      "spaceComplexity": "O(n) for process array"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Java Thread Implementation",
+      "description": "Demonstrates thread creation using Java's Thread class and Runnable interface",
+      "code": "class Worker implements Runnable {\n    private int threadId;\n    \n    public Worker(int id) {\n        this.threadId = id;\n    }\n    \n    @Override\n    public void run() {\n        System.out.println(\"Thread \" + threadId + \" started\");\n        try {\n            Thread.sleep(1000);  // Simulate work\n        } catch (InterruptedException e) {\n            e.printStackTrace();\n        }\n        System.out.println(\"Thread \" + threadId + \" completed\");\n    }\n}\n\npublic class ThreadDemo {\n    public static void main(String[] args) throws InterruptedException {\n        Thread[] threads = new Thread[3];\n        \n        // Create threads\n        for (int i = 0; i < 3; i++) {\n            threads[i] = new Thread(new Worker(i + 1));\n            threads[i].start();\n        }\n        \n        // Wait for completion\n        for (Thread t : threads) {\n            t.join();\n        }\n        \n        System.out.println(\"All threads finished\");\n    }\n}",
+      "explanation": "Java uses One-to-One model where each Java thread maps to a native thread. Thread.start() creates new thread, Thread.join() waits for completion. Demonstrates platform-independent threading.",
+      "timeComplexity": "O(n) for n threads to complete",
+      "spaceComplexity": "O(n) stack per thread"
+    }
+  ]
+}

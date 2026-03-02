@@ -1,0 +1,35 @@
+{
+  "topicId": "file-organizations-indexes",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Linear Search vs Binary Search in Sequential Files",
+      "description": "Comparison of search algorithms for sequential file organization",
+      "code": "// Linear Search - O(n)\nFUNCTION linearSearch(file, key)\n  WHILE NOT EOF(file)\n    READ record\n    IF record.key == key THEN\n      RETURN record\n    END IF\n  END WHILE\n  RETURN NOT FOUND\nEND FUNCTION\n\n// Binary Search - O(log n) - requires sorted file\nFUNCTION binarySearch(file, key)\n  left = 0\n  right = file.numRecords - 1\n  \n  WHILE left <= right DO\n    mid = (left + right) / 2\n    READ record at mid\n    \n    IF record.key == key THEN\n      RETURN record\n    ELSE IF record.key < key THEN\n      left = mid + 1\n    ELSE\n      right = mid - 1\n    END IF\n  END WHILE\n  \n  RETURN NOT FOUND\nEND FUNCTION",
+      "explanation": "Sequential files support both linear and binary search. Binary search requires sorted order and provides O(log n) complexity but needs random access capability.",
+      "timeComplexity": "O(n) for linear, O(log n) for binary",
+      "spaceComplexity": "O(1)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "B+ Tree Insertion Algorithm",
+      "description": "Pseudocode for inserting a key into a B+ tree",
+      "code": "// B+ Tree Insertion\nFUNCTION bPlusTreeInsert(tree, key, value)\n  root = tree.root\n  \n  // Find leaf node to insert\n  leaf = findLeaf(root, key)\n  \n  // If leaf has space, insert directly\n  IF leaf.numKeys < leaf.maxKeys THEN\n    insertKeyIntoLeaf(leaf, key, value)\n  ELSE\n    // Split leaf node\n    newLeaf = createNewLeaf()\n    \n    // Copy keys to temporary array, add new key\n    tempKeys = leaf.keys + [key]\n    \n    // Split at midpoint\n    mid = tempKeys.size / 2\n    newLeaf.keys = tempKeys[mid:]\n    leaf.keys = tempKeys[:mid]\n    \n    // First key of new leaf goes to parent\n    firstKey = newLeaf.keys[0]\n    \n    // Insert key into parent\n    insertIntoParent(leaf, firstKey, newLeaf)\n    \n    // Update leaf pointers\n    newLeaf.next = leaf.next\n    leaf.next = newLeaf\n  END IF\n  \n  // If root split, create new root\n  IF tree.root.isSplit THEN\n    newRoot = createNewRoot(leftChild, rightChild)\n    tree.root = newRoot\n  END IF\nEND FUNCTION\n\nFUNCTION insertIntoParent(leftNode, key, rightNode)\n  parent = leftNode.parent\n  \n  IF parent.numKeys < parent.maxKeys THEN\n    insertKeyIntoParent(parent, key, rightNode)\n  ELSE\n    // Split parent node\n    // Similar splitting logic as leaf\n    // Propagate up if needed\n  END IF\nEND FUNCTION",
+      "explanation": "B+ tree insertion maintains balance by splitting nodes when they overflow. Keys are duplicated to parent nodes for routing, while all data remains at leaf level.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(1) per level, O(log n) total",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Hash Index Implementation",
+      "description": "Simple hash index with chaining for collision handling",
+      "code": "// Hash Index with Chaining\nCONSTANT NUM_BUCKETS = 10\n\nSTRUCTURE HashIndex\n  buckets[NUM_BUCKETS]  // Array of linked lists\nEND STRUCTURE\n\n// Hash function\nFUNCTION hashFunction(key)\n  RETURN key MOD NUM_BUCKETS\nEND FUNCTION\n\n// Insert into hash index\nFUNCTION hashInsert(index, key, recordPointer)\n  bucketNum = hashFunction(key)\n  \n  // Check if key already exists\n  node = index.buckets[bucketNum]\n  WHILE node != NULL DO\n    IF node.key == key THEN\n      node.recordPointer = recordPointer  // Update\n      RETURN\n    END IF\n    node = node.next\n  END WHILE\n  \n  // Insert at beginning of chain\n  newNode = allocateNode()\n  newNode.key = key\n  newNode.recordPointer = recordPointer\n  newNode.next = index.buckets[bucketNum]\n  index.buckets[bucketNum] = newNode\nEND FUNCTION\n\n// Search in hash index\nFUNCTION hashSearch(index, key)\n  bucketNum = hashFunction(key)\n  node = index.buckets[bucketNum]\n  \n  WHILE node != NULL DO\n    IF node.key == key THEN\n      RETURN node.recordPointer\n    END IF\n    node = node.next\n  END WHILE\n  \n  RETURN NULL  // Not found\nEND FUNCTION",
+      "explanation": "Hash index uses a hash function to compute bucket addresses directly. Chaining handles collisions by maintaining linked lists at each bucket. Provides O(1) average case lookup.",
+      "timeComplexity": "O(1) average, O(n) worst case with many collisions",
+      "spaceComplexity": "O(n) for storing all entries plus O(b) for buckets",
+      "language": "pseudocode"
+    }
+  ]
+}

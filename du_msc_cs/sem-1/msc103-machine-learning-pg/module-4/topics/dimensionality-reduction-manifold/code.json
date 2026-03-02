@@ -1,0 +1,35 @@
+{
+  "topicId": "dimensionality-reduction-manifold",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "PCA: Principal Component Analysis",
+      "description": "Basic dimensionality reduction using PCA to reduce 3D data to 2D, demonstrating variance-based projection.",
+      "code": "import numpy as np\nfrom sklearn.decomposition import PCA\nimport matplotlib.pyplot as plt\n\n# Generate synthetic 3D data (elongated cloud)\nnp.random.seed(42)\nn_samples = 300\n# Create correlated data - more variance in first two directions\nX = np.random.randn(n_samples, 3) @ np.diag([5, 2, 0.1]) + np.array([0, 0, 0])\n\nprint(\"Original data shape:\", X.shape)\nprint(\"Original variance per axis:\", np.var(X, axis=0))\n\n# Apply PCA to reduce from 3D to 2D\npca = PCA(n_components=2)\nX_reduced = pca.fit_transform(X)\n\nprint(\"\\nReduced data shape:\", X_reduced.shape)\nprint(\"Explained variance ratio:\", pca.explained_variance_ratio_)\nprint(\"Total variance retained: {:.2%}\".format(sum(pca.explained_variance_ratio_)))\n\n# Visualization\nfig = plt.figure(figsize=(12, 4))\nax1 = fig.add_subplot(121, projection='3d')\nax1.scatter(X[:, 0], X[:, 1], X[:, 2], c=np.arange(n_samples), cmap='viridis', alpha=0.6)\nax1.set_title('Original 3D Data')\nax1.set_xlabel('X1'); ax1.set_ylabel('X2'); ax1.set_zlabel('X3')\n\nax2 = fig.add_subplot(122)\nax2.scatter(X_reduced[:, 0], X_reduced[:, 1], c=np.arange(n_samples), cmap='viridis', alpha=0.6)\nax2.set_title('PCA Reduced to 2D')\nax2.set_xlabel('PC1'); ax2.set_ylabel('PC2')\n\nplt.tight_layout()\nplt.show()",
+      "explanation": "1. Generate synthetic 3D data with different variance along each axis\n2. PCA computes eigenvectors of the covariance matrix\n3. Projects data onto top-k principal components (directions of max variance)\n4. Shows how PCA preserves the structure with most variance (first 2 components retain ~97% variance)",
+      "timeComplexity": "O(n·d² + d³)",
+      "spaceComplexity": "O(n·d + d²)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "t-SNE: Non-linear Manifold Learning",
+      "description": "Advanced manifold learning using t-SNE to visualize high-dimensional data in 2D, preserving local structure.",
+      "code": "import numpy as np\nfrom sklearn.manifold import TSNE\nfrom sklearn.datasets import load_digits\nimport matplotlib.pyplot as plt\n\n# Load digit dataset (1797 samples, 64 features = 8x8 images)\ndigits = load_digits()\nX, y = digits.data, digits.target\n\nprint(\"Dataset shape:\", X.shape)\nprint(\"Number of classes:\", len(np.unique(y)))\n\n# Apply t-SNE for 2D visualization\n# Note: For larger datasets, consider using perplexity=30-50 and more iterations\ntsne = TSNE(\n    n_components=2,\n    perplexity=30,\n    learning_rate='auto',\n    init='pca',\n    random_state=42,\n    n_iter=1000\n)\n\nX_tsne = tsne.fit_transform(X)\n\nprint(\"t-SNE output shape:\", X_tsne.shape)\nprint(\"KL divergence (lower is better):\", tsne.kl_divergence_)\n\n# Visualization with colored clusters\nplt.figure(figsize=(10, 8))\nscatter = plt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=y, cmap='tab10', alpha=0.7, s=20)\nplt.colorbar(scatter, ticks=range(10))\nplt.title('t-SNE Visualization of Handwritten Digits (64D -> 2D)')\nplt.xlabel('t-SNE Dimension 1')\nplt.ylabel('t-SNE Dimension 2')\nplt.show()",
+      "explanation": "1. Load digits dataset (64-dimensional feature space)\n2. t-SNE converts pairwise distances in high-dim space to probabilities\n3. Uses Student t-distribution in low-dim space to preserve local neighborhoods\n4. Minimizes KL divergence between distributions using gradient descent\n5. Result: clusters of similar digits appear close together, showing manifold structure",
+      "timeComplexity": "O(n²·k·iter) where k=perplexity",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "ISOMAP: Geodesic Distance Manifold Learning",
+      "description": "Advanced manifold learning using ISOMAP to capture geodesic distances on curved manifolds, demonstrating Swiss Roll unwrapping.",
+      "code": "import numpy as np\nfrom sklearn.manifold import Isomap\nfrom sklearn.datasets import make_swiss_roll\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\n# Generate Swiss Roll dataset (classic manifold learning example)\nX, t = make_swiss_roll(n_samples=1000, noise=0.2, random_state=42)\n\nprint(\"Swiss Roll shape:\", X.shape)\nprint(\"Manifold dimension: 2 (unrolled)\")\n\n# Apply ISOMAP (k-nearest neighbors for graph, then MDS)\nisomap = Isomap(n_neighbors=10, n_components=2)\nX_isomap = isomap.fit_transform(X)\n\nprint(\"Reconstruction error:\", isomap.reconstruction_error())\n\n# Visualization\nfig = plt.figure(figsize=(14, 5))\n\n# Original Swiss Roll\nax1 = fig.add_subplot(131, projection='3d')\nscatter1 = ax1.scatter(X[:, 0], X[:, 1], X[:, 2], c=t, cmap='viridis', s=10, alpha=0.8)\nax1.set_title('Original Swiss Roll (3D)')\nax1.view_init(10, 70)\n\n# True unrolled manifold\nax2 = fig.add_subplot(132)\nax2.scatter(t, X[:, 1], c=t, cmap='viridis', s=10, alpha=0.8)\nax2.set_title('True Unrolled Manifold')\nax2.set_xlabel('Position along roll'); ax2.set_ylabel('Spread')\n\n# ISOMAP result\nax3 = fig.add_subplot(133)\nscatter3 = ax3.scatter(X_isomap[:, 0], X_isomap[:, 1], c=t, cmap='viridis', s=10, alpha=0.8)\nax3.set_title('ISOMAP: Unwrapped Swiss Roll (2D)')\nax3.set_xlabel('ISOMAP Dimension 1'); ax3.set_ylabel('ISOMAP Dimension 2')\n\nplt.colorbar(scatter3, ax=ax3, label='t')\nplt.tight_layout()\nplt.show()\n\n# Compare with PCA (linear method - fails on curved manifolds)\nfrom sklearn.decomposition import PCA\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X)\n\nfig2, axes = plt.subplots(1, 2, figsize=(12, 5))\naxes[0].scatter(X_pca[:, 0], X_pca[:, 1], c=t, cmap='viridis', s=10, alpha=0.8)\naxes[0].set_title('PCA (Linear) - Fails to Unwrap')\naxes[0].set_xlabel('PC1'); axes[0].set_ylabel('PC2')\n\naxes[1].scatter(X_isomap[:, 0], X_isomap[:, 1], c=t, cmap='viridis', s=10, alpha=0.8)\naxes[1].set_title('ISOMAP (Manifold) - Successfully Unwraps')\naxes[1].set_xlabel('ISOMAP 1'); axes[1].set_ylabel('ISOMAP 2')\n\nplt.tight_layout()\nplt.show()",
+      "explanation": "1. Swiss Roll is a 2D manifold embedded in 3D - PCA fails because it's linear\n2. ISOMAP works in 3 steps:\n   - Build k-NN graph from data points\n   - Compute shortest path geodesic distances (approximating true manifold distances)\n   - Apply MDS (Multidimensional Scaling) to find low-dim embedding\n3. Result: ISOMAP correctly unwraps the roll, preserving the intrinsic 2D structure\n4. Comparison shows why manifold learning is essential for non-linear data",
+      "timeComplexity": "O(n³) or O(n² log n) with knn",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

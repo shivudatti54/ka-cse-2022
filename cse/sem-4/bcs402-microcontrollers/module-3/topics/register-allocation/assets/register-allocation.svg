@@ -1,0 +1,407 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1500">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1976d2"/>
+      <stop offset="100%" stop-color="#1565c0"/>
+    </linearGradient>
+    
+    <!-- Arrow Marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+    
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000033"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="1500" fill="#f8f9fa"/>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fillIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .highlight { animation: pulse 2s infinite; }
+    .draw-anim { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 1s ease-out forwards; }
+  </style>
+
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to Register Allocation in Microcontrollers. This topic covers efficient use of limited CPU registers in 8051 microcontrollers.">
+    <rect x="50" y="10" width="700" height="45" rx="10" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" font-size="20" font-weight="bold" fill="white">Register Allocation in Microcontrollers</text>
+  </g>
+
+  <!-- Step 1: What is Register Allocation -->
+  <g class="step" id="step1" data-narration="Register allocation is the process of efficiently assigning variables to CPU registers to minimize slow memory access operations.">
+    <rect x="40" y="65" width="720" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="85" font-size="14" font-weight="bold" fill="#1976d2">What is Register Allocation?</text>
+    <text x="60" y="105" font-size="11" fill="#424242">The process of efficiently assigning variables and data to CPU registers to minimize</text>
+    <text x="60" y="120" font-size="11" fill="#424242">memory access operations. In 8051: Register operations take 1-2 cycles, while</text>
+    <text x="60" y="135" font-size="11" fill="#424242">internal RAM takes 2-4 cycles, external RAM takes 4-8 cycles.</text>
+  </g>
+
+  <!-- Step 2: Why It Matters -->
+  <g class="step" id="step2" data-narration="Microcontrollers have severely limited registers - 8051 has only 8 GPRs per bank with 4 banks total. Efficient usage is critical.">
+    <rect x="40" y="160" width="720" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="180" font-size="14" font-weight="bold" fill="#e65100">Why It Matters in Microcontrollers</text>
+    <text x="60" y="200" font-size="11" fill="#424242">• Limited Resources: 8051 has only 8 GPRs (R0-R7) per bank</text>
+    <text x="60" y="215" font-size="11" fill="#424242">• 4 Register Banks available: 32 registers total, but only ONE active at a time</text>
+    <text x="60" y="230" font-size="11" fill="#424242">• Every register decision impacts performance and code efficiency</text>
+  </g>
+
+  <!-- Step 3: 8051 Register Banks Overview -->
+  <g class="step" id="step3" data-narration="The 8051 has four register banks at memory locations 00H-1FH. Each bank contains R0-R7, selected via PSW register bits.">
+    <rect x="40" y="255" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="275" font-size="14" font-weight="bold" fill="#388e3c">8051 Register Banks Overview</text>
+    <!-- Bank visualization -->
+    <rect x="60" y="290" width="60" height="50" rx="4" fill="#4caf50" stroke="#2e7d32" stroke-width="1"/>
+    <text x="90" y="315" text-anchor="middle" font-size="10" fill="white">Bank 0</text>
+    <text x="90" y="330" text-anchor="middle" font-size="8" fill="white">00H-07H</text>
+    
+    <rect x="130" y="290" width="60" height="50" rx="4" fill="#8bc34a" stroke="#558b2f" stroke-width="1"/>
+    <text x="160" y="315" text-anchor="middle" font-size="10" fill="white">Bank 1</text>
+    <text x="160" y="330" text-anchor="middle" font-size="8" fill="white">08H-0FH</text>
+    
+    <rect x="200" y="290" width="60" height="50" rx="4" fill="#cddc39" stroke="#9e9d24" stroke-width="1"/>
+    <text x="230" y="315" text-anchor="middle" font-size="10" fill="white">Bank 2</text>
+    <text x="230" y="330" text-anchor="middle" font-size="8" fill="white">10H-17H</text>
+    
+    <rect x="270" y="290" width="60" height="50" rx="4" fill="#ffeb3b" stroke="#f9a825" stroke-width="1"/>
+    <text x="300" y="315" text-anchor="middle" font-size="10" fill="#424242">Bank 3</text>
+    <text x="300" y="330" text-anchor="middle" font-size="8" fill="#424242">18H-1FH</text>
+    
+    <line x1="360" y1="315" x2="400" y2="315" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="410" y="320" font-size="11" fill="#424242">Selected by PSW bits</text>
+  </g>
+
+  <!-- Step 4: Register Bank Selection -->
+  <g class="step" id="step4" data-narration="PSW register bits RS0 (PSW.3) and RS1 (PSW.4) control bank selection. Formula: Bank = (RS1 × 2) + RS0.">
+    <rect x="40" y="360" width="720" height="95" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="380" font-size="14" font-weight="bold" fill="#7b1fa2">Register Bank Selection (PSW Register)</text>
+    <!-- PSW bits visualization -->
+    <rect x="60" y="395" width="120" height="50" rx="4" fill="#9c27b0" stroke="#6a1b9a" stroke-width="1"/>
+    <text x="120" y="415" text-anchor="middle" font-size="11" fill="white">PSW Register</text>
+    <text x="120" y="432" text-anchor="middle" font-size="9" fill="white">RS1(bit4) RS0(bit3)</text>
+    
+    <!-- Truth table -->
+    <text x="200" y="405" font-size="10" fill="#7b1fa2" font-weight="bold">Bank Selection:</text>
+    <rect x="200" y="415" width="50" height="25" rx="3" fill="#e1bee7"/>
+    <text x="225" y="432" text-anchor="middle" font-size="9" fill="#424242">00→B0</text>
+    <rect x="255" y="415" width="50" height="25" rx="3" fill="#e1bee7"/>
+    <text x="280" y="432" text-anchor="middle" font-size="9" fill="#424242">01→B1</text>
+    <rect x="310" y="415" width="50" height="25" rx="3" fill="#e1bee7"/>
+    <text x="335" y="432" text-anchor="middle" font-size="9" fill="#424242">10→B2</text>
+    <rect x="365" y="415" width="50" height="25" rx="3" fill="#e1bee7"/>
+    <text x="390" y="432" text-anchor="middle" font-size="9" fill="#424242">11→B3</text>
+    
+    <!-- Code example -->
+    <rect x="450" y="395" width="300" height="50" rx="4" fill="#263238"/>
+    <text x="460" y="415" font-size="10" fill="#4fc3f7">; Switch to Bank 1</text>
+    <text x="460" y="432" font-size="10" fill="#81c784">SETB PSW.3 ; RS0=1</text>
+  </g>
+
+  <!-- Step 5: General Purpose Registers -->
+  <g class="step" id="step5" data-narration="GPRs include R0-R7 in active bank, plus accumulator (A) and B register. A is most used - serves as implicit operand in many instructions.">
+    <rect x="40" y="465" width="720" height="95" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="485" font-size="14" font-weight="bold" fill="#1976d2">General Purpose Registers (GPRs)</text>
+    
+    <!-- Register boxes -->
+    <rect x="60" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="80" y="518" text-anchor="middle" font-size="10" fill="white">R0</text>
+    <text x="80" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="105" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="125" y="518" text-anchor="middle" font-size="10" fill="white">R1</text>
+    <text x="125" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="150" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="170" y="518" text-anchor="middle" font-size="10" fill="white">R2</text>
+    <text x="170" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="195" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="215" y="518" text-anchor="middle" font-size="10" fill="white">R3</text>
+    <text x="215" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="240" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="260" y="518" text-anchor="middle" font-size="10" fill="white">R4</text>
+    <text x="260" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="285" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="305" y="518" text-anchor="middle" font-size="10" fill="white">R5</text>
+    <text x="305" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="330" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="350" y="518" text-anchor="middle" font-size="10" fill="white">R6</text>
+    <text x="350" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <rect x="375" y="500" width="40" height="35" rx="4" fill="#1976d2"/>
+    <text x="395" y="518" text-anchor="middle" font-size="10" fill="white">R7</text>
+    <text x="395" y="528" text-anchor="middle" font-size="7" fill="#e3f2fd">GP</text>
+    
+    <!-- Special registers -->
+    <rect x="430" y="500" width="50" height="35" rx="4" fill="#f44336"/>
+    <text x="455" y="518" text-anchor="middle" font-size="10" fill="white">ACC</text>
+    <text x="455" y="528" text-anchor="middle" font-size="7" fill="#ffcdd2">Implicit</text>
+    
+    <rect x="485" y="500" width="50" height="35" rx="4" fill="#ff9800"/>
+    <text x="510" y="518" text-anchor="middle" font-size="10" fill="white">B</text>
+    <text x="510" y="528" text-anchor="middle" font-size="7" fill="#ffe0b2">MUL/DIV</text>
+    
+    <text x="560" y="520" font-size="10" fill="#424242">Accumulator (A) is most used - implicit</text>
+    <text x="560" y="535" font-size="10" fill="#424242">operand in ADD, SUBB, MOV, etc.</text>
+  </g>
+
+  <!-- Step 6: Special Function Registers -->
+  <g class="step" id="step6" data-narration="SFRs control peripheral functions. Key ones: PSW (flags, bank select), SP (stack pointer), DPTR (16-bit for external memory).">
+    <rect x="40" y="570" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="590" font-size="14" font-weight="bold" fill="#388e3c">Special Function Registers (SFRs)</text>
+    
+    <!-- PSW -->
+    <rect x="60" y="605" width="80" height="50" rx="4" fill="#4caf50" stroke="#2e7d32" stroke-width="1"/>
+    <text x="100" y="625" text-anchor="middle" font-size="11" fill="white" font-weight="bold">PSW</text>
+    <text x="100" y="640" text-anchor="middle" font-size="8" fill="#e8f5e9">Flags &amp; Bank Sel</text>
+    
+    <!-- SP -->
+    <rect x="150" y="605" width="80" height="50" rx="4" fill="#8bc34a" stroke="#558b2f" stroke-width="1"/>
+    <text x="190" y="625" text-anchor="middle" font-size="11" fill="white" font-weight="bold">SP</text>
+    <text x="190" y="640" text-anchor="middle" font-size="8" fill="#e8f5e9">Stack Pointer</text>
+    
+    <!-- DPTR -->
+    <rect x="240" y="605" width="80" height="50" rx="4" fill="#cddc39" stroke="#9e9d24" stroke-width="1"/>
+    <text x="280" y="625" text-anchor="middle" font-size="11" fill="white" font-weight="bold">DPTR</text>
+    <text x="280" y="640" text-anchor="middle" font-size="8" fill="#e8f5e9">16-bit Data Ptr</text>
+    
+    <!-- P0, P1, P2, P3 -->
+    <rect x="330" y="605" width="50" height="50" rx="4" fill="#009688" stroke="#00695c" stroke-width="1"/>
+    <text x="355" y="625" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Ports</text>
+    <text x="355" y="640" text-anchor="middle" font-size="8" fill="#e0f2f1">P0-P3</text>
+    
+    <!-- Important note -->
+    <rect x="400" y="605" width="350" height="50" rx="4" fill="#fff8e1" stroke="#ffc107" stroke-width="1"/>
+    <text x="415" y="622" font-size="10" fill="#f57f17" font-weight="bold">Important:</text>
+    <text x="415" y="638" font-size="10" fill="#424242">SP defaults to 07H - overlaps Bank 0! Initialize SP to 60H+</text>
+    <text x="415" y="652" font-size="10" fill="#424242">DPTR is the ONLY 16-bit register - essential for external memory access</text>
+  </g>
+
+  <!-- Step 7: Register Saving Conventions -->
+  <g class="step" id="step7" data-narration="Two conventions: Caller-saved (caller preserves registers before call), Callee-saved (subroutine preserves registers it modifies).">
+    <rect x="40" y="675" width="720" height="110" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="695" font-size="14" font-weight="bold" fill="#e65100">Register Saving Conventions</text>
+    
+    <!-- Caller-saved -->
+    <rect x="60" y="710" width="290" height="65" rx="6" fill="#ffcc80" stroke="#ef6c00" stroke-width="1"/>
+    <text x="75" y="730" font-size="12" font-weight="bold" fill="#e65100">Caller-Saved Convention</text>
+    <text x="75" y="748" font-size="10" fill="#424242">Calling function saves registers BEFORE</text>
+    <text x="75" y="763" font-size="10" fill="#424242">making subroutine call. Caller manages preservation.</text>
+    
+    <!-- Arrow -->
+    <line x1="355" y1="742" x2="385" y2="742" stroke="#1976d2" stroke-width="2"/>
+    <polygon points="380,737 390,742 380,747" fill="#1976d2"/>
+    
+    <!-- Callee-saved -->
+    <rect x="395" y="710" width="290" height="65" rx="6" fill="#a5d6a7" stroke="#2e7d32" stroke-width="1"/>
+    <text x="410" y="730" font-size="12" font-weight="bold" fill="#388e3c">Callee-Saved Convention</text>
+    <text x="410" y="748" font-size="10" fill="#424242">Called function preserves registers it</text>
+    <text x="410" y="763" font-size="10" fill="#424242">modifies, restores before returning. Preferred!</text>
+    
+    <!-- Code comparison -->
+    <rect x="60" y="782" width="180" height="1" fill="#e0e0e0"/>
+    <text x="60" y="798" font-size="10" fill="#7f8c8d">; Caller-saved example:</text>
+    <text x="60" y="812" font-size="9" fill="#424242">PUSH ACC  ; Save before call</text>
+    <text x="175" y="798" font-size="10" fill="#7f8c8d">; Callee-saved example:</text>
+    <text x="175" y="812" font-size="9" fill="#424242">SUB: PUSH ACC ; Save at start</text>
+  </g>
+
+  <!-- Step 8: Function Call Parameter Passing -->
+  <g class="step" id="step8" data-narration="Parameters can be passed through registers (faster, limited) or stack (slower, flexible). 8051 typically uses A and B for parameters.">
+    <rect x="40" y="795" width="720" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="815" font-size="14" font-weight="bold" fill="#7b1fa2">Parameter Passing in Function Calls</text>
+    
+    <!-- Register passing -->
+    <rect x="60" y="830" width="280" height="55" rx="6" fill="#ce93d8" stroke="#8e24aa" stroke-width="1"/>
+    <text x="75" y="850" font-size="11" font-weight="bold" fill="#7b1fa2">Register-Based Passing</text>
+    <text x="75" y="868" font-size="10" fill="#424242">Faster but limited by available registers.</text>
+    <text x="75" y="880" font-size="10" fill="#424242">Use R0-R7, ACC, B for parameters.</text>
+    
+    <!-- Stack passing -->
+    <rect x="350" y="830" width="280" height="55" rx="6" fill="#b39ddb" stroke="#5e35b1" stroke-width="1"/>
+    <text x="365" y="850" font-size="11" font-weight="bold" fill="#5e35b1">Stack-Based Passing</text>
+    <text x="365" y="868" font-size="10" fill="#424242">More flexible but slower. Push parameters</text>
+    <text x="365" y="880" font-size="10" fill="#424242">before call, pop inside function.</text>
+    
+    <!-- Trade-off note -->
+    <text x="60" y="905" font-size="10" fill="#7f8c8d">Trade-off: Register passing = faster code, fewer registers available | Stack passing = flexible, slower execution</text>
+  </g>
+
+  <!-- Step 9: Optimization Strategies -->
+  <g class="step" id="step9" data-narration="Optimize by: reusing registers when values are no longer needed, using bank switching instead of stack saving, organizing code to minimize conflicts.">
+    <rect x="40" y="905" width="720" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="60" y="925" font-size="14" font-weight="bold" fill="#c62828">Optimizing Register Usage</text>
+    
+    <!-- Strategy boxes -->
+    <rect x="60" y="940" width="220" height="40" rx="4" fill="#ef9a9a"/>
+    <text x="70" y="958" font-size="10" fill="#c62828" font-weight="bold">1. Register Reuse</text>
+    <text x="170" y="958" font-size="10" fill="#424242">Free registers when values no longer needed</text>
+    
+    <rect x="290" y="940" width="220" height="40" rx="4" fill="#ef9a9a"/>
+    <text x="300" y="958" font-size="10" fill="#c62828" font-weight="bold">2. Bank Switching</text>
+    <text x="400" y="958" font-size="10" fill="#424242">Switch banks instead of pushing to stack</text>
+    
+    <rect x="520" y="940" width="220" height="40" rx="4" fill="#ef9a9a"/>
+    <text x="530" y="958" font-size="10" fill="#c62828" font-weight="bold">3. Code Organization</text>
+    <text x="630" y="958" font-size="10" fill="#424242">Group related operations to use same registers</text>
+  </g>
+
+  <!-- Step 10: Example 1 - Register Bank Switching -->
+  <g class="step" id="step10" data-narration="Example: Switch to Bank 1 before subroutine call to preserve Bank 0 registers without pushing to stack. Uses less stack space.">
+    <rect x="40" y="1000" width="720" height="100" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1020" font-size="14" font-weight="bold" fill="#1976d2">Example 1: Register Bank Switching</text>
+    
+    <!-- Code block -->
+    <rect x="60" y="1035" width="350" height="55" rx="4" fill="#263238"/>
+    <text x="70" y="1053" font-size="10" fill="#81c784">; Save current bank, switch to Bank 1</text>
+    <text x="70" y="1068" font-size="10" fill="#4fc3f7">PUSH PSW</text>
+    <text x="70" y="1083" font-size="10" fill="#4fc3f7">SETB PSW.3    ; RS0 = 1 → Bank 1</text>
+    <text x="280" y="1083" font-size="10" fill="#fff59d">; Use R0-R7 freely</text>
+    <text x="70" y="1098" font-size="10" fill="#4fc3f7">ACALL SUBROUTINE</text>
+    <text x="280" y="1098" font-size="10" fill="#fff59d">; Call subroutine</text>
+    <text x="280" y="1113" font-size="10" fill="#fff59d">; (Bank 0 preserved!)</text>
+    
+    <!-- Explanation -->
+    <rect x="420" y="1035" width="330" height="55" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="430" y="1055" font-size="11" fill="#1976d2" font-weight="bold">Why this works:</text>
+    <text x="430" y="1072" font-size="10" fill="#424242">• Switching banks preserves original registers</text>
+    <text x="430" y="1087" font-size="10" fill="#424242">• Faster than pushing 8 registers to stack</text>
+  </g>
+
+  <!-- Step 11: Example 2 - Parameter Passing -->
+  <g class="step" id="step11" data-narration="Example: Pass parameters in R0 and R1, perform addition, return result in accumulator. Faster than stack-based passing.">
+    <rect x="40" y="1110" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1130" font-size="14" font-weight="bold" fill="#388e3c">Example 2: Parameter Passing Through Registers</text>
+    
+    <!-- Main code -->
+    <rect x="60" y="1145" width="200" height="50" rx="4" fill="#263238"/>
+    <text x="70" y="1163" font-size="10" fill="#81c784">; Main program</text>
+    <text x="70" y="1178" font-size="10" fill="#4fc3f7">MOV R0, #25H  ; Param 1</text>
+    <text x="70" y="1193" font-size="10" fill="#4fc3f7">MOV R1, #30H  ; Param 2</text>
+    
+    <!-- Function -->
+    <rect x="270" y="1145" width="200" height="50" rx="4" fill="#263238"/>
+    <text x="280" y="1163" font-size="10" fill="#81c784">; Function</text>
+    <text x="280" y="1178" font-size="10" fill="#4fc3f7">ADD_FUNC:</text>
+    <text x="340" y="1178" font-size="10" fill="#ce93d8">MOV A, R0</text>
+    <text x="340" y="1193" font-size="10" fill="#ce93d8">ADD A, R1    ; Result in A</text>
+    
+    <!-- Result -->
+    <rect x="480" y="1145" width="270" height="50" rx="4" fill="#fff8e1" stroke="#ffc107" stroke-width="1"/>
+    <text x="490" y="1165" font-size="11" fill="#f57f17" font-weight="bold">Result in Accumulator!</text>
+    <text x="490" y="1183" font-size="10" fill="#424242">ACC naturally holds arithmetic results.</text>
+    <text x="490" y="1198" font-size="10" fill="#424242">No need for explicit return statement.</text>
+  </g>
+
+  <!-- Step 12: Example 3 - Callee-Saved Convention -->
+  <g class="step" id="step12" data-narration="Example: Subroutine saves R2, R3 at start, restores before return. Caller's values preserved without caller knowing.">
+    <rect x="40" y="1215" width="720" height="95" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1235" font-size="14" font-weight="bold" fill="#e65100">Example 3: Callee-Saved Register Convention</text>
+    
+    <!-- Code -->
+    <rect x="60" y="1250" width="350" height="50" rx="4" fill="#263238"/>
+    <text x="70" y="1268" font-size="10" fill="#81c784">; Subroutine with callee-saved registers</text>
+    <text x="70" y="1283" font-size="10" fill="#4fc3f7">MY_SUB:</text>
+    <text x="140" y="1283" font-size="10" fill="#ce93d8">PUSH 02H  ; Save R2</text>
+    <text x="140" y="1298" font-size="10" fill="#ce93d8">PUSH 03H  ; Save R3</text>
+    <text x="280" y="1283" font-size="10" fill="#fff59d">; Use R2,R3 freely</text>
+    
+    <!-- Restore -->
+    <rect x="420" y="1250" width="330" height="50" rx="4" fill="#263238"/>
+    <text x="430" y="1268" font-size="10" fill="#81c784">; Restore before return (reverse order!)</text>
+    <text x="430" y="1283" font-size="10" fill="#4fc3f7">POP 03H   ; Restore R3</text>
+    <text x="430" y="1298" font-size="10" fill="#4fc3f7">POP 02H   ; Restore R2</text>
+    <text x="560" y="1298" font-size="10" fill="#ce93d8">RET</text>
+  </g>
+
+  <!-- Step 13: Exam Tips & Key Formulas -->
+  <g class="step" id="step13" data-narration="Key formulas: Bank = (RS1×2)+RS0. SP initialization: 60H+. Register cycles: Reg(1-2), RAM(2-4), Ext(4-8).">
+    <rect x="40" y="1320" width="720" height="85" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1340" font-size="14" font-weight="bold" fill="#7b1fa2">Exam Tips &amp; Key Formulas</text>
+    
+    <!-- Formulas -->
+    <rect x="60" y="1355" width="200" height="40" rx="4" fill="#7b1fa2"/>
+    <text x="70" y="1375" font-size="10" fill="white">Bank = (RS1 × 2) + RS0</text>
+    <text x="70" y="6390" font-size="9" fill="#e1bee7">RS1=PSW.4, RS0=PSW.3</text>
+    
+    <rect x="270" y="1355" width="150" height="40" rx="4" fill="#7b1fa2"/>
+    <text x="280" y="1375" font-size="10" fill="white">SP → 60H+ (min)</text>
+    <text x="280" y="6390" font-size="9" fill="#e1bee7">Avoid Bank 0 overlap</text>
+    
+    <rect x="430" y="1355" width="180" height="40" rx="4" fill="#7b1fa2"/>
+    <text x="440" y="1375" font-size="10" fill="white">Reg:1-2, RAM:2-4</text>
+    <text x="440" y="6390" font-size="9" fill="#e1bee7">Ext RAM:4-8 cycles</text>
+    
+    <!-- Tips -->
+    <text x="620" y="1365" font-size="9" fill="#424242">Remember:</text>
+    <text x="620" y="6380" font-size="9" fill="#424242">• RS0 = PSW.3</text>
+    <text x="700" y="6380" font-size="9" fill="#424242">• RS1 = PSW.4</text>
+    <text x="620" y="6395" font-size="9" fill="#424242">• ACC = most used</text>
+    <text x="700" y="6395" font-size="9" fill="#424242">• DPTR = 16-bit</text>
+  </g>
+
+  <!-- Step 14: Summary -->
+  <g class="step" id="step14" data-narration="Summary: Register allocation is critical for efficient 8051 code. Use banks, save registers properly, prefer callee-saved convention, initialize SP.">
+    <rect x="40" y="1415" width="720" height="75" rx="8" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1435" font-size="14" font-weight="bold" fill="white">Summary: Key Takeaways</text>
+    <text x="60" y="1455" font-size="11" fill="#e3f2fd">• 8051 has 4 banks (R0-R7 each), select via PSW.3(RS0) and PSW.4(RS1)</text>
+    <text x="60" y="1470" font-size="11" fill="#e3f2fd">• Use callee-saved convention for cleaner code | Initialize SP to 60H+</text>
+    <text x="60" y="1485" font-size="11" fill="#e3f2fd">• Pass parameters via registers when possible | Save ACC, B, PSW in ISRs</text>
+  </g>
+</svg>

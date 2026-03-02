@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary difference between a structure and a union in C?",
+    "options": [
+      "A structure allocates separate memory for each member, while a union allocates shared memory.",
+      "A union allocates separate memory for each member, while a structure allocates shared memory.",
+      "A structure can only hold one value at a time, while a union can hold multiple.",
+      "There is no difference; the terms are interchangeable."
+    ],
+    "correctIndex": 0,
+    "explanation": "The key difference is memory allocation. A structure's members each have their own memory location, allowing all to hold values simultaneously. A union's members share a single memory location, meaning only one member can hold a value at any given time."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following best describes the total memory allocated for a union variable?",
+    "options": [
+      "The sum of the memory required for all its members.",
+      "The memory required for its largest member.",
+      "The memory required for its smallest member.",
+      "A fixed size determined by the compiler, regardless of members."
+    ],
+    "correctIndex": 1,
+    "explanation": "A union is allocated enough memory to hold its largest member. Since all members share this single block of memory, the total size must be at least the size of the biggest data type within the union."
+  },
+  {
+    "id": "q3",
+    "question": "In the context of a union, what is a common practical application?",
+    "options": [
+      "To create arrays of different data types.",
+      "To implement polymorphism and create variant data types.",
+      "To improve memory access speed by separating data.",
+      "To enforce strict type checking on data."
+    ],
+    "correctIndex": 1,
+    "explanation": "Unions are often used to implement variant records or achieve a simple form of polymorphism, where a single variable can hold different types of data at different times. This is useful for interpreting the same data in multiple ways or handling different types of messages in a system."
+  },
+  {
+    "id": "q4",
+    "question": "Consider the following code snippet. What is the value of `data.value` after execution?\n\n```c\nunion Data {\n    int num;\n    char str[4];\n} data;\n\ndata.num = 0x41424344; // 'A','B','C','D' in ASCII\n```\n(Assume a little-endian system where the least significant byte is stored first.)",
+    "options": [
+      "0x41424344",
+      "0x44434241",
+      "0x41424344",
+      "It is undefined and depends on which member was accessed last."
+    ],
+    "correctIndex": 3,
+    "explanation": "After the assignment `data.num = 0x41424344`, the union's memory is overwritten with this integer value. However, the value interpreted by `data.str` (and thus the effective byte order) depends on the system's endianness. The question is phrased to trick based on the last access, but the key point is that writing to one member and reading from another leads to implementation-defined behavior, making the result unreliable and a poor practice."
+  },
+  {
+    "id": "q5",
+    "question": "When would a structure containing a union and a type tag (a tagged union) be a more robust design than a plain union?",
+    "options": [
+      "When you need to allocate more memory for the union members.",
+      "When you need to know which member of the union was most recently written to and is currently valid.",
+      "When you want to improve the performance of memory access.",
+      "When you want to allow multiple union members to be active simultaneously."
+    ],
+    "correctIndex": 1,
+    "explanation": "A plain union has no inherent mechanism to track which member is currently storing a valid value. A tagged union combines a union with an explicit tag field (e.g., an enum) that indicates the currently active member. This allows for safe reading of the union, as the code can check the tag to know how to interpret the data, preventing errors from reading an overwritten member."
+  }
+]

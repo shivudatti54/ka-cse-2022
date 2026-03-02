@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary requirement for a schedule to be considered recoverable?",
+    "options": [
+      "A transaction commits only after all transactions it has read from have committed.",
+      "All read and write operations are timestamped.",
+      "The schedule is conflict serializable.",
+      "The system maintains a detailed log of all operations."
+    ],
+    "correctIndex": 0,
+    "explanation": "A recoverable schedule ensures that for every pair of transactions Ti and Tj, if Tj reads a data item previously written by Ti, then the commit of Tj must follow the commit of Ti. This prevents a transaction from committing based on data from a transaction that later aborts."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following schedules is NOT recoverable?",
+    "options": [
+      "T1: R(A), W(A); T2: R(A), W(A), Commit; T1: Abort",
+      "T1: R(A), W(A), Commit; T2: R(A), W(A), Commit",
+      "T1: R(A), W(A); T2: R(A); T1: Commit; T2: Commit",
+      "T1: R(A), W(A); T1: Commit; T2: R(A), W(A); T2: Commit"
+    ],
+    "correctIndex": 0,
+    "explanation": "This schedule is not recoverable because T2 reads from (and potentially commits based on) the uncommitted data written by T1. If T1 aborts, T2 has already committed with dirty data, leading to an inconsistent database state."
+  },
+  {
+    "id": "q3",
+    "question": "What key characteristic distinguishes an ACA (Avoids Cascading Aborts) schedule from a merely recoverable one?",
+    "options": [
+      "It prevents transactions from reading uncommitted data.",
+      "It ensures all transactions are serializable.",
+      "It uses a strict two-phase locking protocol.",
+      "It allows reads only from the most recently committed transaction."
+    ],
+    "correctIndex": 0,
+    "explanation": "An ACA (or Cascadeless) schedule is stricter than a recoverable one. It prevents a transaction from reading any data written by an uncommitted transaction, thereby eliminating the possibility of cascading aborts where one abort forces others to abort."
+  },
+  {
+    "id": "q4",
+    "question": "Consider the following schedule: T1: W(A); T2: R(A), Commit; T1: Commit. How would this schedule be characterized?",
+    "options": [
+      "It is not recoverable.",
+      "It is recoverable.",
+      "It is ACA (Cascadeless).",
+      "It is strict."
+    ],
+    "correctIndex": 0,
+    "explanation": "This schedule is not recoverable. T2 reads the uncommitted data item A from T1 and commits. Since T2 commits before T1, if T1 were to abort later, T2 would have committed based on data that never officially existed in the database, creating an inconsistency."
+  },
+  {
+    "id": "q5",
+    "question": "A strict schedule is considered the most robust from a recovery perspective. What is its defining rule?",
+    "options": [
+      "A transaction can neither read nor write a data item until the last transaction that wrote it has committed or aborted.",
+      "A transaction must hold all its locks until it commits.",
+      "The schedule must be both conflict serializable and recoverable.",
+      "Reads are allowed on uncommitted data, but writes are blocked until the writer commits."
+    ],
+    "correctIndex": 0,
+    "explanation": "A strict schedule prevents transactions from reading OR writing a data item that has been written by an uncommitted transaction. This simplifies recovery procedures because an aborting transaction can be rolled back using the before-images of the data it wrote, without affecting any other transaction's operations."
+  }
+]

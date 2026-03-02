@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- Step 1: Why void kernels -->
+  <g class="step" id="step1" data-narration="CUDA kernels must return void because thousands of threads run simultaneously with no single caller to receive a value.">
+    <rect x="20" y="30" width="760" height="80" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">Why CUDA Kernels Cannot Return Values</text>
+    <text x="400" y="78" text-anchor="middle" font-size="11" fill="#333">Standard functions return to one caller; CUDA launches</text>
+    <text x="400" y="93" text-anchor="middle" font-size="11" fill="#333">thousands of threads simultaneously — no single return path exists</text>
+    <text x="50" y="85" font-family="monospace" font-size="12" fill="#d32f2f">__global__ void myKernel() { }</text>
+    <circle cx="680" cy="70" r="25" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="680" y="75" text-anchor="middle" font-size="11" fill="#f44336" font-weight="bold">VOID</text>
+  </g>
+  
+  <!-- Step 2: Basic pattern -->
+  <g class="step" id="step2" data-narration="The standard pattern uses cudaMalloc for device memory, kernel writes results to that memory, then cudaMemcpy copies results back.">
+    <rect x="20" y="120" width="760" height="70" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="142" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c">Basic Pattern: Device Memory + cudaMemcpy</text>
+    <rect x="80" y="155" width="100" height="25" rx="4" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="130" y="172" text-anchor="middle" font-size="10" fill="#333">1. cudaMalloc</text>
+    <line x1="180" y1="167" x2="220" y2="167" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="230" y="155" width="100" height="25" rx="4" fill="#bbdefb" stroke="#1976d2"/>
+    <text x="280" y="172" text-anchor="middle" font-size="10" fill="#333">2. Kernel writes</text>
+    <line x1="330" y1="167" x2="370" y2="167" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="380" y="155" width="100" height="25" rx="4" fill="#e1bee7" stroke="#9c27b0"/>
+    <text x="430" y="172" text-anchor="middle" font-size="10" fill="#333">3. cudaMemcpy</text>
+    <text x="550" y="172" font-size="10" fill="#333">D2H:</text>
+    <rect x="590" y="160" width="80" height="20" rx="3" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="630" y="174" text-anchor="middle" font-size="9" fill="#333">DeviceToHost</text>
+  </g>
+  
+  <!-- Step 3: Direction flags table -->
+  <g class="step" id="step3" data-narration="cudaMemcpy uses direction flags: HostToDevice sends inputs, DeviceToHost retrieves results, DeviceToDevice copies on GPU.">
+    <rect x="20" y="200" width="760" height="55" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="222" text-anchor="middle" font-size="14" font-weight="bold" fill="#ff9800">cudaMemcpy Direction Flags</text>
+    <rect x="50" y="235" width="170" height="15" fill="#bbdefb" stroke="#1976d2"/>
+    <text x="135" y="247" text-anchor="middle" font-size="9" fill="#333">cudaMemcpyHostToDevice</text>
+    <rect x="230" y="235" width="170" height="15" fill="#e1bee7" stroke="#9c27b0"/>
+    <text x="315" y="247" text-anchor="middle" font-size="9" fill="#333">cudaMemcpyDeviceToHost</text>
+    <rect x="410" y="235" width="170" height="15" fill="#c8e6c9" stroke="#388e3c"/>
+    <text x="495" y="247" text-anchor="middle" font-size="9" fill="#333">cudaMemcpyDeviceToDevice</text>
+    <rect x="590" y="235" width="170" height="15" fill="#ffcdd2" stroke="#f44336"/>
+    <text x="675" y="247" text-anchor="middle" font-size="9" fill="#333">cudaMemcpyHostToHost</text>
+  </g>
+  
+  <!-- Step 4: Race condition problem -->
+  <g class="step" id="step4" data-narration="Computing a scalar result from many threads causes race conditions because multiple threads read-modify-write the same variable.">
+    <rect x="20" y="265" width="760" height="70" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="400" y="287" text-anchor="middle" font-size="14" font-weight="bold" fill="#f44336">Challenge: Scalar Results and Race Conditions</text>
+    <text x="50" y="310" font-family="monospace" font-size="10" fill="#333">// WRONG: Race condition!</text>
+    <text x="50" y="325" font-family="monospace" font-size="10" fill="#333">*result += data[i];  // T1 reads 0, T2 reads 0, both write,</text>
+    <text x="50" y="338" font-family="monospace" font-size="10" fill="#333">                 //   overwrites instead of accumulating</text>
+    <rect x="400" y="305" width="360" height="25" rx="4" fill="#ffcdd2"/>
+    <text x="580" y="322" text-anchor="middle" font-size="10" fill="#d32f2f">Multiple threads read old value, add,</text>
+    <text x="580" y="335" text-anchor="middle" font-size="10" fill="#d32f2f">overwrite each other's updates → WRONG result</text>
+  </g>
+  
+  <!-- Step 5: atomicAdd -->
+  <g class="step" id="step5" data-narration="atomicAdd provides thread-safe accumulation by serializing updates to one variable, but creates a performance bottleneck with many threads.">
+    <rect x="20" y="345" width="760" height="60" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="400" y="367" text-anchor="middle" font-size="14" font-weight="bold" fill="#9c27b0">Technique 1: atomicAdd for Thread-Safe Accumulation</text>
+    <text x="50" y="390" font-family="monospace" font-size="10" fill="#333">atomicAdd(result, data[i]);  // Ensures only one thread</text>
+    <text x="50" y="403" font-family="monospace" font-size="10" fill="#333">                            // updates at a time</text>
+    <rect x="350" y="380" width="180" height="20" rx="4" fill="#e1bee7"/>
+    <text x="440" y="394" text-anchor="middle" font-size="9" fill="#7b1fa2">Serializes → Slow for many threads</text>
+  </g>
+  
+  <!-- Step 6: Parallel reduction -->
+  <g class="step" id="step6" data-narration="Parallel reduction combines values in shared memory using a tree pattern, needing only log2(threads) steps instead of serial operations.">
+    <rect x="20" y="415" width="760" height="80" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="437" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">Technique 2: Parallel Reduction (Tree-Based)</text>
+    <text x="50" y="458" font-size="10" fill="#333">Step 0:</text>
+    <rect x="80" y="450" width="30" height="16" rx="2" fill="#bbdefb" stroke="#1976d2"/><text x="95" y="461" text-anchor="middle" font-size="8" fill="#333">3</text>
+    <rect x="115" y="450" width="30" height="16" rx="2" fill="#bbdefb" stroke="#1976d2"/><text x="130" y="461" text-anchor="middle" font-size="8" fill="#333">1</text>
+    <rect x="150" y="450" width="30" height="16" rx="2" fill="#bbdefb" stroke="#1976d2"/><text x="165" y="461" text-anchor="middle" font-size="8" fill="#333">4</text>
+    <rect x="185" y="450" width="30" height="16" rx="2" fill="#bbdefb" stroke="#1976d2"/><text x="200" y="461" text-anchor="middle" font-size="8" fill="#333">1</text>
+    <text x="250" y="458" font-size="10" fill="#1976d2">→ s=2:</text>
+    <rect x="280" y="450" width="30" height="16" rx="2" fill="#90caf9" stroke="#1976d2"/><text x="295" y="461" text-anchor="middle" font-size="8" fill="#333">4</text>
+    <rect x="315" y="450" width="30" height="16" rx="2" fill="#90caf9" stroke="#1976d2"/><text x="330" y="461" text-anchor="middle" font-size="8" fill="#333">5</text>
+    <text x="380" y="458" font-size="10" fill="#1976d2">→ s=1:</text>
+    <rect x="410" y="450" width="30" height="16" rx="2" fill="#64b5f6" stroke="#1976d2"/><text x="425" y="461" text-anchor="middle" font-size="8" fill="#333">9</text>
+    <text x="460" y="458" font-size="9" fill="#388e3c">Final: 9</text>
+    <text x="550" y="465" font-size="10" fill="#333">log2(blockDim) steps in shared memory,</text>
+    <text x="550" y="478" font-size="10" fill="#333">then one write per block to global memory</text>
+    <text x="50" y="485" font-family="monospace" font-size="9" fill="#333">sdata[tid] += sdata[tid + s];</text>
+  </g>
+  
+  <!-- Step 7: Unified memory -->
+  <g class="step" id="step7" data-narration="Unified memory with cudaMallocManaged creates one pointer accessible from both CPU and GPU, eliminating explicit cudaMemcpy calls.">
+    <rect x="20" y="505" width="760" height="45" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="527" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c">Technique 3: Unified Memory (cudaMallocManaged)</text>
+    <text x="50" y="540" font-family="monospace" font-size="10" fill="#333">cudaMallocManaged(&amp;A, size);  // Single pointer for CPU and GPU</text>
+    <text x="380" y="540" font-size="10" fill="#333">→ Access from both host and device</text>
+    <text x="580" y="540" font-family="monospace" font-size="9" fill="#d32f2f">cudaDeviceSynchronize()</text>
+    <text x="680" y="540" font-size="9" fill="#333">required before host access</text>
+  </g>
+</svg>

@@ -1,0 +1,55 @@
+{
+  "topicId": "constructors-and-methods",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "How do default parameter values work in Python constructors, and what is a common pitfall?",
+      "back": "Default parameters are defined in the constructor signature using `def __init__(self, name, data=[])`. The pitfall: mutable default arguments (like lists or dicts) are shared across all instances, causing data to persist between objects. Always use `def __init__(self, name, data=None)` and set `self.data = data if data is not None else []`."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the purpose of the __new__ method in Python, and how does it differ from __init__?",
+      "back": "`__new__` is a static method that creates and returns a new instance before `__init__` initializes it. While `__init__` configures an already-created object, `__new__` controls instance creation—essential for implementing singleton patterns or immutable classes like `str`, `int`, or `tuple`."
+    },
+    {
+      "id": "fc-3",
+      "front": "When should you use @classmethod versus @staticmethod in Python? Provide a practical example.",
+      "back": "Use `@classmethod` when you need access to the class itself (cls) to modify class state or create factory methods. Use `@staticmethod` for utility functions that don't need class or instance data. Example: `@classmethod def from_file(cls, path):` creates objects from files; `@staticmethod def validate_email(email):` checks format without modifying state."
+    },
+    {
+      "id": "fc-4",
+      "front": "Explain method overriding in Python inheritance with a code example.",
+      "back": "Method overriding occurs when a subclass provides a specific implementation of a method already defined in its parent class. Example: `class Dog(Animal): def speak(self): return 'Woof!'` overrides `Animal.speak(self)`. When `Dog().speak()` is called, Python searches the MRO (Method Resolution Order) and executes the subclass version first."
+    },
+    {
+      "id": "fc-5",
+      "front": "How does the super() function work in Python constructors during inheritance?",
+      "back": "`super().__init__()` calls the parent class constructor, ensuring proper initialization of inherited attributes. In multiple inheritance, `super()` follows the MRO (Method Resolution Order)—the order defined by the class definition. Always call `super().__init__()` before adding subclass-specific initialization to maintain the chain."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the difference between __str__ and __repr__ dunder methods in Python classes?",
+      "back": "`__str__` returns a human-readable, informal string for end-users (e.g., `print(obj)`), while `__repr__` returns an unambiguous, developer-friendly string for debugging (e.g., `repr(obj)`). If only `__repr__` is defined, Python uses it as a fallback for `__str__`. Always implement `__repr__` for clear debugging output."
+    },
+    {
+      "id": "fc-7",
+      "front": "How do you implement encapsulation in Python using property decorators? Provide a code example.",
+      "back": "Use `@property` to create getter methods, `@property_name.setter` for setters with validation. Example: `class BankAccount: def __init__(self, balance): self._balance = balance` (underscore indicates private). `@property def balance(self): return self._balance`; `@balance.setter def balance(self, value): if value < 0: raise ValueError('Negative balance')`; `self._balance = value`."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the Method Resolution Order (MRO) in Python, and how does it affect method calling in multiple inheritance?",
+      "back": "MRO defines the order in which Python searches for methods in a class hierarchy, accessible via `ClassName.mro()` or `ClassName.__mro__`. In multiple inheritance, Python uses C3 linearization (depth-first, left-to-right). For `class C(A, B):`, Python first looks in C, then A (and its parents), then B—to avoid diamond problem issues."
+    },
+    {
+      "id": "fc-9",
+      "front": "Write a Python code challenge: Create a class hierarchy for a Shape system with method overriding and super().",
+      "back": "Code Challenge: Create base class `Shape` with `__init__(self, color)` and `area()` method. Subclass `Rectangle` with `width, height`; override `area()` returning `width*height`. Subclass `Circle` with `radius`; override `area()` returning `3.14*radius**2`. Use `super().__init__(color)` in both constructors. Create instances and print areas demonstrating polymorphism."
+    },
+    {
+      "id": "fc-10",
+      "front": "Explain the concept of abstract base classes (ABCs) in Python and their relationship with constructors.",
+      "back": "ABCs enforce that subclasses implement specific methods using the `abc` module: `from abc import ABC, abstractmethod`. Abstract classes cannot be instantiated directly—they define a contract. Constructors in ABCs work normally but exist primarily to share initialization logic: `class Vehicle(ABC): def __init__(self, wheels): self.wheels = wheels`. Concrete subclasses must call `super().__init__()` to inherit this behavior."
+    }
+  ]
+}

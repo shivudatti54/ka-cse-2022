@@ -1,0 +1,55 @@
+{
+  "topicId": "recursion",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Recursive Factorial Function",
+      "description": "Computes factorial of a number using recursion",
+      "code": "#include <stdio.h>\n\nint factorial(int n) {\n    // Base case\n    if (n == 0 || n == 1) {\n        return 1;\n    }\n    // Recursive case\n    return n * factorial(n - 1);\n}\n\nint main() {\n    int num = 5;\n    printf(\"Factorial of %d is %d\\n\", num, factorial(num));\n    return 0;\n}",
+      "explanation": "The function checks for base case (n=0 or 1 returns 1) then multiplies n with factorial of n-1. Each call adds to stack until base case is reached, then returns propagate back multiplying all values.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Binary Search Using Recursion",
+      "description": "Searches for an element in a sorted array using divide and conquer",
+      "code": "#include <stdio.h>\n\nint binarySearch(int arr[], int low, int high, int key) {\n    // Base case: element not found\n    if (low > high) {\n        return -1;\n    }\n    \n    int mid = low + (high - low) / 2;\n    \n    // Base case: element found\n    if (arr[mid] == key) {\n        return mid;\n    }\n    \n    // Recursive case: search left half\n    if (key < arr[mid]) {\n        return binarySearch(arr, low, mid - 1, key);\n    }\n    \n    // Recursive case: search right half\n    return binarySearch(arr, mid + 1, high, key);\n}\n\nint main() {\n    int arr[] = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};\n    int n = sizeof(arr) / sizeof(arr[0]);\n    int key = 23;\n    int result = binarySearch(arr, 0, n - 1, key);\n    \n    if (result != -1)\n        printf(\"Element found at index %d\\n\", result);\n    else\n        printf(\"Element not found\\n\");\n    \n    return 0;\n}",
+      "explanation": "The array is divided in half at each step. If key equals mid, found. If key is smaller, search left half; otherwise search right half. Recursion continues until element is found or search space is exhausted.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(log n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Tower of Hanoi",
+      "description": "Solves Tower of Hanoi puzzle using recursion",
+      "code": "#include <stdio.h>\n\nvoid towerOfHanoi(int n, char source, char destination, char auxiliary) {\n    // Base case: only one disk\n    if (n == 1) {\n        printf(\"Move disk 1 from %c to %c\\n\", source, destination);\n        return;\n    }\n    \n    // Move n-1 disks from source to auxiliary\n    towerOfHanoi(n - 1, source, auxiliary, destination);\n    \n    // Move nth disk from source to destination\n    printf(\"Move disk %d from %c to %c\\n\", n, source, destination);\n    \n    // Move n-1 disks from auxiliary to destination\n    towerOfHanoi(n - 1, auxiliary, destination, source);\n}\n\nint main() {\n    int n = 3;\n    printf(\"Tower of Hanoi for %d disks:\\n\", n);\n    towerOfHanoi(n, 'A', 'C', 'B');\n    printf(\"Total moves: %d\\n\", (1 << n) - 1);\n    return 0;\n}",
+      "explanation": "For n disks: first move n-1 disks to auxiliary peg, then move largest disk to destination, then move n-1 disks from auxiliary to destination. This creates 2^n - 1 total moves.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Fibonacci with Memoization",
+      "description": "Efficient Fibonacci using dynamic programming (memoization)",
+      "code": "#include <stdio.h>\n#define MAX 100\n\nint memo[MAX];\n\nint fibonacci(int n) {\n    // Base cases\n    if (n == 0) return 0;\n    if (n == 1) return 1;\n    \n    // Return stored result if already computed\n    if (memo[n] != -1) {\n        return memo[n];\n    }\n    \n    // Compute and store result\n    memo[n] = fibonacci(n - 1) + fibonacci(n - 2);\n    return memo[n];\n}\n\nint main() {\n    int n = 10;\n    \n    // Initialize memo array with -1\n    for (int i = 0; i < MAX; i++) {\n        memo[i] = -1;\n    }\n    \n    printf(\"Fibonacci(%d) = %d\\n\", n, fibonacci(n));\n    return 0;\n}",
+      "explanation": "Memoization stores computed Fibonacci values in an array. When fibonacci(n) is called, it first checks if the value is already in memo array. If yes, returns it immediately without recalculation, avoiding exponential time.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Reverse String Using Recursion",
+      "description": "Reverses a string in place using recursion",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nvoid reverseString(char str[], int start, int end) {\n    // Base case: start >= end\n    if (start >= end) {\n        return;\n    }\n    \n    // Swap characters at start and end positions\n    char temp = str[start];\n    str[start] = str[end];\n    str[end] = temp;\n    \n    // Recursive call for next pair\n    reverseString(str, start + 1, end - 1);\n}\n\nint main() {\n    char str[] = \"Hello World\";\n    int len = strlen(str);\n    \n    printf(\"Original string: %s\\n\", str);\n    reverseString(str, 0, len - 1);\n    printf(\"Reversed string: %s\\n\", str);\n    \n    return 0;\n}",
+      "explanation": "The function takes two indices (start and end). It swaps characters at these positions, then recursively calls itself with incremented start and decremented end. Base case triggers when indices meet or cross.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

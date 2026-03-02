@@ -1,0 +1,35 @@
+{
+  "topicId": "propositional-logic",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Truth Table Generator",
+      "description": "Generates truth table for any compound proposition",
+      "code": "FUNCTION TruthTable(numVars):\n numRows = 2^numVars\n FOR i FROM 0 TO numRows-1:\n row = []\n FOR j FROM 0 TO numVars-1:\n // Calculate truth value using binary representation\n bit = (i // (2^j)) % 2\n row.append(bit == 1) // True if bit is 1\n PRINT row\n RETURN\n\n// Example for 3 variables P, Q, R\n// Output: 8 rows with all combinations",
+      "explanation": "Generates all 2^n combinations of truth values for n propositional variables by treating rows as binary numbers from 0 to 2^n-1.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Evaluate Compound Proposition",
+      "description": "Evaluates a proposition given truth values for variables",
+      "code": "FUNCTION Evaluate(expr, values):\n // expr is in postfix/prefix notation\n // values is dictionary: {'P': True, 'Q': False}\n \n IF expr is atomic proposition:\n RETURN values[expr]\n \n IF expr is NOT P:\n RETURN NOT Evaluate(P, values)\n \n IF expr is P AND Q:\n RETURN Evaluate(P, values) AND Evaluate(Q, values)\n \n IF expr is P OR Q:\n RETURN Evaluate(P, values) OR Evaluate(Q, values)\n \n IF expr is P IMPLY Q:\n // False only when P=True and Q=False\n RETURN (NOT Evaluate(P, values)) OR Evaluate(Q, values)\n \n RETURN\n\n// To check tautology: Evaluate for ALL combinations\n// If all results are True, it's a tautology",
+      "explanation": "Recursively evaluates any compound proposition. For implication, implements the truth table: P→Q is false only when P is true and Q is false.",
+      "timeComplexity": "O(n) per evaluation",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Check Logical Equivalence",
+      "description": "Determines if two propositions are logically equivalent",
+      "code": "FUNCTION CheckEquivalence(expr1, expr2, variables):\n numVars = LENGTH(variables)\n numRows = 2^numVars\n \n FOR i FROM 0 TO numRows-1:\n // Create truth value assignment\n values = {}\n FOR j FROM 0 TO numVars-1:\n values[variables[j]] = (i // (2^j)) % 2 == 1\n \n // Evaluate both expressions\n result1 = Evaluate(expr1, values)\n result2 = Evaluate(expr2, values)\n \n // If any row differs, not equivalent\n IF result1 != result2:\n RETURN FALSE // Not equivalent\n \n RETURN TRUE // Logically equivalent\n\n// Example: Check if P→Q ≡ ¬P ∨ Q",
+      "explanation": "Tests both propositions against all possible truth value combinations. If results match for every combination, they are logically equivalent.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

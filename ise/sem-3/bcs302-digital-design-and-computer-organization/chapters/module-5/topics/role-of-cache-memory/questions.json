@@ -1,0 +1,172 @@
+{
+  "topicId": "role-of-cache-memory",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of locality of reference and its two types. How does it relate to cache memory effectiveness?",
+      "keyPoints": [
+        "Define locality of reference as the tendency of the processor to access the same memory locations repeatedly",
+        "Explain temporal locality: recently accessed items likely accessed again",
+        "Explain spatial locality: nearby locations likely accessed soon",
+        "Relate to cache: cache works because programs exhibit locality",
+        "Higher locality leads to higher cache hit rates and better performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between write-through and write-back cache policies. Mention their advantages and disadvantages.",
+      "keyPoints": [
+        "Write-through: writes to both cache and main memory simultaneously",
+        "Write-back: writes to cache first, main memory updated on eviction",
+        "Write-through advantages: simple, data consistency guaranteed",
+        "Write-through disadvantages: slower writes, uses more memory bandwidth",
+        "Write-back advantages: faster writes, less memory traffic",
+        "Write-back disadvantages: complex, potential data inconsistency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the three main cache mapping techniques with their advantages and limitations.",
+      "keyPoints": [
+        "Direct mapping: each block mapped to one cache line using modulo operation",
+        "Advantages: simple hardware, inexpensive",
+        "Limitations: fixed mapping can cause thrashing",
+        "Fully associative: any block can go anywhere",
+        "Advantages: best hit rate, flexibility",
+        "Limitations: expensive hardware for parallel search",
+        "Set-associative: combination of direct and associative",
+        "Advantages: compromise between cost and performance",
+        "Limitations: slightly more complex than direct mapping"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Calculate the average memory access time for a cache system with: Hit time = 2 cycles, Miss rate = 8%, Miss penalty = 50 cycles. Also explain what this calculation signifies.",
+      "keyPoints": [
+        "Formula: AMAT = Hit time + (Miss rate \u00d7 Miss penalty)",
+        "Calculation: 2 + (0.08 \u00d7 50) = 2 + 4 = 6 cycles",
+        "This represents the effective memory access time considering both cache hits and misses",
+        "Lower AMAT indicates better cache performance",
+        "Shows trade-off between cache speed and memory latency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is cache coherence problem in multiprocessor systems? How is it typically handled?",
+      "keyPoints": [
+        "Cache coherence: ensuring multiple caches have consistent data",
+        "Problem: when one processor updates data in its cache, other processors may have stale copies",
+        "Snooping protocols: each cache monitors bus transactions",
+        "Write-invalidate protocol: invalidates copies in other caches on write",
+        "Write-update protocol: updates copies in other caches on write",
+        "Hardware solutions like MESI protocol"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain LRU replacement policy in cache memory. Why is it commonly used despite requiring additional hardware?",
+      "keyPoints": [
+        "LRU stands for Least Recently Used",
+        "Replaces the block that has not been accessed for the longest time",
+        "Assumes recently used blocks will be used again (temporal locality)",
+        "Requires hardware to track the order of block access",
+        "Commonly used because it closely approximates optimal replacement",
+        "Provides good hit rates for most practical workloads",
+        "Hardware can be implemented with counters or stack algorithms"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the differences between L1, L2, and L3 caches in terms of size, speed, and location?",
+      "keyPoints": [
+        "L1 cache: smallest (16-64KB), fastest (1-2 cycle access), on CPU chip",
+        "L2 cache: larger (256KB-2MB), slower (10-20 cycles), often on same chip or separate",
+        "L3 cache: largest (4MB-64MB), slowest (30-50 cycles), shared among cores",
+        "Trade-off: smaller caches are faster but have lower capacity",
+        "Modern processors use inclusive or exclusive cache hierarchies",
+        "L3 often acts as a victim cache for L2"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A computer system has a cache with the following specifications: Cache size = 16KB, Block size = 64 bytes, Associativity = 2-way. Calculate: (a) Number of cache lines, (b) Number of sets, (c) Number of bits for offset, index, and tag fields in the address. Assume a 32-bit address.",
+      "keyPoints": [
+        "Cache lines = Cache size / Block size = 16384 / 64 = 256 lines",
+        "Sets = Cache lines / Associativity = 256 / 2 = 128 sets",
+        "Offset bits = log2(Block size) = log2(64) = 6 bits",
+        "Index bits = log2(Number of sets) = log2(128) = 7 bits",
+        "Tag bits = Address bits - Offset bits - Index bits = 32 - 6 - 7 = 19 bits",
+        "Verification: 6 + 7 + 19 = 32 bits"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the sequence of events when the CPU requests data that is not present in the cache (cache miss). Discuss both fetch and write scenarios.",
+      "keyPoints": [
+        "Read miss scenario: CPU requests data not in cache",
+        "Cache checks valid bits and tags, determines miss",
+        "Cache controller fetches block from main memory",
+        "Entire block (e.g., 64 bytes) is loaded into cache",
+        "Requested data is sent to CPU while block is being loaded",
+        "CPU may stall or execute other instructions during fetch",
+        "Write miss scenario: CPU writes to a non-cached location",
+        "Write-allocate: fetch block first, then update in cache",
+        "No-writeallocate: write directly to main memory, bypassing cache",
+        "Block replacement may be needed if cache is full",
+        "Dirty bit handling in write-back policy"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare and contrast direct-mapped, set-associative, and fully associative cache mapping techniques. Provide a detailed analysis of their hardware complexity, hit rate, and suitability for different applications.",
+      "keyPoints": [
+        "Direct-mapped: simple hardware, one location per block, high conflict miss potential",
+        "Set-associative: N-way set (e.g., 4-way), reduces conflicts, moderate hardware",
+        "Fully associative: any location, best hit rate, complex expensive hardware",
+        "Hardware complexity: direct simplest, set-associative moderate, fully complex",
+        "Hit rate: fully best, set-associative good, direct varies with access patterns",
+        "Speed: direct fastest lookup, set-associative moderate, fully slowest",
+        "Suitability: direct for cost-sensitive, set-associative for general purpose, fully for specialized applications",
+        "Trade-offs involve hit rate vs hardware cost vs access time"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the various factors that affect cache performance. How can cache miss rate be reduced? Explain with examples.",
+      "keyPoints": [
+        "Factors affecting performance: cache size, block size, associativity, replacement policy",
+        "Cache size: larger reduces capacity misses but increases access time",
+        "Block size: larger exploits spatial locality but increases miss penalty",
+        "Associativity: higher reduces conflict misses but increases lookup time",
+        "Replacement policy: LRU better than FIFO but needs more hardware",
+        "Write policy impacts performance for write-intensive workloads",
+        "Miss rate reduction techniques: increasing cache size, optimizing block size",
+        "Using appropriate associativity for the workload",
+        "Software optimizations: loop tiling, array padding to reduce conflicts",
+        "Hardware optimizations: prefetching, victim caches, non-blocking caches"
+      ],
+      "marks": 10
+    }
+  ]
+}

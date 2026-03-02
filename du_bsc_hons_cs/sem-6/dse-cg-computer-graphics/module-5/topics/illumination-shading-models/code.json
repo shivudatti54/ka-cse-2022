@@ -1,0 +1,45 @@
+{
+  "topicId": "illumination-shading-models",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Phong Illumination Calculation",
+      "description": "Computes Phong reflection model for a single light source and surface point",
+      "code": "FUNCTION PhongIllumination(normal N, lightDir L, viewDir V, material, light)\n    // Step 1: Ambient component\n    ambient = material.ka * light.intensity\n    \n    // Step 2: Diffuse component (Lambert term)\n    dotNL = dotProduct(N, L)\n    IF dotNL < 0 THEN\n        diffuse = 0\n    ELSE\n        diffuse = material.kd * light.intensity * dotNL\n    END IF\n    \n    // Step 3: Specular component\n    // Calculate reflection vector: R = 2(N\u00b7L)N - L\n    reflection = 2 * dotProduct(N, L) * N - L\n    normalize(reflection)\n    \n    dotRV = dotProduct(reflection, V)\n    IF dotRV < 0 THEN\n        specular = 0\n    ELSE\n        specular = material.ks * light.intensity * (dotRV ^ material.shininess)\n    END IF\n    \n    // Step 4: Combine all components\n    totalIntensity = ambient + diffuse + specular\n    \n    RETURN totalIntensity\nEND FUNCTION",
+      "explanation": "This pseudocode implements the three-component Phong model. It calculates ambient (base light), diffuse (matte surface reflection), and specular (shiny highlight) components, then combines them. The specular term uses the reflection vector and view direction to create view-dependent highlights.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Gouraud Shading Implementation",
+      "description": "Vertex-based shading with color interpolation across triangle",
+      "code": "import numpy as np\n\ndef gouraud_shading(vertices, normals, light_dir, material, light_color):\n    \"\"\"\n    Gouraud shading: compute color at each vertex, interpolate\n    vertices: list of 3 vertex positions\n    normals: list of 3 vertex normals\n    \"\"\"\n    \n    def calculate_intensity(normal, light_dir, material, light_color):\n        # Normalize vectors\n        N = normal / np.linalg.norm(normal)\n        L = light_dir / np.linalg.norm(light_dir)\n        \n        # Ambient\n        ambient = material['ka'] * light_color\n        \n        # Diffuse (Lambert)\n        diff = max(0, np.dot(N, L))\n        diffuse = material['kd'] * light_color * diff\n        \n        # Specular\n        R = 2 * np.dot(N, L) * N - L\n        R = R / np.linalg.norm(R)\n        V = np.array([0, 0, 1])  # assuming viewer at z\n        spec = max(0, np.dot(R, V)) ** material['n']\n        specular = material['ks'] * light_color * spec\n        \n        return ambient + diffuse + specular\n    \n    # Calculate intensity at each vertex\n    vertex_colors = []\n    for normal in normals:\n        intensity = calculate_intensity(normal, light_dir, material, light_color)\n        vertex_colors.append(intensity)\n    \n    # Interpolate across triangle (barycentric coordinates)\n    # For each pixel in triangle, interpolate vertex colors\n    # ... rasterization code would go here\n    \n    return vertex_colors\n\n# Example usage\nmaterial = {'ka': 0.1, 'kd': 0.6, 'ks': 0.5, 'n': 32}\nlight_dir = np.array([0.5, 1.0, 0.5])\nlight_color = np.array([1.0, 1.0, 1.0])",
+      "explanation": "This Python code implements Gouraud shading by computing illumination at each vertex first, then interpolating the resulting colors across the triangle. The key difference from Phong shading is that normals are interpolated and lighting is computed per-vertex rather than per-pixel.",
+      "timeComplexity": "O(V) where V is number of vertices",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Phong Shading in Fragment Shader (GLSL-like)",
+      "description": "Per-pixel lighting computation for accurate specular highlights",
+      "code": "// Vertex Shader\nattribute vec3 position;\nattribute vec3 normal;\n\nuniform mat4 modelViewMatrix;\nuniform mat4 normalMatrix;\nuniform mat4 projectionMatrix;\n\nvarying vec3 vNormal;\nvarying vec3 vPosition;\n\nvoid main() {\n    vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;\n    vNormal = normalize((normalMatrix * vec4(normal, 0.0)).xyz);\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n}\n\n// Fragment Shader (Phong Shading - computed per pixel)\nprecision mediump float;\n\nvarying vec3 vNormal;\nvarying vec3 vPosition;\n\nuniform vec3 lightPosition;  // in view space\nuniform vec3 lightColor;\nuniform vec3 ambientColor;\nuniform float ka, kd, ks;    // material properties\nuniform float shininess;\n\nvoid main() {\n    // Normalize interpolated normal\n    vec3 N = normalize(vNormal);\n    \n    // Light direction\n    vec3 L = normalize(lightPosition - vPosition);\n    \n    // View direction (camera at origin in view space)\n    vec3 V = normalize(-vPosition);\n    \n    // Reflection vector: R = 2(N\u00b7L)N - L\n    vec3 R = reflect(-L, N);\n    \n    // Ambient component\n    vec3 ambient = ka * ambientColor;\n    \n    // Diffuse component (Lambert)\n    float diff = max(dot(N, L), 0.0);\n    vec3 diffuse = kd * lightColor * diff;\n    \n    // Specular component (Phong)\n    float spec = pow(max(dot(R, V), 0.0), shininess);\n    vec3 specular = ks * lightColor * spec;\n    \n    // Final color\n    vec3 finalColor = ambient + diffuse + specular;\n    gl_FragColor = vec4(finalColor, 1.0);\n}",
+      "explanation": "This C/GLSL code demonstrates Phong shading in the fragment shader. The key difference from Gouraud is that lighting calculations happen per-pixel (in fragment shader) rather than per-vertex. The normal is interpolated from vertices and used to compute reflection at each pixel, producing sharp specular highlights.",
+      "timeComplexity": "O(P) where P is number of pixels",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Light Attenuation Calculation",
+      "description": "Implements distance-based light intensity attenuation",
+      "code": "import math\n\ndef calculate_attenuation(light_position, surface_position, \n                          a0=1.0, a1=0.0, a2=0.0):\n    \"\"\"\n    Calculate light attenuation based on distance\n    \n    Parameters:\n    - a0, a1, a2: attenuation constants\n      a0 = 1.0: no distance attenuation (directional light)\n      a1: linear attenuation\n      a2: quadratic attenuation (physically accurate)\n    \n    Formula: 1 / (a0 + a1*d + a2*d^2)\n    \"\"\"\n    # Calculate distance\n    dx = light_position[0] - surface_position[0]\n    dy = light_position[1] - surface_position[1]\n    dz = light_position[2] - surface_position[2]\n    distance = math.sqrt(dx*dx + dy*dy + dz*dz)\n    \n    # Calculate attenuation factor\n    if distance == 0:\n        return 1.0\n    \n    attenuation = 1.0 / (a0 + a1 * distance + a2 * distance * distance)\n    \n    # Clamp to prevent unrealistic values\n    attenuation = min(attenuation, 1.0)\n    \n    return attenuation\n\ndef spotlight_factor(light_position, surface_position, \n                    spot_direction, spot_angle, falloff):\n    \"\"\"\n    Calculate spotlight intensity based on cone angle\n    \"\"\"\n    # Direction from light to surface\n    to_surface = [surface_position[i] - light_position[i] for i in range(3)]\n    magnitude = math.sqrt(sum(x**2 for x in to_surface))\n    to_surface = [x/magnitude for x in to_surface]\n    \n    # Cosine of angle between spotlight direction and surface direction\n    cos_angle = sum(to_surface[i] * spot_direction[i] for i in range(3))\n    \n    # Check if within spotlight cone\n    spot_cos = math.cos(spot_angle)\n    if cos_angle < spot_cos:\n        return 0.0\n    \n    # Calculate falloff\n    exponent = falloff * (cos_angle - spot_cos) / (1.0 - spot_cos)\n    return math.pow(cos_angle, exponent)\n\n# Example: Point light with quadratic attenuation\nlight_pos = (0, 10, 0)\nsurface_pos = (5, 0, 5)\nattenuation = calculate_attenuation(light_pos, surface_pos, \n                                     a0=1.0, a1=0.0, a2=0.1)\nprint(f\"Attenuation factor: {attenuation:.4f}\")",
+      "explanation": "This code implements light attenuation, which simulates how light intensity decreases with distance. It includes support for point lights with constant, linear, or quadratic attenuation. The spotlight function calculates intensity falloff within a cone angle, simulating focused light sources like flashlights or spotlights.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

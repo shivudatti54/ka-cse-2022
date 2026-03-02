@@ -1,0 +1,35 @@
+{
+  "topicId": "example-sandstone",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Sequential File Search Algorithm",
+      "description": "Demonstrates linear search in a sequential file",
+      "code": "PROCEDURE SequentialSearch(file, key)\nBEGIN\n OPEN file FOR READ\n WHILE NOT EOF(file) DO\n READ record FROM file\n IF record.key == key THEN\n CLOSE file\n RETURN record\n END IF\n END WHILE\n CLOSE file\n RETURN NOT FOUND\nEND",
+      "explanation": "Reads file from beginning until key is found or EOF reached. Time complexity O(n) in worst case.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Indexed File Search Algorithm",
+      "description": "Two-level search using index for fast access",
+      "code": "PROCEDURE IndexedSearch(file, index, key)\nBEGIN\n // Step 1: Search index\n binarySearch(index, key, low, high)\n blockAddress <- index[high].address\n \n // Step 2: Read relevant data block\n SEEK file TO blockAddress\n READ block FROM file\n \n // Step 3: Search within block\n FOR each record IN block DO\n IF record.key == key THEN\n RETURN record\n END IF\n END FOR\n RETURN NOT FOUND\nEND",
+      "explanation": "Uses binary search on index (O(log n)) to find block, then linear search within block.",
+      "timeComplexity": "O(log n + b)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Hash Function for Direct Access",
+      "description": "Simple hash function for file record addressing",
+      "code": "FUNCTION Hash(key, bucketCount)\nBEGIN\n // Simple modulo hash\n hashValue <- key MOD bucketCount\n RETURN hashValue\nEND\n\nPROCEDURE DirectAccess(file, key)\nBEGIN\n bucket <- Hash(key, file.bucketCount)\n SEEK file TO bucket * bucketSize\n READ record FROM file\n IF record.key == key THEN\n RETURN record\n ELSE\n RETURN NOT FOUND\n END IF\nEND",
+      "explanation": "Computes bucket address using hash function. Average case O(1), worst case O(n) with collisions.",
+      "timeComplexity": "O(1) average, O(n) worst",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

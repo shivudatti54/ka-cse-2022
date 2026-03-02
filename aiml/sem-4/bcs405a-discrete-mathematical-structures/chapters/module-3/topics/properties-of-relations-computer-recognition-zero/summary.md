@@ -1,0 +1,22 @@
+# **Relations and Functions**
+
+- **Definition of a Relation**: A relation R between two sets A and B is a subset of the Cartesian product A × B.
+- **Types of Relations**:
+  - **Equivalence Relation**: Reflexive, Symmetric, and Transitive.
+  - **Partial Order**: Reflexive, Transitive, and Antisymmetric.
+  - **Total Order**: Reflexive, Transitive, Symmetric, and Antisymmetric.
+- **Zero-One Matrices**: Represent relations as matrices where 1 represents the relation and 0 represents no relation.
+- **Directed Graphs**: Represent relations as directed graphs where edges represent the relation.
+- **Hasse Diagrams**: A graphical representation of partial orders where elements are connected by edges if one is less than or equal to the other.
+- **Important Formulas**:
+  - **Complement of a Relation**: For a relation R, the complement is the set of pairs that are not in R.
+  - **Union and Intersection of Relations**: Represented using union and intersection operations.
+- **Important Definitions**:
+  - **Reflexive**: A relation R is reflexive if (a, a) ∈ R for all a ∈ A.
+  - **Symmetric**: A relation R is symmetric if (a, b) ∈ R implies (b, a) ∈ R.
+  - **Transitive**: A relation R is transitive if (a, b) ∈ R and (b, c) ∈ R implies (a, c) ∈ R.
+  - **Antisymmetric**: A relation R is antisymmetric if (a, b) ∈ R and (b, a) ∈ R implies a = b.
+- **Important Theorems**:
+  - **Reflexivity Theorem**: A relation R is reflexive if and only if (a, a) ∈ R for all a ∈ A.
+  - **Symmetry Theorem**: A relation R is symmetric if and only if (a, b) ∈ R implies (b, a) ∈ R.
+  - **Transitivity Theorem**: A relation R is transitive if and only if (a, b) ∈ R and (b, c) ∈ R implies (a, c) ∈ R.

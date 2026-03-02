@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What is the primary purpose of the `sigsuspend` function in Unix system programming?",
+    "back": "The `sigsuspend` function is used to temporarily replace the process's signal mask and then suspend the process until a signal is received. It is primarily used to atomically unblock a signal and wait for it, preventing race conditions."
+  },
+  {
+    "id": "f2",
+    "front": "What is the function prototype for `sigsuspend`?",
+    "back": "`int sigsuspend(const sigset_t *sigmask);` The function takes a single argument, a pointer to a signal set that becomes the new process signal mask during the suspend."
+  },
+  {
+    "id": "f3",
+    "front": "How does `sigsuspend` differ from using a sequence of `sigprocmask` and `pause`?",
+    "back": "Using `sigprocmask(SIG_SETMASK, ...)` followed by `pause()` creates a race condition window where the signal can arrive *after* the mask is unblocked but *before* `pause` is called, causing the program to miss the signal and hang. `sigsuspend` performs these two operations atomically, eliminating this race condition."
+  },
+  {
+    "id": "f4",
+    "front": "What is the return value and error condition for `sigsuspend`?",
+    "back": "`sigsuspend` always returns -1. It returns only after a signal handler has been called and has returned. The `errno` is set to `EINTR` to indicate the function was interrupted by a signal, which is the expected behavior, not an error."
+  },
+  {
+    "id": "f5",
+    "front": "Describe a common use case pattern for `sigsuspend` when waiting for a specific signal.",
+    "back": "A common pattern is:\n1. Block all signals of interest at the start.\n2. Check a global flag (e.g., `volatile sig_atomic_t`) to see if the awaited signal has already arrived.\n3. If not, call `sigsuspend` with a mask that unblocks the specific signal, waiting for it.\n4. The signal handler for that signal simply sets the global flag. This ensures the wait is atomic and race-free."
+  }
+]

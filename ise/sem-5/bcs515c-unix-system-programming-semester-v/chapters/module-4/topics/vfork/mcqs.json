@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the vfork() system call?",
+    "options": [
+      "To create a new process optimized for an immediate exec() call",
+      "To create a fully independent child process with a copy of the parent's address space",
+      "To create a new thread within the same process",
+      "To create a process that shares all file descriptors with the parent"
+    ],
+    "correctIndex": 0,
+    "explanation": "vfork() is specifically designed to be more efficient than fork() when the child process is going to immediately call exec(), as it avoids copying the parent's page tables."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following statements is TRUE regarding the execution of a process created with vfork()?",
+    "options": [
+      "The child process runs in the same address space as the parent until it calls exec() or _exit()",
+      "The child gets its own copy of the parent's data, heap, and stack segments",
+      "The parent is suspended until the child terminates or calls exec()",
+      "The child and parent can modify variables independently without affecting each other"
+    ],
+    "correctIndex": 2,
+    "explanation": "A key characteristic of vfork() is that the parent process is suspended until the child process either exits normally (via _exit()) or calls one of the exec functions."
+  },
+  {
+    "id": "q3",
+    "question": "What is a critical danger of modifying data in the parent's memory from a child process created with vfork()?",
+    "options": [
+      "It can cause the program to crash or produce unpredictable results due to the shared address space",
+      "It will automatically trigger a copy-on-write, making vfork() inefficient",
+      "It is not allowed and will result in a segmentation fault enforced by the kernel",
+      "It will permanently block the parent process from resuming execution"
+    ],
+    "correctIndex": 0,
+    "explanation": "Since vfork() shares the parent's memory address space, any changes the child makes to variables (other than those used for the exec() call) will corrupt the parent's state when it resumes, leading to undefined behavior."
+  },
+  {
+    "id": "q4",
+    "question": "Why must a child process created with vfork() use _exit() instead of exit() to terminate?",
+    "options": [
+      "exit() flushes stdio buffers and calls atexit() handlers, which would corrupt the parent's state in the shared environment",
+      "_exit() is faster and vfork() is all about performance, so it's mandated",
+      "exit() is not supported in the child context created by vfork()",
+      "Using exit() would immediately terminate the parent process as well"
+    ],
+    "correctIndex": 0,
+    "explanation": "The exit() function performs cleanup tasks like flushing I/O buffers and running functions registered with atexit(). This would disrupt the parent's state, which is sharing the same memory. _exit() terminates the process immediately without any such cleanup."
+  },
+  {
+    "id": "q5",
+    "question": "In modern systems, the original performance gap between fork() and vfork() has narrowed significantly. What is the primary technical reason a programmer might still choose vfork() today?",
+    "options": [
+      "In very specific, constrained environments where even the copy-on-write overhead of fork() is unacceptable",
+      "Because it is the more modern and recommended system call for all new process creation",
+      "To ensure the child process has a completely isolated and secure memory space",
+      "To allow the child to signal the parent immediately after changing a shared variable"
+    ],
+    "correctIndex": 0,
+    "explanation": "While copy-on-write makes fork() much more efficient, vfork() still avoids the overhead of creating new page tables entirely. This can be critical in extreme scenarios, such as on memory-constrained embedded systems, where even the potential overhead of a COW fork is too costly."
+  }
+]

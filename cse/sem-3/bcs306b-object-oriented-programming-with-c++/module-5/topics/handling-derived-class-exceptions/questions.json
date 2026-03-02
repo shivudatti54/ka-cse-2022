@@ -1,0 +1,166 @@
+{
+  "topicId": "handling-derived-class-exceptions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of exception handling in C++ with a suitable example. Differentiate between throw, try, and catch blocks.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "throw is used to raise an exception",
+        "try block contains code that might throw",
+        "catch block handles the thrown exception",
+        "Example showing proper syntax and flow",
+        "Exception propagates until caught"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is exception slicing? How can it be prevented when catching exceptions in a class hierarchy?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Definition: losing derived class data when caught by value",
+        "Occurs when base class catch receives derived exception",
+        "Prevention: catch by reference or pointer",
+        "Shows polymorphic behavior is lost when sliced",
+        "Code example demonstrating the problem and solution"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the C++ standard exception class hierarchy. List at least four derived exception classes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "std::exception is base class",
+        "Two main branches: std::logic_error and std::runtime_error",
+        "std::logic_error includes: invalid_argument, length_error, out_of_range",
+        "std::runtime_error includes: range_error, overflow_error, runtime_error",
+        "Other important: std::bad_alloc, std::bad_cast, std::ios_base::failure"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is stack unwinding in C++ exception handling? Explain with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Stack unwinding removes function stack frames",
+        "Destructors of local objects are called during unwinding",
+        "Ensures proper cleanup before exception is caught",
+        "Example showing constructor throws and partial construction cleanup",
+        "Mention that throwing in destructor leads to terminate()"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between catching exceptions by value, by reference, and by pointer. Which is recommended and why?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "By value: creates copy, causes slicing",
+        "By reference: preserves polymorphic behavior, no slicing",
+        "By pointer: requires memory management, less common",
+        "Recommended: catch by const reference",
+        "Reasons: prevents slicing, allows polymorphism, no copy overhead"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the three levels of exception safety guarantees with examples.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Basic guarantee: invariants broken but no resource leak",
+        "Strong guarantee: all-or-nothing, operation either succeeds fully or has no effect",
+        "Nothrow guarantee: operation will never throw",
+        "Examples for each level from standard library",
+        "Real-world scenarios where each applies"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the purpose of the catch(...) block? When and why should it be used?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "catch(...) catches all exception types",
+        "No access to exception object",
+        "Must be last catch block in sequence",
+        "Used for cleanup or logging before rethrowing",
+        "Should not swallow exceptions without proper handling"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a class hierarchy for custom exceptions with a base class CustomException and two derived classes DatabaseException and NetworkException. Write a C++ program demonstrating proper exception handling in this hierarchy, ensuring that derived class exceptions are caught before base class exceptions.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define base class CustomException derived from std::exception",
+        "Define DatabaseException and NetworkException derived from CustomException",
+        "Implement what() method in each class",
+        "Demonstrate throw of each exception type",
+        "Show proper catch block ordering (derived before base)",
+        "Demonstrate catching by reference",
+        "Show output for each case"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C++ program that demonstrates: (a) Rethrowing exceptions, (b) Nested exceptions using std::nested_exception, and (c) Exception specifications using noexcept. Explain the scenarios where each concept is applicable.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Rethrowing: catch block handling partial work then rethrowing",
+        "nested_exception: catching one exception while handling another",
+        "noexcept: declaring functions that won't throw",
+        "Complete code with proper comments",
+        "Explanation of when to use each feature",
+        "Demonstration of error handling benefits"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the problem that arises when constructors and destructors throw exceptions. How does C++ handle such situations? Discuss with suitable code examples.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Constructors can throw - already constructed members get destroyed",
+        "Destructors should NOT throw - leads to std::terminate()",
+        "Stack unwinding handles constructor exceptions",
+        "Destructor exception during unwinding calls terminate()",
+        "Solution: catch in constructor, never throw in destructor",
+        "RAII pattern ensures cleanup even with exceptions",
+        "Code examples demonstrating both scenarios"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a C++ program that implements a simple file processing system with proper exception handling. The system should handle different types of errors: file not found (FileNotFoundException), permission denied (PermissionException), and read/write errors (IOException). Use exception hierarchy and demonstrate proper catch ordering.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create exception class hierarchy with base IOException",
+        "FileNotFoundException and PermissionException derived from IOException",
+        "FileProcessor class that throws appropriate exceptions",
+        "Main function demonstrating each exception type",
+        "Proper catch ordering: most specific first",
+        "Catching by reference to preserve hierarchy",
+        "Proper error messages using what() method"
+      ]
+    }
+  ]
+}

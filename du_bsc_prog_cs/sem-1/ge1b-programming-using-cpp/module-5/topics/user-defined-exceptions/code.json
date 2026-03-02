@@ -1,0 +1,35 @@
+{
+  "topicId": "user-defined-exceptions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C++",
+      "title": "Basic User-Defined Exception",
+      "description": "Demonstrates creating a simple custom exception class by inheriting from std::exception",
+      "code": "#include <iostream>\n#include <exception>\nusing namespace std;\n\n// Define custom exception class\nclass MyException : public exception {\npublic:\n    const char* what() const noexcept override {\n        return \"Custom Exception: Something went wrong!\";\n    }\n};\n\nint main() {\n    try {\n        int age = -5;\n        if (age < 0) {\n            throw MyException();\n        }\n    }\n    catch (const MyException& e) {\n        cout << \"Caught Exception: \" << e.what() << endl;\n    }\n    \n    return 0;\n}",
+      "explanation": "1. We create a class MyException that inherits from std::exception\n2. Override the what() method to return a custom error message\n3. In main(), we throw MyException() when age is negative\n4. The catch block catches the custom exception and prints the message",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "C++",
+      "title": "Exception with Custom Data Members",
+      "description": "Shows how to include additional data members in user-defined exceptions for more detailed error information",
+      "code": "#include <iostream>\n#include <exception>\n#include <string>\nusing namespace std;\n\nclass InvalidInputException : public exception {\nprivate:\n    string message;\n    int errorCode;\npublic:\n    InvalidInputException(const string& msg, int code) : message(msg), errorCode(code) {}\n    \n    const char* what() const noexcept override {\n        return message.c_str();\n    }\n    \n    int getErrorCode() const {\n        return errorCode;\n    }\n};\n\nint divide(int a, int b) {\n    if (b == 0) {\n        throw InvalidInputException(\"Division by zero error!\", 100);\n    }\n    if (a < 0 || b < 0) {\n        throw InvalidInputException(\"Negative numbers not allowed!\", 101);\n    }\n    return a / b;\n}\n\nint main() {\n    try {\n        int result = divide(10, -2);\n        cout << \"Result: \" << result << endl;\n    }\n    catch (const InvalidInputException& e) {\n        cout << \"Error: \" << e.what() << endl;\n        cout << \"Error Code: \" << e.getErrorCode() << endl;\n    }\n    \n    return 0;\n}",
+      "explanation": "1. InvalidInputException stores both message and error code\n2. Constructor initializes both members\n3. getErrorCode() getter allows access to specific error codes\n4. The divide() function throws different exceptions based on the error type\n5. Catch block demonstrates accessing both what() and getErrorCode()",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "C++",
+      "title": "Multiple User-Defined Exceptions in Banking System",
+      "description": "Advanced example showing practical use of multiple custom exceptions in a realistic banking application",
+      "code": "#include <iostream>\n#include <exception>\n#include <string>\nusing namespace std;\n\n// Custom exceptions for banking operations\nclass BankException : public exception {\nprotected:\n    string msg;\npublic:\n    BankException(const string& m) : msg(m) {}\n    const char* what() const noexcept override { return msg.c_str(); }\n};\n\nclass InsufficientFundsException : public BankException {\nprivate:\n    double balance;\n    double withdrawalAmount;\npublic:\n    InsufficientFundsException(double bal, double amt) \n        : BankException(\"Insufficient funds!\"), balance(bal), withdrawalAmount(amt) {}\n    double getBalance() const { return balance; }\n    double getWithdrawalAmount() const { return withdrawalAmount; }\n};\n\nclass InvalidAccountException : public BankException {\npublic:\n    InvalidAccountException() : BankException(\"Invalid account number!\") {}\n};\n\nclass NegativeAmountException : public BankException {\npublic:\n    NegativeAmountException() : BankException(\"Amount cannot be negative!\") {}\n};\n\nclass BankAccount {\nprivate:\n    string accountNumber;\n    double balance;\npublic:\n    BankAccount(string accNo, double bal) : accountNumber(accNo), balance(bal) {}\n    \n    void withdraw(double amount) {\n        if (amount < 0) {\n            throw NegativeAmountException();\n        }\n        if (accountNumber.empty()) {\n            throw InvalidAccountException();\n        }\n        if (amount > balance) {\n            throw InsufficientFundsException(balance, amount);\n        }\n        balance -= amount;\n        cout << \"Withdrawal successful! New balance: \" << balance << endl;\n    }\n    \n    void deposit(double amount) {\n        if (amount < 0) {\n            throw NegativeAmountException();\n        }\n        balance += amount;\n        cout << \"Deposit successful! New balance: \" << balance << endl;\n    }\n};\n\nint main() {\n    BankAccount acc(\"ACC123\", 5000);\n    \n    // Test different exceptions\n    try {\n        acc.deposit(-100);  // Should throw NegativeAmountException\n    }\n    catch (const NegativeAmountException& e) {\n        cout << \"Exception: \" << e.what() << endl;\n    }\n    \n    try {\n        acc.withdraw(10000);  // Should throw InsufficientFundsException\n    }\n    catch (const InsufficientFundsException& e) {\n        cout << \"Exception: \" << e.what() << endl;\n        cout << \"Available Balance: \" << e.getBalance() << endl;\n        cout << \"Requested Amount: \" << e.getWithdrawalAmount() << endl;\n    }\n    \n    try {\n        BankAccount invalidAcc(\"\", 1000);\n        invalidAcc.withdraw(500);  // Should throw InvalidAccountException\n    }\n    catch (const InvalidAccountException& e) {\n        cout << \"Exception: \" << e.what() << endl;\n    }\n    \n    cout << \"\\nProgram completed successfully!\" << endl;\n    return 0;\n}",
+      "explanation": "1. Base class BankException provides common functionality\n2. InsufficientFundsException stores balance and withdrawal amount for detailed error info\n3. InvalidAccountException for account validation\n4. NegativeAmountException for input validation\n5. BankAccount class throws appropriate exceptions for different error conditions\n6. Multiple catch blocks handle different exception types specifically\n7. This demonstrates practical exception handling in real-world applications",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

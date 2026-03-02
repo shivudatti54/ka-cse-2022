@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary advantage of using a state-space model formulation for forecasting over other time series model representations.",
+    "expectedPoints": [
+      "The primary advantage is the use of the Kalman filter, which provides a recursive, computationally efficient algorithm for optimal forecasting.",
+      "It allows forecasts and their error variances to be updated efficiently as new observations become available.",
+      "The formulation naturally handles models with unobserved components (like trends and seasonality) and provides a unified framework for a wide range of models (ARIMA, structural models, etc.)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the two equations that form the general linear state-space model and briefly explain the role of each component (state vector, observation matrix, etc.).",
+    "expectedPoints": [
+      "Observation (or Measurement) Equation: y_t = Z_t * \u03b1_t + \u03b5_t, where y_t is the observed data, \u03b1_t is the unobserved state vector, Z_t is the observation matrix that maps the state to the observation, and \u03b5_t is the observation noise with variance H_t.",
+      "State (or Transition) Equation: \u03b1_t = T_t * \u03b1_{t-1} + R_t * \u03b7_t, where \u03b1_t is the state vector, T_t is the transition matrix that describes how the state evolves, R_t is a selection matrix, and \u03b7_t is the state noise with variance Q_t.",
+      "The state vector \u03b1_t contains all the unobserved information necessary to describe the system (e.g., level, trend, seasonality). The errors \u03b5_t and \u03b7_t are assumed to be white noise and uncorrelated with each other."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Walk through the steps of the Kalman filter recursion for a simple local level model (y_t = \u03bc_t + \u03b5_t, \u03bc_t = \u03bc_{t-1} + \u03b7_t) to derive the one-step-ahead forecast and its error variance. Explain the intuition behind the 'Kalman gain'.",
+    "expectedPoints": [
+      "Start with prior estimates at time t-1: the estimated level a_{t-1} and its error variance P_{t-1}.",
+      "Prediction Step: Predict the state and its variance for time t: a_{t|t-1} = a_{t-1} and P_{t|t-1} = P_{t-1} + Q, where Q is the variance of \u03b7_t.",
+      "Forecast Step: The one-step-ahead forecast is \u0177_t = a_{t|t-1}. The forecast error is v_t = y_t - \u0177_t, with variance F_t = P_{t|t-1} + H, where H is the variance of \u03b5_t.",
+      "Update Step: Compute the Kalman Gain: K_t = P_{t|t-1} / F_t. Update the state estimate: a_t = a_{t|t-1} + K_t * v_t. Update the state variance: P_t = (1 - K_t) * P_{t|t-1}.",
+      "The Kalman Gain (K_t) is the optimal weight given to the new observation. It determines how much the forecast error v_t is used to adjust the state estimate. If the state uncertainty (P) is high relative to the observation noise (H), K_t is closer to 1, meaning the new observation is trusted more. If the observation is noisy (H is high), K_t is closer to 0, and the prior state estimate is trusted more."
+    ],
+    "marks": 10
+  }
+]

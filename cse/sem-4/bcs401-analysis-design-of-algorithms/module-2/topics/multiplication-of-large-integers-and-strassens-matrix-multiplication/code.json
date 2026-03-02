@@ -1,0 +1,35 @@
+{
+  "topicId": "multiplication-of-large-integers-and-strassens-matrix-multiplication",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Karatsuba Multiplication",
+      "description": "Implements divide-and-conquer multiplication for large integers",
+      "code": "KARATSUBAMULTIPLY(a, b)\nBEGIN\n IF a < 10 OR b < 10 THEN\n RETURN a × b\n ENDIF\n \n n ← max(size(a), size(b))\n m ← ceil(n / 2)\n \n // Split numbers into halves\n a₁ ← floor(a / 10^m)\n a₀ ← a mod 10^m\n b₁ ← floor(b / 10^m)\n b₀ ← b mod 10^m\n \n // Compute three products recursively\n z₂ ← KARATSUBAMULTIPLY(a₁, b₁) // high × high\n z₀ ← KARATSUBAMULTIPLY(a₀, b₀) // low × low\n z₁ ← KARATSUBAMULTIPLY(a₁ + a₀, b₁ + b₀) - z₂ - z₀\n \n // Combine results\n RESULT ← z₂ × 10^(2m) + z₁ × 10^m + z₀\n RETURN RESULT\nEND",
+      "explanation": "The algorithm splits each number into two halves, computes three products recursively (instead of four), and combines them using the formula. This reduces complexity from O(n²) to O(n^1.585).",
+      "timeComplexity": "O(n^1.585)",
+      "spaceComplexity": "O(log n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Naive Divide-and-Conquer Matrix Multiplication",
+      "description": "Shows the basic divide-and-conquer approach before Strassen optimization",
+      "code": "MULTIPLY-RECURSIVE(A, B)\nBEGIN\n n ← rows(A)\n IF n = 1 THEN\n RETURN A × B // Single element multiplication\n ENDIF\n \n // Partition matrices into 4 quadrants each\n // Let A = [A₁₁ A₁₂; A₂₁ A₂₂], B = [B₁₁ B₁₂; B₂₁ B₂₂]\n // Let C = [C₁₁ C₁₂; C₂₁ C₂₂] be result\n \n // Compute 8 recursive multiplications\n C₁₁ ← MULTIPLY-RECURSIVE(A₁₁, B₁₁) + MULTIPLY-RECURSIVE(A₁₂, B₂₁)\n C₁₂ ← MULTIPLY-RECURSIVE(A₁₁, B₁₂) + MULTIPLY-RECURSIVE(A₁₂, B₂₂)\n C₂₁ ← MULTIPLY-RECURSIVE(A₂₁, B₁₁) + MULTIPLY-RECURSIVE(A₂₂, B₂₁)\n C₂₂ ← MULTIPLY-RECURSIVE(A₂₁, B₁₂) + MULTIPLY-RECURSIVE(A₂₂, B₂₂)\n \n RETURN [C₁₁ C₁₂; C₂₁ C₂₂]\nEND",
+      "explanation": "This naive approach requires 8 recursive matrix multiplications at each level, giving O(n³) complexity. Strassen improves this by reducing to 7 multiplications.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Strassen Matrix Multiplication",
+      "description": "Strassen's optimized divide-and-conquer matrix multiplication",
+      "code": "STRASSEN(A, B)\nBEGIN\n n ← rows(A)\n IF n = 1 THEN\n RETURN A × B\n ENDIF\n \n // Partition A and B into quadrants\n // A = [A₁₁ A₁₂; A₂₁ A₂₂], B = [B₁₁ B₁₂; B₂₁ B₂₂]\n // Represented as [A B; C D] and [E F; G H]\n \n // Compute 10 intermediate sums/differences\n A11 ← A[1:n/2, 1:n/2], A12 ← A[1:n/2, n/2+1:n]\n A21 ← A[n/2+1:n, 1:n/2], A22 ← A[n/2+1:n, n/2+1:n]\n B11 ← B[1:n/2, 1:n/2], B12 ← B[1:n/2, n/2+1:n]\n B21 ← B[n/2+1:n, 1:n/2], B22 ← B[n/2+1:n, n/2+1:n]\n \n // Compute M1 to M7 recursively (only 7 multiplications!)\n M1 ← STRASSEN(A11, B12 - B22)\n M2 ← STRASSEN(A11 + A12, B22)\n M3 ← STRASSEN(A21 + A22, B11)\n M4 ← STRASSEN(A22, B21 - B11)\n M5 ← STRASSEN(A11 + A22, B11 + B22)\n M6 ← STRASSEN(A12 - A22, B21 + B22)\n M7 ← STRASSEN(A11 - A21, B11 + B12)\n \n // Combine to get result quadrants\n C11 ← M4 + M5\n C12 ← M1 + M2\n C21 ← M3 + M6\n C22 ← M1 + M3 + M5 - M7\n \n RETURN [C11 C12; C21 C22]\nEND",
+      "explanation": "Strassen computes 7 intermediate matrices (M1-M7) instead of 8, achieving O(n^2.807) complexity. This is asymptotically better than O(n³) but has higher constant factors.",
+      "timeComplexity": "O(n^2.807)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "topicId": "sigsuspend-function",
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "SUSPEND Memory Trick",
+      "content": "Think of SIGSUSPEND as: Signal-User Set-Unblock-Proceed-Enter-Next-Dead. It helps remember: 1) Signal 2) User sets 3) Unblock desired signals 4) Proceed to wait 5) Enter critical section 6) Next signal handler runs 7) Done - restore mask"
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "SIG",
+      "expansion": "Signal",
+      "usage": "Prefix for signal-related functions and constants in UNIX/POSIX systems"
+    },
+    {
+      "term": "sigsuspend()",
+      "expansion": "Signal SUSPEND - temporarily SUSPEND process with custom signal MASK",
+      "usage": "Used when waiting for signals while controlling which signals can interrupt"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Atomic mask change and wait",
+      "visualization": "Imagine a gate that locks and closes atomically - you can't slip through when it's being set. sigsuspend() is like a one-way door that changes the lock settings and waits in one motion."
+    },
+    {
+      "concept": "Signal mask as a filter",
+      "visualization": "Think of the signal mask as a sieve/filters - blocked signals can't pass through, unblocked signals can. sigsuspend() temporarily changes which holes are open in the sieve."
+    },
+    {
+      "concept": "Lost wakeup problem",
+      "visualization": "Draw a timeline: Check flag \u2192 Signal arrives \u2192 call pause() \u2192 Signal missed \u2192 Sleep forever! sigsuspend() closes this gap by atomically changing mask AND waiting."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "sigsuspend() atomic operation",
+      "analogy": "Like a bank vault with a combination lock that can only be set when the door is open - you can't change the combination while someone is trying to get in. sigsuspend() is one smooth motion."
+    },
+    {
+      "concept": "Signal mask",
+      "analogy": "Think of signal mask like a 'Do Not Disturb' mode on your phone - blocked signals are like notifications you won't see until you turn off DND. sigsuspend() lets you temporarily change DND settings to wait for one specific notification."
+    },
+    {
+      "concept": "Protecting critical sections",
+      "analogy": "Like a security checkpoint that briefly pauses all traffic (signals) to let a VIP (specific signal) through, then returns to normal - that's sigsuspend() in action."
+    }
+  ]
+}

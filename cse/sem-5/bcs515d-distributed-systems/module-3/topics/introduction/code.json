@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Message Passing Between Nodes",
+      "description": "Pseudocode demonstrating the fundamental message passing mechanism used for communication and coordination in distributed systems.",
+      "code": "PROCEDURE send_message(sender, receiver, message)\n BEGIN\n // Serialize message for transmission\n serialized_msg = serialize(message)\n \n // Route to destination through network\n route = find_route(sender.ID, receiver.ID)\n \n // Send via network protocol\n network.send(serialized_msg, route)\n \n RETURN acknowledgment\n END\n\nPROCEDURE receive_message(receiver)\n BEGIN\n // Wait for incoming message\n serialized_msg = network.receive(receiver)\n \n // Deserialize the message\n message = deserialize(serialized_msg)\n \n // Process the message\n process(message)\n \n RETURN response\n END",
+      "explanation": "This code demonstrates the core communication mechanism in distributed systems - message passing. Nodes do not share memory, so they must communicate by sending serialized messages over the network. The send_message procedure handles serialization, routing, and transmission, while receive_message handles reception and deserialization.",
+      "timeComplexity": "O(m) where m is message size",
+      "spaceComplexity": "O(m) for message storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Distributed Resource Access with Transparency",
+      "description": "Pseudocode showing how location transparency is achieved - users access resources without knowing their physical location in the distributed system.",
+      "code": "// Global Resource Directory\nRESOURCE_DIRECTORY = {}\n\nFUNCTION register_resource(resource_id, node_location)\n BEGIN\n RESOURCE_DIRECTORY[resource_id] = node_location\n RETURN success\n END\n\nFUNCTION access_resource(resource_id)\n BEGIN\n // Check if resource exists in directory\n IF resource_id IN RESOURCE_DIRECTORY THEN\n // Get location transparently\n location = RESOURCE_DIRECTORY[resource_id]\n \n // Connect to node where resource is located\n connection = establish_connection(location)\n \n // Access resource (location hidden from user)\n result = connection.fetch(resource_id)\n \n RETURN result\n ELSE\n RETURN error: \"Resource not found\"\n ENDIF\n END\n\n// User code accessing resource transparently\n// User doesn't know WHERE the resource is located\nuser_request = access_resource(\"file_123\")",
+      "explanation": "This demonstrates location transparency - users call access_resource() without knowing where the resource is physically stored. The RESOURCE_DIRECTORY acts as middleware that hides the actual node location from the user, providing a unified namespace.",
+      "timeComplexity": "O(1) for directory lookup + O(n) for network access where n is distance",
+      "spaceComplexity": "O(d) where d is number of entries in directory"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Handling Partial Failure in Distributed System",
+      "description": "Pseudocode showing how a distributed system handles partial failures - a key challenge where some nodes may fail while others continue operating.",
+      "code": "FUNCTION execute_distributed_task(task, node_list)\n BEGIN\n results = {}\n failures = {}\n \n // Try to execute on each node\n FOR node IN node_list DO\n BEGIN\n TRY\n // Attempt to contact node\n response = node.execute(task)\n results[node.id] = response\n \n CATCH node_failure\n // Handle partial failure\n failures[node.id] = \"Node unreachable\"\n CONTINUE // Continue with other nodes\n ENDTRY\n END\n \n // Aggregate results despite partial failures\n IF results IS NOT EMPTY THEN\n RETURN aggregate(results)\n ELSE\n RETURN error: \"All nodes failed\"\n ENDIF\n END\n\n// Example: Processing continues even if some nodes fail\nFUNCTION process_with_redundancy(data, replicas)\n BEGIN\n success_count = 0\n \n FOR replica IN replicas DO\n IF is_node_alive(replica) THEN\n replica.store(data)\n success_count = success_count + 1\n ENDIF\n ENDFOR\n \n // System continues if quorum is met (CAP theorem)\n IF success_count >= quorum_threshold THEN\n RETURN success\n ELSE\n RETURN error: \"Insufficient replicas available\"\n ENDIF\n END",
+      "explanation": "This code demonstrates partial failure handling, a fundamental challenge in distributed systems. Unlike centralized systems where failure is total, distributed systems can experience failures in only some nodes. The code shows how to continue operation with available nodes and make decisions based on quorum/partial success, aligning with CAP theorem principles.",
+      "timeComplexity": "O(n) where n is number of nodes contacted",
+      "spaceComplexity": "O(f) where f is number of failed nodes tracked"
+    }
+  ]
+}

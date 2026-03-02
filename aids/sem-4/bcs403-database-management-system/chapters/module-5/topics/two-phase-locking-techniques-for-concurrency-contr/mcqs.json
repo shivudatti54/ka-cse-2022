@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What are the two main phases in the Two-Phase Locking (2PL) protocol?",
+    "options": [
+      "Growing Phase and Shrinking Phase",
+      "Locking Phase and Unlocking Phase",
+      "Read Phase and Write Phase",
+      "Shared Phase and Exclusive Phase"
+    ],
+    "correctIndex": 0,
+    "explanation": "The Two-Phase Locking protocol is explicitly defined by a growing phase, where a transaction can only acquire new locks, and a shrinking phase, where it can only release existing locks."
+  },
+  {
+    "id": "q2",
+    "question": "Once a transaction releases its first lock under the 2PL protocol, what is it prohibited from doing?",
+    "options": [
+      "Acquiring any new locks",
+      "Releasing more locks",
+      "Reading from the database",
+      "Writing to the database"
+    ],
+    "correctIndex": 0,
+    "explanation": "This rule defines the 'two-phase' property. After entering the shrinking phase (releasing a lock), a transaction cannot return to the growing phase to acquire any new locks."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following is a significant drawback of the basic Two-Phase Locking protocol?",
+    "options": [
+      "It does not prevent deadlocks.",
+      "It allows cascading rollbacks.",
+      "It cannot ensure serializability.",
+      "It requires a timestamp for each transaction."
+    ],
+    "correctIndex": 1,
+    "explanation": "Basic 2PL allows locks to be released before a transaction commits. If another transaction reads uncommitted data and the first transaction aborts, it leads to a cascading rollback, where dependent transactions must also be rolled back."
+  },
+  {
+    "id": "q4",
+    "question": "A schedule is found to be non-serializable. Which property of Two-Phase Locking guarantees that this could not have been produced by a 2PL protocol?",
+    "options": [
+      "It is conflict serializable.",
+      "It is view serializable.",
+      "It is strict.",
+      "It is recoverable."
+    ],
+    "correctIndex": 0,
+    "explanation": "The fundamental guarantee of the 2PL protocol is that any schedule produced by transactions following its rules is guaranteed to be conflict serializable. Therefore, if a schedule is not conflict serializable, it could not have been generated under 2PL."
+  },
+  {
+    "id": "q5",
+    "question": "Consider the following schedule with three transactions (T1, T2, T3) and two data items (X, Y). The notation 'S(A)' means a shared lock on A, 'X(A)' means an exclusive lock on A, and 'U(A)' means unlock A. Which transaction violates the Two-Phase Locking protocol?\n\nT1: S(X), R(X), U(X), S(Y), R(Y), U(Y), Commit\nT2: X(X), W(X), U(X), Commit\nT3: S(Y), R(Y), X(X), W(X), U(X), U(Y), Commit",
+    "options": [
+      "T1 violates 2PL",
+      "T2 violates 2PL",
+      "T3 violates 2PL",
+      "All transactions follow 2PL"
+    ],
+    "correctIndex": 2,
+    "explanation": "T3 violates 2PL. It acquires S(Y) (growing phase), but then later acquires X(X) *after* it has already entered the shrinking phase by releasing Y (U(Y)). A transaction cannot acquire a new lock (X(X)) after it has released any lock (U(Y)), as this breaks the two-phase rule."
+  }
+]

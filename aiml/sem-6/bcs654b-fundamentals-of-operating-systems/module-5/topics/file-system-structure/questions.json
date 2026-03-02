@@ -1,0 +1,141 @@
+{
+  "topicId": "file-system-structure",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the structure of an inode in Unix-like file systems. List the fields it contains and explain their purpose.",
+      "keyPoints": [
+        "Inode number (identifier)",
+        "File type (regular, directory, special)",
+        "File permissions (owner, group, others)",
+        "Timestamps (creation, modification, access)",
+        "File size in bytes",
+        "Link count (number of hard links)",
+        "Pointers to data blocks (direct, single indirect, double indirect, triple indirect)",
+        "Owner UID and group GID"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Compare contiguous, linked, and indexed file allocation methods. List at least two advantages and two disadvantages of each method.",
+      "keyPoints": [
+        "Contiguous: Fast access, simple but suffers from external fragmentation and file growth issues",
+        "Linked: No external fragmentation, simple allocation but no random access, poor reliability",
+        "Indexed: Supports random access, no external fragmentation but wastes space for index blocks and has limited file size with single-level index"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the typical on-disk structure of a Unix file system. List the components in the order they appear on the disk.",
+      "keyPoints": [
+        "Boot block (first sector, contains bootstrap code)",
+        "Superblock (file system metadata)",
+        "Inode bitmap (tracks allocated inodes)",
+        "Data block bitmap (tracks allocated data blocks)",
+        "Inode table (array of all inodes)",
+        "Data blocks (actual file and directory content)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain how free space is managed in file systems. Describe at least two different methods with their advantages.",
+      "keyPoints": [
+        "Bit vector/bitmap: Simple, easy to find consecutive blocks, but requires keeping entire bitmap in memory",
+        "Linked list: Simple implementation, low memory overhead, but cannot efficiently find consecutive blocks",
+        "Grouping: Groups free blocks together, combines advantages of linked list and bitmap",
+        "Counting: Stores contiguous free regions, efficient for large free spaces"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the purpose of the buffer cache in file system implementation? Explain how it improves performance with a suitable example.",
+      "keyPoints": [
+        "Stores recently accessed disk blocks in memory",
+        "Reduces disk I/O by serving reads from cache",
+        "Batches write operations to reduce disk writes",
+        "Example: Reading a file twice - first read goes to disk, second read serves from cache",
+        "Improves performance through temporal locality of access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the layered architecture of file systems. Describe the functions of each layer.",
+      "keyPoints": [
+        "Application program (highest level)",
+        "Logical file system (manages metadata, file names)",
+        "File organization module (logical to physical address translation)",
+        "Basic file system (physical I/O operations)",
+        "Device driver (hardware communication)",
+        "I/O device (hardware level)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Differentiate between hard links and soft (symbolic) links in Unix file systems. What happens to the inode when a hard link is created?",
+      "keyPoints": [
+        "Hard link: Multiple directory entries pointing to same inode, shares same data blocks",
+        "Soft link: Special file containing path to another file, independent inode",
+        "Hard link: Increments link count in inode, same and permissions ownership",
+        "Soft link: Can cross file system boundaries, broken if target deleted",
+        "Hard link: Cannot link to directories, cannot span file systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A file system uses indexed allocation with a single-level index block that can store 256 block addresses. The disk has a block size of 4KB. Answer the following: (a) What is the maximum file size that can be stored? (b) How would you modify the design to support larger files? (c) What are the trade-offs of increasing the index block size?",
+      "keyPoints": [
+        "(a) Maximum file size = 256 \u00d7 4KB = 1MB",
+        "(b) Use multi-level index: single indirect, double indirect, triple indirect blocks",
+        "(c) Trade-offs: Larger index block wastes space for small files, but supports larger files; can use variable-size inodes or extent-based allocation",
+        "With double indirect: 256 \u00d7 256 \u00d7 4KB = 256MB, with triple indirect: 256\u00b3 \u00d7 4KB = 64GB",
+        "Trade-offs include increased complexity, potential for more disk seeks, and memory usage"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Consider a disk with 10,000 blocks. Design a free space management system using a bitmap. Calculate: (a) How many bytes are needed for the bitmap? (b) How many disk reads are needed to find 50 consecutive free blocks in worst case? (c) Explain an alternative method and compare it with the bitmap approach.",
+      "keyPoints": [
+        "(a) Bitmap size = 10,000 bits = 1,250 bytes \u2248 2 blocks",
+        "(b) In worst case, may need to scan entire bitmap (10,000 bits = 1,250 bytes), requiring 1 disk read of the bitmap block(s)",
+        "(c) Alternative: Linked list of free blocks - simpler but slower for finding consecutive blocks",
+        "Comparison: Bitmap - fast for finding consecutive blocks, needs memory for entire bitmap",
+        "Linked list - low overhead, but slower random access, poor locality",
+        "Hybrid approaches combine advantages of both"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the complete process that occurs when a user requests to open and read a file named '/home/user/data.txt' in a Unix file system. Describe the data structures involved at each step.",
+      "keyPoints": [
+        "1. System call open('/home/user/data.txt', O_RDONLY) is made",
+        "2. Root directory '/' is looked up in superblock to find inode of '/'",
+        "3. Traverse directory hierarchy: look up 'home' in root inode, then 'user' in home inode",
+        "4. Finally look up 'data.txt' in user directory inode, get inode number",
+        "5. Load inode into memory, verify permissions, allocate file descriptor",
+        "6. For read: locate appropriate data block using inode's block pointers",
+        "7. If block not in buffer cache, read from disk to buffer cache",
+        "8. Copy data from buffer to user buffer, update access time in inode"
+      ],
+      "marks": 10
+    }
+  ]
+}

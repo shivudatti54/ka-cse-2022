@@ -1,0 +1,154 @@
+{
+  "topicId": "hash-functions-mac",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the three essential properties of a secure cryptographic hash function with an example of an attack if any property is violated.",
+      "keyPoints": [
+        "Pre-image resistance: Given hash h, find m such that hash(m)=h. Attack: reversing password hashes",
+        "Second pre-image resistance: Given m1, find m2\u2260m1 with same hash. Attack: modifying document while keeping hash same",
+        "Collision resistance: Find any m1,m2 with same hash. Attack: MD5 collision (2004), SHA-1 collision (2017)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is HMAC? Explain its construction and why it provides stronger security than simply appending a key to the message and hashing.",
+      "keyPoints": [
+        "HMAC = H(K\u2295opad || H(K\u2295ipad || M))",
+        "Uses nested hash structure with two different paddings",
+        "Key derived values prevent length extension attacks",
+        "Simple key concatenation vulnerable to birthday attacks on hash",
+        "Security proof based on underlying hash function properties"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the birthday attack and its significance in choosing hash functions. Calculate the effort needed to find collision in a 128-bit hash.",
+      "keyPoints": [
+        "Based on birthday paradox in probability theory",
+        "Need ~2^(n/2) attempts rather than 2^n",
+        "For 128-bit hash: 2^64 attempts needed",
+        "This is why 128-bit MD5 is considered weak",
+        "For 256-bit hash: 2^128 attempts - computationally infeasible"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between hash function, MAC, and digital signature. Provide one use case for each.",
+      "keyPoints": [
+        "Hash: No key, provides integrity only. Use: File integrity verification",
+        "MAC: Secret key, provides integrity + authentication. Use: API request verification",
+        "Digital signature: Private key, provides integrity + authentication + non-repudiation. Use: Legal document signing",
+        "Key difference: MAC uses shared secret, digital signature uses asymmetric keys"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Why is MD5 considered cryptographically broken while SHA-256 is considered secure? Explain with relevant attacks.",
+      "keyPoints": [
+        "MD5: 128-bit output, collisions demonstrated in 2004 (Wang et al.)",
+        "Chosen-prefix collisions possible - can create two files with same MD5",
+        "SHA-256: 256-bit output, no practical collisions known",
+        "Birthday attack on SHA-256 requires 2^128 attempts - infeasible with current technology",
+        "SHA-1 collisions demonstrated in 2017 ('Shattered' attack)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a rainbow table attack? How does salting protect against it?",
+      "keyPoints": [
+        "Rainbow table: Precomputed table of hash->password mappings",
+        "Attackers precompute hashes for common passwords",
+        "To attack: look up hash in table to find original password",
+        "Salt: Random value added to each password before hashing",
+        "Unique salt per user ensures same password produces different hashes, rendering rainbow tables useless"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the difference between CMAC and HMAC. In what scenarios would you prefer CMAC over HMAC?",
+      "keyPoints": [
+        "CMAC: Uses block cipher (AES) as underlying primitive",
+        "HMAC: Uses cryptographic hash function (SHA-256)",
+        "CMAC preferred when: Hash functions unavailable, existing cipher infrastructure, or regulatory requirements specify block ciphers",
+        "CMAC based on CBC-MAC with additional key derivation",
+        "Both provide integrity and authentication"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A company wants to store user passwords securely. They have two options: (a) Store MD5 hash of password, (b) Store SHA-256 hash with random salt. Evaluate both approaches and recommend the best practice with justification.",
+      "keyPoints": [
+        "MD5 broken: collisions possible, vulnerable to rainbow tables, fast to compute (GPU brute force)",
+        "SHA-256 with salt: larger output, unique per user, rainbow table attack prevented",
+        "Should use: bcrypt, scrypt, or Argon2 (key derivation functions) not simple hash",
+        "Multiple rounds/iterations slow down brute force",
+        "Salt should be unique per user, stored in plaintext alongside hash",
+        "Additional: Rate limiting, multi-factor authentication"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a secure message authentication system between a client and server. Explain how you would use HMAC to ensure both integrity and authenticity. What are potential vulnerabilities and how would you address them?",
+      "keyPoints": [
+        "Shared secret key between client and server",
+        "Client: message + HMAC(message, key) = send both",
+        "Server: verify HMAC(message, key) matches received HMAC",
+        "Vulnerabilities: Key distribution, replay attacks, timing attacks",
+        "Replay attack prevention: Add timestamp or nonce/sequence number",
+        "Timing attack prevention: Constant-time comparison (use HMAC compare)",
+        "Key management: Rotate keys periodically, use secure key exchange",
+        "Use HTTPS/TLS for key exchange initially",
+        "Additional: Include sequence numbers, message counters"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare MD5, SHA-1, and SHA-256 algorithms with respect to: (i) output size, (ii) security level, (iii) known attacks, and (iv) applications. Recommend which should be used in modern systems and why.",
+      "keyPoints": [
+        "MD5: 128-bit, BROKEN (collisions since 2004), applications: legacy only",
+        "SHA-1: 160-bit, BROKEN (Shattered attack 2017), being deprecated",
+        "SHA-256: 256-bit, no practical attacks, recommended for new systems",
+        "SHA-3: Alternative family, different design (Keccak), also recommended",
+        "Trade-offs: SHA-256 slower but more secure than MD5/SHA-1",
+        "Modern use: SHA-256 for integrity, HMAC-SHA256 for authentication",
+        "Sensitive data: Consider SHA-384/512 or Argon2 for password hashing"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the concept of commitment scheme using hash functions. How does it work and what security properties does it provide? How is this used in real-world applications?",
+      "keyPoints": [
+        "Commit: Send hash of value (commitment) without revealing value",
+        "Reveal: Later reveal original value, verifier checks hash matches",
+        "Properties: Hiding (can't see original value), Binding (can't change value after commit)",
+        "Real-world: Coin flipping over phone, sealed bids, zero-knowledge proofs",
+        "Example: Alice commits to number by hashing 'secret+random', later reveals both",
+        "Verifier checks hash(secret+random) equals commitment",
+        "Enables trustless protocols without trusted third party"
+      ],
+      "marks": 10
+    }
+  ]
+}

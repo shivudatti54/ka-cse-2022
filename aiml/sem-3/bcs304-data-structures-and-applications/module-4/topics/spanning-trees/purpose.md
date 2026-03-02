@@ -1,0 +1,2 @@
+# Spanning Trees
+This module on Spanning Trees is designed for students/students/students at the Standard level, providing a rigorous treatment of spanning tree theory with emphasis on formal proofs, algorithmic construction, and optimization. The content progresses from fundamental definitions through advanced topics including Minimum Spanning Tree algorithms, establishing the mathematical foundation required for network design and graph optimization problems.

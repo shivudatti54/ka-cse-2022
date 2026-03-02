@@ -1,0 +1,206 @@
+{
+  "topicId": "demand-paging",
+  "visuals": [
+    {
+      "id": "demand-paging-svg",
+      "title": "Demand Paging Overview",
+      "description": "Visual diagram covering page table valid-invalid bit, page fault handling steps, Effective Access Time formula, and Copy-on-Write optimization",
+      "type": "animated-svg",
+      "file": "assets/demand-paging.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "Page Table with Valid-Invalid Bit",
+      "type": "table",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Valid (V): Page is in physical memory (RAM)"
+          },
+          {
+            "id": "n2",
+            "label": "Invalid (I): Page is on disk or not in address space"
+          },
+          {
+            "id": "n3",
+            "label": "PTE contains: V/I bit, Protection, Referenced, Modified (Dirty), Frame Number"
+          }
+        ],
+        "edges": []
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Page Fault Handling Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Memory Access (Invalid Page)"
+          },
+          {
+            "id": "n2",
+            "label": "Page Fault Trap (To OS)"
+          },
+          {
+            "id": "n3",
+            "label": "Check Access Legality"
+          },
+          {
+            "id": "n4",
+            "label": "Illegal Access (Terminate Process)"
+          },
+          {
+            "id": "n5",
+            "label": "Find/Free a Frame"
+          },
+          {
+            "id": "n6",
+            "label": "Schedule Disk I/O"
+          },
+          {
+            "id": "n7",
+            "label": "Block Process (Context Switch)"
+          },
+          {
+            "id": "n8",
+            "label": "I/O Complete (Update Page Table, Set V-bit)"
+          },
+          {
+            "id": "n9",
+            "label": "Restart Instruction"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4",
+            "label": "Illegal"
+          },
+          {
+            "from": "n3",
+            "to": "n5",
+            "label": "Legal"
+          },
+          {
+            "from": "n5",
+            "to": "n6"
+          },
+          {
+            "from": "n6",
+            "to": "n7"
+          },
+          {
+            "from": "n7",
+            "to": "n8"
+          },
+          {
+            "from": "n8",
+            "to": "n9"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Effective Access Time (EAT)",
+      "type": "formula",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "EAT = (1 - p) x ma + p x (Page Fault Overhead)"
+          },
+          {
+            "id": "n2",
+            "label": "ma = 100 ns (RAM access time)"
+          },
+          {
+            "id": "n3",
+            "label": "Page Fault Overhead = ~10 ms (disk I/O dominated)"
+          },
+          {
+            "id": "n4",
+            "label": "For <10% degradation: p < 1/1,000,000"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n1",
+            "to": "n3"
+          },
+          {
+            "from": "n2",
+            "to": "n4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d4",
+      "title": "Copy-on-Write (COW) for fork()",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "fork() called: Parent and Child share all pages"
+          },
+          {
+            "id": "n2",
+            "label": "Shared pages marked as COW"
+          },
+          {
+            "id": "n3",
+            "label": "Read access: Both use same physical frames"
+          },
+          {
+            "id": "n4",
+            "label": "Write access: Page fault triggers private copy"
+          },
+          {
+            "id": "n5",
+            "label": "Only modified page is duplicated"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3",
+            "label": "Read only"
+          },
+          {
+            "from": "n2",
+            "to": "n4",
+            "label": "Write attempt"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          }
+        ]
+      }
+    }
+  ]
+}

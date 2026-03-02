@@ -1,0 +1,27 @@
+{
+  "topicId": "process-wait",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Why is it necessary for a parent process to call wait() after forking a child? (2-3 marks)",
+      "type": "short",
+      "expectedPoints": [
+        "To reap the child process and prevent it from becoming a zombie.",
+        "To obtain the exit status of the child process, allowing the parent to know how/why the child terminated.",
+        "To synchronize the execution of the parent with the completion of the child's task."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Explain the concept of a zombie process. Describe how it is created and how it is destroyed. What is the role of the init process in this lifecycle? (5-10 marks)",
+      "type": "long",
+      "expectedPoints": [
+        "Definition: A zombie is a terminated process whose exit status has not been read by its parent.",
+        "Creation: A zombie is created when a child process terminates (via exit() or a signal) but its parent has not yet called wait() or waitpid() to read its status.",
+        "Destruction: The zombie is destroyed (reaped) when the parent finally calls wait() and retrieves the child's exit status, freeing its process table slot.",
+        "Orphaned Process: If a parent terminates before its child, the child becomes an orphan and is adopted by the init process (PID 1).",
+        "Role of init: The init process automatically calls wait() periodically to reap any orphaned children that have terminated, ensuring they do not become permanent zombies."
+      ]
+    }
+  ]
+}

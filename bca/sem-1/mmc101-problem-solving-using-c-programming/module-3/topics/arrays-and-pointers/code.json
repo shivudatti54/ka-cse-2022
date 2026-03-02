@@ -1,0 +1,45 @@
+{
+  "topicId": "arrays-and-pointers",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Dynamic Array Allocation and Sum",
+      "description": "Program to allocate memory for n integers and calculate their sum",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int n, *arr, sum = 0;\n    \n    printf(\"Enter number of elements: \");\n    scanf(\"%d\", &n);\n    \n    // Allocate memory for n integers\n    arr = (int*)malloc(n * sizeof(int));\n    \n    // Check if allocation succeeded\n    if (arr == NULL) {\n        printf(\"Memory allocation failed!\\n\");\n        return 1;\n    }\n    \n    // Input elements\n    printf(\"Enter %d integers:\\n\", n);\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", arr + i);  // or &(arr[i])\n    }\n    \n    // Calculate sum using pointer arithmetic\n    for (int i = 0; i < n; i++) {\n        sum += *(arr + i);  // or arr[i]\n    }\n    \n    printf(\"Sum = %d\\n\", sum);\n    \n    // Free allocated memory\n    free(arr);\n    \n    return 0;\n}",
+      "explanation": "Demonstrates malloc for dynamic allocation, pointer arithmetic for array access, and importance of free(). The pointer 'arr' acts like an array after allocation.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Reverse Array Using Pointers",
+      "description": "Program to reverse array elements using two-pointer technique",
+      "code": "#include <stdio.h>\n\nvoid reverseArray(int *arr, int size) {\n    int *start = arr;           // Pointer to first element\n    int *end = arr + size - 1;  // Pointer to last element\n    int temp;\n    \n    while (start < end) {\n        // Swap elements using pointers\n        temp = *start;\n        *start = *end;\n        *end = temp;\n        \n        // Move pointers towards center\n        start++;\n        end--;\n    }\n}\n\nvoid display(int *arr, int size) {\n    for (int i = 0; i < size; i++) {\n        printf(\"%d \", *(arr + i));\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};\n    int size = sizeof(arr) / sizeof(arr[0]);\n    \n    printf(\"Original array: \");\n    display(arr, size);\n    \n    reverseArray(arr, size);\n    \n    printf(\"Reversed array: \");\n    display(arr, size);\n    \n    return 0;\n}",
+      "explanation": "Uses two pointers starting from both ends moving towards center, swapping elements. Demonstrates pointer comparison and dereferencing.",
+      "timeComplexity": "O(n/2) = O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Dynamic 2D Matrix Allocation",
+      "description": "Program to create, use, and free a dynamic 2D matrix",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint** createMatrix(int rows, int cols) {\n    int **matrix;\n    \n    // Allocate array of row pointers\n    matrix = (int**)malloc(rows * sizeof(int*));\n    if (matrix == NULL) return NULL;\n    \n    // Allocate each row\n    for (int i = 0; i < rows; i++) {\n        matrix[i] = (int*)malloc(cols * sizeof(int));\n        if (matrix[i] == NULL) {\n            // Free already allocated rows\n            for (int j = 0; j < i; j++) free(matrix[j]);\n            free(matrix);\n            return NULL;\n        }\n    }\n    return matrix;\n}\n\nvoid inputMatrix(int **matrix, int rows, int cols) {\n    printf(\"Enter elements (%d x %d):\\n\", rows, cols);\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++) {\n            scanf(\"%d\", *(matrix + i) + j);  // or &matrix[i][j]\n        }\n    }\n}\n\nvoid displayMatrix(int **matrix, int rows, int cols) {\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++) {\n            printf(\"%d \", *(*(matrix + i) + j));\n        }\n        printf(\"\\n\");\n    }\n}\n\nvoid freeMatrix(int **matrix, int rows) {\n    for (int i = 0; i < rows; i++) {\n        free(matrix[i]);\n    }\n    free(matrix);\n}\n\nint main() {\n    int rows = 3, cols = 4;\n    int **matrix = createMatrix(rows, cols);\n    \n    if (matrix == NULL) {\n        printf(\"Memory allocation failed\\n\");\n        return 1;\n    }\n    \n    inputMatrix(matrix, rows, cols);\n    printf(\"\\nMatrix:\\n\");\n    displayMatrix(matrix, rows, cols);\n    \n    freeMatrix(matrix, rows);\n    \n    return 0;\n}",
+      "explanation": "Demonstrates pointer-to-pointer for 2D arrays, careful memory allocation with error checking, multiple levels of pointer dereferencing for element access, and proper memory cleanup.",
+      "timeComplexity": "O(rows * cols) for all operations",
+      "spaceComplexity": "O(rows * cols)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Pointer Demonstration - Array Pointer Relationship",
+      "description": "Program demonstrating various pointer-array expressions and their equivalence",
+      "code": "#include <stdio.h>\n\nint main() {\n    int arr[5] = {10, 20, 30, 40, 50};\n    \n    printf(\"=== Array and Pointer Relationship ===\\n\\n\");\n    \n    printf(\"arr = %p\\n\", (void*)arr);\n    printf(\"&arr[0] = %p\\n\", (void*)&arr[0]);\n    printf(\"&arr = %p\\n\\n\", (void*)&arr);\n    \n    printf(\"*(arr) = %d (value at arr[0])\\n\", *arr);\n    printf(\"arr[0] = %d\\n\\n\", arr[0]);\n    \n    printf(\"*(arr + 2) = %d (value at arr[2])\\n\", *(arr + 2));\n    printf(\"arr[2] = %d\\n\\n\", arr[2]);\n    \n    // Pointer arithmetic\n    int *ptr = arr;\n    printf(\"ptr = %p\\n\", (void*)ptr);\n    printf(\"ptr + 1 = %p (moves %zu bytes)\\n\", \n           (void*)(ptr + 1), sizeof(int));\n    \n    // Subtracting pointers\n    printf(\"\\nptr2 = arr + 4\\n\");\n    int *ptr2 = arr + 4;\n    printf(\"ptr2 - ptr = %ld (number of elements between)\\n\", \n           ptr2 - ptr);\n    \n    // sizeof demonstrations\n    printf(\"\\nsizeof(arr) = %zu (entire array)\\n\", sizeof(arr));\n    printf(\"sizeof(ptr) = %zu (pointer only)\\n\", sizeof(ptr));\n    \n    return 0;\n}",
+      "explanation": "Shows equivalence of array and pointer notation, demonstrates that arr gives address of first element while &arr gives address of entire array, shows sizeof difference between array and pointer.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

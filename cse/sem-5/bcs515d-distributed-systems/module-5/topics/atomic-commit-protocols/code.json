@@ -1,0 +1,35 @@
+{
+  "topicId": "atomic-commit-protocols",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Two-Phase Commit Coordinator Algorithm",
+      "description": "Pseudocode showing coordinator's role in 2PC protocol",
+      "code": "COORDINATOR_ALGORITHM\nBEGIN\n // Phase 1: Vote Phase\n SEND VOTE-REQUEST to all participants\n WAIT for responses from all participants\n \n // Check all votes\n allVotedCommit = TRUE\n FOR each response IN responses\n IF response == VOTE-ABORT THEN\n allVotedCommit = FALSE\n BREAK\n END IF\n END FOR\n \n // Phase 2: Decision Phase\n IF allVotedCommit THEN\n SEND GLOBAL-COMMIT to all participants\n ELSE\n SEND GLOBAL-ABORT to all participants\n END IF\n \n WAIT for ACK from all participants\n MARK transaction as COMPLETED\nEND",
+      "explanation": "Coordinator initiates 2PC by sending vote requests, collects all participant votes, makes global decision (commit if all vote commit, otherwise abort), and communicates final decision to all participants.",
+      "timeComplexity": "O(n) where n = number of participants",
+      "spaceComplexity": "O(n) for storing participant states"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Two-Phase Commit Participant Algorithm",
+      "description": "Pseudocode showing participant's role in 2PC protocol",
+      "code": "PARTICIPANT_ALGORITHM\nBEGIN\n RECEIVE VOTE-REQUEST from coordinator\n \n // Execute transaction locally\n EXECUTE transaction operations\n WRITE undo/redo logs to stable storage\n \n // Decide vote\n IF transaction executed successfully THEN\n SEND VOTE-COMMIT to coordinator\n ELSE\n SEND VOTE-ABORT to coordinator\n END IF\n \n // Wait for global decision\n SET timeout timer\n WHILE no global decision received AND not timed out\n WAIT\n END WHILE\n \n IF received GLOBAL-COMMIT THEN\n COMMIT transaction using redo logs\n RELEASE all locks\n ELSE IF received GLOBAL-ABORT THEN\n ROLLBACK transaction using undo logs\n RELEASE all locks\n ELSE // timeout\n BLOCK - cannot proceed without coordinator decision\n END IF\nEND",
+      "explanation": "Participant executes transaction, writes logs, votes commit or abort, then waits for coordinator's global decision. If timeout occurs before decision, participant blocks - this is the blocking problem.",
+      "timeComplexity": "O(n) for logging and commit operations",
+      "spaceComplexity": "O(m) for undo/redo logs"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Three-Phase Commit Protocol",
+      "description": "Non-blocking atomic commit protocol pseudocode",
+      "code": "THREE_PHASE_COMMIT\nBEGIN\n // Phase 1: CanCommit\n coordinator.SEND CAN-COMMIT to all participants\n participants.SEND YES/NO to coordinator\n \n IF all responses == YES THEN\n // Phase 2: PreCommit\n coordinator.SEND PRE-COMMIT to all participants\n participants.SEND ACK to coordinator\n \n // Phase 3: DoCommit\n coordinator.SEND DO-COMMIT to all participants\n participants.COMMIT transaction\n participants.SEND ACK to coordinator\n ELSE\n // Abort case\n coordinator.SEND GLOBAL-ABORT to all participants\n participants.ABORT transaction\n END IF\n \n // Handle coordinator failure at each phase\n IF participant times out THEN\n // In PreCommit: know decision was commit, proceed to commit\n // In DoCommit: commit the transaction\n // In CanCommit: abort the transaction\n END IF\nEND",
+      "explanation": "3PC adds an extra phase (PreCommit) to ensure participants know the decision before actual commit. If coordinator fails in PreCommit or later phases, participants can communicate and determine the correct action without blocking.",
+      "timeComplexity": "O(n) - more rounds than 2PC but non-blocking",
+      "spaceComplexity": "O(n) for tracking states"
+    }
+  ]
+}

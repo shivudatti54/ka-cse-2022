@@ -1,0 +1,45 @@
+{
+  "topicId": "gradient-descent",
+  "examples": [
+    {
+      "id": "basic-gradient-descent",
+      "title": "Basic Gradient Descent",
+      "description": "Simple implementation of batch gradient descent.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef batch_gradient_descent(X, y, learning_rate=0.01, epochs=100):\n    \"\"\"\n    Batch gradient descent for linear regression.\n    Loss: MSE = (1/2n) * sum((y - y_hat)^2)\n    \"\"\"\n    n_samples, n_features = X.shape\n    \n    # Initialize weights\n    w = np.zeros(n_features)\n    b = 0\n    \n    history = []\n    \n    for epoch in range(epochs):\n        # Forward pass\n        y_pred = np.dot(X, w) + b\n        \n        # Compute loss\n        loss = (1 / (2 * n_samples)) * np.sum((y - y_pred) ** 2)\n        history.append(loss)\n        \n        # Compute gradients (using ALL samples)\n        dw = -(1 / n_samples) * np.dot(X.T, (y - y_pred))\n        db = -(1 / n_samples) * np.sum(y - y_pred)\n        \n        # Update parameters\n        w = w - learning_rate * dw\n        b = b - learning_rate * db\n    \n    return w, b, history\n\n# Example\nnp.random.seed(42)\nX = np.random.randn(100, 3)\ntrue_w = np.array([2, -1, 0.5])\ny = np.dot(X, true_w) + 0.1 * np.random.randn(100)\n\nw, b, history = batch_gradient_descent(X, y, learning_rate=0.1, epochs=50)\nprint(f\"True weights: {true_w}\")\nprint(f\"Learned weights: {w.round(3)}\")\nprint(f\"Final loss: {history[-1]:.6f}\")",
+      "explanation": "Batch gradient descent uses all samples to compute each gradient, giving stable but slower updates. The gradient of MSE loss w.r.t. weights is -X.T @ (y - y_pred) / n.",
+      "timeComplexity": "O(epochs * n_samples * n_features)",
+      "spaceComplexity": "O(n_features)"
+    },
+    {
+      "id": "sgd-vs-minibatch",
+      "title": "SGD vs Mini-Batch Comparison",
+      "description": "Comparing stochastic and mini-batch gradient descent.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef sgd(X, y, lr=0.01, epochs=10):\n    \"\"\"Stochastic Gradient Descent: one sample at a time.\"\"\"\n    n, d = X.shape\n    w = np.zeros(d)\n    history = []\n    \n    for epoch in range(epochs):\n        # Shuffle data each epoch\n        indices = np.random.permutation(n)\n        \n        for i in indices:\n            # Single sample gradient\n            y_pred = np.dot(X[i], w)\n            grad = -X[i] * (y[i] - y_pred)\n            w = w - lr * grad\n        \n        # Track loss\n        loss = np.mean((y - np.dot(X, w)) ** 2)\n        history.append(loss)\n    \n    return w, history\n\ndef minibatch_gd(X, y, lr=0.01, batch_size=32, epochs=10):\n    \"\"\"Mini-Batch Gradient Descent: batch_size samples at a time.\"\"\"\n    n, d = X.shape\n    w = np.zeros(d)\n    history = []\n    \n    for epoch in range(epochs):\n        indices = np.random.permutation(n)\n        \n        for start in range(0, n, batch_size):\n            batch_idx = indices[start:start + batch_size]\n            X_batch = X[batch_idx]\n            y_batch = y[batch_idx]\n            \n            # Batch gradient\n            y_pred = np.dot(X_batch, w)\n            grad = -np.dot(X_batch.T, (y_batch - y_pred)) / len(batch_idx)\n            w = w - lr * grad\n        \n        loss = np.mean((y - np.dot(X, w)) ** 2)\n        history.append(loss)\n    \n    return w, history\n\n# Compare\nnp.random.seed(42)\nX = np.random.randn(1000, 5)\ntrue_w = np.array([1, -2, 3, -4, 5])\ny = np.dot(X, true_w) + 0.1 * np.random.randn(1000)\n\nw_sgd, h_sgd = sgd(X, y, lr=0.01, epochs=20)\nw_mb, h_mb = minibatch_gd(X, y, lr=0.01, batch_size=32, epochs=20)\n\nprint(\"Final losses:\")\nprint(f\"SGD: {h_sgd[-1]:.6f}\")\nprint(f\"Mini-batch (32): {h_mb[-1]:.6f}\")",
+      "explanation": "SGD updates after each sample (noisy but fast). Mini-batch averages over a batch (balances noise and efficiency). Mini-batch is preferred for GPU parallelization.",
+      "timeComplexity": "O(epochs * n_samples * features)",
+      "spaceComplexity": "O(batch_size * features)"
+    },
+    {
+      "id": "momentum-implementation",
+      "title": "SGD with Momentum",
+      "description": "Implementing momentum to accelerate convergence.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef sgd_momentum(X, y, lr=0.01, momentum=0.9, epochs=50):\n    \"\"\"\n    Mini-batch SGD with momentum.\n    \n    v = momentum * v - lr * grad\n    w = w + v\n    \"\"\"\n    n, d = X.shape\n    w = np.zeros(d)\n    v = np.zeros(d)  # Velocity\n    history = []\n    batch_size = 32\n    \n    for epoch in range(epochs):\n        indices = np.random.permutation(n)\n        \n        for start in range(0, n, batch_size):\n            batch_idx = indices[start:start + batch_size]\n            X_batch, y_batch = X[batch_idx], y[batch_idx]\n            \n            # Compute gradient\n            y_pred = np.dot(X_batch, w)\n            grad = -np.dot(X_batch.T, (y_batch - y_pred)) / len(batch_idx)\n            \n            # Update velocity and weights\n            v = momentum * v - lr * grad\n            w = w + v\n        \n        loss = np.mean((y - np.dot(X, w)) ** 2)\n        history.append(loss)\n    \n    return w, history\n\n# Compare with and without momentum\nnp.random.seed(42)\nX = np.random.randn(500, 3)\ntrue_w = np.array([2, -3, 1])\ny = np.dot(X, true_w) + 0.1 * np.random.randn(500)\n\n# Without momentum\nw_no_mom, h_no_mom = minibatch_gd(X, y, lr=0.01, epochs=50)\n# With momentum\nw_mom, h_mom = sgd_momentum(X, y, lr=0.01, momentum=0.9, epochs=50)\n\nprint(\"Convergence comparison:\")\nprint(f\"Without momentum - Epoch 10: {h_no_mom[9]:.6f}, Final: {h_no_mom[-1]:.6f}\")\nprint(f\"With momentum    - Epoch 10: {h_mom[9]:.6f}, Final: {h_mom[-1]:.6f}\")\nprint(f\"\\nMomentum helps converge faster!\")",
+      "explanation": "Momentum accumulates past gradients in velocity. This accelerates movement in consistent gradient directions and dampens oscillations in others. Typical beta = 0.9.",
+      "timeComplexity": "O(epochs * n * features)",
+      "spaceComplexity": "O(features) for velocity"
+    },
+    {
+      "id": "learning-rate-effects",
+      "title": "Learning Rate Effects",
+      "description": "Demonstrating how learning rate affects convergence.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef train_with_lr(X, y, lr, epochs=100):\n    \"\"\"Train with given learning rate, return loss history.\"\"\"\n    n, d = X.shape\n    w = np.zeros(d)\n    history = []\n    \n    for epoch in range(epochs):\n        y_pred = np.dot(X, w)\n        loss = np.mean((y - y_pred) ** 2)\n        history.append(loss)\n        \n        if np.isnan(loss) or loss > 1e10:\n            # Diverged!\n            history.extend([float('inf')] * (epochs - epoch - 1))\n            break\n        \n        grad = -np.dot(X.T, (y - y_pred)) / n\n        w = w - lr * grad\n    \n    return history\n\n# Generate data\nnp.random.seed(42)\nX = np.random.randn(100, 5)\ny = np.dot(X, np.array([1, 2, 3, 4, 5])) + 0.1 * np.random.randn(100)\n\n# Test different learning rates\nlearning_rates = [0.001, 0.01, 0.1, 0.5, 1.0]\n\nprint(\"Effect of Learning Rate:\")\nprint(\"-\" * 50)\nfor lr in learning_rates:\n    history = train_with_lr(X, y, lr)\n    final_loss = history[-1]\n    status = \"Converged\" if final_loss < 0.1 else (\"Diverged\" if final_loss > 1e5 else \"Slow\")\n    print(f\"LR={lr:5.3f}: Final loss = {final_loss:12.4f} ({status})\")\n\nprint(\"\\nOptimal LR is problem-dependent, typically 0.001 to 0.1\")",
+      "explanation": "Learning rate dramatically affects training. Too small = slow convergence, too large = divergence. Finding the right learning rate is crucial for successful training.",
+      "timeComplexity": "O(epochs * n * features)",
+      "spaceComplexity": "O(features)"
+    }
+  ]
+}

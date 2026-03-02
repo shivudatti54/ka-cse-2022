@@ -1,0 +1,165 @@
+{
+  "topicId": "shared-memory",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the four System V shared memory operations and their purposes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "shmget() - creates/gets shared memory segment with key, size, and permissions",
+        "shmat() - attaches shared memory to process address space, returns pointer",
+        "shmdt() - detaches shared memory from process address space",
+        "shmctl() - performs control operations like removing segment (IPC_RMID) or getting status (IPC_STAT)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Why is synchronization necessary when using shared memory? Mention the synchronization mechanism commonly used.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Multiple processes can access shared memory simultaneously",
+        "Without synchronization, race conditions occur leading to data inconsistency",
+        "Semaphores are commonly used for synchronization",
+        "They provide atomic operations to control access to shared resources"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between MAP_SHARED and MAP_PRIVATE flags in mmap().",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "MAP_SHARED: modifications visible to other processes and written to underlying file",
+        "MAP_PRIVATE: modifications are private to the process, not visible to others or written to file",
+        "MAP_SHARED is used for inter-process communication",
+        "MAP_PRIVATE is used when process needs private copy of data"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is ftok() and why is it used in shared memory programming?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ftok() generates a unique key_t key from pathname and project ID",
+        "Used to identify shared memory segments across different processes",
+        "Ensures multiple processes can access the same shared memory segment",
+        "Takes two parameters: path to an existing file and a project ID (char)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the sequence of steps a process follows to use shared memory.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Generate key using ftok()",
+        "Create shared memory using shmget() with key, size, and permissions",
+        "Attach to process address space using shmat() to get pointer",
+        "Read/write to shared memory",
+        "Detach using shmdt() when done",
+        "Optional: Remove segment using shmctl() with IPC_RMID"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Compare System V shared memory with POSIX shared memory.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "System V: uses shmget(), shmat(), shmdt(), shmctl() functions",
+        "POSIX: uses shm_open() with file-like interface",
+        "POSIX integrates better with mmap()",
+        "POSIX provides simpler, more predictable API",
+        "Both require explicit synchronization"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of memory mapping (mmap) in the context of IPC.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "mmap() creates a mapping between file/anonymous memory and process address space",
+        "When used with MAP_SHARED, changes are visible to other processes",
+        "Provides direct memory access similar to shared memory",
+        "Can be used for file I/O optimization and shared memory IPC",
+        "Returns pointer to mapped area or MAP_FAILED on error"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program demonstrating producer-consumer problem using shared memory and semaphores.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create shared memory using shmget()",
+        "Initialize semaphores for synchronization",
+        "Producer process: waits for empty slot, writes to shared buffer, signals full slot",
+        "Consumer process: waits for full slot, reads from shared buffer, signals empty slot",
+        "Use shmat() to attach memory in both processes",
+        "Proper use of sem_wait() and sem_post()",
+        "Cleanup: detach and remove shared memory and semaphores"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the advantages of shared memory over other IPC mechanisms like pipes and message queues. Why is it the fastest form of IPC?",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Direct access: processes read/write to shared memory without kernel intervention",
+        "No data copying: unlike pipes which copy data between user and kernel space",
+        "Low overhead: minimal system calls required for data transfer",
+        "Shared address space: processes can share complex data structures directly",
+        "Efficiency: only initial setup involves kernel, data transfer is direct",
+        "Comparison: pipes require read()/write() system calls involving copies; message queues also involve kernel mediation",
+        "Ideal for large data transfers between frequently communicating processes"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a shared memory solution for two processes to exchange messages. Include key generation, creation, attachment, data transfer, detachment, and cleanup.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use ftok() to generate key from common pathname",
+        "Create shared memory segment with shmget() using IPC_CREAT | 0666",
+        "Producer attaches with shmat() and writes message",
+        "Consumer attaches with shmat() and reads message",
+        "Use semaphore for synchronization (avoid race conditions)",
+        "Detach both processes using shmdt()",
+        "Clean up with shmctl() using IPC_RMID",
+        "Handle errors at each step"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain memory-mapped files and their use in IPC. How do they differ from traditional file I/O and shared memory?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "mmap() maps file contents directly into process address space",
+        "Changes to mapped memory automatically reflected in file (with MAP_SHARED)",
+        "Eliminates need for read()/write() system calls for file access",
+        "Provides disk-backed shared memory for processes",
+        "Difference from traditional I/O: no explicit system calls for each read/write, data cached in memory",
+        "Difference from shared memory: backed by file, survives process termination, can share between unrelated processes",
+        "Disadvantage: limited by file system vs pure shared memory overhead"
+      ]
+    }
+  ]
+}

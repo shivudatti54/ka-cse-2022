@@ -1,0 +1,25 @@
+{
+  "topicId": "water-pollution",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Water Quality Index Calculation",
+      "description": "Algorithm to calculate WQI based on multiple water quality parameters",
+      "code": "ALGORITHM Calculate_WQI\nINPUT: DO, BOD, COD, pH, Nitrate, Phosphate, Turbidity\nOUTPUT: WQI (Water Quality Index)\n\nBEGIN\n // Define weight for each parameter\n weights = {DO: 0.2, BOD: 0.15, COD: 0.1, pH: 0.15, \n Nitrate: 0.15, Phosphate: 0.1, Turbidity: 0.15}\n \n // Normalize each parameter (0-100 scale)\n q_DO = normalize_DO(DO) // Higher is better\n q_BOD = normalize_BOD(BOD) // Lower is better\n q_COD = normalize_COD(COD) // Lower is better\n q_pH = normalize_pH(pH) // Optimal around 7\n q_Nitrate = normalize_Nitrate(Nitrate) // Lower is better\n q_Phosphate = normalize_Phosphate(Phosphate) // Lower is better\n q_Turbidity = normalize_Turbidity(Turbidity) // Lower is better\n \n // Calculate sub-indices\n sub_indices = [q_DO, q_BOD, q_COD, q_pH, q_Nitrate, q_Phosphate, q_Turbidity]\n \n // Calculate weighted sum\n WQI = 0\n FOR i FROM 0 TO 6 DO\n WQI = WQI + (sub_indices[i] * weights[i])\n END FOR\n \n // Classify water quality\n IF WQI >= 90 THEN\n classification = \"Excellent\"\n ELSE IF WQI >= 70 THEN\n classification = \"Good\"\n ELSE IF WQI >= 50 THEN\n classification = \"Fair\"\n ELSE IF WQI >= 25 THEN\n classification = \"Poor\"\n ELSE\n classification = \"Very Poor\"\n END IF\n \n RETURN WQI, classification\nEND",
+      "explanation": "This algorithm calculates Water Quality Index by normalizing multiple parameters and applying weights. Each parameter is scored based on how close it is to ideal values, then combined into a single index value indicating overall water quality.",
+      "timeComplexity": "O(n) where n is number of parameters (7)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "BOD Calculation Algorithm",
+      "description": "Algorithm to calculate Biochemical Oxygen Demand from dilution series",
+      "code": "ALGORITHM Calculate_BOD\nINPUT: initialDO, finalDO, dilutionFactor, sampleVolume, seedVolume\nOUTPUT: BOD (mg/L)\n\nBEGIN\n // Method 1: Direct measurement\n IF dilutionFactor = 1 THEN\n BOD = initialDO - finalDO\n \n // Method 2: Dilution method\n ELSE\n // Calculate total volume\n totalVolume = sampleVolume + seedVolume + dilutionWater\n \n // Apply dilution factor\n DO_consumed = initialDO - finalDO\n \n // Calculate BOD with dilution\n BOD = (DO_consumed * totalVolume) / sampleVolume\n END IF\n \n // Adjust for seed correction if needed\n IF seedCorrectionRequired THEN\n seedBOD = Calculate_Seed_BOD()\n BOD = BOD - (seedBOD * (seedVolume / totalVolume))\n END IF\n \n // Ensure non-negative\n IF BOD < 0 THEN\n BOD = 0\n END IF\n \n RETURN BOD\nEND\n\n// Helper function for normalization\nFUNCTION normalize_BOD(value)\nBEGIN\n // Lower BOD is better (unpolluted: <1 mg/L, polluted: >8 mg/L)\n ideal = 0\n worst = 10\n score = 100 * (worst - value) / (worst - ideal)\n RETURN clamp(score, 0, 100)\nEND",
+      "explanation": "This algorithm calculates BOD by measuring the difference in dissolved oxygen before and after a 5-day incubation period. The dilution method is used when sample oxygen demand exceeds available oxygen.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "ftp-smtp-telnet-www-http",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FTP File Download Example",
+      "description": "Demonstrates how to connect to FTP server and download a file using Python's ftplib",
+      "code": "import ftplib\n\n# Connect to FTP server\nftp = ftplib.FTP('ftp.example.com')\nftp.login('username', 'password')\n\n# Change directory\nftp.cwd('/public/files')\n\n# Download file\nwith open('downloaded.txt', 'wb') as f:\n    ftp.retrbinary('RETR sample.txt', f.write)\n\n# List files\nprint(ftp.nlst())\n\n# Quit FTP session\nftp.quit()",
+      "explanation": "This code shows basic FTP operations: connect using FTP(), login with credentials, change directory with cwd(), download file using retrbinary(), and properly quit with quit().",
+      "timeComplexity": "O(n) - depends on file size",
+      "spaceComplexity": "O(n) - file buffer size"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "HTTP GET Request Example",
+      "description": "Shows how to send HTTP GET request and process response using Python requests library",
+      "code": "import requests\n\n# Send GET request\nresponse = requests.get('https://api.example.com/data')\n\n# Check status code\nif response.status_code == 200:\n    # Parse JSON response\n    data = response.json()\n    print(data)\nelse:\n    print(f'Error: {response.status_code}')\n\n# Display headers\nprint(response.headers)\n\n# POST request example\npayload = {'username': 'user', 'password': 'pass'}\npost_response = requests.post('https://api.example.com/login', json=payload)",
+      "explanation": "Demonstrates HTTP GET for fetching data and POST for sending data. Uses requests library for simplicity. Status codes indicate success (200) or errors.",
+      "timeComplexity": "O(1) - network time only",
+      "spaceComplexity": "O(n) - response data size"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "SMTP Email Sending Example",
+      "description": "Demonstrates sending email using Python's smtplib with SMTP protocol",
+      "code": "import smtplib\nfrom email.mime.text import MIMEText\n\n# Email configuration\nsender = 'sender@example.com'\nreceiver = 'receiver@example.com'\nsubject = 'Test Email'\nbody = 'This is a test email sent via SMTP'\n\n# Create message\nmsg = MIMEText(body)\nmsg['From'] = sender\nmsg['To'] = receiver\nmsg['Subject'] = subject\n\n# Connect to SMTP server and send\ntry:\n    server = smtplib.SMTP('smtp.gmail.com', 587)\n    server.starttls()  # Enable encryption\n    server.login(sender, 'app_password')\n    server.sendmail(sender, receiver, msg.as_string())\n    print('Email sent successfully')\nexcept Exception as e:\n    print(f'Error: {e}')\nfinally:\n    server.quit()",
+      "explanation": "Shows SMTP email sending: connect to SMTP server, use starttls() for secure connection, login with credentials, send message using sendmail(). Port 587 is for SMTP submission with TLS.",
+      "timeComplexity": "O(1) - network time",
+      "spaceComplexity": "O(1) - fixed message size"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Simple Telnet Client",
+      "description": "Demonstrates basic Telnet connection using Python's telnetlib (for educational purposes)",
+      "code": "import telnetlib\nimport getpass\n\n# Connect to Telnet server\ntn = telnetlib.Telnet('192.168.1.1', 23)\n\n# Read welcome message\nprint(tn.read_until(b'login: ')\n\n# Send username\ntn.write(b'admin\\n')\n\n# Read password prompt\nprint(tn.read_until(b'Password: '))\n\n# Send password (hidden input)\npassword = getpass.getpass()\ntn.write(password.encode('ascii') + b'\\n')\n\n# Execute command\ntn.write(b'show interfaces\\n')\nprint(tn.read_until(b'--More--', timeout=2))\n\n# Close connection\ntn.write(b'exit\\n')\ntn.close()",
+      "explanation": "Demonstrates Telnet client connection: establish TCP connection on port 23, send credentials, execute commands. Note: Telnet is insecure; SSH is recommended for production use.",
+      "timeComplexity": "O(n) - depends on command output",
+      "spaceComplexity": "O(1) - buffer size"
+    }
+  ]
+}

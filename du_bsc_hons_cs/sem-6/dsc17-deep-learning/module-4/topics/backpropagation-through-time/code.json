@@ -1,0 +1,45 @@
+{
+  "topicId": "backpropagation-through-time",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple RNN Forward Pass with NumPy",
+      "description": "Implementation of forward pass through a simple RNN showing hidden state computation",
+      "code": "import numpy as np\n\ndef rnn_forward(x, h_prev, Whh, Wxh, bh):\n    \"\"\"\n    x: input at time t (input_size,)\n    h_prev: previous hidden state (hidden_size,)\n    Whh: hidden-to-hidden weights (hidden_size, hidden_size)\n    Wxh: input-to-hidden weights (hidden_size, input_size)\n    bh: hidden bias (hidden_size,)\n    \"\"\"\n    # Compute activation\n    z = np.dot(Whh, h_prev) + np.dot(Wxh, x) + bh\n    # Apply tanh activation\n    h = np.tanh(z)\n    return h\n\n# Example usage for sequence\ndef rnn_sequence_forward(X, Whh, Wxh, bh, Wy, by):\n    \"\"\"Process entire sequence\"\"\"\n    T = len(X)\n    hidden_size = Whh.shape[0]\n    h = np.zeros(hidden_size)  # Initial hidden state\n    h_history = []\n    outputs = []\n    \n    for t in range(T):\n        h = rnn_forward(X[t], h, Whh, Wxh, bh)\n        h_history.append(h)\n        y = np.dot(Wy, h) + by  # Output computation\n        outputs.append(y)\n    \n    return h_history, outputs",
+      "explanation": "This code demonstrates the forward pass in a simple Elman RNN. At each time step, the hidden state is computed by combining the current input with the previous hidden state, then passing through tanh activation. The same weight matrices are applied at every time step (weight sharing).",
+      "timeComplexity": "O(T \u00d7 hidden_size \u00d7 input_size)",
+      "spaceComplexity": "O(T \u00d7 hidden_size)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "BPTT Gradient Computation",
+      "description": "Implementation of backpropagation through time for computing gradients",
+      "code": "def bptt(x_sequence, y_sequence, Whh, Wxh, Wy, bh, by):\n    \"\"\"BPTT implementation for simple RNN\"\"\"\n    T = len(x_sequence)\n    hidden_size = Whh.shape[0]\n    input_size = Wxh.shape[1]\n    output_size = Wy.shape[0]\n    \n    # Forward pass - store all hidden states\n    h_prev = np.zeros(hidden_size)\n    h_history = [h_prev]\n    \n    for t in range(T):\n        z = np.dot(Whh, h_prev) + np.dot(Wxh, x_sequence[t]) + bh\n        h = np.tanh(z)\n        h_history.append(h)\n        h_prev = h\n    \n    # Initialize gradients\n    dWhh = np.zeros_like(Whh)\n    dWxh = np.zeros_like(Wxh)\n    dWy = np.zeros_like(Wy)\n    dbh = np.zeros_like(bh)\n    dby = np.zeros_like(by)\n    \n    # Backward pass\n    dh_next = np.zeros(hidden_size)  # Gradient from next time step\n    \n    for t in reversed(range(T)):\n        # Gradient of loss w.r.t. output\n        dy = y_sequence[t] - h_history[t+1]  # Assuming MSE loss\n        dWy += np.outer(dy, h_history[t+1])\n        dby += dy\n        \n        # Gradient w.r.t. hidden state\n        dh = np.dot(Wy.T, dy) + dh_next\n        \n        # Gradient through tanh: dh * (1 - tanh\u00b2(z))\n        z = np.dot(Whh, h_history[t]) + np.dot(Wxh, x_sequence[t]) + bh\n        dh_raw = dh * (1 - np.tanh(z)**2)\n        \n        # Accumulate gradients for shared weights\n        dWxh += np.outer(dh_raw, x_sequence[t])\n        dWhh += np.outer(dh_raw, h_history[t])\n        dbh += dh_raw\n        \n        # Gradient for previous time step (propagate backward)\n        dh_next = np.dot(Whh.T, dh_raw)\n    \n    return dWhh, dWxh, dWy, dbh, dby",
+      "explanation": "This BPTT implementation shows how gradients are computed by backpropagating errors through each time step. Key steps: (1) Forward pass stores all hidden states, (2) Backward pass processes time steps in reverse, (3) Gradients for shared weights (Whh, Wxh) are accumulated across all time steps. The tanh derivative is computed as (1 - tanh\u00b2(z)).",
+      "timeComplexity": "O(T \u00d7 hidden_size\u00b2)",
+      "spaceComplexity": "O(T \u00d7 hidden_size)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "BPTT Algorithm Pseudocode",
+      "description": "High-level pseudocode for BPTT algorithm",
+      "code": "ALGORITHM BPTT(X, Y, \u03b8)\n// X = input sequence [x\u2081, x\u2082, ..., x_T]\n// Y = target sequence [y\u2081, y\u2082, ..., y_T]\n// \u03b8 = {Whh, Wxh, Wy, bh, by}\n\nBEGIN\n  SET h\u2080 \u2190 zeros(initial_hidden_size)\n  SET h_history \u2190 [h\u2080]\n  \n  // Step 1: Forward Pass\n  FOR t FROM 1 TO T DO\n    z_t \u2190 Whh \u00d7 h_{t-1} + Wxh \u00d7 x_t + b_h\n    h_t \u2190 tanh(z_t)           // Store h_t for backward pass\n    y_pred_t \u2190 Wy \u00d7 h_t + b_y\n    APPEND h_t TO h_history\n  END FOR\n  \n  // Step 2: Compute Loss\n  L \u2190 \u03a3_{t=1}^{T} Loss(y_pred_t, y_t)\n  \n  // Step 3: Initialize Gradients\n  SET dWhh, dWxh, dWy, dbh, dby \u2190 0\n  SET dh_next \u2190 0\n  \n  // Step 4: Backward Pass (through time)\n  FOR t FROM T DOWN TO 1 DO\n    // Gradient from output\n    dy_t \u2190 \u2202L/\u2202y_pred_t\n    dWy \u2190 dWy + dy_t \u00d7 h_t^T\n    dby \u2190 dby + dy_t\n    \n    // Gradient to hidden state\n    dh_t \u2190 Wy^T \u00d7 dy_t + dh_next\n    \n    // Gradient through tanh activation\n    dz_t \u2190 dh_t \u2218 (1 - tanh\u00b2(z_t))    // \u2218 = element-wise\n    \n    // Accumulate weight gradients\n    dWxh \u2190 dWxh + dz_t \u00d7 x_t^T\n    dWhh \u2190 dWhh + dz_t \u00d7 h_{t-1}^T\n    dbh \u2190 dbh + dz_t\n    \n    // Propagate gradient to previous time step\n    dh_next \u2190 Whh^T \u00d7 dz_t\n  END FOR\n  \n  // Step 5: Update Parameters\n  \u03b8 \u2190 \u03b8 - \u03b7 \u00d7 gradients\n  \n  RETURN \u03b8, L\nEND",
+      "explanation": "This pseudocode captures the essence of BPTT: (1) Forward pass through all time steps storing hidden states, (2) Compute loss at each step, (3) Backward pass iterating from last to first time step, (4) Accumulate gradients for shared weights, (5) Update parameters using gradient descent. The key is the dh_next term that carries gradient information backward through time.",
+      "timeComplexity": "O(T \u00d7 n\u00b2) where n = number of parameters",
+      "spaceComplexity": "O(T \u00d7 h) where h = hidden size"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Gradient Clipping Implementation",
+      "description": "Implementation of gradient clipping to handle exploding gradients in BPTT",
+      "code": "def clip_gradients(gradients, max_norm=1.0):\n    \"\"\"\n    Clip gradients by norm to prevent exploding gradients.\n    \n    Parameters:\n    - gradients: dictionary containing dWhh, dWxh, dWy, dbh, dby\n    - max_norm: maximum allowed gradient norm (threshold)\n    \n    Returns:\n    - Clipped gradients dictionary\n    \"\"\"\n    # Compute total gradient norm\n    total_norm = 0.0\n    for grad in gradients.values():\n        total_norm += np.sum(grad ** 2)\n    total_norm = np.sqrt(total_norm)\n    \n    # Calculate clipping factor\n    clip_coef = max_norm / (total_norm + 1e-8)\n    \n    # Apply clipping if norm exceeds threshold\n    if total_norm > max_norm:\n        for key in gradients:\n            gradients[key] *= clip_coef\n        print(f\"Gradient clipped: {total_norm:.4f} \u2192 {max_norm}\")\n    \n    return gradients\n\n# Example usage in training loop\ndef train_with_bptt(X, Y, model, learning_rate=0.01, max_norm=1.0):\n    \"\"\"Training loop with gradient clipping\"\"\"\n    \n    # Forward pass\n    h_history, outputs = rnn_sequence_forward(\n        X, model['Whh'], model['Wxh'], \n        model['bh'], model['Wy'], model['by']\n    )\n    \n    # Compute gradients via BPTT\n    gradients = bptt(X, Y, model['Whh'], model['Wxh'], \n                     model['Wy'], model['bh'], model['by'])\n    \n    # Clip gradients to prevent exploding\n    gradients = clip_gradients(gradients, max_norm)\n    \n    # Update weights\n    model['Whh'] -= learning_rate * gradients['dWhh']\n    model['Wxh'] -= learning_rate * gradients['dWxh']\n    model['Wy']  -= learning_rate * gradients['dWy']\n    model['bh']  -= learning_rate * gradients['dbh']\n    model['by']  -= learning_rate * gradients['dby']\n    \n    return model",
+      "explanation": "Gradient clipping is essential for stable BPTT training. The algorithm computes the total L2 norm of all gradients, and if it exceeds the threshold, scales all gradients by a factor to bring the norm to the threshold. This preserves the gradient direction while limiting magnitude, preventing unstable updates that could cause NaN values or divergence.",
+      "timeComplexity": "O(n) where n = total number of parameters",
+      "spaceComplexity": "O(1) additional"
+    }
+  ]
+}

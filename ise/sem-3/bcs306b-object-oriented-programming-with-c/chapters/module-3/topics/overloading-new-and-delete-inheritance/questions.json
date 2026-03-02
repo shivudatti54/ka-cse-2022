@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose and basic mechanism of overloading the `new` and `delete` operators in C++. How does a class-specific overload differ from a global overload?",
+    "expectedPoints": [
+      "Overloading allows for custom memory management strategies, such as using a memory pool or tracking allocations.",
+      "A class-specific overload applies only to objects of that specific class, while a global overload affects all dynamic allocations in the program (use with caution).",
+      "The overloaded `new` operator must return a `void*` and can take additional parameters; the overloaded `delete` must have a `void*` parameter and can also take a size parameter."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe how inheritance affects the resolution of overloaded `new` and `delete` operators. If a derived class does not define its own versions, which operators are used when allocating/deallocating a derived class object, and why?",
+    "expectedPoints": [
+      "Overloaded `new` and `delete` operators are inherited by derived classes, just like other member functions.",
+      "If a base class has overloaded `new`/`delete`, and a derived class does not, the base class's operators will be used for dynamic allocation/deallocation of derived objects.",
+      "This behavior is because the operators are statically bound based on the type of the object being allocated/deleted, not dynamically bound like virtual functions."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A program has a complex inheritance hierarchy. Detail the sequence of steps involved, including constructor calls and operator resolution, when the statement `Derived* obj = new Derived;` is executed, assuming both base and derived classes have their own overloaded `new` and `delete` operators and non-trivial constructors.",
+    "expectedPoints": [
+      "First, the overloaded `new` operator for the `Derived` class is called to allocate memory. If it doesn't exist, the one from the most immediate base class that defines it is used, and so on up the hierarchy. If no class defines it, the global `new` is used.",
+      "After memory is allocated, the constructor call chain begins: the base class constructor(s) are called first (in order of inheritance), followed by the `Derived` class constructor.",
+      "Upon deletion with `delete obj;`, the destructor chain runs in reverse order (`Derived` destructor first, then base destructors), and finally, the corresponding overloaded `delete` operator for the class is called to deallocate the memory."
+    ],
+    "marks": 10
+  }
+]

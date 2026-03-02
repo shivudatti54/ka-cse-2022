@@ -1,0 +1,45 @@
+{
+  "topicId": "automata-and-complexity",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "DFA Simulation Algorithm",
+      "description": "Algorithm to simulate DFA on input string",
+      "code": "// DFA: M = (Q, Σ, δ, q0, F)\nfunction simulateDFA(M, input):\n currentState = q0\n for each symbol a in input:\n if δ(currentState, a) is defined:\n currentState = δ(currentState, a)\n else:\n return REJECT\n if currentState in F:\n return ACCEPT\n else:\n return REJECT\n\n// Time Complexity: O(|input|)\n// Space Complexity: O(1) - only stores current state",
+      "explanation": "This algorithm simulates any DFA by following transitions for each input symbol. The current state is updated based on the transition function. At the end, acceptance depends on whether the final state is in the set of accepting states.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "NFA to DFA Conversion (Subset Construction)",
+      "description": "Convert NFA to equivalent DFA",
+      "code": "// Subset Construction Algorithm\nfunction nfaToDfa(NFA):\n DFAstates = empty set of states\n DFAtransitions = empty set\n queue = empty queue\n \n // Start: ε-closure of NFA start state\n startState = epsilonClosure({nfaStart})\n add startState to DFAstates\n enqueue startState\n \n while queue not empty:\n S = dequeue()\n for each input symbol a in alphabet:\n // Compute move(S, a) then ε-closure\n T = epsilonClosure(move(S, a))\n if T not in DFAstates:\n add T to DFAstates\n enqueue T\n add transition S --a--> T to DFAtransitions\n \n return DFA with accepting states = states containing NFA accepting states\n\n// ε-closure: All states reachable via ε-transitions\nfunction epsilonClosure(S):\n result = S\n stack = S\n while stack not empty:\n state = pop(stack)\n for each t in epsilonTransitions(state):\n if t not in result:\n add t to result\n push t to stack\n return result\n\n// Worst case: 2^n states where n = number of NFA states",
+      "explanation": "The subset construction converts NFA to DFA by tracking sets of NFA states. The ε-closure computes all states reachable via ε-transitions. In worst case, the resulting DFA has 2^n states.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Turing Machine for palindrome recognition",
+      "description": "TM that accepts strings of form ww^R",
+      "code": "// TM for language L = {ww^R | w ∈ {0,1}*}\n// Uses matching from outside to center\n\nfunction TM-PALINDROME(input):\n currentState = q0\n tape = input + 'BB...' (blank padding)\n head = 0 // Start at leftmost\n \n while true:\n switch(currentState):\n case q0: // Find rightmost non-blank\n if tape[head] == 'B':\n // Reached end, go to center\n head = head + 1\n currentState = q1\n else:\n head = head + 1\n break\n \n case q1: // Match from ends\n if tape[head] == 'B':\n // Reached center (odd) or crossed (even)\n currentState = q_accept\n else:\n // Mark current, find right end\n symbol = tape[head]\n tape[head] = 'X' // Mark as visited\n currentState = q2\n head = head + 1\n break\n \n case q2: // Move right to find end\n if tape[head] != 'B':\n head = head + 1\n else:\n // Found end, check match\n if tape[head-1] == symbol:\n tape[head] = 'X'\n head = head - 1\n currentState = q3\n else:\n currentState = q_reject\n break\n \n case q3: // Move left to find next unmarked\n if tape[head] == 'X' or tape[head] == 'B':\n head = head - 1\n else:\n currentState = q1\n break\n \n case q_accept:\n return ACCEPT\n \n case q_reject:\n return REJECT\n\n// This TM halts and accepts palindromes\n// Rejects non-palindromes",
+      "explanation": "This TM checks palindromes by marking matched pairs from outside. It uses special symbol X to mark visited positions. Time complexity is O(n²) as each symbol may require full traversal.",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "NP-Complete Reduction Example (3-SAT to Clique)",
+      "description": "Polynomial reduction from 3-SAT to Clique problem",
+      "code": "// Reduction from 3-SAT to CLIQUE\n// 3-SAT: Boolean formula in CNF with 3 literals per clause\n// CLIQUE: Find a clique of size k in a graph\n\nfunction reduce3SATtoClique(formula):\n // Create graph G\n vertices = empty\n edges = empty\n \n // For each clause, create 3 vertices (one per literal)\n clause_id = 0\n for each clause (l1 ∨ l2 ∨ l3) in formula:\n for each literal li in clause:\n add vertex v(clause_id, li)\n clause_id = clause_id + 1\n \n // Add edges between vertices except:\n // 1. Vertices in same clause (can't pick two from one clause)\n // 2. Contradictory literals (x and ¬x)\n for each pair of vertices (u, v):\n if u.clause != v.clause:\n if not isNegation(u.literal, v.literal):\n add edge (u, v)\n \n // Set k = number of clauses\n k = number_of_clauses\n \n // Return (G, k)\n // If G has clique of size k, formula is satisfiable\n // If formula is satisfiable, G has clique of size k\n return (G, k)\n\n// Correctness: Each clause contributes one literal to clique\n// Edge constraints ensure no conflict (same clause or negation)\n// Time: O(m²) where m = number of literals = 3n (n clauses)\n// Polynomial time reduction!",
+      "explanation": "This reduction proves Clique is NP-hard. The construction ensures: a satisfying assignment maps to a clique (choose true literals), and a clique of size k maps to a satisfying assignment (one literal per clause, no contradictions). This is polynomial (O(m²)) thus CLIQUE ≥p 3-SAT.",
+      "timeComplexity": "O(m²)",
+      "spaceComplexity": "O(m²)"
+    }
+  ]
+}

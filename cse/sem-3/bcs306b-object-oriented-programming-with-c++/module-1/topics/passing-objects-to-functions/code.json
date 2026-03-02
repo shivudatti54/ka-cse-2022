@@ -1,0 +1,65 @@
+{
+  "topicId": "passing-objects-to-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Pass by Value Example",
+      "description": "Demonstrates pass-by-value creating a copy of object",
+      "code": "class Box {\n int width, height;\npublic:\n Box(int w, int h) : width(w), height(h) {}\n void display() { cout << width << \"x\" << height; }\n};\n\nvoid modify(Box b) { // Pass by value - creates copy\n b.width = 20; // Modifies copy only\n b.display(); // Shows 20x10\n}\n\nint main() {\n Box b(10, 10);\n modify(b); // Copy constructor invoked\n b.display(); // Still shows 10x10 - original unchanged\n return 0;\n}",
+      "explanation": "When Box is passed by value, the copy constructor creates a duplicate. Changes inside modify() affect only the copy, not the original object in main().",
+      "timeComplexity": "O(n) - copy constructor called",
+      "spaceComplexity": "O(n) - new object created"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Pass by Reference Example",
+      "description": "Demonstrates pass-by-reference allowing modification of original",
+      "code": "class Box {\n int width, height;\npublic:\n Box(int w, int h) : width(w), height(h) {}\n void display() { cout << width << \"x\" << height; }\n};\n\nvoid modify(Box& b) { // Pass by reference - no copy\n b.width = 20; // Modifies original object\n b.display(); // Shows 20x10\n}\n\nint main() {\n Box b(10, 10);\n modify(b); // No copy made\n b.display(); // Shows 20x10 - original modified\n return 0;\n}",
+      "explanation": "The & makes b an alias for the original object. No copy is created. Any modifications inside modify() directly affect the original object in main().",
+      "timeComplexity": "O(1) - no copy",
+      "spaceComplexity": "O(1) - no additional object"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Pass by Const Reference Example",
+      "description": "Demonstrates safest method - efficient read-only access",
+      "code": "class Box {\n int width, height;\npublic:\n Box(int w, int h) : width(w), height(h) {}\n void display() { cout << width << \"x\" << height; }\n int getArea() const { // const member function\n return width * height;\n }\n};\n\nvoid displayArea(const Box& b) { // const reference\n // b.width = 20; // ERROR - cannot modify\n cout << b.getArea(); // Can only read\n}\n\nint main() {\n Box b(10, 20);\n displayArea(b); // Efficient - no copy, no modification risk\n return 0;\n}",
+      "explanation": "const Box& provides efficiency (no copy) and safety (cannot modify). The function can only read data. This is the recommended way to pass large objects for read-only access.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Pass by Pointer Example",
+      "description": "Demonstrates pointer-based object passing with NULL possibility",
+      "code": "class Box {\n int width, height;\npublic:\n Box(int w, int h) : width(w), height(h) {}\n void display() { cout << width << \"x\" << height; }\n};\n\nvoid modify(Box* ptr) { // Pass by pointer\n if (ptr == nullptr) return; // NULL check\n ptr->width = 30; // Modify through pointer\n ptr->display();\n}\n\nint main() {\n Box b(10, 10);\n modify(&b); // Pass address\n b.display(); // Shows 30x10\n \n Box* p = nullptr;\n modify(p); // Safe - NULL checked\n return 0;\n}",
+      "explanation": "Pointer allows NULL values and explicit dereferencing. Use when you need to check for invalid pointers or interface with C code. Arrow operator (->) accesses members.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Object Slicing Problem",
+      "description": "Demonstrates object slicing when passing derived class by value",
+      "code": "class Base {\npublic:\n int baseData;\n Base(int b) : baseData(b) {}\n virtual void show() { cout << \"Base: \" << baseData; }\n};\n\nclass Derived : public Base {\npublic:\n int derivedData;\n Derived(int b, int d) : Base(b), derivedData(d) {}\n void show() override { \n cout << \"Base: \" << baseData << \", Derived: \" << derivedData; \n }\n};\n\nvoid display(Base b) { // Slicing happens here!\n b.show(); // Calls Base::show()\n}\n\nint main() {\n Derived obj(10, 20);\n display(obj); // Object sliced!\n // derivedData lost\n return 0;\n}",
+      "explanation": "When Derived object is passed by value to Base parameter, only the Base part is copied. The derived portion is 'sliced off', losing all derived class data and virtual function behavior.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-6",
+      "language": "cpp",
+      "title": "Preventing Object Slicing",
+      "description": "Shows solution using pointers and references to preserve derived class",
+      "code": "class Base {\npublic:\n int baseData;\n Base(int b) : baseData(b) {}\n virtual void show() { cout << \"Base: \" << baseData; }\n virtual ~Base() {}\n};\n\nclass Derived : public Base {\npublic:\n int derivedData;\n Derived(int b, int d) : Base(b), derivedData(d) {}\n void show() override { \n cout << \"Base: \" << baseData << \", Derived: \" << derivedData; \n }\n};\n\n// Solution 1: Pass by pointer\nvoid displayPtr(Base* ptr) {\n ptr->show(); // Calls Derived::show()\n}\n\n// Solution 2: Pass by reference\nvoid displayRef(Base& ref) {\n ref.show(); // Calls Derived::show()\n}\n\nint main() {\n Derived obj(10, 20);\n displayPtr(&obj); // No slicing - polymorphism works\n displayRef(obj); // No slicing - polymorphism works\n return 0;\n}",
+      "explanation": "Using pointers or references prevents slicing because they hold the address of the original object. Virtual function calls resolve to derived class implementations at runtime.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

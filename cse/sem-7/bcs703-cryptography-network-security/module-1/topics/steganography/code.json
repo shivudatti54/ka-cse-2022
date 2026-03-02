@@ -1,0 +1,35 @@
+{
+  "topicId": "steganography",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python-like pseudocode",
+      "title": "LSB Image Steganography Encoder",
+      "description": "Basic implementation of LSB steganography for embedding text in images",
+      "code": "function ENCODE_IMAGE(image_path, secret_message, output_path):\n # Read cover image as pixel array\n cover_image = LOAD_IMAGE(image_path)\n pixels = GET_PIXEL_ARRAY(cover_image)\n \n # Convert secret message to binary\n binary_message = STRING_TO_BINARY(secret_message)\n binary_message = binary_message + END_MARKER (8 zeros)\n \n # Check capacity\n if len(binary_message) > len(pixels):\n raise ERROR(\"Message too large for cover image\")\n \n # Embed message in LSB of each color channel\n message_index = 0\n for i in range(len(pixels)):\n if message_index >= len(binary_message):\n break\n \n for channel in [RED, GREEN, BLUE]:\n if message_index >= len(binary_message):\n break\n \n # Replace LSB with message bit\n pixel_value = pixels[i][channel]\n pixel_value = (pixel_value & 0xFE) | int(binary_message[message_index])\n pixels[i][channel] = pixel_value\n message_index += 1\n \n # Save stego-image\n SAVE_IMAGE(pixels, output_path)\n return SUCCESS",
+      "explanation": "This encoder takes an image and secret text message. It converts the message to binary, then replaces the LSB of each color channel (R, G, B) with one bit of the message. The END_MARKER signals where the message ends during decoding.",
+      "timeComplexity": "O(n \u00d7 m) where n = pixels, m = message length",
+      "spaceComplexity": "O(n) for storing modified pixel array"
+    },
+    {
+      "id": "code-2",
+      "language": "Python-like pseudocode",
+      "title": "LSB Steganography Decoder",
+      "description": "Decoder to extract hidden message from LSB-encoded images",
+      "code": "function DECODE_IMAGE(stego_image_path):\n # Load stego-image\n stego_image = LOAD_IMAGE(stego_image_path)\n pixels = GET_PIXEL_ARRAY(stego_image)\n \n # Extract LSB bits\n extracted_bits = \"\"\n for i in range(len(pixels)):\n for channel in [RED, GREEN, BLUE]:\n pixel_value = pixels[i][channel]\n lsb = pixel_value & 1 # Get LSB\n extracted_bits = extracted_bits + str(lsb)\n \n # Check for end marker (8 consecutive zeros)\n if len(extracted_bits) >= 8:\n recent_bits = extracted_bits[-8:]\n if recent_bits == \"00000000\":\n # End marker found\n binary_message = extracted_bits[:-8]\n return BINARY_TO_STRING(binary_message)\n \n # If no end marker, return whatever was extracted\n return BINARY_TO_STRING(extracted_bits)",
+      "explanation": "The decoder iterates through all pixels and extracts the LSB from each color channel. It reconstructs the binary message and looks for the END_MARKER (8 zeros) to know when the actual message ends. The recovered bits are converted back to text.",
+      "timeComplexity": "O(n) where n = total pixels in image",
+      "spaceComplexity": "O(m) where m = length of extracted message"
+    },
+    {
+      "id": "code-3",
+      "language": "Python-like pseudocode",
+      "title": "DCT JPEG Steganography Encoder",
+      "description": "Transform domain steganography using Discrete Cosine Transform coefficients",
+      "code": "function ENCODE_DCT(jpeg_path, secret_message, output_path):\n # Load and decompress JPEG image\n image = LOAD_JPEG(jpeg_path)\n \n # Divide image into 8x8 blocks\n blocks = DIVIDE_INTO_BLOCKS(image, size=8)\n \n # Convert secret message to binary with length header\n binary_message = STRING_TO_BINARY(secret_message)\n length_header = BINARY(len(binary_message), width=16)\n full_message = length_header + binary_message\n \n # Apply DCT to each block\n message_index = 0\n for block in blocks:\n if message_index >= len(full_message):\n break\n \n # Apply DCT to block\n dct_coefficients = DCT_2D(block)\n \n # Embed in middle frequency coefficients (more robust)\n # Skip DC coefficient (index 0) and very high frequencies\n for i in range(1, len(dct_coefficients) - 1):\n if message_index >= len(full_message):\n break\n \n if dct_coefficients[i] != 0:\n # Quantize and embed\n dct_coefficients[i] = (dct_coefficients[i] // 2 * 2) + int(full_message[message_index])\n message_index += 1\n \n # Apply inverse DCT\n block = IDCT_2D(dct_coefficients)\n \n # Save stego-image\n SAVE_JPEG(image, output_path)\n return SUCCESS",
+      "explanation": "This encoder works in the frequency domain. It applies DCT to 8x8 blocks of the image, then modifies middle-frequency coefficients to embed data. Middle frequencies are chosen because they survive JPEG compression while having enough energy for modification. The length header allows the decoder to know exactly how many bits to extract.",
+      "timeComplexity": "O(n \u00d7 log n) due to DCT operations per block",
+      "spaceComplexity": "O(n) for storing coefficient arrays"
+    }
+  ]
+}

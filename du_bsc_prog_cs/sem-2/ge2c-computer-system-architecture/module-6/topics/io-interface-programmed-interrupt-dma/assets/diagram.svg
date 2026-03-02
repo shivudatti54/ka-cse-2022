@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="io-interface-programmed-interrupt-dma">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="100%" style="stop-color:#f5e6f5"/>
+    </linearGradient>
+    <linearGradient id="cpuGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90d9"/>
+      <stop offset="100%" style="stop-color:#2d5a87"/>
+    </linearGradient>
+    <linearGradient id="memGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7cb87c"/>
+      <stop offset="100%" style="stop-color:#4a8a4a"/>
+    </linearGradient>
+    <linearGradient id="ioGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e89b3c"/>
+      <stop offset="100%" style="stop-color:#b8741f"/>
+    </linearGradient>
+    <linearGradient id="dmaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9b6bb5"/>
+      <stop offset="100%" style="stop-color:#6b447f"/>
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes dataFlow {
+      0% { stroke-dashoffset: 20; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+    .label { font-family: Arial, sans-serif; font-size: 14px; fill: #fff; font-weight: bold; }
+    .detail { font-family: Arial, sans-serif; font-size: 11px; fill: #fff; }
+    .section-title { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #333; }
+    .method-box { rx: 8; ry: 8; stroke: #888; stroke-width: 1; }
+    .component { rx: 5; ry: 5; }
+    .arrow-line { stroke: #555; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .dashed-arrow { stroke: #777; stroke-width: 1.5; fill: none; stroke-dasharray: 4,3; marker-end: url(#arrowhead); }
+    .interrupt-line { stroke: #d44; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .data-line { stroke: #2a7; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .animated { animation: fadeIn 1s ease-out forwards; }
+    .slide-left { animation: slideInLeft 0.8s ease-out forwards; }
+    .slide-right { animation: slideInRight 0.8s ease-out forwards; }
+    .pulse-anim { animation: pulse 2s ease-in-out infinite; }
+    .flow-anim { animation: dataFlow 1s linear infinite; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="25" text-anchor="middle" class="title">I/O Data Transfer Methods</text>
+  
+  <!-- Section 1: Programmed I/O -->
+  <g data-narration="Programmed I/O: CPU actively polls the I/O device, checking status registers continuously until data is ready">
+    <rect x="10" y="40" width="125" height="130" fill="#f0f8ff" stroke="#4a90d9" stroke-width="2" rx="8" class="method-box"/>
+    <text x="72" y="58" text-anchor="middle" class="section-title">Programmed I/O</text>
+    <rect x="20" y="68" width="35" height="30" fill="url(#cpuGradient)" class="component"/>
+    <text x="37" y="85" text-anchor="middle" class="label" font-size="10">CPU</text>
+    <rect x="85" y="68" width="35" height="30" fill="url(#ioGradient)" class="component"/>
+    <text x="102" y="85" text-anchor="middle" class="label" font-size="9">I/O</text>
+    <line x1="55" y1="83" x2="85" y2="83" class="arrow-line"/>
+    <text x="72" y="105" text-anchor="middle" font-size="9" fill="#555">CPU polls</text>
+    <text x="72" y="118" text-anchor="middle" font-size="8" fill="#666">status register</text>
+    <text x="72" y="138" text-anchor="middle" font-size="8" fill="#d44">High CPU usage</text>
+  </g>
+  
+  <!-- Section 2: Interrupt-Driven I/O -->
+  <g data-narration="Interrupt-Driven I/O: I/O device interrupts CPU when ready, allowing CPU to perform other tasks">
+    <rect x="147" y="40" width="125" height="130" fill="#f0f8ff" stroke="#9b6bb5" stroke-width="2" rx="8" class="method-box"/>
+    <text x="209" y="58" text-anchor="middle" class="section-title">Interrupt-Driven</text>
+    <rect x="157" y="68" width="35" height="30" fill="url(#cpuGradient)" class="component"/>
+    <text x="174" y="85" text-anchor="middle" class="label" font-size="10">CPU</text>
+    <rect x="227" y="68" width="35" height="30" fill="url(#ioGradient)" class="component"/>
+    <text x="244" y="85" text-anchor="middle" class="label" font-size="9">I/O</text>
+    <line x1="262" y1="83" x2="290" y2="50" class="interrupt-line"/>
+    <line x1="192" y1="83" x2="160" y2="50" class="interrupt-line"/>
+    <text x="209" y="105" text-anchor="middle" font-size="9" fill="#555">Device sends</text>
+    <text x="209" y="118" text-anchor="middle" font-size="8" fill="#666">interrupt signal</text>
+    <text x="209" y="138" text-anchor="middle" font-size="8" fill="#4a8a4a">Better CPU efficiency</text>
+  </g>
+  
+  <!-- Section 3: DMA -->
+  <g data-narration="Direct Memory Access: DMA controller handles data transfer directly between I/O device and memory, CPU is free for other tasks">
+    <rect x="284" y="40" width="125" height="130" fill="#f0f8ff" stroke="#7cb87c" stroke-width="2" rx="8" class="method-box"/>
+    <text x="346" y="58" text-anchor="middle" class="section-title">DMA</text>
+    <rect x="294" y="68" width="25" height="25" fill="url(#cpuGradient)" class="component"/>
+    <text x="306" y="82" text-anchor="middle" class="label" font-size="9">CPU</text>
+    <rect x="360" y="68" width="35" height="30" fill="url(#ioGradient)" class="component"/>
+    <text x="377" y="85" text-anchor="middle" class="label" font-size="9">I/O</text>
+    <rect x="340" y="100" width="30" height="20" fill="url(#dmaGradient)" class="component"/>
+    <text x="355" y="113" text-anchor="middle" class="label" font-size="8">DMA</text>
+    <line x1="306" y1="100" x2="340" y2="110" class="dashed-arrow"/>
+    <line x1="370" y1="98" x2="370" y2="80" class="data-line"/>
+    <text x="346" y="138" text-anchor="middle" font-size="8" fill="#4a8a4a">CPU not involved</text>
+    <text x="346" y="150" text-anchor="middle" font-size="8" fill="#666">in data transfer</text>
+  </g>
+  
+  <!-- Memory Component -->
+  <g data-narration="System Memory: Data is stored here after I/O operations or during DMA transfers">
+    <rect x="147" y="185" width="125" height="50" fill="url(#memGradient)" rx="5" class="component pulse-anim"/>
+    <text x="209" y="205" text-anchor="middle" class="label">System Memory</text>
+    <text x="209" y="220" text-anchor="middle" class="detail">Data buffer area</text>
+  </g>
+  
+  <!-- Comparison Table -->
+  <g data-narration="Comparison: Programmed I/O has highest CPU overhead, DMA has lowest, Interrupt-driven is balanced">
+    <rect x="10" y="250" width="400" height="135" fill="#fff" stroke="#ccc" stroke-width="1" rx="5"/>
+    <text x="210" y="268" text-anchor="middle" class="section-title" fill="#333">Comparison Summary</text>
+    
+    <!-- Table Header -->
+    <line x1="10" y1="280" x2="410" y2="280" stroke="#ddd"/>
+    <text x="70" y="295" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">Method</text>
+    <text x="175" y="295" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">CPU Involvement</text>
+    <text x="280" y="295" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">Speed</text>
+    <text x="360" y="295" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">Complexity</text>
+    
+    <!-- Row 1 -->
+    <line x1="10" y1="305" x2="410" y2="305" stroke="#eee"/>
+    <text x="70" y="320" text-anchor="middle" font-size="9" fill="#333">Programmed</text>
+    <text x="175" y="320" text-anchor="middle" font-size="9" fill="#d44">Very High</text>
+    <text x="280" y="320" text-anchor="middle" font-size="9" fill="#555">Slow</text>
+    <text x="360" y="320" text-anchor="middle" font-size="9" fill="#555">Low</text>
+    
+    <!-- Row 2 -->
+    <line x1="10" y1="330" x2="410" y2="330" stroke="#eee"/>
+    <text x="70" y="345" text-anchor="middle" font-size="9" fill="#333">Interrupt</text>
+    <text x="175" y="345" text-anchor="middle" font-size="9" fill="#e89b3c">Medium</text>
+    <text x="280" y="345" text-anchor="middle" font-size="9" fill="#555">Medium</text>
+    <text x="360" y="345" text-anchor="middle" font-size="9" fill="#555">Medium</text>
+    
+    <!-- Row 3 -->
+    <line x1="10" y1="355" x2="410" y2="355" stroke="#eee"/>
+    <text x="70" y="370" text-anchor="middle" font-size="9" fill="#333">DMA</text>
+    <text x="175" y="370" text-anchor="middle" font-size="9" fill="#4a8a4a">Minimal</text>
+    <text x="280" y="370" text-anchor="middle" font-size="9" fill="#555">Fast</text>
+    <text x="360" y="370" text-anchor="middle" font-size="9" fill="#555">High</text>
+  </g>
+  
+  <!-- Status Register Icon -->
+  <g data-narration="Status Register: Contains flags indicating device ready, error conditions, and transfer status">
+    <rect x="365" y="185" width="45" height="35" fill="#f5f5dc" stroke="#b5a642" stroke-width="1" rx="3"/>
+    <text x="387" y="198" text-anchor="middle" font-size="8" font-weight="bold" fill="#666">Status</text>
+    <text x="387" y="210" text-anchor="middle" font-size="7" fill="#666">Reg</text>
+    <circle cx="375" cy="215" r="2" fill="#4a8a4a"/>
+    <circle cx="382" cy="215" r="2" fill="#e89b3c"/>
+    <circle cx="389" cy="215" r="2" fill="#d44"/>
+  </g>
+  
+  <!-- Interrupt Lines Visual -->
+  <g data-narration="Interrupt Lines: Hardware signal lines connecting devices to CPU interrupt controller">
+    <path d="M 30 175 L 30 185 L 55 185" stroke="#d44" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+    <text x="35" y="178" font-size="7" fill="#d44">INT</text>
+  </g>
+  
+  <!-- Key Concepts Box -->
+  <g data-narration="Key Takeaway: DMA provides the best performance by offloading data transfer work from CPU, but requires additional hardware complexity">
+    <rect x="10" y="250" width="400" height="25" fill="#e6f3e6" stroke="#7cb87c" rx="3"/>
+    <text x="210" y="267" text-anchor="middle" font-size="10" fill="#333">★ Choose based on data volume: Programmed for simple/small, Interrupt for moderate, DMA for bulk transfers</text>
+  </g>
+</svg>

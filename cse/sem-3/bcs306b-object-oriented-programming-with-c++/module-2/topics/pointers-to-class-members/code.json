@@ -1,0 +1,45 @@
+{
+  "topicId": "pointers-to-class-members",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Pointer to Data Member Example",
+      "description": "Demonstrates basic pointer to integer data member usage",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Rectangle {\npublic:\n int width;\n int height;\n};\n\nint main() {\n // Declare pointer to int member of Rectangle\n int Rectangle::*wptr = &Rectangle::width;\n int Rectangle::*hptr = &Rectangle::height;\n \n Rectangle rect = {10, 5};\n \n // Access through object using .*\n cout << \"Width: \" << rect.*wptr << endl;\n cout << \"Height: \" << rect.*hptr << endl;\n \n // Modify using pointer\n rect.*wptr = 20;\n cout << \"New Width: \" << rect.width << endl;\n \n return 0;\n}",
+      "explanation": "The program shows declaring pointers to data members (wptr and hptr), initializing them with addresses of class members, and using the .* operator to access members through an object.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Pointer to Member Function Example",
+      "description": "Shows how to use pointer to member function with multiple functions",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Calculator {\npublic:\n int add(int a, int b) { return a + b; }\n int subtract(int a, int b) { return a - b; }\n int multiply(int a, int b) { return a * b; }\n};\n\nint main() {\n // Declare pointer to member function\n int (Calculator::*opPtr)(int, int);\n \n Calculator calc;\n \n // Point to different functions\n opPtr = &Calculator::add;\n cout << \"Add: \" << (calc.*opPtr)(10, 5) << endl;\n \n opPtr = &Calculator::subtract;\n cout << \"Subtract: \" << (calc.*opPtr)(10, 5) << endl;\n \n opPtr = &Calculator::multiply;\n cout << \"Multiply: \" << (calc.*opPtr)(10, 5) << endl;\n \n return 0;\n}",
+      "explanation": "Demonstrates declaring and using pointers to member functions, showing how the same pointer can be reassigned to different functions and called through the same object reference.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Menu-Driven Calculator using Member Function Pointers",
+      "description": "Uses array of member function pointers for operation selection",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Calculator {\nprivate:\n int result;\npublic:\n Calculator() : result(0) {}\n \n void add(int v) { result += v; }\n void subtract(int v) { result -= v; }\n void multiply(int v) { result *= v; }\n void divide(int v) { if(v != 0) result /= v; }\n void clear() { result = 0; }\n void display() { cout << \"Result: \" << result << endl; }\n};\n\nint main() {\n Calculator calc;\n \n // Array of pointers to member functions\n void (Calculator::*operations[4])(int) = {\n &Calculator::add,\n &Calculator::subtract,\n &Calculator::multiply,\n &Calculator::divide\n };\n \n int choice, value;\n \n calc.add(10); // Initial value\n calc.display();\n \n cout << \"Enter operation (0=add,1=sub,2=mul,3=div): \";\n cin >> choice;\n cout << \"Enter value: \";\n cin >> value;\n \n if(choice >= 0 && choice < 4) {\n (calc.*operations[choice])(value);\n calc.display();\n }\n \n return 0;\n}",
+      "explanation": "Shows practical application of member function pointers - storing multiple function pointers in an array and selecting them dynamically based on user input.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Using typedef with Member Pointers",
+      "description": "Simplifies complex member pointer declarations using typedef",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass MyClass {\npublic:\n int data;\n int getData() { return data; }\n void setData(int v) { data = v; }\n};\n\n// Typedef for pointer to data member\ntypedef int MyClass::*IntDataPtr;\n\n// Typedef for pointer to member function\ntypedef int (MyClass::*GetterFn)();\ntypedef void (MyClass::*SetterFn)(int);\n\nint main() {\n IntDataPtr dataPtr = &MyClass::data;\n GetterFn getFn = &MyClass::getData;\n SetterFn setFn = &MyClass::setData;\n \n MyClass obj;\n \n // Using typedef names\n (obj.*setFn)(42);\n cout << \"Data: \" << (obj.*getFn)() << endl;\n cout << \"Direct: \" << obj.*dataPtr << endl;\n \n return 0;\n}",
+      "explanation": "Demonstrates how typedef simplifies writing complex pointer-to-member declarations, making code more readable and maintainable.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

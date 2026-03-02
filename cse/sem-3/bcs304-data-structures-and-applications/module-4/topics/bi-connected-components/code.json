@@ -1,0 +1,35 @@
+{
+  "topicId": "bi-connected-components",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Tarjan's Algorithm for Articulation Points",
+      "description": "Recursive algorithm to find all articulation points using DFS with discovery time and low value computation.",
+      "code": "BEGIN\n  GLOBAL time = 0\n  GLOBAL AP[] = empty set\n  \n  FUNCTION FindAP(G(V, E)):\n    FOR each vertex u in V:\n      IF disc[u] is not set THEN\n        DFS(u, parent = NIL)\n    RETURN AP\n  \n  FUNCTION DFS(u, parent):\n    disc[u] = low[u] = ++time\n    children = 0\n    \n    FOR each neighbor v of u:\n      IF disc[v] is not set THEN\n        children = children + 1\n        PUSH edge (u, v) onto stack\n        DFS(v, u)\n        \n        // Update low value\n        low[u] = MIN(low[u], low[v])\n        \n        // Check articulation point condition (non-root)\n        IF parent != NIL AND low[v] >= disc[u] THEN\n          ADD u to AP\n        ENDIF\n        \n        // Extract biconnected component\n        IF low[v] >= disc[u] THEN\n          POP edges from stack until (u,v) removed\n          PRINT popped edges as one BCC\n        ENDIF\n        \n      ELSE IF v != parent AND disc[v] < disc[u] THEN\n        // Back edge (avoid double counting)\n        PUSH edge (u, v) onto stack\n        low[u] = MIN(low[u], disc[v])\n      ENDIF\n    ENDFOR\n    \n    // Root articulation point condition\n    IF parent == NIL AND children > 1 THEN\n      ADD u to AP\n    ENDIF\n  END FUNCTION\nEND",
+      "explanation": "This algorithm performs a single DFS traversal. It maintains discovery times (disc) and low values. For non-root vertices, it checks if low[child] >= disc[parent] to identify articulation points. The edge stack is used to extract biconnected components when the condition is satisfied.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V + E)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Bridge Finding Algorithm",
+      "description": "Algorithm to find all bridges in an undirected graph using the low value concept.",
+      "code": "BEGIN\n  GLOBAL time = 0\n  GLOBAL bridges = empty list\n  \n  FUNCTION FindBridges(G(V, E)):\n    FOR each vertex u in V:\n      disc[u] = NIL\n    \n    FOR each vertex u in V:\n      IF disc[u] is NIL THEN\n        BridgeDFS(u, parent = -1)\n    \n    RETURN bridges\n  \n  FUNCTION BridgeDFS(u, parent):\n    disc[u] = low[u] = ++time\n    \n    FOR each neighbor v of u:\n      IF disc[v] is NIL THEN\n        BridgeDFS(v, u)\n        low[u] = MIN(low[u], low[v])\n        \n        // Edge (u,v) is a bridge\n        IF low[v] > disc[u] THEN\n          ADD edge (u,v) to bridges\n        ENDIF\n        \n      ELSE IF v != parent THEN\n        // Back edge\n        low[u] = MIN(low[u], disc[v])\n      ENDIF\n    ENDFOR\n  END FUNCTION\nEND",
+      "explanation": "This is a simplified version focusing only on bridges. An edge (u,v) is a bridge if and only if low[v] > disc[u], meaning the subtree rooted at v cannot reach any ancestor of u without using the edge (u,v). This is stricter than the articulation point condition.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Complete Biconnected Component Extraction",
+      "description": "Full algorithm with explicit edge stack management to extract all biconnected components.",
+      "code": "BEGIN\n  GLOBAL time = 0\n  GLOBAL stack = empty stack\n  GLOBAL BCCs = empty list of lists\n  \n  FUNCTION FindAllBCCs(G(V, E)):\n    initialize disc[1..|V|] = 0, low[1..|V|] = 0\n    \n    FOR each vertex u in V:\n      IF disc[u] == 0 THEN\n        BCC-DFS(u, parent = NIL)\n        \n        // If any edges left in stack, they're a BCC\n        IF stack is not empty THEN\n          POP all edges as final BCC\n        ENDIF\n      ENDIF\n    ENDFOR\n    \n    RETURN BCCs\n  \n  FUNCTION BCC-DFS(u, parent):\n    disc[u] = low[u] = ++time\n    childCount = 0\n    \n    FOR each neighbor v of u:\n      IF disc[v] == 0 THEN\n        childCount = childCount + 1\n        PUSH (u, v) onto stack\n        BCC-DFS(v, u)\n        \n        // Update low[u]\n        low[u] = MIN(low[u], low[v])\n        \n        // Check for BCC boundary\n        IF low[v] >= disc[u] THEN\n          currentBCC = empty list\n          REPEAT\n            edge = POP from stack\n            ADD edge to currentBCC\n          UNTIL edge == (u, v)\n          ADD currentBCC to BCCs\n        ENDIF\n        \n      ELSE IF v != parent AND disc[v] < disc[u] THEN\n        // Back edge to ancestor\n        PUSH (u, v) onto stack\n        low[u] = MIN(low[u], disc[v])\n      ENDIF\n    ENDFOR\n    \n    // Root is AP if it has multiple children\n    IF parent == NIL AND childCount > 1 THEN\n      Mark u as articulation point\n    ENDIF\n  END FUNCTION\nEND",
+      "explanation": "This complete algorithm handles all cases: root articulation point detection, back edge processing, and explicit edge stack management for BCC extraction. When low[child] >= disc[parent], we pop edges until the connecting edge, forming one biconnected component.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V + E)"
+    }
+  ]
+}

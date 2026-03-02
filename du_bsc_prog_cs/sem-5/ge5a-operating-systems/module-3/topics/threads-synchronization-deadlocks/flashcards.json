@@ -1,0 +1,45 @@
+{
+  "topicId": "threads-synchronization-deadlocks",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "Define deadlock and list the four Coffman conditions.",
+      "back": "Deadlock is a state where a set of processes are permanently blocked because each holds a resource the others need. The four Coffman conditions are: mutual exclusion (resource is non‑sharable), hold and wait (process holds resources while requesting others), no preemption (resources cannot be forcibly taken), and circular wait (a circular chain of processes each waiting for a resource held by the next)."
+    },
+    {
+      "id": "fc-2",
+      "front": "What are the main synchronization primitives used in thread synchronization, and how do they differ?",
+      "back": "Mutex (mutual‑exclusion lock) provides exclusive access to a critical section; a monitor adds synchronized methods and condition variables for waiting/signalling; condition variables let threads block until a condition is signalled, always used with a mutex. In POSIX, pthread_mutex_lock/unlock, pthread_cond_wait/signal are typical, while hardware primitives like test‑and‑set provide atomic read‑modify‑write for building locks."
+    },
+    {
+      "id": "fc-3",
+      "front": "Describe a deadlock‑prevention technique that breaks the circular‑wait condition.",
+      "back": "Impose a total ordering on all resource types and require each process to request resources in increasing order; this prevents circular wait because a process cannot hold a lower‑order resource while waiting for a higher‑order one, eliminating the possibility of a circular wait."
+    },
+    {
+      "id": "fc-4",
+      "front": "Explain the Banker’s Algorithm for deadlock avoidance.",
+      "back": "Banker’s Algorithm keeps track of available, maximum, and allocated resources for each process. Before granting a request, it simulates allocation, checks whether the resulting state remains safe (a safe sequence of process completions exists), and only grants the request if safe; otherwise it postpones the request."
+    },
+    {
+      "id": "fc-5",
+      "front": "How does deadlock detection work in a system with a single instance of each resource type?",
+      "back": "For single‑instance resources, construct a Resource Allocation Graph (RAG) with process nodes and resource nodes; a cycle in the graph indicates a deadlock. The detection algorithm periodically runs a wait‑for graph and identifies processes involved in cycles."
+    },
+    {
+      "id": "fc-6",
+      "front": "Give a monitor‑based solution to the Dining Philosophers problem.",
+      "back": "Use a monitor with a state array (thinking, hungry, eating); each philosopher tests the state of both neighbours; the monitor’s method pickup() signals the philosopher when both forks are free, and putdown() releases them, ensuring no two adjacent philosophers eat simultaneously."
+    },
+    {
+      "id": "fc-7",
+      "front": "Show a minimal POSIX implementation of the Producer‑Consumer problem using a bounded buffer.",
+      "back": "Initialize two semaphores (empty = N, full = 0) and a mutex; producer does sem_wait(&empty), lock(&mutex), buffer[inx++] = item, unlock(&mutex), sem_post(&full); consumer does sem_wait(&full), lock(&mutex), item = buffer[out++], unlock(&mutex), sem_post(&empty)."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the Reader‑Writer problem and how can it be solved with a readers‑preference policy?",
+      "back": "Readers‑Writer problem: multiple readers may access the shared object concurrently, but a writer requires exclusive access. In a readers‑preference solution, maintain a readcount and a mutex; readers increment readcount (acquiring the mutex only to protect the count) and release it, allowing other readers; writers must wait until readcount is zero, acquiring a write lock (wrt) before modifying."
+    }
+  ]
+}

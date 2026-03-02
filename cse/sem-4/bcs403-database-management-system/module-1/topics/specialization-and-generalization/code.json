@@ -1,0 +1,26 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Implementing Specialization in SQL",
+    "description": "Shows how to implement entity hierarchy using table inheritance",
+    "code": "-- Superclass table\nCREATE TABLE Person (\n person_id PRIMARY KEY,\n name VARCHAR(100),\n address VARCHAR(200),\n dob DATE\n);\n\n-- Subclass tables (inherit from Person)\nCREATE TABLE Student (\n person_id PRIMARY KEY REFERENCES Person(person_id),\n student_id VARCHAR(20),\n department VARCHAR(50),\n semester INT\n);\n\nCREATE TABLE Teacher (\n person_id PRIMARY KEY REFERENCES Person(person_id),\n employee_id VARCHAR(20),\n salary DECIMAL(10,2),\n specialization VARCHAR(100)\n);",
+    "explanation": "In relational databases, specialization is implemented using separate tables for each subclass that reference the superclass table, inheriting common attributes through foreign key relationship.",
+    "complexity": {
+      "time": "N/A",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "sql",
+    "title": "Querying Inherited Data",
+    "description": "Demonstrates how to query data across superclass and subclasses",
+    "code": "-- Get all persons who are students\nSELECT p.name, p.address, s.department\nFROM Person p\nJOIN Student s ON p.person_id = s.person_id;\n\n-- Get all teachers with salary > 50000\nSELECT p.name, t.salary\nFROM Person p\nJOIN Teacher t ON p.person_id = t.person_id\nWHERE t.salary > 50000;\n\n-- UNION example for overlapping constraint\n-- If person can be both student and teacher\nSELECT name, 'Student' AS type FROM Student\nUNION\nSELECT name, 'Teacher' AS type FROM Teacher;",
+    "explanation": "Shows how to retrieve data using JOINs between superclass and subclass tables, demonstrating attribute inheritance in queries.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  }
+]

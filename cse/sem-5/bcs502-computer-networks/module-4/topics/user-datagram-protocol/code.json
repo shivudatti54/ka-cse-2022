@@ -1,0 +1,35 @@
+{
+  "topicId": "user-datagram-protocol",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "UDP Server Socket Creation",
+      "description": "Basic pseudocode for creating a UDP server that listens for incoming datagrams",
+      "code": "UDP_SERVER()\nBEGIN\n socket_fd = socket(AF_INET, SOCK_DGRAM, 0)\n IF socket_fd < 0 THEN\n PRINT \"Socket creation failed\"\n EXIT\n END IF\n \n server_address = create_address(PORT=8080, IP=\"0.0.0.0\")\n bind_result = bind(socket_fd, server_address, sizeof(server_address))\n \n IF bind_result < 0 THEN\n PRINT \"Bind failed\"\n close(socket_fd)\n EXIT\n END IF\n \n PRINT \"UDP Server listening on port 8080\"\n \n WHILE TRUE DO\n buffer = receive_from(socket_fd, client_address)\n PRINT \"Received: \", buffer\n PRINT \"From client at: \", client_address\n END WHILE\nEND",
+      "explanation": "This pseudocode demonstrates creating a UDP server socket. Note that unlike TCP, UDP server does not need to listen() or accept() connections - it simply binds to a port and receives datagrams directly.",
+      "timeComplexity": "O(1) per receive",
+      "spaceComplexity": "O(buffer_size)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "UDP Client Sending Datagram",
+      "description": "Basic pseudocode for a UDP client sending data to a server",
+      "code": "UDP_CLIENT()\nBEGIN\n socket_fd = socket(AF_INET, SOCK_DGRAM, 0)\n IF socket_fd < 0 THEN\n PRINT \"Socket creation failed\"\n EXIT\n END IF\n \n server_address = create_address(PORT=8080, IP=\"127.0.0.1\")\n message = \"Hello UDP Server\"\n \n send_result = sendto(socket_fd, message, len(message), \n 0, server_address, sizeof(server_address))\n \n IF send_result < 0 THEN\n PRINT \"Send failed\"\n ELSE\n PRINT \"Message sent successfully\"\n END IF\n \n close(socket_fd)\nEND",
+      "explanation": "UDP client creates a socket and uses sendto() to send a datagram. Unlike TCP, there is no connect() call needed - the destination address is specified with each sendto() call.",
+      "timeComplexity": "O(message_length)",
+      "spaceComplexity": "O(message_size)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "UDP Datagram Structure",
+      "description": "Shows how data is encapsulated from application layer to network layer",
+      "code": "ENCAPSULATION(application_data)\nBEGIN\n // Application Layer\n udp_header = create_udp_header(\n source_port = 5000,\n destination_port = 8080,\n length = 8 + length(application_data),\n checksum = calculate_checksum()\n )\n \n udp_datagram = udp_header + application_data\n PRINT \"UDP Datagram: \", udp_datagram\n \n // Internet Layer (IP)\n ip_header = create_ip_header(\n source_ip = \"192.168.1.10\",\n destination_ip = \"192.168.1.20\",\n protocol = 17, // UDP protocol number\n total_length = 20 + length(udp_datagram)\n )\n \n ip_packet = ip_header + udp_datagram\n PRINT \"IP Packet ready for transmission\"\n \n RETURN ip_packet\nEND",
+      "explanation": "This demonstrates UDP encapsulation. Application data is wrapped with an 8-byte UDP header, then wrapped with an IP header for network transmission. UDP protocol number in IP header is 17.",
+      "timeComplexity": "O(data_length)",
+      "spaceComplexity": "O(data_length + header_overhead)"
+    }
+  ]
+}

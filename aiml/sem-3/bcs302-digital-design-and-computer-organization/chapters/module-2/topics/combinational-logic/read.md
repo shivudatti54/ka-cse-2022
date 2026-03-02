@@ -1,0 +1,1 @@
+[Inputs] (X1, X2, ..., Xn) --> [Combinational Logic Circuit] --> [Outputs] (Y1, Y2, ..., Ym)

@@ -1,0 +1,155 @@
+{
+  "topicId": "attribute-based-access-control",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Attribute-Based Access Control (ABAC) and explain its fundamental working principle.",
+      "keyPoints": [
+        "ABAC is an authorization mechanism that uses attributes instead of roles",
+        "Access decisions are based on subject, resource, action, and environment attributes",
+        "Policies define rules combining these attributes for dynamic access control",
+        "Provides fine-grained, context-aware access decisions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the four categories of attributes used in ABAC with one example for each.",
+      "keyPoints": [
+        "Subject attributes: describe the user (e.g., role, department, clearance level)",
+        "Resource attributes: describe the object (e.g., file type, sensitivity level, owner)",
+        "Action attributes: describe the operation (e.g., read, write, delete)",
+        "Environment attributes: describe context (e.g., time, location, device type)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the functions of Policy Enforcement Point (PEP) and Policy Decision Point (PDP) in ABAC architecture.",
+      "keyPoints": [
+        "PEP intercepts access requests from users",
+        "PEP collects necessary information and forwards to PDP",
+        "PDP evaluates requests against policies using attributes",
+        "PDP returns access decision (permit/deny) to PEP",
+        "PEP enforces the decision on the resource"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is XACML? How is it related to ABAC?",
+      "keyPoints": [
+        "XACML stands for eXtensible Access Control Markup Language",
+        "It is an XML-based standard language for expressing access control policies",
+        "XACML provides a standardized way to define ABAC policies",
+        "It enables interoperability between different ABAC implementations",
+        "Contains policy language (PAP), request/response protocol, and architecture definitions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Compare ABAC and RBAC, highlighting why ABAC is more suitable for modern cloud environments.",
+      "keyPoints": [
+        "RBAC uses static roles; ABAC uses dynamic attributes",
+        "ABAC supports fine-grained access control; RBAC is coarser",
+        "ABAC can consider context (time, location); RBAC cannot",
+        "For cloud: ABAC handles multi-tenancy, federated identities, diverse resource types better",
+        "ABAC supports complex policies needed for IoT and distributed systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "List three advantages and three disadvantages of implementing ABAC in an organization.",
+      "keyPoints": [
+        "Advantages: Fine-grained control, dynamic context-aware decisions, scalable for complex environments, supports federated access",
+        "Disadvantages: Complex to implement and manage, performance overhead, difficult to audit/debug, requires robust attribute infrastructure",
+        "Additional: Policy explosion problem, steep learning curve for administrators"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the ABAC access request evaluation flow with the help of a diagram.",
+      "keyPoints": [
+        "User initiates access request to resource",
+        "PEP intercepts the request",
+        "PIP retrieves required attributes from attribute sources",
+        "PDP evaluates request against policies",
+        "PDP returns permit/deny decision",
+        "PEP enforces the decision",
+        "Access granted or denied to user"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the complete ABAC architecture including all components (PEP, PDP, PAP, PIP). How do these components interact to make and enforce an access control decision? Provide a detailed diagram description.",
+      "keyPoints": [
+        "PEP: Intercepts requests, enforces decisions",
+        "PDP: Evaluates policies, makes decisions",
+        "PAP: Manages policies (create, store, administer)",
+        "PIP: Retrieves attributes from sources",
+        "Interaction flow: User\u2192PEP\u2192PIP\u2192PDP\u2192PEP\u2192User",
+        "Attribute sources include LDAP, databases, APIs",
+        "PAP stores policies evaluated by PDP",
+        "PIP provides subject, resource, action, environment attributes",
+        "Each component can be distributed across the network",
+        "XACML standard defines interaction protocols"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design an ABAC policy for a healthcare system that allows: (a) doctors to access medical records only of their assigned patients, (b) access only during hospital operating hours, (c) access only from authorized devices. Explain the attributes and policy rules.",
+      "keyPoints": [
+        "Subject attributes: doctor_id, department, assigned_patients list, device_authorization",
+        "Resource attributes: medical_record_id, patient_id, record_sensitivity, record_department",
+        "Action attributes: access (read/write), export, print",
+        "Environment attributes: current_time, day_of_week, device_type, device_location",
+        "Policy rule 1: doctor.assigned_patients CONTAINS record.patient_id",
+        "Policy rule 2: environment.current_time WITHIN hospital_operating_hours",
+        "Policy rule 3: device.is_authorized = TRUE",
+        "Combine with AND logic: all conditions must be TRUE for access",
+        "Can be expressed in XACML format"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the challenges in migrating from RBAC to ABAC. How can an organization transition from RBAC to ABAC effectively?",
+      "keyPoints": [
+        "Challenges: Complexity in policy design, performance overhead, attribute infrastructure requirement, staff training, policy migration effort, potential security gaps during transition",
+        "Transition approach: Inventory existing roles and permissions, identify attributes needed, select ABAC components, start with hybrid RBAC-ABAC, gradually move policies, implement attribute management infrastructure, test thoroughly, train administrators",
+        "Best practices: Start small, maintain role-to-attribute mapping, use XACML for policy standardization, implement policy versioning, regular audits"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the n-ary ABAC model and discuss its significance in handling complex access control scenarios. How does it differ from basic ABAC?",
+      "keyPoints": [
+        "Basic ABAC typically handles binary (permit/deny) decisions",
+        "n-ary ABAC supports multiple subjects, resources, actions, and environment conditions in single policies",
+        "Enables complex relationships: multiple users accessing multiple resources with different actions",
+        "Useful for collaborative workflows, group-based access, shared resources",
+        "Policies can express: 'User A and User B can access Document X for editing'",
+        "More expressive than simple subject-resource-action tuples",
+        "Enables delegation, group ownership, multi-party authorization scenarios"
+      ],
+      "marks": 10
+    }
+  ]
+}

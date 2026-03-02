@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Schema Mapping Transformation",
+    "description": "Demonstrates how a user query at external level gets transformed to physical storage access",
+    "code": "// USER QUERY (External Level)\nSELECT name, marks FROM student WHERE marks > 75;\n\n// STEP 1: External to Conceptual Mapping\n// Transform user field names to entity attributes\n// student.name \u2192 StudentEntity.name\n// student.marks \u2192 StudentEntity.marks\n\n// STEP 2: Conceptual to Internal Mapping\n// Transform logical operation to physical storage access\n// Convert WHERE clause to index scan on MarksIndex\n// Determine optimal access path using B-tree index\n\n// STEP 3: Physical Execution\n// Read data pages using buffer manager\n// Apply filter condition\n// Return result to user\n\n// OUTPUT: Student records with name and marks > 75",
+    "explanation": "Shows how DBMS transforms user queries through three-schema levels, using mapping definitions at each stage",
+    "complexity": {
+      "time": "Depends on query and indexes",
+      "space": "O(n) for result set"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Data Independence Demonstration",
+    "description": "Shows how DBMS handles schema changes without affecting applications",
+    "code": "// SCENARIO: Physical storage reorganization\n// Change from sequential file to indexed file\n\n// BEFORE (Internal Schema):\n// Storage: Sequential file on magnetic tape\n\n// AFTER (Internal Schema):\n// Storage: B+ tree index on student_id\n\n// Conceptual Schema: UNCHANGED\n// Entity: Student {student_id, name, marks}\n\n// External Schema: UNCHANGED\n// View: StudentMarks as SELECT * FROM Student\n\n// Application program: UNCHANGED\n// SELECT * FROM StudentMarks WHERE student_id = 123\n\n// DBMS handles translation automatically\n// Uses Conceptual/Internal Mapping to translate\n// Query works without any application changes",
+    "explanation": "Demonstrates Physical Data Independence - storage reorganization doesn't require application changes",
+    "complexity": {
+      "time": "Varies by storage change",
+      "space": "Same"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "sql",
+    "title": "Three-Schema Implementation Example",
+    "description": "SQL examples showing different schema levels",
+    "code": "-- INTERNAL SCHEMA (Physical Storage)\n-- How data is actually stored (DBMS dependent)\n-- Index on student_id (B-tree)\n-- Clustered index on marks\n-- Data pages: 8KB each\n\n-- CONCEPTUAL SCHEMA (Logical Structure)\nCREATE TABLE Student (\n student_id VARCHAR(10) PRIMARY KEY,\n name VARCHAR(50) NOT NULL,\n marks INTEGER,\n department_id VARCHAR(5),\n FOREIGN KEY (department_id) REFERENCES Department(dept_id)\n);\n\n-- EXTERNAL SCHEMA (User Views)\n-- Student view for exam department\nCREATE VIEW ExamStudent AS\nSELECT student_id, name, marks\nFROM Student\nWHERE marks IS NOT NULL;\n\n-- Student view for admin department \nCREATE VIEW AdminStudent AS\nSELECT student_id, name, department_id\nFROM Student;",
+    "explanation": "Shows how the same database can have different representations at each schema level",
+    "complexity": {
+      "time": "N/A",
+      "space": "N/A"
+    }
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "topicId": "symmetric-encryption-confidentiality",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CBC Mode Encryption Algorithm",
+      "description": "Implementation of CBC (Cipher Block Chaining) mode encryption",
+      "code": "ALGORITHM CBC_Encrypt(plaintext, key, IV, blockCipher)\nINPUT: plaintext array P[1..n], key K, IV, block cipher E\nOUTPUT: ciphertext array C[1..n]\n\nBEGIN\n  FOR i FROM 1 TO n DO\n    IF i = 1 THEN\n      // First block: XOR with IV\n      input_block \u2190 IV \u2295 P[i]\n    ELSE\n      // Subsequent blocks: XOR with previous ciphertext\n      input_block \u2190 C[i-1] \u2295 P[i]\n    END IF\n    \n    // Encrypt the combined block\n    C[i] \u2190 E(K, input_block)\n  END FOR\n  \n  RETURN C\nEND",
+      "explanation": "CBC mode XORs each plaintext block with the previous ciphertext block before encryption. The first block uses an Initialization Vector (IV). This chaining ensures that identical plaintext blocks produce different ciphertext blocks.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "AES Encryption with CBC Mode",
+      "description": "Python implementation using pycryptodome library",
+      "code": "from Crypto.Cipher import AES\nfrom Crypto.Random import get_random_bytes\n\ndef aes_cbc_encrypt(plaintext, key):\n    # Generate random 16-byte IV\n    iv = get_random_bytes(16)\n    \n    # Create cipher in CBC mode\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    \n    # Pad plaintext to multiple of 16 bytes\n    padding_length = 16 - (len(plaintext) % 16)\n    plaintext += bytes([padding_length] * padding_length)\n    \n    # Encrypt\n    ciphertext = cipher.encrypt(plaintext)\n    \n    return iv, ciphertext\n\ndef aes_cbc_decrypt(ciphertext, key, iv):\n    # Create cipher for decryption\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    \n    # Decrypt and remove padding\n    plaintext = cipher.decrypt(ciphertext)\n    padding_length = plaintext[-1]\n    plaintext = plaintext[:-padding_length]\n    \n    return plaintext\n\n# Example usage\nkey = get_random_bytes(32)  # 256-bit key\nmessage = b\"Hello, Security!\"\niv, encrypted = aes_cbc_encrypt(message, key)\ndecrypted = aes_cbc_decrypt(encrypted, key, iv)\nprint(f\"Original: {message}\")\nprint(f\"Decrypted: {decrypted}\")",
+      "explanation": "This Python code demonstrates AES-256 encryption in CBC mode. It includes PKCS#7 padding, random IV generation, and proper decryption with padding removal.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "AES Key Schedule",
+      "description": "C code showing AES key expansion for 128-bit key",
+      "code": "#include <stdio.h>\n#include <stdint.h>\n\n// S-box for AES (substitution)\nstatic const uint8_t sbox[256] = {\n    0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,\n    // ... (full S-box would be here)\n};\n\n// Round constants\nstatic const uint8_t Rcon[11] = {\n    0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36\n};\n\n// RotWord: circular left shift of 4-byte word\nuint32_t rotWord(uint32_t w) {\n    return ((w << 8) | ((w >> 24) & 0xff));\n}\n\n// SubWord: apply S-box to each byte\nuint32_t subWord(uint32_t w) {\n    uint8_t *p = (uint8_t *)&w;\n    p[0] = sbox[p[0]];\n    p[1] = sbox[p[1]];\n    p[2] = sbox[p[2]];\n    p[3] = sbox[p[3]];\n    return w;\n}\n\n// Key expansion for AES-128 (generates 44 32-bit words)\nvoid keyExpansion(const uint8_t *key, uint32_t w[44]) {\n    // First 4 words are the key\n    for (int i = 0; i < 4; i++) {\n        w[i] = (key[4*i] << 24) | (key[4*i+1] << 16) | \n               (key[4*i+2] << 8) | key[4*i+3];\n    }\n    \n    // Generate remaining 40 words\n    for (int i = 4; i < 44; i++) {\n        uint32_t temp = w[i-1];\n        if (i % 4 == 0) {\n            temp = subWord(rotWord(temp)) ^ Rcon[i/4];\n        }\n        w[i] = w[i-4] ^ temp;\n    }\n}\n\nint main() {\n    uint8_t key[16] = {0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,\n                       0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};\n    uint32_t w[44];\n    keyExpansion(key, w);\n    printf(\"AES-128 Key Expansion Complete\\n\");\n    return 0;\n}",
+      "explanation": "This C code implements the AES key expansion algorithm. For AES-128, it expands a 128-bit (16-byte) key into 44 32-bit round keys (176 bytes total). The key schedule uses RotWord (rotation), SubWord (S-box substitution), and XOR with round constants (Rcon).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "CTR Mode Encryption",
+      "description": "Java implementation of Counter (CTR) mode encryption",
+      "code": "import javax.crypto.Cipher;\nimport javax.crypto.spec.IvParameterSpec;\nimport javax.crypto.spec.SecretKeySpec;\nimport java.security.SecureRandom;\n\npublic class CTRModeEncryption {\n    \n    // Increment counter array by 1\n    private static byte[] incrementCounter(byte[] counter) {\n        for (int i = counter.length - 1; i >= 0; i--) {\n            if (++counter[i] != 0) break;\n        }\n        return counter;\n    }\n    \n    public static byte[] ctrEncrypt(byte[] plaintext, byte[] key) throws Exception {\n        // AES uses 128-bit (16-byte) blocks\n        int blockSize = 16;\n        \n        // Generate random 16-byte nonce/IV\n        byte[] nonce = new byte[blockSize];\n        new SecureRandom().nextBytes(nonce);\n        \n        // Initialize cipher for AES\n        SecretKeySpec keySpec = new SecretKeySpec(key, \"AES\");\n        Cipher cipher = Cipher.getInstance(\"AES/ECB/NoPadding\");\n        cipher.init(Cipher.ENCRYPT_MODE, keySpec);\n        \n        byte[] ciphertext = new byte[plaintext.length];\n        byte[] counter = nonce.clone();\n        byte[] keystream = new byte[blockSize];\n        \n        for (int i = 0; i < plaintext.length; i += blockSize) {\n            // Generate keystream block\n            keystream = cipher.doFinal(counter);\n            \n            // XOR plaintext with keystream\n            int remaining = Math.min(blockSize, plaintext.length - i);\n            for (int j = 0; j < remaining; j++) {\n                ciphertext[i + j] = (byte)(plaintext[i + j] ^ keystream[j]);\n            }\n            \n            // Increment counter\n            counter = incrementCounter(counter);\n        }\n        \n        // Prepend nonce to ciphertext for decryption\n        byte[] result = new byte[nonce.length + ciphertext.length];\n        System.arraycopy(nonce, 0, result, 0, nonce.length);\n        System.arraycopy(ciphertext, 0, result, nonce.length, ciphertext.length);\n        \n        return result;\n    }\n    \n    public static void main(String[] args) throws Exception {\n        byte[] key = new byte[32]; // 256-bit key\n        new SecureRandom().nextBytes(key);\n        \n        byte[] plaintext = \"Hello CTR Mode!\".getBytes();\n        byte[] encrypted = ctrEncrypt(plaintext, key);\n        System.out.println(\"Encryption successful, length: \" + encrypted.length);\n    }\n}",
+      "explanation": "CTR mode generates a keystream by encrypting successive counter values (nonce + counter). Each plaintext block is XORed with the keystream. Advantages include parallelizable encryption/decryption and random access capability.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

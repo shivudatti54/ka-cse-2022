@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb" stop-opacity="1" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="1" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" />
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8fafc"/>
+  <text x="400" y="30" font-size="22" fill="#2563eb" text-anchor="middle" font-weight="bold">Copy-on-Write (COW)</text>
+  <g id="step0" class="step" data-narration="Introduction to Copy-on-Write (COW)">
+    <rect x="150" y="80" width="500" height="100" fill="#2563eb" rx="10" />
+    <text x="400" y="125" font-size="24" fill="#ffffff" text-anchor="middle">Copy-on-Write (COW)</text>
+    <text x="400" y="155" font-size="16" fill="#ffffff" text-anchor="middle">An Efficient Forking Mechanism</text>
+  </g>
+  <g id="step1" class="step" data-narration="Traditional fork() operation">
+    <rect x="50" y="60" width="330" height="120" fill="#10b981" rx="10" />
+    <text x="215" y="100" font-size="18" fill="#ffffff" text-anchor="middle">Parent Process</text>
+    <text x="215" y="130" font-size="14" fill="#ffffff" text-anchor="middle">Memory: 100MB</text>
+    <text x="215" y="155" font-size="12" fill="#ffffff" text-anchor="middle">Code + Data</text>
+    <line x1="380" y1="120" x2="420" y2="120" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)" />
+    <text x="400" y="110" font-size="14" fill="#f59e0b" text-anchor="middle">fork()</text>
+    <rect x="420" y="60" width="330" height="120" fill="#f59e0b" rx="10" />
+    <text x="585" y="100" font-size="18" fill="#ffffff" text-anchor="middle">Child Process</text>
+    <text x="585" y="130" font-size="14" fill="#ffffff" text-anchor="middle">Traditional: Copy all 100MB</text>
+    <text x="585" y="155" font-size="12" fill="#ffffff" text-anchor="middle">Wasteful!</text>
+  </g>
+  <g id="step2" class="step" data-narration="Copy-on-Write optimization">
+    <rect x="50" y="60" width="700" height="140" fill="#10b981" rx="10" />
+    <text x="400" y="90" font-size="20" fill="#ffffff" text-anchor="middle">Copy-on-Write Optimization</text>
+    <rect x="150" y="120" width="200" height="60" fill="#2563eb" rx="5" />
+    <text x="250" y="155" font-size="14" fill="#ffffff" text-anchor="middle">Parent & Child Share</text>
+    <rect x="400" y="120" width="200" height="60" fill="#8b5cf6" rx="5" />
+    <text x="500" y="145" font-size="14" fill="#ffffff" text-anchor="middle">Same Memory Pages</text>
+    <text x="500" y="165" font-size="12" fill="#ffffff" text-anchor="middle">(Read-Only)</text>
+  </g>
+  <g id="step3" class="step" data-narration="First write attempt">
+    <rect x="50" y="60" width="700" height="160" fill="#f59e0b" rx="10" />
+    <text x="400" y="90" font-size="20" fill="#ffffff" text-anchor="middle">Write Attempt Triggers Copy</text>
+    <text x="400" y="125" font-size="16" fill="#ffffff" text-anchor="middle">When child tries to write to shared page:</text>
+    <text x="60" y="160" font-size="14" fill="#ffffff">1. Page fault occurs</text>
+    <text x="60" y="185" font-size="14" fill="#ffffff">2. OS creates a copy of that page</text>
+    <text x="60" y="210" font-size="14" fill="#ffffff">3. Child gets its own copy</text>
+  </g>
+  <g id="step4" class="step" data-narration="Page fault and copy">
+    <rect x="50" y="60" width="330" height="140" fill="#8b5cf6" rx="10" />
+    <text x="215" y="95" font-size="18" fill="#ffffff" text-anchor="middle">Before Write</text>
+    <rect x="100" y="120" width="100" height="40" fill="#2563eb" rx="5" />
+    <text x="150" y="145" font-size="12" fill="#ffffff" text-anchor="middle">Parent</text>
+    <rect x="230" y="120" width="100" height="40" fill="#10b981" rx="5" />
+    <text x="280" y="145" font-size="12" fill="#ffffff" text-anchor="middle">Child</text>
+    <text x="215" y="185" font-size="12" fill="#ffffff" text-anchor="middle">Both point to same page</text>
+    <rect x="420" y="60" width="330" height="140" fill="#2563eb" rx="10" />
+    <text x="585" y="95" font-size="18" fill="#ffffff" text-anchor="middle">After Write</text>
+    <rect x="450" y="120" width="100" height="40" fill="#f59e0b" rx="5" />
+    <text x="500" y="145" font-size="12" fill="#ffffff" text-anchor="middle">Parent</text>
+    <rect x="580" y="120" width="100" height="40" fill="#10b981" rx="5" />
+    <text x="630" y="145" font-size="12" fill="#ffffff" text-anchor="middle">Child (Copy)</text>
+    <text x="585" y="185" font-size="12" fill="#ffffff" text-anchor="middle">Child has private copy</text>
+  </g>
+  <g id="step5" class="step" data-narration="Private copy for child process">
+    <rect x="50" y="60" width="700" height="180" fill="#10b981" rx="10" />
+    <text x="400" y="90" font-size="20" fill="#ffffff" text-anchor="middle">Memory Efficiency</text>
+    <text x="60" y="130" font-size="16" fill="#ffffff">Only modified pages are copied</text>
+    <text x="60" y="160" font-size="14" fill="#ffffff">Example: If child modifies only 5MB out of 100MB</text>
+    <text x="60" y="190" font-size="14" fill="#ffffff">→ Only 5MB is copied, not 100MB!</text>
+    <text x="400" y="130" font-size="14" fill="#ffffff">Saves memory and time</text>
+    <text x="400" y="160" font-size="14" fill="#ffffff">Faster fork() operation</text>
+  </g>
+  <g id="step6" class="step" data-narration="Benefits of Copy-on-Write">
+    <rect x="50" y="60" width="700" height="200" fill="#f59e0b" rx="10" />
+    <text x="400" y="90" font-size="20" fill="#ffffff" text-anchor="middle">Benefits of Copy-on-Write</text>
+    <text x="60" y="130" font-size="16" fill="#ffffff">1. Reduced Memory Consumption</text>
+    <text x="80" y="155" font-size="14" fill="#ffffff">• Shared pages not duplicated</text>
+    <text x="60" y="185" font-size="16" fill="#ffffff">2. Improved Performance</text>
+    <text x="80" y="210" font-size="14" fill="#ffffff">• Faster process creation</text>
+    <text x="60" y="240" font-size="16" fill="#ffffff">3. Efficient for exec() after fork()</text>
+    <text x="80" y="265" font-size="14" fill="#ffffff">• Child often calls exec() immediately</text>
+  </g>
+</svg>

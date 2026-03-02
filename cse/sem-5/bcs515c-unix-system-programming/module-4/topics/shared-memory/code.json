@@ -1,0 +1,55 @@
+{
+  "topicId": "shared-memory",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "System V Shared Memory - Producer",
+      "description": "Demonstrates creating and writing to shared memory as producer process",
+      "code": "#include <stdio.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n#include <string.h>\n\n#define SHM_SIZE 1024\n\nint main() {\n // Generate unique key\n key_t key = ftok(\"/tmp\", 'A');\n if (key == -1) {\n perror(\"ftok\");\n return 1;\n }\n\n // Create shared memory segment\n int shmid = shmget(key, SHM_SIZE, IPC_CREAT | 0666);\n if (shmid == -1) {\n perror(\"shmget\");\n return 1;\n }\n\n // Attach to shared memory\n char *shm_ptr = (char *)shmat(shmid, NULL, 0);\n if (shm_ptr == (char *)-1) {\n perror(\"shmat\");\n return 1;\n }\n\n // Write data to shared memory\n char message[] = \"Hello from Producer!\";\n strcpy(shm_ptr, message);\n\n printf(\"Producer: Written to shared memory\\n\");\n\n // Wait for consumer to read (in real scenario, use semaphores)\n sleep(2);\n\n // Detach from shared memory\n if (shmdt(shm_ptr) == -1) {\n perror(\"shmdt\");\n return 1;\n }\n\n // Optionally remove shared memory\n // shmctl(shmid, IPC_RMID, NULL);\n\n return 0;\n}",
+      "explanation": "This code demonstrates: 1) Using ftok() to generate a key, 2) Creating shared memory with shmget(), 3) Attaching with shmat(), 4) Writing to shared memory, 5) Detaching with shmdt(). In practice, semaphores should be used for synchronization.",
+      "timeComplexity": "O(1) for each operation",
+      "spaceComplexity": "O(SHM_SIZE)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "System V Shared Memory - Consumer",
+      "description": "Demonstrates reading from shared memory as consumer process",
+      "code": "#include <stdio.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n\n#define SHM_SIZE 1024\n\nint main() {\n // Same key as producer\n key_t key = ftok(\"/tmp\", 'A');\n if (key == -1) {\n perror(\"ftok\");\n return 1;\n }\n\n // Get existing shared memory (don't create)\n int shmid = shmget(key, SHM_SIZE, 0666);\n if (shmid == -1) {\n perror(\"shmget\");\n return 1;\n }\n\n // Attach to shared memory\n char *shm_ptr = (char *)shmat(shmid, NULL, SHM_RDONLY);\n if (shm_ptr == (char *)-1) {\n perror(\"shmat\");\n return 1;\n }\n\n // Read data from shared memory\n printf(\"Consumer: Read from shared memory: %s\\n\", shm_ptr);\n\n // Detach from shared memory\n if (shmdt(shm_ptr) == -1) {\n perror(\"shmdt\");\n return 1;\n }\n\n return 0;\n}",
+      "explanation": "The consumer uses the same key to access existing shared memory. SHM_RDONLY flag makes the attachment read-only for safety. The process reads the message written by producer.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(SHM_SIZE)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "POSIX Shared Memory with mmap",
+      "description": "Demonstrates POSIX shared memory using shm_open and mmap",
+      "code": "#include <stdio.h>\n#include <sys/mman.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <string.h>\n\n#define SHM_NAME \"/my_shared_mem\"\n#define SHM_SIZE 256\n\nint main() {\n // Create and open shared memory object\n int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);\n if (fd == -1) {\n perror(\"shm_open\");\n return 1;\n }\n\n // Set the size of the shared memory object\n if (ftruncate(fd, SHM_SIZE) == -1) {\n perror(\"ftruncate\");\n return 1;\n }\n\n // Map the shared memory object\n void *ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, \n MAP_SHARED, fd, 0);\n if (ptr == MAP_FAILED) {\n perror(\"mmap\");\n return 1;\n }\n\n // Write to shared memory\n strcpy((char *)ptr, \"Hello from POSIX shared memory!\");\n printf(\"Written to POSIX shared memory\\n\");\n\n // Unmap\n if (munmap(ptr, SHM_SIZE) == -1) {\n perror(\"munmap\");\n return 1;\n }\n\n // Close and unlink\n close(fd);\n shm_unlink(SHM_NAME);\n\n return 0;\n}",
+      "explanation": "POSIX shared memory uses file-like interface: shm_open() creates the object, ftruncate() sets size, mmap() maps it to address space, munmap() unmaps, and shm_unlink() removes it.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(SHM_SIZE)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Shared Memory with Semaphore Synchronization",
+      "description": "Demonstrates proper synchronization between processes using semaphores",
+      "code": "#include <stdio.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n#include <sys/sem.h>\n#include <string.h>\n\nunion semun {\n int val;\n struct semid_ds *buf;\n unsigned short *array;\n};\n\n// Semaphore operations\nvoid sem_lock(int semid) {\n struct sembuf sb = {0, -1, 0}; // Decrement (wait)\n if (semop(semid, &sb, 1) == -1) {\n perror(\"semop lock\");\n }\n}\n\nvoid sem_unlock(int semid) {\n struct sembuf sb = {0, 1, 0}; // Increment (signal)\n if (semop(semid, &sb, 1) == -1) {\n perror(\"semop unlock\");\n }\n}\n\nint main() {\n key_t key = ftok(\"/tmp\", 'B');\n \n // Create shared memory\n int shmid = shmget(key, 256, IPC_CREAT | 0666);\n char *shm = (char *)shmat(shmid, NULL, 0);\n \n // Create semaphore (binary - for mutual exclusion)\n int semid = semget(key, 1, IPC_CREAT | 0666);\n union semun arg;\n arg.val = 1; // Initial value = 1 (unlocked)\n semctl(semid, 0, SETVAL, arg);\n \n // Producer: write with lock\n sem_lock(semid);\n strcpy(shm, \"Protected message\");\n printf(\"Producer: Wrote to shared memory\\n\");\n sem_unlock(semid);\n \n // Consumer: read with lock\n sem_lock(semid);\n printf(\"Consumer: Read: %s\\n\", shm);\n sem_unlock(semid);\n \n // Cleanup\n shmdt(shm);\n shmctl(shmid, IPC_RMID, NULL);\n semctl(semid, 0, IPC_RMID);\n \n return 0;\n}",
+      "explanation": "This code shows proper synchronization using semaphores. The union semun is required for semctl operations. sem_lock() decrements semaphore (wait), sem_unlock() increments (signal). This prevents race conditions.",
+      "timeComplexity": "O(1) for each operation",
+      "spaceComplexity": "O(256 bytes + semaphore)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Anonymous Shared Memory (Parent-Child)",
+      "description": "Demonstrates anonymous shared memory using mmap for parent-child communication",
+      "code": "#include <stdio.h>\n#include <sys/mman.h>\n#include <unistd.h>\n#include <string.h>\n#include <sys/wait.h>\n\n#define SHM_SIZE 256\n\nint main() {\n // Create anonymous shared memory\n void *shared_mem = mmap(NULL, SHM_SIZE, \n PROT_READ | PROT_WRITE,\n MAP_SHARED | MAP_ANONYMOUS, \n -1, 0);\n \n if (shared_mem == MAP_FAILED) {\n perror(\"mmap\");\n return 1;\n }\n \n // Fork child process\n pid_t pid = fork();\n \n if (pid == 0) {\n // Child process - write to shared memory\n strcpy((char *)shared_mem, \"Message from child\");\n printf(\"Child: Wrote to shared memory\\n\");\n return 0;\n } else {\n // Parent process - wait for child\n wait(NULL);\n // Read from shared memory\n printf(\"Parent: Read: %s\\n\", (char *)shared_mem);\n }\n \n // Cleanup\n munmap(shared_mem, SHM_SIZE);\n \n return 0;\n}",
+      "explanation": "MAP_ANONYMOUS creates memory without file backing. Parent and child share the same physical memory after fork(). This is efficient for parent-child IPC. No explicit cleanup of shared memory needed as it's not backed by file or SysV segment.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(SHM_SIZE)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "file-concept",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "File Operations in C",
+      "description": "Demonstrates basic file operations: create, open, write, read, seek, close",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n\nint main() {\n    // CREATE AND OPEN FILE\n    int fd = open(\"test.txt\", O_CREAT | O_WRONLY, 0644);\n    \n    // WRITE TO FILE\n    char buffer[] = \"Hello, File System!\";\n    write(fd, buffer, sizeof(buffer));\n    \n    // CLOSE FILE\n    close(fd);\n    \n    // REOPEN FOR READING\n    fd = open(\"test.txt\", O_RDONLY);\n    \n    // READ FROM FILE\n    char readBuffer[50];\n    read(fd, readBuffer, 20);\n    \n    // SEEK TO BEGINNING\n    lseek(fd, 0, SEEK_SET);\n    \n    // CLOSE FILE\n    close(fd);\n    return 0;\n}",
+      "explanation": "This C program demonstrates POSIX file operations using system calls: open() to create/open files, write() to write data, read() to read data, lseek() to move file pointer, and close() to release file descriptor.",
+      "timeComplexity": "O(n) for read/write where n is bytes transferred",
+      "spaceComplexity": "O(1) besides buffer space"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "File Operations in Python",
+      "description": "High-level file operations demonstrating sequential and random access",
+      "code": "# OPEN FILE FOR WRITING\nwith open('data.txt', 'w') as f:\n    f.write('Line 1: Hello\\n')\n    f.write('Line 2: World\\n')\n    f.write('Line 3: File Concepts\\n')\n\n# OPEN FILE FOR READING (Sequential Access)\nwith open('data.txt', 'r') as f:\n    for line in f:  # Sequential access\n        print(line.strip())\n\n# RANDOM ACCESS USING SEEK\nwith open('data.txt', 'r') as f:\n    f.seek(12)  # Jump to byte 12\n    print(f.read(5))  # Read 5 bytes from position\n    \n    f.seek(0, 0)  # Seek to beginning (SEEK_SET)\n    first_line = f.readline()\n    \n    f.seek(0, 2)  # Seek to end (SEEK_END)\n    position = f.tell()\n\nprint(f\"File size: {position} bytes\")",
+      "explanation": "Python provides high-level file operations. The with statement ensures proper file closing. seek() enables random access by moving to specific byte positions. tell() returns current position.",
+      "timeComplexity": "O(n) for read/write operations",
+      "spaceComplexity": "O(n) for buffer used during operations"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "File Operations in Java",
+      "description": "Java file I/O with buffered streams for efficient processing",
+      "code": "import java.io.*;\n\npublic class FileDemo {\n    public static void main(String[] args) {\n        String filename = \"sample.txt\";\n        \n        // WRITE TO FILE (Buffered)\n        try (BufferedWriter writer = new BufferedWriter(\n                new FileWriter(filename))) {\n            writer.write(\"This is file concept demonstration\\n\");\n            writer.write(\"Second line of data\\n\");\n            writer.write(\"Third line with more content\\n\");\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n        \n        // READ FILE SEQUENTIALLY\n        try (BufferedReader reader = new BufferedReader(\n                new FileReader(filename))) {\n            String line;\n            while ((line = reader.readLine()) != null) {\n                System.out.println(line);\n            }\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n        \n        // RANDOM ACCESS\n        try (RandomAccessFile raf = new RandomAccessFile(filename, \"r\")) {\n            raf.seek(8);  // Jump to byte 8\n            System.out.println(\"From position 8: \" + raf.readLine());\n            \n            System.out.println(\"Current position: \" + raf.getFilePointer());\n            System.out.println(\"File length: \" + raf.length());\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}",
+      "explanation": "Java uses BufferedReader/BufferedWriter for efficient I/O with buffering. RandomAccessFile class provides random access capability with seek() method. try-with-resources ensures proper resource cleanup.",
+      "timeComplexity": "O(n) for read/write where n is characters/bytes",
+      "spaceComplexity": "O(n) buffer size for Buffered classes"
+    }
+  ]
+}

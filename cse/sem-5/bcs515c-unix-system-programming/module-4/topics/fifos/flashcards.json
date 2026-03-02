@@ -1,0 +1,80 @@
+{
+  "topicId": "fifos",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is a FIFO in Unix/Linux?",
+      "back": "A FIFO (First-In-First-Out) is a named pipe - a filesystem object that allows unrelated processes to communicate. Unlike anonymous pipes, FIFOs persist in the filesystem and have a persistent name."
+    },
+    {
+      "id": "fc-2",
+      "front": "What command is used to create a FIFO?",
+      "back": "The mkfifo command is used to create a FIFO. Syntax: mkfifo [-m mode] fifo_name. Example: mkfifo mypipe creates a FIFO named 'mypipe'."
+    },
+    {
+      "id": "fc-3",
+      "front": "How does a FIFO differ from an anonymous pipe?",
+      "back": "Anonymous pipes exist only during process lifetime and require parent-child relationship. FIFOs are filesystem objects with names, allowing any unrelated processes to communicate using the path name."
+    },
+    {
+      "id": "fc-4",
+      "front": "What happens when you open a FIFO?",
+      "back": "Opening a FIFO for reading blocks until another process opens it for writing, and vice versa. This is called 'blocking mode' - ensures data synchronization between processes."
+    },
+    {
+      "id": "fc-5",
+      "front": "How do you remove a FIFO from the filesystem?",
+      "back": "FIFOs are removed using the rm command like regular files: rm fifo_name. They can also be removed programmatically using unlink()."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the default permission of a newly created FIFO?",
+      "back": "The default permissions are typically 0666 minus the umask value (similar to regular files). For example, with umask 022, default is 0644 (rw-r--r--)."
+    },
+    {
+      "id": "fc-7",
+      "front": "Can a FIFO be opened in non-blocking mode?",
+      "back": "Yes, by adding O_NONBLOCK flag to open(). In non-blocking mode, open() returns immediately. Reading from empty FIFO returns -1 with errno set to EAGAIN."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is a potential deadlock with FIFOs?",
+      "back": "Deadlock occurs when both ends of FIFO wait for each other to open. To prevent: open both ends in correct order, use non-blocking mode, or ensure writer opens after reader."
+    },
+    {
+      "id": "fc-9",
+      "front": "How do multiple writers handle a FIFO?",
+      "back": "Data from multiple writers is interleaved but atomic for writes smaller than PIPE_BUF (4096 bytes). The kernel ensures writes don't mix at the system call level for small writes."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is PIPE_BUF in FIFOs?",
+      "back": "PIPE_BUF is a constant (4096 bytes) defining the maximum number of bytes guaranteed to be atomic when writing to a pipe or FIFO. Writes larger than PIPE_BUF may interleave."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is the purpose of FIFO in client-server communication?",
+      "back": "FIFOs enable client-server communication where multiple clients can send requests to a server through a common FIFO (request queue), and server responds through individual response FIFOs."
+    },
+    {
+      "id": "fc-12",
+      "front": "Can FIFOs be used for bidirectional communication?",
+      "back": "Yes, but it requires two separate FIFOs - one for each direction. Using a single FIFO for both directions can cause deadlock as both processes may wait for each other."
+    },
+    {
+      "id": "fc-13",
+      "front": "How do you check if a file is a FIFO?",
+      "back": "Use ls -l to check - FIFOs are listed with 'p' prefix (e.g., prw-r--r--). Also use test -p filename or stat command to check file type."
+    },
+    {
+      "id": "fc-14",
+      "front": "What are common use cases of FIFOs?",
+      "back": "Common uses: 1) Client-server communication 2) Single-writer multiple-readers scenarios 3) Log aggregation 4) Producer-consumer problems 5) Connecting unrelated processes."
+    },
+    {
+      "id": "fc-15",
+      "front": "How is data read from a FIFO different from regular file?",
+      "back": "Reading from FIFO blocks until data is available (unless O_NONBLOCK). Unlike files, FIFOs have no persistent storage - data is transferred directly between processes."
+    }
+  ]
+}

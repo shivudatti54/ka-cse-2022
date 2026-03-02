@@ -1,0 +1,35 @@
+{
+  "topicId": "hash-tables-collision-resolution",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Insertion in Separate Chaining Hash Table",
+      "description": "Demonstrates how to insert a key-value pair into a hash table using separate chaining for collision resolution",
+      "code": "STRUCTURE Node\n  key\n  value\n  next\nEND STRUCTURE\n\nFUNCTION insertChaining(table, key, value)\n  index = hash(key)\n  newNode = createNode(key, value)\n  \n  IF table[index] == NULL THEN\n    table[index] = newNode\n  ELSE\n    newNode.next = table[index]\n    table[index] = newNode\n  END IF\nEND FUNCTION\n\nFUNCTION searchChaining(table, key)\n  index = hash(key)\n  current = table[index]\n  \n  WHILE current != NULL DO\n    IF current.key == key THEN\n      RETURN current.value\n    END IF\n    current = current.next\n  END WHILE\n  \n  RETURN NOT_FOUND\nEND FUNCTION",
+      "explanation": "Insertion adds new node at the beginning of the linked list (O(1)). Search traverses the chain at computed index looking for the key. Average case O(1+\u03b1), worst case O(n).",
+      "timeComplexity": "O(1) average, O(n) worst case",
+      "spaceComplexity": "O(n) for storing n elements plus O(n) overhead for pointers"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Linear Probing Hash Table Implementation",
+      "description": "Python implementation of hash table with linear probing for collision resolution",
+      "code": "class LinearProbingHashTable:\n    def __init__(self, size):\n        self.size = size\n        self.table = [None] * size\n        self.tombstone = object()  # Marker for deleted keys\n    \n    def hash(self, key):\n        return key % self.size\n    \n    def insert(self, key, value):\n        index = self.hash(key)\n        \n        for i in range(self.size):\n            probe = (index + i) % self.size\n            \n            if self.table[probe] is None or self.table[probe] is self.tombstone:\n                self.table[probe] = (key, value)\n                return True\n            \n            if self.table[probe][0] == key:\n                self.table[probe] = (key, value)\n                return True\n        \n        return False  # Table is full\n    \n    def search(self, key):\n        index = self.hash(key)\n        \n        for i in range(self.size):\n            probe = (index + i) % self.size\n            \n            if self.table[probe] is None:\n                return None  # Not found\n            \n            if self.table[probe] is not self.tombstone:\n                if self.table[probe][0] == key:\n                    return self.table[probe][1]\n        \n        return None\n    \n    def delete(self, key):\n        index = self.hash(key)\n        \n        for i in range(self.size):\n            probe = (index + i) % self.size\n            \n            if self.table[probe] is None:\n                return False\n            \n            if self.table[probe] is not self.tombstone:\n                if self.table[probe][0] == key:\n                    self.table[probe] = self.tombstone\n                    return True\n        \n        return False",
+      "explanation": "Linear probing uses probe sequence (h(k) + i) mod m. Insert finds first empty/tombstone slot. Search stops at None but continues past tombstones. Tombstones mark deleted positions to preserve probe sequences.",
+      "timeComplexity": "O(1/(1-\u03b1)) average, O(n) worst case",
+      "spaceComplexity": "O(m) for table array, with tombstones counted as occupied"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Double Hashing Implementation",
+      "description": "Java implementation of hash table with double hashing for collision resolution",
+      "code": "class DoubleHashingHashTable {\n    private int size;\n    private String[] table;\n    private final String TOMBSTONE = \"DELETED\";\n    \n    public DoubleHashingHashTable(int size) {\n        this.size = size;\n        this.table = new String[size];\n    }\n    \n    // Primary hash function\n    private int hash1(int key) {\n        return key % size;\n    }\n    \n    // Secondary hash function - must not return 0\n    private int hash2(int key) {\n        return 7 - (key % 7);  // Prime smaller than size\n    }\n    \n    // Probe function for double hashing\n    private int probe(int key, int i) {\n        return (hash1(key) + i * hash2(key)) % size;\n    }\n    \n    public boolean insert(int key, String value) {\n        for (int i = 0; i < size; i++) {\n            int index = probe(key, i);\n            \n            if (table[index] == null || table[index].equals(TOMBSTONE)) {\n                table[index] = value;\n                return true;\n            }\n        }\n        return false;\n    }\n    \n    public String search(int key, String target) {\n        for (int i = 0; i < size; i++) {\n            int index = probe(key, i);\n            \n            if (table[index] == null) {\n                return null;\n            }\n            \n            if (!table[index].equals(TOMBSTONE) && table[index].equals(target)) {\n                return table[index];\n            }\n        }\n        return null;\n    }\n}",
+      "explanation": "Uses two hash functions: h1 gives initial position, h2 determines step size. Probe sequence: (h1 + i\u00d7h2) mod m. This eliminates primary and secondary clustering. h2 must be non-zero and relatively prime to table size for full coverage.",
+      "timeComplexity": "O(1/(1-\u03b1)) average, O(n) worst case",
+      "spaceComplexity": "O(m) for table array, supports load factor up to ~0.7 before degradation"
+    }
+  ]
+}

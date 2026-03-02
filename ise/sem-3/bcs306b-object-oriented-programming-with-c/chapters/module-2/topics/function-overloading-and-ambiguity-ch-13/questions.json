@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain what function overloading is in C++ and describe the primary mechanism the compiler uses to distinguish between overloaded functions.",
+    "expectedPoints": [
+      "Function overloading is the creation of multiple functions in the same scope that share the same name.",
+      "The functions are distinguished by their parameter lists, specifically the number, type, and order of parameters.",
+      "The return type alone is not sufficient to overload a function; a different parameter list is required."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe a common scenario that leads to ambiguity in function overloading. Provide a specific code example that would cause a compiler error and explain why the ambiguity occurs.",
+    "expectedPoints": [
+      "Ambiguity often arises from type conversions, such as when a function call argument can be converted to match more than one overloaded function's parameter type with equal precedence.",
+      "Example: `void func(int); void func(double);` followed by a call `func(1.5f);` (a float value).",
+      "The ambiguity occurs because the float `1.5f` can be promoted to a double OR to an int with standard type conversion. The compiler finds both functions equally good matches and cannot choose, resulting in an error."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A programmer writes the following overloaded functions: `void display(int& x)` and `void display(const int& x)`. They then call `display(10)`. Explain the precise compiler behavior for this call, including why it results in an error. Discuss the role of l-values, r-values, and const correctness in creating this ambiguity.",
+    "expectedPoints": [
+      "The call `display(10)` passes an r-value (a literal, which is not stored in a named variable and cannot be modified).",
+      "The first function, `void display(int& x)`, requires an l-value reference (a modifiable named variable). An r-value like `10` cannot be bound to a non-const l-value reference, so this function is not a viable match.",
+      "The second function, `void display(const int& x)`, can bind to an r-value because a const l-value reference is allowed to extend the lifetime of a temporary object.",
+      "Since the first function is not a viable candidate, the call should resolve to the second function without ambiguity. However, if both functions were viable (e.g., if called with an int variable), an ambiguity would exist because the compiler cannot decide between a modifiable reference and a const reference for the same argument."
+    ],
+    "marks": 10
+  }
+]

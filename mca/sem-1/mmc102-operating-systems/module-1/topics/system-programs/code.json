@@ -1,0 +1,45 @@
+{
+  "topicId": "system-programs",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "File Copy Operation using System Calls",
+      "description": "Demonstrates how system programs invoke system calls to perform file operations",
+      "code": "PROGRAM FileCopy\nBEGIN\n    INPUT sourceFile, destinationFile\n    \n    // Open source file (system call)\n    sourceFD = open(sourceFile, READ_ONLY)\n    IF sourceFD == -1 THEN\n        PRINT \"Error: Cannot open source file\"\n        EXIT\n    END IF\n    \n    // Create/overwrite destination file (system call)\n    destFD = open(destinationFile, WRITE_ONLY | CREATE_TRUNCATE)\n    IF destFD == -1 THEN\n        PRINT \"Error: Cannot create destination file\"\n        close(sourceFD)\n        EXIT\n    END IF\n    \n    // Read from source and write to destination in chunks\n    WHILE (bytesRead = read(sourceFD, buffer, BUFFER_SIZE)) > 0 DO\n        write(destFD, buffer, bytesRead)\n    END WHILE\n    \n    // Close files (system calls)\n    close(sourceFD)\n    close(destFD)\n    \n    PRINT \"File copied successfully\"\nEND",
+      "explanation": "This pseudocode demonstrates how file management system programs work. The copy command invokes system calls (open, read, write, close) which are handled by the kernel to perform actual file operations on the filesystem.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Shell Implementation",
+      "description": "Basic command interpreter that processes user commands",
+      "code": "import os\nimport subprocess\n\nclass SimpleShell:\n    def __init__(self):\n        self.running = True\n        \n    def parse_command(self, command):\n        \"\"\"Parse user input into command and arguments\"\"\"\n        parts = command.strip().split()\n        if not parts:\n            return None, []\n        return parts[0], parts[1:]\n    \n    def execute_builtin(self, cmd, args):\n        \"\"\"Execute built-in shell commands\"\"\"\n        if cmd == \"exit\":\n            self.running = False\n            return True\n        elif cmd == \"cd\":\n            if args:\n                os.chdir(args[0])\n            return True\n        elif cmd == \"pwd\":\n            print(os.getcwd())\n            return True\n        elif cmd == \"ls\":\n            subprocess.run([cmd] + args)\n            return True\n        return False\n    \n    def run(self):\n        \"\"\"Main shell loop\"\"\"\n        print(\"Simple Shell - Type 'exit' to quit\")\n        \n        while self.running:\n            command = input(f\"{os.getcwd()}$ \")\n            cmd, args = self.parse_command(command)\n            \n            if cmd:\n                if not self.execute_builtin(cmd, args):\n                    # Execute external commands\n                    subprocess.run([cmd] + args)\n\nif __name__ == \"__main__\":\n    shell = SimpleShell()\n    shell.run()",
+      "explanation": "This Python code implements a basic command interpreter (shell). It demonstrates how shells accept user commands, parse them, and either execute built-in commands or launch external programs using system calls like fork() and exec().",
+      "timeComplexity": "O(n) per command",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "System Call Example - Process Information",
+      "description": "C program demonstrating use of system calls to get process information",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/sysinfo.h>\n\nint main() {\n    // Get process ID (system call)\n    pid_t pid = getpid();\n    printf(\"Process ID: %d\\n\", pid);\n    \n    // Get parent process ID (system call)\n    pid_t ppid = getppid();\n    printf(\"Parent Process ID: %d\\n\", ppid);\n    \n    // Get user ID (system call)\n    uid_t uid = getuid();\n    printf(\"User ID: %d\\n\", uid);\n    \n    // Get current working directory (system call)\n    char cwd[256];\n    if (getcwd(cwd, sizeof(cwd)) != NULL) {\n        printf(\"Current Working Directory: %s\\n\", cwd);\n    }\n    \n    // Get system information using sysinfo structure\n    struct sysinfo si;\n    sysinfo(&si);\n    printf(\"Total Memory: %lu MB\\n\", si.totalram / (1024*1024));\n    printf(\"Free Memory: %lu MB\\n\", si.freeram / (1024*1024));\n    printf(\"Number of Processes: %d\\n\", si.procs);\n    \n    return 0;\n}",
+      "explanation": "This C program demonstrates various system calls used to obtain process and system information. Functions like getpid(), getppid(), getuid(), getcwd(), and sysinfo() are system calls that request information from the OS kernel.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Disk Defragmentation Algorithm",
+      "description": "Demonstrates how disk maintenance system programs work",
+      "code": "ALGORITHM DiskDefragment\nINPUT: Disk drive letter or mount point\nOUTPUT: Defragmented disk\n\nBEGIN\n    // Phase 1: Scan and analyze disk\n    PRINT \"Analyzing disk...\"\n    fileList = SCAN_ALL_FILES(disk)\n    FOR each file IN fileList DO\n        fileInfo = GET_FILE_LOCATION(file)\n        IF fileInfo.isFragmented THEN\n            ADD to fragmentedFilesList\n        END IF\n    END FOR\n    \n    PRINT \"Found\", COUNT(fragmentedFilesList), \"fragmented files\"\n    \n    // Phase 2: Sort files by access frequency (optional optimization)\n    SORT fragmentedFilesList BY accessFrequency DESC\n    \n    // Phase 3: Relocate fragmented files\n    freeSpaces = GET_FREE_SPACE_REGIONS(disk)\n    currentPosition = START_OF_DATA_AREA\n    \n    FOR each file IN fragmentedFilesList DO\n        // Read file blocks\n        blocks = READ_FILE_BLOCKS(file)\n        \n        // Find continuous space\n        FOR each space IN freeSpaces DO\n            IF space.size >= blocks.size THEN\n                // Move file to continuous space\n                WRITE_TO_DISK(blocks, space.location)\n                UPDATE_FILE_TABLE(file, space.location)\n                REMOVE freeSpaces(space)\n                BREAK\n            END IF\n        END FOR\n        \n        PRINT \"Defragmented:\", file.name\n    END FOR\n    \n    // Phase 4: Update filesystem metadata\n    UPDATE_FILESYSTEM_TABLES()\n    \n    PRINT \"Disk defragmentation complete\"\nEND",
+      "explanation": "This pseudocode illustrates how disk defragmentation utilities work. They scan for fragmented files, identify free spaces, and relocate file blocks to contiguous areas on disk to improve read/write performance.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(k)"
+    }
+  ]
+}

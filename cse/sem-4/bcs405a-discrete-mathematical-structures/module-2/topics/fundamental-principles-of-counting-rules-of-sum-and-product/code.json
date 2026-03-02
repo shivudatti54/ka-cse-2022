@@ -1,0 +1,45 @@
+{
+  "topicId": "fundamental-principles-of-counting-rules-of-sum-and-product",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Calculate nCr using Pascal's Triangle",
+      "description": "Program to compute combinations using dynamic programming based on Pascal's Triangle identity: C(n,r) = C(n-1,r-1) + C(n-1,r)",
+      "code": "FUNCTION nCr(n, r):\n IF r == 0 OR r == n THEN\n RETURN 1\n ELSE IF r > n THEN\n RETURN 0\n ELSE\n RETURN nCr(n-1, r-1) + nCr(n-1, r)\n END IF\nEND FUNCTION\n\n// Alternative: Iterative calculation\nFUNCTION nCr_iterative(n, r):\n IF r > n-r THEN\n r = n-r // Use symmetry property\n END IF\n result = 1\n FOR i = 1 TO r DO\n result = result * (n - r + i) / i\n END FOR\n RETURN result\nEND FUNCTION",
+      "explanation": "Uses the recursive property of Pascal's Triangle: each combination can be computed from smaller combinations. The iterative version avoids overflow and is more efficient with symmetry optimization.",
+      "timeComplexity": "O(n×r) for DP, O(r) for iterative",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Generate All Permutations",
+      "description": "Algorithm to generate all permutations of n elements using backtracking",
+      "code": "FUNCTION Permute(arr, left, right):\n IF left == right THEN\n PRINT arr // One permutation complete\n ELSE\n FOR i = left TO right DO\n Swap(arr[left], arr[i])\n Permute(arr, left + 1, right)\n Swap(arr[left], arr[i]) // Backtrack\n END FOR\n END IF\nEND FUNCTION\n\n// Example usage for 3 elements: [1,2,3]\n// Permute([1,2,3], 0, 2) generates all 3! = 6 permutations",
+      "explanation": "Uses recursion and backtracking to generate all permutations. Each element gets placed in each position systematically, exploring all possible orderings.",
+      "timeComplexity": "O(n×n!)",
+      "spaceComplexity": "O(n) for recursion stack"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Stars and Bars Distribution",
+      "description": "Calculate number of ways to distribute n identical items into r distinct boxes using stars and bars",
+      "code": "FUNCTION starsAndBars(n, r):\n // n = identical items, r = distinct boxes\n // Formula: (n+r-1)C(r-1) = (n+r-1)! / ((r-1)! × n!)\n \n result = 1\n // Use smaller of r-1 and n for efficiency\n k = minimum(r-1, n)\n \n FOR i = 1 TO k DO\n result = result * (n + r - i) / i\n END FOR\n \n RETURN result\nEND FUNCTION\n\n// Example: Distribute 5 identical balls into 3 boxes\n// starsAndBars(5, 3) = 7C2 = 21",
+      "explanation": "Stars and Bars formula counts ways to place separators (bars) among identical items (stars). With n stars and r boxes, we need r-1 bars to create r partitions.",
+      "timeComplexity": "O(min(r,n))",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Pigeonhole Principle Check",
+      "description": "Function to determine minimum guaranteed repetitions using pigeonhole principle",
+      "code": "FUNCTION pigeonholeMinimum(n, k):\n // n items distributed into k boxes\n // Returns minimum number in largest box (worst case)\n \n minimumInLargest = ceil(n / k)\n \n RETURN minimumInLargest\nEND FUNCTION\n\nFUNCTION pigeonholeRepetition(totalDays, totalPeople):\n // For birthday problem: minimum people to guarantee\n // at least 2 share same birth month\n // \n // Using: k = 12 months\n // At least ceil(n/12) people needed\n \n minimumForRepetition = totalDays + 1\n \n RETURN minimumForRepetition\nEND FUNCTION\n\n// Example: 13 people guarantee same birth month\n// pigeonholeRepetition(12, 13) returns 13",
+      "explanation": "Pigeonhole principle states that when n items are placed into m containers and n > m, at least one container has ⌈n/m⌉ items. For guaranteeing repetition, we need containers + 1 items.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

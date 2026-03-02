@@ -1,0 +1,55 @@
+{
+  "topicId": "two-simple-hash-functions",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What is the primary purpose of a hash function in cryptography?",
+      "back": "To take an input (or 'message') of any length and return a fixed-size string of bytes (a digest), which acts as a unique fingerprint. It is a one-way function, meaning it is computationally infeasible to reverse the process."
+    },
+    {
+      "id": "fc2",
+      "front": "What are the two simple hash functions discussed in this module?",
+      "back": "1. The Simple Hash Function using modulo arithmetic: H_i = (H_{i-1} + M_i) mod p\n2. The Davies-Meyer Hash Function using a block cipher: H_i = E(M_i, H_{i-1}) XOR H_{i-1}"
+    },
+    {
+      "id": "fc3",
+      "front": "How does the simple modulo-based hash function work?",
+      "back": "The message is split into fixed-size blocks. Each block is added to the previous hash value, and the result is taken modulo a prime number p. Formula: H_i = (H_{i-1} + M_i) mod p. The initial hash value (IV) is typically zero."
+    },
+    {
+      "id": "fc4",
+      "front": "How does the Davies-Meyer hash function work?",
+      "back": "It uses a block cipher where the message block M_i serves as the key. The current hash value H_{i-1} is encrypted, and the result is XORed with H_{i-1} (feedforward). Formula: H_i = E(M_i, H_{i-1}) XOR H_{i-1}"
+    },
+    {
+      "id": "fc5",
+      "front": "What is the feedforward step in the Davies-Meyer construction?",
+      "back": "The XOR of the cipher output with the input hash value: H_i = E(M_i, H_{i-1}) XOR H_{i-1}. This step is crucial because it provides pre-image resistance, preventing an attacker from easily finding an input that produces a given hash."
+    },
+    {
+      "id": "fc6",
+      "front": "What are the three essential properties of a cryptographic hash function?",
+      "back": "1. Pre-image Resistance: Given h, hard to find m such that hash(m) = h\n2. Second Pre-image Resistance: Given m1, hard to find m2 where hash(m1) = hash(m2)\n3. Collision Resistance: Hard to find any two distinct inputs m1, m2 with hash(m1) = hash(m2)"
+    },
+    {
+      "id": "fc7",
+      "front": "Why is the simple modulo hash function considered cryptographically weak?",
+      "back": "It is highly susceptible to collisions because simple addition and modulo provide almost no diffusion or confusion. It lacks the avalanche effect - small input changes do not cause large output changes. An attacker can easily find collisions by rearranging message blocks."
+    },
+    {
+      "id": "fc8",
+      "front": "What is the avalanche effect in hash functions?",
+      "back": "A desirable property where a small change in the input (e.g., flipping one bit) causes a significant, unpredictable change in the output hash (ideally ~50% of output bits change). Simple hash functions lack this property; strong ones like SHA-256 exhibit it."
+    },
+    {
+      "id": "fc9",
+      "front": "Why does the Davies-Meyer construction use the message block as the key rather than as plaintext?",
+      "back": "Using the message block as the encryption key and the previous hash as the plaintext ensures that the compression function behaves differently for each block. Combined with the feedforward XOR, this design provides better collision resistance than simple arithmetic approaches."
+    },
+    {
+      "id": "fc10",
+      "front": "Compare the simple modulo hash and the Davies-Meyer hash.",
+      "back": "Simple Modulo: Uses arithmetic (addition + mod), very weak, prone to collisions, academic example only.\nDavies-Meyer: Uses a block cipher as core, theoretically stronger, security based on cipher strength, conceptual basis for real-world hash functions like SHA-256."
+    }
+  ]
+}

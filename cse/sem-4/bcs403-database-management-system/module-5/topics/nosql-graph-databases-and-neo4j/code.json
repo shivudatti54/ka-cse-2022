@@ -1,0 +1,93 @@
+[
+  {
+    "id": "code-1",
+    "language": "cypher",
+    "title": "Creating Nodes",
+    "description": "Creating nodes with labels and properties in Neo4j",
+    "code": "// Create a single node\nCREATE (p:Person {name: 'Alice', age: 25, city: 'New York'})\nRETURN p\n\n// Create multiple nodes\nCREATE (p1:Person {name: 'Bob'}),\n (p2:Person {name: 'Charlie'}),\n (c:Company {name: 'TechCorp'})\nRETURN p1, p2, c",
+    "explanation": "CREATE clause instantiates new nodes. Labels follow colon (:), properties in curly braces {}. RETURN displays results.",
+    "difficulty": "easy",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "cypher",
+    "title": "Creating Relationships",
+    "description": "Creating relationships between existing nodes",
+    "code": "// Match existing nodes and create relationship\nMATCH (a:Person {name: 'Alice'}),\n (b:Person {name: 'Bob'})\nCREATE (a)-[r:FRIEND {since: 2020, type: 'close'}]->(b)\nRETURN a, r, b\n\n// Create bidirectional relationship\nMATCH (a:Person), (b:Person)\nWHERE a.name = 'Alice' AND b.name = 'Charlie'\nCREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a)",
+    "explanation": "MATCH finds existing nodes, CREATE adds relationships. Relationships can have properties. Arrow direction matters.",
+    "difficulty": "medium",
+    "complexity": {
+      "time": "O(n+m)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "cypher",
+    "title": "Reading and Filtering Data",
+    "description": "Querying nodes and relationships with filters",
+    "code": "// Find all Person nodes\nMATCH (p:Person)\nRETURN p\n\n// Find with property filter\nMATCH (p:Person {name: 'Alice'})\nRETURN p\n\n// Find using WHERE clause\nMATCH (p:Person)\nWHERE p.age > 25 AND p.city = 'New York'\nRETURN p.name, p.age\n\n// Find with relationship\nMATCH (a:Person)-[:FRIEND]->(b:Person)\nWHERE a.name = 'Alice'\nRETURN b.name",
+    "explanation": "MATCH finds patterns, WHERE adds conditions. Can filter on node properties, labels, or relationship properties.",
+    "difficulty": "medium",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "cypher",
+    "title": "Updating Nodes and Relationships",
+    "description": "Modifying existing data in Neo4j",
+    "code": "// Update node property\nMATCH (p:Person {name: 'Alice'})\nSET p.age = 26\nRETURN p\n\n// Add new property\nMATCH (p:Person {name: 'Alice'})\nSET p.email = 'alice@email.com'\nRETURN p\n\n// Remove property\nMATCH (p:Person {name: 'Alice'})\nREMOVE p.city\nRETURN p\n\n// Update relationship property\nMATCH (a:Person)-[r:FRIEND]->(b:Person)\nWHERE a.name = 'Alice'\nSET r.since = 2019\nRETURN r",
+    "explanation": "SET modifies or adds properties, REMOVE deletes properties. Can update both nodes and relationship properties.",
+    "difficulty": "medium",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "cypher",
+    "title": "Deleting Nodes and Relationships",
+    "description": "Removing data from Neo4j database",
+    "code": "// Delete a relationship first\nMATCH (a:Person)-[r:FRIEND]->(b:Person)\nDELETE r\n\n// Delete a node (and relationships)\nMATCH (p:Person {name: 'Bob'})\nDETACH DELETE p\n\n// Delete all nodes and relationships\nMATCH (n)\nDETACH DELETE n",
+    "explanation": "DELETE removes relationships, DETACH DELETE removes node and all its relationships. Always delete relationships first or use DETACH.",
+    "difficulty": "medium",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-6",
+    "language": "cypher",
+    "title": "Complex Graph Traversal",
+    "description": "Advanced queries traversing multiple hops in graph",
+    "code": "// Find friends of friends (2 hops)\nMATCH (a:Person {name: 'Alice'})-[:FRIEND]->(b:Person)-[:FRIEND]->(c:Person)\nWHERE NOT c.name = 'Alice'\nRETURN DISTINCT c.name\n\n// Find shortest path\nMATCH (a:Person {name: 'Alice'}),\n (b:Person {name: 'Eve'}),\n path = shortestPath((a)-[*]-(b))\nRETURN path\n\n// Count relationships\nMATCH (p:Person {name: 'Alice'})-[r:FRIEND]->()\nRETURN count(r) AS friendCount",
+    "explanation": "Use [*] for variable length paths, shortestPath() finds minimum hops, aggregate functions like count() work with relationships.",
+    "difficulty": "hard",
+    "complexity": {
+      "time": "O(n^d)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-7",
+    "language": "cypher",
+    "title": "Social Network Query Examples",
+    "description": "Practical queries for a social network application",
+    "code": "// Create sample social graph\nCREATE (alice:Person {name: 'Alice'}),\n (bob:Person {name: 'Bob'}),\n (charlie:Person {name: 'Charlie'}),\n (david:Person {name: 'David'}),\n (alice)-[:FRIEND {since: 2018}]->(bob),\n (bob)-[:FRIEND {since: 2019}]->(charlie),\n (alice)-[:FOLLOWS]->(charlie),\n (david)-[:FRIEND {since: 2020}]->(bob)\n\n// Who does Alice's friends know?\nMATCH (alice:Person {name: 'Alice'})-[:FRIEND]->(friend)-[:FRIEND]->(foaf)\nWHERE NOT foaf.name = 'Alice'\nRETURN foaf.name AS suggestedFriend, count(*) AS times\nORDER BY times DESC\nLIMIT 5",
+    "explanation": "Real-world social network queries showing friend recommendations based on mutual friends (FOAF - Friend of a Friend).",
+    "difficulty": "hard",
+    "complexity": {
+      "time": "O(n^2)",
+      "space": "O(n)"
+    }
+  }
+]

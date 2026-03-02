@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Finding Kernel of Matrix Transformation",
+    "description": "Algorithm to find the kernel (null space) of a linear transformation represented by matrix A",
+    "code": "ALGORITHM FindKernel(A)\nINPUT: m\u00d7n matrix A representing T(x) = Ax\nOUTPUT: Basis for kernel of T\nBEGIN\n // Step 1: Form augmented matrix [A | 0]\n m \u2190 rows(A), n \u2190 cols(A)\n Aug \u2190 concatenate(A, zero_matrix(m,1))\n \n // Step 2: Row reduce to echelon form\n R \u2190 row_echelon_form(Aug)\n \n // Step 3: Identify free variables\n pivots \u2190 find_pivot_columns(R)\n free_vars \u2190 columns not in pivots\n \n // Step 4: Express basic variables in terms of free variables\n solutions \u2190 []\n for each free variable f do\n // Set f = 1, other free variables = 0\n // Solve for pivot variables\n // Add solution vector to basis\n END FOR\n \n RETURN solutions as kernel basis\nEND",
+    "explanation": "This algorithm finds all vectors x such that Ax = 0 by solving the homogeneous system. The solution space forms the kernel/null space of the transformation.",
+    "complexity": {
+      "time": "O(n\u00b3) for Gaussian elimination",
+      "space": "O(n\u00b2)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Finding Image (Column Space) of Matrix Transformation",
+    "description": "Algorithm to find the image/range of a linear transformation by determining column space",
+    "code": "ALGORITHM FindImage(A)\nINPUT: m\u00d7n matrix A representing T(x) = Ax\nOUTPUT: Basis for image of T\nBEGIN\n // Method: Find pivot columns of A\n R \u2190 row_echelon_form(A)\n \n // Identify pivot columns in original matrix\n pivots \u2190 find_pivot_columns(R)\n \n // Pivot columns of A form basis for column space\n basis \u2190 []\n for each pivot index p in pivots do\n basis.append(column(A, p))\n END FOR\n \n // Alternative: Transpose and find null space of A^T\n // im(T) = null(A^T)\u22a5 (orthogonal complement)\n \n RETURN basis\nEND",
+    "explanation": "The image is spanned by the columns of A. By row reducing and finding pivot columns, we identify which original columns form a basis for the column space.",
+    "complexity": {
+      "time": "O(n\u00b3)",
+      "space": "O(n\u00b2)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Rank-Nullity Computation",
+    "description": "Compute rank and nullity using Gaussian elimination",
+    "code": "ALGORITHM ComputeRankNullity(A)\nINPUT: Matrix A (m\u00d7n)\nOUTPUT: rank and nullity of T(x) = Ax\nBEGIN\n // Row reduce to echelon form\n R \u2190 row_echelon_form(A)\n \n // Count pivots = rank\n rank \u2190 count_pivots(R)\n \n // Apply Rank-Nullity Theorem\n n \u2190 cols(A)\n nullity \u2190 n - rank\n \n // Determine properties\n IF nullity == 0 THEN\n print \"T is ONE-TO-ONE (injective)\"\n ELSE\n print \"T is NOT one-to-one\"\n END IF\n \n IF rank == m THEN\n print \"T is ONTO (surjective) to R^m\"\n ELSE\n print \"T is NOT onto\"\n END IF\n \n RETURN (rank, nullity)\nEND",
+    "explanation": "Uses Rank-Nullity theorem to compute both quantities. Rank is found via row reduction, then nullity = n - rank. Also determines if transformation is 1-1 or onto.",
+    "complexity": {
+      "time": "O(min(m,n) \u00d7 m \u00d7 n)",
+      "space": "O(m \u00d7 n)"
+    }
+  }
+]

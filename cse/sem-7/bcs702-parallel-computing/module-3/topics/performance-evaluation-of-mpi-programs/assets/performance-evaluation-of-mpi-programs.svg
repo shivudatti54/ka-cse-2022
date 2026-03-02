@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="10" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3 L 0 6 z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1565c0">Performance Evaluation of MPI Programs</text>
+
+  <g id="step0" class="step" data-narration="We measure MPI program performance using MPI_Wtime for timing, calculate speedup and efficiency to gauge parallel gains, and identify bottlenecks like communication overhead and load imbalance.">
+    <rect x="80" y="50" width="640" height="55" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#2e7d32">Measure, Analyze, and Optimize Parallel Performance</text>
+    <text x="400" y="92" text-anchor="middle" font-size="11" fill="#555">MPI_Wtime + speedup analysis + profiling tools = performance insights</text>
+  </g>
+
+  <g id="step1" class="step" data-narration="The four key metrics are execution time measured with MPI_Wtime, speedup showing how much faster parallel is versus serial, efficiency measuring processor utilization, and parallel overhead being extra cost from parallelization.">
+    <text x="400" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Key Performance Metrics</text>
+    <rect x="60" y="145" width="160" height="75" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="140" y="167" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">Execution Time</text>
+    <text x="140" y="185" text-anchor="middle" font-size="8" fill="#555">T(p) = MPI_Wtime</text>
+    <text x="140" y="200" text-anchor="middle" font-size="8" fill="#555">Wall-clock seconds</text>
+    <rect x="235" y="145" width="160" height="75" rx="6" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+    <text x="315" y="167" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Speedup</text>
+    <text x="315" y="185" text-anchor="middle" font-size="8" fill="#555">S(p) = T(1)/T(p)</text>
+    <text x="315" y="200" text-anchor="middle" font-size="8" fill="#555">How much faster</text>
+    <rect x="410" y="145" width="160" height="75" rx="6" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="490" y="167" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">Efficiency</text>
+    <text x="490" y="185" text-anchor="middle" font-size="8" fill="#555">E(p) = S(p)/p</text>
+    <text x="490" y="200" text-anchor="middle" font-size="8" fill="#555">Utilization quality</text>
+    <rect x="585" y="145" width="160" height="75" rx="6" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="665" y="167" text-anchor="middle" font-size="10" font-weight="bold" fill="#e65100">Overhead</text>
+    <text x="665" y="185" text-anchor="middle" font-size="8" fill="#555">T_o = p×T(p)-T(1)</text>
+    <text x="665" y="200" text-anchor="middle" font-size="8" fill="#555">Extra parallel cost</text>
+  </g>
+
+  <g id="step2" class="step" data-narration="Parallel overhead has four main sources: communication latency and bandwidth from message passing, synchronization delays from barriers, load imbalance causing idle processors, and redundant computation on multiple processes.">
+    <text x="400" y="250" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Sources of Parallel Overhead</text>
+    <rect x="60" y="265" width="160" height="70" rx="6" fill="#ffcdd2" stroke="#e53935" stroke-width="1.5"/>
+    <text x="140" y="287" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">Communication</text>
+    <text x="140" y="305" text-anchor="middle" font-size="8" fill="#555">Message latency</text>
+    <text x="140" y="320" text-anchor="middle" font-size="8" fill="#555">Bandwidth costs</text>
+    <rect x="235" y="265" width="160" height="70" rx="6" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="315" y="287" text-anchor="middle" font-size="10" font-weight="bold" fill="#e65100">Synchronization</text>
+    <text x="315" y="305" text-anchor="middle" font-size="8" fill="#555">Barrier delays</text>
+    <text x="315" y="320" text-anchor="middle" font-size="8" fill="#555">Blocking ops</text>
+    <rect x="410" y="265" width="160" height="70" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="490" y="287" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">Load Imbalance</text>
+    <text x="490" y="305" text-anchor="middle" font-size="8" fill="#555">Uneven work</text>
+    <text x="490" y="320" text-anchor="middle" font-size="8" fill="#555">Idle processors</text>
+    <rect x="585" y="265" width="160" height="70" rx="6" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="665" y="287" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">Redundant Work</text>
+    <text x="665" y="305" text-anchor="middle" font-size="8" fill="#555">Duplicated compute</text>
+    <text x="665" y="320" text-anchor="middle" font-size="8" fill="#555">Extra memory use</text>
+  </g>
+
+  <g id="step3" class="step" data-narration="The PMPI interface intercepts MPI calls for profiling without changing source code. Tools like TAU, Vampir, and Scalasca use PMPI to trace communication patterns and identify performance bottlenecks.">
+    <text x="400" y="365" text-anchor="middle" font-size="14" font-weight="bold" fill="#9c27b0">Profiling Tools and PMPI</text>
+    <rect x="80" y="380" width="300" height="85" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="230" y="402" text-anchor="middle" font-size="11" font-weight="bold" fill="#9c27b0">PMPI Interface</text>
+    <text x="230" y="422" text-anchor="middle" font-size="9" fill="#333">Intercept MPI calls transparently</text>
+    <text x="230" y="440" text-anchor="middle" font-size="9" fill="#333">No source code changes needed</text>
+    <text x="230" y="455" text-anchor="middle" font-size="9" fill="#555">Wrap MPI_Send, MPI_Recv, etc.</text>
+    <rect x="420" y="380" width="300" height="85" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="570" y="402" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565c0">Profiling Tools</text>
+    <text x="570" y="422" text-anchor="middle" font-size="9" fill="#333">TAU, Vampir, Scalasca</text>
+    <text x="570" y="440" text-anchor="middle" font-size="9" fill="#333">Trace communication patterns</text>
+    <text x="570" y="455" text-anchor="middle" font-size="9" fill="#555">Identify hotspots and bottlenecks</text>
+  </g>
+
+  <g id="step4" class="step" data-narration="Strong scaling keeps problem size fixed while adding processors and is limited by Amdahl's Law. Weak scaling grows problem size with processors and tests how well the algorithm scales to larger workloads.">
+    <text x="400" y="495" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Scaling Analysis</text>
+    <rect x="80" y="510" width="300" height="70" rx="8" fill="#ffebee" stroke="#e53935" stroke-width="1.5"/>
+    <text x="230" y="532" text-anchor="middle" font-size="11" font-weight="bold" fill="#c62828">Strong Scaling</text>
+    <text x="230" y="552" text-anchor="middle" font-size="9" fill="#333">Fixed problem size, more processors</text>
+    <text x="230" y="568" text-anchor="middle" font-size="9" fill="#555">Limited by serial fraction</text>
+    <rect x="420" y="510" width="300" height="70" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+    <text x="570" y="532" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">Weak Scaling</text>
+    <text x="570" y="552" text-anchor="middle" font-size="9" fill="#333">Problem grows with processors</text>
+    <text x="570" y="568" text-anchor="middle" font-size="9" fill="#555">Tests algorithm scalability</text>
+  </g>
+</svg>

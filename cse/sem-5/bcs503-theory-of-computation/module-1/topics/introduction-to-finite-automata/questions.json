@@ -1,0 +1,149 @@
+{
+  "topicId": "introduction-to-finite-automata",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Finite Automaton and list its five components.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Finite Automaton is a mathematical model with finite states that processes input strings",
+        "Five components: Q (finite set of states), Σ (input alphabet), δ (transition function), q0 (initial state), F (set of final states)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the difference between DFA and NFA with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DFA: Deterministic - exactly one transition per input symbol from each state",
+        "NFA: Non-deterministic - can have multiple or zero transitions for same input",
+        "Example: NFA for (a|b)*ab has multiple paths while equivalent DFA has unique path"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the language accepted by a finite automaton? How is it defined formally?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Language L(M) is set of all strings accepted by FA M",
+        "Formal definition: L(M) = {w ∈ Σ* | δ(q0, w) ∈ F}",
+        "A string w is accepted if after processing w, FA reaches a final state"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Draw and explain the state diagram for a DFA that accepts all strings over {a,b} ending with 'ab'.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "States: q0 (start), q1 (saw 'a'), q2 (accept - saw 'ab')",
+        "Transitions: From q0: a→q1, b→q0; From q1: a→q1, b→q2; From q2: a→q1, b→q0",
+        "State q2 is final (double circle)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are ε-transitions in NFA? How do they affect language acceptance?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ε-transition allows movement between states without consuming input",
+        "It adds spontaneity to NFA",
+        "Acceptance still requires ending in final state after processing entire input string",
+        "ε-closure of a state includes itself and all states reachable via ε-transitions"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of trap state in Finite Automata with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Trap state (dead state) is a non-final state that cannot reach final state once entered",
+        "Typically has self-loops for all input symbols",
+        "Used in DFA design to explicitly reject certain strings",
+        "Example: In DFA for strings ending in 'ab', state after reading 'ba' is trap for finding 'ab' ending"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Convert the following NFA to DFA: NFA with states {q0,q1}, alphabet {0,1}, where δ(q0,0)={q0,q1}, δ(q0,1)={q1}, δ(q1,0)=∅, δ(q1,1)={q0}, start q0, final {q1}.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Start DFA state: ε-closure({q0}) = {q0} = A",
+        "Transitions from A: For 0: {q0,q1} = B; For 1: {q1} = C",
+        "From B: For 0: {q0,q1} = B; For 1: {q0,q1} = B",
+        "From C: For 0: ∅ = D (dead); For 1: {q0} = A",
+        "Final states: Any DFA state containing q1: C and B are final"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a DFA that accepts all strings over alphabet {0,1} that represent binary numbers divisible by 3. Show the state diagram, transition table, and explain the working.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "States: q0 (remainder 0), q1 (remainder 1), q2 (remainder 2) - all track remainders when read as binary",
+        "Initial state: q0 (divisible by 3, also final)",
+        "Transitions: On reading 0: stay in same state; On reading 1: q0→q1 (0→1), q1→q2 (1→2), q2→q0 (2→3 mod 3 = 0)",
+        "State q0 is final (double circle)",
+        "Explain: Reading binary number bit by bit, tracking remainder when divided by 3"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the subset construction algorithm for converting NFA to DFA with a detailed example. Prove that DFA and NFA are equivalent in computational power.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Subset construction: DFA state = set of NFA states",
+        "Step 1: Start with ε-closure of initial NFA state as initial DFA state",
+        "Step 2: For each DFA state (set of NFA states), compute transitions for all input symbols",
+        "Step 3: δ_D(S,a) = ε-closure(∪ δ_N(p,a) for all p∈S)",
+        "Step 4: DFA final states are those containing any NFA final state",
+        "Proof: Every DFA is trivially an NFA; Every NFA can be converted to DFA via subset construction; Both accept same language"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design an NFA that accepts the language L = {w | w contains at least two consecutive 0's} over alphabet {0,1}. Then convert it to equivalent DFA.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "NFA Design: States q0 (start), q1 (saw one 0), q2 (accept - saw 00)",
+        "Transitions: δ(q0,0)={q0,q1}, δ(q0,1)={q0}, δ(q1,0)={q2}, δ(q1,1)={q0}, δ(q2,0)={q2}, δ(q2,1)={q2}",
+        "Final state: q2",
+        "Conversion: Start state = {q0}; Compute transitions; Final DFA states contain q2"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Prove that the language L = {0^n1^n | n ≥ 1} is NOT a regular language using pumping lemma, and explain why finite automata cannot recognize this language.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Pumping lemma proof: Assume L is regular, let pumping length p, consider string 0^p1^p",
+        "By pumping lemma, can be divided into xyz where |xy|≤p, y≠ε",
+        "If y contains only 0s, pumping gives 0^(p+|y|)1^p not in L",
+        "If y contains both 0s and 1s or only 1s, similar contradiction",
+        "Why FA fails: FA has finite states but needs to remember arbitrary 'n' for 0^n1^n",
+        "With finite states, pigeonhole principle forces same state after p+1 different prefixes, cannot distinguish different n values"
+      ]
+    }
+  ]
+}

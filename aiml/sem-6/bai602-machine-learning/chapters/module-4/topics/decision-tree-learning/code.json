@@ -1,0 +1,35 @@
+{
+  "topicId": "decision-trees",
+  "examples": [
+    {
+      "id": "decision-tree-scratch",
+      "title": "Decision Tree from Scratch",
+      "description": "Simplified implementation showing tree building with Gini impurity.",
+      "language": "python",
+      "code": "import numpy as np\n\nclass DecisionTreeNode:\n    def __init__(self, feature=None, threshold=None, left=None, right=None, value=None):\n        self.feature = feature\n        self.threshold = threshold\n        self.left = left\n        self.right = right\n        self.value = value  # For leaf nodes\n\ndef gini_impurity(y):\n    if len(y) == 0:\n        return 0\n    p = np.bincount(y) / len(y)\n    return 1 - np.sum(p ** 2)\n\ndef best_split(X, y):\n    best_gain = -1\n    best_feature, best_threshold = None, None\n    \n    parent_gini = gini_impurity(y)\n    n = len(y)\n    \n    for feature in range(X.shape[1]):\n        thresholds = np.unique(X[:, feature])\n        for threshold in thresholds:\n            left_mask = X[:, feature] <= threshold\n            right_mask = ~left_mask\n            \n            if sum(left_mask) == 0 or sum(right_mask) == 0:\n                continue\n            \n            left_gini = gini_impurity(y[left_mask])\n            right_gini = gini_impurity(y[right_mask])\n            \n            weighted_gini = (sum(left_mask) * left_gini + sum(right_mask) * right_gini) / n\n            gain = parent_gini - weighted_gini\n            \n            if gain > best_gain:\n                best_gain = gain\n                best_feature = feature\n                best_threshold = threshold\n    \n    return best_feature, best_threshold, best_gain\n\ndef build_tree(X, y, max_depth=5, depth=0):\n    if depth >= max_depth or len(np.unique(y)) == 1:\n        return DecisionTreeNode(value=np.bincount(y).argmax())\n    \n    feature, threshold, gain = best_split(X, y)\n    if gain <= 0:\n        return DecisionTreeNode(value=np.bincount(y).argmax())\n    \n    left_mask = X[:, feature] <= threshold\n    left = build_tree(X[left_mask], y[left_mask], max_depth, depth + 1)\n    right = build_tree(X[~left_mask], y[~left_mask], max_depth, depth + 1)\n    \n    return DecisionTreeNode(feature=feature, threshold=threshold, left=left, right=right)\n\n# Example usage\nX = np.array([[2, 3], [4, 5], [6, 1], [8, 2], [1, 7], [3, 8]])\ny = np.array([0, 0, 1, 1, 0, 0])\ntree = build_tree(X, y, max_depth=3)\nprint(f\"Root splits on feature {tree.feature} at threshold {tree.threshold}\")",
+      "explanation": "This builds a decision tree by recursively finding the best split using Gini impurity. Stops when max depth is reached or node is pure.",
+      "timeComplexity": "O(n * d * n * log(n))",
+      "spaceComplexity": "O(n) for recursion stack"
+    },
+    {
+      "id": "sklearn-decision-tree",
+      "title": "Decision Tree with scikit-learn",
+      "description": "Practical implementation with visualization of feature importance.",
+      "language": "python",
+      "code": "from sklearn.tree import DecisionTreeClassifier, plot_tree\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nimport matplotlib.pyplot as plt\n\n# Load data\niris = load_iris()\nX, y = iris.data, iris.target\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# Train decision tree\ndt = DecisionTreeClassifier(\n    criterion='gini',      # or 'entropy'\n    max_depth=4,            # Prevent overfitting\n    min_samples_split=5,    # Min samples to split\n    min_samples_leaf=2,     # Min samples in leaf\n    random_state=42\n)\ndt.fit(X_train, y_train)\n\n# Evaluate\ny_pred = dt.predict(X_test)\nprint(f\"Accuracy: {accuracy_score(y_test, y_pred):.4f}\")\n\n# Feature importance\nfor name, importance in zip(iris.feature_names, dt.feature_importances_):\n    print(f\"{name}: {importance:.4f}\")\n\n# Visualize tree\nplt.figure(figsize=(20, 10))\nplot_tree(dt, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)\nplt.title(\"Decision Tree for Iris Dataset\")\nplt.tight_layout()\n# plt.savefig('decision_tree.png')",
+      "explanation": "scikit-learn provides a highly optimized implementation with pruning parameters, feature importance, and visualization capabilities.",
+      "timeComplexity": "O(n * d * log(n))",
+      "spaceComplexity": "O(number of nodes)"
+    },
+    {
+      "id": "decision-tree-java",
+      "title": "Decision Tree Concepts in Java",
+      "description": "Java structure showing tree node and prediction logic.",
+      "language": "java",
+      "code": "import java.util.HashMap;\nimport java.util.Map;\n\nclass TreeNode {\n    int feature;        // Feature index to split on\n    double threshold;   // Split threshold\n    TreeNode left;      // <= threshold\n    TreeNode right;     // > threshold\n    Integer label;      // For leaf nodes (null if internal)\n    \n    TreeNode(int feature, double threshold) {\n        this.feature = feature;\n        this.threshold = threshold;\n    }\n    \n    TreeNode(int label) {  // Leaf node\n        this.label = label;\n    }\n    \n    boolean isLeaf() {\n        return label != null;\n    }\n}\n\npublic class DecisionTreeClassifier {\n    private TreeNode root;\n    \n    // Prediction traverses the tree\n    public int predict(double[] sample) {\n        TreeNode node = root;\n        while (!node.isLeaf()) {\n            if (sample[node.feature] <= node.threshold) {\n                node = node.left;\n            } else {\n                node = node.right;\n            }\n        }\n        return node.label;\n    }\n    \n    // Calculate Gini impurity\n    static double gini(int[] labels) {\n        Map<Integer, Integer> counts = new HashMap<>();\n        for (int label : labels) {\n            counts.merge(label, 1, Integer::sum);\n        }\n        double impurity = 1.0;\n        for (int count : counts.values()) {\n            double p = (double) count / labels.length;\n            impurity -= p * p;\n        }\n        return impurity;\n    }\n    \n    public static void main(String[] args) {\n        // Example: manually constructed tree\n        TreeNode root = new TreeNode(0, 5.5);  // Split on feature 0 at 5.5\n        root.left = new TreeNode(0);           // Leaf: class 0\n        root.right = new TreeNode(1);          // Leaf: class 1\n        \n        DecisionTreeClassifier dt = new DecisionTreeClassifier();\n        dt.root = root;\n        \n        System.out.println(\"Predict [3.0, 2.0]: \" + dt.predict(new double[]{3.0, 2.0}));\n        System.out.println(\"Predict [7.0, 2.0]: \" + dt.predict(new double[]{7.0, 2.0}));\n    }\n}",
+      "explanation": "This shows the tree structure and prediction logic. In practice, the fit() method would implement the recursive splitting algorithm.",
+      "timeComplexity": "O(depth) for prediction",
+      "spaceComplexity": "O(1) for prediction"
+    }
+  ]
+}

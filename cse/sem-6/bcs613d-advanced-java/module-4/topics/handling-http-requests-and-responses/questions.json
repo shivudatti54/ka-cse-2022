@@ -1,0 +1,112 @@
+{
+  "topicId": "handling-http-requests-and-responses",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between getParameter() and getAttribute() methods in HttpServletRequest. Provide a scenario where each would be used.",
+      "keyPoints": [
+        "getParameter() retrieves data sent by client (form data, query strings) - always returns String",
+        "getAttribute() retrieves data set by server-side code (objects) - can return any Object type",
+        "getParameter() returns null if parameter doesn't exist; getAttribute() returns null if attribute doesn't exist",
+        "Example: getParameter() for login form username; getAttribute() for data from database query passed to JSP"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of setCharacterEncoding() in servlet request handling? When must it be called, and what happens if you forget to call it?",
+      "keyPoints": [
+        "Sets the character encoding for decoding request body parameters",
+        "Must be called BEFORE any getParameter() methods",
+        "If forgotten, default encoding (often ISO-8859-1) is used, causing garbled characters for non-ASCII input (like UTF-8)",
+        "Only affects POST request body parameters, not GET parameters (which use URL encoding)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between forward() and sendRedirect() methods in servlet handling. Include the HTTP behavior and URL changes in your answer.",
+      "keyPoints": [
+        "forward() is server-side; RequestDispatcher forwards request to another resource",
+        "sendRedirect() sends HTTP 302/307 status to browser, browser makes new request",
+        "forward() - single request, URL unchanged (browser doesn't know)",
+        "sendRedirect() - two requests, URL changes to the redirect location",
+        "forward() is faster; sendRedirect() useful for redirecting to external URLs"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Write the code snippet to handle a POST request containing form data with UTF-8 encoding and return a JSON response.",
+      "keyPoints": [
+        "Set character encoding first: request.setCharacterEncoding(\"UTF-8\")",
+        "Read parameters using getParameter()",
+        "Set response content type: response.setContentType(\"application/json\")",
+        "Set character encoding for response: response.setCharacterEncoding(\"UTF-8\")",
+        "Write JSON using response.getWriter() or getOutputStream()"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "How do you retrieve all header names and values from an HTTP request in a servlet? Explain with code.",
+      "keyPoints": [
+        "Use getHeaderNames() which returns Enumeration<String>",
+        "Iterate through header names using hasMoreElements() and nextElement()",
+        "For each header name, use getHeader() to get the value",
+        "Common headers: Content-Type, Authorization, Accept, Cookie"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of request attributes in servlets. How are they different from session attributes? Provide use cases for each.",
+      "keyPoints": [
+        "Request attributes exist only during a single request-response cycle",
+        "Set using setAttribute(), retrieve using getAttribute()",
+        "Session attributes persist across multiple requests from the same client",
+        "Use request attributes for forwarding data between servlets/JSPs in same request",
+        "Use session attributes for user login state, shopping cart across pages"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a servlet that handles both GET and POST requests for a login form. The servlet should validate credentials and either redirect to a success page with user data in session, or redirect back to login with an error message. Include proper error handling and encoding.",
+      "keyPoints": [
+        "Implement doGet() to show login form (setContentType, write HTML)",
+        "Implement doPost() to process login (setCharacterEncoding first)",
+        "Validate input parameters (check null/empty)",
+        "Authenticate user (hardcoded or mock DB check)",
+        "On success: set session attribute, redirect to success page (sendRedirect)",
+        "On failure: set error as request attribute, forward to login with error",
+        "Use proper character encoding throughout"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the complete lifecycle of an HTTP request in a servlet container. Include details about when the service() method is called, how it dispatches to doGet/doPost, and the role of HttpServletRequest and HttpServletResponse objects.",
+      "keyPoints": [
+        "Client sends HTTP request to server",
+        "Container creates HttpServletRequest and HttpServletResponse objects",
+        "Container identifies correct servlet and creates/uses existing instance",
+        "Container calls service() method, passing request and response",
+        "service() determines HTTP method and calls doXxx() (doGet, doPost, etc.)",
+        "Servlet processes request using request methods, generates response",
+        "Response is sent back to client",
+        "Request/Response objects are recycled or garbage collected",
+        "Request attributes are cleared after each request"
+      ],
+      "marks": 10
+    }
+  ]
+}

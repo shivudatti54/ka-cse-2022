@@ -1,0 +1,143 @@
+{
+  "topicId": "the-life-cycle-of-a-servlet",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the three main phases of the servlet lifecycle and the methods invoked in each phase.",
+      "keyPoints": [
+        "Initialization phase - init() method called once",
+        "Request handling phase - service() called for each request, dispatches to doGet/doPost",
+        "Destruction phase - destroy() called once when servlet unloaded",
+        "Container manages automatic invocation of these methods"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between ServletConfig and ServletContext with respect to their scope and usage.",
+      "keyPoints": [
+        "ServletConfig - per-servlet, specific to one servlet",
+        "ServletContext - per-web-application, shared by all servlets",
+        "ServletConfig obtained via getServletConfig()",
+        "ServletContext obtained via getServletContext()",
+        "Both provide getInitParameter() method"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Why is thread safety a major concern in servlet programming? Explain with an example.",
+      "keyPoints": [
+        "Single servlet instance handles multiple concurrent requests",
+        "Instance variables are shared across requests - not thread-safe",
+        "Local variables are thread-safe (stack-based)",
+        "Example: instance variable 'counter' incremented by multiple threads causes race condition",
+        "Solutions: synchronize, use local variables, or SingleThreadModel (deprecated)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the purpose of load-on-startup in web.xml? How does it affect servlet initialization?",
+      "keyPoints": [
+        "Specifies when servlet is loaded during application startup",
+        "Positive value = load during startup (e.g., 1, 2, 3)",
+        "Higher values load after lower values",
+        "Without it, servlet is lazy-loaded on first request",
+        "Useful for servlets requiring early initialization like database connection pools"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Describe what happens if a servlet's init() method throws an UnavailableException.",
+      "keyPoints": [
+        "UnavailableException indicates servlet cannot be placed in service",
+        "If permanent - servlet will never serve requests until removed/reconfigured",
+        "If temporary - container retries after specified duration",
+        "Servlet remains unloaded until exception resolves",
+        "Other servlets in application continue functioning normally"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the purpose of ServletContextListener with a practical use case.",
+      "keyPoints": [
+        "Responds to web application lifecycle events",
+        "contextInitialized() called when application starts",
+        "contextDestroyed() called when application shuts down",
+        "Use case: initialize database connection pool at startup",
+        "Use case: load application-wide configuration parameters",
+        "Use case: cleanup resources on shutdown"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Why is overriding the service() method directly not recommended in HttpServlet?",
+      "keyPoints": [
+        "service() method handles HTTP method dispatching",
+        "Direct override bypasses doGet/doPost/etc. handlers",
+        "Should override specific doMethod() based on request type",
+        "Allows clean separation of GET, POST, PUT, DELETE handling",
+        "Makes code more maintainable and follows design patterns"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Draw and explain the complete servlet lifecycle diagram. Also write a servlet code snippet demonstrating lifecycle method usage with proper comments explaining what each phase does.",
+      "keyPoints": [
+        "Diagram showing: Load \u2192 init() \u2192 Ready \u2192 [service() loop] \u2192 destroy() \u2192 Unload",
+        "Constructor creates servlet instance (container does this)",
+        "init() performs one-time initialization - override for setup",
+        "service() called repeatedly - dispatch to doGet/doPost",
+        "destroy() called once - override for cleanup resources",
+        "Code should show @WebServlet annotation or web.xml config",
+        "Include try-catch in init for error handling"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a servlet that tracks the number of hits on a website. Discuss the thread-safety issues and propose solutions to make it thread-safe.",
+      "keyPoints": [
+        "Need instance variable to store hit counter",
+        "Problem: multiple threads incrementing simultaneously causes race condition",
+        "Solution 1: Synchronize the increment operation",
+        "Solution 2: Use AtomicLong from java.util.concurrent",
+        "Solution 3: Store counter in ServletContext (application-scoped)",
+        "Show code with synchronized block or AtomicLong",
+        "Discuss pros/cons of each approach"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the sequence of events when a client sends a GET request to a servlet. Include all relevant method calls in the correct order.",
+      "keyPoints": [
+        "Client sends HTTP GET request to server",
+        "Servlet container receives request",
+        "Container checks if servlet is loaded (if not, loads and calls init())",
+        "Container calls service() method",
+        "service() determines request type is GET",
+        "service() calls doGet() method",
+        "doGet() processes request, writes response",
+        "After response, service() returns (servlet stays loaded)",
+        "destroy() only called when servlet unloaded/shutdown"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Algorithm to Check 2NF",
+    "description": "Procedure to determine if a relation is in Second Normal Form",
+    "code": "PROCEDURE Check2NF(Relation R, Set FDs, Set CandidateKeys)\nBEGIN\n // Step 1: Check if in 1NF\n IF NOT IsIn1NF(R) THEN\n RETURN \"Not in 1NF\"\n END IF\n \n // Step 2: Check for partial dependencies\n FOR EACH FD X \u2192 Y IN FDs DO\n IF X is a proper subset of any CandidateKey THEN\n // Partial dependency exists\n IF Y contains non-prime attribute THEN\n RETURN \"Violates 2NF: Partial dependency \" + X + \" \u2192 \" + Y\n END IF\n END IF\n END FOR\n \n RETURN \"In 2NF\"\nEND",
+    "explanation": "The algorithm checks if any non-prime attribute is functionally dependent on part of any candidate key, which would violate 2NF.",
+    "complexity": {
+      "time": "O(n\u00d7k)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Algorithm to Check 3NF",
+    "description": "Procedure to determine if a relation is in Third Normal Form",
+    "code": "PROCEDURE Check3NF(Relation R, Set FDs)\nBEGIN\n // First check if in 2NF\n IF NOT IsIn2NF(R) THEN\n RETURN \"Not in 2NF, hence not in 3NF\"\n END IF\n \n // Step 2: Check for transitive dependencies\n FOR EACH FD X \u2192 Y IN FDs DO\n // Check if X is non-prime and Y is non-prime\n IF X is NOT a superkey AND Y contains non-prime attribute THEN\n // Possible transitive dependency\n // Check if there exists Z where X\u2192Z and Z\u2192Y\n FOR EACH FD Z \u2192 W IN FDs DO\n IF X contains Z AND W contains attribute in Y THEN\n RETURN \"Violates 3NF: Transitive dependency through \" + Z\n END IF\n END FOR\n END IF\n END FOR\n \n RETURN \"In 3NF\"\nEND",
+    "explanation": "This checks for transitive dependencies where a non-prime attribute determines another non-prime attribute through an intermediary.",
+    "complexity": {
+      "time": "O(n\u00b2)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Decomposition to 3NF",
+    "description": "Algorithm to decompose a relation into Third Normal Form",
+    "code": "PROCEDURE DecomposeTo3NF(Relation R, Set FDs)\nBEGIN\n ResultRelations = EMPTY SET\n \n // Step 1: Find minimal cover of FDs\n MinimalCover = FindMinimalCover(FDs)\n \n // Step 2: For each FD in minimal cover, create relation\n FOR EACH FD X \u2192 Y IN MinimalCover DO\n ResultRelations = ResultRelations \u222a { Relation(X \u222a Y) }\n END FOR\n \n // Step 3: Ensure one relation contains candidate key\n Keys = FindCandidateKeys(R, FDs)\n IF NOT ANY relation in ResultRelations contains any Key THEN\n RelationWithKey = {}\n FOR EACH attr IN ANY Key DO\n RelationWithKey = RelationWithKey \u222a {attr}\n END FOR\n ResultRelations = ResultRelations \u222a {RelationWithKey}\n END IF\n \n // Step 4: Remove redundant relations\n ResultRelations = RemoveRedundantRelations(ResultRelations)\n \n RETURN ResultRelations\nEND",
+    "explanation": "This algorithm decomposes a relation into 3NF by using the minimal cover of functional dependencies and ensuring the candidate key is preserved.",
+    "complexity": {
+      "time": "O(n\u00b2)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "pseudocode",
+    "title": "Find Minimal Cover",
+    "description": "Algorithm to find minimal cover of functional dependencies",
+    "code": "PROCEDURE FindMinimalCover(Set FDs)\nBEGIN\n // Step 1: Split RHS attributes\n SplitFDs = {}\n FOR EACH FD X \u2192 Y IN FDs DO\n FOR EACH attribute A IN Y DO\n SplitFDs = SplitFDs \u222a {X \u2192 A}\n END FOR\n END FOR\n \n // Step 2: Remove extraneous LHS attributes\n MinimalFDs = {}\n FOR EACH FD X \u2192 A IN SplitFDs DO\n IF |X| > 1 THEN\n FOR EACH attribute B IN X DO\n // Check if B is extraneous\n XminusB = X - {B}\n IF (XminusB)+ contains A THEN\n X = XminusB // Remove B\n END IF\n END FOR\n END IF\n MinimalFDs = MinimalFDs \u222a {X \u2192 A}\n END FOR\n \n // Step 3: Remove redundant FDs\n FinalFDs = {}\n FOR EACH FD X \u2192 A IN MinimalFDs DO\n RemainingFDs = MinimalFDs - {X \u2192 A}\n IF NOT (X)+ w.r.t RemainingFDs contains A THEN\n FinalFDs = FinalFDs \u222a {X \u2192 A}\n END IF\n END FOR\n \n RETURN FinalFDs\nEND",
+    "explanation": "The minimal cover simplifies FDs by splitting RHS, removing extraneous LHS attributes, and removing redundant dependencies.",
+    "complexity": {
+      "time": "O(n\u00b2\u00d7m)",
+      "space": "O(n)"
+    }
+  }
+]

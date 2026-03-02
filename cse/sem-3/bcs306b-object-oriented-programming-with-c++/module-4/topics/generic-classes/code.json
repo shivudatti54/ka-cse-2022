@@ -1,0 +1,55 @@
+{
+  "topicId": "generic-classes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Class Template - Stack",
+      "description": "A simple generic stack implementation using class template",
+      "code": "template<class T>\nclass Stack {\nprivate:\n T arr[100];\n int top;\npublic:\n Stack() { top = -1; }\n void push(T item) {\n if (top >= 99) throw \"Overflow\";\n arr[++top] = item;\n }\n T pop() {\n if (top < 0) throw \"Underflow\";\n return arr[top--];\n }\n bool isEmpty() { return top == -1; }\n};\n\n// Usage\nint main() {\n Stack<int> intStack;\n Stack<float> floatStack;\n Stack<string> strStack;\n intStack.push(10);\n floatStack.push(3.14);\n return 0;\n}",
+      "explanation": "Template parameter T is replaced with actual type at compile time. Each instantiation (int, float, string) generates separate class with type-specific code.",
+      "timeComplexity": "O(1) for push/pop",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Template with Multiple Parameters",
+      "description": "Class template with type and non-type parameters",
+      "code": "template<class T, int MAXSIZE = 100>\nclass Array {\nprivate:\n T data[MAXSIZE];\n int size;\npublic:\n Array() { size = 0; }\n void add(T item) {\n if (size < MAXSIZE) data[size++] = item;\n }\n T get(int index) {\n if (index >= 0 && index < size) return data[index];\n throw \"Invalid index\";\n }\n int getSize() { return size; }\n};\n\n// Usage\nint main() {\n Array<int, 50> smallArr; // Size 50\n Array<int> defaultArr; // Default size 100\n Array<double, 200> largeArr;\n return 0;\n}",
+      "explanation": "Combines type parameter (T) with non-type parameter (MAXSIZE). Non-type parameter must be compile-time constant.",
+      "timeComplexity": "O(1) for add/get",
+      "spaceComplexity": "O(MAXSIZE)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Full Template Specialization",
+      "description": "Specialized implementation for specific type",
+      "code": "template<class T>\nclass Calculator {\npublic:\n T add(T a, T b) { return a + b; }\n};\n\n// Full specialization for char*\ntemplate<>\nclass Calculator<char*> {\npublic:\n char* add(char* a, char* b) {\n char* result = new char[strlen(a) + strlen(b) + 1];\n strcpy(result, a);\n strcat(result, b);\n return result;\n }\n};\n\n// Usage\nint main() {\n Calculator<int> intCalc;\n Calculator<char*> strCalc;\n cout << intCalc.add(5, 3); // Output: 8\n cout << strCalc.add(\"Hello\", \"World\"); // Output: HelloWorld\n return 0;\n}",
+      "explanation": "Full specialization (template<>) provides completely new implementation for specific type. Compiler uses specialized version when exact type matches.",
+      "timeComplexity": "O(n) for string concat",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Partial Template Specialization",
+      "description": "Specialized for pointer types",
+      "code": "template<class T>\nclass PointerHolder {\n T value;\npublic:\n void set(T v) { value = v; }\n T get() { return value; }\n};\n\n// Partial specialization for pointers\ntemplate<class T>\nclass PointerHolder<T*> {\n T* ptr;\npublic:\n void set(T* p) { ptr = p; }\n T* get() { return ptr; }\n void display() { cout << *ptr; }\n};\n\n// Usage\nint main() {\n int x = 10;\n PointerHolder<int> ph1; // Regular version\n PointerHolder<int*> ph2; // Pointer version\n ph1.set(x);\n ph2.set(&x);\n ph2.display(); // Outputs: 10\n return 0;\n}",
+      "explanation": "Partial specialization matches type patterns. When T* is used, pointer version is selected with special handling for pointer types.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Member Function Template",
+      "description": "Template member functions inside regular class",
+      "code": "class Container {\n int data[10];\n int size;\npublic:\n Container() { size = 0; }\n \n // Template member function\n template<class T>\n void set(T item, int index) {\n if (index >= 0 && index < 10) \n data[index] = static_cast<int>(item);\n }\n \n template<class T>\n T get(int index) {\n return static_cast<T>(data[index]);\n }\n \n void add(int item) { if(size < 10) data[size++] = item; }\n};\n\n// Usage\nint main() {\n Container c;\n c.add(100);\n double d = c.get<double>(0); // Converts int to double\n string s = c.get<string>(0); // Converts int to string\n return 0;\n}",
+      "explanation": "Member function templates allow flexible type conversion and operations. They're instantiated only when called.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

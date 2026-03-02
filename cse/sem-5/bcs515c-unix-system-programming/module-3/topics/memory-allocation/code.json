@@ -1,0 +1,55 @@
+{
+  "topicId": "memory-allocation",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "First Fit Allocation Algorithm",
+      "description": "Algorithm to allocate memory using First Fit strategy",
+      "code": "// First Fit Memory Allocation\n// holes: list of available memory blocks with (start, size)\n// processSize: size of memory requested\n\nFUNCTION FirstFit(holes, processSize):\n FOR each hole IN holes:\n IF hole.size >= processSize THEN\n // Allocate memory\n allocatedAddress = hole.start\n remainingSize = hole.size - processSize\n \n // Update hole list\n REMOVE hole FROM holes\n \n IF remainingSize > 0 THEN\n // Create new smaller hole\n newHole = (hole.start + processSize, remainingSize)\n ADD newHole TO holes\n END IF\n \n RETURN allocatedAddress\n END IF\n END FOR\n \n // No suitable hole found\n RETURN -1 // Out of memory\nEND FUNCTION",
+      "explanation": "First Fit searches memory from the beginning and allocates the first hole that is large enough. It then updates the hole list by removing the allocated block and adding back any remaining space.",
+      "timeComplexity": "O(n) where n is number of holes",
+      "spaceComplexity": "O(1) additional space"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Best Fit Allocation Algorithm",
+      "description": "Algorithm to allocate memory using Best Fit strategy",
+      "code": "// Best Fit Memory Allocation\n// holes: list of available memory blocks\n// processSize: size of memory requested\n\nFUNCTION BestFit(holes, processSize):\n bestHole = NULL\n minSize = INFINITY\n \n FOR each hole IN holes:\n IF hole.size >= processSize THEN\n IF hole.size < minSize THEN\n minSize = hole.size\n bestHole = hole\n END IF\n END IF\n END FOR\n \n IF bestHole != NULL THEN\n allocatedAddress = bestHole.start\n remainingSize = bestHole.size - processSize\n \n REMOVE bestHole FROM holes\n \n IF remainingSize > 0 THEN\n newHole = (bestHole.start + processSize, remainingSize)\n ADD newHole TO holes\n END IF\n \n RETURN allocatedAddress\n END IF\n \n RETURN -1 // Out of memory\nEND FUNCTION",
+      "explanation": "Best Fit searches through all holes to find the smallest one that can accommodate the request. This minimizes wasted space but requires scanning all holes.",
+      "timeComplexity": "O(n) for searching, O(n log n) if sorted",
+      "spaceComplexity": "O(1) additional space"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Paging Address Translation",
+      "description": "Translation of virtual address to physical address using page table",
+      "code": "// Paging Address Translation\n// pageTable: array mapping page numbers to frame numbers\n// pageSize: size of each page (must be power of 2)\n// virtualAddress: the logical address from CPU\n\nFUNCTION TranslateAddress(virtualAddress, pageTable, pageSize):\n // Calculate number of offset bits\n offsetBits = log2(pageSize)\n \n // Extract page number and offset from virtual address\n pageNumber = virtualAddress >> offsetBits\n offset = virtualAddress AND (pageSize - 1)\n \n // Check if page is valid using page table\n IF pageTable[pageNumber].valid == FALSE THEN\n // Page fault occurs\n HANDLE_PAGE_FAULT(pageNumber)\n END IF\n \n // Get frame number from page table\n frameNumber = pageTable[pageNumber].frameNumber\n \n // Calculate physical address\n physicalAddress = (frameNumber << offsetBits) + offset\n \n RETURN physicalAddress\nEND FUNCTION\n\n// Example: 16-bit VA, 4KB page\n// VPN = upper 4 bits, Offset = lower 12 bits",
+      "explanation": "This demonstrates how the MMU translates virtual addresses to physical addresses by extracting the page number, looking up the frame in the page table, and combining the frame number with the offset.",
+      "timeComplexity": "O(1) with TLB hit, O(n) with page table lookup",
+      "spaceComplexity": "O(1) additional space"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "FIFO Page Replacement Algorithm",
+      "description": "Implementation of First In First Out page replacement",
+      "code": "// FIFO Page Replacement Algorithm\n// frames: array representing physical memory frames\n// pages: sequence of page references\n// numFrames: number of available frames\n\nFUNCTION FIFO_PageReplacement(pages, numFrames):\n // Initialize frames as empty\n frames = ARRAY of size numFrames\n FOR i = 0 to numFrames-1:\n frames[i] = -1 // Empty\n END FOR\n \n pageFaults = 0\n front = 0 // Points to oldest page\n rear = 0 // Points to next insertion point\n count = 0 // Number of frames filled\n \n FOR each page IN pages:\n // Check if page is already in memory\n IF page NOT IN frames THEN\n pageFaults = pageFaults + 1\n \n IF count < numFrames THEN\n // Frames not full, simply add page\n frames[rear] = page\n rear = (rear + 1) % numFrames\n count = count + 1\n ELSE\n // Frames full, replace oldest (FIFO)\n frames[front] = page\n front = (front + 1) % numFrames\n rear = (rear + 1) % numFrames\n END IF\n END IF\n END FOR\n \n RETURN pageFaults\nEND FUNCTION\n\n// Example: pages = [1,2,3,4,1,2,5,1,2,3], frames = 3",
+      "explanation": "FIFO maintains a queue of pages in memory. When a page needs to be replaced, the oldest page (first in queue) is removed. It is simple to implement but may not perform optimally.",
+      "timeComplexity": "O(f) where f is number of frames",
+      "spaceComplexity": "O(f) for frame storage"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "LRU Page Replacement Algorithm",
+      "description": "Implementation of Least Recently Used page replacement using counters",
+      "code": "// LRU Page Replacement Algorithm\n// Using counter-based implementation\n\nFUNCTION LRU_PageReplacement(pages, numFrames):\n frames = ARRAY of size numFrames\n counters = ARRAY of size numFrames\n time = 0\n pageFaults = 0\n \n // Initialize\n FOR i = 0 to numFrames-1:\n frames[i] = -1\n counters[i] = 0\n END FOR\n \n FOR each page IN pages:\n found = FALSE\n \n // Check if page is in memory\n FOR i = 0 to numFrames-1:\n IF frames[i] == page THEN\n found = TRUE\n counters[i] = time // Update recent use\n BREAK\n END IF\n END FOR\n \n IF NOT found THEN\n pageFaults = pageFaults + 1\n \n // Find LRU page (smallest counter)\n minCounter = INFINITY\n lruIndex = -1\n \n FOR i = 0 to numFrames-1:\n IF counters[i] < minCounter THEN\n minCounter = counters[i]\n lruIndex = i\n END IF\n END FOR\n \n // Replace LRU page\n frames[lruIndex] = page\n counters[lruIndex] = time\n END IF\n \n time = time + 1\n END FOR\n \n RETURN pageFaults\nEND FUNCTION\n\n// Note: Real implementations use hardware support (reference bits)",
+      "explanation": "LRU replaces the page that was used least recently. It provides a good approximation to optimal replacement but requires hardware support for accurate implementation.",
+      "timeComplexity": "O(n × f) where n = pages, f = frames",
+      "spaceComplexity": "O(f)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "dequeues",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Circular Array Deque Implementation",
+      "description": "Complete implementation of deque operations using circular array with O(1) time complexity for all operations",
+      "code": "CLASS Deque:\n  CONSTANT MAXSIZE = 100\n  ARRAY arr[MAXSIZE]\n  INTEGER front = -1\n  INTEGER rear = -1\n\n  FUNCTION isEmpty():\n    RETURN (front == -1)\n\n  FUNCTION isFull():\n    RETURN ((rear + 1) % MAXSIZE == front)\n\n  FUNCTION insertFront(x):\n    IF isFull() THEN:\n      PRINT \"Overflow\"\n      RETURN\n    IF isEmpty() THEN:\n      front = 0\n      rear = 0\n    ELSE:\n      front = (front - 1 + MAXSIZE) % MAXSIZE\n    arr[front] = x\n\n  FUNCTION insertRear(x):\n    IF isFull() THEN:\n      PRINT \"Overflow\"\n      RETURN\n    IF isEmpty() THEN:\n      front = 0\n      rear = 0\n    ELSE:\n      rear = (rear + 1) % MAXSIZE\n    arr[rear] = x\n\n  FUNCTION deleteFront():\n    IF isEmpty() THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    element = arr[front]\n    IF front == rear THEN:\n      front = -1\n      rear = -1\n    ELSE:\n      front = (front + 1) % MAXSIZE\n    RETURN element\n\n  FUNCTION deleteRear():\n    IF isEmpty() THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    element = arr[rear]\n    IF front == rear THEN:\n      front = -1\n      rear = -1\n    ELSE:\n      rear = (rear - 1 + MAXSIZE) % MAXSIZE\n    RETURN element\n\n  FUNCTION getFront():\n    IF isEmpty() THEN RETURN NULL\n    RETURN arr[front]\n\n  FUNCTION getRear():\n    IF isEmpty() THEN RETURN NULL\n    RETURN arr[rear]",
+      "explanation": "This circular array implementation achieves O(1) for all operations by using modulo arithmetic for wrap-around. The key insight is that we use n-1 positions to distinguish full from empty: when (rear+1)%n == front, the deque is full. The front and rear pointers wrap around using the formula (index \u00b1 1 + n) % n.",
+      "timeComplexity": "O(1) for all operations",
+      "spaceComplexity": "O(n) where n = MAXSIZE"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Doubly Linked List Deque Implementation",
+      "description": "Linked-list based deque implementation with head and tail pointers for O(1) operations",
+      "code": "CLASS Node:\n  DATA value\n  Node prev\n  Node next\n\nCLASS LinkedDeque:\n  Node head = NULL\n  Node tail = NULL\n\n  FUNCTION isEmpty():\n    RETURN (head == NULL)\n\n  FUNCTION insertFront(x):\n    newNode = Node(x)\n    newNode.next = head\n    IF NOT isEmpty() THEN:\n      head.prev = newNode\n    ELSE:\n      tail = newNode\n    head = newNode\n\n  FUNCTION insertRear(x):\n    newNode = Node(x)\n    newNode.prev = tail\n    IF NOT isEmpty() THEN:\n      tail.next = newNode\n    ELSE:\n      head = newNode\n    tail = newNode\n\n  FUNCTION deleteFront():\n    IF isEmpty() THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    element = head.value\n    head = head.next\n    IF head != NULL THEN:\n      head.prev = NULL\n    ELSE:\n      tail = NULL\n    RETURN element\n\n  FUNCTION deleteRear():\n    IF isEmpty() THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    element = tail.value\n    tail = tail.prev\n    IF tail != NULL THEN:\n      tail.next = NULL\n    ELSE:\n      head = NULL\n    RETURN element\n\n  FUNCTION getFront():\n    IF isEmpty() THEN RETURN NULL\n    RETURN head.value\n\n  FUNCTION getRear():\n    IF isEmpty() THEN RETURN NULL\n    RETURN tail.value",
+      "explanation": "This doubly linked list implementation maintains both head and tail pointers, enabling O(1) access to both ends. Each operation involves updating at most 3-4 pointers: the new/existing node's pointers and the head/tail references. No traversal is needed.",
+      "timeComplexity": "O(1) for all operations",
+      "spaceComplexity": "O(n) for n elements, plus O(1) for pointers"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Dynamic Array Deque with Geometric Resizing",
+      "description": "Deque implementation that dynamically resizes when full, achieving amortized O(1) insertion",
+      "code": "CLASS DynamicDeque:\n  ARRAY arr\n  INTEGER capacity = 4\n  INTEGER front = 0\n  INTEGER rear = 0\n  INTEGER size = 0\n\n  FUNCTION resize(newCap):\n    newArr = ARRAY(newCap)\n    FOR i = 0 TO size-1:\n      newArr[i] = arr[(front + i) % capacity]\n    arr = newArr\n    front = 0\n    rear = size\n    capacity = newCap\n\n  FUNCTION insertRear(x):\n    IF size == capacity THEN:\n      resize(2 * capacity)\n    arr[rear] = x\n    rear = (rear + 1) % capacity\n    size = size + 1\n\n  FUNCTION deleteFront():\n    IF size == 0 THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    element = arr[front]\n    front = (front + 1) % capacity\n    size = size - 1\n    IF size > 0 AND size == capacity / 4 THEN:\n      resize(capacity / 2)\n    RETURN element\n\n  FUNCTION insertFront(x):\n    IF size == capacity THEN:\n      resize(2 * capacity)\n    front = (front - 1 + capacity) % capacity\n    arr[front] = x\n    size = size + 1\n\n  FUNCTION deleteRear():\n    IF size == 0 THEN:\n      PRINT \"Underflow\"\n      RETURN NULL\n    rear = (rear - 1 + capacity) % capacity\n    element = arr[rear]\n    size = size - 1\n    IF size > 0 AND size == capacity / 4 THEN:\n      resize(capacity / 2)\n    RETURN element",
+      "explanation": "This implementation uses geometric resizing (doubling on overflow, halving when quarter-full). The amortized cost of n insertions is O(1) because each element is copied at most once during doubling phases, and the total cost of n operations sums to O(n).",
+      "timeComplexity": "Amortized O(1) for all operations",
+      "spaceComplexity": "O(n) where n is current number of elements"
+    }
+  ]
+}

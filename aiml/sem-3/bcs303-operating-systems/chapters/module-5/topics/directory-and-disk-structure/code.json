@@ -1,0 +1,45 @@
+{
+  "topicId": "directory-and-disk-structure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Create Directory Entry",
+      "description": "Algorithm to create a new entry in directory structure",
+      "code": "PROCEDURE CreateDirectoryEntry(dirName, fileInfo)\nBEGIN\n  IF directoryFull THEN\n    RETURN ERROR_NO_SPACE\n  ENDIF\n  \n  // Check for name conflicts\n  FOR each entry IN currentDirectory DO\n    IF entry.name == dirName THEN\n      RETURN ERROR_NAME_EXISTS\n    ENDIF\n  ENDFOR\n  \n  // Allocate new directory entry\n  newEntry.name = dirName\n  newEntry.attributes = fileInfo\n  newEntry.inode = allocateInode()\n  newEntry.created = currentTime()\n  \n  // Add to directory structure\n  appendToDirectory(newEntry)\n  updateDirectorySize()\n  \n  RETURN SUCCESS\nEND",
+      "explanation": "This pseudocode shows the process of creating a new directory entry, including checking for name conflicts and allocating necessary data structures.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Directory Search Implementation",
+      "description": "Linear search through directory entries",
+      "code": "class DirectoryEntry:\n    def __init__(self, name, inode, entry_type):\n        self.name = name\n        self.inode = inode\n        self.type = entry_type  # 'file' or 'directory'\n\nclass Directory:\n    def __init__(self):\n        self.entries = []\n    \n    def search_linear(self, filename):\n        \"\"\"Linear search O(n) - simple but slow\"\"\"\n        for entry in self.entries:\n            if entry.name == filename:\n                return entry\n        return None\n    \n    def search_hash(self, filename, hash_table):\n        \"\"\"Hash-based search O(1) average\"\"\"\n        index = hash(filename) % len(hash_table)\n        bucket = hash_table[index]\n        for entry in bucket:\n            if entry.name == filename:\n                return entry\n        return None\n    \n    def add_entry(self, entry):\n        self.entries.append(entry)\n\n# Example usage\ndirectory = Directory()\ndirectory.add_entry(DirectoryEntry(\"file1.txt\", 1001, \"file\"))\ndirectory.add_entry(DirectoryEntry(\"docs\", 2001, \"directory\"))\nresult = directory.search_linear(\"file1.txt\")\nprint(f\"Found: {result.name if result else 'Not found'}\")",
+      "explanation": "Demonstrates two directory search methods: linear O(n) search and hash-based O(1) average search with collision handling.",
+      "timeComplexity": "O(n) linear, O(1) hash average",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Path Resolution Algorithm",
+      "description": "Resolve absolute and relative paths in hierarchical directory",
+      "code": "#include <stdio.h>\n#include <string.h>\n\ntypedef struct DirEntry {\n    char name[256];\n    int inode;\n    struct DirEntry* parent;\n    struct DirEntry* children[100];\n    int childCount;\n} DirEntry;\n\n// Current working directory (global)\nDirEntry* currentDir;\n\n// Resolve relative path\nDirEntry* resolvePath(char* path) {\n    DirEntry* target = currentDir;\n    \n    if (path[0] == '/') {\n        // Absolute path: start from root\n        target = findRoot();\n        path++; // skip leading '/'\n    }\n    \n    char* token = strtok(path, \"/\");\n    while (token != NULL) {\n        if (strcmp(token, \".\") == 0) {\n            // Current directory - no change\n        } else if (strcmp(token, \"..\") == 0) {\n            // Parent directory\n            if (target->parent != NULL) {\n                target = target->parent;\n            }\n        } else {\n            // Find child directory\n            DirEntry* found = NULL;\n            for (int i = 0; i < target->childCount; i++) {\n                if (strcmp(target->children[i]->name, token) == 0) {\n                    found = target->children[i];\n                    break;\n                }\n            }\n            if (found == NULL) return NULL; // Not found\n            target = found;\n        }\n        token = strtok(NULL, \"/\");\n    }\n    return target;\n}\n\nint main() {\n    // Example: resolve \"./docs/../notes.txt\"\n    char path[] = \"./docs/../notes.txt\";\n    DirEntry* result = resolvePath(path);\n    return 0;\n}",
+      "explanation": "C implementation showing how to resolve both absolute and relative paths by traversing directory tree, handling \".\" (current) and \"..\" (parent) navigation.",
+      "timeComplexity": "O(d) where d is path depth",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Directory Permissions Management",
+      "description": "Implement access control for directory operations",
+      "code": "import java.util.*;\n\nenum Permission {\n    READ,    // List directory contents\n    WRITE,   // Create/delete entries\n    EXECUTE  // Access and traverse\n}\n\nenum UserType {\n    OWNER, GROUP, OTHERS\n}\n\nclass AccessControl {\n    private Map<String, Map<UserType, Set<Permission>>> acl;\n    \n    public AccessControl() {\n        this.acl = new HashMap<>();\n    }\n    \n    // Check if user has required permission\n    public boolean hasPermission(String username, String group, \n                                  String dirName, Permission required) {\n        \n        // Get user's effective permissions\n        Set<Permission> perms = getEffectivePermissions(\n            username, group, dirName\n        );\n        \n        return perms.contains(required);\n    }\n    \n    private Set<Permission> getEffectivePermissions(\n            String username, String group, String dirName) {\n        \n        Set<Permission> effective = new HashSet<>();\n        AccessInfo info = getAccessInfo(username, group);\n        \n        // Check owner permissions first\n        if (info.isOwner) {\n            effective.addAll(acl.get(dirName).get(UserType.OWNER));\n        }\n        // Then group permissions\n        else if (info.isInGroup) {\n            effective.addAll(acl.get(dirName).get(UserType.GROUP));\n        }\n        // Finally others\n        else {\n            effective.addAll(acl.get(dirName).get(UserType.OTHERS));\n        }\n        \n        return effective;\n    }\n    \n    // Set permissions for directory\n    public void setPermissions(String dirName, UserType userType, \n                               Set<Permission> permissions) {\n        acl.computeIfAbsent(dirName, k -> new HashMap<>());\n        acl.get(dirName).put(userType, permissions);\n    }\n    \n    private AccessInfo getAccessInfo(String username, String group) {\n        // Implementation would check system user database\n        return new AccessInfo();\n    }\n    \n    private static class AccessInfo {\n        boolean isOwner;\n        boolean isInGroup;\n    }\n}\n\npublic class DirectoryProtection {\n    public static void main(String[] args) {\n        AccessControl ac = new AccessControl();\n        \n        // Set up directory permissions\n        Set<Permission> ownerPerms = new HashSet<>(Arrays.asList(\n            Permission.READ, Permission.WRITE, Permission.EXECUTE\n        ));\n        Set<Permission> groupPerms = new HashSet<>(Arrays.asList(\n            Permission.READ, Permission.EXECUTE\n        ));\n        Set<Permission> otherPerms = new HashSet<>(Arrays.asList(\n            Permission.READ\n        ));\n        \n        ac.setPermissions(\"/home/docs\", UserType.OWNER, ownerPerms);\n        ac.setPermissions(\"/home/docs\", UserType.GROUP, groupPerms);\n        ac.setPermissions(\"/home/docs\", UserType.OTHERS, otherPerms);\n        \n        // Check permissions\n        boolean canWrite = ac.hasPermission(\"john\", \"users\", \n                                              \"/home/docs\", \n                                              Permission.WRITE);\n        System.out.println(\"Can write: \" + canWrite);\n    }\n}",
+      "explanation": "Java implementation of directory access control showing owner/group/others permission model similar to UNIX file permissions.",
+      "timeComplexity": "O(1) for permission check",
+      "spaceComplexity": "O(n) where n is number of access rules"
+    }
+  ]
+}

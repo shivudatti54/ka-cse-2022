@@ -1,0 +1,5 @@
+Index 0: [ ]
+Index 1: [ ]
+Index 2: [12] -> [22]
+Index 3: [3] -> [18]
+Index 4: [ ]

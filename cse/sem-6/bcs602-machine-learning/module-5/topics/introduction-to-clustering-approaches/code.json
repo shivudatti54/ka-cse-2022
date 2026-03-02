@@ -1,0 +1,43 @@
+{
+  "topicId": "introduction-to-clustering-approaches",
+  "examples": [
+    {
+      "id": "pseudocode-k-means",
+      "title": "Algorithm: K-Means Clustering",
+      "description": "A centroid-based clustering algorithm that partitions data into k clusters.",
+      "language": "pseudocode",
+      "code": "ALGORITHM K-Means\nINPUT: dataset, k (number of clusters)\nOUTPUT: cluster assignments, centroids\n\nBEGIN\n 1. Initialize k centroids randomly\n 2. Assign each data point to the closest centroid\n 3. Update centroids as the mean of all data points assigned to each cluster\n 4. Repeat steps 2-3 until convergence\nEND",
+      "explanation": "K-Means is a simple and efficient clustering algorithm, but it requires the number of clusters (k) to be specified beforehand and is sensitive to initial centroid selection."
+    },
+    {
+      "id": "python-k-means",
+      "title": "Python: K-Means Clustering",
+      "description": "Implementation of the K-Means clustering algorithm in Python.",
+      "language": "python",
+      "code": "import numpy as np\nfrom sklearn.cluster import KMeans\n\n# Generate sample data\nnp.random.seed(0)\ndata = np.random.rand(100, 2)\n\n# Create a KMeans instance with k=3 clusters\nkmeans = KMeans(n_clusters=3)\n\n# Fit the model to the data\nkmeans.fit(data)\n\n# Get the cluster assignments and centroids\nlabels = kmeans.labels_\ncentroids = kmeans.cluster_centers_\n\nprint(labels)\nprint(centroids)",
+      "explanation": "This code demonstrates how to use the scikit-learn library to perform K-Means clustering in Python.",
+      "timeComplexity": "O(nkdt)",
+      "spaceComplexity": "O(nk + kd)"
+    },
+    {
+      "id": "python-dbscan",
+      "title": "Python: DBSCAN Clustering",
+      "description": "Implementation of the DBSCAN clustering algorithm in Python.",
+      "language": "python",
+      "code": "import numpy as np\nfrom sklearn.cluster import DBSCAN\n\n# Generate sample data\nnp.random.seed(0)\ndata = np.random.rand(100, 2)\n\n# Create a DBSCAN instance with epsilon=0.5 and min_samples=10\n dbscan = DBSCAN(eps=0.5, min_samples=10)\n\n# Fit the model to the data\n dbscan.fit(data)\n\n# Get the cluster assignments\nlabels = dbscan.labels_\n\nprint(labels)",
+      "explanation": "This code demonstrates how to use the scikit-learn library to perform DBSCAN clustering in Python.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-k-means",
+      "title": "C: K-Means Clustering",
+      "description": "Implementation of the K-Means clustering algorithm in C.",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n\n// Structure to represent a data point\ntypedef struct {\n double x;\n double y;\n} Point;\n\n// Function to calculate the Euclidean distance between two points\n double distance(Point p1, Point p2) {\n return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));\n}\n\nint main() {\n // Generate sample data\n Point data[100];\n for (int i = 0; i < 100; i++) {\n data[i].x = rand() / (double) RAND_MAX;\n data[i].y = rand() / (double) RAND_MAX;\n }\n\n // Create an array to store the cluster assignments\n int labels[100];\n\n // Initialize k centroids randomly\n Point centroids[3];\n for (int i = 0; i < 3; i++) {\n centroids[i].x = rand() / (double) RAND_MAX;\n centroids[i].y = rand() / (double) RAND_MAX;\n }\n\n // Assign each data point to the closest centroid\n for (int i = 0; i < 100; i++) {\n double min_distance = INFINITY;\n int closest_centroid = -1;\n for (int j = 0; j < 3; j++) {\n double distance_ij = distance(data[i], centroids[j]);\n if (distance_ij < min_distance) {\n min_distance = distance_ij;\n closest_centroid = j;\n }\n }\n labels[i] = closest_centroid;\n }\n\n // Update centroids as the mean of all data points assigned to each cluster\n for (int i = 0; i < 3; i++) {\n double sum_x = 0;\n double sum_y = 0;\n int count = 0;\n for (int j = 0; j < 100; j++) {\n if (labels[j] == i) {\n sum_x += data[j].x;\n sum_y += data[j].y;\n count++;\n }\n }\n if (count > 0) {\n centroids[i].x = sum_x / count;\n centroids[i].y = sum_y / count;\n }\n }\n\n // Print the cluster assignments and centroids\n for (int i = 0; i < 100; i++) {\n printf(\"%d \", labels[i]);\n }\n printf(\"\\n\");\n for (int i = 0; i < 3; i++) {\n printf(\"(%f, %f) \", centroids[i].x, centroids[i].y);\n }\n printf(\"\\n\");\n\n return 0;\n}",
+      "explanation": "This code demonstrates how to implement the K-Means clustering algorithm in C.",
+      "timeComplexity": "O(nkdt)",
+      "spaceComplexity": "O(nk + kd)"
+    }
+  ]
+}

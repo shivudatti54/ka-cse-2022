@@ -1,0 +1,65 @@
+{
+  "topicId": "bgp",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cisco-ios",
+      "title": "Basic BGP Configuration",
+      "description": "Shows basic BGP neighbor configuration for eBGP and iBGP setup",
+      "code": "router bgp 100\n ! Configure eBGP neighbor\n neighbor 192.168.1.2 remote-as 200\n neighbor 192.168.1.2 description eBGP-to-AS200\n ! Configure iBGP neighbor\n neighbor 10.1.1.1 remote-as 100\n neighbor 10.1.1.1 description iBGP-peer\n ! Optional: Modify next-hop for iBGP\n neighbor 10.1.1.1 next-hop-self",
+      "explanation": "Basic BGP configuration establishes peering with neighbors. remote-as defines the AS number of the neighbor. next-hop-self changes the NEXT_HOP attribute for routes advertised to iBGP peers.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "cisco-ios",
+      "title": "BGP Route Summarization",
+      "description": "Demonstrates BGP route aggregation with and without AS_SET",
+      "code": "! Without AS_SET (simple aggregation)\nrouter bgp 100\n aggregate-address 172.16.0.0 255.255.0.0\n\n! With AS_SET (preserves path information)\nrouter bgp 100\n aggregate-address 172.16.0.0 255.255.0.0 as-set\n\n! Summary-only (suppresses specific routes)\nrouter bgp 100\n aggregate-address 172.16.0.0 255.255.0.0 summary-only",
+      "explanation": "aggregate-address creates a summary route. as-set option includes AS_PATH information from component routes, useful for loop prevention. summary-only suppresses advertising the more specific routes.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-3",
+      "language": "cisco-ios",
+      "title": "BGP Path Attribute Configuration",
+      "description": "Shows how to manipulate BGP attributes for traffic engineering",
+      "code": "! Set Local Preference for outbound traffic\nrouter bgp 100\n neighbor 10.1.1.1 route-map SET_LOCAL_PREF in\nroute-map SET_LOCAL_PREF permit 10\n set local-preference 200\n\n! Set MED for inbound traffic control\nrouter bgp 100\n neighbor 192.168.1.2 route-map SET_MED out\nroute-map SET_MED permit 10\n set metric 50\n\n! Filter routes using prefix-list\nrouter bgp 100\n neighbor 10.1.1.1 prefix-list BLOCKED_ROUTES in\nip prefix-list BLOCKED_ROUTES deny 10.0.0.0/8\nip prefix-list BLOCKED_ROUTES permit 0.0.0.0/0 le 32",
+      "explanation": "Local Preference influences outbound traffic (higher wins). MED influences inbound traffic from neighboring AS (lower wins). Prefix lists filter which routes are accepted or advertised.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-4",
+      "language": "cisco-ios",
+      "title": "BGP Route Reflection Configuration",
+      "description": "Shows configuration of route reflector and its clients",
+      "code": "! Route Reflector Server\nrouter bgp 100\n neighbor 10.1.1.1 remote-as 100\n neighbor 10.1.1.1 route-reflector-client\n neighbor 10.1.2.1 remote-as 100\n neighbor 10.1.2.1 route-reflector-client\n neighbor 10.1.3.1 remote-as 100\n ! 10.1.3.1 is non-client\n\n! On Client Router\nrouter bgp 100\n neighbor 10.0.0.1 remote-as 100\n ! Client only needs to peer with RR",
+      "explanation": "route-reflector-client defines which iBGP peers are clients. RR reflects routes from clients to all other RR peers (clients and non-clients). Non-clients require full mesh with other RR.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "BGP UPDATE Message Processing",
+      "description": "Algorithm for processing received BGP UPDATE messages",
+      "code": "PROCESS_UPDATE(update_msg):\n 1. FOR each withdrawn_route IN update_msg.withdrawn_routes:\n Remove route from BGP table\n Mark as withdrawn\n\n 2. FOR each path_attribute IN update_msg.path_attributes:\n Parse and store attributes\n (AS_PATH, NEXT_HOP, LOCAL_PREF, MED, etc.)\n\n 3. IF own_AS IN path_attribute.AS_PATH:\n DISCARD route (loop detected)\n RETURN\n\n 4. Add own_AS to beginning of AS_PATH\n\n 5. IF route already exists in BGP table:\n IF new_route better than existing (path selection):\n Replace existing route\n Advertise to all BGP peers\n ELSE:\n Keep existing route\n ELSE:\n Add new route to BGP table\n Advertise to all BGP peers\n\n 6. UPDATE routing decision process",
+      "explanation": "This pseudocode shows how BGP processes incoming UPDATE messages, including loop detection using AS_PATH, path comparison, and route advertisement to peers.",
+      "timeComplexity": "O(n) where n is number of prefixes",
+      "spaceComplexity": "O(n) for BGP table"
+    },
+    {
+      "id": "code-6",
+      "language": "cisco-ios",
+      "title": "Route Flap Damping Configuration",
+      "description": "Shows configuration to suppress unstable BGP routes",
+      "code": "router bgp 100\n ! Enable route flap damping\n bgp dampening\n\n! Custom damping parameters\nbgp dampening 15 750 2000 60\n ! half-life: 15 min\n ! reuse: 750\n ! suppress: 2000\n ! max-suppress-time: 60 min\n\n! View dampened routes\nshow ip bgp dampened-paths\n\n! Clear damping for specific route\nclear ip bgp 10.0.0.0 dampening",
+      "explanation": "Route flap damping suppresses unstable routes. When a route flaps, penalties accumulate. Once the penalty exceeds suppress limit, route is dampened. Penalty decays over time based on half-life.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

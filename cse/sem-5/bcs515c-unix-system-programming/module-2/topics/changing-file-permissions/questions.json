@@ -1,0 +1,174 @@
+{
+  "topicId": "changing-file-permissions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the three categories of permissions in Linux and what each category controls.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Owner/User permissions - controls access for the file owner",
+        "Group permissions - controls access for members of the file's group",
+        "Others permissions - controls access for all other users",
+        "Each category can have Read, Write, and Execute permissions"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between symbolic mode and numeric mode in the chmod command with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Symbolic mode uses letters: u (owner), g (group), o (others), a (all) with operators (+, -, =)",
+        "Numeric mode uses octal numbers: 4=read, 2=write, 1=execute",
+        "Example symbolic: chmod u+x file.sh (adds execute for owner)",
+        "Example numeric: chmod 755 file.sh (sets rwxr-xr-x)",
+        "Symbolic is more precise, numeric is more concise"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is umask? How is it used to calculate default permissions for files and directories?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "umask (User File Creation Mode Mask) is a value that determines default permissions",
+        "Default file permission: 666 (rw-rw-rw-) minus umask",
+        "Default directory permission: 777 (rwxrwxrwx) minus umask",
+        "Example with umask 022: Files get 644, Directories get 755",
+        "umask can be changed using umask command"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the three special permissions in Linux: SetUID, SetGID, and Sticky Bit with their numeric values and use cases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SetUID (4000): Makes executable run with owner's privileges, shown as 's' in owner position",
+        "SetGID (2000): Makes executable run with group's privileges OR directories inherit group, shown as 's' in group position",
+        "Sticky Bit (1000): On directories, only owner can delete files, shown as 't' in others position",
+        "Use cases: SetUID for passwd command, SetGID for shared directories, Sticky Bit for /tmp",
+        "Applied like: chmod 4755 file (SetUID + rwxr-xr-x)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the difference between chmod +x and chmod 755 commands.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "chmod +x adds execute permission to owner, group, and others (makes it a=rx)",
+        "chmod 755 explicitly sets owner=rwx (7), group=rx (5), others=rx (5)",
+        "chmod +x is equivalent to chmod a+x",
+        "chmod 755 gives owner more permissions (write) than +x",
+        "Use +x for making scripts executable, use 755 for precise control"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How would you secure a sensitive file containing passwords? What permissions would you set and why?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Set permissions to 600 (rw-------) using: chmod 600 filename",
+        "This gives owner read and write (6), group and others get no permissions (0)",
+        "Only the owner can access the file",
+        "Prevents other users from reading sensitive data",
+        "For extra security, consider file encryption in addition to permissions"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the output of ls -l command with respect to file permissions. What does -rw-r--r-- indicate?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "First character indicates file type (- for regular file, d for directory)",
+        "Next 9 characters show permissions in 3 groups of 3",
+        "rw- = owner has read and write (not execute)",
+        "r-- = group has read only",
+        "r-- = others have read only",
+        "Total numeric value: 6-4-4 = 644"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the file permission system in Linux/Unix in detail. Discuss the types of permissions, representation methods, and how to modify them with chmod command.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Three types: Owner, Group, Others - each can have Read, Write, Execute",
+        "Two representation methods: Symbolic (rwx) and Numeric (octal 0-7)",
+        "chmod command: chmod [options] mode file",
+        "Symbolic mode: u/g/o/a +/- r/w/x, examples: chmod u+x, chmod go-rw",
+        "Numeric mode: 4=read, 2=write, 1=execute, combine by adding",
+        "Common permissions: 644 (files), 755 (scripts/programs), 600 (private), 700 (private dir)",
+        "Special permissions: SetUID(4000), SetGID(2000), Sticky Bit(1000)",
+        "Recursive changes: chmod -R",
+        "Practical examples and security implications"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe special permissions (SetUID, SetGID, Sticky Bit) in detail with practical examples and security implications.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "SetUID (4000): When set on executable, process runs with owner's UID, example: /usr/bin/passwd has -rwSr-xr-x",
+        "Security concern: Can be exploited if vulnerabilities exist",
+        "SetGID (2000): On executables, runs with group's GID; on directories, new files inherit directory's group",
+        "Sticky Bit (1000): On directories like /tmp, users can only delete their own files",
+        "How to set: chmod 4755 (SetUID), chmod 2755 (SetGID), chmod 1755 (Sticky Bit)",
+        "Visual representation: 's' or 'S' for SetUID/SetGID, 't' or 'T' for Sticky Bit",
+        "Lowercase means execute permission exists, uppercase means it doesn't",
+        "Security best practices: Avoid SetUID on unknown programs, audit regularly"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "A system administrator needs to set up a shared directory where multiple users can create files but only the file owner can delete their own files. Explain how to achieve this with appropriate permissions.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create directory with appropriate group ownership",
+        "Set SetGID (chmod 2770 dir) so new files inherit the group",
+        "Add all users to the shared group",
+        "Set Sticky Bit (chmod 1770 dir) to prevent users from deleting others' files",
+        "Final permissions: 3770 or 1770 depending on requirements",
+        "Example: mkdir /shared, chgrp developers /shared, chmod 2775 /shared",
+        "Verify with ls -ld /shared showing rwsrwsrwt",
+        "Explain each component's purpose in detail",
+        "Common use cases: project directories, team collaboration folders"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain umask in detail. How does it work? Calculate the default permissions for files and directories when umask is set to 027.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "umask (User File Creation Mode Mask) is a 4-digit octal number",
+        "It SUBTRACTS from default permissions to determine new file/directory permissions",
+        "Default permissions: Files = 666 (rw-rw-rw-), Directories = 777 (rwxrwxrwx)",
+        "Calculation for umask 027: Files: 666-027=640 (rw-r-----), Directories: 777-027=750 (rwxr-x---)",
+        "umask can be viewed with 'umask' command and set with 'umask 027'",
+        "First digit in umask (0 here) affects special permissions",
+        "Common umask values: 022 (default), 077 (maximum privacy), 002 (shared systems)",
+        "umask is inherited by child processes",
+        "Environment variable: can be set in ~/.bashrc or /etc/profile"
+      ]
+    }
+  ]
+}

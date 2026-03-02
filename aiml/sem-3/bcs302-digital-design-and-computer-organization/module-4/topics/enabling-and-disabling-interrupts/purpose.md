@@ -1,0 +1,2 @@
+# Enabling And Disabling Interrupts
+This chapter enables students to understand the theoretical foundations and practical implementation of interrupt enable/disable mechanisms in computer systems. Students will learn to analyze race conditions in concurrent systems, implement atomic critical sections using interrupt masking, evaluate trade-offs between responsiveness and correctness, and apply best practices for interrupt management in operating systems and embedded systems.

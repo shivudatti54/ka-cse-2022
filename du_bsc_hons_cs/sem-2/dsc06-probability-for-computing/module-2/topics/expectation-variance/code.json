@@ -1,0 +1,45 @@
+{
+  "topicId": "expectation-variance",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Calculate Expected Value and Variance",
+      "description": "Functions to compute expectation and variance from a discrete distribution",
+      "code": "import random\n\ndef expected_value(values, probabilities):\n    \"\"\"Calculate E[X] = \u03a3 x\u00b7P(X=x)\"\"\"\n    return sum(v * p for v, p in zip(values, probabilities))\n\ndef variance(values, probabilities):\n    \"\"\"Calculate Var(X) = E[X\u00b2] - (E[X])\u00b2\"\"\"\n    mean = expected_value(values, probabilities)\n    # E[X\u00b2]\n    mean_square = sum(v**2 * p for v, p in zip(values, probabilities))\n    # Var(X) = E[X\u00b2] - (E[X])\u00b2\n    return mean_square - mean**2\n\n# Example: Rolling a fair die\nvalues = [1, 2, 3, 4, 5, 6]\nprobabilities = [1/6] * 6\n\nprint(\"Expected Value:\", expected_value(values, probabilities))  # 3.5\nprint(\"Variance:\", variance(values, probabilities))  # 2.92",
+      "explanation": "Computes expectation and variance using the formulas E[X] = \u03a3x\u00b7P(x) and Var(X) = E[X\u00b2] - (E[X])\u00b2. Uses the direct method for discrete distributions.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Binomial Distribution Calculator",
+      "description": "Calculate mean, variance, and probabilities for binomial distribution",
+      "code": "import math\n\ndef binomial_probability(n, k, p):\n    \"\"\"P(X=k) = C(n,k) * p^k * (1-p)^(n-k)\"\"\"\n    return math.comb(n, k) * (p**k) * ((1-p)**(n-k))\n\ndef binomial_mean(n, p):\n    \"\"\"E[X] = n * p\"\"\"\n    return n * p\n\ndef binomial_variance(n, p):\n    \"\"\"Var(X) = n * p * (1-p)\"\"\"\n    return n * p * (1-p)\n\ndef binomial_cdf(n, k, p):\n    \"\"\"P(X <= k)\"\"\"\n    return sum(binomial_probability(n, i, p) for i in range(k+1))\n\n# Example: 20 trials, probability 0.3\nn, p = 20, 0.3\nprint(f\"Mean: {binomial_mean(n, p)}\")  # 6.0\nprint(f\"Variance: {binomial_variance(n, p)}\")  # 4.2\nprint(f\"P(X=6): {binomial_probability(n, 6, p):.4f}\")  # ~0.1916\nprint(f\"P(X<=5): {binomial_cdf(n, 5, p):.4f}\")  # ~0.2375",
+      "explanation": "Implements binomial distribution functions including probability mass function, mean, variance, and cumulative distribution. Useful for analyzing algorithms with success/failure outcomes.",
+      "timeComplexity": "O(k) for CDF, O(1) for others",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Law of Total Expectation Simulation",
+      "description": "Demonstrate E[E[X|Y]] = E[X] using simulation",
+      "code": "import random\nimport math\n\ndef simulate_total_expectation():\n    \"\"\"\n    Example: Y = number of dice rolls (1-6)\n    X = sum of Y dice rolls\n    \"\"\"\n    total_unconditional = []\n    total_conditional = []\n    \n    for _ in range(10000):\n        # First roll: determines number of dice to roll\n        y = random.randint(1, 6)  \n        # Roll y dice and sum them\n        x = sum(random.randint(1, 6) for _ in range(y))\n        total_unconditional.append(x)\n        \n        # For conditional expectation E[X|Y=y]\n        # Simulated: average when Y=y\n    \n    # Compute unconditional expectation\n    E_X = sum(total_unconditional) / len(total_unconditional)\n    \n    # Compute conditional expectations by grouping\n    conditional_means = {}\n    trials = 5000\n    for _ in range(trials):\n        y = random.randint(1, 6)\n        x = sum(random.randint(1, 6) for _ in range(y))\n        if y not in conditional_means:\n            conditional_means[y] = []\n        conditional_means[y].append(x)\n    \n    # E[E[X|Y]]\n    E_E_X_given_Y = sum(sum(cond)/len(cond) * len(cond)/trials \n                        for cond in conditional_means.values())\n    \n    print(f\"E[X] (unconditional): {E_X:.2f}\")\n    print(f\"E[E[X|Y]]: {E_E_X_given_Y:.2f}\")\n    print(\"They should be approximately equal!\")\n\nsimulate_total_expectation()",
+      "explanation": "Simulates the Law of Total Expectation by generating random Y (number of dice), then X (sum of Y dice). Shows that averaging conditional expectations gives the unconditional expectation.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Variance Calculation for Running Time Analysis",
+      "description": "Calculate mean and variance of algorithm running times",
+      "code": "#include <stdio.h>\n#include <math.h>\n\ndouble calculate_mean(double times[], int n) {\n    double sum = 0;\n    for (int i = 0; i < n; i++) {\n        sum += times[i];\n    }\n    return sum / n;\n}\n\ndouble calculate_variance(double times[], int n) {\n    double mean = calculate_mean(times, n);\n    double sum_squared_diff = 0;\n    \n    for (int i = 0; i < n; i++) {\n        sum_squared_diff += pow(times[i] - mean, 2);\n    }\n    return sum_squared_diff / n;  // Population variance\n}\n\ndouble calculate_std_dev(double variance) {\n    return sqrt(variance);\n}\n\nint main() {\n    // Sample running times (in ms) from algorithm runs\n    double times[] = {95, 102, 98, 105, 100, 97, 101, 103, 99, 104};\n    int n = sizeof(times) / sizeof(times[0]);\n    \n    double mean = calculate_mean(times, n);\n    double variance = calculate_variance(times, n);\n    double std_dev = calculate_std_dev(variance);\n    \n    printf(\"Algorithm Running Time Analysis\\n\");\n    printf(\"Mean: %.2f ms\\n\", mean);\n    printf(\"Variance: %.2f ms\u00b2\\n\", variance);\n    printf(\"Standard Deviation: %.2f ms\\n\", std_dev);\n    \n    return 0;\n}",
+      "explanation": "C program to calculate mean, variance, and standard deviation of algorithm running times. Essential for analyzing randomized algorithm performance.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "topicId": "systems-vary",
+  "visuals": [
+    {
+      "id": "systems-vary-svg",
+      "title": "System V IPC Architecture and Communication Flow",
+      "description": "Animated diagram showing the three System V IPC mechanisms (Message Queues, Semaphores, Shared Memory), their kernel-managed identifiers, permission structures, process communication flow, and producer-consumer synchronization pattern.",
+      "type": "animated-svg",
+      "file": "assets/systems-vary.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "System V IPC Creation and Access Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Process generates key using ftok()"
+          },
+          {
+            "id": "n2",
+            "label": "Call xxxget() with key and flags"
+          },
+          {
+            "id": "n3",
+            "label": "Kernel creates/returns IPC object"
+          },
+          {
+            "id": "n4",
+            "label": "Process performs operations"
+          },
+          {
+            "id": "n5",
+            "label": "Other processes access with same key"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4"
+          },
+          {
+            "from": "n3",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Shared Memory with Semaphore Synchronization",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Process A creates shared memory"
+          },
+          {
+            "id": "n2",
+            "label": "Process A creates semaphore"
+          },
+          {
+            "id": "n3",
+            "label": "Process B attaches to shared memory"
+          },
+          {
+            "id": "n4",
+            "label": "Process A locks semaphore (P operation)"
+          },
+          {
+            "id": "n5",
+            "label": "Process A writes to shared memory"
+          },
+          {
+            "id": "n6",
+            "label": "Process A unlocks semaphore (V operation)"
+          },
+          {
+            "id": "n7",
+            "label": "Process B locks semaphore (P operation)"
+          },
+          {
+            "id": "n8",
+            "label": "Process B reads from shared memory"
+          },
+          {
+            "id": "n9",
+            "label": "Process B unlocks semaphore (V operation)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n6"
+          },
+          {
+            "from": "n6",
+            "to": "n7"
+          },
+          {
+            "from": "n7",
+            "to": "n8"
+          },
+          {
+            "from": "n8",
+            "to": "n9"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "IPC Mechanism Comparison",
+      "type": "comparison",
+      "content": {
+        "categories": ["Message Queues", "Semaphores", "Shared Memory", "Pipes/FIFOs"],
+        "attributes": [
+          {
+            "name": "Communication Type",
+            "values": ["Structured messages", "Synchronization", "Raw memory access", "Byte stream"]
+          },
+          {
+            "name": "Speed",
+            "values": ["Medium", "Fast", "Very fast", "Slow to medium"]
+          },
+          {
+            "name": "Persistence",
+            "values": ["Until removed", "Until removed", "Until removed", "Process lifetime"]
+          },
+          {
+            "name": "Complexity",
+            "values": ["Medium", "High", "Medium", "Low"]
+          }
+        ]
+      }
+    }
+  ]
+}

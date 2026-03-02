@@ -1,0 +1,105 @@
+{
+  "topicId": "flow-control",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between flow control and congestion control in TCP/IP networks.",
+      "keyPoints": [
+        "Flow control manages data rate between specific sender-receiver pair using receiver window size",
+        "Congestion control manages data rate to prevent network overload",
+        "Flow control uses TCP header's window size field to advertise available buffer space",
+        "Congestion control uses algorithms like slow start, congestion avoidance, and fast retransmit",
+        "Both mechanisms limit the sender's transmission rate but at different levels (end-to-end vs network-wide)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Calculate the efficiency of a Stop-and-Wait ARQ system with a frame size of 1000 bits and a one-way propagation delay of 25 ms on a 1 Mbps link.",
+      "keyPoints": [
+        "Total time for one cycle = Frame transmission time + 2 \u00d7 Propagation delay + Processing time",
+        "Frame transmission time = 1000 bits / 1 Mbps = 1 ms",
+        "Round trip delay = 2 \u00d7 25 ms = 50 ms",
+        "Total cycle time = 1 + 50 = 51 ms",
+        "Efficiency = Transmission time / Total cycle time = 1/51 \u2248 1.96%",
+        "Shows why Stop-and-Wait is inefficient for high-speed or high-latency networks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the working of the Sliding Window Protocol with a sender window size of 5.",
+      "keyPoints": [
+        "Sender can transmit up to 5 frames without receiving acknowledgment",
+        "Each frame is assigned a sequence number",
+        "Window slides forward (increments) when ACK is received",
+        "Window establishes a pipeline of unacknowledged frames in transit",
+        "Increases link utilization compared to Stop-and-Wait",
+        "Receiver maintains own window to track expected frames"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the significance of the TCP Window Scale option?",
+      "key": "Explain how TCP Window Scaling extends the window size field and why it is needed.",
+      "keyPoints": [
+        "Original TCP header has 16-bit window field, maximum 65,535 bytes",
+        "With high bandwidth-delay products (like modern networks), this limits throughput",
+        "Window Scale option allows window size to be shifted left by specified bits",
+        "Can advertise windows up to 1 GB (65,535 \u00d7 2^14)",
+        "Enabled during TCP 3-way handshake via scale factor option",
+        "Essential for utilizing full capacity of high-speed networks like 10 Gbps links"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Compare Go-Back-N ARQ and Selective Repeat ARQ protocols, highlighting their advantages and disadvantages.",
+      "keyPoints": [
+        "Go-Back-N: Retransmits all frames after lost frame; simpler receiver, more bandwidth waste on retransmission",
+        "Selective Repeat: Retransmits only lost frame; complex receiver (buffering out-of-order), efficient bandwidth usage",
+        "Go-Back-N suitable for low error rates; Selective Repeat for high error rates",
+        "Go-Back-N requires fewer sequence number bits; Selective Repeat needs more to avoid ambiguity",
+        "Selective Repeat window size limited to 2^(n-1); Go-Back-N limited to 2^n - 1"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "A TCP connection has a receiver window (rwnd) of 64 KB and the current congestion window (cwnd) is 32 KB. The round trip time is 100 ms. Calculate: (a) What is the effective window size? (b) What is the maximum throughput achievable? (c) If the RTT increases to 200 ms due to network congestion, what happens to throughput?",
+      "keyPoints": [
+        "(a) Effective window = min(rwnd, cwnd) = min(64KB, 32KB) = 32 KB",
+        "(b) Throughput = Window size / RTT = 32 KB / 100 ms = 32 \u00d7 1024 \u00d7 8 / 0.1 = 2,621,440 bps \u2248 2.62 Mbps",
+        "(c) With RTT = 200 ms: Throughput = 32 KB / 200 ms = 32 \u00d7 1024 \u00d7 8 / 0.2 = 1,310,720 bps \u2248 1.31 Mbps",
+        "Throughput is inversely proportional to RTT",
+        "This demonstrates why latency affects throughput significantly",
+        "In practice, TCP would trigger congestion control and reduce cwnd further"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a flow control mechanism for a wireless network with high error rates and variable latency. Justify your design choices.",
+      "keyPoints": [
+        "Need Selective Repeat ARQ rather than Go-Back-N due to high error rates",
+        "Variable latency requires adaptive timeout calculations using exponential weighted moving average",
+        "Smaller initial window size to prevent buffer overflow during bad conditions",
+        "Implement positive acknowledgments with individual sequence numbers",
+        "Add push flag for urgent data to bypass normal flow control",
+        "Consider using smaller window sizes to reduce overhead from retransmissions",
+        "Implement channel estimation and adaptive modulation to improve reliability",
+        "May need to incorporate explicit congestion notification (ECN)",
+        "Justification: High error rates make Go-Back-N inefficient; variable latency makes fixed timeouts unreliable"
+      ],
+      "marks": 10
+    }
+  ]
+}

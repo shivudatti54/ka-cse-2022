@@ -1,0 +1,45 @@
+{
+  "topicId": "views-and-odbc",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "SQL",
+      "title": "Creating Various Types of Views",
+      "description": "SQL statements demonstrating creation of simple, complex, and materialized views",
+      "code": "-- Simple View (Single Table)\nCREATE VIEW EmployeeDetails AS\nSELECT EmployeeID, FirstName, LastName, Department\nFROM Employees\nWHERE Department = 'IT';\n\n-- Complex View with Aggregate\nCREATE VIEW DeptSalarySummary AS\nSELECT Department, \n       COUNT(*) AS TotalEmployees,\n       SUM(Salary) AS TotalSalary,\n       AVG(Salary) AS AvgSalary\nFROM Employees\nGROUP BY Department;\n\n-- Complex View with JOIN\nCREATE VIEW EmpDeptView AS\nSELECT e.EmployeeID, e.FirstName, d.DepartmentName\nFROM Employees e\nJOIN Departments d ON e.DeptID = d.DeptID;\n\n-- Materialized View (Oracle Syntax)\nCREATE MATERIALIZED VIEW EmpMonthlyReport\nBUILD IMMEDIATE\nREFRESH COMPLETE START WITH SYSDATE\nNEXT SYSDATE + INTERVAL '1' MONTH\nAS SELECT Department, COUNT(*) AS EmpCount\nFROM Employees GROUP BY Department;",
+      "explanation": "These examples show different view creation patterns: simple views filter data, complex views use aggregates or JOINs, and materialized views store results physically with refresh options.",
+      "timeComplexity": "N/A (DDL)",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "C",
+      "title": "ODBC Connection Example in C",
+      "description": "Basic ODBC API functions for establishing database connection",
+      "code": "#include <sql.h>\n#include <sqlext.h>\n\nSQLHENV henv;      // Environment handle\nSQLHDBC hdbc;      // Connection handle\nSQLRETURN retcode;\n\n// Step 1: Allocate Environment Handle\nSQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);\nSQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, \n              (void*)SQL_OV_ODBC3, 0);\n\n// Step 2: Allocate Connection Handle\nSQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);\n\n// Step 3: Connect to Data Source\n// Method A: Using SQLConnect\nretcode = SQLConnect(hdbc,\n    (SQLCHAR*)\"MyDataSource\", SQL_NTS,\n    (SQLCHAR*)\"username\", SQL_NTS,\n    (SQLCHAR*)\"password\", SQL_NTS);\n\n// Method B: Using SQLDriverConnect (with dialog)\nretcode = SQLDriverConnect(hdbc, NULL,\n    (SQLCHAR*)\"DSN=MyDataSource;UID=username;PWD=password;\",\n    SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);\n\n// Step 4: Use connected database...\n\n// Step 5: Disconnect and Free Handles\nSQLDisconnect(hdbc);\nSQLFreeHandle(SQL_HANDLE_DBC, hdbc);\nSQLFreeHandle(SQL_HANDLE_ENV, henv);",
+      "explanation": "This demonstrates ODBC API usage in C: allocating handles, setting environment attributes, establishing connection via SQLConnect or SQLDriverConnect, and proper cleanup of resources.",
+      "timeComplexity": "N/A (Connection)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Python ODBC Connection using pyodbc",
+      "description": "Python example for connecting to databases using ODBC",
+      "code": "import pyodbc\n\n# Connection string components\nserver = 'localhost'\ndatabase = 'SampleDB'\nusername = 'sa'\npassword = 'password'\n\n# Method 1: Using DSN\nconn = pyodbc.connect('DSN=MyDataSource;UID=username;PWD=password')\n\n# Method 2: Using connection string (without DSN)\nconn = pyodbc.connect(\n    f'DRIVER={{ODBC Driver 17 for SQL Server}};\n     SERVER={server};\n     DATABASE={database};\n     UID={username};\n     PWD={password}'\n)\n\n# Create cursor and execute query\ncursor = conn.cursor()\ncursor.execute(\"SELECT * FROM Employees\")\n\n# Fetch and display results\nfor row in cursor.fetchall():\n    print(row)\n\n# Execute with parameters\ncursor.execute(\"SELECT * FROM Employees WHERE Department = ?\", ('IT',))\nresults = cursor.fetchall()\n\n# Close connection\nconn.close()\n\n# Using context manager (auto-close)\nwith pyodbc.connect(conn_string) as conn:\n    with conn.cursor() as cursor:\n        cursor.execute(\"SELECT COUNT(*) FROM Employees\")\n        count = cursor.fetchone()[0]\n        print(f\"Total Employees: {count}\")",
+      "explanation": "Python pyodbc library provides simple ODBC connectivity. The example shows DSN-based and direct connection strings, query execution, parameterization for security, and proper resource management using context managers.",
+      "timeComplexity": "O(n) for query execution",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "SQL",
+      "title": "View Operations and Modifications",
+      "description": "SQL statements for viewing, modifying, and dropping views",
+      "code": "-- Query a view (same as querying a table)\nSELECT * FROM EmployeeDetails;\nSELECT * FROM DeptSalarySummary;\n\n-- Check if view exists and view definition\nSELECT * FROM information_schema.VIEWS \nWHERE TABLE_NAME = 'EmployeeDetails';\n\n-- Modify view (recreate with new definition)\nCREATE OR REPLACE VIEW EmployeeDetails AS\nSELECT EmployeeID, FirstName, LastName, Department, Salary\nFROM Employees\nWHERE Department IN ('IT', 'HR');\n\n-- Add WITH CHECK OPTION to prevent violations\nCREATE VIEW ITEmployees AS\nSELECT * FROM Employees WHERE Department = 'IT'\nWITH CHECK OPTION;\n\n-- Attempting to insert violating row will fail\nINSERT INTO ITEmployees VALUES (101, 'John', 'Doe', 'Sales', 60000);\n-- Error: The attempted insert or update failed\n\n-- Drop a view\nDROP VIEW EmployeeDetails;\nDROP VIEW IF EXISTS DeptSalarySummary; -- PostgreSQL/MySQL 8.0+\n\n-- Updatable view example\nCREATE VIEW ITStaff AS\nSELECT EmployeeID, FirstName, Salary\nFROM Employees\nWHERE Department = 'IT';\n\n-- This INSERT works through updatable view\nINSERT INTO ITStaff VALUES (999, 'NewEmp', 55000);\n-- Equivalent to: INSERT INTO Employees VALUES (999, 'NewEmp', NULL, 55000, 'IT');",
+      "explanation": "This demonstrates view operations: querying views, checking definitions, recreating views with CREATE OR REPLACE, using WITH CHECK OPTION for data integrity, and dropping views. Shows how updatable views allow DML operations.",
+      "timeComplexity": "N/A (DDL/DML)",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "topicId": "when-constructors-and-destructors-are-executed",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain when constructors and destructors are called for a local object inside a function.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Constructor called when function is entered and local object declaration is reached",
+        "Destructor called when function exits or block ends (object goes out of scope)",
+        "This follows LIFO (Last In First Out) order for multiple local objects"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the order of constructor and destructor execution in single inheritance? Explain with reason.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Constructor order: Base class constructor executes first, then derived class constructor",
+        "Destructor order: Derived class destructor executes first, then base class destructor",
+        "Reason: Base must be fully initialized before derived uses it; derived must clean up before base resources are released"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the need for virtual destructors in C++ with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Virtual destructor needed when deleting derived class object through base class pointer",
+        "Without virtual: only base destructor called causing resource leak in derived class",
+        "With virtual: both derived and base destructors called in correct order",
+        "Example: Base* ptr = new Derived(); delete ptr; // needs virtual destructor"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "When and in what order are global objects and static local objects constructed and destructed?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Global objects: constructed before main() starts, destructed after main() ends",
+        "Static local objects: constructed on first function call, destructed when main() terminates",
+        "Construction order follows program flow and translation unit order for globals",
+        "Destructors for both run in reverse order of construction (for globals in same translation unit)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain when copy constructor is invoked with three scenarios.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Scenario 1: Passing object by value to a function - temporary copy created",
+        "Scenario 2: Returning object by value from function - copy returned to caller",
+        "Scenario 3: Explicitly initializing one object with another: MyClass obj2 = obj1;",
+        "Scenario 4: Object copied into a container (e.g., vector.push_back(obj))"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the order of construction for member objects in a class? Why is the order important?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Member objects are constructed in the order they are declared in the class",
+        "NOT in the order of initializer list - compiler ignores initializer list order for construction",
+        "Destructors run in reverse order of construction",
+        "Order is important to ensure dependencies between members are properly initialized"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What happens to objects when dynamically allocated with 'new' but never deleted? Explain the consequences.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Object constructor is called at allocation but destructor is NEVER called without delete",
+        "Results in memory leak - allocated memory not returned to system",
+        "Other resources (file handles, network connections) also not released",
+        "Program may run out of memory or resources if many objects leak"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Predict the output of the following program and explain the order of constructor/destructor calls:\n\n#include <iostream>\nusing namespace std;\n\nclass A {\npublic:\n A() { cout << \"A constructed\\n\"; }\n ~A() { cout << \"A destroyed\\n\"; }\n};\n\nclass B : public A {\npublic:\n B() { cout << \"B constructed\\n\"; }\n ~B() { cout << \"B destroyed\\n\"; }\n};\n\nclass C : public B {\npublic:\n C() { cout << \"C constructed\\n\"; }\n ~C() { cout << \"C destroyed\\n\"; }\n};\n\nint main() {\n C obj;\n return 0;\n}",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Output order of construction: A constructed → B constructed → C constructed",
+        "Output order of destruction: C destroyed → B destroyed → A destroyed",
+        "Explanation: Constructors run from most base to most derived (A→B→C)",
+        "Destructors run in reverse order (C→B→A)",
+        "This follows the principle: build upward, tear downward",
+        "For dynamic allocation with base pointer, virtual destructor would be needed for proper cleanup"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C++ program demonstrating the difference between using 'delete' vs 'delete[]' for arrays of objects. Explain when destructors are called in each case.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Program shows class with constructor and destructor",
+        "For new[] allocation, using delete causes undefined behavior - may not call all destructors",
+        "Using delete[] correctly calls destructors for all array elements in reverse order",
+        "Demonstrate: MyClass* arr = new MyClass[5]; delete[] arr; // calls all 5 destructors",
+        "Contrast with: MyClass* obj = new MyClass(); delete obj; // calls single destructor",
+        "Emphasize rule: always match new with delete, new[] with delete[]"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain all scenarios when a copy constructor is invoked. Write a program demonstrating at least three scenarios.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Scenario 1: Passing object by value to function - copy created for parameter",
+        "Scenario 2: Returning object by value from function - copy created for return value",
+        "Scenario 3: Explicit initialization: Class obj2 = obj1; or Class obj2(obj1);",
+        "Scenario 4: Inserting object into container (vector, list, etc.)",
+        "Scenario 5: When object is thrown/caught by value in exception handling",
+        "Program demonstrates all scenarios with output showing constructor and copy constructor calls"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Consider a class hierarchy: class Animal { }, class Dog : public Animal { }. Write a program that demonstrates why virtual destructor is essential when deleting derived object through base pointer. Show both correct and incorrect approaches.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Incorrect: Animal* ptr = new Dog(); delete ptr; // only Animal destructor called if not virtual",
+        "Correct: Make Animal destructor virtual: virtual ~Animal() { }",
+        "Then delete ptr; calls Dog destructor first, then Animal destructor",
+        "Explain that without virtual destructor, derived class resources (like Dog-specific data) are leaked",
+        "Program output should show which destructors are called in each case",
+        "Conclusion: Always make destructor virtual if class is meant to be base class with polymorphism"
+      ]
+    }
+  ]
+}

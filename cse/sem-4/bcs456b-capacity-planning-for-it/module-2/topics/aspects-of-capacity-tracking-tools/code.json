@@ -1,0 +1,26 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Basic Threshold Check Algorithm",
+    "description": "Algorithm demonstrating how capacity tracking tools check thresholds and generate alerts",
+    "code": "PROCEDURE CheckThreshold(metricValue, threshold, metricName)\nBEGIN\n IF metricValue > threshold THEN\n alertLevel = CalculateAlertLevel(metricValue, threshold)\n alertMessage = \"Alert: \" + metricName + \" exceeded threshold\"\n alertMessage = alertMessage + \". Current: \" + metricValue + \", Threshold: \" + threshold\n GenerateAlert(alertLevel, alertMessage)\n LogAlert(alertMessage, metricName, metricValue, threshold)\n RETURN TRUE\n ELSE\n RETURN FALSE\n ENDIF\nEND PROCEDURE\n\nPROCEDURE CalculateAlertLevel(current, threshold)\nBEGIN\n ratio = current / threshold\n IF ratio >= 1.5 THEN\n RETURN \"CRITICAL\"\n ELSE IF ratio >= 1.2 THEN\n RETURN \"WARNING\"\n ELSE\n RETURN \"INFO\"\n ENDIF\nEND PROCEDURE",
+    "explanation": "This pseudocode shows the core logic of threshold-based alerting in capacity tracking tools. The algorithm compares current metric values against predefined thresholds and generates alerts with appropriate severity levels.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Data Aggregation for Historical Analysis",
+    "description": "Algorithm for aggregating raw capacity data into time-based summaries",
+    "code": "PROCEDURE AggregateCapacityData(rawData, timeInterval)\nBEGIN\n aggregatedData = EmptyMap\n FOR EACH dataPoint IN rawData DO\n timeKey = RoundToInterval(dataPoint.timestamp, timeInterval)\n IF timeKey NOT IN aggregatedData THEN\n aggregatedData[timeKey] = NewAggregationBucket()\n ENDIF\n aggregatedData[timeKey].AddMetric(dataPoint)\n END FOR\n \n summary = EmptyList\n FOR EACH bucket IN aggregatedData DO\n summaryRecord = NewRecord()\n summaryRecord.timestamp = bucket.startTime\n summaryRecord.avgCPU = bucket.Average(\"cpu_usage\")\n summaryRecord.maxCPU = bucket.Maximum(\"cpu_usage\")\n summaryRecord.avgMemory = bucket.Average(\"memory_usage\")\n summaryRecord.maxMemory = bucket.Maximum(\"memory_usage\")\n summaryRecord.totalDiskIO = bucket.Sum(\"disk_io\")\n summaryRecord.totalNetwork = bucket.Sum(\"network_throughput\")\n summary.Add(summaryRecord)\n END FOR\n \n RETURN summary\nEND PROCEDURE",
+    "explanation": "This algorithm demonstrates how capacity tracking tools aggregate raw metric data into summarized records for efficient storage and historical analysis, computing averages, maximums, and totals.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(k)"
+    }
+  }
+]

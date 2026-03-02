@@ -1,0 +1,35 @@
+{
+  "topicId": "daemon-processes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic Daemon Creation",
+      "description": "Complete C program demonstrating daemon process creation with proper steps",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n\nvoid create_daemon() {\n pid_t pid;\n \n // Step 1: Fork to create child process\n pid = fork();\n if (pid < 0) {\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n // Parent exits\n exit(EXIT_SUCCESS);\n }\n \n // Step 2: Create new session\n if (setsid() < 0) {\n exit(EXIT_FAILURE);\n }\n \n // Step 3: Optional second fork\n pid = fork();\n if (pid < 0) {\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n exit(EXIT_SUCCESS);\n }\n \n // Step 4: Change working directory to root\n chdir(\"/\");\n \n // Step 5: Close standard file descriptors\n close(STDIN_FILENO);\n close(STDOUT_FILENO);\n close(STDERR_FILENO);\n \n // Redirect to /dev/null\n open(\"/dev/null\", O_RDONLY);\n open(\"/dev/null\", O_WRONLY);\n open(\"/dev/null\", O_WRONLY);\n \n // Step 6: Set appropriate umask\n umask(0);\n}\n\nint main() {\n create_daemon();\n \n // Daemon work - infinite loop\n while (1) {\n // Daemon operations here\n sleep(60);\n }\n \n return 0;\n}",
+      "explanation": "This program demonstrates all essential steps: fork, setsid, double fork, chdir, close file descriptors, and umask setting. The daemon runs in an infinite loop performing its background tasks.",
+      "timeComplexity": "O(1) per iteration",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Daemon with PID File and Signal Handling",
+      "description": "Daemon with PID file management and graceful shutdown handling",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <signal.h>\n#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <time.h>\n\n#define PID_FILE \"/var/run/mydaemon.pid\"\nstatic volatile int keep_running = 1;\n\nvoid signal_handler(int sig) {\n if (sig == SIGTERM || sig == SIGINT) {\n keep_running = 0;\n }\n}\n\nvoid write_pid_file() {\n FILE *fp = fopen(PID_FILE, \"w\");\n if (fp) {\n fprintf(fp, \"%d\\n\", getpid());\n fclose(fp);\n }\n}\n\nvoid daemon_work() {\n time_t now;\n FILE *log = fopen(\"/var/log/mydaemon.log\", \"a\");\n \n while (keep_running) {\n time(&now);\n if (log) {\n fprintf(log, \"Daemon running: %s\", ctime(&now));\n fflush(log);\n }\n sleep(60);\n }\n \n if (log) fclose(log);\n}\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) exit(EXIT_FAILURE);\n if (pid > 0) exit(EXIT_SUCCESS);\n \n setsid();\n chdir(\"/\");\n umask(0);\n \n close(STDIN_FILENO);\n close(STDOUT_FILENO);\n close(STDERR_FILENO);\n \n signal(SIGTERM, signal_handler);\n signal(SIGINT, signal_handler);\n \n write_pid_file();\n daemon_work();\n \n unlink(PID_FILE);\n return 0;\n}",
+      "explanation": "This enhanced daemon includes: PID file creation for process management, signal handlers for graceful SIGTERM/SIGINT shutdown, proper logging to file, and cleanup on exit.",
+      "timeComplexity": "O(1) per iteration",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "Daemon Management Commands",
+      "description": "Common Linux commands for managing daemon processes",
+      "code": "# Check if a process is running (using PID file)\nif [ -f /var/run/httpd.pid ]; then\n PID=$(cat /var/run/httpd.pid)\n if kill -0 $PID 2>/dev/null; then\n echo \"Process $PID is running\"\n fi\nfi\n\n# Stop a daemon gracefully (send SIGTERM)\nkill $(cat /var/run/mydaemon.pid)\n\n# Force stop a daemon (send SIGKILL)\nkill -9 $(cat /var/run/mydaemon.pid)\n\n# List all running processes including daemons\nps -ef | grep -v grep\n\n# List daemon processes (long running)\nps -eo pid,ppid,cmd,etime | grep -E '^\\s+1' | head -20\n\n# Using systemctl (systemd based systems)\nsystemctl start daemon-name\nsystemctl stop daemon-name\nsystemctl status daemon-name\nsystemctl restart daemon-name\nsystemctl enable daemon-name",
+      "explanation": "These commands demonstrate how to manage daemon processes: checking status, graceful termination, force kill, listing processes, and using systemd for service management.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

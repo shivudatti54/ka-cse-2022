@@ -1,0 +1,35 @@
+{
+  "topicId": "file-system-interface",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "File Open, Read, Write Operations",
+      "description": "Demonstrates basic file operations using file descriptors",
+      "code": "// Step 1: Create/Open file\nfd = open(\"data.txt\", O_RDWR | O_CREAT, 0644)\nIF fd == -1 THEN\n PRINT \"Error opening file\"\n EXIT\nEND IF\n\n// Step 2: Write initial data\nbytesWritten = write(fd, \"Hello World\", 11)\n// file position now at 11\n\n// Step 3: Seek to beginning\nposition = lseek(fd, 0, SEEK_SET)\n// position = 0\n\n// Step 4: Read data into buffer\nbytesRead = read(fd, buffer, 11)\n// file position now at 11, buffer contains \"Hello World\"\n\n// Step 5: Seek to end and append\nposition = lseek(fd, 0, SEEK_END)\n// position = 11\nbytesWritten = write(fd, \" More Text\", 10)\n// file now 21 bytes total\n\n// Step 6: Close file\nclose(fd)",
+      "explanation": "This pseudocode shows the typical sequence: open with flags, write initial data, seek to reposition, read data, seek to end for append, then close. Each operation affects the file position pointer stored in the per-process open file table entry.",
+      "timeComplexity": "O(n) for read/write where n is bytes transferred, O(1) for open/close/seek",
+      "spaceComplexity": "O(n) for buffer used in read/write operations, O(1) for file descriptors"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "File Locking Example",
+      "description": "Shows how to implement file locking for coordinated access",
+      "code": "// Process A: Acquire shared lock to read\nfd = open(\"shared.txt\", O_RDWR)\n\n// Acquire shared (read) lock\nresult = flock(fd, LOCK_SH)\nIF result == 0 THEN\n // Read file contents\n WHILE read(fd, buffer, 1024) > 0 DO\n process(buffer)\n END WHILE\n \n // Release lock\n flock(fd, LOCK_UN)\nEND IF\n\n// Process B: Acquire exclusive lock to write\nfd = open(\"shared.txt\", O_RDWR)\n\n// Try to acquire exclusive (write) lock (blocks until available)\nresult = flock(fd, LOCK_EX)\nIF result == 0 THEN\n // Seek to position and write\n lseek(fd, 0, SEEK_SET)\n write(fd, newData, dataSize)\n \n // Release lock\n flock(fd, LOCK_UN)\nEND IF\n\nclose(fd)",
+      "explanation": "flock() provides whole-file locking. LOCK_SH (shared) allows multiple readers simultaneously. LOCK_EX (exclusive) blocks all other locks. LOCK_UN releases the lock. This prevents race conditions when multiple processes access the same file.",
+      "timeComplexity": "O(1) for lock operations, O(n) for read/write",
+      "spaceComplexity": "O(1) for lock structures, O(n) for I/O buffers"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Two-Process File Sharing with Fork",
+      "description": "Demonstrates file descriptor inheritance after fork()",
+      "code": "// Parent process\nparent_fd = open(\"common.txt\", O_RDWR | O_CREAT, 0644)\n// parent_fd = 3 (first available)\n\n// Write initial data\nwrite(parent_fd, \"Parent data\", 12)\n\n// Fork to create child\nchild_pid = fork()\n\nIF child_pid == 0 THEN\n // Child process - inherits copy of file descriptor 3\n // But has its own file position pointer!\n \n // Child reads - will read from position 12 (shared offset!)\n lseek(parent_fd, 0, SEEK_SET) // Reset to start\n bytesRead = read(parent_fd, buffer, 100)\n PRINT \"Child read: \" + buffer\n \n // Child writes at current position\n write(parent_fd, \"Child write\", 11)\n \n // Child closes - parent's fd still valid!\n close(parent_fd)\n \nELSE THEN\n // Parent process\n // Wait for child\n wait(NULL)\n \n // Parent reads from position 23 (after child's write)\n lseek(parent_fd, 0, SEEK_SET)\n bytesRead = read(parent_fd, buffer, 100)\n PRINT \"Parent read: \" + buffer\n \n close(parent_fd)\nEND IF",
+      "explanation": "After fork(), child inherits parent's file descriptors pointing to same system-wide file table entry, so they share the same file position. This demonstrates that file position is NOT stored in the per-process table alone - it's in the system table. Closing in child doesn't affect parent (different descriptor table entries), but both see changes to the shared file offset.",
+      "timeComplexity": "O(n) for read/write operations",
+      "spaceComplexity": "O(n) for buffer, O(1) for descriptors"
+    }
+  ]
+}

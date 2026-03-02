@@ -1,0 +1,506 @@
+{
+  "topicId": "process-termination",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which system call is used by a parent to retrieve the exit status of a terminated child process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "fork()"
+        },
+        {
+          "key": "B",
+          "text": "exec()"
+        },
+        {
+          "key": "C",
+          "text": "wait()"
+        },
+        {
+          "key": "D",
+          "text": "exit()"
+        }
+      ],
+      "correctAnswer": "wait()",
+      "explanation": "wait() suspends parent execution until child terminates and retrieves the child's exit status. fork() creates a new process, exec() replaces process image, exit() terminates the calling process.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "A process that has terminated but whose parent has not yet called wait() is called:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Orphan process"
+        },
+        {
+          "key": "B",
+          "text": "Zombie process"
+        },
+        {
+          "key": "C",
+          "text": "Daemon process"
+        },
+        {
+          "key": "D",
+          "text": "Init process"
+        }
+      ],
+      "correctAnswer": "Zombie process",
+      "explanation": "A zombie process (or defunct process) has completed execution but its exit status hasn't been collected by the parent. It remains in the process table consuming only the PID entry.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Which of the following correctly describes the exit() function?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Terminates immediately without cleanup"
+        },
+        {
+          "key": "B",
+          "text": "Calls exit handlers and flushes buffers before termination"
+        },
+        {
+          "key": "C",
+          "text": "Can only be called by child processes"
+        },
+        {
+          "key": "D",
+          "text": "Returns the process to ready queue"
+        }
+      ],
+      "correctAnswer": "Calls exit handlers and flushes buffers before termination",
+      "explanation": "exit() performs complete cleanup: calls atexit() registered handlers, flushes stdio buffers, then calls _exit() to terminate. This ensures proper resource cleanup.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What happens to orphaned child processes in Unix/Linux?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are terminated immediately"
+        },
+        {
+          "key": "B",
+          "text": "They become zombies"
+        },
+        {
+          "key": "C",
+          "text": "They are adopted by init process (PID 1)"
+        },
+        {
+          "key": "D",
+          "text": "They continue running normally"
+        }
+      ],
+      "correctAnswer": "They are adopted by init process (PID 1)",
+      "explanation": "When a parent terminates, its children become orphans and are adopted by init (PID 1). Init periodically calls wait() to reap these processes and prevent zombie formation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Which signal cannot be caught or ignored by a process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGTERM"
+        },
+        {
+          "key": "B",
+          "text": "SIGSTOP"
+        },
+        {
+          "key": "C",
+          "text": "SIGKILL"
+        },
+        {
+          "key": "D",
+          "text": "SIGHUP"
+        }
+      ],
+      "correctAnswer": "SIGKILL",
+      "explanation": "SIGKILL (signal 9) is the termination signal that cannot be caught, blocked, or ignored. It forces immediate termination without cleanup, making it a sure kill.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What does _exit() system call do?",
+      "text": "What does _exit() system call do?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Performs full cleanup including buffer flush"
+        },
+        {
+          "key": "B",
+          "text": "Terminates process immediately without cleanup"
+        },
+        {
+          "key": "C",
+          "text": "Waits for child processes to terminate"
+        },
+        {
+          "key": "D",
+          "text": "Creates a new process"
+        }
+      ],
+      "correctAnswer": "Terminates process immediately without cleanup",
+      "explanation": "_exit() is the underlying system call that terminates the process immediately without calling exit handlers or flushing stdio buffers. It's used when immediate termination is needed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "The process control block (PCB) is removed from the kernel after:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Process calls exit()"
+        },
+        {
+          "key": "B",
+          "text": "Parent calls wait()"
+        },
+        {
+          "key": "C",
+          "text": "Process receives SIGKILL"
+        },
+        {
+          "key": "D",
+          "text": "CPU scheduler removes process"
+        }
+      ],
+      "correctAnswer": "Parent calls wait()",
+      "explanation": "The PCB remains in kernel memory after process termination until the parent reads the exit status via wait()/waitpid(). Only after wait() is called is the PCB fully deallocated.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which of the following is NOT a valid process termination cause?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Normal completion"
+        },
+        {
+          "key": "B",
+          "text": "Signal reception"
+        },
+        {
+          "key": "C",
+          "text": "Parent calling abort()"
+        },
+        {
+          "key": "D",
+          "text": "Memory allocation failure"
+        }
+      ],
+      "correctAnswer": "Memory allocation failure",
+      "explanation": "Memory allocation failure doesn't terminate a process - it returns an error. Valid termination causes include normal completion (exit()), signal reception (SIGTERM/SIGKILL), and parent calling abort().",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "The waitpid() function with WNOHANG option:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Blocks until child terminates"
+        },
+        {
+          "key": "B",
+          "text": "Returns immediately with child status"
+        },
+        {
+          "key": "C",
+          "text": "Returns immediately if no child has terminated"
+        },
+        {
+          "key": "D",
+          "text": "Suspends parent for specified time"
+        }
+      ],
+      "correctAnswer": "Returns immediately if no child has terminated",
+      "explanation": "WNOHANG makes waitpid() non-blocking - it returns immediately with 0 if no child has terminated status available, rather than blocking the parent process.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What is the range of exit status values?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0 to 127"
+        },
+        {
+          "key": "B",
+          "text": "0 to 255"
+        },
+        {
+          "key": "C",
+          "text": "-1 to 255"
+        },
+        {
+          "key": "D",
+          "text": "1 to 256"
+        }
+      ],
+      "correctAnswer": "0 to 255",
+      "explanation": "Exit status is an 8-bit value, allowing values from 0 to 255. By convention, 0 indicates success, while non-zero values indicate failure or specific error conditions.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "Which function registers a function to be called at normal process termination?",
+      "options": [
+        {
+          "key": "A",
+          "text": "on_exit()"
+        },
+        {
+          "key": "B",
+          "text": "atexit()"
+        },
+        {
+          "key": "C",
+          "text": "register_exit()"
+        },
+        {
+          "key": "D",
+          "text": "signal()"
+        }
+      ],
+      "correctAnswer": "atexit()",
+      "explanation": "atexit() registers a function to be called when the process calls exit() normally. Multiple functions can be registered and they're called in reverse order of registration.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "When a process receives SIGTERM, what happens?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Process terminates immediately"
+        },
+        {
+          "key": "B",
+          "text": "Process can catch and handle it for graceful shutdown"
+        },
+        {
+          "key": "C",
+          "text": "Process becomes zombie"
+        },
+        {
+          "key": "D",
+          "text": "Process ignores the signal"
+        }
+      ],
+      "correctAnswer": "Process can catch and handle it for graceful shutdown",
+      "explanation": "SIGTERM is the polite termination request that can be caught, ignored, or handled. A well-designed program catches SIGTERM to perform cleanup before exiting.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "A process that has finished execution but still has an entry in the process table is in:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Ready state"
+        },
+        {
+          "key": "B",
+          "text": "Running state"
+        },
+        {
+          "key": "C",
+          "text": "Blocked state"
+        },
+        {
+          "key": "D",
+          "text": "Terminated/Zombie state"
+        }
+      ],
+      "correctAnswer": "Terminated/Zombie state",
+      "explanation": "A process that has finished execution but whose parent hasn't read the exit status is in the terminated (zombie/defunct) state. It retains only the PCB until wait() is called.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-14",
+      "question": "The parent process can determine the exit status of child using:",
+      "options": [
+        {
+          "key": "A",
+          "text": "A pointer to integer"
+        },
+        {
+          "key": "B",
+          "text": "Return value of wait()"
+        },
+        {
+          "key": "C",
+          "text": "Both A and B"
+        },
+        {
+          "key": "D",
+          "text": "Neither A nor B"
+        }
+      ],
+      "correctAnswer": "Both A and B",
+      "explanation": "wait() returns the child's PID on success, and stores the exit status in the integer pointer argument. Both the return value and the status pointer provide information about the child.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What prevents zombie processes from accumulating in a properly designed system?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Periodic system restart"
+        },
+        {
+          "key": "B",
+          "text": "Parent calling wait() or waitpid()"
+        },
+        {
+          "key": "C",
+          "text": "Kernel automatically removing terminated processes"
+        },
+        {
+          "key": "D",
+          "text": "Using only daemon processes"
+        }
+      ],
+      "correctAnswer": "Parent calling wait() or waitpid()",
+      "explanation": "The proper solution is for the parent to always call wait()/waitpid() to collect child exit status. If the parent cannot block, it should use signal handlers for SIGCHLD to reap children.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-16",
+      "question": "Which of the following is true about orphan processes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are killed immediately"
+        },
+        {
+          "key": "B",
+          "text": "They cannot be adopted"
+        },
+        {
+          "key": "C",
+          "text": "They are adopted by init process"
+        },
+        {
+          "key": "D",
+          "text": "They become zombies"
+        }
+      ],
+      "correctAnswer": "They are adopted by init process",
+      "explanation": "Orphan processes (children whose parents died) are adopted by init (PID 1), which acts as their surrogate parent and calls wait() to reap them when they terminate.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-17",
+      "question": "The WIFEXITED macro is used to check:",
+      "options": [
+        {
+          "key": "A",
+          "text": "If process was killed by signal"
+        },
+        {
+          "key": "B",
+          "text": "If process exited normally"
+        },
+        {
+          "key": "C",
+          "text": "If process is zombie"
+        },
+        {
+          "key": "D",
+          "text": "If process has pending signals"
+        }
+      ],
+      "correctAnswer": "If process exited normally",
+      "explanation": "WIFEXITED(status) returns true if the child terminated normally by calling exit() or returning from main(). It checks if the exit was via exit() system call rather than signal.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "In the context of process termination, what does 'reaping' mean?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Killing a process"
+        },
+        {
+          "key": "B",
+          "text": "Collecting exit status of a terminated process"
+        },
+        {
+          "key": "C",
+          "text": "Creating a new process"
+        },
+        {
+          "key": "D",
+          "text": "Suspending a process"
+        }
+      ],
+      "correctAnswer": "Collecting exit status of a terminated process",
+      "explanation": "Reaping refers to the parent process calling wait()/waitpid() to collect the exit status of a terminated child. This releases the child's kernel resources.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-19",
+      "question": "What is the default action if a child terminates and parent doesn't wait?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Process becomes orphan"
+        },
+        {
+          "key": "B",
+          "text": "Process becomes zombie"
+        },
+        {
+          "key": "C",
+          "text": "Process is removed from system"
+        },
+        {
+          "key": "D",
+          "text": "Process enters waiting queue"
+        }
+      ],
+      "correctAnswer": "Process becomes zombie",
+      "explanation": "When a child terminates but the parent doesn't call wait(), the child becomes a zombie - its PCB remains in kernel until the parent calls wait() to reap it.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-20",
+      "question": "The init process (PID 1) helps in:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Creating new processes"
+        },
+        {
+          "key": "B",
+          "text": "Scheduling CPU"
+        },
+        {
+          "key": "C",
+          "text": "Reaping orphaned zombies"
+        },
+        {
+          "key": "D",
+          "text": "Loading kernel modules"
+        }
+      ],
+      "correctAnswer": "Reaping orphaned zombies",
+      "explanation": "Init process periodically calls wait() to clean up orphaned zombie processes. This prevents accumulation of zombie processes in the system.",
+      "difficulty": "medium"
+    }
+  ]
+}

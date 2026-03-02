@@ -1,0 +1,36 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose of the fchdir() function in Unix System Programming and describe a scenario where using fchdir() is advantageous over using chdir().",
+    "expectedPoints": [
+      "The fchdir() function changes the current working directory of the calling process to the directory associated with the provided file descriptor.",
+      "It performs the same core function as chdir() but operates on a file descriptor instead of a pathname.",
+      "A key advantage is that it avoids time-of-check-to-time-of-use (TOCTTOU) race conditions, as the file descriptor reliably references a specific directory.",
+      "It is more efficient if the program already has an open file descriptor for the target directory, as it avoids repeated path resolution."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose and typical usage of the getcwd() function. What happens if the buffer provided to getcwd() is too small?",
+    "expectedPoints": [
+      "The getcwd() function copies the absolute pathname of the current working directory into the provided buffer.",
+      "It is essential for a process to determine its own location in the filesystem hierarchy, especially after a series of directory changes.",
+      "If the buffer is too small to hold the pathname, the function returns NULL and sets errno to ERANGE to indicate the error.",
+      "A common practice is to call getcwd() with a NULL buffer and a size of 0, which allows the function to dynamically allocate a buffer of the necessary size."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast block special files and character special files. Explain how the kernel distinguishes between them and how they are typically used within the system.",
+    "expectedPoints": [
+      "Both are types of device special files that act as an interface to device drivers, but they differ fundamentally in how data is transferred.",
+      "Block special files (e.g., /dev/sda1) provide buffered, random access to devices in fixed-size blocks. They are used for devices like hard disks and are the basis for filesystems.",
+      "Character special files (e.g., /dev/ttyS0) provide unbuffered, sequential stream access. They are used for devices like keyboards, terminals, and printers.",
+      "The kernel distinguishes them by examining the file's mode (st_mode in the stat structure), specifically the S_ISBLK and S_ISCHR macros.",
+      "The major and minor numbers embedded in the inode identify the specific device driver and instance that the special file corresponds to."
+    ],
+    "marks": 10
+  }
+]

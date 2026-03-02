@@ -1,0 +1,2 @@
+# Sparse Matrices
+This material provides a comprehensive theoretical treatment of sparse matrix representations, algorithms, and their computational complexities, targeted at students/students/students. It establishes formal mathematical foundations with proofs, compares multiple storage schemes (triplet, CSR, CSC), analyzes key matrix operations (transpose, addition, multiplication), and prepares students for practical implementation and application in scientific computing and machine learning contexts.

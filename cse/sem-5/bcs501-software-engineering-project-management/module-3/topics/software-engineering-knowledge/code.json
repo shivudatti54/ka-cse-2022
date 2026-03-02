@@ -1,0 +1,35 @@
+{
+  "topicId": "software-engineering-knowledge",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Agile Knowledge Transfer Simulation",
+      "description": "Simulates knowledge sharing between team members through pair programming sessions",
+      "code": "PROCEDURE SimulateKnowledgeTransfer(teamMembers, sessions)\n // Initialize knowledge matrix\n FOR each member i in teamMembers:\n FOR each member j in teamMembers:\n IF i == j THEN knowledge[i][j] = 1\n ELSE knowledge[i][j] = 0\n\n // Simulate pairing sessions\n FOR s = 1 to sessions:\n pairs = GenerateRandomPairs(teamMembers)\n FOR each pair (a, b) in pairs:\n // Bidirectional knowledge transfer\n knowledge[a][b] = 1\n knowledge[b][a] = 1\n // Transitive knowledge: a learns what b knows\n FOR each member c in teamMembers:\n IF knowledge[b][c] == 1 AND a != c:\n knowledge[a][c] = 1\n\n // Calculate team knowledge coverage\n coverage = Sum(knowledge) / (n * n)\n RETURN coverage\nEND PROCEDURE",
+      "explanation": "This simulation demonstrates how pair programming sessions gradually distribute knowledge across a team. Initially, members only know their own expertise. After each pairing, bidirectional transfer occurs. Additionally, transitive knowledge transfer happens: if A pairs with B who knows C's expertise, A indirectly learns about C. The coverage metric measures overall team knowledge distribution.",
+      "timeComplexity": "O(s \u00d7 p \u00d7 n\u00b2) where s=sessions, p=pairs per session, n=team size",
+      "spaceComplexity": "O(n\u00b2) for knowledge matrix storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Agile Sprint Knowledge Validation",
+      "description": "Algorithm for validating sprint backlog items against accumulated knowledge",
+      "code": "PROCEDURE ValidateSprintKnowledge(backlogItems, teamKnowledge)\n validatedItems = []\n knowledgeGaps = []\n\n FOR each item in backlogItems:\n requiredSkills = item.GetRequiredSkills()\n requiredDomain = item.GetRequiredDomain()\n\n // Check if team has sufficient knowledge\n teamHasSkills = CheckSkillCoverage(teamKnowledge, requiredSkills)\n teamHasDomain = CheckDomainKnowledge(teamKnowledge, requiredDomain)\n\n IF teamHasSkills AND teamHasDomain THEN\n validatedItems.Add(item)\n ELSE\n // Identify knowledge gaps\n missingSkills = GetMissingSkills(requiredSkills, teamKnowledge)\n missingDomain = GetMissingDomain(requiredDomain, teamKnowledge)\n knowledgeGaps.Add(CreateGapItem(item, missingSkills, missingDomain))\n\n RETURN (validatedItems, knowledgeGaps)\nEND PROCEDURE\n\nPROCEDURE CheckSkillCoverage(knowledge, requiredSkills)\n FOR each skill in requiredSkills:\n teamMembersWithSkill = 0\n FOR each member in knowledge:\n IF member.HasSkill(skill) THEN\n teamMembersWithSkill = teamMembersWithSkill + 1\n IF teamMembersWithSkill < MIN_SKILL_COVERAGE THEN\n RETURN FALSE\n RETURN TRUE\nEND PROCEDURE",
+      "explanation": "This algorithm validates whether the team's accumulated knowledge is sufficient for sprint backlog items. It checks both technical skills and domain knowledge coverage. If knowledge gaps exist, they are identified for remediation (through training, hiring, or external expertise). This prevents starting work the team cannot complete due to knowledge limitations.",
+      "timeComplexity": "O(b \u00d7 s \u00d7 m) where b=backlog items, s=skills per item, m=team members",
+      "spaceComplexity": "O(b + g) where g=knowledge gaps identified"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Retrospective Knowledge Capture System",
+      "description": "System for capturing and categorizing lessons learned during sprint retrospectives",
+      "code": "DATA STRUCTURE LessonLearned:\n description: String\n category: Enum(Process, Technical, Communication, Domain)\n impact: Enum(Positive, Negative)\n actionItems: List<String>\n applicableTo: List[String] // project names or types\n\nPROCEDURE CaptureRetrospective(lessons, sprintData)\n categorized = InitializeCategoryMap()\n\n FOR each lesson in lessons:\n // Classify the lesson\n category = ClassifyLesson(lesson, sprintData)\n impact = DetermineImpact(lesson)\n\n // Create structured lesson record\n record = CreateLessonRecord(\n description = lesson,\n category = category,\n impact = impact,\n actionItems = ExtractActions(lesson),\n applicableTo = DetermineScope(sprintData)\n )\n\n // Add to organizational knowledge base\n categorized[category].Add(record)\n\n // Persist for future reference\n StoreInKnowledgeBase(categorized)\n\n // Notify relevant teams\n FOR each category in categorized:\n relevantTeams = FindTeamsNeeding(category)\n Notify(relevantTeams, categorized[category])\n\n RETURN categorized\nEND PROCEDURE",
+      "explanation": "This system structures lessons from retrospectives into reusable organizational knowledge. Each lesson is categorized (process, technical, communication, domain), its impact assessed, and actionable items extracted. The knowledge base can be queried by future teams facing similar situations. This institutionalizes learning from one sprint to benefit all future work.",
+      "timeComplexity": "O(l \u00d7 c) where l=lessons, c=classification complexity",
+      "spaceComplexity": "O(l) for lesson storage"
+    }
+  ]
+}

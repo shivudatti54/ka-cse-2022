@@ -1,0 +1,45 @@
+{
+  "topicId": "liang-barsky-clipping",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Liang-Barsky Line Clipping Algorithm",
+      "description": "Implementation of parametric line clipping against a rectangular window",
+      "code": "// Liang-Barsky Line Clipping Algorithm\n// Input: Line from (x1,y1) to (x2,y2), Clipping window (xmin, ymin, xmax, ymax)\n// Output: Clipped line coordinates or indication if line is completely outside\n\nPROCEDURE LiangBarsky(x1, y1, x2, y2, xmin, ymin, xmax, ymax):\n // Calculate direction differences\n dx = x2 - x1\n dy = y2 - y1\n \n // Initialize parameter values\n u1 = 0.0 // Entering parameter\n u2 = 1.0 // Exiting parameter\n \n // Define p and q arrays for 4 edges\n p[1] = -dx // Left edge\n q[1] = x1 - xmin\n p[2] = dx // Right edge\n q[2] = xmax - x1\n p[3] = -dy // Bottom edge\n q[3] = y1 - ymin\n p[4] = dy // Top edge\n q[4] = ymax - y1\n \n // Process each clipping edge\n FOR i = 1 TO 4:\n IF p[i] = 0 THEN:\n // Line is parallel to this edge\n IF q[i] < 0 THEN:\n RETURN \"Line completely outside\" // Reject\n END IF\n ELSE:\n // Calculate parameter value\n r = q[i] / p[i]\n \n IF p[i] < 0 THEN:\n // Entering edge - update u1\n IF r > u1 THEN:\n u1 = r\n END IF\n ELSE:\n // Exiting edge - update u2\n IF r < u2 THEN:\n u2 = r\n END IF\n END IF\n END IF\n \n // Early rejection test\n IF u1 > u2 THEN:\n RETURN \"Line completely outside\"\n END IF\n END FOR\n \n // Calculate clipped endpoints\n x1_clip = x1 + u1 * dx\n y1_clip = y1 + u1 * dy\n x2_clip = x1 + u2 * dx\n y2_clip = y1 + u2 * dy\n \n RETURN (x1_clip, y1_clip, x2_clip, y2_clip)\nEND PROCEDURE",
+      "explanation": "The algorithm processes each clipping edge sequentially. For each edge, it checks if the line is parallel (p=0) and outside (q<0), then rejects if so. Otherwise, it updates the entering parameter u1 for entering edges (p<0) and exiting parameter u2 for exiting edges (p>0). If u1 ≤ u2 after all edges, the line is clipped using the computed parameters.",
+      "timeComplexity": "O(1) - constant, processes exactly 4 edges",
+      "spaceComplexity": "O(1) - uses fixed number of variables"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python Implementation of Liang-Barsky",
+      "description": "Complete working implementation with visualization support",
+      "code": "def liang_barsky_clip(x1, y1, x2, y2, xmin, ymin, xmax, ymax):\n '''\n Liang-Barsky Line Clipping Algorithm\n Returns clipped coordinates or None if line is completely outside\n '''\n # Direction coefficients\n dx = x2 - x1\n dy = y2 - y1\n \n # Initialize parameters\n u1, u2 = 0.0, 1.0\n \n # Define p and q for each edge\n # Edge 0: Left (x = xmin)\n p = [-dx, dx, -dy, dy]\n q = [x1 - xmin, xmax - x1, y1 - ymin, ymax - y1]\n \n # Process each clipping edge\n for i in range(4):\n if p[i] == 0:\n # Line parallel to edge\n if q[i] < 0:\n return None # Line is outside\n else:\n r = q[i] / p[i]\n \n if p[i] < 0:\n # Entering edge\n u1 = max(u1, r)\n else:\n # Exiting edge\n u2 = min(u2, r)\n \n # Early exit if parameters cross\n if u1 > u2:\n return None\n \n # Calculate clipped endpoints\n x1_clipped = x1 + u1 * dx\n y1_clipped = y1 + u1 * dy\n x2_clipped = x1 + u2 * dx\n y2_clipped = y1 + u2 * dy\n \n return (x1_clipped, y1_clipped, x2_clipped, y2_clipped)\n\n# Example usage\nif __name__ == \"__main__\":\n # Clip line from (50, 100) to (200, 150) against window (100, 100, 180, 180)\n result = liang_barsky_clip(50, 100, 200, 150, 100, 100, 180, 180)\n if result:\n print(f\"Clipped line: ({result[0]:.2f}, {result[1]:.2f}) to ({result[2]:.2f}, {result[3]:.2f})\")\n else:\n print(\"Line completely outside clipping window\")",
+      "explanation": "This Python implementation demonstrates the complete Liang-Barsky algorithm with proper handling of parallel lines, early rejection, and parameter updates. The function returns None for completely outside lines and the clipped coordinates otherwise.",
+      "timeComplexity": "O(1) - constant time, fixed 4 iterations",
+      "spaceComplexity": "O(1) - minimal memory usage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Step-by-Step Example Execution",
+      "description": "Walkthrough of Liang-Barsky with specific numerical example",
+      "code": "// Example: Clip line from (50, 100) to (200, 150) against window (100, 100, 180, 180)\n\n// Step 1: Initialize\nx1=50, y1=100, x2=200, y2=150\nxmin=100, ymin=100, xmax=180, ymax=180\ndx = 200 - 50 = 150\ndy = 150 - 100 = \nu1 = 0, u2 = 1\n\n// Step 2: Process each edge\n// LEFT EDGE (p1 = -dx = -150, q1 = x1-xmin = 50-100 = -50)\np = -150 < 0 (entering), r = -50/-150 = 0.33\nu1 = max(0, 0.33) = 0.33\n\n// RIGHT EDGE (p2 = dx = 150, q2 = xmax-x1 = 180-50 = 130)\np = 150 > 0 (exiting), r = 130/150 = 0.87\nu2 = min(1, 0.87) = 0.87\n\n// BOTTOM EDGE (p3 = -dy = -50, q3 = y1-ymin = 100-100 = 0)\np = -50 < 0 (entering), r = 0/-50 = 0\nu1 = max(0.33, 0) = 0.33\n\n// TOP EDGE (p4 = dy = 50, q4 = ymax-y1 = 180-100 = 80)\np = 50 > 0 (exiting), r = 80/50 = 1.6\nu2 = min(0.87, 1.6) = 0.87\n\n// Step 3: Check validity\nu1 (0.33) ≤ u2 (0.87) ✓ Valid\n\n// Step 4: Calculate clipped endpoints\nx1' = 50 + 0.33*150 = 50 + 49.5 = 99.5 ≈ 100\ny1' = 100 + 0.33*50 = 100 + 16.5 = 116.5\nx2' = 50 + 0.87*150 = 50 + 130.5 = 180.5 ≈ 180\ny2' = 100 + 0.87*50 = 100 + 43.5 = 143.5\n\n// Result: Line clipped to approximately (100, 117) to (180, 144)",
+      "explanation": "This step-by-step walkthrough shows how the algorithm processes each edge, updates parameters, and computes final clipped coordinates. The line enters through the left edge (u1=0.33) and exits through the right edge (u2=0.87).",
+      "timeComplexity": "O(1) - demonstrated with 4 iterations",
+      "spaceComplexity": "O(1) - simple calculations"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Comparison: Cohen-Sutherland vs Liang-Barsky",
+      "description": "Comparison of computational steps between both algorithms",
+      "code": "// COHEN-SUTHERLAND ALGORITHM\n// Uses 4-bit outcodes for each endpoint\n// Outcode bits: top(8), bottom(4), right(2), left(1)\n// \n// PROCEDURE CohenSutherland(x1,y1,x2,y2,xmin,ymin,xmax,ymax):\n// REPEAT\n// outcode1 = ComputeOutcode(x1,y1)\n// outcode2 = ComputeOutcode(x2,y2)\n// \n// IF outcode1=0 AND outcode2=0: // Both inside\n// RETURN (x1,y1,x2,y2) // Accept\n// ELSE IF (outcode1 AND outcode2) ≠ 0: // Both outside same edge\n// RETURN \"Reject\" // Trivial reject\n// ELSE:\n// // Partial clipping - compute intersection\n// // May require multiple iterations (up to 4)\n// // Each iteration tests against 4 edges\n// UNTIL done\n\n// LIANG-BARSKY ALGORITHM\n// Uses parametric equations\n// \n// PROCEDURE LiangBarsky(x1,y1,x2,y2,xmin,ymin,xmax,ymax):\n// dx = x2-x1, dy = y2-y1\n// u1=0, u2=1\n// \n// FOR each of 4 edges (left,right,bottom,top):\n// Compute p and q for edge\n// Update u1 or u2 accordingly\n// IF u1 > u2: RETURN \"Reject\"\n// \n// IF u1 ≤ u2:\n// Compute new endpoints using u1, u2\n// RETURN clipped line\n// ELSE: RETURN \"Reject\"\n\n// COMPARISON SUMMARY:\n// | Aspect | Cohen-Sutherland | Liang-Barsky |\n// |---------------------|------------------|---------------|\n// | Comparisons/Line | 15-20 worst case | ~10 fixed |\n// | Iterations | Up to 4 | Exactly 1 |\n// | Method | Outcode bits | Parametric |\n// | Edge testing | Multiple rounds | Single pass |\n// | Efficiency | Lower | Higher |",
+      "explanation": "This comparison shows why Liang-Barsky is more efficient: it performs all computations in a single pass through the four edges, while Cohen-Sutherland may require multiple iterations with endpoint re-computation for partially clipped lines.",
+      "timeComplexity": "Cohen-Sutherland: O(1) but with more comparisons; Liang-Barsky: O(1) with fewer comparisons",
+      "spaceComplexity": "Both O(1)"
+    }
+  ]
+}

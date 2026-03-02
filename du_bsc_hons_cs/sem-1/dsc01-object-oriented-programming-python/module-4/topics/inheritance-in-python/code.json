@@ -1,0 +1,35 @@
+{
+  "topicId": "inheritance-in-python",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Basic Single Inheritance",
+      "description": "Demonstrates fundamental inheritance where a child class inherits from a single parent class",
+      "code": "# Base class (Parent)\nclass Vehicle:\n    def __init__(self, brand, model):\n        self.brand = brand\n        self.model = model\n    \n    def display_info(self):\n        return f\"Vehicle: {self.brand} {self.model}\"\n    \n    def start(self):\n        return \"Engine started\"\n\n# Derived class (Child)\nclass Car(Vehicle):\n    def __init__(self, brand, model, num_doors):\n        super().__init__(brand, model)  # Call parent constructor\n        self.num_doors = num_doors\n    \n    def display_info(self):\n        return f\"Car: {self.brand} {self.model}, Doors: {self.num_doors}\"\n\n# Create objects\nvehicle = Vehicle(\"Generic\", \"Model X\")\ncar = Car(\"Toyota\", \"Corolla\", 4)\n\n# Demonstrate inheritance\nprint(vehicle.display_info())\nprint(car.display_info())\nprint(car.start())  # Inherited method\nprint(isinstance(car, Car))\nprint(isinstance(car, Vehicle))",
+      "explanation": "1. Vehicle is the parent/base class with brand, model attributes and two methods.\n2. Car inherits from Vehicle using class Car(Vehicle) syntax.\n3. super().__init__() calls the parent's constructor to initialize inherited attributes.\n4. Car overrides display_info() to provide its own implementation.\n5. Car objects can access both its own methods and inherited methods from Vehicle.\n6. isinstance() demonstrates that Car is also an instance of Vehicle (IS-A relationship).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Multiple Inheritance and Method Resolution Order (MRO)",
+      "description": "Shows a class inheriting from multiple parent classes and how Python resolves method calls",
+      "code": "# Parent class 1\nclass Writer:\n    def write(self):\n        return \"Writing content...\"\n\n# Parent class 2\nclass Editor:\n    def edit(self):\n        return \"Editing content...\"\n\n# Child class inheriting from multiple parents\nclass ContentCreator(Writer, Editor):\n    def create(self):\n        return \"Creating original content...\"\n    \n    def process(self):\n        # Call methods from both parents\n        content = self.create()\n        written = self.write()\n        edited = self.edit()\n        return f\"{content} -> {written} -> {edited}\"\n\n# Demonstrate MRO\ncreator = ContentCreator()\nprint(creator.process())\nprint(\"\\nMethod Resolution Order:\")\nfor cls in ContentCreator.__mro__:\n    print(f\"  - {cls.__name__}\")\n\n# Diamond problem demonstration\nclass A:\n    def greet(self):\n        return \"Hello from A\"\n\nclass B(A):\n    def greet(self):\n        return \"Hello from B\"\n\nclass C(A):\n    def greet(self):\n        return \"Hello from C\"\n\nclass D(B, C):  # MRO: D -> B -> C -> A\n    pass\n\nd = D()\nprint(f\"\\nDiamond problem - D.greet(): {d.greet()}\")",
+      "explanation": "1. ContentCreator inherits from both Writer and Editor (multiple inheritance).\n2. It can access methods from both parent classes directly.\n3. __mro__ (Method Resolution Order) shows the order Python searches for methods.\n4. The diamond problem occurs when a class inherits from two classes that share a common ancestor.\n5. Python uses C3 linearization algorithm - D inherits from B first, then C, so B's greet() is called.\n6. This ensures a consistent, predictable method resolution order.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Multi-level Inheritance with Polymorphism",
+      "description": "Demonstrates multi-level inheritance hierarchy with super() and polymorphism using abstract methods",
+      "code": "from abc import ABC, abstractmethod\n\n# Abstract base class (cannot be instantiated)\nclass Employee(ABC):\n    def __init__(self, emp_id, name):\n        self.emp_id = emp_id\n        self.name = name\n    \n    @abstractmethod\n    def calculate_salary(self):\n        pass\n    \n    def get_details(self):\n        return f\"ID: {self.emp_id}, Name: {self.name}\"\n\n# Level 1: Manager inherits from Employee\nclass Manager(Employee):\n    def __init__(self, emp_id, name, team_size):\n        super().__init__(emp_id, name)\n        self.team_size = team_size\n    \n    def calculate_salary(self):\n        base = 50000\n        bonus = self.team_size * 1000\n        return base + bonus\n\n# Level 2: SeniorManager inherits from Manager\nclass SeniorManager(Manager):\n    def __init__(self, emp_id, name, team_size, projects):\n        super().__init__(emp_id, name, team_size)\n        self.projects = projects\n    \n    def calculate_salary(self):\n        # Call parent method and add project bonus\n        base_salary = super().calculate_salary()\n        project_bonus = self.projects * 5000\n        return base_salary + project_bonus\n\n# Polymorphism demonstration\ndef print_salary_info(emp):\n    print(f\"{emp.get_details()} -> Salary: Rs.{emp.calculate_salary()}\")\n\n# Create objects\nmgr = Manager(\"M001\", \"Rahul\", 10)\nsr_mgr = SeniorManager(\"SM001\", \"Priya\", 25, 5)\n\n# Use polymorphism\nemployees = [mgr, sr_mgr]\nprint(\"=== Polymorphism Demo ===\")\nfor emp in employees:\n    print_salary_info(emp)\n\n# Demonstrate isinstance\nprint(f\"\\nisinstance(sr_mgr, SeniorManager): {isinstance(sr_mgr, SeniorManager)}\")\nprint(f\"isinstance(sr_mgr, Manager): {isinstance(sr_mgr, Manager)}\")\nprint(f\"isinstance(sr_mgr, Employee): {isinstance(sr_mgr, Employee)}\")",
+      "explanation": "1. Employee is an abstract base class (ABC) with an abstract method - enforces that subclasses must implement calculate_salary().\n2. Manager inherits from Employee (Level 1), SeniorManager inherits from Manager (Level 2) - multi-level inheritance.\n3. super().calculate_salary() in SeniorManager calls the parent (Manager's) method, demonstrating code reuse.\n4. Polymorphism: the print_salary_info() function works with any Employee subclass - different objects respond differently to the same method call.\n5. isinstance() checks demonstrate the inheritance chain - SeniorManager IS-A Manager and IS-A Employee.\n6. This pattern is useful in real-world scenarios like HR systems, game development (Character -> Enemy -> Boss), etc.",
+      "timeComplexity": "O(n) where n is number of employees processed",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

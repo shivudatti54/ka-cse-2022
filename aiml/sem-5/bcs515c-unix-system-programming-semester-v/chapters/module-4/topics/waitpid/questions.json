@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary purpose of the `waitpid` system call and describe a simple scenario where it would be preferred over the `wait` system call.",
+    "expectedPoints": [
+      "The primary purpose of `waitpid` is to allow a parent process to suspend its execution until a specific child process, identified by its process ID (PID), changes state (e.g., terminates or stops).",
+      "It provides more control than `wait` by allowing the parent to wait for a particular child, not just any child.",
+      "A simple scenario: A parent process with multiple children needs to wait for a specific child to finish before proceeding, ensuring ordered execution or handling results from a particular task."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the function prototype and parameters of `waitpid`. Explain the significance of the `options` argument, focusing on at least two commonly used flags and their effects.",
+    "expectedPoints": [
+      "Function prototype: `pid_t waitpid(pid_t pid, int *status, int options);`",
+      "The `pid` parameter specifies which child process(es) to wait for (e.g., >0 for a specific PID, -1 for any child).",
+      "The `status` pointer is used to retrieve the child's exit status.",
+      "The `options` argument modifies the call's behavior; `WNOHANG` allows it to return immediately if no child has exited (non-blocking), and `WUNTRACED` also returns if a child has stopped (but not terminated)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A parent process spawns three child processes. Write a detailed explanation of how you would use `waitpid` to ensure the parent waits for and collects the exit status of each child in the reverse order of their creation. Include how you would handle the possibility of a child terminating before the parent calls `waitpid` for it.",
+    "expectedPoints": [
+      "Store the PIDs of the children in an array as they are created using `fork`.",
+      "Use a loop that iterates backwards through the array of stored PIDs, calling `waitpid` with each specific PID.",
+      "Set the `options` argument to 0 (or use `WUNTRACED`/`WCONTINUED` if needed) to make the call block until that specific child exits.",
+      "Even if a child terminates early, its exit status is kept by the kernel in a 'zombie' state until the parent collects it via `waitpid`. Therefore, calling `waitpid` for a PID that has already terminated will still succeed and immediately return, collecting the status and reaping the zombie.",
+      "This method ensures the parent waits for each child in the specified reverse order, regardless of the actual termination order."
+    ],
+    "marks": 10
+  }
+]

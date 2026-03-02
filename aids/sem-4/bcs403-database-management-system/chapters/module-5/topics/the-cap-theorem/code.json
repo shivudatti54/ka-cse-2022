@@ -1,0 +1,35 @@
+{
+  "topicId": "the-cap-theorem",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simulating CAP Trade-off Decision",
+      "description": "Demonstrates how a distributed system decides between consistency and availability during partition",
+      "code": "FUNCTION HandleReadRequest(nodeId, dataKey)\n  IF networkPartitionDetected THEN\n    IF systemMode == CP_MODE THEN\n      RETURN ERROR_UNAVAILABLE\n    ELSE IF systemMode == AP_MODE THEN\n      localData = GET_FROM_LOCAL_REPLICA(dataKey)\n      RETURN localData\n    END IF\n  ELSE\n    data = GET_FROM_PRIMARY_REPLICA(dataKey)\n    SYNC_TO_SECONDARY_REPLICAS(dataKey, data)\n    RETURN data\n  END IF\nEND FUNCTION",
+      "explanation": "This pseudocode demonstrates how a system chooses behavior during network partition based on CP or AP mode. In CP mode, the system returns an error (unavailable) to maintain consistency. In AP mode, it returns local data which may be stale.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Eventual Consistency Implementation",
+      "description": "Simple implementation of eventual consistency using write and read operations",
+      "code": "class EventualConsistentStore:\n    def __init__(self):\n        self.replicas = {}\n        self.version = {}\n    \n    def write(self, key, value):\n        # Write to all replicas asynchronously\n        for replica_id in self.replicas:\n            self.replicas[replica_id][key] = value\n            self.version[key] = self.version.get(key, 0) + 1\n        return True\n    \n    def read(self, key):\n        # Read from any available replica (may be stale)\n        for replica_id in self.replicas:\n            if key in self.replicas[replica_id]:\n                return self.replicas[replica_id][key]\n        return None\n    \n    def sync(self, source_replica, target_replica):\n        # Background sync process\n        for key, value in self.replicas[source_replica].items():\n            self.replicas[target_replica][key] = value",
+      "explanation": "This Python code demonstrates eventual consistency where writes are propagated asynchronously and reads may return stale data from any replica.",
+      "timeComplexity": "O(n) for write to n replicas, O(1) for read",
+      "spaceComplexity": "O(n) for storing n replicas"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Strong Consistency Implementation",
+      "description": "Implementation showing strong consistency with quorum-based reads and writes",
+      "code": "class StrongConsistentStore {\n    private List<Replica> replicas;\n    private int quorumSize;\n    \n    public void write(String key, String value) {\n        // Write to quorum of replicas before acknowledging\n        int written = 0;\n        for (Replica replica : replicas) {\n            if (replica.write(key, value)) {\n                written++;\n            }\n            if (written >= quorumSize) break;\n        }\n        if (written < quorumSize) {\n            throw new ConsistencyException(\"Write failed\");\n        }\n    }\n    \n    public String read(String key) {\n        // Read from quorum to ensure latest value\n        Map<String, Integer> versions = new HashMap<>();\n        for (Replica replica : replicas) {\n            String value = replica.read(key);\n            if (value != null) {\n                versions.put(value, versions.getOrDefault(value, 0) + 1);\n            }\n        }\n        // Return value with majority votes\n        return versions.entrySet().stream()\n            .max(Map.Entry.comparingByValue())\n            .map(Map.Entry::getKey)\n            .orElse(null);\n    }\n}",
+      "explanation": "This Java code implements strong consistency using quorum-based approach. Both reads and writes require acknowledgment from a majority of replicas, ensuring all nodes see the same data.",
+      "timeComplexity": "O(n) where n is number of replicas",
+      "spaceComplexity": "O(n) for storing versions from each replica"
+    }
+  ]
+}

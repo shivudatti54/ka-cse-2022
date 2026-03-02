@@ -1,0 +1,35 @@
+{
+  "topicId": "line-drawing-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "DDA Line Drawing Algorithm",
+      "description": "Implementation of Digital Differential Analyzer algorithm for drawing lines between two points",
+      "code": "ALGORITHM DDA_Line(x1, y1, x2, y2)\nBEGIN\n dx = x2 - x1\n dy = y2 - y1\n \n steps = MAX(ABS(dx), ABS(dy))\n \n xinc = dx / steps\n yinc = dy / steps\n \n x = x1\n y = y1\n \n FOR i = 0 to steps\n PUTPIXEL(ROUND(x), ROUND(y), color)\n x = x + xinc\n y = y + yinc\n END FOR\nEND",
+      "explanation": "The algorithm calculates the number of steps needed (max of absolute differences), computes incremental values, and plots pixels by adding these increments while rounding to integer coordinates.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Bresenham's Line Drawing Algorithm",
+      "description": "Efficient integer-based line drawing algorithm for lines with slope between 0 and 1",
+      "code": "ALGORITHM Bresenham_Line(x1, y1, x2, y2)\nBEGIN\n dx = x2 - x1\n dy = y2 - y1\n \n P = 2 * dy - dx // Initial decision parameter\n \n x = x1\n y = y1\n \n PUTPIXEL(x, y, color)\n \n FOR x = x1+1 to x2\n IF P < 0 THEN\n // Choose East pixel\n P = P + 2 * dy\n ELSE\n // Choose North-East pixel\n y = y + 1\n P = P + 2 * dy - 2 * dx\n END IF\n PUTPIXEL(x, y, color)\n END FOR\nEND",
+      "explanation": "Uses decision parameter P to choose between East (no y-increment) or North-East (y-increment) pixels. P is updated incrementally using only integer arithmetic.",
+      "timeComplexity": "O(dx)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Bresenham's Algorithm - General Form",
+      "description": "Complete Bresenham algorithm handling all line orientations including steep slopes",
+      "code": "ALGORITHM Bresenham_General(x1, y1, x2, y2)\nBEGIN\n // Ensure we always iterate from left to right\n IF x1 > x2 THEN\n SWAP(x1, x2)\n SWAP(y1, y2)\n END IF\n \n dx = x2 - x1\n dy = y2 - y1\n \n // Determine octant and adjust\n IF ABS(dy) > ABS(dx) THEN\n // Line is steep (slope > 1 or < -1)\n // Swap roles of x and y\n RETURN Bresenham_Steep(y1, x1, y2, x2)\n ELSE\n RETURN Bresenham_Gentle(x1, y1, x2, y2)\n END IF\nEND",
+      "explanation": "This general form handles all line orientations by detecting steep lines and swapping coordinates, then calling the appropriate specialized function.",
+      "timeComplexity": "O(max(dx,dy))",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

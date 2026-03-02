@@ -1,0 +1,33 @@
+{
+  "topicId": "introduction-to-blockchain",
+  "examples": [
+    {
+      "id": "pseudocode-blockchain-structure",
+      "title": "Blockchain Structure",
+      "description": "Demonstrates the basic structure of a blockchain",
+      "language": "pseudocode",
+      "code": "CLASS Block\n HEADER: Hash\n BODY: List<Transaction>\n PREV_HASH: Hash\n TIMESTAMP: Timestamp\n NONCE: Integer\nEND CLASS\n\nCLASS Blockchain\n CHAIN: List<Block>\n ADD_BLOCK(Block newBlock)\n IF newBlock.PREV_HASH == CHAIN[-1].HEADER\n CHAIN.APPEND(newBlock)\n END IF\n END ADD_BLOCK\nEND CLASS",
+      "explanation": "This pseudocode defines a Block class and a Blockchain class. The Block class has attributes for the block's header, body, previous hash, timestamp, and nonce. The Blockchain class has a list of blocks and a method to add a new block to the chain."
+    },
+    {
+      "id": "python-blockchain-implementation",
+      "title": "Blockchain Implementation",
+      "description": "A basic implementation of a blockchain in Python",
+      "language": "python",
+      "code": "import hashlib\nimport time\n\nclass Block:\n def __init__(self, index, previous_hash, timestamp, data):\n self.index = index\n self.previous_hash = previous_hash\n self.timestamp = timestamp\n self.data = data\n self.hash = self.calculate_hash()\n\n def calculate_hash(self):\n data_string = str(self.index) + self.previous_hash + str(self.timestamp) + str(self.data)\n return hashlib.sha256(data_string.encode()).hexdigest()\n\nclass Blockchain:\n def __init__(self):\n self.chain = [self.create_genesis_block()]\n\n def create_genesis_block(self):\n return Block(0, '0', int(time.time()), 'Genesis Block')\n\n def get_latest_block(self):\n return self.chain[-1]\n\n def add_block(self, new_block):\n new_block.previous_hash = self.get_latest_block().hash\n new_block.hash = new_block.calculate_hash()\n self.chain.append(new_block)\n\n# Create a new blockchain and add some blocks\nmy_blockchain = Blockchain()\nmy_blockchain.add_block(Block(1, my_blockchain.get_latest_block().hash, int(time.time()), 'Transaction 1'))\nmy_blockchain.add_block(Block(2, my_blockchain.get_latest_block().hash, int(time.time()), 'Transaction 2'))",
+      "explanation": "This Python code defines a Block class and a Blockchain class. The Block class has attributes for the block's index, previous hash, timestamp, data, and hash. The Blockchain class has a list of blocks and methods to create a genesis block, get the latest block, and add a new block to the chain.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-blockchain-implementation",
+      "title": "Blockchain Implementation",
+      "description": "A basic implementation of a blockchain in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <time.h>\n#include <sha2.h>\n\n#define BLOCK_SIZE 1024\n\ntypedef struct Block {\n int index;\n char previous_hash[SHA256_DIGEST_LENGTH * 2 + 1];\n time_t timestamp;\n char data[BLOCK_SIZE];\n char hash[SHA256_DIGEST_LENGTH * 2 + 1];\n} Block;\n\ntypedef struct Blockchain {\n Block *chain;\n int length;\n} Blockchain;\n\nvoid calculate_hash(Block *block) {\n char data_string[BLOCK_SIZE + SHA256_DIGEST_LENGTH * 2 + 1];\n sprintf(data_string, \"%d%s%ld%s\", block->index, block->previous_hash, block->timestamp, block->data);\n SHA256_CTX sha256;\n SHA256_Init(&sha256);\n SHA256_Update(&sha256, data_string, strlen(data_string));\n SHA256_Final(block->hash, &sha256);\n}\n\nBlockchain *create_blockchain() {\n Blockchain *blockchain = malloc(sizeof(Blockchain));\n blockchain->chain = malloc(sizeof(Block));\n blockchain->length = 1;\n return blockchain;\n}\n\nvoid add_block(Blockchain *blockchain, Block *new_block) {\n new_block->previous_hash = blockchain->chain[blockchain->length - 1].hash;\n calculate_hash(new_block);\n blockchain->chain = realloc(blockchain->chain, (blockchain->length + 1) * sizeof(Block));\n blockchain->chain[blockchain->length] = *new_block;\n blockchain->length++;\n}\n\nint main() {\n Blockchain *my_blockchain = create_blockchain();\n Block genesis_block;\n genesis_block.index = 0;\n strcpy(genesis_block.previous_hash, \"0\");\n genesis_block.timestamp = time(NULL);\n strcpy(genesis_block.data, \"Genesis Block\");\n calculate_hash(&genesis_block);\n my_blockchain->chain[0] = genesis_block;\n\n Block new_block;\n new_block.index = 1;\n new_block.timestamp = time(NULL);\n strcpy(new_block.data, \"Transaction 1\");\n add_block(my_blockchain, &new_block);\n\n return 0;\n}",
+      "explanation": "This C code defines a Block struct and a Blockchain struct. The Block struct has attributes for the block's index, previous hash, timestamp, data, and hash. The Blockchain struct has a pointer to a list of blocks and an integer for the length of the chain. The code also includes functions to calculate the hash of a block and to add a new block to the chain.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

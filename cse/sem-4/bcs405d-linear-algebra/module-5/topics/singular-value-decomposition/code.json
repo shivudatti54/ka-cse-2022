@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Computing SVD using Power Iteration",
+    "description": "Simplified algorithm to compute largest singular value and vectors",
+    "code": "ALGORITHM Power Iteration for SVD\nINPUT: Matrix A (m\u00d7n), max iterations k\nOUTPUT: Largest singular value \u03c3, vectors u, v\n\nBEGIN\n // Initialize random vector\n v \u2190 random unit vector of size n\n \n FOR i = 1 TO k DO\n // Power iteration on A^TA\n u \u2190 normalize(A \u00d7 v)\n v \u2190 normalize(A^T \u00d7 u)\n \u03c3 \u2190 ||A \u00d7 v||\n END FOR\n \n RETURN \u03c3, u, v\nEND",
+    "explanation": "Power iteration finds dominant singular value by repeatedly multiplying by A and A^T, converging to the largest singular value and corresponding singular vectors.",
+    "complexity": {
+      "time": "O(k \u00d7 m \u00d7 n)",
+      "space": "O(m + n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Low-Rank Approximation using SVD",
+    "description": "Computing rank-k approximation of a matrix",
+    "code": "ALGORITHM LowRankApproximation\nINPUT: Matrix A, rank k\nOUTPUT: Approximated matrix A_k\n\nBEGIN\n // Step 1: Compute SVD\n (U, \u03a3, V) \u2190 SVD(A)\n \n // Step 2: Keep only top k singular values\n \u03a3_k \u2190 zero matrix\n FOR i = 1 TO k DO\n \u03a3_k[i,i] \u2190 \u03a3[i,i]\n END FOR\n \n U_k \u2190 first k columns of U\n V_k \u2190 first k columns of V\n \n // Step 3: Reconstruct\n A_k \u2190 U_k \u00d7 \u03a3_k \u00d7 V_k^T\n \n RETURN A_k\nEND",
+    "explanation": "Uses Eckart-Young theorem to compute optimal rank-k approximation. Only stores k largest singular values, reducing storage from O(mn) to O(k(m+n)).",
+    "complexity": {
+      "time": "O(min(m,n) \u00d7 m \u00d7 n) for SVD",
+      "space": "O(k(m+n)) for approximation"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Computing Pseudoinverse using SVD",
+    "description": "Finding Moore-Penrose pseudoinverse of a matrix",
+    "code": "ALGORITHM PseudoinverseSVD\nINPUT: Matrix A (m\u00d7n)\nOUTPUT: Pseudoinverse A\u207a (n\u00d7m)\n\nBEGIN\n // Compute SVD\n (U, \u03a3, V) \u2190 SVD(A)\n \n // Create \u03a3\u207a (n\u00d7m)\n \u03a3\u207a \u2190 zero matrix of size n\u00d7m\n r \u2190 rank(A)\n \n FOR i = 1 TO r DO\n IF \u03a3[i,i] > 0 THEN\n \u03a3\u207a[i,i] \u2190 1 / \u03a3[i,i]\n END IF\n END FOR\n \n // Compute A\u207a = V\u03a3\u207aU^T\n A\u207a \u2190 V \u00d7 \u03a3\u207a \u00d7 U^T\n \n RETURN A\u207a\nEND",
+    "explanation": "Computes pseudoinverse which solves least squares problems. Useful when A is singular or rectangular with no exact inverse.",
+    "complexity": {
+      "time": "O(min(m,n) \u00d7 m \u00d7 n)",
+      "space": "O(mn + mn)"
+    }
+  }
+]

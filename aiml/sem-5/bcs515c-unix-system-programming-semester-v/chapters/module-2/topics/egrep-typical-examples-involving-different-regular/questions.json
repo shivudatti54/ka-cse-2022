@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between the `grep` and `egrep` commands. Provide a specific example of a regular expression pattern that would work in `egrep` but not in standard `grep` without using the `-E` option.",
+    "expectedPoints": [
+      "egrep uses Extended Regular Expressions (ERE), while basic grep uses Basic Regular Expressions (BRE).",
+      "ERE provides more powerful meta-characters that do not require a backslash for interpretation (e.g., +, ?, |, {}).",
+      "Example: The pattern 'a(b|c)d' in egrep matches 'abd' or 'acd'. In basic grep, the same pattern would be interpreted literally and would require a backslash for the parentheses or would need to be written as 'a\\(b\\|c\\)d'."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Construct an `egrep` command to search a file named 'data.txt' for all lines that contain a valid, simple email address. Define your assumptions about the email format (e.g., it consists of alphanumeric characters, dots, and hyphens before the @ symbol, and a common domain like .com or .org). List and explain the key components of your regular expression.",
+    "expectedPoints": [
+      "Command example: `egrep '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}' data.txt`",
+      "Explanation of pattern: [a-zA-Z0-9._%+-]+ matches the local part (one or more of these characters).",
+      "The @ symbol matches literally.",
+      "[a-zA-Z0-9.-]+ matches the domain name (e.g., gmail, example).",
+      "\\. matches the literal dot (escaped because . is a meta-character).",
+      "[a-zA-Z]{2,} matches the top-level domain (e.g., com, org, net - at least two letters)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "You are troubleshooting a script that uses `egrep` to filter log entries. The command `egrep 'error|warning|critical' /var/log/syslog` is unexpectedly returning lines that contain the word 'unknown'. Propose a detailed, step-by-step methodology to diagnose and fix this issue. Your answer should cover how to verify the current behavior, the likely cause based on regular expression syntax, and how to modify the command to be more precise.",
+    "expectedPoints": [
+      "Step 1: Verify by running the command and analyzing the output to confirm which lines match and what text they contain.",
+      "Step 2: The likely cause is that the alternation operator | has the lowest precedence. The pattern matches 'error', 'warning', 'critical', OR any string containing 'unknown'.",
+      "Step 3: To fix, use grouping parentheses to clarify logic: `egrep '(error|warning|critical)' /var/log/syslog`.",
+      "Step 4: For even more precision, use word boundaries to avoid partial matches: `egrep '\\<(error|warning|critical)\\>' /var/log/syslog` (though \\< and \\> are GNU extensions, not part of standard ERE).",
+      "Step 5: Discuss alternative approaches, such as using `-w` option if available or a more complex pattern like `egrep '(^|\\s)(error|warning|critical)($|\\s)'` to match whole words."
+    ],
+    "marks": 10
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "topicId": "memory-register-io-instructions",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "Distinguish between Memory-Mapped I/O and Isolated (Port-Mapped) I/O in terms of address space usage and instruction compatibility.",
+      "back": "Memory-mapped I/O uses the same logical address space for memory and I/O devices, allowing standard LOAD/STORE instructions to access I/O registers. Isolated I/O uses a separate address space requiring dedicated IN/OUT instructions, providing better isolation but limiting available addressing modes."
+    },
+    {
+      "id": "fc-2",
+      "front": "In x86-32, calculate the effective address for 'mov eax, [ebx + ecx*4 + 100h]' and identify the addressing mode.",
+      "back": "Effective Address (EA) = EBX + (ECX × 4) + 0x100. This is Base+Scale×Index+Displacement addressing, commonly used for accessing array elements indexed by ECX within a structure base at EBX+0x100."
+    },
+    {
+      "id": "fc-3",
+      "front": "During the execute phase of a memory READ instruction (e.g., 'MOV reg, [addr]'), describe the bus cycle sequence and state the purpose of each control signal.",
+      "back": "CPU places address on address bus and asserts M/IO#, RD# signals; memory places data on data bus and asserts READY#; CPU latches data on data bus. For burst reads, multiple data transfers occur per address cycle, reducing memory access latency."
+    },
+    {
+      "id": "fc-4",
+      "front": "Convert the MIPS instruction 'lw $t0, 8($s1)' to machine code (binary) and explain each field.",
+      "back": "Encoding: opcode=35 (0x23), rs=17 ($s1), rt=8 ($t0), offset=8 (0x008). Binary: 1000 1101 0000 1000 0000 0000 0000 1000. The 16-bit signed offset is added to base register $s1 to form the memory address."
+    },
+    {
+      "id": "fc-5",
+      "front": "Explain the operation of x86 I/O instructions 'IN AL, 60h' and 'OUT 80h, AX' including bus transaction details.",
+      "back": "'IN AL, 60h' places 0x60 on address bus, asserts I/O# and RD#, reads 8-bit data into AL. 'OUT 80h, AX' places 0x80 on address bus and AX on data bus, asserts I/O# and WR#, writes 16-bit data. Both use separate I/O address space, not memory space."
+    },
+    {
+      "id": "fc-6",
+      "front": "In a little-endian x86 system, what bytes are stored at memory addresses 0x1000-0x1003 for the 32-bit value 0x12345678? How would this differ on a big-endian system?",
+      "back": "Little-endian: [0x1000]=78, [0x1001]=56, [0x1002]=34, [0x1003]=12 (least significant byte at lowest address). Big-endian: [0x1000]=12, [0x1001]=34, [0x1002]=56, [0x1003]=78. This affects multi-byte data interpretation when casting between types."
+    },
+    {
+      "id": "fc-7",
+      "front": "Describe the difference between 'PUSH EAX' and 'POP EBX' in terms of stack pointer manipulation and memory access in x86.",
+      "back": "PUSH EAX decrements ESP by 4, then stores EAX at [ESP]; POP EBX reads 4 bytes from [ESP] into EBX, then increments ESP by 4. Stack grows downward in address space; both operations involve implicit memory access using ESP as base register with zero displacement."
+    },
+    {
+      "id": "fc-8",
+      "front": "Given MIPS instruction 'sw $t0, 0($t1)', identify the datapath components activated during execution and the order of operations.",
+      "back": "1) Instruction fetch from memory to IR; 2) Decode: $t0 and $t1 fields extracted; 3) ALU computes address = $t1 + sign-extended offset(0); 4) Data from register $t0 written to memory at computed address using Data Write signal. Register file and ALU are both utilized in the same clock cycle."
+    }
+  ]
+}

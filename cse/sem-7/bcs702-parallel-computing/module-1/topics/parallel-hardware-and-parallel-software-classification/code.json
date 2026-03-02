@@ -1,0 +1,35 @@
+{
+  "topicId": "parallel-hardware-and-parallel-software-classification",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "OpenMP Parallel Loop (Data Parallelism)",
+      "description": "Example of data-parallel programming using OpenMP to parallelize a loop",
+      "code": "#include <omp.h>\n\nvoid parallel_matrix_add(float* A, float* B, float* C, int N) {\n #pragma omp parallel for schedule(static)\n for (int i = 0; i < N; i++) {\n for (int j = 0; j < N; j++) {\n C[i][j] = A[i][j] + B[i][j];\n }\n }\n}\n\n// Equivalent SPMD-like behavior:\n// Each thread executes same loop body\n// Operating on different data elements (rows)\n// Implicit synchronization at end of parallel region",
+      "explanation": "This OpenMP code demonstrates data parallelism: the same operation (matrix addition) is applied to different data elements (matrix rows/elements) concurrently. The #pragma omp parallel for directive distributes iterations across available threads. The schedule(static) indicates static load balancing - each thread gets equal chunks.",
+      "timeComplexity": "O(n\u00b2/p) where p = number of threads",
+      "spaceComplexity": "O(n\u00b2) for matrices, O(1) additional per thread"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "MPI Point-to-Point Communication (Distributed Memory)",
+      "description": "Message passing between processes in a distributed memory system",
+      "code": "#include <mpi.h>\n\nvoid mpi_computation(double* local_data, int local_size, int rank, int size) {\n // Each process has its own local_data (distributed memory)\n \n // Compute local result\n double local_result = compute(local_data, local_size);\n \n // Send to rank 0 if not root\n if (rank != 0) {\n MPI_Send(&local_result, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);\n } else {\n // Root receives and reduces\n double total = local_result;\n double received;\n for (int src = 1; src < size; src++) {\n MPI_Recv(&received, 1, MPI_DOUBLE, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);\n total += received;\n }\n printf(\"Total: %f\\n\", total);\n }\n}\n\n// This follows SPMD model: same program runs on all ranks\n// Each rank has different data and may take different paths",
+      "explanation": "This MPI code demonstrates distributed memory programming. Each process has its own local memory and communicates via explicit messages. MPI_Send/MPI_Recv handle point-to-point communication. The code follows SPMD model - same executable runs on all processes with different data (rank determines behavior).",
+      "timeComplexity": "O(n/p + p \u00d7 L) where L = latency per message",
+      "spaceComplexity": "O(n/p) local data per process + O(1) message buffers"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Task Parallel Pipeline with OpenMP Sections",
+      "description": "Demonstrates task parallelism using pipeline stages",
+      "code": "void task_parallel_pipeline(DataStream& input, DataStream& output) {\n #pragma omp parallel sections num_threads(3)\n {\n #pragma omp section\n {\n // Stage 1: Read and preprocess\n while (more_data) {\n DataChunk chunk = input.read();\n preprocess(chunk);\n stage1_buffer.push(chunk);\n }\n }\n \n #pragma omp section\n {\n // Stage 2: Process data\n while (more_data) {\n DataChunk chunk = stage1_buffer.pop();\n process(chunk);\n stage2_buffer.push(chunk);\n }\n }\n \n #pragma omp section\n {\n // Stage 3: Write results\n while (more_data) {\n DataChunk chunk = stage2_buffer.pop();\n output.write(chunk);\n }\n }\n }\n}\n\n// Each section runs in parallel - different tasks simultaneously\n// Pipeline parallelism: stages process different data concurrently",
+      "explanation": "This demonstrates task parallelism - different functions executed concurrently on different threads. Unlike data parallelism (same operation on different data), task parallelism assigns different operations to different processors. Pipeline stages process different chunks of data simultaneously, achieving throughput improvement.",
+      "timeComplexity": "O(n) serial vs O(n/3 + pipeline_overhead) parallel",
+      "spaceComplexity": "O(buffer_size \u00d7 3) for pipeline buffers"
+    }
+  ]
+}

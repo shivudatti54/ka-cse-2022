@@ -1,0 +1,55 @@
+{
+  "topicId": "cache-coherence",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What is cache coherence?",
+      "back": "The consistency of data stored in multiple local caches for a shared resource in multiprocessor systems. It ensures that when one processor updates a cached value, all other processors see the updated value."
+    },
+    {
+      "id": "fc2",
+      "front": "Name the four states in the MESI protocol.",
+      "back": "Modified (dirty, exclusive -- data differs from main memory), Exclusive (clean, exclusive -- only copy), Shared (clean, shared -- multiple caches), Invalid (stale -- not valid)."
+    },
+    {
+      "id": "fc3",
+      "front": "What is the difference between write-invalidate and write-update protocols?",
+      "back": "Write-invalidate: on a write, invalidate all other cached copies (they must re-fetch on next read). Write-update: on a write, immediately broadcast the new value to update all cached copies."
+    },
+    {
+      "id": "fc4",
+      "front": "What is false sharing?",
+      "back": "When unrelated variables that happen to reside on the same cache line cause unnecessary cache invalidations and coherence traffic, degrading performance even though the threads are not truly sharing data."
+    },
+    {
+      "id": "fc5",
+      "front": "When should you use directory-based instead of snooping cache coherence?",
+      "back": "In large-scale multiprocessor systems where broadcast-based snooping becomes inefficient due to bus contention. Directory-based protocols send coherence messages only to caches that actually hold copies of the data."
+    },
+    {
+      "id": "fc6",
+      "front": "How does snooping-based cache coherence work?",
+      "back": "All caches monitor (snoop on) the shared bus for memory transactions. When a cache sees a bus transaction for a line it holds, it takes appropriate action (invalidate, update, or supply data) based on the protocol."
+    },
+    {
+      "id": "fc7",
+      "front": "How does directory-based cache coherence work?",
+      "back": "A centralized directory keeps track of which caches hold copies of each memory line. On a write, the directory sends invalidation messages only to caches that have the line, avoiding broadcast. Better scalability than snooping."
+    },
+    {
+      "id": "fc8",
+      "front": "What is the Exclusive state's advantage in MESI over the simpler MSI protocol?",
+      "back": "In MSI, a write to a clean-only-copy line requires a bus transaction to move from Shared to Modified. In MESI, the Exclusive state means the cache knows it has the only copy, so it can write (transition to Modified) silently without any bus traffic."
+    },
+    {
+      "id": "fc9",
+      "front": "What is coherence thrashing?",
+      "back": "When multiple processors frequently write to the same cache line (true sharing or false sharing), causing constant invalidations and cache misses. The line 'ping-pongs' between caches, severely degrading performance."
+    },
+    {
+      "id": "fc10",
+      "front": "How can false sharing be prevented?",
+      "back": "Pad data structures so that variables accessed by different threads are on separate cache lines. Align data to cache line boundaries. Avoid placing frequently-written per-thread variables adjacent in memory."
+    }
+  ]
+}

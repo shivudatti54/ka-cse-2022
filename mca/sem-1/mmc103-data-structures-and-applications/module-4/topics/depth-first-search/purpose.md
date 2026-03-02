@@ -1,0 +1,2 @@
+# Depth First Search
+This unit establishes the foundational theory and algorithmic principles of Depth First Search, a cornerstone algorithm in graph theory. Students will develop rigorous understanding of DFS mechanics, correctness reasoning, complexity analysis, and edge classification—essential prerequisites for advanced graph algorithms including topological sort, cycle detection, and strongly connected components. The analytical MCQs test application-level understanding required for standard-level examinations.

@@ -1,0 +1,45 @@
+{
+  "topicId": "prims-algorithm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Prim's Algorithm using Arrays",
+      "description": "Basic O(V\u00b2) implementation of Prim's Algorithm using arrays for dense graphs",
+      "code": "#include <stdio.h>\n#include <limits.h>\n\n#define V 5\n\nint minKey(int key[], bool mstSet[]) {\n    int min = INT_MAX, min_index;\n    for (int v = 0; v < V; v++)\n        if (!mstSet[v] && key[v] < min) {\n            min = key[v];\n            min_index = v;\n        }\n    return min_index;\n}\n\nvoid primMST(int graph[V][V]) {\n    int parent[V];\n    int key[V];\n    bool mstSet[V];\n\n    for (int i = 0; i < V; i++) {\n        key[i] = INT_MAX;\n        mstSet[i] = false;\n    }\n\n    key[0] = 0;\n    parent[0] = -1;\n\n    for (int count = 0; count < V - 1; count++) {\n        int u = minKey(key, mstSet);\n        mstSet[u] = true;\n\n        for (int v = 0; v < V; v++)\n            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v]) {\n                parent[v] = u;\n                key[v] = graph[u][v];\n            }\n    }\n\n    printf(\"Edge \\tWeight\\n\");\n    for (int i = 1; i < V; i++)\n        printf(\"%d - %d \\t%d\\n\", parent[i], i, graph[i][parent[i]]);\n}\n\nint main() {\n    int graph[V][V] = {{0, 2, 0, 6, 0},\n                      {2, 0, 3, 8, 5},\n                      {0, 3, 0, 0, 7},\n                      {6, 8, 0, 0, 9},\n                      {0, 5, 7, 9, 0}};\n    primMST(graph);\n    return 0;\n}",
+      "explanation": "This array-based implementation iterates V times, each time finding the minimum key vertex and updating adjacent vertices. Suitable for dense graphs where E \u2248 V\u00b2. Time: O(V\u00b2), Space: O(V)",
+      "timeComplexity": "O(V\u00b2)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Prim's Algorithm using Priority Queue",
+      "description": "Efficient O(E log V) implementation using heap for sparse graphs",
+      "code": "import heapq\n\ndef prim_mst(graph, start=0):\n    V = len(graph)\n    parent = [-1] * V\n    key = [float('inf')] * V\n    visited = [False] * V\n\n    key[start] = 0\n    pq = [(0, start)]\n\n    while pq:\n        weight, u = heapq.heappop(pq)\n\n        if visited[u]:\n            continue\n\n        visited[u] = True\n\n        for v, w in graph[u]:\n            if not visited[v] and w < key[v]:\n                key[v] = w\n                parent[v] = u\n                heapq.heappush(pq, (w, v))\n\n    mst_edges = []\n    total_weight = 0\n    for i in range(1, V):\n        if parent[i] != -1:\n            mst_edges.append((parent[i], i, key[i]))\n            total_weight += key[i]\n\n    return mst_edges, total_weight\n\n# Example: Graph as adjacency list\ngraph = {\n    0: [(1, 2), (3, 6)],\n    1: [(0, 2), (2, 3), (3, 8), (4, 5)],\n    2: [(1, 3), (4, 7)],\n    3: [(0, 6), (1, 8), (4, 9)],\n    4: [(1, 5), (2, 7), (3, 9)]\n}\n\nedges, weight = prim_mst(graph)\nprint(\"MST Edges:\", edges)\nprint(\"Total Weight:\", weight)",
+      "explanation": "Uses Python's heapq (min-heap) for efficient minimum edge selection. Each vertex is processed once, and edges cause heap operations. Better for sparse graphs with fewer edges. Time: O(E log V), Space: O(V)",
+      "timeComplexity": "O(E log V)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Generic Prim's Algorithm Pseudocode",
+      "description": "Standard pseudocode showing the core logic of Prim's Algorithm",
+      "code": "ALGORITHM PrimMST(G, start)\n// G is weighted undirected graph\n// start is the source vertex\nBEGIN\n    FOR each vertex v IN G.V DO\n        key[v] \u2190 \u221e          // Minimum weight to connect v to MST\n        parent[v] \u2190 -1      // Parent of v in MST\n        mstSet[v] \u2190 FALSE   // Whether v is included in MST\n    END FOR\n\n    key[start] \u2190 0          // Start vertex has key 0\n\n    WHILE mstSet is not complete DO\n        // Find vertex u with minimum key value not in MST\n        u \u2190 Extract-Min-Key(mstSet)\n        mstSet[u] \u2190 TRUE\n\n        // Update keys of adjacent vertices\n        FOR each neighbor v OF u DO\n            IF v NOT IN mstSet AND weight(u,v) < key[v] THEN\n                parent[v] \u2190 u\n                key[v] \u2190 weight(u,v)\n            END IF\n        END FOR\n    END WHILE\n\n    RETURN parent array and edges in MST\nEND",
+      "explanation": "This pseudocode shows the generic Prim's Algorithm structure. The Extract-Min-Key operation can be implemented using arrays (O(V)) or Priority Queue (O(log V)). The algorithm repeatedly picks the minimum weight edge connecting MST to a new vertex.",
+      "timeComplexity": "O(V\u00b2) with arrays, O(E log V) with Priority Queue",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Prim's Algorithm using Fibonacci Heap",
+      "description": "Optimal O(E + V log V) implementation using Fibonacci Heap for very large graphs",
+      "code": "import java.util.*;\n\nclass PrimFibonacci {\n    static class Edge {\n        int to, weight;\n        Edge(int to, int weight) {\n            this.to = to;\n            this.weight = weight;\n        }\n    }\n\n    static final int INF = Integer.MAX_VALUE;\n\n    public List<int[]> findMST(int[][][] graph, int n, int start) {\n        int[] key = new int[n];\n        int[] parent = new int[n];\n        boolean[] inMST = new boolean[n];\n\n        Arrays.fill(key, INF);\n        Arrays.fill(parent, -1);\n        key[start] = 0;\n\n        // Fibonacci Heap would be used here in optimal implementation\n        PriorityQueue<int[]> pq = new PriorityQueue<>(\n            (a, b) -> a[1] - b[1]\n        );\n        pq.add(new int[]{start, 0});\n\n        while (!pq.isEmpty()) {\n            int[] current = pq.poll();\n            int u = current[0];\n\n            if (inMST[u]) continue;\n            inMST[u] = true;\n\n            for (Edge e : graph[u]) {\n                int v = e.to;\n                int w = e.weight;\n\n                if (!inMST[v] && w < key[v]) {\n                    key[v] = w;\n                    parent[v] = u;\n                    pq.add(new int[]{v, w});\n                }\n            }\n        }\n\n        List<int[]> mst = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            if (parent[i] != -1) {\n                mst.add(new int[]{parent[i], i, key[i]});\n            }\n        }\n        return mst;\n    }\n}",
+      "explanation": "This Java implementation uses PriorityQueue (Binary Heap). For truly optimal performance with very large graphs, Fibonacci Heap would reduce complexity to O(E + V log V), though the constant factors make Binary Heap preferable in practice.",
+      "timeComplexity": "O(E log V) with Binary Heap, O(E + V log V) with Fibonacci Heap",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

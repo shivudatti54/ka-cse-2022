@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+
+  <g class="step" id="step0" data-narration="The Travelling Salesman Problem asks: given cities and distances, find the shortest route visiting each city once and returning home.">
+    <rect x="0" y="10" width="800" height="40" fill="#1976d2" rx="5"/>
+    <text x="400" y="38" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="white">Travelling Salesman Problem (TSP)</text>
+  </g>
+
+  <g class="step" id="step1" data-narration="TSP asks for a minimum-weight Hamiltonian cycle in a complete graph. It is NP-hard, meaning no fast exact algorithm exists for large instances.">
+    <rect x="10" y="58" width="780" height="80" fill="#e3f2fd" rx="5" stroke="#1976d2" stroke-width="1"/>
+    <text x="25" y="78" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Problem Definition</text>
+    <text x="25" y="95" font-family="Arial" font-size="10" fill="#333">Given complete graph G=(V,E) with weights w:E→ℝ, find Hamiltonian cycle with</text>
+    <text x="25" y="110" font-family="Arial" font-size="10" fill="#333">minimum total weight: Σᵢ w(vᵢ,vᵢ₊₁) + w(vₙ,v₁)</text>
+    <text x="25" y="128" font-family="Arial" font-size="10" font-weight="bold" fill="#f44336">NP-hard: No polynomial-time exact algorithm exists (unless P=NP)</text>
+  </g>
+
+  <g class="step" id="step2" data-narration="Three main TSP types exist: symmetric where distances are bidirectional, asymmetric where directions differ, and metric which obeys triangle inequality.">
+    <rect x="10" y="146" width="780" height="80" fill="#e8f5e9" rx="5" stroke="#388e3c" stroke-width="1"/>
+    <text x="25" y="166" font-family="Arial" font-size="13" font-weight="bold" fill="#388e3c">Types of TSP</text>
+    <rect x="25" y="178" width="240" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="35" y="193" font-family="Arial" font-size="10" font-weight="bold" fill="#2e7d32">Symmetric (STSP)</text>
+    <text x="35" y="208" font-family="Arial" font-size="9" fill="#333">d(A,B) = d(B,A)</text>
+    <text x="35" y="221" font-family="Arial" font-size="9" fill="#333">Undirected graph</text>
+    <rect x="275" y="178" width="240" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="285" y="193" font-family="Arial" font-size="10" font-weight="bold" fill="#2e7d32">Asymmetric (ATSP)</text>
+    <text x="285" y="208" font-family="Arial" font-size="9" fill="#333">d(A,B) ≠ d(B,A) possible</text>
+    <text x="285" y="221" font-family="Arial" font-size="9" fill="#333">Directed graph</text>
+    <rect x="525" y="178" width="240" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="535" y="193" font-family="Arial" font-size="10" font-weight="bold" fill="#2e7d32">Metric TSP</text>
+    <text x="535" y="208" font-family="Arial" font-size="9" fill="#333">Triangle inequality:</text>
+    <text x="535" y="221" font-family="Arial" font-size="9" fill="#333">d(A,C) ≤ d(A,B)+d(B,C)</text>
+  </g>
+
+  <g class="step" id="step3" data-narration="Brute force enumerates all permutations. Starting from a fixed city, there are (n-1) factorial tours to check. Works only for n up to 10-12.">
+    <rect x="10" y="234" width="780" height="80" fill="#fff3e0" rx="5" stroke="#ff9800" stroke-width="1"/>
+    <text x="25" y="254" font-family="Arial" font-size="13" font-weight="bold" fill="#e65100">Brute Force Approach</text>
+    <text x="25" y="272" font-family="Arial" font-size="10" fill="#333">Enumerate all (n-1)! permutations starting from fixed city. Select minimum tour.</text>
+    <text x="25" y="290" font-family="Arial" font-size="10" fill="#333">Example with 4 cities: 3! = 6 tours to check</text>
+    <rect x="350" y="250" width="420" height="55" fill="#ffe0b2" rx="3"/>
+    <text x="360" y="268" font-family="Arial" font-size="11" font-weight="bold" fill="#e65100">Time: O(n!) | Space: O(n)</text>
+    <text x="360" y="285" font-family="Arial" font-size="9" fill="#333">Only practical for n ≤ 10-12 due to factorial growth</text>
+    <text x="360" y="298" font-family="Arial" font-size="9" fill="#f44336">For n=20: 2.4×10¹⁷ operations - impossible!</text>
+  </g>
+
+  <g class="step" id="step4" data-narration="The Held-Karp algorithm uses dynamic programming. It solves TSP in O(n²×2^n) time by building a table of minimum costs for subsets.">
+    <rect x="10" y="322" width="780" height="80" fill="#f3e5f5" rx="5" stroke="#9c27b0" stroke-width="1"/>
+    <text x="25" y="342" font-family="Arial" font-size="13" font-weight="bold" fill="#7b1fa2">Dynamic Programming (Held-Karp)</text>
+    <text x="25" y="360" font-family="Arial" font-size="10" fill="#333">Recurrence: DP(S,i) = min{DP(S-{i},j) + w(j,i)} for all j∈S, j≠i</text>
+    <text x="25" y="378" font-family="Arial" font-size="10" fill="#333">Base: DP({v},v) = w(start,v). Final: min{DP(V-{0},i) + w(i,0)}</text>
+    <rect x="380" y="340" width="390" height="55" fill="#e1bee7" rx="3"/>
+    <text x="390" y="358" font-family="Arial" font-size="11" font-weight="bold" fill="#7b1fa2">Time: O(n²·2ⁿ) | Space: O(n·2ⁿ)</text>
+    <text x="390" y="375" font-family="Arial" font-size="9" fill="#333">Much better than brute force. Practical for n ≤ 20-25</text>
+    <text x="390" y="388" font-family="Arial" font-size="9" fill="#333">n=20: ~10¹³ operations - still large but doable</text>
+  </g>
+
+  <g class="step" id="step5" data-narration="Approximation algorithms include Nearest Neighbor heuristic and MST-based 2-approximation. The MST method guarantees tour within twice optimal for metric TSP.">
+    <rect x="10" y="410" width="780" height="80" fill="#e3f2fd" rx="5" stroke="#1976d2" stroke-width="1"/>
+    <text x="25" y="430" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Approximation Algorithms</text>
+    <rect x="25" y="445" width="360" height="38" fill="#bbdefb" rx="3"/>
+    <text x="35" y="460" font-family="Arial" font-size="10" font-weight="bold" fill="#1565c0">Nearest Neighbor Heuristic</text>
+    <text x="35" y="475" font-family="Arial" font-size="9" fill="#333">Always visit nearest unvisited city. O(n²). No quality guarantee.</text>
+    <rect x="395" y="445" width="380" height="38" fill="#bbdefb" rx="3"/>
+    <text x="405" y="460" font-family="Arial" font-size="10" font-weight="bold" fill="#1565c0">MST-based 2-Approximation</text>
+    <text x="405" y="475" font-family="Arial" font-size="9" fill="#333">Build MST, preorder traversal. For metric TSP: tour ≤ 2× optimal.</text>
+  </g>
+
+  <g class="step" id="step6" data-narration="For the 4-city example, brute force finds optimal cost 80 via tours C1-C2-C4-C3-C1 or C1-C4-C2-C3-C1. Nearest Neighbor also finds 80 here.">
+    <rect x="10" y="498" width="780" height="90" fill="#e8f5e9" rx="5" stroke="#388e3c" stroke-width="1"/>
+    <text x="25" y="518" font-family="Arial" font-size="13" font-weight="bold" fill="#2e7d32">Example: 4 Cities</text>
+    <rect x="25" y="530" width="200" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="35" y="545" font-family="Arial" font-size="9" fill="#333">Distance Matrix:</text>
+    <text x="35" y="558" font-family="Arial" font-size="8" fill="#333">C1-C2:10 C1-C3:15 C1-C4:20</text>
+    <text x="35" y="571" font-family="Arial" font-size="8" fill="#333">C2-C3:35 C2-C4:25 C3-C4:30</text>
+    <rect x="235" y="530" width="280" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="245" y="545" font-family="Arial" font-size="9" font-weight="bold" fill="#2e7d32">Optimal Tours (Cost = 80):</text>
+    <text x="245" y="560" font-family="Arial" font-size="9" fill="#333">C1→C2→C4→C3→C1</text>
+    <text x="245" y="573" font-family="Arial" font-size="9" fill="#333">=10+25+30+15=80</text>
+    <rect x="525" y="530" width="250" height="50" fill="#c8e6c9" rx="3"/>
+    <text x="535" y="545" font-family="Arial" font-size="9" font-weight="bold" fill="#2e7d32">Nearest Neighbor (from C1):</text>
+    <text x="535" y="560" font-family="Arial" font-size="9" fill="#333">C1→C2→C4→C3→C1</text>
+    <text x="535" y="573" font-family="Arial" font-size="9" fill="#333">=10+25+30+15=80 (optimal!)</text>
+  </g>
+</svg>

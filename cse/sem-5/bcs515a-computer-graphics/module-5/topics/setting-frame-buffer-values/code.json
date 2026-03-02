@@ -1,0 +1,35 @@
+{
+  "topicId": "setting-frame-buffer-values",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Writing Pixel to Frame Buffer",
+      "description": "Basic algorithm for setting a pixel value in frame buffer",
+      "code": "// Assume: frameBuffer is array of RGBA pixels\n// width, height are screen dimensions\n// x, y are pixel coordinates\n// r, g, b, a are color components (0-255)\n\nPROCEDURE SetPixel(x, y, r, g, b, a)\nBEGIN\n IF x < 0 OR x >= width OR y < 0 OR y >= height THEN\n RETURN // Out of bounds check\n ENDIF\n \n pixelIndex = (y * width) + x\n \n // Pack RGBA into 32-bit value\n frameBuffer[pixelIndex] = (r << 24) | (g << 16) | (b << 8) | a\nEND",
+      "explanation": "Converts 2D pixel coordinates to 1D array index using row-major ordering, then packs RGBA components into a 32-bit integer for storage",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Z-Buffer Depth Test Algorithm",
+      "description": "Algorithm for depth testing and hidden surface removal",
+      "code": "// Initialize Z-buffer with maximum depth\nPROCEDURE InitializeBuffers(width, height)\nBEGIN\n FOR y = 0 TO height-1 DO\n FOR x = 0 TO width-1 DO\n colorBuffer[x][y] = backgroundColor\n zBuffer[x][y] = MAX_DEPTH // Far plane value\n ENDFOR\n ENDFOR\nEND\n\n// Process fragment with depth test\nPROCEDURE DrawFragment(x, y, z, color)\nBEGIN\n IF z < zBuffer[x][y] THEN\n // New fragment is closer - update both buffers\n zBuffer[x][y] = z\n colorBuffer[x][y] = color\n ENDIF\n // Else: fragment is hidden, discard\nEND",
+      "explanation": "Compares incoming fragment depth with stored value; only updates if fragment is closer to viewer (smaller z value)",
+      "timeComplexity": "O(1) per fragment, O(wh) for full clear",
+      "spaceComplexity": "O(wh) for z-buffer + color-buffer"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Double Buffer Swap",
+      "description": "Swapping front and back buffers for flicker-free rendering",
+      "code": "// Global variables for double buffering\nfrontBuffer = pixelArray[0] // Currently displayed\nbackBuffer = pixelArray[1] // Being drawn to\nbufferIndex = 0 // Tracks current front buffer\n\nPROCEDURE RenderFrame()\nBEGIN\n // Draw entire scene to back buffer\n ClearBuffer(backBuffer)\n DrawSceneTo(backBuffer)\n \n // Swap buffers when rendering complete\n SwapBuffers()\nEND\n\nPROCEDURE SwapBuffers()\nBEGIN\n // Atomic swap of buffer pointers\n bufferIndex = 1 - bufferIndex\n frontBuffer = pixelArray[bufferIndex]\n backBuffer = pixelArray[1 - bufferIndex]\n \n // Display hardware now automatically shows new frontBuffer\nEND",
+      "explanation": "Uses two buffers - GPU renders to back buffer while display shows front buffer; swapping is atomic operation, eliminating flicker",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(2 × frameBufferSize)"
+    }
+  ]
+}

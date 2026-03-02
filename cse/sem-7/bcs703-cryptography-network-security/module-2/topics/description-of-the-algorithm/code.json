@@ -1,0 +1,35 @@
+{
+  "topicId": "description-of-the-algorithm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Generic PRNG Algorithm Structure",
+      "description": "Pseudocode showing the general structure of a PRNG with seeding, state transition, and output generation phases",
+      "code": "// Generic PRNG Algorithm Structure\nBEGIN PRNG_Algorithm\n // Phase 1: Seeding\n FUNCTION Initialize(seed)\n state \u2190 seed\n RETURN state\n END FUNCTION\n \n // Phase 2: State Transition\n FUNCTION Transition(currentState)\n // Mathematical function to compute next state\n nextState \u2190 f(currentState)\n RETURN nextState\n END FUNCTION\n \n // Phase 3: Output Generation\n FUNCTION Output(currentState)\n // Extract pseudorandom bits from state\n output \u2190 g(currentState)\n RETURN output\n END FUNCTION\n \n // Main PRNG Operation\n FUNCTION Generate( seed, numValues )\n state \u2190 Initialize(seed)\n outputSequence \u2190 []\n \n FOR i \u2190 1 TO numValues DO\n output \u2190 Output(state)\n outputSequence.append(output)\n state \u2190 Transition(state)\n END FOR\n \n RETURN outputSequence\n END FUNCTION\nEND PRNG_Algorithm",
+      "explanation": "This pseudocode demonstrates the three main phases of any PRNG: initialization from seed, state transition to next state, and output generation. The functions f() and g() represent the transition and output functions that define specific PRNG algorithms.",
+      "timeComplexity": "O(n) for generating n numbers",
+      "spaceComplexity": "O(1) excluding output storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "PRNG with Reseeding for Forward Security",
+      "description": "Enhanced PRNG showing how reseeding injects additional entropy to provide forward security",
+      "code": "// PRNG with Reseeding Mechanism\nBEGIN SecurePRNG\n VARIABLES:\n state // Internal state\n entropyPool // Buffer for additional entropy\n \n // Initial Seeding\n FUNCTION Initialize(seed, initialEntropy)\n state \u2190 Mix(seed, initialEntropy)\n entropyPool \u2190 []\n RETURN state\n END FUNCTION\n \n // Mixing function combines inputs\n FUNCTION Mix(input1, input2)\n // Cryptographic mixing (e.g., hash-based)\n result \u2190 Hash(input1 || input2)\n RETURN result\n END FUNCTION\n \n // Generate with optional reseeding\n FUNCTION GenerateWithReseed(currentState, numValues, additionalEntropy)\n state \u2190 currentState\n outputSequence \u2190 []\n \n // Inject new entropy if provided\n IF additionalEntropy \u2260 NULL THEN\n state \u2190 Mix(state, additionalEntropy)\n END IF\n \n FOR i \u2190 1 TO numValues DO\n // Generate output\n output \u2190 Extract(state)\n outputSequence.append(output)\n \n // Update state with transition\n state \u2190 Transition(state)\n \n // Periodic reseeding for forward security\n IF i mod ReseedInterval == 0 THEN\n state \u2190 Mix(state, FreshEntropy())\n END IF\n END FOR\n \n RETURN outputSequence, state\n END FUNCTION\nEND SecurePRNG",
+      "explanation": "This algorithm shows reseeding which provides forward security - even if current state is compromised, attacker cannot predict past outputs. Fresh entropy is periodically mixed into state to ensure forward security.",
+      "timeComplexity": "O(n) with periodic overhead for mixing",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "State Compromise Simulation",
+      "description": "Demonstrates forward and backward security properties by showing what information is exposed/leaked in different compromise scenarios",
+      "code": "// Demonstrating Security Properties\nBEGIN SecurityProperties\n \n // Without security: State compromise reveals all\n FUNCTION InsecurePRNG_Compromise(state, pastOutputs)\n // Knowing state, attacker can regenerate all past outputs\n attackerKnowledge \u2190 state\n // Can also predict ALL future outputs\n futurePredictable \u2190 TRUE\n RETURN attackerKnowledge, futurePredictable\n END FUNCTION\n \n // With forward security: Past outputs protected\n FUNCTION ForwardSecure_Compromise(currentState, pastOutputs)\n // Even with current state, cannot recover past outputs\n // Because outputs were generated before current state existed\n pastRecoverable \u2190 FALSE\n futurePredictable \u2190 TRUE // But future is compromised\n RETURN pastRecoverable\n END FUNCTION\n \n // With backward security: Seed not recoverable\n FUNCTION BackwardSecure_Compromise(currentState, seed)\n // Knowing current state, cannot determine original seed\n // Because transition function is one-way (computationally hard)\n seedRecoverable \u2190 FALSE\n RETURN seedRecoverable\n END FUNCTION\n \n // Complete secure PRNG simulation\n FUNCTION DemonstrateSecurity(seed)\n // Generate sequence\n outputs \u2190 GenerateSecureSequence(seed, 100)\n \n // Attack scenario 1: Intercept outputs only\n intercepted \u2190 outputs[1:50]\n // Cannot predict outputs[51:100] - unpredictable\n \n // Attack scenario 2: Compromise state at position 50\n compromisedState \u2190 stateAtPosition(50)\n // Forward secure: Cannot recover outputs[1:49]\n // Backward secure: Cannot recover seed\n \n RETURN \"System demonstrates forward and backward security\"\n END FUNCTION\n \nEND SecurityProperties",
+      "explanation": "This pseudocode illustrates what forward and backward security mean in practice. Forward security ensures past outputs remain secret even if current state is compromised. Backward security ensures the original seed cannot be determined from current state.",
+      "timeComplexity": "Varies by operation (hash functions typically O(n))",
+      "spaceComplexity": "O(k) where k is output history stored"
+    }
+  ]
+}

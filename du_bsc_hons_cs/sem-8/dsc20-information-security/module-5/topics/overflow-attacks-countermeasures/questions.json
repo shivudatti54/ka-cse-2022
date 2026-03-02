@@ -1,0 +1,158 @@
+{
+  "topicId": "overflow-attacks-countermeasures",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between stack-based and heap-based buffer overflow attacks.",
+      "keyPoints": [
+        "Stack-based overflow targets return addresses in stack frames",
+        "Heap-based overflow targets metadata in dynamically allocated memory",
+        "Stack attacks are easier to exploit due to predictable layout",
+        "Heap attacks require corrupting memory management structures"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are stack canaries and how do they provide protection against buffer overflows?",
+      "keyPoints": [
+        "Stack canaries are known values placed between buffer and return address",
+        "Placed at compile time using -fstack-protector flag",
+        "Check canary value before function returns",
+        "If modified, program terminates immediately",
+        "Does not prevent overflow but detects it before control is hijacked"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe three countermeasures against buffer overflow attacks with their purposes.",
+      "keyPoints": [
+        "Stack Canaries - detect overflow by checking guard value",
+        "ASLR - randomize memory addresses to make exploits unpredictable",
+        "DEP/NX - mark data pages as non-executable",
+        "Safe Libraries - use bounds-checked functions",
+        "Code Hardening - compile with security flags"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is integer overflow? How can it be exploited?",
+      "keyPoints": [
+        "Integer overflow occurs when arithmetic result exceeds maximum representable value",
+        "Result wraps around to small or negative value",
+        "Can cause buffer overflows when used for memory allocation",
+        "Attacker manipulates size values to allocate smaller buffers",
+        "Write sanitizers and proper bounds checking prevent exploitation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the working of the Morris Worm and its impact on computer security.",
+      "keyPoints": [
+        "Released in 1988 by Robert Morris",
+        "Exploited buffer overflow vulnerability in finger daemon",
+        "Affected approximately 6,000 computers (10% of internet at that time)",
+        "First major internet-wide security incident",
+        "Led to formation of CERTs and increased focus on secure coding"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is Return-Oriented Programming (ROP)? Why is it effective against DEP?",
+      "keyPoints": [
+        "ROP chains existing code fragments (gadgets) ending with RET instructions",
+        "Does not inject new code - uses legitimate code already in memory",
+        "Bypasses DEP by executing existing code rather than injected shellcode",
+        "Can bypass ASLR if sufficient gadgets found in non-randomized libraries",
+        "Modern defenses combine ROP mitigations with other techniques"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Differentiate between format string vulnerability and buffer overflow with an example.",
+      "keyPoints": [
+        "Format string occurs when user input is used as format specifier",
+        "printf(user_input) allows %n to write memory",
+        "Buffer overflow writes beyond array boundaries",
+        "Example of format string: printf(input) where input contains %x %x %n",
+        "Example of buffer overflow: strcpy(buf, large_string) without size check"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the complete process of a stack-based buffer overflow attack. Discuss all the countermeasures that can prevent or mitigate such attacks.",
+      "keyPoints": [
+        "Attack process: Overflow local buffer, overwrite return address, redirect execution to shellcode",
+        "Vulnerability caused by unsafe functions like gets(), strcpy() without bounds checking",
+        "Countermeasures: Stack canaries (detect overflow)",
+        "DEP/NX bit (prevent code execution on stack)",
+        "ASLR (randomize addresses)",
+        "Safe libraries (bounds-checked functions)",
+        "Non-executable stack",
+        "Input validation",
+        "Compiler warnings and hardening flags",
+        "Defense in depth approach"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of Address Space Layout Randomization (ASLR) and its effectiveness against buffer overflow attacks. Discuss its limitations.",
+      "keyPoints": [
+        "ASLR randomizes addresses of stack, heap, libraries, and executable",
+        "Makes exploit development harder as attacker cannot predict jump targets",
+        "Effectiveness depends on entropy bits available",
+        "Limitations: Information leaks can reveal addresses",
+        "Does not protect against overwrite of adjacent variables",
+        "Can be bypassed with brute force or memory leaks",
+        "Return-to-libc and ROP techniques work around ASLR",
+        "Works best when combined with DEP and stack canaries"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write short notes on: (a) Heap-based buffer overflow (b) Integer overflow (c) Shellcode (d) Format string vulnerability",
+      "keyPoints": [
+        "(a) Heap overflow: Corrupts heap metadata, overwrites function pointers, use-after-free attacks",
+        "(b) Integer overflow: Wraparound of arithmetic results, leads to buffer overflows via incorrect size calculations",
+        "(c) Shellcode: Machine code to spawn shell, position-independent, typically disables NX for stack execution",
+        "(d) Format string: User input as format string allows %n write, %s read, exploiting printf family functions"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the secure coding practices that developers should follow to prevent buffer overflow vulnerabilities in C/C++ programs.",
+      "keyPoints": [
+        "Use safe library functions: strcpy_s, strncpy_s instead of strcpy, strcpy",
+        "Always specify buffer sizes when copying strings",
+        "Validate all user input before processing",
+        "Enable compiler warnings (-Wall, -Wextra)",
+        "Use compile-time hardening: -fstack-protector, -D_FORTIFY_SOURCE=2",
+        "Prefer higher-level languages with bounds checking",
+        "Use static analysis tools to detect vulnerabilities",
+        "Avoid dangerous functions: gets(), sprintf(), strcat()",
+        "Perform regular security audits and code reviews"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "code-1",
+    "language": "SQL (Oracle Syntax)",
+    "title": "Creating Assertions",
+    "description": "Example of creating database-wide assertions",
+    "code": "-- Creating an Assertion (syntax varies by DBMS)\n-- Example: No employee can have salary > manager's salary\nCREATE ASSERTION salary_not_exceed_manager\nCHECK (NOT EXISTS (\n SELECT e.emp_id \n FROM employee e\n JOIN employee m ON e.manager_id = m.emp_id\n WHERE e.salary > m.salary\n));",
+    "explanation": "This assertion ensures that for any employee, their salary never exceeds their direct manager's salary. The check runs after any INSERT or UPDATE that could violate this rule.",
+    "complexity": {
+      "time": "O(n\u00b2) - checks all employee-manager pairs",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "SQL (Oracle Syntax)",
+    "title": "BEFORE INSERT Trigger",
+    "description": "Auto-generate employee ID before insertion",
+    "code": "CREATE OR REPLACE TRIGGER trg_before_insert_emp\nBEFORE INSERT ON employee\nFOR EACH ROW\nBEGIN\n -- Auto-generate employee ID if not provided\n IF :NEW.emp_id IS NULL THEN\n SELECT 'EMP' || TO_CHAR(emp_seq.NEXTVAL) \n INTO :NEW.emp_id \n FROM DUAL;\n END IF;\n -- Set creation timestamp\n :NEW.created_date := SYSDATE;\n :NEW.created_by := USER;\nEND;\n/",
+    "explanation": "This BEFORE INSERT trigger automatically generates an employee ID using a sequence and sets audit fields before the row is inserted. Uses :NEW to reference the new row values.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "SQL (Oracle Syntax)",
+    "title": "AFTER UPDATE Trigger with Conditional Logic",
+    "description": "Log salary changes to audit table when salary increases by more than 20%",
+    "code": "CREATE OR REPLACE TRIGGER trg_log_salary_change\nAFTER UPDATE OF salary ON employee\nFOR EACH ROW\nWHEN (NEW.salary > OLD.salary * 1.20)\nBEGIN\n INSERT INTO salary_audit (emp_id, old_salary, new_salary, changed_by, change_date)\n VALUES (:OLD.emp_id, :OLD.salary, :NEW.salary, USER, SYSDATE);\nEND;\n/",
+    "explanation": "This AFTER UPDATE trigger logs significant salary changes (>20%) to an audit table. The WHEN clause makes it conditional - it only fires when the condition is met.",
+    "complexity": {
+      "time": "O(1) per row modified",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "SQL (Oracle Syntax)",
+    "title": "INSTEAD OF Trigger on View",
+    "description": "Enable insertion through a view that joins multiple tables",
+    "code": "CREATE OR REPLACE TRIGGER trg_instead_of_insert_empdept\nINSTEAD OF INSERT ON emp_dept_view\nFOR EACH ROW\nBEGIN\n -- Insert into department first\n INSERT INTO department (dept_id, dept_name)\n VALUES (:NEW.dept_id, :NEW.dept_name);\n \n -- Then insert into employee\n INSERT INTO employee (emp_id, emp_name, dept_id)\n VALUES (:NEW.emp_id, :NEW.emp_name, :NEW.dept_id);\nEND;\n/",
+    "explanation": "INSTEAD OF triggers allow DML operations on views that aren't normally updatable. This trigger intercepts INSERT on the view and performs the actual inserts into underlying tables.",
+    "complexity": {
+      "time": "O(2) - two insert operations",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "SQL (Standard/Oracle)",
+    "title": "Statement-Level Trigger for Business Rule",
+    "description": "Prevent deletion during business hours",
+    "code": "-- Statement-level trigger to prevent deletions during business hours\nCREATE TRIGGER trg_no_delete_hours\nBEFORE DELETE ON employee\nBEGIN\n IF TO_CHAR(SYSDATE, 'HH24') BETWEEN 9 AND 17 THEN\n RAISE_APPLICATION_ERROR(-20001, \n 'Cannot delete employees during business hours (9 AM - 5 PM)');\n END IF;\nEND;\n/",
+    "explanation": "This statement-level trigger prevents any DELETE on the employee table during business hours. It fires once regardless of how many rows would be deleted.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-6",
+    "language": "SQL (Oracle Syntax)",
+    "title": "Compound Trigger Example",
+    "description": "Maintain running total across all timing points to avoid mutating table",
+    "code": "CREATE OR REPLACE TRIGGER trg_compound_emp\nFOR UPDATE OF salary ON employee\nCOMPOUND TRIGGER\n -- Declarative section - persists across timing points\n TYPE t_salaries IS TABLE OF employee.salary%TYPE INDEX BY PLS_INTEGER;\n v_salaries t_salaries;\n v_count INTEGER := 0;\n\n BEFORE STATEMENT IS\n BEGIN\n v_count := 0;\n END BEFORE STATEMENT;\n\n BEFORE EACH ROW IS\n BEGIN\n v_count := v_count + 1;\n v_salaries(v_count) := :NEW.salary;\n END BEFORE EACH ROW;\n\n AFTER STATEMENT IS\n BEGIN\n -- Log total salary changes after statement completes\n DBMS_OUTPUT.PUT_LINE('Total rows processed: ' || v_count);\n END AFTER STATEMENT;\nEND trg_compound_emp;\n/",
+    "explanation": "Compound triggers (Oracle 11g+) can define actions for multiple timing points in one trigger. This solves the mutating table problem by allowing access to aggregate information after the statement completes.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n) - stores values per row"
+    }
+  }
+]

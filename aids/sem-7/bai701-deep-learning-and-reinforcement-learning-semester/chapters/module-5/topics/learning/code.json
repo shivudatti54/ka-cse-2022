@@ -1,0 +1,45 @@
+{
+  "topicId": "learning",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Q-Learning Implementation",
+      "description": "Basic Q-Learning algorithm for a simple environment",
+      "code": "import numpy as np\n\nclass QLearningAgent:\n    def __init__(self, state_space, action_space, alpha=0.1, gamma=0.95, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.01):\n        self.q_table = np.zeros((state_space, action_space))\n        self.alpha = alpha  # Learning rate\n        self.gamma = gamma  # Discount factor\n        self.epsilon = epsilon  # Exploration rate\n        self.epsilon_decay = epsilon_decay\n        self.epsilon_min = epsilon_min\n        \n    def choose_action(self, state):\n        # Epsilon-greedy strategy\n        if np.random.random() < self.epsilon:\n            return np.random.randint(self.q_table.shape[1])\n        return np.argmax(self.q_table[state])\n    \n    def learn(self, state, action, reward, next_state):\n        # Q-Learning update using Bellman equation\n        current_q = self.q_table[state, action]\n        max_next_q = np.max(self.q_table[next_state])\n        new_q = current_q + self.alpha * (reward + self.gamma * max_next_q - current_q)\n        self.q_table[state, action] = new_q\n        \n        # Decay epsilon\n        if self.epsilon > self.epsilon_min:\n            self.epsilon *= self.epsilon_decay",
+      "explanation": "This Q-Learning implementation maintains a Q-table and updates values using the Bellman optimality equation. The agent uses epsilon-greedy exploration and the learning rate (alpha) controls how much new information overrides old knowledge.",
+      "timeComplexity": "O(1) per update",
+      "spaceComplexity": "O(|S| * |A|) for Q-table"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "SARSA Implementation",
+      "description": "On-policy SARSA algorithm for learning while exploring",
+      "code": "class SARSAAgent:\n    def __init__(self, state_space, action_space, alpha=0.1, gamma=0.95, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.01):\n        self.q_table = np.zeros((state_space, action_space))\n        self.alpha = alpha\n        self.gamma = gamma\n        self.epsilon = epsilon\n        self.epsilon_decay = epsilon_decay\n        self.epsilon_min = epsilon_min\n        \n    def choose_action(self, state):\n        if np.random.random() < self.epsilon:\n            return np.random.randint(self.q_table.shape[1])\n        return np.argmax(self.q_table[state])\n    \n    def learn(self, state, action, reward, next_state, next_action):\n        # SARSA update: uses ACTUAL next action taken\n        current_q = self.q_table[state, action]\n        next_q = self.q_table[next_state, next_action]\n        new_q = current_q + self.alpha * (reward + self.gamma * next_q - current_q)\n        self.q_table[state, action] = new_q\n        \n        if self.epsilon > self.epsilon_min:\n            self.epsilon *= self.epsilon_decay\n\n# Training loop example\ndef train_sarsa(env, agent, episodes):\n    for episode in range(episodes):\n        state = env.reset()\n        action = agent.choose_action(state)\n        total_reward = 0\n        \n        while not env.done:\n            next_state, reward, done = env.step(action)\n            next_action = agent.choose_action(next_state)\n            agent.learn(state, action, reward, next_state, next_action)\n            state, action = next_state, next_action\n            total_reward += reward\n    return agent",
+      "explanation": "SARSA differs from Q-Learning in that it learns the value of the policy being followed, including the exploration policy. This makes it more suitable for scenarios where exploration safety matters, as it accounts for the exploration noise in its value estimates.",
+      "timeComplexity": "O(1) per step",
+      "spaceComplexity": "O(|S| * |A|)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Multi-Armed Bandit with UCB",
+      "description": "Upper Confidence Bound algorithm for the multi-armed bandit problem",
+      "code": "import numpy as np\n\nclass UCBBandit:\n    def __init__(self, n_arms, c=2.0):\n        self.n_arms = n_arms\n        self.c = c  # Exploration parameter\n        self.counts = np.zeros(n_arms)  # Times each arm pulled\n        self.values = np.zeros(n_arms)  # Estimated value of each arm\n        self.total_counts = 0\n    \n    def select_arm(self):\n        # UCB formula: exploitation + exploration bonus\n        ucb_values = np.zeros(self.n_arms)\n        for arm in range(self.n_arms):\n            if self.counts[arm] == 0:\n                # Ensure each arm is tried at least once\n                return arm\n            exploitation = self.values[arm]\n            exploration = self.c * np.sqrt(np.log(self.total_counts) / self.counts[arm])\n            ucb_values[arm] = exploitation + exploration\n        return np.argmax(ucb_values)\n    \n    def update(self, arm, reward):\n        self.counts[arm] += 1\n        self.total_counts += 1\n        n = self.counts[arm]\n        value = self.values[arm]\n        # Incremental mean update\n        self.values[arm] = ((n - 1) / n) * value + (1 / n) * reward\n\n# Example usage\nnp.random.seed(42)\ntrue_probs = [0.3, 0.5, 0.7, 0.4]  # True success probabilities\nbandit = UCBBandit(n_arms=4, c=2.0)\n\nfor _ in range(1000):\n    arm = bandit.select_arm()\n    reward = 1 if np.random.random() < true_probs[arm] else 0\n    bandit.update(arm, reward)\n\nprint(\"Estimated values:\", bandit.values)\nprint(\"Best arm:\", np.argmax(bandit.values))",
+      "explanation": "UCB balances exploitation and exploration by adding an uncertainty bonus that decreases as an arm is pulled more times. The c parameter controls the exploration bonus - higher c means more exploration. This algorithm has theoretical regret bounds.",
+      "timeComplexity": "O(k) per selection where k is number of arms",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Deep Q-Network (DQN) Algorithm",
+      "description": "Pseudocode showing DQN with experience replay and target network",
+      "code": "// DQN ALGORITHM\n\nINITIALIZE replay memory D with capacity N\nINITIALIZE action-value network Q with random weights\nINITIALIZE target network Q_target with weights = Q\n\nFOR episode = 1 to M:\n    INITIALIZE state s\n    \n    FOR step = 1 to max_steps:\n        // Choose action using epsilon-greedy\n        IF random() < epsilon:\n            action = random action from A\n        ELSE:\n            action = argmax_a Q(s, a)\n        \n        // Execute action in environment\n        Execute action a, observe reward r and next state s'\n        \n        // Store transition in replay memory\n        Store transition (s, a, r, s', done) in D\n        \n        // Sample random minibatch from replay memory\n        Sample minibatch of transitions from D\n        \n        // Compute target Q-value\n        FOR each transition in minibatch:\n            IF terminal state:\n                y = r\n            ELSE:\n                y = r + gamma * max_a' Q_target(s', a')\n        \n        // Perform gradient descent on loss\n        Loss = (y - Q(s, a))^2\n        Update Q network using loss gradient\n        \n        // Periodically update target network\n        IF step % target_update_frequency == 0:\n            Q_target = Q\n        \n        s = s'\n    END FOR\nEND FOR",
+      "explanation": "DQN uses two key techniques: 1) Experience Replay stores past experiences and samples randomly to break temporal correlation, and 2) Target Network provides stable target values for Q-learning updates, preventing the moving target problem that causes instability in naive deep RL.",
+      "timeComplexity": "O(batch_size) per update step",
+      "spaceComplexity": "O(N) for replay memory + O(parameters) for networks"
+    }
+  ]
+}

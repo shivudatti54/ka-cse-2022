@@ -1,0 +1,45 @@
+{
+  "topicId": "mass-storage-magnetic-ssd",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FCFS Disk Scheduling Algorithm",
+      "description": "Implementation of First-Come-First-Served disk scheduling",
+      "code": "ALGORITHM FCFS_Schedule(requests, start_track)\nBEGIN\n    total_seek <- 0\n    current_track <- start_track\n    \n    FOR each request IN requests DO\n        seek_distance <- ABS(request - current_track)\n        total_seek <- total_seek + seek_distance\n        current_track <- request\n        PRINT \"Serviced request at track: \" + request\n    END FOR\n    \n    PRINT \"Total Seek Distance: \" + total_seek\n    PRINT \"Average Seek Time: \" + (total_seek / length(requests))\nEND",
+      "explanation": "FCFS processes disk requests in the order they arrive in the queue. It starts from the current head position and calculates the absolute distance to each request, summing up all seek distances to get total head movement.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "SCAN (Elevator) Disk Scheduling",
+      "description": "Implementation of SCAN disk scheduling algorithm",
+      "code": "ALGORITHM SCAN_Schedule(requests, start_track, max_track, direction)\nBEGIN\n    sorted_requests <- SORT(requests)  // Sort in ascending order\n    total_seek <- 0\n    current_track <- start_track\n    \n    // Find position to start scanning\n    IF direction = \"forward\" THEN\n        right_requests <- sorted_requests WHERE > start_track\n        left_requests <- sorted_requests WHERE <= start_track\n        \n        // Service all forward requests\n        FOR each req IN right_requests DO\n            total_seek <- total_seek + ABS(req - current_track)\n            current_track <- req\n        END FOR\n        \n        // Go to end and reverse\n        total_seek <- total_seek + ABS(max_track - current_track)\n        current_track <- max_track\n        \n        // Service remaining (backward) requests\n        FOR each req IN reverse(left_requests) DO\n            total_seek <- total_seek + ABS(req - current_track)\n            current_track <- req\n        END FOR\n    END IF\n    \n    PRINT \"Total Seek Distance: \" + total_seek\nEND",
+      "explanation": "SCAN algorithm works like an elevator - it services requests in one direction until it reaches the end, then reverses direction and services remaining requests. This reduces average seek time compared to FCFS while providing fair service.",
+      "timeComplexity": "O(n log n) for sorting",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "SSD Wear Leveling Simulation",
+      "description": "Python simulation demonstrating basic wear leveling concept",
+      "code": "import random\n\nclass SSDSimulator:\n    def __init__(self, num_blocks, p_e_cycles):\n        self.num_blocks = num_blocks\n        self.p_e_cycles = p_e_cycles\n        self.block_wear = [0] * num_blocks\n        self.logical_to_physical = {i: i for i in range(num_blocks)}\n        self.physical_to_logical = {i: i for i in range(num_blocks)}\n    \n    def write(self, logical_block, data):\n        \"\"\"Write data with wear leveling\"\"\"\n        # Find least worn block\n        min_wear = min(self.block_wear)\n        available_blocks = [i for i, w in enumerate(self.block_wear) if w == min_wear]\n        \n        # Choose a random block from least worn\n        new_physical = random.choice(available_blocks)\n        \n        # Update mappings\n        old_physical = self.logical_to_physical[logical_block]\n        self.logical_to_physical[logical_block] = new_physical\n        self.physical_to_logical[new_physical] = logical_block\n        \n        # Increment wear count\n        self.block_wear[new_physical] += 1\n        self.block_wear[old_physical]  # Old block available for reuse\n        \n        print(f\"Written to logical block {logical_block} -> physical block {new_physical}\")\n        print(f\"Block wear counts: {self.block_wear}\")\n    \n    def get_wear_stats(self):\n        return {\n            'min': min(self.block_wear),\n            'max': max(self.block_wear),\n            'avg': sum(self.block_wear) / len(self.block_wear)\n        }\n\n# Demo usage\nssd = SSDSimulator(num_blocks=8, p_e_cycles=1000)\nfor i in range(20):\n    logical_block = random.randint(0, 7)\n    ssd.write(logical_block, \"data\")\n    \nprint(f\"\\nWear Statistics: {ssd.get_wear_stats()}\")",
+      "explanation": "This code simulates wear leveling in SSDs. When writing data, it always selects the least-worn block to write to, ensuring even distribution of writes across all blocks to maximize SSD lifespan.",
+      "timeComplexity": "O(n) where n is number of blocks",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Disk Access Time Calculator",
+      "description": "C program to calculate total disk access time components",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n\ntypedef struct {\n    double seek_time_ms;      // Time for head movement (ms)\n    double rotational_latency_ms; // Average rotational latency (ms)\n    double transfer_rate_mbps;   // Transfer rate (MB/s)\n    int rpm;                    // Revolutions per minute\n} DiskParams;\n\ndouble calculate_rotational_latency(int rpm) {\n    // Average rotational latency = 1/2 \u00d7 time for one rotation\n    double time_per_rotation = 60000.0 / rpm;  // ms per rotation\n    return time_per_rotation / 2.0;\n}\n\ndouble calculate_total_access_time(DiskParams disk, int num_sectors, int sector_size) {\n    double latency = calculate_rotational_latency(disk.rpm);\n    double transfer_time = (num_sectors * sector_size) / (disk.transfer_rate_mbps * 125000.0);\n    \n    return disk.seek_time_ms + latency + transfer_time;\n}\n\nint main() {\n    DiskParams disk;\n    int num_sectors = 10000;\n    int sector_size = 512;\n    \n    disk.seek_time_ms = 8.0;\n    disk.rpm = 7200;\n    disk.transfer_rate_mbps = 50.0;\n    \n    double latency = calculate_rotational_latency(disk.rpm);\n    double total_time = calculate_total_access_time(disk, num_sectors, sector_size);\n    double transfer_time = (num_sectors * sector_size) / (disk.transfer_rate_mbps * 125000.0);\n    \n    printf(\"=== Disk Access Time Calculation ===\\n\");\n    printf(\"Seek Time: %.2f ms\\n\", disk.seek_time_ms);\n    printf(\"Rotational Latency (avg): %.2f ms\\n\", latency);\n    printf(\"Transfer Time: %.2f ms\\n\", transfer_time);\n    printf(\"Total Access Time: %.2f ms\\n\", total_time);\n    \n    return 0;\n}",
+      "explanation": "This C program calculates the total disk access time by combining seek time (head movement), rotational latency (waiting for the sector to rotate under the head), and transfer time (actual data transfer). It demonstrates the mathematical formulas used in disk performance analysis.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

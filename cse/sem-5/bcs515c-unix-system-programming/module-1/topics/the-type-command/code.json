@@ -1,0 +1,35 @@
+{
+  "topicId": "the-type-command",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Checking Command Types Script",
+      "description": "Script demonstrating use of type to check command types before execution",
+      "code": "#!/bin/bash\n# Script to demonstrate type command usage\n\ncheck_command() {\n local cmd=$1\n local cmd_type=$(type -t \"$cmd\" 2>/dev/null)\n \n if [ -z \"$cmd_type\" ]; then\n echo \"$cmd: command not found\"\n return 1\n fi\n \n case \"$cmd_type\" in\n alias)\n echo \"$cmd is an alias\"\n type -a \"$cmd\"\n ;;\n keyword)\n echo \"$cmd is a shell keyword\"\n ;;\n function)\n echo \"$cmd is a shell function\"\n type -a \"$cmd\"\n ;;\n builtin)\n echo \"$cmd is a shell builtin\"\n ;;\n file)\n echo \"$cmd is an executable file\"\n type -p \"$cmd\"\n ;;\n esac\n}\n\n# Test with various commands\ncheck_command \"ls\"\ncheck_command \"cd\"\ncheck_command \"if\"\ncheck_command \"myfunction\"",
+      "explanation": "This script uses `type -t` to get single-word type and `type -a` to show all occurrences. It demonstrates practical use of type for command validation in shell scripts.",
+      "timeComplexity": "O(n) - depends on PATH size for file searches",
+      "spaceComplexity": "O(1) - fixed variables"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "Create Command Override Test",
+      "description": "Test to demonstrate command resolution order with aliases, functions, and builtins",
+      "code": "#!/bin/bash\n# Demonstrate command resolution order\n\n# Step 1: Create an alias with same name as a file\nalias testcmd='echo \"I am an alias\"'\n\n# Step 2: Create a function with same name\ntestcmd() {\n echo \"I am a function\"\n}\n\n# Step 3: Test type command to see resolution\necho \"=== Testing type command resolution ===\"\necho \"type -t testcmd: $(type -t testcmd)\"\necho \"type -a testcmd:\"\ntype -a testcmd\n\n# Step 4: Remove alias to see function\nalias -d testcmd\necho \"After removing alias, type -t: $(type -t testcmd)\"\n\n# Step 5: Unset function to see builtin or file\nunset -f testcmd\necho \"After removing function, type -t: $(type -t testcmd)\"",
+      "explanation": "This script demonstrates how `type` shows the priority order: aliases override functions, which override builtins, which override files. Shows practical understanding of shell resolution.",
+      "timeComplexity": "O(1) - simple lookups",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Type Command Option Logic",
+      "description": "Pseudocode showing how type command processes different options",
+      "code": "FUNCTION type_command(command, options):\n IF option == \"-t\":\n # Return single word type\n result = get_command_type(command)\n PRINT result[0] # alias/keyword/function/builtin/file\n \n ELSE IF option == \"-a\":\n # Return all matches\n IF is_alias(command):\n PRINT \"command is aliased to...\"\n IF is_keyword(command):\n PRINT \"command is a shell keyword\"\n IF is_function(command):\n PRINT \"command is a function\"\n IF is_builtin(command):\n PRINT \"command is a shell builtin\"\n IF is_file_in_path(command):\n PRINT \"command is... (path)\"\n \n ELSE IF option == \"-p\":\n # Return only file path\n IF is_file_in_path(command):\n PRINT get_path(command)\n ELSE:\n PRINT nothing\n \n ELSE IF option == \"-P\":\n # Force PATH search\n path = search_path(command)\n PRINT path\n \n ELSE IF option == \"-f\":\n # Suppress function lookup\n type = get_type_without_function(command)\n PRINT type\n\nFUNCTION get_command_type(command):\n IF is_alias(command): RETURN [\"alias\"]\n ELSE IF is_keyword(command): RETURN [\"keyword\"]\n ELSE IF is_function(command): RETURN [\"function\"]\n ELSE IF is_builtin(command): RETURN [\"builtin\"]\n ELSE IF is_file_in_path(command): RETURN [\"file\"]\n ELSE RETURN [\"not found\"]",
+      "explanation": "Pseudocode showing the logic flow of type command with different options. Demonstrates understanding of how type processes each option differently.",
+      "timeComplexity": "O(n) - depends on PATH and number of definitions",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

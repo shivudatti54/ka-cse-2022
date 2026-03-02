@@ -1,0 +1,166 @@
+{
+  "topicId": "the-type-command",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the purpose of the `type` command in Linux with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "`type` is a Bash builtin that indicates how a command would be interpreted",
+        "It distinguishes between alias, keyword, function, builtin, and file",
+        "Example: `type cd` shows 'cd is a shell builtin'",
+        "Example: `type ls` shows 'ls is /bin/ls' (file)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain the five different types of commands identified by the `type` command.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Alias: User-defined command shortcuts (e.g., alias ll='ls -la')",
+        "Keyword: Shell reserved words (e.g., if, while, for)",
+        "Function: User-defined shell functions",
+        "Builtin: Shell internal commands (e.g., cd, pwd, echo)",
+        "File: External executable programs in PATH (e.g., /bin/ls)"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between `type -t` and `type -a` options? Give examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "`type -t` returns single word description useful for scripting",
+        "`type -a` displays all matches including aliases, functions, builtins, and files",
+        "Example: `type -t cd` returns 'builtin'",
+        "Example: `type -a ls` shows all instances of ls if multiple exist"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the order in which the shell resolves command types when a command is executed.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "First: Aliases - user-defined command shortcuts",
+        "Second: Keywords - shell reserved words for control structures",
+        "Third: Functions - user-defined shell functions",
+        "Fourth: Builtins - shell internal commands",
+        "Fifth: Files - external executables searched in PATH",
+        "This priority order is important for command execution"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between `type`, `which`, and `whereis` commands.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "`type`: Shell builtin, shows all command types (alias, function, builtin, file)",
+        "`which`: External command, finds only executable files in PATH",
+        "`whereis`: External command, finds binary, source, and man page locations",
+        "`type` is most comprehensive for identifying command types",
+        "`which` is limited to PATH search only"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the significance of the `-p` and `-P` options in the `type` command?",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "`-p` returns only filename of executable if it's a file, otherwise empty",
+        "`-P` forces PATH search, returns only executable file paths",
+        "`-p` does not search PATH if command is alias/builtin/function",
+        "`-P` overrides other types and forces PATH search always",
+        "Useful for scripts requiring only executable paths"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Write a shell script that uses `type` to check if a command exists before executing it.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use `type -t` to check command type",
+        "If type returns 'file', command is available as executable",
+        "Include error handling for commands not found",
+        "Example: if type -t \"$cmd\" != \"file\"; then echo \"Command not found\"; fi",
+        "Script should handle different exit codes from type"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain in detail the various options available with the `type` command with examples for each.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "-t: Single word type description (type -t cd returns 'builtin')",
+        "-a: All matches (type -a echo shows builtin and file)",
+        "-p: Print file pathname only (type -p ls returns /bin/ls)",
+        "-P: Force PATH search (type -P cd searches PATH)",
+        "-f: Suppress function lookup (type -f myfunc shows nothing)",
+        "--help: Display help information",
+        "Each option serves different purposes in scripting and debugging"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "What are shell builtins? How does `type` help in identifying builtins? Give examples of common builtins and explain why they are implemented as builtins rather than external commands.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Builtins are commands implemented within the shell itself",
+        "`type` identifies builtins: type -t cd returns 'builtin'",
+        "Common builtins: cd, pwd, echo, read, exit, type, alias, export",
+        "Builtins execute in shell process (faster, no fork)",
+        "Builtins need shell context (cd changes shell's directory)",
+        "Builtins can modify shell state directly",
+        "Examples with type output explained"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of aliases and keywords in Linux. How does `type` distinguish between them? Provide examples and explain when each is used.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Aliases: User-defined shortcuts (alias ll='ls -la') - for convenience",
+        "Keywords: Reserved words for shell syntax (if, while, for, case) - for control flow",
+        "`type -t aliasname` returns 'alias', `type -t if` returns 'keyword'",
+        "Aliases expand before execution, keywords parsed by shell",
+        "Use keywords for scripting control structures",
+        "Use aliases for frequently used long commands",
+        "Differences in expansion order and parsing explained"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Design a comprehensive test to verify the command resolution order in Bash using the `type` command. Explain your test methodology and expected results.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create test alias with same name as existing command",
+        "Create test function with same name",
+        "Test with builtin and file",
+        "Use type -a to see all matches",
+        "Verify order: alias overrides function, function overrides builtin, builtin overrides file",
+        "Document each test case and result",
+        "Shows practical understanding of shell command resolution"
+      ]
+    }
+  ]
+}

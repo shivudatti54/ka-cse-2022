@@ -1,0 +1,45 @@
+{
+  "topicId": "polygonal-shading",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Compute Surface Normal",
+      "description": "Algorithm to calculate the face normal of a polygon",
+      "code": "FUNCTION ComputeFaceNormal(v1, v2, v3):\n // Compute two edge vectors\n edge1 = Subtract(v2, v1)\n edge2 = Subtract(v3, v1)\n \n // Cross product to get raw normal\n normalRaw = CrossProduct(edge1, edge2)\n \n // Normalize to unit vector\n length = Magnitude(normalRaw)\n normal = Divide(normalRaw, length)\n \n RETURN normal\nEND FUNCTION",
+      "explanation": "Takes three vertices of a polygon, computes edge vectors, takes their cross product to get perpendicular direction, then normalizes to unit length.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Phong Illumination Model",
+      "description": "Implementation of complete Phong lighting calculation",
+      "code": "FUNCTION PhongIllumination(point, normal, material, lights, viewDir):\n resultIntensity = 0.0\n \n // Ambient component\n resultIntensity += material.ambientCoeff * lights.ambientIntensity\n \n // For each light source\n FOR EACH light IN lights:\n lightDir = Normalize(light.position - point)\n \n // Diffuse component (Lambertian)\n dotNL = DotProduct(normal, lightDir)\n IF dotNL > 0 THEN\n resultIntensity += material.diffuseCoeff * light.diffuseIntensity * dotNL\n END IF\n \n // Specular component (Phong)\n reflection = Reflect(-lightDir, normal)\n dotRV = DotProduct(reflection, viewDir)\n IF dotNL > 0 AND dotRV > 0 THEN\n specular = material.specularCoeff * light.specularIntensity * (dotRV ^ material.shininess)\n resultIntensity += specular\n END IF\n END FOR\n \n RETURN resultIntensity\nEND FUNCTION",
+      "explanation": "Calculates final color intensity by combining ambient, diffuse (using N·L), and specular (using R·V) components with material properties.",
+      "timeComplexity": "O(L) where L is number of lights",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Gouraud Shading Algorithm",
+      "description": "Vertex-based shading with intensity interpolation",
+      "code": "ALGORITHM GouraudShading(polygon, vertices, light, material):\nBEGIN\n // Step 1: Compute vertex normals by averaging adjacent face normals\n FOR EACH vertex IN vertices:\n vertex.normal = AverageNormalsOfAdjacentFaces(vertex)\n END FOR\n \n // Step 2: Compute intensity at each vertex using Phong model\n FOR EACH vertex IN polygon.vertices:\n vertex.intensity = PhongIllumination(vertex.position, vertex.normal, material, light)\n END FOR\n \n // Step 3: Rasterize and interpolate intensities\n FOR EACH scanLine intersecting polygon:\n // Find intersection points with polygon edges\n i1 = InterpolateIntensity(scanLine.y, edge1, vertex1.intensity, vertex2.intensity)\n i2 = InterpolateIntensity(scanLine.y, edge2, vertex2.intensity, vertex3.intensity)\n \n // Interpolate along scan line\n FOR x FROM leftEdge TO rightEdge:\n pixelIntensity = Interpolate(i1, i2, x)\n SetPixelColor(x, scanLine.y, pixelIntensity)\n END FOR\n END FOR\nEND",
+      "explanation": "Computes lighting at vertices, then linearly interpolates the intensity values across the polygon during rasterization.",
+      "timeComplexity": "O(V + P) where V=vertices, P=pixels",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Phong Shading Algorithm",
+      "description": "Per-pixel shading with normal interpolation",
+      "code": "ALGORITHM PhongShading(polygon, vertices, light, material):\nBEGIN\n // Step 1: Compute vertex normals (same as Gouraud)\n FOR EACH vertex IN vertices:\n vertex.normal = AverageNormalsOfAdjacentFaces(vertex)\n END FOR\n \n // Step 2: Rasterize and interpolate normals\n FOR EACH fragment (pixel) IN polygon:\n // Get barycentric coordinates\n bary = GetBarycentricCoordinates(fragment.position, polygon)\n \n // Interpolate normal at this pixel\n normal = bary.alpha * v1.normal + bary.beta * v2.normal + bary.gamma * v3.normal\n normal = Normalize(normal)\n \n // Compute view direction\n viewDir = Normalize(camera.position - fragment.position)\n \n // Calculate Phong illumination at this pixel\n fragment.color = PhongIllumination(fragment.position, normal, material, light, viewDir)\n \n SetPixelColor(fragment.x, fragment.y, fragment.color)\n END FOR\nEND",
+      "explanation": "Interpolates normals across the polygon surface instead of intensities, then computes full lighting model at each pixel for accurate highlights.",
+      "timeComplexity": "O(P) where P=pixels",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

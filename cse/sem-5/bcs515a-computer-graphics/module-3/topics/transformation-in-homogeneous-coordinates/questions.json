@@ -1,0 +1,154 @@
+{
+  "topicId": "transformation-in-homogeneous-coordinates",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the need for homogeneous coordinates in computer graphics transformations.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Homogeneous coordinates add an extra dimension (w) to represent points",
+        "They allow translation to be represented as matrix multiplication",
+        "All geometric transformations become unified as matrix operations",
+        "Enables composite transformations through simple matrix multiplication"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Derive the 3×3 homogeneous transformation matrix for 2D translation by (tx, ty).",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Start with identity matrix",
+        "Place tx in position (1,3) - first row, third column",
+        "Place ty in position (2,3) - second row, third column",
+        "Final matrix: [1 0 tx; 0 1 ty; 0 0 1]"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the difference between a point and a vector in homogeneous coordinate representation.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Point has w = 1, representing position",
+        "Vector has w = 0, representing direction",
+        "Translation affects points but not vectors",
+        "This distinction is crucial for proper transformation handling"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "How do you perform rotation about an arbitrary point P(px, py)? Explain with transformation sequence.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Translate point P to origin: T(-px, -py)",
+        "Apply rotation about origin: R(θ)",
+        "Translate back from origin to P: T(px, py)",
+        "Composite: T(px, py) × R(θ) × T(-px, -py) × point"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the shearing transformation? Derive the matrix for x-shear with factor shx.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Shearing skews the shape by shifting one axis proportionally to the other",
+        "For x-shear, x' = x + shx × y, y' = y",
+        "Matrix form: [1 shx 0; 0 1 0; 0 0 1]",
+        "shx determines the amount of horizontal shear"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain why matrix multiplication is preferred over sequential transformation application.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Single matrix multiplication is computationally faster",
+        "Reduces number of operations from O(n) to O(1) for n transformations",
+        "Allows hardware acceleration through GPU pipelines",
+        "Simplifies the transformation pipeline in graphics systems"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Convert the homogeneous coordinate (8, 12, 4) to Cartesian coordinates and explain the significance.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Divide by w: (8/4, 12/4) = (2, 3)",
+        "The w=4 indicates perspective effect",
+        "This represents a point that's been foreshortened",
+        "Used in perspective projection for 3D rendering"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Derive and explain the homogeneous transformation matrix for 2D rotation about the origin by angle θ. Also prove that rotation followed by translation can be represented as a single composite matrix.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Start with rotation formulas: x' = x cosθ - y sinθ, y' = x sinθ + y cosθ",
+        "Matrix form: [cosθ -sinθ 0; sinθ cosθ 0; 0 0 1]",
+        "For composite T × R: multiply matrices giving [cosθ -sinθ tx; sinθ cosθ ty; 0 0 1]",
+        "Shows combined rotation and translation in single matrix",
+        "Applications: object orientation, animation, camera transformations"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of composite transformations with an example. Derive the transformation matrix to scale an object by factor 2 about a fixed point (3, 4).",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Composite transformations combine multiple basic transforms",
+        "Order matters - non-commutative nature of matrices",
+        "For scale about (3,4): T(-3,-4) → S(2,2) → T(3,4)",
+        "Matrix derivation: T(3,4) × S(2,2) × T(-3,-4)",
+        "Result: [2 0 -3; 0 2 -2; 0 0 1]",
+        "Practical applications: zooming at specific points, object manipulation"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the 3D homogeneous transformation matrices for translation, scaling, and rotation about z-axis. Explain how perspective projection utilizes the homogeneous coordinate system.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "3D Translation: 4×4 matrix with (tx, ty, tz) in last column",
+        "3D Scaling: 4×4 with sx, sy, sz on diagonal",
+        "3D Rotation about z-axis: same as 2D rotation in xy-plane with [cos -sin 0; sin cos 0; 0 0 1]",
+        "Perspective: w component enables division x' = x/w, y' = y/w creating foreshortening",
+        "Camera matrices use this for 3D to 2D projection",
+        "Real-world applications: 3D graphics, CAD, animation"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain reflection and shear transformations using homogeneous coordinates. Derive matrices for reflection about line y = x and x-shear with factor 0.5.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Reflection: Mirror transformation achieved by negating coordinates",
+        "Reflection about y=x swaps x and y: matrix [0 1 0; 1 0 0; 0 0 1]",
+        "X-shear: x' = x + 0.5y, y' = y gives [1 0.5 0; 0 1 0; 0 0 1]",
+        "Verify with test points",
+        "Applications: texture mapping, geometric distortions, symmetry operations"
+      ]
+    }
+  ]
+}

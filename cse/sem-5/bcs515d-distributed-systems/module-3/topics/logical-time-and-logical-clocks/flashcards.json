@@ -1,0 +1,80 @@
+{
+  "topicId": "logical-time-and-logical-clocks",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is logical time in distributed systems?",
+      "back": "Logical time is a way to order events in distributed systems without relying on physical clocks. It provides a partial ordering of events based on causality rather than actual time of occurrence."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the happened-before relation (→)?",
+      "back": "The happened-before relation (→) is a partial ordering defined as: (1) If a and b occur in the same process and a comes before b, then a→b; (2) If a is send of message and b is receipt, then a→b; (3) Transitive: if a→b and b→c, then a→c."
+    },
+    {
+      "id": "fc-3",
+      "front": "What are Lamport timestamps?",
+      "back": "Lamport timestamps are logical clocks that assign a numerical value to each event. Each process maintains a counter that increments for every event. When sending a message, the timestamp is included and the receiver sets its counter to max(local, received) + 1."
+    },
+    {
+      "id": "fc-4",
+      "front": "What is the limitation of Lamport timestamps?",
+      "back": "Lamport timestamps only provide total ordering but cannot capture causality. Two concurrent events may have different timestamps but we cannot determine if they are causally related."
+    },
+    {
+      "id": "fc-5",
+      "front": "What are vector clocks?",
+      "back": "Vector clocks are an extension of Lamport timestamps that capture causality. Each process maintains a vector of counters, one for each process. The vector at process Pi is incremented for local events and updated by taking max of corresponding elements when receiving messages."
+    },
+    {
+      "id": "fc-6",
+      "front": "How do you compare two vector clocks?",
+      "back": "Given two vectors V1 and V2: V1 < V2 if V1[i] ≤ V2[i] for all i and at least one is strictly less; V1 = V2 if V1[i] = V2[i] for all i; otherwise they are concurrent."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is causal ordering of messages?",
+      "back": "Causal ordering ensures that if a send event of message M1 happened-before send of message M2, then M1 is delivered before M2 at every destination. It reduces unnecessary delays while maintaining causality."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is total ordering (total broadcast)?",
+      "back": "Total ordering ensures all receivers deliver messages in the same order, regardless of send order. It is stricter than causal ordering and often implemented using a sequencer or consensus."
+    },
+    {
+      "id": "fc-9",
+      "front": "Define concurrent events in vector clocks",
+      "back": "Two events e1 and e2 are concurrent (e1 || e2) if neither e1→e2 nor e2→e1. In vector clocks, this means neither vector is less than or equal to the other."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is the relationship between physical and logical time?",
+      "back": "Physical time provides real-world timing but cannot be perfectly synchronized in distributed systems. Logical time provides causal ordering without physical time guarantees. Logical time respects causality but not necessarily real-world time."
+    },
+    {
+      "id": "fc-11",
+      "front": "Why are physical clocks insufficient for distributed systems?",
+      "back": "Physical clocks suffer from clock drift (oscillator variations), network delays, and cannot be perfectly synchronized. NTP can reduce but not eliminate synchronization errors, making them unreliable for precise ordering."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is a logical clock in distributed systems?",
+      "back": "A logical clock is a software mechanism that maintains a counter or vector to track event ordering. It doesn't represent real time but captures the happens-before relationship between events."
+    },
+    {
+      "id": "fc-13",
+      "front": "How does message passing affect logical time?",
+      "back": "When a process sends a message, it includes its logical timestamp. The receiver updates its clock by taking maximum of its own value and received timestamp, then increments. This ensures causality is preserved across processes."
+    },
+    {
+      "id": "fc-14",
+      "front": "What is the difference between causal and total order?",
+      "back": "Causal order respects happens-before relation (if sender happened-before another sender, delivery respects this). Total order requires all receivers to see messages in identical sequence, regardless of causal relationship."
+    },
+    {
+      "id": "fc-15",
+      "front": "State the use of logical clocks in distributed debugging",
+      "back": "Logical clocks help track potential cause-effect relationships in distributed systems. By examining Lamport timestamps or vector clocks, developers can determine which events could have influenced others and trace bug origins."
+    }
+  ]
+}

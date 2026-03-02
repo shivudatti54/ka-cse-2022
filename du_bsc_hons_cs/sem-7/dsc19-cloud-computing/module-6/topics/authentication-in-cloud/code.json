@@ -1,0 +1,45 @@
+{
+  "topicId": "authentication-in-cloud",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "JWT Token Generation and Validation",
+      "description": "Demonstrates token-based authentication using JSON Web Tokens",
+      "code": "import jwt\nimport datetime\n\n# Generate JWT Token\ndef generate_token(user_id, username):\n    payload = {\n        'user_id': user_id,\n        'username': username,\n        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),\n        'iat': datetime.datetime.utcnow()\n    }\n    token = jwt.encode(payload, 'secret_key', algorithm='HS256')\n    return token\n\n# Verify JWT Token\ndef verify_token(token):\n    try:\n        payload = jwt.decode(token, 'secret_key', algorithms=['HS256'])\n        return True, payload\n    except jwt.ExpiredSignatureError:\n        return False, 'Token expired'\n    except jwt.InvalidTokenError:\n        return False, 'Invalid token'\n\n# Usage\ntoken = generate_token(1, 'john_cloud')\nprint(f\"Generated Token: {token}\")\nis_valid, result = verify_token(token)\nprint(f\"Token Valid: {is_valid}, Payload: {result}\")",
+      "explanation": "This code demonstrates JWT token generation for authentication. After successful login, the server generates a signed token containing user claims. Each API request includes this token, which is validated without session storage on the server.",
+      "timeComplexity": "O(1) per token operation",
+      "spaceComplexity": "O(1) excluding token storage"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "OAuth 2.0 Authorization Code Flow",
+      "description": "Simulates OAuth 2.0 authorization code grant flow for third-party app access",
+      "code": "import hashlib\nimport secrets\n\n# Simulated Authorization Server\nclass AuthorizationServer:\n    def __init__(self):\n        self.authorization_codes = {}\n        self.tokens = {}\n    \n    def generate_auth_code(self, client_id, redirect_uri, user_id):\n        code = secrets.token_urlsafe(32)\n        self.authorization_codes[code] = {\n            'client_id': client_id,\n            'redirect_uri': redirect_uri,\n            'user_id': user_id\n        }\n        return code\n    \n    def exchange_code_for_token(self, auth_code, client_id, client_secret):\n        if auth_code in self.authorization_codes:\n            code_data = self.authorization_codes[auth_code]\n            if code_data['client_id'] == client_id:\n                access_token = secrets.token_urlsafe(32)\n                self.tokens[access_token] = code_data['user_id']\n                return {'access_token': access_token, 'token_type': 'Bearer'}\n        return None\n\n# Usage\nauth_server = AuthorizationServer()\nauth_code = auth_server.generate_auth_code('cloud_app', 'https://app.com/callback', 'user123')\nprint(f\"Auth Code: {auth_code}\")\ntoken_response = auth_server.exchange_code_for_token(auth_code, 'cloud_app', 'secret')\nprint(f\"Token Response: {token_response}\")",
+      "explanation": "This demonstrates OAuth 2.0 authorization code flow. User is redirected to authorization server, grants permission, receives authorization code, which is then exchanged for access token. The token is used to access resources without sharing user credentials.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n) for code/token storage"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Simple Multi-Factor Authentication Check",
+      "description": "Demonstrates MFA verification combining password and OTP",
+      "code": "import secrets\nimport time\n\n# Simulated user database\nusers = {\n    'john': {\n        'password_hash': 'hashed_password',\n        'totp_secret': 'JBSWY3DPEHPK3PXP',\n        'phone': '+1234567890'\n    }\n}\n\n# Simulated TOTP generator\ndef generate_totp(secret):\n    # Simplified TOTP - in production use pyotp library\n    return str(hash(secret + str(int(time.time()) // 30)))[-6:]\n\n# MFA Verification\ndef verify_mfa(username, password, otp_input):\n    if username in users:\n        # Step 1: Verify password\n        if password == 'correct_password':  # In reality: hash comparison\n            # Step 2: Verify TOTP\n            user = users[username]\n            expected_otp = generate_totp(user['totp_secret'])\n            if otp_input == expected_otp:\n                return True, 'MFA Verified - Access Granted'\n            else:\n                return False, 'Invalid OTP'\n        else:\n            return False, 'Invalid Password'\n    return False, 'User not found'\n\n# Usage\notp = generate_totp(users['john']['totp_secret'])\nprint(f\"Generated OTP: {otp}\")\nis_authenticated, message = verify_mfa('john', 'correct_password', otp)\nprint(f\"Result: {message}\")",
+      "explanation": "This code demonstrates MFA implementation combining something you know (password) with something you have (time-based OTP). The user must provide both factors successfully to gain access, significantly improving security.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "RBAC with Cloud IAM Policy Check",
+      "description": "Demonstrates Role-Based Access Control implementation in cloud IAM",
+      "code": "from enum import Enum\n\n# Define Roles and Permissions\nclass Role(Enum):\n    ADMIN = 'admin'\n    DEVELOPER = 'developer'\n    VIEWER = 'viewer'\n\n# Resource permissions\nRESOURCE_PERMISSIONS = {\n    's3_bucket_read': [Role.ADMIN, Role.DEVELOPER, Role.VIEWER],\n    's3_bucket_write': [Role.ADMIN, Role.DEVELOPER],\n    's3_bucket_delete': [Role.ADMIN],\n    'compute_start': [Role.ADMIN, Role.DEVELOPER],\n    'compute_stop': [Role.ADMIN, Role.DEVELOPER],\n    'admin_console': [Role.ADMIN]\n}\n\n# User class with role\nclass CloudUser:\n    def __init__(self, user_id, name, role):\n        self.user_id = user_id\n        self.name = name\n        self.role = role\n    \n    def has_permission(self, resource):\n        allowed_roles = RESOURCE_PERMISSIONS.get(resource, [])\n        return self.role in allowed_roles\n    \n    def access_resource(self, resource):\n        if self.has_permission(resource):\n            return f\"Access GRANTED to {resource} for {self.name}\"\n        return f\"Access DENIED to {resource} for {self.name}\"\n\n# Usage\nadmin = CloudUser('u1', 'Alice', Role.ADMIN)\ndeveloper = CloudUser('u2', 'Bob', Role.DEVELOPER)\nviewer = CloudUser('u3', 'Charlie', Role.VIEWER)\n\nresources = ['s3_bucket_read', 's3_bucket_delete', 'admin_console']\nfor res in resources:\n    print(admin.access_resource(res))",
+      "explanation": "This demonstrates Role-Based Access Control (RBAC) in cloud IAM. Users are assigned roles, and resources have defined permissions. Access is granted only if the user's role is permitted for the requested resource, following least privilege principle.",
+      "timeComplexity": "O(1) for permission check",
+      "spaceComplexity": "O(n) for role/permission storage"
+    }
+  ]
+}

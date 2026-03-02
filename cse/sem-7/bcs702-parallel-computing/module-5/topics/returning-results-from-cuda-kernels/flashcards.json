@@ -1,0 +1,30 @@
+{
+  "topicId": "returning-results-from-cuda-kernels",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "Why can't CUDA kernels use the return statement to send results back to the host?",
+      "back": "CUDA kernels are declared __global__ void because thousands of threads execute simultaneously. There is no single caller waiting for one return value. Instead, threads write results to device memory, and the host uses cudaMemcpy with cudaMemcpyDeviceToHost to retrieve them."
+    },
+    {
+      "id": "fc2",
+      "front": "What is the standard three-step pattern for returning results from a CUDA kernel?",
+      "back": "1) Allocate device memory with cudaMalloc for the output. 2) The kernel writes results to device memory. 3) Copy results back to the host with cudaMemcpy using cudaMemcpyDeviceToHost. After use, free device memory with cudaFree."
+    },
+    {
+      "id": "fc3",
+      "front": "How does parallel reduction in shared memory work for computing a scalar sum on the GPU?",
+      "back": "Each thread loads its value into shared memory. In a tree-based reduction, half the threads add their neighbor's value at each step (stride halves: blockDim/2, blockDim/4, ..., 1). After log2(blockDim) steps with __syncthreads() between each, thread 0 holds the block's total sum and writes it to global memory. The host sums all block results."
+    },
+    {
+      "id": "fc4",
+      "front": "What is unified memory in CUDA and how does it simplify returning results?",
+      "back": "Unified memory, allocated with cudaMallocManaged(), creates a single address space accessible from both CPU and GPU. The runtime automatically migrates data via page faults. No explicit cudaMemcpy is needed, but cudaDeviceSynchronize() must be called before the host reads results to ensure the kernel has finished."
+    },
+    {
+      "id": "fc5",
+      "front": "What are the two error checks needed after a CUDA kernel launch?",
+      "back": "1) cudaGetLastError() immediately after launch to detect configuration errors (invalid grid/block size, insufficient shared memory). 2) cudaDeviceSynchronize() to detect runtime execution errors (out-of-bounds access, illegal instructions). Both return cudaError_t which should be checked against cudaSuccess."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between the `gather()` and `pivot_longer()` functions from the tidyr package. In which scenario would you choose one over the other?",
+    "expectedPoints": [
+      "`gather()` is the older, superseded function for converting data from a wide to a long format.",
+      "`pivot_longer()` is its modern, more powerful, and flexible replacement introduced in tidyr version 1.0.0.",
+      "You should always choose `pivot_longer()` for new code as `gather()` is maintained for backward compatibility but no longer actively developed."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose and key components of the 'Tidy Data' principle. How does adhering to this principle specifically facilitate easier data manipulation and visualization in R?",
+    "expectedPoints": [
+      "The purpose is to standardize the structure of datasets to make them easier to manipulate, model, and visualize. Each variable forms a column, each observation forms a row, and each type of observational unit forms a table.",
+      "Key components include: 1) Each variable must have its own column. 2) Each observation must have its own row. 3) Each value must have its own cell.",
+      "It facilitates easier analysis because functions across the tidyverse (e.g., dplyr, ggplot2) are designed to work seamlessly with this standardized data structure, reducing the need for extensive data reshaping during an analysis."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A colleague has a wide dataset where each row represents a patient and columns contain blood pressure readings from five consecutive visits (e.g., BP_Visit1, BP_Visit2...BP_Visit5). They need to analyze the trend of blood pressure over time for all patients. Outline the detailed steps, including specific R functions and their arguments, you would take to tidy this dataset and prepare it for a longitudinal analysis. Justify your choice of functions at each step.",
+    "expectedPoints": [
+      "Load the necessary library: `library(tidyr)`.",
+      "Use `pivot_longer()` to transform the data from wide to long format. The key arguments would be: `cols = starts_with('BP_Visit')` to select the columns to pivot, `names_to = 'Visit'` to create a new column for the original visit identifiers, `values_to = 'Blood_Pressure'` to create a new column for the measurement values.",
+      "Use `mutate()` with `parse_number()` or `str_extract()` from stringr to extract the numeric visit number from the new 'Visit' column (e.g., `mutate(Visit_Number = parse_number(Visit))`) for proper ordering and modeling.",
+      "The justification: `pivot_longer()` is the modern, intended function for this task, correctly structuring the data so that time (visit) is a variable and blood pressure is a value, which is the required format for longitudinal models like those in `nlme` or `lme4` and for faceting in `ggplot2`."
+    ],
+    "marks": 10
+  }
+]

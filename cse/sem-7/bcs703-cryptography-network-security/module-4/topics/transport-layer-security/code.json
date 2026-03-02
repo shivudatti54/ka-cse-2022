@@ -1,0 +1,35 @@
+{
+  "topicId": "transport-layer-security",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: TLS 1.3 Handshake Protocol",
+      "description": "Simplified handshake process for session establishment",
+      "code": "ALGORITHM TLS_Handshake\nBEGIN\n 1. Client sends ClientHello with:\n - Supported cipher suites\n - Key share (client public key)\n - Protocol version\n\n 2. Server responds with ServerHello containing:\n - Selected cipher suite\n - Key share (server public key)\n - Digital certificate\n\n 3. Client verifies server certificate\n\n 4. Both parties compute:\n - Pre-master secret using ECDH\n - Master secret using HKDF-Extract\n - Session keys using HKDF-Expand\n\n 5. Exchange Finished messages with HMAC verification\nEND",
+      "explanation": "Steps 1-2 negotiate parameters and exchange keys. Step 3 authenticates server. Step 4 derives encryption keys using elliptic curve Diffie-Hellman and HKDF. Step 5 verifies handshake integrity.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Algorithm: HKDF Key Derivation",
+      "description": "Key derivation using HMAC-based Extract-and-Expand",
+      "code": "ALGORITHM HKDF_Key_Derivation\nBEGIN\n FUNCTION HKDF-Extract(salt, input_key_material):\n RETURN HMAC-SHA256(salt, input_key_material)\n\n FUNCTION HKDF-Expand(prk, info, length):\n T = empty byte string\n FOR i FROM 1 TO ceil(length/HashLen):\n T = T || HMAC-SHA256(prk, T || info || i)\n RETURN first 'length' bytes of T\nEND",
+      "explanation": "Extract phase condenses input material into pseudorandom key. Expand phase generates required key length using HMAC iterations. Used in TLS 1.3 for key derivation.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "AES-GCM Encryption (TLS Record Protocol)",
+      "description": "Data encryption as used in TLS record layer",
+      "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.backends import default_backend\nimport os\n\ndef encrypt_tls_record(plaintext, key):\n # Generate 12-byte nonce for GCM\n nonce = os.urandom(12)\n cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())\n encryptor = cipher.encryptor()\n ciphertext = encryptor.update(plaintext) + encryptor.finalize()\n return (nonce, ciphertext, encryptor.tag)\n\ndef decrypt_tls_record(nonce, ciphertext, tag, key):\n cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())\n decryptor = cipher.decryptor()\n return decryptor.update(ciphertext) + decryptor.finalize()",
+      "explanation": "encrypt_tls_record generates random nonce and performs AES-GCM encryption. decrypt_tls_record requires same nonce and authentication tag. Demonstrates confidentiality and integrity checks used in TLS records.",
+      "timeComplexity": "O(m)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

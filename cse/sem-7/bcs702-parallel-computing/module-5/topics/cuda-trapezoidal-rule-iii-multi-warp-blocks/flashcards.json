@@ -1,0 +1,30 @@
+{
+  "topicId": "cuda-trapezoidal-rule-iii-multi-warp-blocks",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "Why is __syncthreads() unnecessary for the last 5 iterations of tree reduction in a 256-thread block?",
+      "back": "When the stride drops to 32 or below, all remaining active threads (0-31) belong to warp 0. Threads within a warp execute in lockstep (SIMT model), so they are implicitly synchronized and do not need an explicit barrier."
+    },
+    {
+      "id": "fc2",
+      "front": "What does __shfl_down_sync(0xFFFFFFFF, val, delta) do?",
+      "back": "It is a warp shuffle instruction where thread i receives the register value of 'val' from thread i + delta within the same warp. The mask 0xFFFFFFFF indicates all 32 threads participate. It transfers data directly between registers without using shared memory, at ~1 cycle latency."
+    },
+    {
+      "id": "fc3",
+      "front": "Describe the two-phase reduction for multi-warp blocks using warp shuffles.",
+      "back": "Phase 1: Each warp independently reduces its 32 values to a single value using __shfl_down_sync() (5 shuffle operations, no shared memory). Lane 0 of each warp writes the result to a shared memory array. Phase 2: After one __syncthreads(), warp 0 loads the per-warp sums and performs another warp shuffle reduction to produce the final block sum."
+    },
+    {
+      "id": "fc4",
+      "front": "Why is the volatile keyword needed for shared memory in pre-Volta warp-level reduction code?",
+      "back": "Without __syncthreads(), the compiler may optimize shared memory reads by caching values in registers. Declaring the shared memory pointer as volatile forces every read/write to go directly to shared memory, ensuring that threads within the warp see each other's most recent writes. On Volta+ (CC 7.0+), use __shfl_down_sync() instead."
+    },
+    {
+      "id": "fc5",
+      "front": "How does the two-phase warp-shuffle reduction improve performance over the full tree reduction?",
+      "back": "It reduces __syncthreads() calls from log2(blockDim.x) to just 1, uses warp shuffles (~1 cycle) instead of shared memory reads (~5 cycles), eliminates shared memory bank conflicts during intra-warp reduction, and reduces shared memory usage from blockDim.x entries to just 32 entries (one per warp), enabling higher occupancy."
+    }
+  ]
+}

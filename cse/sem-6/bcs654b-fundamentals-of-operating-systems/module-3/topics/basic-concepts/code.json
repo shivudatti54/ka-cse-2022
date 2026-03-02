@@ -1,0 +1,35 @@
+{
+  "topicId": "basic-concepts",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Test-and-Set Lock Implementation",
+      "description": "Implementation of mutual exclusion using atomic Test-and-Set instruction",
+      "code": "// Hardware atomic instruction\nboolean TestAndSet(boolean *target) {\n boolean temp = *target;\n *target = TRUE;\n return temp;\n}\n\n// Lock implementation using Test-and-Set\ndo {\n while (TestAndSet(&lock)); // Spin until lock acquired\n critical_section();\n lock = FALSE; // Release lock\n remainder_section();\n} while (TRUE);",
+      "explanation": "The Test-and-Set instruction atomically returns the old value of lock while setting it to TRUE. The while loop spins (busy waits) until the lock was FALSE (unlocked). When a process exits the critical section, it sets lock back to FALSE, allowing another waiting process to acquire it. This ensures mutual exclusion.",
+      "timeComplexity": "O(1) for acquiring lock in best case, O(n) worst case where n processes compete",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Semaphore Implementation",
+      "description": "Classic semaphore implementation with wait and signal operations",
+      "code": "// Semaphore structure\nstruct semaphore {\n int value; // Count of available resources\n queue processQueue; // Queue of blocked processes\n};\n\n// Wait (P) operation\nwait(semaphore *S) {\n S->value--;\n if (S->value < 0) {\n // Block this process\n add_to_queue(S->processQueue, current_process);\n block(); // Move process to blocked state\n }\n}\n\n// Signal (V) operation\nsignal(semaphore *S) {\n S->value++;\n if (S->value <= 0) {\n // Wake up one waiting process\n remove_from_queue(S->processQueue, some_process);\n wakeup(some_process); // Move to ready queue\n }\n}",
+      "explanation": "The wait operation decrements the semaphore. If result is negative, the process blocks itself and is added to the queue. The signal operation increments and wakes a process if there are waiting processes (when value \u2264 0). This is the classic definition where negative values indicate number of waiting processes.",
+      "timeComplexity": "O(1) for both operations (excluding queue operations)",
+      "spaceComplexity": "O(n) where n is max number of processes that can wait"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Peterson's Solution for Two Processes",
+      "description": "Software solution to critical section problem for two processes",
+      "code": "// Shared variables\nint turn; // Whose turn\nboolean flag[2]; // Interest in entering CS\n\n// Process i (where i is 0 or 1, j is the other)\ndo {\n flag[i] = TRUE; // Indicate desire to enter\n turn = j; // Give priority to other\n while (flag[j] && turn == j); // Wait while other wants and it's their turn\n \n critical_section(); // Protected code\n \n flag[i] = FALSE; // No longer interested\n \n remainder_section(); // Non-critical work\n} while (TRUE);",
+      "explanation": "Peterson's solution uses two shared variables: 'turn' for tie-breaking and 'flag' array to indicate interest. A process sets its flag to true, gives turn to the other, then waits while the other process wants to enter AND it's the other's turn. This satisfies mutual exclusion, progress, and bounded waiting for two processes. Works only for 2 processes and assumes atomic memory reads/writes.",
+      "timeComplexity": "O(1) - bounded waiting time in CS",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

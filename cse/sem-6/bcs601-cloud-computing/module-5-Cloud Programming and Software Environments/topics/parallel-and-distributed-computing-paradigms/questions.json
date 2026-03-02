@@ -1,0 +1,129 @@
+{
+  "topicId": "parallel-and-distributed-computing-paradigms",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Derive and explain Amdahl's Law formula for maximum parallel speedup. A program takes 100 seconds on a single processor with 30% being inherently serial. Calculate maximum speedup with unlimited processors.",
+      "keyPoints": [
+        "Amdahl's Law: S \u2264 1/(1-P) where P = parallelizable fraction",
+        "Serial portion limits maximum speedup regardless of processor count",
+        "Given: Serial portion = 30% = 0.3, so P = 0.7",
+        "Maximum speedup = 1/(1-0.7) = 1/0.3 \u2248 3.33x",
+        "This demonstrates diminishing returns from adding more processors"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Compare and contrast Data Parallelism and Task Parallelism with suitable examples in cloud computing contexts.",
+      "keyPoints": [
+        "Data Parallelism: Same operation on different data elements simultaneously",
+        "Task Parallelism: Different operations executing concurrently",
+        "Data parallelism examples: MapReduce map phase, GPU computing, vector operations",
+        "Task parallelism examples: Web server handling requests, pipeline stages, independent microservices",
+        "Trade-offs: Data parallelism simpler but requires regular data, task parallelism more flexible but complex scheduling"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the three-tier client-server architecture and discuss its suitability for cloud deployment.",
+      "keyPoints": [
+        "Presentation tier (UI), Application tier (business logic), Data tier (storage)",
+        "Separation enables independent scaling of tiers",
+        "Cloud suitability: Auto-scaling for presentation, stateless application servers, managed databases",
+        "Benefits: Maintainability, scalability, flexibility",
+        "Examples: Traditional web applications, enterprise systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the Actor Model of computation. How does it handle concurrency and what are its advantages in distributed systems?",
+      "keyPoints": [
+        "Actor: Independent entity with private state, processes messages sequentially",
+        "Communication via asynchronous message passing",
+        "Can create new actors, send messages to other actors",
+        "Inherent concurrency without locks or shared memory",
+        "Advantages: Fault tolerance, location transparency, scalable distribution",
+        "Used in Erlang, Akka framework for telecom, chat systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Calculate the speedup and efficiency for a program that runs in 200 seconds sequentially and 40 seconds on 8 processors. Comment on the results.",
+      "keyPoints": [
+        "Speedup S = T(1)/T(P) = 200/40 = 5x",
+        "Efficiency E = S/P = 5/8 = 0.625 = 62.5%",
+        "Ideal speedup would be 8x with 100% efficiency",
+        "62.5% efficiency indicates overhead from communication, synchronization, or non-parallelizable sections",
+        "Remaining parallelizable portion: Using Amdahl: S = 1/(1-P) = 5, solving P = 0.8 or 80%"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain Event-Driven Architecture in cloud computing. What are its advantages and typical use cases?",
+      "keyPoints": [
+        "Components communicate through events (state changes) rather than direct calls",
+        "Event producers emit to event bus/broker; consumers subscribe to relevant events",
+        "Advantages: Loose coupling, scalability, real-time responsiveness, resilience",
+        "Use cases: IoT data ingestion, real-time analytics, notification systems, stock trading platforms",
+        "Cloud services: AWS Lambda, Azure Event Grid, Kafka"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "A cloud-based video processing system needs to process uploaded videos through: (1) Format conversion, (2) Thumbnail generation, (3) Quality optimization, (4) Metadata extraction. The processing times for each stage are 30s, 10s, 25s, and 5s respectively on a single processor. Design a pipeline architecture and calculate: (a) Total time to process 100 videos sequentially (b) Total time with pipeline parallelism (c) What is the bottleneck stage and how would you address it?",
+      "keyPoints": [
+        "Sequential: 100 \u00d7 (30+10+25+5) = 100 \u00d7 70 = 7000 seconds",
+        "Pipeline with P stages: First video takes 70s (fill), remaining 99 complete at bottleneck rate (25s each) = 70 + 99\u00d725 = 2575 seconds",
+        "Speedup = 7000/2575 \u2248 2.72x",
+        "Bottleneck: Stage 3 (quality optimization) at 25s\u2014limits throughput",
+        "Solutions: Horizontal scaling (multiple processors for slow stage), stage optimization, parallelization within stage",
+        "Throughput: 1 video per 25 seconds after pipeline fills"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the Peer-to-Peer (P2P) architecture model in distributed systems. Compare it with client-server architecture, highlighting advantages, challenges, and applications in cloud environments.",
+      "keyPoints": [
+        "P2P: Decentralized where each node acts as client and server, shares resources directly",
+        "Client-Server: Centralized server handles requests, clients are consumers",
+        "P2P Advantages: No single point of failure, scalable, cost-effective, resilient to load spikes",
+        "P2P Challenges: Security, consistency, discovery, free-riding, legal issues",
+        "Client-Server Advantages: Simpler, predictable, easier to secure and manage",
+        "P2P Applications: File sharing (BitTorrent), blockchain/ cryptocurrency, distributed storage (IPFS), collaborative apps",
+        "Hybrid approaches: Centralized index with P2P transfers (Napster model)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain Microservices architecture pattern. How does it relate to cloud computing, and what are the challenges in implementing inter-service communication and data consistency?",
+      "keyPoints": [
+        "Microservices: Decompose application into independently deployable services around business capabilities",
+        "Each service has its own database, communicates via lightweight APIs (REST, gRPC)",
+        "Cloud relationship: Native cloud pattern\u2014each microservice can scale independently, deploy in containers (Docker, Kubernetes)",
+        "Communication challenges: Network latency, service discovery, fault tolerance, versioning",
+        "Data consistency: Each service owns data\u2014challenges in maintaining consistency across services",
+        "Solutions: Event-driven (eventual consistency), saga pattern, CQRS, distributed transactions",
+        "Advantages: Technology heterogeneity, independent deployment, scalability, team autonomy",
+        "Challenges: Complexity in operations, debugging, testing, data duplication"
+      ],
+      "marks": 10
+    }
+  ]
+}

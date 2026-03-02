@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What is the primary, deprecated method for stopping a thread and why was it deprecated?",
+    "back": "The Thread.stop() method. It was deprecated because it is inherently unsafe\u2014it releases all monitors the thread has locked (causing potential object state corruption) and can leave the application in an inconsistent state."
+  },
+  {
+    "id": "f2",
+    "front": "What is the recommended, cooperative mechanism for stopping a thread?",
+    "back": "Using a volatile boolean flag (e.g., `isRunning`) that the thread checks periodically. When the flag is set to false from another thread, the running thread can terminate its task and exit its run loop gracefully."
+  },
+  {
+    "id": "f3",
+    "front": "Why is the `volatile` keyword often used with the flag for stopping a thread?",
+    "back": "To ensure visibility of the flag's value across threads. Without `volatile`, one thread might not see the change made to the flag by another thread due to caching, leading to a liveness failure (the thread wouldn't stop)."
+  },
+  {
+    "id": "f4",
+    "front": "What should a thread's run() method do to be properly stoppable?",
+    "back": "It should regularly check the status of the termination flag within its main loop. If the flag indicates a stop has been requested, it should break out of the loop, perform any necessary cleanup, and then return from the run() method."
+  },
+  {
+    "id": "f5",
+    "front": "What is the Thread.interrupt() method used for?",
+    "back": "It is a standard way to signal a thread that it should stop what it is doing. It does not force the thread to stop; instead, it sets the thread's interrupted status. The target thread must periodically check this status using `Thread.interrupted()` or `Thread.isInterrupted()` and respond by stopping itself."
+  }
+]

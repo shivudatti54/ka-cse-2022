@@ -1,0 +1,33 @@
+{
+  "topicId": "applications-of-queues",
+  "examples": [
+    {
+      "id": "pseudocode-printer-spooler",
+      "title": "Pseudocode: Printer Spooler",
+      "description": "A pseudocode example demonstrating a printer spooler using a queue",
+      "language": "pseudocode",
+      "code": "INITIALIZE printQueue as empty queue\n\nWHILE TRUE\n IF new print job arrives THEN\n ADD job to printQueue\n END IF\n IF printer is available THEN\n REMOVE job from front of printQueue\n SEND job to printer\n END IF\nEND WHILE",
+      "explanation": "This pseudocode shows how a printer spooler can use a queue to manage print jobs. It continuously checks for new jobs and adds them to the queue. When the printer is available, it removes the job at the front of the queue and sends it to the printer."
+    },
+    {
+      "id": "c-printer-spooler",
+      "title": "C: Printer Spooler",
+      "description": "A C implementation of a printer spooler using a queue",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#define MAX_SIZE 100\n\n// Queue structure\nstruct PrintQueue {\n int jobs[MAX_SIZE];\n int front, rear;\n};\n\n// Initialize queue\nvoid initQueue(struct PrintQueue *pq) {\n pq->front = -1;\n pq->rear = -1;\n}\n\n// Check if queue is empty\nint isEmpty(struct PrintQueue *pq) {\n return pq->front == -1;\n}\n\n// Check if queue is full\nint isFull(struct PrintQueue *pq) {\n return (pq->rear + 1) % MAX_SIZE == pq->front;\n}\n\n// Add print job to queue\nvoid enqueue(struct PrintQueue *pq, int jobId) {\n if (isFull(pq)) {\n printf(\"Print queue is full. Cannot add job %d\\n\", jobId);\n return;\n }\n if (isEmpty(pq)) {\n pq->front = pq->rear = 0;\n } else {\n pq->rear = (pq->rear + 1) % MAX_SIZE;\n }\n pq->jobs[pq->rear] = jobId;\n printf(\"Added print job %d to queue\\n\", jobId);\n}\n\n// Process next print job\nint dequeue(struct PrintQueue *pq) {\n if (isEmpty(pq)) {\n printf(\"No jobs in print queue\\n\");\n return -1;\n }\n int jobId = pq->jobs[pq->front];\n printf(\"Processing print job: %d\\n\", jobId);\n if (pq->front == pq->rear) {\n pq->front = pq->rear = -1; // Queue becomes empty\n } else {\n pq->front = (pq->front + 1) % MAX_SIZE;\n }\n return jobId;\n}\n\nint main() {\n struct PrintQueue pq;\n initQueue(&pq);\n // Simulate print jobs\n enqueue(&pq, 101);\n enqueue(&pq, 102);\n enqueue(&pq, 103);\n // Process jobs\n dequeue(&pq);\n dequeue(&pq);\n enqueue(&pq, 104);\n dequeue(&pq);\n dequeue(&pq);\n return 0;\n}",
+      "explanation": "This C code implements a printer spooler using a queue. It provides functions to initialize the queue, check if it's empty or full, add print jobs to the queue, and process the next job in the queue.",
+      "timeComplexity": "O(1) for enqueue and dequeue operations",
+      "spaceComplexity": "O(MAX_SIZE) for the queue array"
+    },
+    {
+      "id": "python-breadth-first-search",
+      "title": "Python: Breadth-First Search",
+      "description": "A Python implementation of breadth-first search using a queue",
+      "language": "python",
+      "code": "from collections import deque\n\ndef bfs(graph, start):\n visited = set()\n queue = deque([start])\n visited.add(start)\n while queue:\n node = queue.popleft()\n print(node, end=' ')\n for neighbor in graph[node]:\n if neighbor not in visited:\n queue.append(neighbor)\n visited.add(neighbor)\n\n# Example graph\ngraph = {\n 'A': ['B', 'C'],\n 'B': ['A', 'D', 'E'],\n 'C': ['A', 'F'],\n 'D': ['B'],\n 'E': ['B', 'F'],\n 'F': ['C', 'E']\n}\n\nbfs(graph, 'A')",
+      "explanation": "This Python code implements breadth-first search using a queue. It uses a set to keep track of visited nodes and a queue to store nodes to be visited.",
+      "timeComplexity": "O(V + E) where V is the number of vertices and E is the number of edges",
+      "spaceComplexity": "O(V) for the visited set and queue"
+    }
+  ]
+}

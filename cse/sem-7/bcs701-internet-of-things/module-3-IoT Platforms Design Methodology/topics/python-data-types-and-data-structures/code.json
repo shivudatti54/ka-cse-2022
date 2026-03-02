@@ -1,0 +1,35 @@
+{
+  "topicId": "python-data-types-and-data-structures",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "IoT Sensor Buffer using collections.deque",
+      "description": "Efficient fixed-size buffer for storing recent sensor readings with automatic overflow handling",
+      "code": "from collections import deque\nfrom datetime import datetime\n\n# Create buffer storing last 60 readings (1 hour at 1/minute)\nsensor_buffer = deque(maxlen=60)\n\ndef add_reading(sensor_id, temperature):\n \"\"\"Add new sensor reading with timestamp\"\"\"\n timestamp = datetime.now().strftime(\"%H:%M:%S\")\n sensor_buffer.append({\n 'sensor_id': sensor_id,\n 'timestamp': timestamp,\n 'temperature': temperature\n })\n \ndef get_average():\"\"\"Calculate average temperature\"\"\"\n if not sensor_buffer:\n return 0\n total = sum(reading['temperature'] for reading in sensor_buffer)\n return total / len(sensor_buffer)\n\n# Simulate sensor readings\nfor temp in [22, 23, 24, 25, 26]:\n add_reading('sensor_001', temp)\n \nprint(f\"Buffer size: {len(sensor_buffer)}\")\nprint(f\"Average temp: {get_average():.2f}\u00b0C\")",
+      "explanation": "Using deque with maxlen automatically manages buffer size - when 61st reading is added, oldest is automatically removed. This is ideal for streaming IoT data where only recent readings are relevant.",
+      "timeComplexity": "O(1) for append, O(n) for average calculation",
+      "spaceComplexity": "O(60) - fixed maximum storage"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "IoT Device Data Management using Nested Dictionaries",
+      "description": "Efficient storage and retrieval of multi-sensor IoT data with O(1) lookup by device ID",
+      "code": "# Nested dictionary structure for IoT sensor network\niot_devices = {\n 'sensor_001': {\n 'location': 'Living Room',\n 'type': 'temperature',\n 'readings': [22.5, 23.0, 22.8],\n 'status': 'active'\n },\n 'sensor_002': {\n 'location': 'Bedroom',\n 'type': 'humidity',\n 'readings': [65, 67, 64],\n 'status': 'active'\n },\n 'sensor_003': {\n 'location': 'Kitchen',\n 'type': 'temperature',\n 'readings': [24.1, None, 23.9], # None = missing reading\n 'status': 'error'\n }\n}\n\n# O(1) lookup by device ID\ndef get_device_readings(device_id):\n device = iot_devices.get(device_id)\n if device is None:\n return f\"Device {device_id} not found\"\n valid_readings = [r for r in device['readings'] if r is not None]\n return {\n 'device': device_id,\n 'location': device['location'],\n 'average': sum(valid_readings)/len(valid_readings) if valid_readings else None\n }\n\nprint(get_device_readings('sensor_001'))\nprint(get_device_readings('sensor_003'))",
+      "explanation": "Dictionaries provide O(1) average lookup time, essential for IoT systems with many devices. Using .get() prevents KeyError for non-existent devices. Handling None values ensures robustness when sensors fail.",
+      "timeComplexity": "O(1) for dictionary lookup, O(n) for processing readings",
+      "spaceComplexity": "O(d) where d = number of devices"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "IoT Alert System using Sets for Unique Detection",
+      "description": "Track unique alert conditions triggered by IoT sensors using set for automatic duplicate handling",
+      "code": "# Set to track unique alert conditions\ntriggered_alerts = set()\nalert_thresholds = {\n 'temperature_high': 35,\n 'temperature_low': 5,\n 'humidity_high': 80,\n 'humidity_low': 20\n}\n\ndef check_sensor_alerts(sensor_id, sensor_type, value):\n \"\"\"Check value against thresholds and generate alerts\"\"\"\n alerts_found = []\n \n # Determine which threshold to check\n if sensor_type == 'temperature':\n if value > alert_thresholds['temperature_high']:\n alert = f\"{sensor_id}: HIGH_TEMP_{value}\"\n alerts_found.append(alert)\n elif value < alert_thresholds['temperature_low']:\n alert = f\"{sensor_id}: LOW_TEMP_{value}\"\n alerts_found.append(alert)\n \n elif sensor_type == 'humidity':\n if value > alert_thresholds['humidity_high']:\n alert = f\"{sensor_id}: HIGH_HUMIDITY_{value}\"\n alerts_found.append(alert)\n \n # Add unique alerts to set (duplicates auto-handled)\n for alert in alerts_found:\n triggered_alerts.add(alert)\n print(f\"ALERT: {alert}\")\n \n return alerts_found\n\n# Simulate sensor readings\ncheck_sensor_alerts('sensor_001', 'temperature', 38) # High temp\ncheck_sensor_alerts('sensor_002', 'humidity', 85) # High humidity\ncheck_sensor_alerts('sensor_001', 'temperature', 38) # Duplicate - ignored\ncheck_sensor_alerts('sensor_003', 'temperature', 2) # Low temp\n\nprint(f\"\\nTotal unique alerts: {len(triggered_alerts)}\")\nprint(\"Alert history:\", triggered_alerts)",
+      "explanation": "Sets automatically handle duplicate alerts - if the same alert condition occurs multiple times, it's only stored once. This is useful for IoT systems to track what alert conditions have ever been triggered without counting duplicates.",
+      "timeComplexity": "O(1) average for add() and membership testing",
+      "spaceComplexity": "O(a) where a = number of unique alerts"
+    }
+  ]
+}

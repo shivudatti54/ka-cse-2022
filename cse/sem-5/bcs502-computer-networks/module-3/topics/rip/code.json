@@ -1,0 +1,45 @@
+{
+  "topicId": "rip",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "RIP Route Update Algorithm",
+      "description": "Demonstrates how RIP processes incoming routing updates using Bellman-Ford principles",
+      "code": "// RIP Route Update Process\nPROCEDURE ProcessRIPUpdate(receivedRoute, neighborAddress):\n FOR EACH route IN receivedRoute:\n // Add 1 hop for the neighbor\n newMetric = route.metric + 1\n \n // Check if metric exceeds infinity\n IF newMetric > 16 THEN\n newMetric = 16\n END IF\n \n // Check if we already have this route\n existingRoute = LookupRouteTable(route.destination)\n \n IF existingRoute = NULL THEN\n // New destination discovered\n AddToRouteTable(route.destination, newMetric, neighborAddress)\n ELSE IF neighborAddress = existingRoute.nextHop THEN\n // Same neighbor, always update\n IF newMetric != existingRoute.metric THEN\n existingRoute.metric = newMetric\n SetTimer(existingRoute, invalidTimer)\n END IF\n ELSE IF newMetric < existingRoute.metric THEN\n // Better route found\n existingRoute.metric = newMetric\n existingRoute.nextHop = neighborAddress\n SetTimer(existingRoute, invalidTimer)\n END IF\n END FOR\nEND PROCEDURE",
+      "explanation": "This pseudocode shows how RIP processes incoming routing updates. It adds 1 to received metrics (Bellman-Ford), compares with existing routes, and updates only if the new route is better. Routes with metric 16 are unreachable.",
+      "timeComplexity": "O(n) where n is number of routes in update",
+      "spaceComplexity": "O(m) where m is size of routing table"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "RIP Periodic Update Timer",
+      "description": "Shows how RIP generates and sends periodic updates every 30 seconds",
+      "code": "// RIP Periodic Update Generation\nPROCEDURE RIPPeriodicUpdate():\n // Triggered by Update Timer (expires every 30 seconds)\n \n FOR EACH interface IN router.interfaces:\n // Get all routes in routing table\n routesToSend = GetAllRoutes()\n \n // Apply split horizon (don't send routes learned from this interface)\n FOR EACH route IN routesToSend:\n IF route.interface != interface THEN\n AddToUpdateMessage(route)\n END IF\n END FOR\n \n // Send update via appropriate method\n IF RIPVersion = 1 THEN\n SendBroadcast(interface, updateMessage) // 255.255.255.255\n ELSE\n SendMulticast(interface, 224.0.0.9, updateMessage) // RIPv2\n END IF\n END FOR\n \n // Reset the update timer\n ResetTimer(updateTimer, 30 seconds)\nEND PROCEDURE",
+      "explanation": "Every 30 seconds, RIP generates routing updates for all interfaces. RIPv1 uses broadcast, RIPv2 uses multicast. Split horizon is applied to prevent routing loops.",
+      "timeComplexity": "O(n) where n is routing table size",
+      "spaceComplexity": "O(n) for message construction"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "RIP Holddown Timer Logic",
+      "description": "Demonstrates how holddown prevents accepting potentially bad route updates",
+      "code": "// RIP Holddown Logic\nPROCEDURE OnRouteChange(destination, newMetric, fromNeighbor):\n currentRoute = LookupRouteTable(destination)\n \n // If route was not in table or is worse\n IF currentRoute = NULL THEN\n AddRoute(destination, newMetric, fromNeighbor)\n StartHolddown(destination, fromNeighbor, 180 seconds)\n ELSE IF fromNeighbor = currentRoute.nextHop THEN\n // Same neighbor - update immediately\n currentRoute.metric = newMetric\n ResetTimer(currentRoute)\n \n // If now unreachable, start holddown\n IF newMetric = 16 THEN\n StartHolddown(destination, fromNeighbor, 180 seconds)\n END IF\n ELSE IF newMetric < currentRoute.metric THEN\n // Check if holddown is active\n IF IsHolddownActive(destination) THEN\n // Ignore better route during holddown\n Log(\"Route to\", destination, \"in holddown\")\n ELSE\n // Accept better route\n currentRoute.metric = newMetric\n currentRoute.nextHop = fromNeighbor\n ResetTimer(currentRoute)\n END IF\n END IF\nEND PROCEDURE",
+      "explanation": "Holddown prevents accepting potentially false route updates. After a route becomes unreachable, the router ignores any updates about that destination for 180 seconds, allowing time for consistent information to propagate.",
+      "timeComplexity": "O(1) lookup + O(1) update",
+      "spaceComplexity": "O(1) per route"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Route Poisoning Implementation",
+      "description": "Shows how route poisoning advertises unreachable routes with metric 16",
+      "code": "// Route Poisoning Procedure\nPROCEDURE OnNetworkFailure(network, interface):\n // Called when directly connected network goes down\n \n // Mark route as unreachable (metric 16)\n failedRoute = LookupRouteTable(network)\n IF failedRoute != NULL THEN\n failedRoute.metric = 16\n failedRoute.status = UNREACHABLE\n \n // Send triggered update immediately (poison reverse)\n SendImmediateUpdate(network, 16, interface)\n \n // Reset invalid timer\n ResetTimer(failedRoute.invalidTimer, 180 seconds)\n \n // Start garbage collection\n SetTimer(failedRoute.flushTimer, 240 seconds)\n END IF\n \n // Also poison reverse: include this route in updates to other interfaces\n // with metric 16 to ensure neighbors know it's unreachable\n FOR EACH otherInterface IN router.interfaces:\n IF otherInterface != interface THEN\n SendUpdate(otherInterface, network, 16)\n END IF\n END FOR\nEND PROCEDURE",
+      "explanation": "When a network fails, RIP immediately advertises it with metric 16 (poisoning) to all neighbors. This is faster than waiting for neighbors to timeout. Poison reverse ensures the bad news spreads quickly.",
+      "timeComplexity": "O(n) where n is number of interfaces",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

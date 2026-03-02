@@ -1,0 +1,45 @@
+{
+  "topicId": "clipping",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Cohen-Sutherland Line Clipping",
+      "description": "Implementation of Cohen-Sutherland algorithm for line clipping against a rectangular window",
+      "code": "ALGORITHM CohenSutherlandClip(x1, y1, x2, y2, xwmin, ywmin, xwmax, ywmax)\nBEGIN\n REJECT = FALSE\n ACCEPT = FALSE\n \n WHILE NOT (REJECT OR ACCEPT) DO\n outcode1 = ComputeOutcode(x1, y1, xwmin, ywmin, xwmax, ywmax)\n outcode2 = ComputeOutcode(x2, y2, xwmin, ywmin, xwmax, ywmax)\n \n IF (outcode1 = 0 AND outcode2 = 0) THEN\n ACCEPT = TRUE\n ELSE IF (outcode1 AND outcode2) ≠ 0 THEN\n REJECT = TRUE\n ELSE\n // Partially visible - need to clip\n IF outcode1 ≠ 0 THEN\n outcodeOut = outcode1\n ELSE\n outcodeOut = outcode2\n END IF\n \n // Find intersection with boundary\n IF (outcodeOut AND 8) ≠ 0 THEN // Top\n x = x1 + (x2-x1) * (ywmax-y1)/(y2-y1)\n y = ywmax\n ELSE IF (outcodeOut AND 4) ≠ 0 THEN // Bottom\n x = x1 + (x2-x1) * (ywmin-y1)/(y2-y1)\n y = ywmin\n ELSE IF (outcodeOut AND 2) ≠ 0 THEN // Right\n y = y1 + (y2-y1) * (xwmax-x1)/(x2-x1)\n x = xwmax\n ELSE IF (outcodeOut AND 1) ≠ 0 THEN // Left\n y = y1 + (y2-y1) * (xwmin-x1)/(x2-x1)\n x = xwmin\n END IF\n \n // Replace outside point with intersection\n IF outcodeOut = outcode1 THEN\n x1 = x; y1 = y\n ELSE\n x2 = x; y2 = y\n END IF\n END IF\n END WHILE\n \n IF ACCEPT THEN\n RETURN (x1, y1, x2, y2)\n ELSE\n RETURN NULL\n END IF\nEND",
+      "explanation": "The algorithm uses outcodes to quickly determine trivial acceptance or rejection. For partially visible lines, it computes intersections with clipping boundaries and replaces the outside endpoint, repeating until the line is fully processed.",
+      "timeComplexity": "O(1) average, O(k) worst case where k is number of subdivisions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Liang-Barsky Line Clipping",
+      "description": "Parametric line clipping algorithm for rectangular windows",
+      "code": "ALGORITHM LiangBarsky(x1, y1, x2, y2, xwmin, ywmin, xwmax, ywmax)\nBEGIN\n dx = x2 - x1\n dy = y2 - y1\n \n p1 = -dx\n p2 = dx\n p3 = -dy\n p4 = dy\n \n q1 = x1 - xwmin\n q2 = xwmax - x1\n q3 = y1 - ywmin\n q4 = ywmax - y1\n \n u1 = 0.0\n u2 = 1.0\n \n // Check each boundary\n FOR i = 1 TO 4 DO\n IF p[i] = 0 THEN\n IF q[i] < 0 THEN\n RETURN NULL // Line is parallel and outside\n END IF\n ELSE\n r = q[i] / p[i]\n IF p[i] < 0 THEN\n u1 = MAX(u1, r) // Entering parameter\n ELSE\n u2 = MIN(u2, r) // Exiting parameter\n END IF\n END IF\n END FOR\n \n IF u1 > u2 THEN\n RETURN NULL // Line is completely outside\n ELSE\n // Calculate clipped endpoints\n xc1 = x1 + u1 * dx\n yc1 = y1 + u1 * dy\n xc2 = x1 + u2 * dx\n yc2 = y1 + u2 * dy\n RETURN (xc1, yc1, xc2, yc2)\n END IF\nEND",
+      "explanation": "The algorithm uses parametric form of line and computes entry (u1) and exit (u2) parameters. It updates these parameters based on each boundary's inequality. If final u1 ≤ u2, the line is clipped; otherwise it's rejected.",
+      "timeComplexity": "O(1) - fixed 4 boundary checks",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Sutherland-Hodgman Polygon Clipping",
+      "description": "Clips a polygon against a single clipping boundary",
+      "code": "ALGORITHM ClipPolygonAgainstBoundary(inputPolygon, boundary)\nBEGIN\n outputPolygon = EMPTY\n n = number of vertices in inputPolygon\n \n FOR i = 0 TO n-1 DO\n // Current vertex and next vertex\n current = inputPolygon[i]\n next = inputPolygon[(i+1) MOD n]\n \n currentInside = IsInside(current, boundary)\n nextInside = IsInside(next, boundary)\n \n IF currentInside AND nextInside THEN\n // Both inside - add next vertex\n ADD next TO outputPolygon\n ELSE IF currentInside AND NOT nextInside THEN\n // Going outside - add intersection only\n intersection = FindIntersection(current, next, boundary)\n ADD intersection TO outputPolygon\n ELSE IF NOT currentInside AND nextInside THEN\n // Coming inside - add intersection and next vertex\n intersection = FindIntersection(current, next, boundary)\n ADD intersection TO outputPolygon\n ADD next TO outputPolygon\n ELSE\n // Both outside - add nothing\n // No vertices added\n END IF\n END FOR\n \n RETURN outputPolygon\nEND\n\nALGORITHM SutherlandHodgman(polygon, xwmin, ywmin, xwmax, ywmax)\nBEGIN\n // Clip against all four boundaries sequentially\n result = ClipPolygonAgainstBoundary(polygon, LEFT_BOUNDARY)\n result = ClipPolygonAgainstBoundary(result, RIGHT_BOUNDARY)\n result = ClipPolygonAgainstBoundary(result, BOTTOM_BOUNDARY)\n result = ClipPolygonAgainstPolygon(result, TOP_BOUNDARY)\n RETURN result\nEND",
+      "explanation": "The algorithm processes each edge of the polygon against one boundary at a time. Vertices are added to output based on whether they are inside/outside relative to the boundary. Intersection points are computed where edges cross the boundary.",
+      "timeComplexity": "O(n) where n is number of vertices - processes each edge once per boundary",
+      "spaceComplexity": "O(n) for output polygon"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "ComputeOutcode Function",
+      "description": "Helper function to compute Cohen-Sutherland outcode for a point",
+      "code": "FUNCTION ComputeOutcode(x, y, xwmin, ywmin, xwmax, ywmax)\nBEGIN\n outcode = 0\n \n IF y > ywmax THEN\n outcode = outcode OR 8 // 1000 - Top\n END IF\n \n IF y < ywmin THEN\n outcode = outcode OR 4 // 0100 - Bottom\n END IF\n \n IF x > xwmax THEN\n outcode = outcode OR 2 // 0010 - Right\n END IF\n \n IF x < xwmin THEN\n outcode = outcode OR 1 // 0001 - Left\n END IF\n \n RETURN outcode\nEND",
+      "explanation": "This function assigns a 4-bit outcode to a point based on its position relative to the clipping window. Each bit represents whether the point is beyond one of the four boundaries.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

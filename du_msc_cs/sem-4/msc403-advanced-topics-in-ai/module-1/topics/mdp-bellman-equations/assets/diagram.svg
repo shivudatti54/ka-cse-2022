@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="mdp-bellman-equations">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4fc;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f0e8fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8fce8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7eb8da;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a90c2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#f5f5f5;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #34495e; }
+    .sublabel { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #7f8c8d; }
+    .equation { font-family: 'Courier New', monospace; font-size: 13px; fill: #2c3e50; }
+    .box-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #2980b9; }
+    .animate-fade { animation: fadeIn 1s ease-out forwards; opacity: 0; }
+    .animate-slide-left { animation: slideInLeft 0.8s ease-out forwards; opacity: 0; }
+    .animate-slide-right { animation: slideInRight 0.8s ease-out forwards; opacity: 0; }
+    .animate-slide-up { animation: slideInUp 0.8s ease-out forwards; opacity: 0; }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; transform-origin: center; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .delay-4 { animation-delay: 0.8s; }
+    .delay-5 { animation-delay: 1s; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title animate-fade">MDP &amp; Bellman Equations</text>
+  
+  <!-- MDP Components Box (Left) -->
+  <g class="animate-slide-left delay-1" filter="url(#shadow)">
+    <rect x="15" y="50" width="130" height="130" rx="8" fill="url(#boxGradient)" stroke="#b8d4e8" stroke-width="2"/>
+    <text x="80" y="70" text-anchor="middle" class="box-title">MDP Components</text>
+    <line x1="25" y1="80" x2="135" y2="80" stroke="#b8d4e8" stroke-width="1"/>
+    
+    <text x="25" y="100" class="label" data-narration="States: Finite set S of possible situations">S: States</text>
+    <text x="25" y="118" class="label" data-narration="Actions: Decisions available to the agent">A: Actions</text>
+    <text x="25" y="136" class="label" data-narration="Transition: Probability P(s'|s,a)">P: Transition</text>
+    <text x="25" y="154" class="label" data-narration="Reward: R(s,a,s') immediate reward">R: Reward</text>
+    <text x="25" y="172" class="label" data-narration="Discount: γ balances immediate vs future">γ: Discount</text>
+  </g>
+  
+  <!-- State Transition Diagram (Center) -->
+  <g class="animate-fade delay-2">
+    <!-- State nodes -->
+    <circle cx="220" cy="120" r="28" fill="url(#nodeGradient)" stroke="#3498db" stroke-width="2" class="animate-pulse"/>
+    <text x="220" y="125" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">s</text>
+    
+    <circle cx="340" cy="120" r="28" fill="url(#nodeGradient)" stroke="#3498db" stroke-width="2"/>
+    <text x="340" y="125" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">s'</text>
+    
+    <circle cx="280" cy="220" r="28" fill="url(#nodeGradient)" stroke="#3498db" stroke-width="2"/>
+    <text x="280" y="225" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">s''</text>
+    
+    <!-- Action arrows -->
+    <line x1="248" y1="120" x2="312" y2="120" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+    <text x="275" y="108" text-anchor="middle" class="sublabel animate-pulse" data-narration="Action a from state s to s'">a</text>
+    
+    <line x1="310" y1="135" x2="295" y2="195" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="320" y="170" text-anchor="middle" class="sublabel">a</text>
+    
+    <!-- Probability/Reward labels -->
+    <rect x="250" y="135" width="60" height="32" rx="4" fill="#fff9e6" stroke="#f39c12" stroke-width="1"/>
+    <text x="280" y="148" text-anchor="middle" class="sublabel" data-narration="Transition probability">P=0.8</text>
+    <text x="280" y="162" text-anchor="middle" class="sublabel" data-narration="Reward value">R=+10</text>
+  </g>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  
+  <!-- Bellman Equation Box (Right) -->
+  <g class="animate-slide-right delay-3" filter="url(#shadow)">
+    <rect x="265" y="50" width="140" height="130" rx="8" fill="url(#boxGradient)" stroke="#c8e6c9" stroke-width="2"/>
+    <text x="335" y="70" text-anchor="middle" class="box-title">Bellman Expectation</text>
+    <line x1="275" y1="80" x2="395" y2="80" stroke="#c8e6c9" stroke-width="1"/>
+    
+    <text x="275" y="102" class="equation" data-narration="State value function definition">V^π(s) = Σ_a π(a|s)</text>
+    <text x="285" y="120" class="equation" data-narration="Sum over next states of probability times reward plus discounted value">Σ_{s'} P(s'|s,a)</text>
+    <text x="285" y="138" class="equation" data-narration="Reward plus gamma times next state value">[R + γV^π(s')]</text>
+    <text x="275" y="158" class="equation" data-narration="For action-value function">Q^π(s,a) = Σ_{s'} P[s']</text>
+    <text x="285" y="173" class="equation" data-narration="Immediate reward plus discounted future">[R + γΣ_a'π(a'|s')V^π(s')]</text>
+  </g>
+  
+  <!-- Value Functions Section (Bottom Left) -->
+  <g class="animate-slide-up delay-4" filter="url(#shadow)">
+    <rect x="15" y="195" width="130" height="70" rx="8" fill="url(#boxGradient)" stroke="#e1bee7" stroke-width="2"/>
+    <text x="80" y="215" text-anchor="middle" class="box-title">Value Functions</text>
+    <line x1="25" y1="225" x2="135" y2="225" stroke="#e1bee7" stroke-width="1"/>
+    
+    <text x="25" y="245" class="label" data-narration="State-value: Expected return from state s under policy π">V^π(s): Expected return</text>
+    <text x="25" y="263" class="label" data-narration="Action-value: Expected return from s taking a then π">Q^π(s,a): Action value</text>
+  </g>
+  
+  <!-- Policy & Discount Section (Bottom Right) -->
+  <g class="animate-slide-up delay-5" filter="url(#shadow)">
+    <rect x="265" y="195" width="140" height="70" rx="8" fill="url(#boxGradient)" stroke="#ffccbc" stroke-width="2"/>
+    <text x="335" y="215" text-anchor="middle" class="box-title">Key Relationships</text>
+    <line x1="275" y1="225" x2="395" y2="225" stroke="#ffccbc" stroke-width="1"/>
+    
+    <text x="275" y="247" class="label" data-narration="Optimal value function from best policy">V*(s) = max_π V^π(s)</text>
+    <text x="275" y="263" class="label" data-narration="Gamma in range 0 to 1 balances rewards">γ ∈ [0,1): Discount factor</text>
+  </g>
+  
+  <!-- Connection arrows between sections -->
+  <g class="animate-fade delay-4">
+    <path d="M 145 115 L 190 115" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,2" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M 250 220 L 260 220" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,2" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Highlighted key term -->
+  <g class="animate-pulse delay-3">
+    <circle cx="280" cy="300" r="35" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="280" y="295" text-anchor="middle" class="box-title">Optimal</text>
+    <text x="280" y="312" text-anchor="middle" class="equation">V* = max_π V^π</text>
+  </g>
+  
+  <!-- Legend for transition diagram -->
+  <g class="animate-fade delay-5">
+    <rect x="165" y="270" width="90" height="40" rx="4" fill="#fff" stroke="#ddd" stroke-width="1"/>
+    <text x="210" y="285" text-anchor="middle" class="sublabel" data-narration="Transition probability and reward legend">P(s'|s,a), R(s,a,s')</text>
+    <text x="210" y="302" text-anchor="middle" class="sublabel">Transition Model</text>
+  </g>
+  
+  <!-- Narration indicators (small dots) -->
+  <circle cx="30" cy="375" r="4" fill="#3498db" class="animate-pulse" data-narration="State s current state in MDP"/>
+  <circle cx="150" cy="375" r="4" fill="#e74c3c" class="animate-pulse delay-1" data-narration="Action a taken by agent"/>
+  <circle cx="270" cy="375" r="4" fill="#27ae60" class="animate-pulse delay-2" data-narration="Next state s' reached"/>
+  <circle cx="380" cy="375" r="4" fill="#f39c12" class="animate-pulse delay-3" data-narration="Bellman equation computes value"/>
+  
+  <text x="210" y="390" text-anchor="middle" class="sublabel" data-narration="The diagram shows how Bellman equations compute optimal values through state transitions">Understanding MDPs through State Transitions</text>
+</svg>

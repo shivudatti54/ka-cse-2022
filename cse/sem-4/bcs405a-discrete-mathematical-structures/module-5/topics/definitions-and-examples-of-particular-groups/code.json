@@ -1,0 +1,35 @@
+{
+  "topicId": "definitions-and-examples-of-particular-groups",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Finding Generators of Cyclic Group Zn",
+      "description": "Algorithm to find all generators of Zn under addition modulo n",
+      "code": "def find_generators(n):\n generators = []\n for a in range(1, n):\n # Check if a generates the entire group\n elements = set()\n for k in range(n):\n elements.add((a * k) % n)\n if len(elements) == n:\n generators.append(a)\n return generators\n\n# Example: Find generators of Z7 and Z8\nprint(\"Generators of Z7:\", find_generators(7)) # [1,2,3,4,5,6]\nprint(\"Generators of Z8:\", find_generators(8)) # [1,3,5,7]",
+      "explanation": "A generator a produces all n elements when we compute a×k mod n for k=0 to n-1. For prime n, all non-zero elements generate. For n=8, only odd numbers 1,3,5,7 work because gcd(a,n)=1.",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Computing Order of Element in Zn",
+      "description": "Algorithm to find order of an element in cyclic group Zn",
+      "code": "def order_of_element(a, n):\n \"\"\"Find order of element a in Zn under addition modulo n\"\"\"\n current = a % n\n count = 1\n while current != 0:\n current = (current + a) % n\n count += 1\n if count > n: # Avoid infinite loop\n return float('inf')\n return count\n\n# Examples\nprint(\"Order of 2 in Z8:\", order_of_element(2, 8)) # 4\nprint(\"Order of 3 in Z7:\", order_of_element(3, 7)) # 7\nprint(\"Order of 4 in Z6:\", order_of_element(4, 6)) # 3",
+      "explanation": "Starting from a, repeatedly add a modulo n until we reach 0. The number of steps is the order. If order equals n, the element is a generator.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Verify Group Properties for Custom Set",
+      "description": "Program to verify if a set with operation forms a group",
+      "code": "def is_group(elements, operation, identity):\n \"\"\"Check if (elements, operation) satisfies group axioms\"\"\"\n # 1. Closure\n for a in elements:\n for b in elements:\n if operation(a, b) not in elements:\n return False, \"Failed closure\"\n \n # 2. Associativity (simplified check)\n for a in elements:\n for b in elements:\n for c in elements:\n if operation(operation(a, b), c) != operation(a, operation(b, c)):\n return False, \"Failed associativity\"\n \n # 3. Identity\n for a in elements:\n if operation(identity, a) != a or operation(a, identity) != a:\n return False, \"Failed identity\"\n \n # 4. Inverse\n for a in elements:\n found_inverse = False\n for b in elements:\n if operation(a, b) == identity:\n found_inverse = True\n break\n if not found_inverse:\n return False, \"Failed inverse\"\n \n return True, \"Valid group\"\n\n# Test with V4 (Klein four-group)\nV4 = ['e', 'a', 'b', 'ab']\n# Define operation table (simplified)\nprint(\"Checking Klein four-group properties...\")",
+      "explanation": "This code systematically checks all four group axioms: closure, associativity, identity, and inverses. It can verify whether any finite set with a defined operation forms a group.",
+      "timeComplexity": "O(n⁴)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

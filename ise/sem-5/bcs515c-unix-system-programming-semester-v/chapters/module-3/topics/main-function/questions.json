@@ -1,0 +1,36 @@
+[
+  {
+    "id": "sa1",
+    "question": "Describe the two standard prototypes for the main function in a C program and explain the purpose of each of its parameters (argc, argv, and envp).",
+    "expectedPoints": [
+      "The two common prototypes are: int main(void) and int main(int argc, char *argv[]) (with an optional third parameter char *envp[]).",
+      "argc (argument count) is the number of command-line arguments passed to the program.",
+      "argv (argument vector) is an array of character pointers listing all the arguments, where argv[0] is the program name.",
+      "The optional envp parameter is an array of strings representing the user's environment, similar to the environ global variable."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the significance of the integer return value of the main function in a UNIX program. What do the conventional return values EXIT_SUCCESS and EXIT_FAILURE signify, and which header files define them?",
+    "expectedPoints": [
+      "The return value of main() is the exit status of the program, which is passed back to the parent process (e.g., the shell).",
+      "EXIT_SUCCESS (typically 0) indicates that the program terminated successfully.",
+      "EXIT_FAILURE (typically 1) indicates that the program terminated due to a failure or error.",
+      "These macros are defined in the <stdlib.h> header file, providing a standardized and portable way to represent success and failure."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "In the context of UNIX system programming, detail the complete lifecycle of a C program, starting from the kernel loading the executable into memory. Explain the role of the startup routine, the call to main, and the subsequent call to exit. Why is it crucial to not return from main without a value or use exit-related functions incorrectly?",
+    "expectedPoints": [
+      "The kernel loads the program into memory and calls the startup routine (crt0).",
+      "The startup routine sets up the environment (e.g., preparing argc, argv, and the environment array), initializes the C library, and then calls the main function.",
+      "Upon returning from main, the value is passed to the exit function (i.e., exit(main_return_value)).",
+      "The exit function performs crucial cleanup tasks: flushing stdio buffers, calling functions registered with atexit(), and finally making the _exit system call to terminate the process.",
+      "Returning from main without a value leads to undefined behavior. Incorrect use of _exit() bypasses crucial cleanup, while using exit() in a signal handler can cause non-reentrant function issues."
+    ],
+    "marks": 10
+  }
+]

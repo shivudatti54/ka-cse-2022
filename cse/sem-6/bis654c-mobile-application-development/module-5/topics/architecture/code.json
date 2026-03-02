@@ -1,0 +1,19 @@
+{
+  "topicId": "architecture",
+  "examples": [
+    {
+      "id": "ce1",
+      "title": "Accessing Android System Services",
+      "language": "java",
+      "code": "// Accessing system services through the Application Framework layer\nimport android.app.Activity;\nimport android.content.Context;\nimport android.location.LocationManager;\nimport android.net.ConnectivityManager;\nimport android.os.Bundle;\n\npublic class SystemServiceDemo extends Activity {\n @Override\n protected void onCreate(Bundle savedInstanceState) {\n super.onCreate(savedInstanceState);\n setContentView(R.layout.activity_main);\n\n // Activity Manager - manages app lifecycle\n android.app.ActivityManager activityManager =\n (android.app.ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);\n\n // Location Manager - accesses GPS via HAL layer\n LocationManager locationManager =\n (LocationManager) getSystemService(Context.LOCATION_SERVICE);\n\n // Connectivity Manager - network status via Linux kernel\n ConnectivityManager connectivityManager =\n (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);\n\n // Window Manager - manages display via SurfaceFlinger\n android.view.WindowManager windowManager =\n (android.view.WindowManager) getSystemService(Context.WINDOW_SERVICE);\n }\n}",
+      "explanation": "This example demonstrates how Android apps interact with the Application Framework layer to access system services. Each service ultimately communicates through the HAL and Linux Kernel layers of the Android architecture stack."
+    },
+    {
+      "id": "ce2",
+      "title": "Using Native Libraries via JNI",
+      "language": "java",
+      "code": "// Accessing native C/C++ libraries through JNI\n// This demonstrates the Native Libraries layer of Android architecture\npublic class NativeLibDemo extends Activity {\n\n // Load native library (compiled C/C++ code)\n static {\n System.loadLibrary(\"native-lib\");\n }\n\n // Declare native method (implemented in C/C++)\n public native String stringFromJNI();\n public native int computeFromNative(int a, int b);\n\n @Override\n protected void onCreate(Bundle savedInstanceState) {\n super.onCreate(savedInstanceState);\n setContentView(R.layout.activity_main);\n\n // Call native method - bridges Java and native layers\n String result = stringFromJNI();\n int sum = computeFromNative(10, 20);\n\n // Using Android's built-in native libraries\n // OpenGL ES for graphics (native library)\n // SQLite for database (native library)\n // WebKit for web rendering (native library)\n }\n}",
+      "explanation": "JNI (Java Native Interface) bridges the Application Framework and Native Libraries layers. Apps can call C/C++ code compiled into shared libraries (.so files), which is how Android provides high-performance graphics (OpenGL ES), database (SQLite), and media processing capabilities."
+    }
+  ]
+}

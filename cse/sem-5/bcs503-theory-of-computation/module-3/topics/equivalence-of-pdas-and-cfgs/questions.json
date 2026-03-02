@@ -1,0 +1,172 @@
+{
+  "topicId": "equivalence-of-pdas-and-cfgs",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the procedure to convert a CFG to a Pushdown Automaton using empty stack acceptance.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Start with the start symbol S on the stack",
+        "For each production A → α, create PDA transitions that pop A and push α",
+        "Add a transition from initial state to accept state that pops S on ε",
+        "Acceptance when stack becomes empty after reading input",
+        "The PDA simulates leftmost derivations by replacing non-terminals"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define Chomsky Normal Form and state the steps to convert a CFG to CNF.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "CNF: Productions are either A → a or A → BC",
+        "Eliminate ε-productions (except possibly S → ε)",
+        "Eliminate unit productions (A → B)",
+        "Remove useless symbols (non-generating and non-reachable)",
+        "Convert terminals to non-terminals in longer productions",
+        "Ensure RHS has at most 2 non-terminals"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the pumping lemma for context-free languages? Explain its significance.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "For any CFL L, there exists pumping length p",
+        "Any string w ∈ L with |w| ≥ p can be decomposed as w = uvxyz",
+        "With conditions: |vy| ≥ 1, |vxy| ≤ p",
+        "uvⁿxyⁿz ∈ L for all n ≥ 0",
+        "Used to prove certain languages are not context-free",
+        "Contradicts regular language pumping lemma which uses uvwxy"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the CYK algorithm with its time complexity.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "CYK decides membership for CFLs in CNF",
+        "Uses dynamic programming approach",
+        "Builds table of substrings and their deriving non-terminals",
+        "Time complexity is O(n³ |G|)",
+        "Space complexity is O(n²)",
+        "Works by computing which non-terminals can generate each substring"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the two methods of acceptance in Pushdown Automata and their equivalence.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Empty stack acceptance: Accept when stack becomes empty",
+        "Final state acceptance: Accept when reaches accepting state",
+        "Both methods accept exactly the same class of languages (CFLs)",
+        "Can convert between methods by adding states and transitions",
+        "Empty stack is more intuitive for CFG to PDA conversion"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is ambiguity in grammars? How can it be resolved?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Grammar is ambiguous if one string has multiple parse trees",
+        "Not all CFLs have ambiguous grammars",
+        "Can be resolved by rewriting grammar",
+        "Use operator precedence or associativity rules",
+        "Convert to Greibach Normal Form",
+        "Some inherently ambiguous CFLs cannot be made unambiguous"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Prove that for every CFG there exists an equivalent PDA and vice versa.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Part 1: CFG → PDA - Use empty stack method",
+        " - Start with S on stack",
+        " - For production A → α, add transition popping A, pushing reverse(α)",
+        " - For terminal a, add transition popping a",
+        " - PDA accepts by empty stack",
+        "Part 2: PDA → CFG - Configuration approach",
+        " - Create variables [pXq] for each state combination",
+        " - For transition δ(p,a,X) = {(q,γ)}, add productions",
+        " - Generate productions for ε-transitions",
+        " - Start variable is [q₀Sqf] where q₀ is start, qf is new final",
+        "Equivalence established by both directions"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Convert the following grammar to Chomsky Normal Form:\nS → ASA | AB | a\nA → B | b\nB → b",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Step 1: Remove ε-productions (none here)",
+        "Step 2: Remove unit productions - A → B, so replace B → b in A → B",
+        "Step 3: Remove useless symbols (none)",
+        "Step 4: Convert terminals in length >2 productions",
+        " - S → ASA: introduce X₁ → A, then S → AX₁",
+        " - S → AB: introduce X₂ → B, then S → AX₂",
+        " - Keep S → a, A → b, B → b as is",
+        "Step 5: Ensure RHS has at most 2 symbols",
+        "Final CNF: S → AX₁ | AX₂ | a, A → b | b, B → b, X₁ → A, X₂ → B (need to split further if needed)"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Using CYK algorithm, determine whether string 'bbab' can be generated by the grammar:\nS → AB\nA → a | bB\nB → a | b",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Write grammar in CNF: S → AB, A → bB | b, B → a | b",
+        "Length of string = 4, create table of 4×4",
+        "P(1,1): {B} (since 'b')",
+        "P(2,2): {B} (since 'b')",
+        "P(3,3): {A,B} (since 'a')",
+        "P(4,4): {B} (since 'b')",
+        "P(1,2): combine P(1,1) × P(2,2): B×B = {none}",
+        "P(2,3): combine B×{A,B}: B×A = {}, B×B = {}",
+        "P(3,4): {A,B}×B = {A→bB? no}, {b×b = none}",
+        "Continue computing larger substrings",
+        "Check if S ∈ P(1,4) - final answer: string IS generated by grammar"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Eliminate left recursion from the following grammar and convert to Greibach Normal Form:\nS → Sx | Ay | b\nA → Az | w",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Step 1: Eliminate left recursion from S → Sx | Ay | b",
+        " - S → AyS' | bS'",
+        " - S' → xS' | ε",
+        "Step 2: Eliminate left recursion from A → Az | w",
+        " - A → wA'",
+        " - A' → zA' | ε",
+        "Step 3: Convert to GNF",
+        " - S productions start with terminals: AyS', bS' - but A not terminal",
+        " - Need to substitute A → wA' in S",
+        " - Final GNF: S → wA'yS' | bS' | xS' | wA' | ε",
+        " - A → wA' (starts with w)",
+        " - A' → zA' | ε (starts with z or ε)"
+      ]
+    }
+  ]
+}

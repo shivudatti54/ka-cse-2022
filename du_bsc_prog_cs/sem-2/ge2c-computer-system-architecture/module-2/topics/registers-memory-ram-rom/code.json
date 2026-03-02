@@ -1,0 +1,35 @@
+{
+  "topicId": "registers-memory-ram-rom",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simulate Basic Register Operations",
+      "description": "Demonstrates register-like behavior in Python with immediate access variables",
+      "code": "class Register:\n    def __init__(self, name, size=8):\n        self.name = name\n        self.size = size\n        self.value = 0\n    \n    def write(self, data):\n        \"\"\"Write data to register (like LOAD instruction)\"\"\"\n        self.value = data & ((1 << self.size) - 1)\n        return self.value\n    \n    def read(self):\n        \"\"\"Read data from register (like MOV instruction)\"\"\"\n        return self.value\n    \n    def clear(self):\n        \"\"\"Clear register contents\"\"\"\n        self.value = 0\n\n# Example: Simulating CPU registers\nACC = Register(\"ACCUMULATOR\", 8)  # 8-bit accumulator\nIR = Register(\"INSTRUCTION_REG\", 8)  # Instruction register\nPC = Register(\"PROGRAM_COUNTER\", 16)  # 16-bit PC\n\n# Perform operations\nACC.write(42)\nIR.write(0x3A)  # Load instruction\nprint(f\"ACC: {ACC.read()}, IR: {IR.read():02X}\")\nACC.write(ACC.read() + 10)  # Add operation\nprint(f\"After ADD: {ACC.read()}\")",
+      "explanation": "Simulates CPU register operations: write stores data, read retrieves it, demonstrating the immediate access nature of registers vs main memory.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Memory Access Pattern Demonstration",
+      "description": "Demonstrates memory access differences between register, cache, and RAM simulation",
+      "code": "#include <stdio.h>\n#include <time.h>\n\n// Simulate register access (immediate)\nint register_access(int *reg) {\n    return *reg;  // Direct access - fastest\n}\n\n// Simulate cache access (array in cache)\nint cache_access(int arr[100], int index) {\n    // If in cache (first 10 accesses), fast\n    return arr[index];\n}\n\n// Simulate RAM access with timing\nclock_t ram_access(int *ram, int address) {\n    clock_t start = clock();\n    int data = ram[address];  // Memory access latency\n    return clock() - start;\n}\n\nint main() {\n    int register_var = 100;\n    int cache_array[100];\n    int ram_array[1000];\n    \n    // Initialize arrays\n    for(int i=0; i<100; i++) cache_array[i] = i;\n    for(int i=0; i<1000; i++) ram_array[i] = i;\n    \n    // Access examples\n    int reg_val = register_access(&register_var);  // Register\n    int cache_val = cache_access(cache_array, 5);  // Cache\n    int ram_val = ram_access(ram_array, 500);      // RAM\n    \n    printf(\"Register: %d, Cache: %d, RAM: %d\\n\", \n           reg_val, cache_val, ram_val);\n    return 0;\n}",
+      "explanation": "Demonstrates the conceptual difference in access patterns: register (direct, O(1)), cache (fast for frequently accessed), and RAM (slower with potential latency).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "RAM/ROM Memory Allocation Simulation",
+      "description": "Simulates how RAM (volatile) and ROM (non-volatile) would handle data storage",
+      "code": "class RAM:\n    \"\"\"Simulates Random Access Memory - volatile\"\"\"\n    def __init__(self, capacity):\n        self.capacity = capacity\n        self.data = [0] * capacity\n        self.power_on = True\n    \n    def write(self, address, value):\n        if self.power_on and address < self.capacity:\n            self.data[address] = value\n            return True\n        return False\n    \n    def read(self, address):\n        if address < self.capacity:\n            return self.data[address]\n        return None\n    \n    def power_off(self):\n        \"\"\"Volatile: data lost when power off\"\"\"\n        self.power_on = False\n        self.data = [0] * self.capacity\n        print(\"RAM: Power lost - ALL DATA CLEARED (volatile)\")\n\nclass ROM:\n    \"\"\"Simulates Read-Only Memory - non-volatile\"\"\"\n    def __init__(self, capacity, firmware):\n        self.capacity = capacity\n        self.data = firmware + [0] * (capacity - len(firmware))\n        self.power_on = True\n    \n    def write(self, address, value):\n        print(\"ROM: Write operation blocked (read-only)\")\n        return False\n    \n    def read(self, address):\n        if address < self.capacity:\n            return self.data[address]\n        return None\n    \n    def power_off(self):\n        \"\"\"Non-volatile: data retained after power off\"\"\"\n        print(\"ROM: Power lost - DATA RETAINED (non-volatile)\")\n\n# Demonstration\nram = RAM(16)\nrom = ROM(16, [0xF0, 0x0F, 0xAA, 0x55])  # Pre-programmed firmware\n\n# Write to RAM\nram.write(0, 42)\nram.write(1, 99)\nprint(f\"RAM before power off: {ram.data[:5]}\")\nram.power_off()\nprint(f\"RAM after power off: {ram.data[:5]}\")\n\n# Read from ROM\nprint(f\"ROM contents: {rom.data[:4]}\")\nrom.power_off()\nprint(f\"ROM after power off: {rom.data[:4]}\")",
+      "explanation": "Demonstrates the key difference: RAM loses data when powered off (volatile), while ROM retains data (non-volatile) - essential characteristic for understanding memory types.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "selection-trees",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Winner Tree Construction Algorithm",
+      "description": "Algorithm to construct a winner tree (min selection tree) from k sorted sequences by comparing elements pairwise from bottom up.",
+      "code": "// Input: Array A[0..k-1] containing first element from each of k sorted sequences\n// Output: Complete winner tree stored in array Tree[0..2k-2]\n\nBEGIN WinnerTreeConstruction(A, k)\n    // Step 1: Copy leaves to tree array (indices k to 2k-1 represent leaves)\n    FOR i FROM 0 TO k-1 DO\n        Tree[k + i] \u2190 A[i]\n    END FOR\n    \n    // Fill dummy leaves with +\u221e for non-power-of-2\n    nextPower \u2190 Smallest power of 2 \u2265 k\n    FOR i FROM k TO nextPower-1 DO\n        Tree[k + i] \u2190 +\u221e\n    END FOR\n    \n    // Step 2: Build internal nodes bottom-up\n    FOR i FROM nextPower-1 DOWNTO 1 DO\n        Tree[i] \u2190 min(Tree[2*i], Tree[2*i + 1])  // Store winner\n    END FOR\n    \n    RETURN Tree\nEND\n\n// Time Complexity: O(k) - exactly (nextPower-1) comparisons\n// Space Complexity: O(k) for tree storage",
+      "explanation": "The construction algorithm uses a complete binary tree representation where leaves are stored from index k onwards. Starting from the lowest internal node, we compare the two children and store the smaller (winner) at the parent. This bottom-up approach ensures O(k) construction time since each of the (k-1) internal nodes requires exactly one comparison.",
+      "timeComplexity": "O(k)",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Winner Tree Update Operation",
+      "description": "Update procedure after removing the winner (minimum element) from the root and replacing it with the next element from the same sorted sequence.",
+      "code": "// Input: Tree[1..n] where 1 is root, leaves at indices n/2+1 to n\n//       leafIndex: index of leaf that received new element\n//       newValue: next element from the same sequence\n// Output: Updated winner tree with new winner at root\n\nBEGIN WinnerTreeUpdate(Tree, leafIndex, newValue)\n    Tree[leafIndex] \u2190 newValue\n    \n    // Calculate parent index\n    parent \u2190 leafIndex / 2\n    \n    WHILE parent >= 1 DO\n        leftChild \u2190 2 * parent\n        rightChild \u2190 2 * parent + 1\n        \n        // Compare both children to find winner at parent\n        IF Tree[leftChild] <= Tree[rightChild] THEN\n            Tree[parent] \u2190 Tree[leftChild]\n        ELSE\n            Tree[parent] \u2190 Tree[rightChild]\n        END IF\n        \n        parent \u2190 parent / 2\n    END WHILE\n    \n    RETURN Tree\nEND\n\n// Time Complexity: O(log k) where k is number of leaves\n// Each iteration moves one level up the tree\n// Maximum \u2308log\u2082k\u2309 iterations for complete binary tree",
+      "explanation": "The update operation propagates the new element from the modified leaf up to the root. At each level, both children are compared to determine the new winner. Since the tree height is \u2308log\u2082k\u2309, the update requires at most log\u2082k comparisons, making it O(log k).",
+      "timeComplexity": "O(log k)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Loser Tree Update Operation",
+      "description": "More efficient update algorithm for loser trees where internal nodes store the loser, requiring only one comparison per level.",
+      "code": "// Input: Tree[1..n] loser tree, leafIndex where element was replaced\n//       newValue: new element at that leaf position\n// Output: Updated loser tree\n\nBEGIN LoserTreeUpdate(Tree, leafIndex, newValue)\n    Tree[leafIndex] \u2190 newValue\n    \n    // Start from leaf's parent\n    parent \u2190 leafIndex / 2\n    winner \u2190 newValue\n    \n    WHILE parent >= 1 DO\n        // Compare with stored loser at parent\n        storedLoser \u2190 Tree[parent]\n        \n        // Winner always moves up (smaller value wins in min selection)\n        IF winner < storedLoser THEN\n            // Current winner is smaller than stored loser\n            // Swap: winner goes up, storedLoser becomes new loser at parent\n            Tree[parent] \u2190 winner\n            winner \u2190 storedLoser\n        ELSE\n            // storedLoser remains the loser, winner is larger\n            // No change to tree[parent], winner stays same for next level\n        END IF\n        \n        parent \u2190 parent / 2\n    END WHILE\n    \n    RETURN Tree\nEND\n\n// Time Complexity: O(log k)\n// Advantage over winner tree: only ONE comparison per level\n// Winner tree needs 2 comparisons per level (compare with sibling, then parent)\n// Loser tree stores opponent, so only 1 comparison needed\n// This reduces comparisons by approximately half",
+      "explanation": "The key advantage of loser trees is that each internal node already contains the loser from the previous comparison. When a new element arrives, we only need to compare it with this stored loser to determine the winner that propagates upward. This eliminates the need to compare the new element with its sibling at each level, effectively halving the number of comparisons during updates.",
+      "timeComplexity": "O(log k)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

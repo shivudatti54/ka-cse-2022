@@ -1,0 +1,183 @@
+{
+  "topicId": "daemon-characteristics",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the term 'daemon' in Unix/Linux operating systems and list any four characteristics of a daemon process.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Definition: background process running without user interaction",
+        "Characteristic 1: No controlling terminal (detached from TTY)",
+        "Characteristic 2: Started at system boot, runs until shutdown",
+        "Characteristic 3: Becomes child of init (PID 1)",
+        "Characteristic 4: Has name ending with 'd'",
+        "Characteristic 5: Runs in background continuously",
+        "Characteristic 6: Independent of user login sessions"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the double-fork technique used for creating a daemon process. Why is it necessary?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "First fork: parent process exits, child continues",
+        "Second fork: prevents daemon from acquiring controlling terminal",
+        "Purpose: ensures daemon cannot become session leader",
+        "Result: daemon is fully detached from controlling terminal",
+        "Prevents terminal-related interference"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List the steps involved in daemonizing a process in Unix.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Step 1: Call fork() and have parent exit",
+        "Step 2: Call setsid() to create new session",
+        "Step 3: Change working directory to root (/)",
+        "Step 4: Redirect stdin, stdout, stderr to /dev/null",
+        "Step 5: Optionally second fork for extra security",
+        "Optional: Set umask, close unnecessary file descriptors"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the difference between a standalone daemon and a transient daemon? Give examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Standalone: runs continuously in memory, always ready to serve (e.g., httpd, sshd)",
+        "Transient: spawned on-demand, exits after serving (e.g., FTP served by inetd)",
+        "Standalone: faster response but uses more resources",
+        "Transient: resource-efficient but slower first response",
+        "inetd/xinetd are meta-daemons that spawn transient daemons"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the role of init process (PID 1) in daemon management.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "init is first user-space process started at boot",
+        "Becomes parent (adopts) of all orphaned processes",
+        "When daemon's parent terminates, daemon is adopted by init",
+        "init performs wait() to prevent zombie processes",
+        "In modern Linux, systemd performs similar functions"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are zombie processes and how can daemons prevent their accumulation?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Zombie: terminated process whose entry remains in process table",
+        "Occurs when parent doesn't call wait() after child termination",
+        "Prevention: daemon should call wait() for terminated children",
+        "Alternative: use SA_NOCLDWAIT flag in sigaction",
+        "Prevents resource exhaustion from accumulated zombies"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the purpose of redirecting standard file descriptors to /dev/null in daemon creation.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "stdin, stdout, stderr redirected to /dev/null",
+        "Prevents daemon from reading terminal input",
+        "Prevents daemon output appearing on terminal",
+        "Ensures clean separation from user sessions",
+        "Security: prevents unintended I/O to user terminals"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe in detail the complete procedure for creating a daemon process in Unix/Linux. Include all necessary system calls and explain their purpose.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Step 1: fork() - create child process, parent exits",
+        "Step 2: setsid() - create new session, detach from terminal",
+        "Step 3: (optional) second fork - prevent terminal acquisition",
+        "Step 4: chdir('/') - change to root directory",
+        "Step 5: umask() - set file creation mask",
+        "Step 6: close() - close inherited file descriptors",
+        "Step 7: redirect stdio to /dev/null",
+        "Step 8: open() - reopen needed file descriptors to /dev/null or log files",
+        "Implementation using C code/system calls",
+        "Explanation of why each step is necessary",
+        "Result: fully detached, background-running daemon"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare inetd/xinetd and systemd as daemon management mechanisms. Explain their features, advantages, and differences.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "inetd/xinetd: super-server, spawns services on-demand",
+        "systemd: modern init system, parallel startup, socket activation",
+        "inetd advantages: resource efficiency, simple service configuration",
+        "inetd disadvantages: overhead for frequent requests, slower first response",
+        "systemd advantages: parallelization, dependency management, socket activation",
+        "systemd features: cgroups, service monitoring, automatic restart",
+        "Both: manage service lifecycle, handle start/stop/restart",
+        "Modern systems predominantly use systemd",
+        "Comparison table of features"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the various signals used in daemon process management and how daemons handle them effectively.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "SIGHUP: reload configuration without restart - daemon re-reads config files",
+        "SIGTERM: graceful shutdown request - daemon cleans up and exits",
+        "SIGKILL: forced termination - cannot be caught, immediate exit",
+        "SIGUSR1/SIGUSR2: user-defined for custom operations",
+        "SIGCHLD: child process termination - reap children with wait()",
+        "Daemon signal handling: install signal handlers",
+        "Best practice: ignore SIGHUP during config reload to prevent race",
+        "Log signal receipt for debugging",
+        "Clean resource release on termination signals"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Design a C program that implements a simple daemon process. Include all necessary code and explain each step of daemonization.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Complete C program with daemonization code",
+        "Include headers: stdio.h, stdlib.h, unistd.h, sys/types.h, sys/stat.h, fcntl.h",
+        "Implementation of fork() and parent exit",
+        "Implementation of setsid()",
+        "Change directory to root using chdir()",
+        "Set umask for proper file permissions",
+        "Close standard file descriptors",
+        "Redirect to /dev/null using open()",
+        "Code to verify daemon is running (write to log file)",
+        "Proper error handling at each step",
+        "Explanation of each code segment",
+        "Compilation and testing notes"
+      ]
+    }
+  ]
+}

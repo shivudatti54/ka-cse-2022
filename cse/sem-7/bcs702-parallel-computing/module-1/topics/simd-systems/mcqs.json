@@ -1,0 +1,117 @@
+{
+  "topicId": "simd-systems",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "According to Flynn's Taxonomy, what does SIMD stand for?",
+      "options": [
+        { "key": "A", "text": "Single Instruction, Multiple Data" },
+        { "key": "B", "text": "Synchronous Instruction, Multiple Data" },
+        { "key": "C", "text": "Sequential Instruction, Multiple Devices" },
+        { "key": "D", "text": "Systematic Instruction, Managed Data" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Flynn's Taxonomy defines SIMD as Single Instruction, Multiple Data. A single control unit broadcasts one instruction to multiple processing elements, each executing it on its own local data.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "Which of the following is a key characteristic of a classical SIMD processor array?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Each Processing Element (PE) fetches its own instructions independently."
+        },
+        {
+          "key": "B",
+          "text": "A central Control Processor broadcasts instructions to all PEs for lockstep execution."
+        },
+        {
+          "key": "C",
+          "text": "PEs are designed to execute different instructions simultaneously."
+        },
+        {
+          "key": "D",
+          "text": "It requires complex hardware for decentralized instruction scheduling."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The defining feature of a classical SIMD machine is a central control unit that fetches an instruction and broadcasts it to all PEs. All PEs then execute this same instruction simultaneously on their own data (lockstep execution).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq3",
+      "question": "A modern CPU with AVX-512 instructions can perform sixteen 32-bit floating-point additions in a single cycle. This is an example of which type of SIMD implementation?",
+      "options": [
+        { "key": "A", "text": "Processor Array" },
+        { "key": "B", "text": "Distributed MIMD" },
+        { "key": "C", "text": "Packed SIMD" },
+        { "key": "D", "text": "Multithreaded Core" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "AVX-512 is Packed SIMD: it uses wide 512-bit vector registers to hold multiple data elements (sixteen 32-bit floats). A single instruction operates on all these elements in parallel within the same CPU core.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "What is a major challenge when implementing conditional branches (if-else) on a pure SIMD architecture?",
+      "options": [
+        { "key": "A", "text": "Instructions become too long to decode." },
+        { "key": "B", "text": "PEs cannot access memory during branches." },
+        {
+          "key": "C",
+          "text": "It breaks the lockstep model, forcing all PEs to execute all paths with masking."
+        },
+        { "key": "D", "text": "The control processor becomes unable to fetch new instructions." }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In lockstep SIMD, all PEs must execute the same instruction. For if-else branches, all PEs execute both paths but results are only stored where the condition is true (masking/predication). This wastes cycles when many PEs are idle.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "How does the SIMT (Single Instruction, Multiple Threads) model used in GPUs relate to classical SIMD?",
+      "options": [
+        { "key": "A", "text": "SIMT is identical to SIMD and the terms are interchangeable." },
+        { "key": "B", "text": "SIMT is a type of MIMD and is fundamentally different from SIMD." },
+        {
+          "key": "C",
+          "text": "SIMT provides SIMD-like execution but with more flexibility for individual threads."
+        },
+        {
+          "key": "D",
+          "text": "SIMT allows each thread to have its own independent instruction stream, unlike SIMD."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "SIMT implements the SIMD paradigm with a thread-based abstraction. A warp of threads executes the same instruction on different data in lockstep (SIMD-like), but SIMT provides features like independent instruction pointers and hardware-managed branching for more flexibility.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq6",
+      "question": "Which classical SIMD machine had up to 65,536 processing elements?",
+      "options": [
+        { "key": "A", "text": "ILLIAC IV" },
+        { "key": "B", "text": "Connection Machine CM-2" },
+        { "key": "C", "text": "Cray-1" },
+        { "key": "D", "text": "IBM Blue Gene" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The Connection Machine CM-2 (1987) was a massively parallel SIMD machine with up to 65,536 simple processing elements. ILLIAC IV had 64 PEs. The Cray-1 was a vector processor (pipelined SIMD), not a processor array.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq7",
+      "question": "Which of the following workloads is BEST suited for SIMD execution?",
+      "options": [
+        { "key": "A", "text": "A web server handling different requests from different clients." },
+        { "key": "B", "text": "Applying the same brightness filter to every pixel of an image." },
+        { "key": "C", "text": "A database query with complex nested conditional logic." },
+        { "key": "D", "text": "A multi-player game server managing different player states." }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Applying the same filter to every pixel is a perfect data-parallel task: the same instruction is applied to multiple independent data elements. The other options involve different operations or data-dependent branching, which are poorly suited for SIMD.",
+      "difficulty": "hard"
+    }
+  ]
+}

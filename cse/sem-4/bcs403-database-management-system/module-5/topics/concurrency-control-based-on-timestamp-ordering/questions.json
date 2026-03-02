@@ -1,0 +1,92 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the basic read rule in Timestamp Ordering protocol with an example.",
+    "expectedPoints": [
+      "Read rule: Transaction T can read data item Q only if TS(T) >= WTS(Q)",
+      "If condition fails, transaction is rolled back",
+      "Example: If transaction with timestamp 10 tries to read data with WTS=15, read is rejected because 10<15"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What is Thomas' Write Rule? How does it differ from basic Timestamp Ordering?",
+    "expectedPoints": [
+      "Thomas' Write Rule modifies the write condition in TO",
+      "If TS(T) < WTS(Q): Write is ignored (not rejected)",
+      "If TS(T) < RTS(Q): Write is rejected and T is rolled back",
+      "Difference: Basic TO rejects writes where TS<TWTS, while Thomas' ignores them"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "List any four advantages of Timestamp Ordering over lock-based concurrency control.",
+    "expectedPoints": [
+      "No deadlocks can occur (timestamp ordering prevents circular wait)",
+      "No cascading rollbacks (each transaction reads committed data only)",
+      "Does not require blocking of transactions",
+      "Simple to implement compared to lock management"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "What is the problem of starvation in Timestamp Ordering? How can it occur?",
+    "expectedPoints": [
+      "Starvation occurs when a transaction keeps getting rolled back",
+      "Long-running transactions may be repeatedly rolled back",
+      "Younger transactions keep accessing data items needed by older transaction",
+      "Older transaction never completes because its timestamp is always older than recent writes"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Define Read Timestamp (RTS) and Write Timestamp (WTS) with respect to a data item.",
+    "expectedPoints": [
+      "RTS(Q): Largest timestamp among all transactions that have successfully read data item Q",
+      "WTS(Q): Largest timestamp among all transactions that have successfully written data item Q",
+      "Both are maintained by the system for each data item",
+      "Used in read and write rules to determine if operations should proceed"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain why Timestamp Ordering does not cause cascading rollbacks.",
+    "expectedPoints": [
+      "Each transaction reads only committed data due to timestamp checks",
+      "Transactions work with their own copy or consistent snapshot",
+      "Rollback of one transaction does not affect other transactions",
+      "Unlike lock-based protocols where reading uncommitted data can cause cascading rollback"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "long",
+    "question": "Consider the following scenario: Transaction T1 has timestamp 10, Transaction T2 has timestamp 20. Data item X has RTS=15 and WTS=18. Determine whether the following operations are allowed or rejected: (a) T1 reads X (b) T2 reads X (c) T1 writes X (d) T2 writes X. Show your reasoning.",
+    "expectedPoints": [
+      "(a) T1 reads X: TS(10) < WTS(18), so REJECTED - T1 is older than the last writer",
+      "(b) T2 reads X: TS(20) >= WTS(18), so ALLOWED - T2 is newer than the last writer",
+      "(c) T1 writes X: TS(10) < RTS(15) and TS(10) < WTS(18), so REJECTED - too old for both",
+      "(d) T2 writes X: TS(20) >= RTS(15) and TS(20) >= WTS(18), so ALLOWED - newer than both reader and writer"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

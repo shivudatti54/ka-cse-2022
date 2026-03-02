@@ -1,0 +1,35 @@
+{
+  "topicId": "comparators",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "java",
+      "title": "Basic Comparator with Lambda",
+      "description": "Demonstrates creating Comparator using lambda expressions for sorting strings by length",
+      "code": "// Method 1: Lambda expression\nComparator<String> byLength = (s1, s2) -> s1.length() - s2.length();\n\n// Method 2: Method reference with comparing\nComparator<String> byLength2 = Comparator.comparingInt(String::length);\n\n// Method 3: Using Collections utility\nCollections.sort(list, byLength);\n\n// Method 4: Using List sort (Java 8+)\nlist.sort(byLength2);\n\n// Example usage\nList<String> words = Arrays.asList(\"cat\", \"elephant\", \"a\", \"dog\");\nwords.sort(Comparator.comparingInt(String::length));\n// Output: [a, cat, dog, elephant]",
+      "explanation": "Shows multiple ways to create and apply Comparators. Lambda (s1, s2) -> s1.length() - s2.length() creates a Comparator that compares by string length. Comparator.comparingInt(String::length) is the method reference equivalent.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(1) - in-place sort"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Multi-field Sorting with thenComparing",
+      "description": "Shows how to sort Employee objects by multiple fields using comparator chaining",
+      "code": "class Employee {\n private String name;\n private int salary;\n private String department;\n \n // constructors, getters\n}\n\n// Sort by department (asc), then salary (desc), then name (asc)\nComparator<Employee> complexSort = Comparator\n .comparing(Employee::getDepartment) // Primary: department ascending\n .thenComparing(Comparator.comparingInt(Employee::getSalary).reversed()) // Secondary: salary descending\n .thenComparing(Employee::getName); // Tertiary: name ascending\n\nList<Employee> employees = new ArrayList<>();\n// add employees...\nemployees.sort(complexSort);\n\n// Alternative using Collections\nCollections.sort(employees, complexSort);",
+      "explanation": "thenComparing() chains comparators. First comparator sorts by department. For employees in same department, salary comparison (reversed for descending) is used. For same department and salary, name decides order. This is short-circuit: only uses secondary comparator when primary returns 0.",
+      "timeComplexity": "O(n log n) with comparison count O(n log n) * k where k is chain depth",
+      "spaceComplexity": "O(k) where k is number of comparators in chain"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Handling Nulls with nullsFirst and nullsLast",
+      "description": "Demonstrates proper null handling in Comparator for collections with null elements",
+      "code": "class Person {\n private String name;\n private Integer age;\n // constructors, getters\n}\n\nList<Person> people = Arrays.asList(\n new Person(\"Alice\", 25),\n null,\n new Person(\"Bob\", null),\n null,\n new Person(\"Charlie\", 30)\n);\n\n// Handle nulls in the list - put all null Persons at end\n// Within non-null persons, sort by name (case-insensitive)\nComparator<Person> nullSafeComparator = Comparator\n .nullsLast(Comparator.comparing(Person::getName, String.CASE_INSENSITIVE_ORDER));\n\npeople.sort(nullSafeComparator);\n\n// For handling null ages within Person objects:\nComparator<Person> withNullAgeHandling = Comparator\n .nullsLast(Comparator.comparing(Person::getName))\n .thenComparing(Comparator.nullsLast(Comparator.comparingInt(Person::getAge)));\n\n// Using nullsFirst for nulls at beginning:\nComparator<Person> nullsAtStart = Comparator\n .nullsFirst(Comparator.comparing(Person::getName));",
+      "explanation": "nullsFirst() treats null as less than any non-null (places at beginning). nullsLast() treats null as greater than any non-null (places at end). Chain with comparing() to create complete null-safe comparator. String.CASE_INSENSITIVE_ORDER enables case-insensitive sorting.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n) if using parallel sort"
+    }
+  ]
+}

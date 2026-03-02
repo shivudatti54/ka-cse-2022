@@ -1,0 +1,33 @@
+{
+  "topicId": "public-and-private-keys",
+  "examples": [
+    {
+      "id": "pseudocode-ecdsa-signature-generation",
+      "title": "Algorithm: ECDSA Signature Generation",
+      "description": "Pseudocode for generating a digital signature using ECDSA",
+      "language": "pseudocode",
+      "code": "ALGORITHM ECDSA_Sign\nINPUT: private key d, message m\nOUTPUT: signature (r, s)\n\nBEGIN\n 1. Generate a random number k such that 1 <= k <= n-1\n 2. Compute r = (k*G).x mod n, where G is the generator point\n 3. Compute s = (m + r*d) / k mod n\n 4. Return signature (r, s)\nEND",
+      "explanation": "This pseudocode demonstrates the process of generating a digital signature using the ECDSA algorithm. It takes a private key d and a message m as input and returns a signature (r, s) as output."
+    },
+    {
+      "id": "python-ecdsa-signature-verification",
+      "title": "Python: ECDSA Signature Verification",
+      "description": "Python implementation of ECDSA signature verification",
+      "language": "python",
+      "code": "import hashlib\nfrom ecdsa import SigningKey, VerifyingKey\n\n# Generate a private key and a corresponding public key\nprivate_key = SigningKey.generate(curve=ecdsa.SECP256k1)\npublic_key = private_key.get_verifying_key()\n\n# Sign a message using the private key\nmessage = b'Hello, world!'\nsignature = private_key.sign(message)\n\n# Verify the signature using the public key\nverifying_key = VerifyingKey.from_string(public_key.to_string(), curve=ecdsa.SECP256k1)\ntry:\n verifying_key.verify(signature, message)\n print('Signature is valid')\nexcept ecdsa.BadSignatureError:\n print('Signature is invalid')",
+      "explanation": "This Python code demonstrates the process of verifying a digital signature using the ECDSA algorithm. It generates a private key and a corresponding public key, signs a message using the private key, and then verifies the signature using the public key.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "c-ecdsa-key-generation",
+      "title": "C: ECDSA Key Generation",
+      "description": "C implementation of ECDSA key generation",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <openssl/ec.h>\n#include <openssl/err.h>\n\nint main() {\n EC_KEY *key;\n EC_GROUP *group;\n BIGNUM *private_key;\n EC_POINT *public_key;\n\n // Initialize the OpenSSL library\n ERR_load_crypto_strings();\n\n // Create a new EC key\n key = EC_KEY_new_by_curve_name(NID_secp256k1);\n\n // Generate a private key\n private_key = BN_new();\n EC_KEY_generate_key(key);\n BN_bin2bn(EC_KEY_get0_private_key(key), 32, private_key);\n\n // Compute the corresponding public key\n group = EC_KEY_get0_group(key);\n public_key = EC_POINT_new(group);\n EC_POINT_mul(group, public_key, private_key, NULL, NULL, NULL);\n\n // Print the private key and public key\n printf(\"Private key: %s\\n\", BN_bn2hex(private_key));\n printf(\"Public key: %s\\n\", EC_POINT_point2hex(group, public_key, POINT_CONVERSION_UNCOMPRESSED));\n\n // Free the memory\n EC_KEY_free(key);\n BN_free(private_key);\n EC_POINT_free(public_key);\n\n return 0;\n}",
+      "explanation": "This C code demonstrates the process of generating a private key and a corresponding public key using the ECDSA algorithm. It uses the OpenSSL library to create a new EC key, generate a private key, and compute the corresponding public key.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

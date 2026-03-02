@@ -1,0 +1,35 @@
+{
+  "topicId": "disk-scheduling-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "FCFS (First Come First Serve) Disk Scheduling",
+      "description": "Implements the basic FCFS algorithm that services disk requests in the order they arrive, regardless of their position on the disk.",
+      "code": "# FCFS Disk Scheduling Algorithm\n# Input: Current head position and list of disk requests\n\ndef fcfs(head, requests):\n    \"\"\"\n    FCFS: Serves requests in the order they arrive.\n    \"\"\"\n    seek_count = 0\n    current_position = head\n    sequence = []\n    \n    print(f\"Initial Head Position: {head}\")\n    print(f\"Requests: {requests}\")\n    print(\"-\" * 40)\n    \n    for request in requests:\n        distance = abs(request - current_position)\n        seek_count += distance\n        sequence.append((current_position, request, distance))\n        print(f\"Move from {current_position} to {request}: Seek distance = {distance}\")\n        current_position = request\n    \n    print(\"-\" * 40)\n    print(f\"Total Seek Time: {seek_count}\")\n    print(f\"Average Seek Time: {seek_count / len(requests):.2f}\")\n    print(f\"Seek Sequence: {[head] + requests}\")\n    \n    return seek_count, sequence\n\n# Example usage\nhead_position = 50\ndisk_requests = [82, 170, 43, 140, 24, 16, 190]\nfcfs(head_position, disk_requests)",
+      "explanation": "1. Start at the initial head position (50)\n2. For each request in the order received: calculate absolute distance from current position, add to total seek time, move head to that position\n3. FCFS is simple but not optimal - it may cause excessive head movement\n4. Total seek time = sum of all individual seek distances",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "SSTF (Shortest Seek Time First) Disk Scheduling",
+      "description": "Implements SSTF algorithm that always selects the request closest to the current head position, reducing average seek time compared to FCFS.",
+      "code": "# SSTF (Shortest Seek Time First) Disk Scheduling Algorithm\n\ndef sstf(head, requests):\n    \"\"\"\n    SSTF: Always selects the nearest request to the current head position.\n    \"\"\"\n    seek_count = 0\n    current_position = head\n    remaining_requests = requests.copy()\n    sequence = []\n    \n    print(f\"Initial Head Position: {head}\")\n    print(f\"Requests: {requests}\")\n    print(\"-\" * 40)\n    \n    while remaining_requests:\n        # Find the request with minimum distance from current position\n        closest = min(remaining_requests, key=lambda x: abs(x - current_position))\n        distance = abs(closest - current_position)\n        seek_count += distance\n        sequence.append((current_position, closest, distance))\n        print(f\"Move from {current_position} to {closest}: Seek distance = {distance}\")\n        \n        current_position = closest\n        remaining_requests.remove(closest)\n    \n    print(\"-\" * 40)\n    print(f\"Total Seek Time: {seek_count}\")\n    print(f\"Average Seek Time: {seek_count / len(requests):.2f}\")\n    \n    return seek_count, sequence\n\n# Example usage\nhead_position = 50\ndisk_requests = [82, 170, 43, 140, 24, 16, 190]\nresult = sstf(head_position, disk_requests)",
+      "explanation": "1. Start at initial head position\n2. At each step, find the request closest to current head (minimum absolute difference)\n3. Service that request and move head there\n4. Repeat until all requests are served\n5. SSTF reduces average seek time but may cause starvation for distant requests",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "SCAN (Elevator) Disk Scheduling Algorithm",
+      "description": "Implements the SCAN algorithm (also known as Elevator algorithm) where the head moves in one direction servicing all requests until it reaches the end, then reverses direction.",
+      "code": "# SCAN (Elevator) Disk Scheduling Algorithm\n\ndef scan(head, requests, disk_size=200):\n    \"\"\"\n    SCAN: Head moves in one direction servicing all requests,\n    then reverses direction at the end.\n    \"\"\"\n    seek_count = 0\n    current_position = head\n    sequence = []\n    \n    # Sort requests and separate into left and right of head\n    left = [r for r in requests if r < head]\n    right = [r for r in requests if r >= head]\n    \n    # Sort both lists\n    left.sort(reverse=True)  # Process far left first\n    right.sort()  # Process near right first\n    \n    print(f\"Initial Head Position: {head}\")\n    print(f\"Requests: {requests}\")\n    print(f\"Disk Size: {disk_size}\")\n    print(\"-\" * 40)\n    \n    # First, go to the right end\n    # Process all requests on the right side\n    for request in right:\n        distance = abs(request - current_position)\n        seek_count += distance\n        sequence.append((current_position, request, distance))\n        print(f\"Move from {current_position} to {request}: Seek distance = {distance}\")\n        current_position = request\n    \n    # Go to the end of disk\n    if right:\n        distance = abs(disk_size - 1 - current_position)\n        seek_count += distance\n        print(f\"Move to disk end {disk_size - 1}: Seek distance = {distance}\")\n        current_position = disk_size - 1\n    \n    # Now reverse and go left\n    for request in left:\n        distance = abs(request - current_position)\n        seek_count += distance\n        sequence.append((current_position, request, distance))\n        print(f\"Move from {current_position} to {request}: Seek distance = {distance}\")\n        current_position = request\n    \n    print(\"-\" * 40)\n    print(f\"Total Seek Time: {seek_count}\")\n    print(f\"Average Seek Time: {seek_count / len(requests):.2f}\")\n    \n    return seek_count, sequence\n\n# Example usage\nhead_position = 50\ndisk_requests = [82, 170, 43, 140, 24, 16, 190]\nscan(head_position, disk_requests, disk_size=200)",
+      "explanation": "1. Sort requests into those less than head (left) and greater/equal (right)\n2. Move head right, servicing all requests in increasing order\n3. When no more requests on right, go to disk end (200)\n4. Reverse direction and service remaining (left) requests in decreasing order\n5. SCAN provides better response time and avoids starvation",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

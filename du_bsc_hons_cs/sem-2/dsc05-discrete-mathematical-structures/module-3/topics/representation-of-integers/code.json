@@ -1,0 +1,45 @@
+{
+  "topicId": "representation-of-integers",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Two's Complement Conversion",
+      "description": "Convert decimal to n-bit two's complement and vice versa",
+      "code": "def to_twos_complement(n, bits):\n    if n >= 0:\n        return format(n, f'0{bits}b')\n    else:\n        # Compute two's complement: 2^n + n\n        return format((1 << bits) + n, f'0{bits}b')\n\ndef from_twos_complement(binary_str):\n    bits = len(binary_str)\n    value = int(binary_str, 2)\n    # If negative (MSB is 1), subtract 2^bits\n    if value >= (1 << (bits - 1)):\n        value -= (1 << bits)\n    return value\n\n# Examples\nprint(to_twos_complement(-5, 8))   # Output: 11111011\nprint(from_twos_complement('11111011'))  # Output: -5\nprint(to_twos_complement(127, 8))  # Output: 01111111",
+      "explanation": "to_twos_complement converts negative numbers by adding 2^bits. from_twos_complement checks MSB and applies sign extension to recover original value.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Overflow Detection in Signed Addition",
+      "description": "C program to detect overflow in two's complement addition",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\nbool detect_overflow(int a, int b, int result) {\n    // Check if both operands have same sign\n    bool a_negative = a < 0;\n    bool b_negative = b < 0;\n    bool result_negative = result < 0;\n    \n    // Overflow when signs are same but result sign differs\n    return (a_negative == b_negative) && (result_negative != a_negative);\n}\n\nint add_with_overflow_check(int a, int b) {\n    int result = a + b;\n    \n    if (detect_overflow(a, b, result)) {\n        printf(\"Warning: Overflow occurred!\\\\n\");\n    }\n    return result;\n}\n\nint main() {\n    // Test cases\n    printf(\"%d + %d = %d\\\\n\", 45, 78, add_with_overflow_check(45, 78));   // No overflow\n    printf(\"%d + %d = %d\\\\n\", -45, -78, add_with_overflow_check(-45, -78)); // No overflow\n    printf(\"%d + %d = %d\\\\n\", 100, 60, add_with_overflow_check(100, 60));  // Overflow!\n    return 0;\n}",
+      "explanation": "Overflow detection logic: if both operands have same sign but result has different sign, overflow occurred. The C program demonstrates this with 3 test cases showing overflow and non-overflow scenarios.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Binary/Decimal/Hex/Octal Converter",
+      "description": "Convert integers between different number systems",
+      "code": "def convert_number(value, from_base=10, to_base=2):\n    \"\"\"Convert between decimal, binary, octal, hex\"\"\"\n    # First convert to decimal\n    if from_base == 10:\n        decimal_val = int(value)\n    elif from_base == 2:\n        decimal_val = int(value, 2)\n    elif from_base == 8:\n        decimal_val = int(value, 8)\n    elif from_base == 16:\n        decimal_val = int(value, 16)\n    \n    # Convert to target base\n    if to_base == 10:\n        return str(decimal_val)\n    elif to_base == 2:\n        return bin(decimal_val)[2:]  # Remove '0b'\n    elif to_base == 8:\n        return oct(decimal_val)[2:]  # Remove '0o'\n    elif to_base == 16:\n        return hex(decimal_val)[2:].upper()  # Remove '0x'\n\n# Examples\nprint(convert_number(93, 10, 2))     # Binary: 1011101\nprint(convert_number('1011101', 2, 10))  # Decimal: 93\nprint(convert_number('5D', 16, 2))    # Binary: 1011101 (93)\nprint(convert_number(255, 10, 16))   # Hex: FF\nprint(convert_number(93, 10, 8))      # Octal: 135",
+      "explanation": "This converter first converts input to decimal, then from decimal to the target base. Python's built-in bin(), oct(), and hex() functions are used, with string manipulation to clean the output.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Sign Extension for Two's Complement",
+      "description": "Java program demonstrating sign extension for signed integers",
+      "code": "public class SignExtension {\n    public static String signExtend(String binary, int newBits) {\n        if (binary.length() >= newBits) {\n            return binary;  // No extension needed\n        }\n        \n        char signBit = binary.charAt(0);  // Get the sign bit\n        int padding = newBits - binary.length();\n        \n        // Create padding with the sign bit\n        StringBuilder paddingStr = new StringBuilder();\n        for (int i = 0; i < padding; i++) {\n            paddingStr.append(signBit);\n        }\n        \n        return paddingStr.toString() + binary;\n    }\n    \n    public static int interpretTwosComplement(String binary) {\n        int value = Integer.parseInt(binary, 2);\n        int bits = binary.length();\n        \n        // If negative (MSB is 1), apply sign extension to 32 bits\n        if (value >= (1 << (bits - 1))) {\n            value = value - (1 << bits);\n        }\n        return value;\n    }\n    \n    public static void main(String[] args) {\n        // Sign extend 8-bit to 16-bit\n        String pos8bit = \"00001101\";  // +13\n        String neg8bit = \"11111011\";  // -5\n        \n        System.out.println(\"Sign Extension Examples:\");\n        System.out.println(\"+13: \" + signExtend(pos8bit, 16) + \" (16-bit)\");\n        System.out.println(\"-5:  \" + signExtend(neg8bit, 16) + \" (16-bit)\");\n        \n        // Interpret values\n        System.out.println(\"\\nInterpretation:\");\n        System.out.println(\"00001101 (8-bit) = \" + interpretTwosComplement(pos8bit));\n        System.out.println(\"11111011 (8-bit) = \" + interpretTwosComplement(neg8bit));\n        System.out.println(\"0000000011111011 (16-bit) = \" + interpretTwosComplement(signExtend(neg8bit, 16)));\n    }\n}",
+      "explanation": "Sign extension works by replicating the sign bit to the left. For positive numbers, add 0s; for negative two's complement, add 1s. This preserves the original value when increasing bit width.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

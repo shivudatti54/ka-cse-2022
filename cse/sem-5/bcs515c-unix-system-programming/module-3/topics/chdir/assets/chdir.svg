@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <g class="step" id="step0" data-narration="The chdir system call is a fundamental operating system function that allows processes to modify their current working directory dynamically during execution.">
+    <rect x="0" y="10" width="800" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="400" y="38" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#1976d2">Change Directory (chdir) System Call</text>
+  </g>
+  
+  <g class="step" id="step1" data-narration="Every Unix process inherits a Current Working Directory (CWD) from its parent at fork time. Relative file paths are resolved from this inherited CWD.">
+    <rect x="20" y="58" width="760" height="80" fill="#e8f5e9" stroke="#388e3c" stroke-width="1" rx="5"/>
+    <text x="40" y="80" font-family="Arial" font-size="13" font-weight="bold" fill="#388e3c">Current Working Directory (CWD)</text>
+    <text x="40" y="98" font-family="Arial" font-size="11" fill="#2e7d32">• Inherited from parent process at fork()</text>
+    <text x="40" y="114" font-family="Arial" font-size="11" fill="#2e7d32">• Default location for relative path resolution</text>
+    <text x="40" y="130" font-family="Arial" font-size="11" fill="#2e7d32">• Initial CWD for login shells is typically user's home directory</text>
+  </g>
+  
+  <g class="step" id="step2" data-narration="The chdir() function takes a path argument and returns 0 on success or -1 on failure. It accepts both absolute and relative paths.">
+    <rect x="20" y="146" width="760" height="80" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="5"/>
+    <text x="40" y="168" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">chdir() Function Prototype</text>
+    <text x="40" y="188" font-family="Courier New" font-size="12" fill="#1565c0">int chdir(const char *path);</text>
+    <text x="40" y="208" font-family="Arial" font-size="11" fill="#1565c0">• Header: &lt;unistd.h&gt;</text>
+    <text x="40" y="224" font-family="Arial" font-size="11" fill="#1565c0">• Returns: 0 (success) or -1 (failure)</text>
+  </g>
+  
+  <g class="step" id="step3" data-narration="chdir() takes a pathname while fchdir() uses a file descriptor. The fchdir() variant is more efficient when a directory file descriptor is already open.">
+    <rect x="20" y="234" width="760" height="96" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="5"/>
+    <text x="40" y="256" font-family="Arial" font-size="13" font-weight="bold" fill="#ff9800">chdir vs fchdir</text>
+    <rect x="40" y="270" width="330" height="55" fill="#fff8e1" stroke="#ffb74d" rx="3"/>
+    <text x="50" y="288" font-family="Courier New" font-size="11" fill="#e65100">int chdir(const char *path);</text>
+    <text x="50" y="305" font-family="Arial" font-size="10" fill="#e65100">• Takes pathname as argument</text>
+    <text x="50" y="320" font-family="Arial" font-size="10" fill="#e65100">• Use when you know the directory name</text>
+    <rect x="390" y="270" width="330" height="55" fill="#fff8e1" stroke="#ffb74d" rx="3"/>
+    <text x="400" y="288" font-family="Courier New" font-size="11" fill="#e65100">int fchdir(int fd);</text>
+    <text x="400" y="305" font-family="Arial" font-size="10" fill="#e65100">• Takes file descriptor as argument</text>
+    <text x="400" y="320" font-family="Arial" font-size="10" fill="#e65100">• Use when directory is already open</text>
+  </g>
+  
+  <g class="step" id="step4" data-narration="getcwd() retrieves the current working directory path, serving as the inverse of chdir(). When passed NULL, it dynamically allocates memory that must be freed.">
+    <rect x="20" y="338" width="760" height="80" fill="#e8f5e9" stroke="#388e3c" stroke-width="1" rx="5"/>
+    <text x="40" y="360" font-family="Arial" font-size="13" font-weight="bold" fill="#388e3c">getcwd() - Complementary Function</text>
+    <text x="40" y="380" font-family="Courier New" font-size="12" fill="#2e7d32">char *getcwd(char *buf, size_t size);</text>
+    <text x="40" y="400" font-family="Arial" font-size="11" fill="#2e7d32">• Returns current working directory path</text>
+    <text x="40" y="416" font-family="Arial" font-size="11" fill="#2e7d32">• getcwd(NULL, 0) dynamically allocates - remember to free()</text>
+  </g>
+  
+  <g class="step" id="step5" data-narration="The chdir() function can fail with several error codes: EACCES when permission is denied, ENOENT when the directory does not exist, and ENOTDIR when a path component is not a directory.">
+    <rect x="20" y="426" width="760" height="80" fill="#ffebee" stroke="#f44336" stroke-width="1" rx="5"/>
+    <text x="40" y="448" font-family="Arial" font-size="13" font-weight="bold" fill="#f44336">Error Conditions</text>
+    <rect x="40" y="462" width="170" height="38" fill="#ffcdd2" rx="3"/>
+    <text x="50" y="478" font-family="Courier New" font-size="10" fill="#c62828">EACCES</text>
+    <text x="50" y="492" font-family="Arial" font-size="9" fill="#c62828">Permission denied</text>
+    <rect x="220" y="462" width="170" height="38" fill="#ffcdd2" rx="3"/>
+    <text x="230" y="478" font-family="Courier New" font-size="10" fill="#c62828">ENOENT</text>
+    <text x="230" y="492" font-family="Arial" font-size="9" fill="#c62828">Directory not found</text>
+    <rect x="400" y="462" width="170" height="38" fill="#ffcdd2" rx="3"/>
+    <text x="410" y="478" font-family="Courier New" font-size="10" fill="#c62828">ENOTDIR</text>
+    <text x="410" y="492" font-family="Arial" font-size="9" fill="#c62828">Path component</text>
+    <text x="410" y="503" font-family="Arial" font-size="9" fill="#c62828">not a directory</text>
+  </g>
+  
+  <g class="step" id="step6" data-narration="Example shows saving original directory with getcwd, changing to /tmp with chdir, then restoring the original directory. Always check return values for errors.">
+    <rect x="20" y="514" width="760" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="5"/>
+    <text x="40" y="536" font-family="Arial" font-size="13" font-weight="bold" fill="#9c27b0">Example: Save and Restore Directory</text>
+    <text x="40" y="558" font-family="Courier New" font-size="10" fill="#7b1fa2">char *orig = getcwd(NULL, 0);</text>
+    <text x="40" y="572" font-family="Courier New" font-size="10" fill="#7b1fa2">chdir("/tmp"); // Change to /tmp</text>
+    <text x="40" y="586" font-family="Courier New" font-size="10" fill="#7b1fa2">chdir(orig); // Restore original</text>
+  </g>
+</svg>

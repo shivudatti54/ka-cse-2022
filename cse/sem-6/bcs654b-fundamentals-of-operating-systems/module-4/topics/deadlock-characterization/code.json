@@ -1,0 +1,33 @@
+{
+  "topicId": "deadlock-characterization",
+  "examples": [
+    {
+      "id": "pseudocode-deadlock-detection",
+      "title": "Pseudocode: Deadlock Detection",
+      "description": "Detecting deadlock using a Resource-Allocation Graph (RAG)",
+      "language": "pseudocode",
+      "code": "ALGORITHM DetectDeadlock\nINPUT: RAG (Resource-Allocation Graph)\nOUTPUT: Boolean indicating deadlock presence\n\nBEGIN\n FOR EACH process P in RAG\n IF P is waiting for a resource AND\n a cycle exists in RAG involving P\n THEN RETURN TRUE (deadlock detected)\n RETURN FALSE (no deadlock detected)\nEND",
+      "explanation": "This pseudocode demonstrates how to detect deadlocks by analyzing a Resource-Allocation Graph (RAG) for cycles involving waiting processes."
+    },
+    {
+      "id": "python-deadlock-detection",
+      "title": "Python: Deadlock Detection",
+      "description": "Implementing deadlock detection using a Resource-Allocation Graph (RAG) in Python",
+      "language": "python",
+      "code": "class Process:\n def __init__(self, name):\n self.name = name\n self.waiting_for = None\n\nclass Resource:\n def __init__(self, name):\n self.name = name\n self.allocated_to = None\n\nclass RAG:\n def __init__(self):\n self.processes = {}\n self.resources = {}\n\n def add_process(self, process):\n self.processes[process.name] = process\n\n def add_resource(self, resource):\n self.resources[resource.name] = resource\n\n def detect_deadlock(self):\n for process in self.processes.values():\n if process.waiting_for and self.has_cycle(process):\n return True\n return False\n\n def has_cycle(self, process):\n # Implement cycle detection algorithm (e.g., DFS)\n pass\n\n# Example usage:\nrag = RAG()\nprocess1 = Process('P1')\nresource1 = Resource('R1')\nprocess1.waiting_for = resource1\nrag.add_process(process1)\nrag.add_resource(resource1)\nprint(rag.detect_deadlock())",
+      "explanation": "This Python implementation demonstrates how to create a Resource-Allocation Graph (RAG) and detect deadlocks by analyzing cycles involving waiting processes.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(n + m)"
+    },
+    {
+      "id": "c-deadlock-detection",
+      "title": "C: Deadlock Detection",
+      "description": "Implementing deadlock detection using a Resource-Allocation Graph (RAG) in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Define Process and Resource structures\ntypedef struct Process {\n char name[10];\n struct Resource* waiting_for;\n} Process;\n\ntypedef struct Resource {\n char name[10];\n Process* allocated_to;\n} Resource;\n\n// Define RAG structure\ntypedef struct RAG {\n Process** processes;\n Resource** resources;\n int num_processes;\n int num_resources;\n} RAG;\n\n// Function to detect deadlock\nint detect_deadlock(RAG* rag) {\n for (int i = 0; i < rag->num_processes; i++) {\n if (rag->processes[i]->waiting_for && has_cycle(rag->processes[i])) {\n return 1;\n }\n }\n return 0;\n}\n\n// Function to check for cycle\nint has_cycle(Process* process) {\n // Implement cycle detection algorithm (e.g., DFS)\n return 0;\n}\n\nint main() {\n // Create RAG and add processes and resources\n RAG* rag = (RAG*)malloc(sizeof(RAG));\n rag->num_processes = 2;\n rag->num_resources = 2;\n rag->processes = (Process**)malloc(rag->num_processes * sizeof(Process*));\n rag->resources = (Resource**)malloc(rag->num_resources * sizeof(Resource*));\n\n Process* process1 = (Process*)malloc(sizeof(Process));\n process1->name[0] = 'P';\n process1->name[1] = '1';\n process1->waiting_for = NULL;\n rag->processes[0] = process1;\n\n Resource* resource1 = (Resource*)malloc(sizeof(Resource));\n resource1->name[0] = 'R';\n resource1->name[1] = '1';\n resource1->allocated_to = NULL;\n rag->resources[0] = resource1;\n\n printf(\"%d\\n\", detect_deadlock(rag));\n return 0;\n}",
+      "explanation": "This C implementation demonstrates how to create a Resource-Allocation Graph (RAG) and detect deadlocks by analyzing cycles involving waiting processes.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(n + m)"
+    }
+  ]
+}

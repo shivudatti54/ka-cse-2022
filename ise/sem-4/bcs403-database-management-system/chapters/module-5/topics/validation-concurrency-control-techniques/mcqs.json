@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In the context of validation-based (optimistic) concurrency control, what is the primary purpose of the validation phase?",
+    "options": [
+      "To check if a transaction's read and write operations conflict with other committed transactions.",
+      "To immediately lock all data items a transaction intends to use.",
+      "To write all the transaction's updates to the database.",
+      "To roll back the transaction if it fails to acquire necessary locks."
+    ],
+    "correctIndex": 0,
+    "explanation": "The validation phase, also known as the certification phase, is where the concurrency control manager checks if a transaction's read set (the data it read) overlaps with the write set of any other transaction that committed during its execution. If no conflicts are found, the transaction is validated and can commit."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following is a distinct phase of the optimistic concurrency control (OCC) protocol?",
+    "options": [
+      "Read, Validate, Write",
+      "Read, Validation, Write",
+      "Read, Lock, Write",
+      "Read, Execute, Commit"
+    ],
+    "correctIndex": 1,
+    "explanation": "The three distinct phases of OCC are: 1) Read Phase (where the transaction reads data into a private workspace and computes its updates), 2) Validation Phase (where the system checks for conflicts), and 3) Write Phase (where the validated updates are written to the database if validation is successful)."
+  },
+  {
+    "id": "q3",
+    "question": "A transaction T2 is assigned a higher timestamp than transaction T1. According to the timestamp ordering rule for validation in OCC, which condition must be true for T2 to pass validation?",
+    "options": [
+      "T2 must finish its read phase before T1 starts its write phase.",
+      "T1 must finish its write phase before T2 starts its read phase.",
+      "T2 must start its read phase after T1 has finished its write phase.",
+      "The write-set of T2 must not intersect with the read-set of any transaction with a larger timestamp."
+    ],
+    "correctIndex": 1,
+    "explanation": "A fundamental timestamp-based validation rule states that for a transaction T2 to be valid, all transactions T1 with a smaller timestamp (i.e., that started earlier) must have finished their write phase before T2 starts its read phase. This ensures T2 reads data that already reflects the updates of all older, committed transactions."
+  },
+  {
+    "id": "q4",
+    "question": "In an optimistic concurrency control system, what is the main trade-off compared to a locking-based protocol?",
+    "options": [
+      "OCC has higher overhead for transactions that frequently abort.",
+      "OCC requires more complex lock management routines.",
+      "OCC guarantees stricter isolation levels like serializability.",
+      "OCC eliminates the need for transaction rollbacks entirely."
+    ],
+    "correctIndex": 0,
+    "explanation": "The main trade-off is that OCC saves the overhead of acquiring and releasing locks, which is beneficial in low-conflict environments. However, if a transaction fails validation, it must be rolled back and restarted. This rollback cost can be very high if conflicts are frequent, making the overhead greater than that of a locking protocol in high-conflict scenarios."
+  },
+  {
+    "id": "q5",
+    "question": "Consider three transactions, T1, T2, and T3, executing under an optimistic concurrency control protocol. T1 reads data item X. T2 validates and writes to X. T3 then reads X and validates. According to the backward-oriented certification (BOC) method, which condition is checked to validate T3?",
+    "options": [
+      "Check that T3's read-set does not intersect with the write-set of any transaction that validated after T3 started its read phase.",
+      "Check that T3's write-set does not intersect with the read-set of any transaction that validated before T3.",
+      "Check that T3's read-set does not intersect with the write-set of any transaction that validated *before* T3 finished its read phase.",
+      "Check that T3's write-set does not intersect with the read-set of any active transaction."
+    ],
+    "correctIndex": 0,
+    "explanation": "Backward-oriented certification (BOC) is a common validation technique. For a validating transaction T_i, it checks for conflicts with all transactions T_j that have already committed (i.e., validated) *since* T_i began. Specifically, it checks that the read-set of T_i has no intersection with the write-set of any such T_j. This ensures T_i did not read any data that was subsequently changed by a committed transaction."
+  }
+]

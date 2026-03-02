@@ -1,0 +1,65 @@
+{
+  "topicId": "exit",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Basic Exit Status Check",
+      "description": "Demonstrates checking exit status using $?",
+      "code": "#!/bin/bash\n# Check if file exists and handle appropriately\n\nif [ -f \"$1\" ]; then\n echo \"File exists\"\n exit 0 # Success\nelse\n echo \"File does not exist\" >&2\n exit 1 # General error\nfi",
+      "explanation": "Simple script that checks file existence. Returns 0 if file found, 1 if not. Uses stderr for error message.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "EXIT Trap for Cleanup",
+      "description": "Using EXIT trap to ensure cleanup runs on any exit",
+      "code": "#!/bin/bash\n# Create temp file and ensure cleanup\nTEMP_FILE=\"/tmp/script_temp_$$\n\n# Cleanup function\ncleanup() {\n echo \"Cleaning up temp file...\"\n rm -f \"$TEMP_FILE\"\n}\n\n# Register EXIT trap\ntrap cleanup EXIT\n\n# Main script logic\necho \"Creating temp file...\"\ntouch \"$TEMP_FILE\"\necho \"Processing...\"\n# Script will cleanup automatically on exit",
+      "explanation": "Demonstrates EXIT trap usage. cleanup() runs regardless of how script exits (success, error, or Ctrl+C).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "Pipeline with pipefail",
+      "description": "Proper error handling in pipelines",
+      "code": "#!/bin/bash\n# Without pipefail - only checks last command\nset +o pipefail # Default\ngrep \"pattern\" file.txt | sort | uniq\necho \"Exit status: $?\" # Only shows uniq's status\n\n# With pipefail - catches any failure\nset -o pipefail\ngrep \"pattern\" file.txt | sort | uniq\necho \"Exit status: $?\" # Shows first command that failed",
+      "explanation": "Demonstrates difference between default pipeline behavior and pipefail. Critical for detecting errors early in pipelines.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "bash",
+      "title": "Signal Handling and Exit Codes",
+      "description": "Handling signals and their exit codes",
+      "code": "#!/bin/bash\n# Script demonstrating signal handling\n\n# Function to handle SIGINT (Ctrl+C)\nhandle_interrupt() {\n echo \"\\nScript interrupted! Exiting cleanly...\"\n exit 130 # 128 + 2 (SIGINT)\n}\n\n# Register signal handlers\ntrap handle_interrupt SIGINT\ntrap 'echo \"Received TERM\"; exit 143' SIGTERM # 128+15\n\n# Main loop\necho \"Running... Press Ctrl+C to test\"\nwhile true; do\n sleep 1\ndone",
+      "explanation": "Demonstrates custom signal handling. Exit codes 130 and 143 clearly indicate which signal terminated the script.",
+      "timeComplexity": "O(∞)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "bash",
+      "title": "Function Return vs Exit",
+      "description": "Comparing return (function) and exit (script)",
+      "code": "#!/bin/bash\n\n# Function that returns status\ncheck_file() {\n if [ -f \"$1\" ]; then\n return 0 # Success - only exits function\n else\n return 1 # Failure - only exits function\n fi\n}\n\n# Using the function\ncheck_file \"myfile.txt\"\nif [ $? -eq 0 ]; then\n echo \"File found in function\"\nfi\n\n# Exit that terminates entire script\ntest \"$1\" = \"--quit\" && exit 0 # Quits entire script\necho \"This line runs unless --quit was passed\"",
+      "explanation": "Shows that return only exits the function and returns control to caller, while exit terminates the entire script.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-6",
+      "language": "bash",
+      "title": "Proper Error Propagation",
+      "description": "Propagating exit codes to parent processes",
+      "code": "#!/bin/bash\n\n# Function to perform operation with error handling\nperform_operation() {\n # Validate input\n if [ -z \"$1\" ]; then\n echo \"Usage: $0 <filename>\" >&2\n return 2 # Return error code for usage\n fi\n \n # Try operation\n if ! command_that_may_fail \"$1\"; then\n return 1 # Return error code for failure\n fi\n \n return 0 # Success\n}\n\n# Call function and propagate exit status\nperform_operation \"$1\"\nexit $? # Exit with same status as function",
+      "explanation": "Demonstrates proper error propagation: function returns status, script uses 'exit $?' to pass that to parent.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

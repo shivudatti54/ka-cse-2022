@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary requirement for two functions to be considered overloaded in C++?",
+    "options": [
+      "They must have the same name but different return types.",
+      "They must have the same name and the same number of parameters.",
+      "They must have the same name but a different number and/or types of parameters.",
+      "They must be declared in different scopes."
+    ],
+    "correctIndex": 2,
+    "explanation": "Function overloading is achieved when functions have the same name but are distinguishable by the compiler based on their parameter lists (number, type, or order of parameters). Return type alone is not sufficient."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following function calls would result in ambiguity and fail to compile?",
+    "options": [
+      "void func(int a); void func(double a); -> func(5);",
+      "void func(int a); void func(int a, int b=10); -> func(5, 6);",
+      "void func(float a); void func(double a); -> func(5.0f);",
+      "void func(int a); void func(int &a); -> int x=5; func(x);"
+    ],
+    "correctIndex": 3,
+    "explanation": "The call `func(x)` is ambiguous because the argument `x` is an lvalue. It can bind equally well to both the value parameter `int a` and the reference parameter `int &a`, so the compiler cannot choose which function to call."
+  },
+  {
+    "id": "q3",
+    "question": "Consider the code: `void print(int i) {}` and `void print(double f) {}`. What is the result of the function call `print('a')`?",
+    "options": [
+      "It calls print(int i) due to a standard conversion from char to int.",
+      "It calls print(double f) due to a standard conversion from char to double.",
+      "It results in a compiler error due to ambiguity.",
+      "The behavior is undefined at runtime."
+    ],
+    "correctIndex": 0,
+    "explanation": "The character literal 'a' is of type `char`. A standard conversion (promotion) exists from `char` to `int`, which is a better match than the standard conversion from `char` to `double`. Therefore, `print(int i)` is the best viable function and is called."
+  },
+  {
+    "id": "q4",
+    "question": "Given the overloads: `void process(const int& num)` and `void process(int& num)`. Which function is called by `process(42)` and why?",
+    "options": [
+      "`process(int& num)` because 42 is an integer.",
+      "`process(const int& num)` because a non-const reference cannot bind to an rvalue.",
+      "It causes a compiler error due to ambiguity.",
+      "The result is implementation-defined."
+    ],
+    "correctIndex": 1,
+    "explanation": "The literal `42` is an rvalue. A non-const lvalue reference (`int&`) cannot bind to an rvalue. However, a const lvalue reference (`const int&`) can. Therefore, `process(const int& num)` is the only viable function and is called."
+  },
+  {
+    "id": "q5",
+    "question": "Analyze the following code snippet:\n\nvoid dispatch(long param) {}\nvoid dispatch(float param) {}\n\nint main() {\n    dispatch(10.5);\n    return 0;\n}\n\nWhat is the most likely outcome?",
+    "options": [
+      "The code compiles and calls `dispatch(long)`.",
+      "The code compiles and calls `dispatch(float)`.",
+      "The code fails to compile due to an ambiguity error.",
+      "The code exhibits undefined behavior."
+    ],
+    "correctIndex": 2,
+    "explanation": "The literal `10.5` is of type `double`. To call either overload, a standard conversion is required: from `double` to `long` or from `double` to `float`. Both conversions are equally ranked (both are Standard Conversions), so the call is ambiguous and the code will not compile."
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "topicId": "logic-gates",
+  "examples": [
+    {
+      "id": "logic-gates-verilog",
+      "title": "Logic Gates in Verilog",
+      "description": "Hardware description of all basic logic gates",
+      "language": "verilog",
+      "code": "module logic_gates(\n input A, B,\n output AND_out,\n output OR_out,\n output NOT_out,\n output NAND_out,\n output NOR_out,\n output XOR_out,\n output XNOR_out\n);\n\n // Basic gates using continuous assignment\n assign AND_out = A & B; // AND gate\n assign OR_out = A | B; // OR gate\n assign NOT_out = ~A; // NOT gate (inverter)\n assign NAND_out = ~(A & B); // NAND gate\n assign NOR_out = ~(A | B); // NOR gate\n assign XOR_out = A ^ B; // XOR gate\n assign XNOR_out = ~(A ^ B); // XNOR gate\n\nendmodule\n\n// Alternative: Using gate primitives\nmodule gates_primitive(\n input A, B,\n output Y1, Y2, Y3\n);\n and g1(Y1, A, B); // Built-in AND primitive\n or g2(Y2, A, B); // Built-in OR primitive\n not g3(Y3, A); // Built-in NOT primitive\nendmodule",
+      "explanation": "Verilog provides both operator-based (& | ~ ^) and primitive-based (and, or, not) ways to describe gates. Primitives directly map to physical gates during synthesis.",
+      "timeComplexity": "O(1) - parallel hardware",
+      "spaceComplexity": "7 gates"
+    },
+    {
+      "id": "gate-simulation-python",
+      "title": "Gate Simulator in Python",
+      "description": "Simulate logic gates with timing and propagation delay",
+      "language": "python",
+      "code": "class LogicGate:\n def __init__(self, name, delay_ns=1):\n self.name = name\n self.delay = delay_ns\n \n def simulate(self, *inputs):\n raise NotImplementedError\n\nclass ANDGate(LogicGate):\n def simulate(self, a, b):\n return a & b\n\nclass ORGate(LogicGate):\n def simulate(self, a, b):\n return a | b\n\nclass NOTGate(LogicGate):\n def simulate(self, a):\n return 1 - a\n\nclass NANDGate(LogicGate):\n def simulate(self, a, b):\n return 1 - (a & b)\n\nclass XORGate(LogicGate):\n def simulate(self, a, b):\n return a ^ b\n\n# Example: Build a half adder (Sum = A XOR B, Carry = A AND B)\nxor_gate = XORGate(\"XOR1\")\nand_gate = ANDGate(\"AND1\")\n\nA, B = 1, 1\nsum_bit = xor_gate.simulate(A, B) # 0\ncarry = and_gate.simulate(A, B) # 1\nprint(f\"Half Adder: {A}+{B} = Sum:{sum_bit}, Carry:{carry}\")",
+      "explanation": "Object-oriented gate simulation allows building complex circuits from basic gates. Each gate class implements the simulate method for its Boolean function.",
+      "timeComplexity": "O(1) per gate",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "circuit-builder",
+      "title": "Circuit Builder with Gates",
+      "description": "Build complex circuits by connecting gates",
+      "language": "python",
+      "code": "class Circuit:\n def __init__(self):\n self.gates = []\n self.wires = {}\n \n def add_input(self, name, value):\n self.wires[name] = value\n \n def add_gate(self, gate_type, inputs, output_name):\n self.gates.append((gate_type, inputs, output_name))\n \n def evaluate(self):\n for gate_type, inputs, output in self.gates:\n input_values = [self.wires[i] for i in inputs]\n if gate_type == 'AND':\n result = input_values[0] & input_values[1]\n elif gate_type == 'OR':\n result = input_values[0] | input_values[1]\n elif gate_type == 'NOT':\n result = 1 - input_values[0]\n elif gate_type == 'XOR':\n result = input_values[0] ^ input_values[1]\n self.wires[output] = result\n return self.wires\n\n# Example: Build F = A.B + C\ncircuit = Circuit()\ncircuit.add_input('A', 1)\ncircuit.add_input('B', 0)\ncircuit.add_input('C', 1)\ncircuit.add_gate('AND', ['A', 'B'], 'T1') # T1 = A.B\ncircuit.add_gate('OR', ['T1', 'C'], 'F') # F = T1 + C\n\nresult = circuit.evaluate()\nprint(f\"F = {result['F']}\") # Output: F = 1",
+      "explanation": "This circuit builder allows defining inputs, adding gates, and evaluating the entire circuit. Gates are processed in order, so dependencies must be added first.",
+      "timeComplexity": "O(g) where g is number of gates",
+      "spaceComplexity": "O(w) where w is number of wires"
+    },
+    {
+      "id": "gates-vhdl",
+      "title": "Logic Gates in VHDL",
+      "description": "VHDL implementation of basic gates",
+      "language": "vhdl",
+      "code": "library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\nentity logic_gates is\n Port ( A, B : in STD_LOGIC;\n AND_out : out STD_LOGIC;\n OR_out : out STD_LOGIC;\n NOT_out : out STD_LOGIC;\n NAND_out : out STD_LOGIC;\n NOR_out : out STD_LOGIC;\n XOR_out : out STD_LOGIC;\n XNOR_out : out STD_LOGIC);\nend logic_gates;\n\narchitecture Behavioral of logic_gates is\nbegin\n AND_out <= A and B;\n OR_out <= A or B;\n NOT_out <= not A;\n NAND_out <= A nand B;\n NOR_out <= A nor B;\n XOR_out <= A xor B;\n XNOR_out <= A xnor B;\nend Behavioral;",
+      "explanation": "VHDL uses readable keywords (and, or, not, nand, nor, xor, xnor) for logic operations. STD_LOGIC type supports additional values like 'X' (unknown) and 'Z' (high impedance).",
+      "timeComplexity": "O(1) - parallel hardware",
+      "spaceComplexity": "7 gates"
+    },
+    {
+      "id": "truth-table-generator",
+      "title": "Truth Table Generator for Gates",
+      "description": "Generate truth tables for any gate combination",
+      "language": "python",
+      "code": "def generate_gate_truth_table(gate_func, n_inputs, gate_name):\n \"\"\"Generate truth table for any gate function.\"\"\"\n # Header\n inputs = [chr(65+i) for i in range(n_inputs)] # A, B, C...\n print(f\"\\nTruth Table for {gate_name}\")\n print(\"-\" * 30)\n print(\" | \".join(inputs) + \" | Output\")\n print(\"-\" * 30)\n \n # Generate all combinations\n for i in range(2 ** n_inputs):\n values = [(i >> j) & 1 for j in range(n_inputs-1, -1, -1)]\n output = gate_func(*values)\n row = \" | \".join(map(str, values)) + f\" | {output}\"\n print(row)\n\n# Define gate functions\nAND = lambda a, b: a & b\nOR = lambda a, b: a | b\nNAND = lambda a, b: 1 - (a & b)\nXOR = lambda a, b: a ^ b\nXNOR = lambda a, b: 1 - (a ^ b)\n\n# 3-input AND gate\nAND3 = lambda a, b, c: a & b & c\n\n# Generate tables\ngenerate_gate_truth_table(AND, 2, \"2-input AND\")\ngenerate_gate_truth_table(XOR, 2, \"2-input XOR\")\ngenerate_gate_truth_table(AND3, 3, \"3-input AND\")",
+      "explanation": "This generator creates truth tables for any gate function with any number of inputs. Useful for verifying gate behavior and understanding multi-input gates.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "ic-7400-simulation",
+      "title": "74xx IC Simulation",
+      "description": "Simulate a 7400 quad 2-input NAND IC",
+      "language": "python",
+      "code": "class IC7400:\n \"\"\"Simulates 7400 quad 2-input NAND gate IC.\n \n Pin Configuration:\n Pin 1,2 -> Gate 1 inputs, Pin 3 -> Gate 1 output\n Pin 4,5 -> Gate 2 inputs, Pin 6 -> Gate 2 output\n Pin 7 -> GND\n Pin 8,9 -> Gate 3 inputs, Pin 10 -> Gate 3 output\n Pin 11,12 -> Gate 4 inputs, Pin 13 -> Gate 4 output\n Pin 14 -> VCC\n \"\"\"\n def __init__(self):\n self.pins = {i: 0 for i in range(1, 15)}\n self.pins[14] = 1 # VCC\n self.pins[7] = 0 # GND\n \n def set_input(self, pin, value):\n if pin in [1,2,4,5,9,10,12,13]:\n self.pins[pin] = value\n else:\n raise ValueError(f\"Pin {pin} is not an input\")\n \n def _nand(self, a, b):\n return 1 - (a & b)\n \n def evaluate(self):\n # Gate 1\n self.pins[3] = self._nand(self.pins[1], self.pins[2])\n # Gate 2\n self.pins[6] = self._nand(self.pins[4], self.pins[5])\n # Gate 3\n self.pins[8] = self._nand(self.pins[9], self.pins[10])\n # Gate 4\n self.pins[11] = self._nand(self.pins[12], self.pins[13])\n \n def get_output(self, gate_num):\n outputs = {1: 3, 2: 6, 3: 8, 4: 11}\n return self.pins[outputs[gate_num]]\n\n# Example usage\nic = IC7400()\nic.set_input(1, 1)\nic.set_input(2, 1)\nic.evaluate()\nprint(f\"Gate 1 output (NAND 1,1): {ic.get_output(1)}\") # 0",
+      "explanation": "This simulates the actual pin configuration of a 7400 IC with 4 NAND gates. Understanding IC pinouts is essential for physical circuit design.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

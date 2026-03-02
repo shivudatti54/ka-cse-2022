@@ -1,0 +1,150 @@
+{
+  "topicId": "virtual-memory-management",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define virtual memory and explain how it creates an illusion of larger memory.",
+      "keyPoints": [
+        "Virtual memory is a memory management technique combining RAM and disk",
+        "Creates illusion of contiguous address space larger than physical memory",
+        "Uses paging or segmentation to map virtual addresses to physical addresses",
+        "Pages not in RAM are stored on disk (swap space)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the concept of demand paging with a diagram showing when page fault occurs.",
+      "keyPoints": [
+        "Demand paging loads pages only when referenced",
+        "Initially only required pages are loaded from disk",
+        "Page fault occurs when referenced page not in memory (invalid bit)",
+        "OS brings page from secondary storage to free frame",
+        "Page table updated, instruction restarted"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is thrashing? Explain the working set model as a solution to thrashing.",
+      "keyPoints": [
+        "Thrashing: excessive paging activity, low CPU utilization",
+        "Occurs when processes have insufficient frames",
+        "Working set: pages referenced in recent time window (\u0394)",
+        "Keep working set in memory to minimize page faults",
+        "If total working set size > available frames, thrashing results"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between FIFO, LRU, and Optimal page replacement algorithms.",
+      "keyPoints": [
+        "FIFO: Replace oldest page in memory (first in, first out)",
+        "LRU: Replace page not used for longest time (uses past knowledge)",
+        "Optimal: Replace page that will not be used for longest future time (theoretical best)",
+        "FIFO can suffer from Belady's Anomaly, LRU does not"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is a Translation Lookaside Buffer (TLB)? Explain its role in virtual memory address translation.",
+      "keyPoints": [
+        "TLB is a hardware associative cache for address translations",
+        "Stores recent virtual page to physical frame mappings",
+        "On TLB hit: O(1) translation without memory access",
+        "On TLB miss: Page table walk in memory required",
+        "Contains valid bit, protection, frame number, and address tag"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain Copy-on-Write (COW) technique and its benefits in virtual memory systems.",
+      "keyPoints": [
+        "COW allows fork() to share memory pages between parent and child",
+        "Pages marked as read-only initially",
+        "Only when a process writes to a page, a private copy is made",
+        "Saves memory and improves performance for fork-heavy workloads",
+        "Used in modern operating systems like Linux and Windows"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is locality of reference? How does it affect virtual memory performance?",
+      "keyPoints": [
+        "Locality of reference: tendency to access same memory locations repeatedly",
+        "Two types: temporal (same location soon) and spatial (nearby locations)",
+        "Caching works because of locality",
+        "Virtual memory performance depends on high locality",
+        "Programs with good locality need fewer page faults"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider a system with 3 frames and the following page reference string: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5. Calculate page faults for FIFO and LRU algorithms. Show each step clearly.",
+      "keyPoints": [
+        "Initialize empty frames",
+        "FIFO: Maintain queue of pages in order of arrival",
+        "Step through each reference: if page not in frames, load it",
+        "LRU: Track when each page was last used, replace least recently used",
+        "For given string: FIFO = 9 page faults, LRU = 10 page faults",
+        "Show detailed frame contents after each reference"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the Clock (Second Chance) page replacement algorithm with a detailed example. How does it overcome limitations of FIFO?",
+      "keyPoints": [
+        "Clock uses reference (use) bit in circular buffer",
+        "Pointer scans pages: if R=0, replace; if R=1, clear R and skip",
+        "Pages with recent use (R=1) get second chance",
+        "More sophisticated than simple FIFO",
+        "Reduces anomaly by considering page usage, not just arrival time"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the structure and types of page tables. Discuss inverted page tables and their advantages over conventional page tables.",
+      "keyPoints": [
+        "Conventional page table: one entry per virtual page, indexed by VPN",
+        "Multi-level page tables: hierarchical structure for large address spaces",
+        "Inverted page table: one entry per physical frame, not per virtual page",
+        "Advantages: less memory for large address spaces, single table system-wide",
+        "Disadvantages: slower lookup, harder to share pages"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the steps involved in handling a page fault. How does the operating system ensure the process can continue after the page fault?",
+      "keyPoints": [
+        "1. Hardware triggers trap to OS",
+        "2. OS saves process state and verifies fault",
+        "3. Locate required page on swap space (disk)",
+        "4. Find free frame or use replacement algorithm",
+        "5. Read page from disk to frame",
+        "6. Update page table entry (valid bit, frame number)",
+        "7. Clear TLBs (optional)",
+        "8. Restart interrupted instruction"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "data-representation-arithmetic-ops",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Binary Addition Algorithm",
+      "description": "Algorithm to add two n-bit binary numbers with overflow detection",
+      "code": "ALGORITHM Binary_Add(A[0..n-1], B[0..n-1])\nBEGIN\n  carry \u2190 0\n  result[0..n-1] \u2190 0\n  \n  FOR i \u2190 0 TO n-1 DO\n    sum \u2190 A[i] + B[i] + carry\n    result[i] \u2190 sum MOD 2\n    carry \u2190 sum DIV 2\n  END FOR\n  \n  overflow \u2190 carry  // For unsigned, carry indicates result > 2^n\n  \n  // For signed overflow detection:\n  // overflow = (A[n-1] == B[n-1]) AND (result[n-1] != A[n-1])\n  \n  RETURN result, carry, overflow\nEND",
+      "explanation": "Processes bits from LSB to MSB, propagating carry. For unsigned, carry out indicates overflow. For signed, overflow occurs when adding two numbers with same sign gives different sign result.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Decimal to 2's Complement Conversion",
+      "description": "Convert decimal to n-bit 2's complement representation",
+      "code": "def to_twos_complement(n, bits):\n    \"\"\"Convert integer n to n-bit 2's complement\"\"\"\n    if n >= 0:\n        return format(n, f'0{bits}b')\n    else:\n        # For negative: add 2^bits, then convert\n        return format((1 << bits) + n, f'0{bits}b')\n\ndef from_twos_complement(binary_str):\n    \"\"\"Convert n-bit 2's complement to decimal\"\"\"\n    bits = len(binary_str)\n    value = int(binary_str, 2)\n    # If negative (MSB is 1), subtract 2^bits\n    if value >= (1 << (bits - 1)):\n        value -= (1 << bits)\n    return value\n\n# Example: -47 in 8-bit 2's complement\nprint(to_twos_complement(-47, 8))  # Output: 11010001\nprint(from_twos_complement('11010001'))  # Output: -47",
+      "explanation": "For positive numbers, direct binary conversion. For negative: add 2^n to get unsigned value, then convert. Reverse by checking MSB and subtracting 2^n if negative.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "IEEE 754 Single Precision Encoder",
+      "description": "Encode a floating point number to IEEE 754 single precision format",
+      "code": "#include <stdio.h>\n\ntypedef union {\n    float f;\n    unsigned int i;\n} FloatBits;\n\nunsigned int floatToIEEE754(float value) {\n    FloatBits fb;\n    fb.f = value;\n    return fb.i;\n}\n\nvoid printBinary(unsigned int n, int bits) {\n    for (int i = bits - 1; i >= 0; i--) {\n        printf(\"%d\", (n >> i) & 1);\n        if (i == 31 || i == 23) printf(\" \");\n    }\n}\n\nint main() {\n    float num = -5.75f;\n    unsigned int ieee = floatToIEEE754(num);\n    \n    printf(\"Number: %.2f\\n\", num);\n    printf(\"IEEE 754: \");\n    printBinary(ieee, 32);\n    printf(\"\\nHex: %08X\\n\", ieee);\n    \n    // Manual verification for -5.75:\n    // Sign: 1 (negative)\n    // 5.75 = 101.11 binary = 1.011 \u00d7 2^2\n    // Exponent: 2 + 127 = 129 = 10000001\n    // Mantissa: 0111000... = 0111 then zeros\n    // Result: 1 10000001 01110000000000000000000\n    \n    return 0;\n}",
+      "explanation": "Uses union to reinterpret float's bits as unsigned int. Prints sign, exponent, and mantissa separated. For -5.75: sign=1, exponent=129 (10000001), mantissa stores .0111.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Binary to Gray Code Conversion",
+      "description": "Convert binary number to Gray code (used in K-maps and encoders)",
+      "code": "ALGORITHM Binary_To_Gray(binary[0..n-1])\nBEGIN\n  gray[0] \u2190 binary[0]  // MSB remains same\n  \n  FOR i \u2190 1 TO n-1 DO\n    gray[i] \u2190 binary[i-1] XOR binary[i]\n  END FOR\n  \n  RETURN gray\nEND\n\nALGORITHM Gray_To_Binary(gray[0..n-1])\nBEGIN\n  binary[0] \u2190 gray[0]\n  \n  FOR i \u2190 1 TO n-1 DO\n    binary[i] \u2190 binary[i-1] XOR gray[i]\n  END FOR\n  \n  RETURN binary\nEND\n\n// Example: Binary 1100 \u2192 Gray 1010\n// gray[0] = 1\n// gray[1] = 1 XOR 1 = 0\n// gray[2] = 1 XOR 0 = 1\n// gray[3] = 0 XOR 0 = 0\n// Result: 1010",
+      "explanation": "Gray code: MSB stays same, each subsequent bit is XOR of current and previous binary bit. Reverse uses running XOR. Ensures only one bit changes between consecutive values.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

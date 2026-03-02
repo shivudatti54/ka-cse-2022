@@ -1,0 +1,53 @@
+{
+  "topicId": "constructors-destructors",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the purpose of a destructor in C++. When is it invoked and what typical tasks does it perform? Provide a brief example.",
+      "keyPoints": [
+        "Destructor cleans up resources (memory, files) when object goes out of scope",
+        "Automatically called; cannot be overloaded; has no parameters or return type",
+        "Execution order: reverse of construction (member destructors before base destructors)",
+        "Example: ~MyClass() { delete ptr; }"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is an initializer list in a constructor? Why is it preferred over assignment inside the constructor body? Give an example.",
+      "keyPoints": [
+        "Initializer list directly initializes members before the constructor body runs",
+        "Required for const and reference members, and for efficiency (avoids extra default construction)",
+        "Syntax: MyClass(int v) : member(v) { }",
+        "Example: class A { const int x; A(int v) : x(v) {} };"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Discuss the order of constructor and destructor calls in a multi-level inheritance hierarchy. Include the role of virtual destructors when a base class pointer points to a derived object. Provide a code example illustrating this order.",
+      "keyPoints": [
+        "Constructors run from most‑base to most‑derived; destructors run reverse (derived to base)",
+        "If base class destructor is not virtual, deleting a derived object through base pointer causes undefined behaviour",
+        "Virtual destructor ensures proper derived destructor is called, then base destructor",
+        "Example: class Base{virtual ~Base(){}}; class Derived: public Base{ ~Derived(){}}; Base* p = new Derived; delete p; // calls ~Derived then ~Base"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Explain the copy assignment operator in C++. How does it differ from the copy constructor? When is it invoked? Also discuss why a base class should have a virtual destructor when used polymorphically, with reference to assignment and destruction.",
+      "keyPoints": [
+        "Copy assignment operator is used when an existing object is assigned a new value of the same type; signature: Class& operator=(const Class&)",
+        "Differs from copy constructor (initializes new object) – assignment operates on already constructed object",
+        "Invoked in statements like a = b; or when passing/returning by value (if copy elision not applied)",
+        "Virtual destructor needed so that delete on base pointer calls derived destructor, ensuring resources (including any owned dynamic memory) are correctly released"
+      ],
+      "marks": 10
+    }
+  ]
+}

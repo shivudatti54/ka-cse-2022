@@ -1,0 +1,124 @@
+{
+  "topicId": "deadlock-detection-and-recovery-from-deadlock",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Resource Allocation Graph (RAG) - Deadlock State",
+      "description": "A directed graph showing the state of resource allocation in a system where deadlock has occurred",
+      "elements": [
+        "Processes (circles): P1, P2, P3 representing active processes",
+        "Resources (rectangles): R1, R2 representing resource types",
+        "Assignment edges (solid arrows from resource to process): R1→P1, R2→P2 showing allocated resources",
+        "Request edges (dashed arrows from process to resource): P2→R1, P3→R2 showing pending requests",
+        "Circular wait chain: P1 holds R1 and requests R2, P2 holds R2 and requests R1 creating a cycle",
+        "Visual indication of cycle: Bold circular arrow around P1→R1→P2→R2→P1 path"
+      ],
+      "purpose": "Students learn to identify deadlock conditions visually using RAG. A cycle in the RAG with all resources having exactly one instance indicates guaranteed deadlock. This is the primary method for detecting deadlocks in systems with single instances of each resource type."
+    },
+    {
+      "id": "diagram-2",
+      "title": "Deadlock Detection Algorithm Flowchart",
+      "description": "Step-by-step flowchart showing the banker's algorithm-like detection process",
+      "elements": [
+        "Start node (oval): Begin detection process",
+        "Initialization step: Set Work = Available, Finish = (false for all processes)",
+        "Process selection diamond: Find process i where Finish[i]=false and Request[i]≤Work",
+        "Grant resources rectangle: Work = Work + Allocation[i], Finish[i] = true",
+        "Loop arrow: Return to process selection",
+        "Termination check diamond: If all Finish[i]=true, no deadlock exists",
+        "Deadlock detection diamond: If some Finish[i]=false, system is in deadlock state",
+        "Recovery selection: List processes in deadlock cycle",
+        "End node (oval): Terminate detection"
+      ],
+      "purpose": "Students understand the algorithmic approach to deadlock detection. The flowchart demonstrates how the detection algorithm works by simulating resource allocation and identifying processes that cannot complete, helping them understand when and how the OS detects deadlocks."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Deadlock Recovery Strategies Classification",
+      "description": "Hierarchical diagram showing the two main approaches to deadlock recovery with their sub-methods",
+      "elements": [
+        "Recovery box (rectangle): Deadlock Recovery",
+        "Abort Processes branch (left): Terminate all deadlocked processes or terminate one at a time",
+        "Preempt Resources branch (right): Select victim process, rollback to safe state, resource preemption options",
+        "Cost factors column: Consider process priority, execution time, resources held, restart requirements",
+        "Recovery decision diamond: Choose between abort or preempt based on system state",
+        "Implementation arrows: Showing sequential decision flow"
+      ],
+      "purpose": "Students learn the practical recovery mechanisms available to operating systems when deadlock is detected. Understanding trade-offs between process termination (simpler but loses work) and resource preemption (complex but preserves work) helps in designing robust systems."
+    },
+    {
+      "id": "diagram-4",
+      "title": "Wait-Die and Wound-Wait Deadlock Prevention Schemes",
+      "description": "Comparison diagram showing two timestamp-based deadlock prevention techniques for preemptive systems",
+      "elements": [
+        "Wait-Die scheme (left side): Younger transaction waits, older transaction dies (aborts)",
+        "Wound-Wait scheme (right side): Older transaction wounds (preempts) younger, younger waits",
+        "Timestamp labels: T1 (older), T2 (younger), T3 (youngest) for comparison",
+        "Request scenario boxes: Show what happens when T1 requests resource held by T2",
+        "Circular arrows: Showing which transactions proceed or abort in each scenario",
+        "Legend: Color coding for wait (green), die/abort (red), wound (orange)"
+      ],
+      "purpose": "Students understand timestamp-based prevention mechanisms that prevent circular wait condition. The visual comparison between Wait-Die (non-preemptive) and Wound-Wait (preemptive) helps students grasp how different prevention strategies resolve potential deadlocks at the protocol level."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Banker's Algorithm - Safety Check Flow",
+      "description": "Flowchart showing how the Banker's algorithm determines if a system is in a safe state",
+      "elements": [
+        "Input vectors: Available[], Maximum[][], Allocation[][], Need[][] matrix",
+        "Initialize: Work = Available, Finish[i] = false for all processes",
+        "Find process diamond: Find i such that Finish[i]=false and Need[i]≤Work",
+        "Simulation step: Work = Work + Allocation[i], Finish[i]=true",
+        "Loop back arrow: Return to find process",
+        "Safe sequence output: If safe, display sequence P[i]→P[j]→...",
+        "Unsafe result: If no such i exists, system is unsafe",
+        "Safety indicator: Green checkmark for safe, red X for unsafe"
+      ],
+      "purpose": "Students learn the safety check algorithm that forms the basis of deadlock avoidance. Understanding how the algorithm simulates resource allocation to find a safe sequence helps students appreciate the conservative nature of Banker's algorithm in preventing unsafe states."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison-table",
+      "title": "Deadlock Handling Strategies Comparison",
+      "content": "Four column comparison: Prevention (eliminates one Coffman condition), Avoidance (maintains safe state information), Detection (allows deadlock, then finds and recovers), Recovery (terminates or preempts after detection). Columns show approach, advantages, disadvantages, and when to use. Prevention is most restrictive but guaranteed no deadlock; Avoidance is moderate overhead with safe state tracking; Detection has low overhead but requires recovery; Recovery is last resort with potential data loss."
+    },
+    {
+      "type": "flowchart",
+      "title": "Deadlock Detection vs Recovery Process Flow",
+      "content": "Top-level flowchart showing entire deadlock handling lifecycle: Normal execution → Resource request → Check for unsafe state (Banker's) → Grant if safe OR deny if unsafe → Deadlock occurs → Detection algorithm runs → Deadlock found YES → Recovery action (abort/preempt) → Return to normal execution OR No deadlock → Continue normal execution. Shows decision points and system states."
+    },
+    {
+      "type": "table",
+      "title": "Recovery Method Cost-Benefit Analysis",
+      "content": "Three row comparison of recovery methods: Process Termination (aborts affected processes, loses partial computation, may need restart from checkpoint), Resource Preemption (chooses victim, rolls back, can cause starvation, requires rollback mechanism), Orbiting (ignores deadlock, lets system crash - last resort). Columns: Method, Process Impact, Data Integrity, Complexity, System Overhead."
+    },
+    {
+      "type": "classification-chart",
+      "title": "Resource Preemption Classification",
+      "content": "Three types of resource preemption for deadlock recovery: Select Victim (chooses based on cost factors like priority, resource count, execution time), Rollback (returns to safe checkpoint state, requires checkpointing mechanism), Starvation Prevention (ensure same process not victim repeatedly, use fairness metrics). Shows hierarchy and key characteristics of each approach."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Deadlock Detection and Recovery",
+      "branches": [
+        "Detection Methods",
+        "Recovery Strategies",
+        "Detection Algorithms",
+        "System Models"
+      ],
+      "purpose": "Comprehensive overview showing how detection (identifying when deadlock exists using RAG or algorithm) connects to recovery (terminating processes or preempting resources). Shows relationship between single-instance detection using RAG cycles versus multiple-instance detection using algorithm. Recovery branch shows the trade-off between aborting processes (simpler) versus preempting resources (complex but preserves work). This mind map helps students see the complete deadlock handling lifecycle."
+    },
+    {
+      "centralConcept": "Deadlock Recovery Execution",
+      "branches": [
+        "Process Termination",
+        "Resource Preemption",
+        "Recovery Aftermath",
+        "Prevention Integration"
+      ],
+      "purpose": "Shows recovery as a system function: Process termination can be all-or-one, resource preemption requires victim selection and rollback, aftermath involves restarting terminated processes and restoring preempted resources, prevention integration helps avoid future deadlocks. This map emphasizes that recovery is not just detecting and breaking deadlock but also returning system to consistent state."
+    }
+  ]
+}

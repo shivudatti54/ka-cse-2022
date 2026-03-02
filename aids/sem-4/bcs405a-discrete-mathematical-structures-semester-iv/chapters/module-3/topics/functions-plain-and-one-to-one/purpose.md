@@ -1,0 +1,9 @@
+### Learning Purpose: Functions – Plain and One-to-One
+
+**1. Importance:** This topic is fundamental because functions are the primary tool for describing relationships between sets, forming the backbone of discrete mathematics and computer science. Understanding the specific properties of plain (onto) and one-to-one functions is crucial for analyzing how information is mapped and transferred, which is essential for data integrity and system design.
+
+**2. Student Learning:** Students will learn to define functions and identify their key properties. They will distinguish between general functions, one-to-one (injective), onto (surjective), and bijective functions. A core skill will be proving or disproving these properties for given functions, solidifying their logical reasoning and proof-writing abilities.
+
+**3. Connections:** This knowledge directly builds upon set theory and relations. It is a prerequisite for understanding invertible functions, combinatorics (counting), and algorithm analysis. In computer science, these concepts are vital for database theory (data mappings), cryptography (one-way functions), and ensuring programs function as intended without information loss or collision.
+
+**4. Real-World Applications:** One-to-one functions model unique assignment systems like serial numbers or hashing algorithms where output collisions are undesirable. Onto functions ensure complete coverage, such as a system where every possible output status code is mapped from an input. Together, these properties are used in compression, encryption, and defining efficient data structures.

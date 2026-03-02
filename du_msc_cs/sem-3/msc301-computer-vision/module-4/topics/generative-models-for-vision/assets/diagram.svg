@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="generative-models-for-vision">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="50%" style="stop-color:#f5e6f3"/>
+      <stop offset="100%" style="stop-color:#e6f3ff"/>
+    </linearGradient>
+    <linearGradient id="generatorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7ec8e3"/>
+      <stop offset="100%" style="stop-color:#5ba3c6"/>
+    </linearGradient>
+    <linearGradient id="discriminatorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c9a8d4"/>
+      <stop offset="100%" style="stop-color:#a88bb8"/>
+    </linearGradient>
+    <linearGradient id="noiseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd6a5"/>
+      <stop offset="100%" style="stop-color:#ffb347"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes flowArrow {
+      0% { stroke-dashoffset: 20; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #2c3e50; font-weight: 600; }
+    .detail { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #555; }
+    .section-box { rx: 8; ry: 8; stroke: #ccc; stroke-width: 1; }
+    .arrow { fill: none; stroke: #666; stroke-width: 2; marker-end: url(#arrowhead); }
+    .dashed-arrow { fill: none; stroke: #e74c3c; stroke-width: 2; stroke-dasharray: 5,3; marker-end: url(#arrowheadRed); }
+    .feedback-arrow { fill: none; stroke: #27ae60; stroke-width: 2; stroke-dasharray: 4,4; }
+    .animate-fade { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-slide-left { animation: slideInLeft 0.6s ease-out forwards; }
+    .animate-slide-right { animation: slideInRight 0.6s ease-out forwards; }
+    .animate-slide-up { animation: slideInUp 0.7s ease-out forwards; }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+  </style>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowheadRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title animate-fade">Generative Models for Vision</text>
+  <line x1="100" y1="40" x2="320" y2="40" stroke="#7ec8e3" stroke-width="2" class="animate-fade"/>
+  
+  <!-- Noise Input Section -->
+  <g class="animate-slide-left" data-narration="Random noise vector z sampled from a prior distribution (typically Gaussian), providing the random seed for generation">
+    <rect x="30" y="60" width="90" height="50" rx="6" fill="url(#noiseGrad)" filter="url(#shadow)"/>
+    <text x="75" y="82" text-anchor="middle" class="label" fill="#fff">Noise z</text>
+    <text x="75" y="100" text-anchor="middle" class="detail">z ~ N(0,1)</text>
+  </g>
+  
+  <!-- Generator Section -->
+  <g class="animate-slide-up" data-narration="Generator network G(z) transforms random noise into synthetic images through learned distribution">
+    <rect x="140" y="55" width="120" height="90" rx="8" fill="url(#generatorGrad)" filter="url(#shadow)"/>
+    <text x="200" y="80" text-anchor="middle" class="label" fill="#fff">GENERATOR</text>
+    <text x="200" y="100" text-anchor="middle" class="detail" fill="#fff">Neural Network</text>
+    <text x="200" y="115" text-anchor="middle" class="detail" fill="#fff">G(z) → Image</text>
+    <text x="200" y="130" text-anchor="middle" class="detail" fill="#fff">p_g(x)</text>
+  </g>
+  
+  <!-- Arrow from Noise to Generator -->
+  <path d="M120 85 L140 85" class="arrow"/>
+  
+  <!-- Fake Image -->
+  <g class="animate-slide-left" data-narration="Generated fake image output from the generator">
+    <rect x="280" y="65" width="60" height="50" rx="4" fill="#f8d7da" stroke="#f5c6cb" stroke-width="2"/>
+    <text x="310" y="95" text-anchor="middle" class="detail">Fake</text>
+  </g>
+  
+  <!-- Arrow from Generator to Fake -->
+  <path d="M260 85 L280 85" class="arrow"/>
+  
+  <!-- Real Data Section -->
+  <g class="animate-slide-right" data-narration="Real training images sampled from the true data distribution p_data(x)">
+    <rect x="30" y="180" width="90" height="50" rx="6" fill="#d4edda" stroke="#c3e6cb" stroke-width="2" filter="url(#shadow)"/>
+    <text x="75" y="200" text-anchor="middle" class="label" fill="#155724">Real Data</text>
+    <text x="75" y="218" text-anchor="middle" class="detail" fill="#155724">x ~ p_data</text>
+  </g>
+  
+  <!-- Discriminator Section -->
+  <g class="animate-slide-up" data-narration="Discriminator network D(x) learns to distinguish real from fake images, providing training signal to generator">
+    <rect x="140" y="165" width="120" height="90" rx="8" fill="url(#discriminatorGrad)" filter="url(#shadow)"/>
+    <text x="200" y="190" text-anchor="middle" class="label" fill="#fff">DISCRIMINATOR</text>
+    <text x="200" y="210" text-anchor="middle" class="detail" fill="#fff">Neural Network</text>
+    <text x="200" y="225" text-anchor="middle" class="detail" fill="#fff">D(x) → [0,1]</text>
+    <text x="200" y="240" text-anchor="middle" class="detail" fill="#fff">Real/Fake?</text>
+  </g>
+  
+  <!-- Arrows to Discriminator -->
+  <path d="M120 205 L140 205" class="arrow" data-narration="Real images fed to discriminator"/>
+  <path d="M260 90 L260 205 L260 205" class="arrow" data-narration="Fake images also fed to discriminator for comparison"/>
+  
+  <!-- Decision Output -->
+  <g class="animate-slide-right" data-narration="Discriminator outputs probability score - closer to 1 means 'real', closer to 0 means 'fake'">
+    <rect x="280" y="180" width="100" height="60" rx="6" fill="#fff3cd" stroke="#ffeeba" stroke-width="2" filter="url(#shadow)"/>
+    <text x="330" y="205" text-anchor="middle" class="label">D(x) Output</text>
+    <text x="330" y="225" text-anchor="middle" class="detail">Probability</text>
+    <text x="330" y="238" text-anchor="middle" class="detail">Real: ~1, Fake: ~0</text>
+  </g>
+  
+  <!-- Arrow from Discriminator to Output -->
+  <path d="M260 205 L280 210" class="arrow"/>
+  
+  <!-- Feedback Arrow (Generator Loss) -->
+  <g class="animate-fade" data-narration="Loss gradient flows back to generator to improve fake image quality - adversarial training mechanism">
+    <path d="M200 145 Q200 155 200 165" class="feedback-arrow" marker-end="url(#arrowheadGreen)"/>
+    <defs>
+      <marker id="arrowheadGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+      </marker>
+    </defs>
+    <rect x="160" y="270" width="80" height="40" rx="4" fill="#27ae60" opacity="0.8"/>
+    <text x="200" y="290" text-anchor="middle" class="label" fill="#fff" font-size="12">Loss</text>
+    <text x="200" y="303" text-anchor="middle" class="detail" fill="#fff" font-size="10">∇G backprop</text>
+  </g>
+  
+  <!-- Loss Arrow from Discriminator -->
+  <path d="M200 255 L200 270" class="dashed-arrow"/>
+  
+  <!-- Key Concepts Box -->
+  <g class="animate-slide-up" data-narration="Key takeaway: GANs use minimax adversarial game where generator tries to fool discriminator while discriminator tries to catch fakes">
+    <rect x="15" y="320" width="390" height="70" rx="6" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" filter="url(#shadow)"/>
+    <text x="25" y="342" class="label" font-size="13" fill="#2c3e50">Minimax Game:</text>
+    <text x="25" y="358" class="detail" font-size="11">min_G max_D V(D,G) = E[log D(x)] + E[log(1-D(G(z)))]</text>
+    <text x="25" y="378" class="detail" font-size="11" fill="#666">Goal: Generator fool D → Realistic images | Discriminator: Distinguish real vs fake</text>
+  </g>
+  
+  <!-- Animated elements overlay -->
+  <g class="animate-pulse" style="transform-origin: 310px 90px;">
+    <circle cx="310" cy="90" r="35" fill="none" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
+  </g>
+  
+  <!-- Flow indicators -->
+  <g opacity="0.7">
+    <circle cx="75" cy="140" r="4" fill="#ffb347">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="50" r="4" fill="#7ec8e3">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+    </circle>
+    <circle cx="330" cy="170" r="4" fill="#c9a8d4">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+  </g>
+</svg>

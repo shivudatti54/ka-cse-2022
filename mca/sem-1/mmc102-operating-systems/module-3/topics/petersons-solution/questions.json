@@ -1,0 +1,118 @@
+{
+  "topicId": "petersons-solution",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the two shared variables used in Peterson's solution and their purposes.",
+      "keyPoints": [
+        "flag[2] - Boolean array where flag[i] indicates if process i wants to enter critical section",
+        "turn - Integer variable that resolves conflicts when both processes want to enter",
+        "flag shows intention/wish, turn makes the final decision when both want in"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "State and explain the three requirements of the critical section problem that Peterson's solution satisfies.",
+      "keyPoints": [
+        "Mutual Exclusion - Only one process can be in critical section at any time",
+        "Progress - If no process is in critical section and some want to enter, only those not in remainder section participate in decision",
+        "Bounded Waiting - After a process indicates desire to enter, there is a limit on how many times other processes can enter before this process gets in"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are the limitations of Peterson's solution?",
+      "keyPoints": [
+        "Works only for exactly two processes",
+        "Cannot be directly extended to handle N processes",
+        "Relies on atomic load/store assumptions which may fail on modern multi-core processors with memory reordering",
+        "Uses busy-waiting (spin-lock) which wastes CPU cycles"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Why is Peterson's solution called a software-based solution?",
+      "keyPoints": [
+        "Does not require any special hardware atomic instructions like test-and-set or compare-and-swap",
+        "Achieves mutual exclusion using only regular shared variables and standard load/store operations",
+        "Demonstrates that mutual exclusion can be solved purely through software coordination",
+        "The solution runs entirely in user space without kernel support"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the busy-waiting (spin-lock) aspect of Peterson's solution and its disadvantages.",
+      "keyPoints": [
+        "In entry section, process waits in a while loop checking conditions continuously",
+        "Disadvantage: wastes CPU cycles as process constantly checks without doing useful work",
+        "Can cause performance degradation in multi-core systems due to cache coherency traffic",
+        "Better alternatives: block/wakeup mechanisms using semaphores or condition variables"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Write the pseudocode for Peterson's solution for two processes P0 and P1, clearly showing the entry, critical, and exit sections.",
+      "keyPoints": [
+        "Initialize: flag[0] = flag[1] = false, turn = 0 or 1",
+        "Process i code: do { entry section, critical section, exit section, remainder section } while (true)",
+        "Entry: flag[i] = true; turn = j; while (flag[j] == true && turn == j);",
+        "Exit: flag[i] = false;",
+        "Explain each line's purpose and how mutual exclusion is achieved",
+        "Show that both cannot be in critical section simultaneously due to flag and turn combination"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain with an example how Peterson's solution ensures mutual exclusion. Show why both processes cannot be in the critical section simultaneously.",
+      "keyPoints": [
+        "For both to be in CS simultaneously, both flag[0] and flag[1] must be true",
+        "If both in CS, then P0 must have passed while condition: flag[1]==false OR turn==0",
+        "Similarly P1 must have passed: flag[0]==false OR turn==1",
+        "Contradiction: If both flags are true, turn must be either 0 or 1, not both",
+        "Therefore one process must wait at the while loop",
+        "The turn variable combined with flag prevents simultaneous entry"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain how Peterson's solution guarantees bounded waiting. Also discuss why it may not work correctly on modern multi-core processors.",
+      "keyPoints": [
+        "Bounded waiting: After P0 indicates desire (sets flag[0]=true), P1 can enter at most once before P0 enters",
+        "This is because if P1 wants to enter again, it must set turn=0, allowing P0 to enter",
+        "On modern multi-core: CPU/memory reordering can cause operations to appear out of order",
+        "Without memory barriers, the order of flag setting and turn assignment may not be visible to other cores",
+        "This can break the mutual exclusion guarantee on weakly ordered architectures like ARM, PowerPC"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare Peterson's solution with hardware-based solutions (like test-and-set) for achieving mutual exclusion. List advantages and disadvantages of each approach.",
+      "keyPoints": [
+        "Hardware solutions: Use atomic instructions (test-and-set, compare-and-swap)",
+        "Advantage of hardware: Simpler, can work for any number of processes, more efficient on modern CPUs",
+        "Disadvantage of hardware: Requires special CPU instructions, less portable",
+        "Advantage of Peterson: Pure software, no hardware support needed, educational value",
+        "Disadvantage of Peterson: Only 2 processes, busy-waiting wastes CPU, assumes atomic memory operations",
+        "Peterson's solution is primarily of historical and educational importance"
+      ],
+      "marks": 10
+    }
+  ]
+}

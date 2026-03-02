@@ -1,0 +1,2 @@
+# Dequeues
+This module on Deques is designed for students/students/students studying Data Structures and Applications. It provides comprehensive coverage including formal definitions, theorem proofs, complete C implementations using circular arrays, time/space complexity analysis, and a comparative study with other queue variants. The content prepares students for both theoretical examination questions and practical implementation problems.

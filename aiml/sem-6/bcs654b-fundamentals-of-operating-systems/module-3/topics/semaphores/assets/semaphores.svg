@@ -1,0 +1,58 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="35" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a237e">Semaphores</text>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <g id="step0" class="step" data-narration="A semaphore is an integer variable accessed only through two atomic operations: wait and signal. It provides a more robust synchronization tool than hardware instructions alone.">
+    <text x="400" y="60" text-anchor="middle" font-size="14" fill="#616161">Integer variable with atomic wait and signal operations</text>
+  </g>
+  <g id="step1" class="step" data-narration="Wait operation, also called P or down: decrements semaphore value. If value becomes negative, the process is blocked and placed in a waiting queue associated with the semaphore.">
+    <rect x="50" y="80" width="340" height="90" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="220" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1976d2">wait(S) / P(S) / down(S)</text>
+    <text x="70" y="122" font-size="10" fill="#424242" font-family="monospace">wait(S) {</text>
+    <text x="70" y="139" font-size="10" fill="#424242" font-family="monospace">  S.value--;</text>
+    <text x="70" y="156" font-size="10" fill="#1976d2" font-family="monospace">  if(S.value &lt; 0) block(); //queue</text>
+    <text x="70" y="166" font-size="10" fill="#424242" font-family="monospace">}</text>
+  </g>
+  <g id="step2" class="step" data-narration="Signal operation, also called V or up: increments semaphore value. If value is still not positive, a waiting process is woken up from the queue and moved to ready state.">
+    <rect x="420" y="80" width="340" height="90" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="590" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#388e3c">signal(S) / V(S) / up(S)</text>
+    <text x="440" y="122" font-size="10" fill="#424242" font-family="monospace">signal(S) {</text>
+    <text x="440" y="139" font-size="10" fill="#424242" font-family="monospace">  S.value++;</text>
+    <text x="440" y="156" font-size="10" fill="#388e3c" font-family="monospace">  if(S.value &lt;= 0) wakeup(P); </text>
+    <text x="440" y="166" font-size="10" fill="#424242" font-family="monospace">}</text>
+  </g>
+  <g id="step3" class="step" data-narration="Counting semaphore: integer value ranges over unrestricted domain. Controls access to resource with finite instances. Initialized to number of available resources.">
+    <rect x="50" y="185" width="340" height="80" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="220" y="205" text-anchor="middle" font-size="13" font-weight="bold" fill="#ff9800">Counting Semaphore</text>
+    <text x="70" y="225" font-size="11" fill="#424242">Value: 0, 1, 2, 3, ... (any integer)</text>
+    <text x="70" y="242" font-size="11" fill="#424242">Init to N = number of resource copies</text>
+    <text x="70" y="259" font-size="11" fill="#ff9800">wait() grabs one, signal() releases one</text>
+  </g>
+  <g id="step4" class="step" data-narration="Binary semaphore, also called mutex lock: value only zero or one. Simpler to implement. Provides mutual exclusion. wait acquires lock, signal releases lock.">
+    <rect x="420" y="185" width="340" height="80" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="590" y="205" text-anchor="middle" font-size="13" font-weight="bold" fill="#9c27b0">Binary Semaphore (Mutex)</text>
+    <text x="440" y="225" font-size="11" fill="#424242">Value: 0 or 1 only</text>
+    <text x="440" y="242" font-size="11" fill="#424242">Init to 1 = resource available</text>
+    <text x="440" y="259" font-size="11" fill="#9c27b0">Equivalent to a mutex lock</text>
+  </g>
+  <g id="step5" class="step" data-narration="Implementation with no busy waiting uses a waiting queue per semaphore. Block places process in queue. Wakeup removes process from queue and puts it in ready queue.">
+    <rect x="50" y="280" width="340" height="75" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="220" y="300" text-anchor="middle" font-size="13" font-weight="bold" fill="#f44336">No Busy Waiting Implementation</text>
+    <text x="70" y="320" font-size="11" fill="#424242">Each semaphore has a waiting queue</text>
+    <text x="70" y="337" font-size="11" fill="#f44336">block() -> queue, wakeup() -> ready</text>
+  </g>
+  <g id="step6" class="step" data-narration="Deadlock possible: P0 waits on S then Q. P1 waits on Q then S. Both blocked forever. Priority inversion: low priority holds lock needed by high priority process.">
+    <rect x="420" y="280" width="340" height="75" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="590" y="300" text-anchor="middle" font-size="13" font-weight="bold" fill="#1976d2">Pitfalls</text>
+    <text x="440" y="320" font-size="11" fill="#424242">Deadlock: circular wait on semaphores</text>
+    <text x="440" y="337" font-size="11" fill="#1976d2">Priority inversion: Mars Pathfinder bug</text>
+  </g>
+  <g id="step7" class="step" data-narration="Semaphores are powerful synchronization tools. Counting semaphores manage multiple resources. Binary semaphores provide mutual exclusion. Both avoid busy waiting with queues.">
+    <rect x="50" y="370" width="700" height="40" rx="8" fill="#1976d2"/>
+    <text x="400" y="395" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">wait()/signal() + Queue = Counting (N resources) or Binary (mutex) Semaphore</text>
+  </g>
+</svg>

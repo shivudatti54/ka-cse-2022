@@ -1,0 +1,45 @@
+{
+  "topicId": "memory-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Memory Read Operation",
+      "description": "Demonstrates how the CPU reads data from a memory location",
+      "code": "// Memory Read Operation Pseudocode\nPROCEDURE MemoryRead(address):\n    // Step 1: Place address on address bus\n    AddressBus <- address\n    \n    // Step 2: Assert READ control signal\n    ControlBus.READ <- TRUE\n    ControlBus.WRITE <- FALSE\n    \n    // Step 3: Wait for memory response\n    WAIT UNTIL MemoryReady = TRUE\n    \n    // Step 4: Read data from data bus\n    data <- DataBus\n    \n    // Step 5: Deassert control signals\n    ControlBus.READ <- FALSE\n    \n    RETURN data",
+      "explanation": "The CPU places the memory address on the address bus, asserts the READ signal, waits for memory to fetch the data, and reads the data from the data bus into an internal register.",
+      "timeComplexity": "O(1) per memory access",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Memory Write Operation",
+      "description": "Demonstrates how the CPU writes data to a memory location",
+      "code": "// Memory Write Operation Pseudocode\nPROCEDURE MemoryWrite(address, data):\n    // Step 1: Place address on address bus\n    AddressBus <- address\n    \n    // Step 2: Place data on data bus\n    DataBus <- data\n    \n    // Step 3: Assert WRITE control signal\n    ControlBus.WRITE <- TRUE\n    ControlBus.READ <- FALSE\n    \n    // Step 4: Wait for memory to complete write\n    WAIT UNTIL MemoryReady = TRUE\n    \n    // Step 5: Deassert control signals\n    ControlBus.WRITE <- FALSE\n    \n    RETURN SUCCESS",
+      "explanation": "The CPU places both the target address and the data to be written on their respective buses, asserts the WRITE signal, waits for memory to complete the storage operation.",
+      "timeComplexity": "O(1) per memory access",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Stack PUSH and POP Operations",
+      "description": "Demonstrates stack memory management with PUSH and POP",
+      "code": "// Stack Operations Pseudocode\n// Assuming stack grows downward in memory\n// SP points to top of stack\n\nCONSTANT STACK_BASE = 0x1000\nSP = STACK_BASE\n\nPROCEDURE PUSH(data):\n    // Decrement stack pointer\n    SP <- SP - 4\n    \n    // Store data at new top of stack\n    Memory[SP] <- data\n    \n    RETURN\n\nPROCEDURE POP():\n    // Read data from top of stack\n    data <- Memory[SP]\n    \n    // Increment stack pointer\n    SP <- SP + 4\n    \n    RETURN data\n\n// Example: Function call saving\nPROCEDURE CallFunction(funcAddr):\n    PUSH(ReturnAddress)  // Save return address\n    PUSH(Register1)     // Save registers\n    PUSH(Register2)\n    GOTO funcAddr       // Jump to function",
+      "explanation": "PUSH decrements the stack pointer and stores data. POP retrieves data and increments the stack pointer. Used for managing function calls, saving/restoring registers, and implementing recursion.",
+      "timeComplexity": "O(1) per operation",
+      "spaceComplexity": "O(1) per push operation"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Demonstrating Endianness",
+      "description": "Shows how data is stored in memory for little-endian and big-endian systems",
+      "code": "import struct\n\n# Integer to store\nvalue = 0x12345678\n\n# Convert to bytes (4 bytes)\nbytes_data = value.to_bytes(4, byteorder='big')\n\nprint(f\"Value: 0x{value:08X}\")\nprint(f\"As bytes (big-endian): {bytes_data.hex()}\")\n\n# Show little-endian representation\nbytes_little = value.to_bytes(4, byteorder='little')\nprint(f\"As bytes (little-endian): {bytes_little.hex()}\")\n\n# Memory address representation\nprint(\"\\n--- Memory Layout ---\")\nprint(\"Address  Big-Endian  Little-Endian\")\nfor i in range(4):\n    print(f\"  {i}        {bytes_data[i]:02X}           {bytes_little[i]:02X}\")\n\n# Output shows:\n# Big-endian: MSB at lowest address\n# Little-endian: LSB at lowest address",
+      "explanation": "This code demonstrates endianness by showing how the 4-byte integer 0x12345678 is stored in memory. Big-endian stores 12 at address 0, 34 at address 1, etc. Little-endian stores 78 at address 0, 56 at address 1, etc.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

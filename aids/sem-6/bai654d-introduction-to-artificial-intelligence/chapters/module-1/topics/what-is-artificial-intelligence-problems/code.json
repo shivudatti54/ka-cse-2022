@@ -1,0 +1,45 @@
+{
+  "topicId": "what-is-artificial-intelligence-problems",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Problem Definition Structure",
+      "description": "Basic structure for representing a problem in AI",
+      "code": "CLASS Problem\n  attributes:\n    initialState    // Starting state\n    goalState       // Target state to achieve\n    operators[]     // Set of legal operators/actions\n    stateSpace      // All possible states\n    \n  methods:\n    isGoal(state)   // Returns TRUE if state is goal\n    getSuccessors(state)  // Returns states reachable via operators\n    pathCost(path)  // Returns cost of a particular path\nENDCLASS",
+      "explanation": "This pseudocode shows a class structure for defining search problems. The Problem class encapsulates all five components needed to formulate a problem: initial state, goal state, operators, state space, and path cost calculation.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Production System Execution Cycle",
+      "description": "Basic execution cycle of a production system",
+      "code": "FUNCTION ProductionSystem(rules, workingMemory)\n  WHILE NOT goalReached(workingMemory) DO\n    // MATCH: Find all rules that apply to current state\n    applicableRules = []\n    FOR each rule IN rules DO\n      IF rule.condition.matches(workingMemory) THEN\n        ADD rule TO applicableRules\n      ENDIF\n    ENDFOR\n    \n    // SELECT: Choose one rule to fire (conflict resolution)\n    selectedRule = resolveConflict(applicableRules)\n    \n    // EXECUTE: Apply the selected rule to working memory\n    EXECUTE selectedRule.action\n    \n    // Check if goal is now reached\n    IF isGoal(workingMemory) THEN\n      RETURN SUCCESS\n    ENDIF\n  ENDWHILE\n  RETURN FAILURE\nENDFUNCTION",
+      "explanation": "This shows the recognize-act cycle of a production system: Match (find applicable rules), Select (choose one using conflict resolution), and Execute (apply the rule). This cycle repeats until goal is reached or no rules apply.",
+      "timeComplexity": "O(r) per cycle where r is number of rules",
+      "spaceComplexity": "O(s) where s is working memory size"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "8-Puzzle Problem Implementation",
+      "description": "Implementation of a well-defined problem - the 8-puzzle",
+      "code": "class EightPuzzle:\n    def __init__(self, initial, goal):\n        self.initial = initial  # tuple of 9 numbers (0-8)\n        self.goal = goal        # goal state tuple\n    \n    def get_successors(self, state):\n        \"\"\"Returns all valid successor states\"\"\"\n        successors = []\n        pos = state.index(0)  # blank position\n        row, col = pos // 3, pos % 3\n        moves = [(-1,0), (1,0), (0,-1), (0,1)]  # up, down, left, right\n        \n        for dr, dc in moves:\n            new_row, new_col = row + dr, col + dc\n            if 0 <= new_row < 3 and 0 <= new_col < 3:\n                new_pos = new_row * 3 + new_col\n                new_state = list(state)\n                new_state[pos], new_state[new_pos] = new_state[new_pos], new_state[pos]\n                successors.append(tuple(new_state))\n        return successors\n    \n    def is_goal(self, state):\n        \"\"\"Check if state is goal state\"\"\"\n        return state == self.goal\n    \n    def get_operators(self):\n        \"\"\"Return valid operators\"\"\"\n        return ['UP', 'DOWN', 'LEFT', 'RIGHT']",
+      "explanation": "This Python implementation demonstrates a well-defined problem. The 8-puzzle has clear: initial state (given configuration), goal state (ordered 0-8), and operators (moving blank up/down/left/right). This is commonly used to demonstrate search algorithms like BFS, DFS, A*.",
+      "timeComplexity": "O(4) per successor generation",
+      "spaceComplexity": "O(9) per state storage"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Problem Solving Agent Framework",
+      "description": "Basic framework for a problem-solving agent in Java",
+      "code": "public abstract class ProblemSolvingAgent {\n    protected Object initialState;\n    protected Object goalState;\n    protected List<Operator> operators;\n    \n    public ProblemSolvingAgent(Object initial, Object goal) {\n        this.initialState = initial;\n        this.goalState = goal;\n        this.operators = new ArrayList<>();\n    }\n    \n    public abstract boolean isGoal(Object state);\n    public abstract List<Object> getSuccessors(Object state);\n    public abstract double pathCost(List<Object> path);\n    \n    public List<Object> solve() {\n        // Generic search algorithm placeholder\n        // This would be implemented by specific algorithms\n        // like BFS, DFS, A*, etc.\n        return null;\n    }\n}\n\n// Concrete implementation for 8-Puzzle\nclass EightPuzzleAgent extends ProblemSolvingAgent {\n    public EightPuzzleAgent(int[] initial, int[] goal) {\n        super(initial, goal);\n    }\n    \n    @Override\n    public boolean isGoal(Object state) {\n        // Check if current state equals goal state\n        return Arrays.equals((int[])state, (int[])goalState);\n    }\n    \n    @Override\n    public List<Object> getSuccessors(Object state) {\n        // Generate all valid moves from current state\n        // Returns list of new states\n        return new ArrayList<>();\n    }\n    \n    @Override\n    public double pathCost(List<Object> path) {\n        return path.size();  // Each move costs 1\n    }\n}",
+      "explanation": "This Java code shows the framework for a problem-solving agent. It defines an abstract base class with methods for checking goals, generating successors, and calculating path cost. Concrete implementations like EightPuzzleAgent define specific problem characteristics.",
+      "timeComplexity": "Varies by algorithm implementation",
+      "spaceComplexity": "O(b^d) where b is branching factor and d is depth"
+    }
+  ]
+}

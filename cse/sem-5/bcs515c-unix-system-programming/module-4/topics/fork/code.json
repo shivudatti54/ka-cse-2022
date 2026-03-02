@@ -1,0 +1,55 @@
+{
+  "topicId": "fork",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic fork() Example",
+      "description": "Simple program demonstrating fork() and differentiating parent/child",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid;\n \n pid = fork();\n \n if (pid < 0) {\n printf(\"Fork failed!\\n\");\n return 1;\n }\n else if (pid == 0) {\n // Child process\n printf(\"Child: PID = %d, PPID = %d\\n\", getpid(), getppid());\n printf(\"Child executing...\\n\");\n _exit(0); // Child exits\n }\n else {\n // Parent process\n printf(\"Parent: PID = %d, Child PID = %d\\n\", getpid(), pid);\n wait(NULL); // Wait for child\n printf(\"Parent: Child has finished\\n\");\n }\n \n return 0;\n}",
+      "explanation": "Demonstrates basic fork() usage: checks return value to differentiate parent and child, uses getpid()/getppid() for identification, uses wait() to prevent zombie",
+      "timeComplexity": "O(n) where n is execution time",
+      "spaceComplexity": "O(1) additional beyond process memory"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "fork() with exec() Example",
+      "description": "Child process executes a new program using exec()",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid;\n \n pid = fork();\n \n if (pid < 0) {\n printf(\"Fork failed\\n\");\n return 1;\n }\n else if (pid == 0) {\n // Child: execute 'ls' command\n printf(\"Child (PID %d): Calling exec()\\n\", getpid());\n execlp(\"/bin/ls\", \"ls\", \"-l\", NULL);\n // If exec() succeeds, this won't execute\n printf(\"exec() failed\\n\");\n _exit(1);\n }\n else {\n // Parent waits for child\n wait(NULL);\n printf(\"Parent: Child finished execution\\n\");\n }\n \n return 0;\n}",
+      "explanation": "Shows fork()-exec() pattern: child replaces its image with 'ls' program using execlp(). Parent waits for completion using wait()",
+      "timeComplexity": "O(n) for exec program execution",
+      "spaceComplexity": "O(1) beyond loaded program"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Zombie Process Demonstration",
+      "description": "Program that creates a zombie process",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid;\n \n pid = fork();\n \n if (pid < 0) {\n printf(\"Fork failed\\n\");\n return 1;\n }\n else if (pid == 0) {\n // Child exits immediately, becomes zombie\n printf(\"Child (PID %d): Exiting now\\n\", getpid());\n _exit(0); // Child terminates\n }\n else {\n // Parent doesn't call wait() - child becomes zombie\n printf(\"Parent (PID %d): Not waiting for child %d\\n\", getpid(), pid);\n printf(\"Child %d is now ZOMBIE\\n\", pid);\n sleep(10); // Parent sleeps, child remains zombie\n wait(NULL); // Now reap the zombie\n printf(\"Parent: Zombie reaped\\n\");\n }\n \n return 0;\n}",
+      "explanation": "Demonstrates zombie creation: child exits but parent doesn't wait. During parent sleep, 'ps' shows child as zombie (defunct)",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Multiple fork() Calls",
+      "description": "Creates multiple child processes using sequential fork()",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid1, pid2;\n \n printf(\"Original process: PID = %d\\n\", getpid());\n \n pid1 = fork();\n \n if (pid1 == 0) {\n // First child\n printf(\"First child: PID = %d, PPID = %d\\n\", getpid(), getppid());\n \n pid2 = fork(); // Create grandchild\n if (pid2 == 0) {\n // Grandchild\n printf(\"Grandchild: PID = %d, PPID = %d\\n\", getpid(), getppid());\n _exit(0);\n }\n _exit(0);\n }\n else {\n // Original parent waits for first child\n wait(NULL);\n printf(\"Parent: All children finished\\n\");\n }\n \n return 0;\n}",
+      "explanation": "Shows nested fork() calls creating multiple processes. First fork creates child, second fork (in child) creates grandchild, resulting in 3 total processes",
+      "timeComplexity": "O(n) for n processes created",
+      "spaceComplexity": "O(n) process table entries"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Pipe Communication after fork()",
+      "description": "Parent and child communicate through pipe",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n#include <string.h>\n\nint main() {\n int pipefd[2];\n pid_t pid;\n char msg[] = \"Hello from parent!\";\n char buffer[50];\n \n if (pipe(pipefd) == -1) {\n perror(\"pipe\");\n return 1;\n }\n \n pid = fork();\n \n if (pid == 0) {\n // Child: reads from pipe\n close(pipefd[1]); // Close write end\n read(pipefd[0], buffer, sizeof(buffer));\n printf(\"Child received: %s\\n\", buffer);\n close(pipefd[0]);\n _exit(0);\n }\n else {\n // Parent: writes to pipe\n close(pipefd[0]); // Close read end\n write(pipefd[1], msg, strlen(msg) + 1);\n close(pipefd[1]);\n wait(NULL);\n printf(\"Parent: Message sent to child\\n\");\n }\n \n return 0;\n}",
+      "explanation": "Demonstrates inter-process communication: creates pipe before fork, child reads from parent through pipe after fork",
+      "timeComplexity": "O(n) message length",
+      "spaceComplexity": "O(n) buffer size"
+    }
+  ]
+}

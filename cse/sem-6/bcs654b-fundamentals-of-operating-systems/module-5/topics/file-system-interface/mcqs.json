@@ -1,0 +1,381 @@
+{
+  "topicId": "file-system-interface",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In Unix/Linux, what does the open() system call return to the calling process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A pointer to the file structure"
+        },
+        {
+          "key": "B",
+          "text": "A file descriptor (small non-negative integer)"
+        },
+        {
+          "key": "C",
+          "text": "The file size in bytes"
+        },
+        {
+          "key": "D",
+          "text": "A buffer containing file contents"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The open() system call returns a file descriptor, which is a small non-negative integer. This descriptor is used in subsequent read(), write(), and close() calls to identify the file. The actual file structure is maintained internally by the kernel and is not directly accessible to user processes.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which of the following is NOT typically stored as a file attribute?",
+      "options": [
+        {
+          "key": "A",
+          "text": "File name"
+        },
+        {
+          "key": "B",
+          "text": "File creation timestamp"
+        },
+        {
+          "key": "C",
+          "text": "File content/data"
+        },
+        {
+          "key": "D",
+          "text": "File permissions"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "File attributes (metadata) include name, timestamps, permissions, size, owner, etc. The actual content/data of the file is NOT an attribute - it is the file's body stored separately on disk. Attributes describe the file rather than comprise its content.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "A process opens a file in read-write mode and reads 100 bytes, then writes 50 bytes. Where is the current file position after these operations?",
+      "options": [
+        {
+          "key": "A",
+          "text": "At byte 50"
+        },
+        {
+          "key": "B",
+          "text": "At byte 100"
+        },
+        {
+          "key": "C",
+          "text": "At byte 150"
+        },
+        {
+          "key": "D",
+          "text": "At byte 0"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The file position starts at 0. After reading 100 bytes, position advances to 100. Writing 50 bytes advances position by 50, so final position is 150. The write operation overwrites bytes 100-149 if the file had sufficient data, or extends the file if at the end.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What type of lock allows multiple processes to simultaneously read the same file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Exclusive lock"
+        },
+        {
+          "key": "B",
+          "text": "Shared lock"
+        },
+        {
+          "key": "C",
+          "text": "Mandatory lock"
+        },
+        {
+          "key": "D",
+          "text": "Advisory lock"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A shared lock (also called read lock) allows multiple processes to hold locks simultaneously for reading. An exclusive lock (write lock) prevents any other lock (shared or exclusive) from being held. This concurrency control ensures data consistency while maximizing read access.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Which file access method uses the lseek() system call for positioning?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Sequential access only"
+        },
+        {
+          "key": "B",
+          "text": "Direct access only"
+        },
+        {
+          "key": "C",
+          "text": "Both sequential and direct access"
+        },
+        {
+          "key": "D",
+          "text": "Neither - lseek() is for memory mapping"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Direct (random) access method uses lseek() to position the file pointer to any location within the file before reading or writing. Sequential access processes records one after another without explicit seeking. The lseek() call explicitly sets the offset for the next operation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "In a system with two-level open file tables (system-wide and per-process), where is the file position pointer stored?",
+      "options": [
+        {
+          "key": "A",
+          "text": "In the system-wide table"
+        },
+        {
+          "key": "B",
+          "text": "In the per-process table"
+        },
+        {
+          "key": "C",
+          "text": "In the i-node structure"
+        },
+        {
+          "key": "D",
+          "text": "In the disk directory entry"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The file position pointer is process-specific and stored in the per-process open file table entry. Each process has its own view of where it is in the file. The system-wide table contains information shared across processes like the file's location on disk and access mode.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What happens to the file descriptor when a process calls close() on an open file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The file descriptor is set to NULL"
+        },
+        {
+          "key": "B",
+          "text": "The file descriptor becomes available for reuse"
+        },
+        {
+          "key": "C",
+          "text": "The file descriptor is destroyed permanently"
+        },
+        {
+          "key": "D",
+          "text": "The file descriptor value changes to -1"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When close() is called, the file descriptor is deallocated and becomes available for reuse in future open() calls. The descriptor itself is not destroyed - it's simply marked as unused in the process's file descriptor table. The actual file (on disk) is not affected by closing.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Consider: Process A opens file1.txt and gets file descriptor 3. Process B (a child) forks. What file descriptor does Process B have for the same file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "3 (inherits the same descriptor)"
+        },
+        {
+          "key": "B",
+          "text": "4 (new descriptor allocated)"
+        },
+        {
+          "key": "C",
+          "text": "-1 (cannot share descriptors)"
+        },
+        {
+          "key": "D",
+          "text": "0 (stdin is reused)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "After fork(), the child process inherits a copy of the parent's open file descriptors, pointing to the same system-wide file table entries. Both processes share the same file offset. This is why closing a file descriptor in one process doesn't affect the other (each has its own descriptor number in its table).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-9",
+      "question": "What is the primary purpose of buffering in file I/O operations?",
+      "block": "options",
+      "options": [
+        {
+          "key": "A",
+          "text": "To encrypt data during transfer"
+        },
+        {
+          "key": "B",
+          "text": "To reduce the number of physical I/O operations"
+        },
+        {
+          "key": "C",
+          "text": "To compress file contents automatically"
+        },
+        {
+          "key": "D",
+          "text": "To provide error correction"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Buffering accumulates data in memory buffers before performing physical disk I/O. This reduces expensive disk operations by doing bulk transfers instead of many small ones. A write may only go to memory (buffer) initially; actual disk write happens when buffer is full or file is closed.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which of the following path names is a relative path?",
+      "options": [
+        {
+          "key": "A",
+          "text": "/usr/local/bin/gcc"
+        },
+        {
+          "key": "B",
+          "text": "C:\\Windows\\System32"
+        },
+        {
+          "key": "C",
+          "text": "../project/main.c"
+        },
+        {
+          "key": "D",
+          "text": "/home/student/data.txt"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A relative path is interpreted from the current working directory. '../project/main.c' uses '..' to go up one directory level, making it relative. Absolute paths start from root (/) on Unix or contain drive letter (C:\\) on Windows.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "When a file is opened with O_APPEND flag, where is the file position set before each write?",
+      "options": [
+        {
+          "key": "A",
+          "text": "At position 0"
+        },
+        {
+          "key": "B",
+          "text": "At the current position in the table"
+        },
+        {
+          "key": "C",
+          "text": "At the end of the file (seek to end)"
+        },
+        {
+          "key": "D",
+          "text": "Random position"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "With O_APPEND, before each write operation, the file is automatically seeked to the end of file. This ensures all writes are appended atomically, preventing race conditions where another process might write between seeking and writing. The file position pointer is repositioned before each write.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What information does the system-wide open file table entry contain?",
+      "options": [
+        {
+          "key": "A",
+          "text": "File descriptor number and process ID"
+        },
+        {
+          "key": "B",
+          "text": "File pointer and process-specific flags"
+        },
+        {
+          "key": "C",
+          "text": "File offset, access mode, and pointer to i-node"
+        },
+        {
+          "key": "D",
+          "text": "File name and creation time"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The system-wide open file table entry contains: current file offset (position), access mode (read/write), file status flags, and a pointer to the file's i-node (inode). Per-process table holds the file descriptor and process-specific flags.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Which operation would you use to reduce a file's size to zero while keeping the file handle open?",
+      "options": [
+        {
+          "key": "A",
+          "text": "delete()"
+        },
+        {
+          "key": "B",
+          "text": "remove()"
+        },
+        {
+          "key": "C",
+          "text": "truncate() / ftruncate()"
+        },
+        {
+          "key": "D",
+          "text": "unlink()"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The truncate() or ftruncate() system call sets the file size to zero without closing the file descriptor. This preserves the file (its name, attributes, open handle) while discarding all content. delete() and unlink() remove the file entirely; remove() is similar for files.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "If file 'data.dat' has 1000 bytes and you open it, seek to offset 500, then write 200 bytes, what is the new file size?",
+      "options": [
+        {
+          "key": "A",
+          "text": "500 bytes"
+        },
+        {
+          "key": "B",
+          "text": "700 bytes"
+        },
+        {
+          "key": "C",
+          "text": "1000 bytes"
+        },
+        {
+          "key": "D",
+          "text": "1200 bytes"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "When writing at offset 500 with 200 bytes, the file extends from 500 to 700 (200 bytes written). Since the original size was 1000, the file now contains bytes 0-999 (original) plus new bytes at positions 500-699, making the new size 1200 bytes. The write extends the file beyond the original 1000-byte boundary.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What is the maximum number of files that can be simultaneously open if the system allows file descriptors 0-63?",
+      "options": [
+        {
+          "key": "A",
+          "text": "63"
+        },
+        {
+          "key": "B",
+          "text": "64"
+        },
+        {
+          "key": "C",
+          "text": "62"
+        },
+        {
+          "key": "D",
+          "text": "Unlimited"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "File descriptors 0-63 means 64 possible values (0-63). However, 0, 1, 2 are typically reserved for standard input (stdin), standard output (stdout), and standard error (stderr). So 64 - 3 = 61 actually available, but if we're strict about 'simultaneously open', the limit is the total minus stdin/stdout/stderr = 61-62 depending on OS. A safe answer is 62 (if 0-2 reserved).",
+      "difficulty": "medium"
+    }
+  ]
+}

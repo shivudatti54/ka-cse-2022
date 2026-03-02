@@ -1,0 +1,35 @@
+{
+  "topicId": "encapsulating-security-payload",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: ESP Packet Encryption",
+      "description": "Demonstrates ESP packet processing with encryption and authentication",
+      "code": "ALGORITHM ESP_Encrypt\nBEGIN\n  1. Generate Security Parameters Index (SPI)\n  2. Generate Sequence Number (increment for each packet)\n  3. Encrypt payload using symmetric algorithm (e.g., AES-CBC):\n     encrypted_data = AES_Encrypt(plaintext, encryption_key, IV)\n  4. Add padding to meet block size requirements\n  5. Calculate Authentication Data using HMAC:\n     auth_data = HMAC(SPI | SeqNum | encrypted_data, auth_key)\n  6. Construct final ESP packet:\n     [SPI][SeqNum][IV][encrypted_data][padding][pad_length][next_header][auth_data]\nEND",
+      "explanation": "Step 3 performs payload encryption, step 5 ensures integrity through HMAC. Padding (step 4) aligns to cipher block size.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "ESP Encryption Simulation with AES & HMAC",
+      "description": "Python implementation of core ESP encryption functions",
+      "code": "from Crypto.Cipher import AES\nfrom Crypto.Util.Padding import pad\nimport hmac\n\ndef esp_encrypt(plaintext, enc_key, auth_key, spi, seq_num):\n    # Encryption\n    cipher = AES.new(enc_key, AES.MODE_CBC)\n    iv = cipher.iv\n    padded_data = pad(plaintext, AES.block_size)\n    ciphertext = cipher.encrypt(padded_data)\n\n    # Authentication\n    auth_data = hmac.new(auth_key, spi.to_bytes(4, 'big') + \n                        seq_num.to_bytes(4, 'big') + \n                        ciphertext, 'sha1').digest()\n\n    return {\n        'spi': spi,\n        'seq_num': seq_num,\n        'iv': iv,\n        'ciphertext': ciphertext,\n        'auth_data': auth_data\n    }",
+      "explanation": "Uses PyCryptodome library for AES-CBC encryption and HMAC-SHA1. The function returns ESP-like encrypted packet components.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "HMAC-SHA1 for ESP Authentication",
+      "description": "C implementation of HMAC-SHA1 used in ESP integrity check",
+      "code": "#include <openssl/hmac.h>\n#include <stdint.h>\n\nvoid esp_hmac_sha1(const uint8_t* key, int key_len,\n                  const uint8_t* data, int data_len,\n                  uint8_t* output) {\n    HMAC_CTX *ctx = HMAC_CTX_new();\n    HMAC_Init_ex(ctx, key, key_len, EVP_sha1(), NULL);\n    HMAC_Update(ctx, data, data_len);\n    unsigned int len;\n    HMAC_Final(ctx, output, &len);\n    HMAC_CTX_free(ctx);\n}",
+      "explanation": "Uses OpenSSL's HMAC functions to generate authentication data. Output buffer should be at least 20 bytes for SHA1 digest.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

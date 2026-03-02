@@ -1,0 +1,57 @@
+[
+  {
+    "id": "q1",
+    "question": "Which of the following system calls allows a parent process to wait for a child process to change state and retrieve resource usage information?",
+    "options": ["wait3", "wait", "waitpid", "fork"],
+    "correctIndex": 0,
+    "explanation": "wait3 is specifically designed to wait for a child process to change state and returns resource usage information through a struct rusage parameter, unlike wait and waitpid."
+  },
+  {
+    "id": "q2",
+    "question": "What is the primary purpose of the 'options' parameter in the wait3 system call?",
+    "options": [
+      "To specify which child process to wait for",
+      "To specify the priority of the process",
+      "To control the behavior of wait3 (e.g., WNOHANG)",
+      "To pass environment variables to the child"
+    ],
+    "correctIndex": 2,
+    "explanation": "The options parameter allows you to specify flags that control wait3's behavior. The most common flag is WNOHANG, which makes the call return immediately if no child has exited, rather than blocking."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following best describes the key difference between waitpid and wait3?",
+    "options": [
+      "waitpid is obsolete and wait3 should always be used",
+      "wait3 includes an additional parameter to return resource usage statistics",
+      "wait3 can only wait for a specific process ID, while waitpid can wait for any child",
+      "waitpid is used for threads, while wait3 is used for processes"
+    ],
+    "correctIndex": 1,
+    "explanation": "The fundamental difference is that wait3 has a third parameter, 'struct rusage *rusage', which, if not NULL, is filled with resource usage information (like CPU time, page faults) about the terminated child."
+  },
+  {
+    "id": "q4",
+    "question": "In a UNIX system programming context, if a process calls wait3 with the WNOHANG option and it returns 0, what does this indicate?",
+    "options": [
+      "A child process has exited and its status is available",
+      "The call failed due to an invalid argument",
+      "No child process status is currently available, so the call returned immediately",
+      "The specified child process does not exist"
+    ],
+    "correctIndex": 2,
+    "explanation": "A return value of 0 from wait3 when using WNOHANG indicates that the call did not block and that no child process has yet changed state. The parent can continue its work and check again later."
+  },
+  {
+    "id": "q5",
+    "question": "Considering the evolution of the UNIX API, why might wait3 be considered deprecated in favor of wait4 or waitpid?",
+    "options": [
+      "wait3 is inherently less secure",
+      "wait3 cannot be used in a multi-threaded application",
+      "wait3 lacks the ability to wait for a specific process ID (pid), a feature provided by wait4 and waitpid",
+      "wait3 is significantly slower in performance"
+    ],
+    "correctIndex": 2,
+    "explanation": "The main limitation of wait3 is that it waits for any child process. The wait4 system call extends wait3 by adding a 'pid_t' parameter, allowing the caller to wait for a specific child process, just like waitpid. This provides more precise control."
+  }
+]

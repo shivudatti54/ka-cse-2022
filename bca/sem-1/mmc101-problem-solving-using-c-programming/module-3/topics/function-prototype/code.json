@@ -1,0 +1,45 @@
+{
+  "topicId": "function-prototype",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic Function Prototypes",
+      "description": "Demonstrates correct function prototype syntax with different return types and parameters",
+      "code": "#include <stdio.h>\n\n// Function prototypes (declarations)\nint add(int, int);           // Returns int, takes two ints\nfloat divide(float, float);  // Returns float, takes two floats\nvoid greet(void);            // Returns nothing, takes no arguments\nchar toUpper(char);          // Returns char, takes one char\n\nint main() {\n    printf(\"Sum: %d\\n\", add(10, 20));\n    printf(\"Division: %.2f\\n\", divide(15.0, 4.0));\n    greet();\n    printf(\"Uppercase: %c\\n\", toUpper('a'));\n    return 0;\n}\n\n// Function definitions\nint add(int a, int b) {\n    return a + b;\n}\n\nfloat divide(float x, float y) {\n    return x / y;\n}\n\nvoid greet(void) {\n    printf(\"Hello!\\n\");\n}\n\nchar toUpper(char c) {\n    return c - 32;  // Simple ASCII conversion\n}",
+      "explanation": "This program demonstrates function prototypes with various scenarios: prototypes allow calling functions before their definitions appear. Note that parameter names can be omitted in prototypes (int add(int, int)) but must be present in definitions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Forward Declaration for Mutual Recursion",
+      "description": "Shows how function prototypes enable mutually recursive functions",
+      "code": "#include <stdio.h>\n\n// Forward declarations (prototypes)\nint isEven(int n);   // Declared before isOdd\nint isOdd(int n);\n\nint main() {\n    int num = 7;\n    if (isEven(num))\n        printf(\"%d is even\\n\", num);\n    else\n        printf(\"%d is odd\\n\", num);\n    return 0;\n}\n\n// Function definitions\nint isEven(int n) {\n    if (n == 0)\n        return 1;  // True - even\n    else\n        return isOdd(n - 1);  // Call isOdd\n}\n\nint isOdd(int n) {\n    if (n == 0)\n        return 0;  // False - not even\n    else\n        return isEven(n - 1);  // Call isEven\n}",
+      "explanation": "This demonstrates mutual recursion where two functions call each other. Without the function prototypes (forward declarations), the compiler would not know about isOdd when compiling isEven. The prototypes resolve this dependency.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n) - recursive call stack"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Function Prototype with Pointers",
+      "description": "Demonstrates function prototypes involving pointer parameters",
+      "code": "#include <stdio.h>\n\n// Function prototypes with pointers\nvoid swap(int *a, int *b);           // Pointers to integers\nvoid modifyArray(int *arr, int n);   // Pointer to array\nint* createNumber(int n);            // Returns pointer to integer\n\nint main() {\n    int x = 10, y = 20;\n    printf(\"Before swap: x=%d, y=%d\\n\", x, y);\n    swap(&x, &y);  // Pass addresses\n    printf(\"After swap: x=%d, y=%d\\n\", x, y);\n    \n    int arr[5] = {1, 2, 3, 4, 5};\n    modifyArray(arr, 5);\n    printf(\"Array after modify: \");\n    for (int i = 0; i < 5; i++)\n        printf(\"%d \", arr[i]);\n    printf(\"\\n\");\n    \n    int *ptr = createNumber(100);\n    printf(\"Created number: %d\\n\", *ptr);\n    return 0;\n}\n\nvoid swap(int *a, int *b) {\n    int temp = *a;\n    *a = *b;\n    *b = temp;\n}\n\nvoid modifyArray(int *arr, int n) {\n    for (int i = 0; i < n; i++)\n        arr[i] *= 2;  // Double each element\n}\n\nint* createNumber(int n) {\n    static int value;\n    value = n;\n    return &value;\n}",
+      "explanation": "This shows function prototypes involving pointers. int *a in prototype indicates a pointer parameter. The prototype tells the compiler that the function will receive addresses, enabling pass-by-reference semantics in C.",
+      "timeComplexity": "O(n) for modifyArray, O(1) for others",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Function Prototype Concept in Python (Comparison)",
+      "description": "Compares C function prototypes with Python's dynamic typing approach",
+      "code": "# Python does not require function prototypes\n# The interpreter infers types at runtime\n\ndef add(a, int) -> int:  # Type hints (optional, Python 3.5+)\n    return a + b\n\ndef greet() -> None:  # None indicates no return value\n    print(\"Hello!\")\n\n# Can call functions before or after definition\nresult = add(10, 20)\ngreet()\n\n# Unlike C, Python has no separate declaration step\n# Function definition serves as both declaration and definition",
+      "explanation": "This demonstrates how Python handles functions differently. Unlike C's function prototypes which provide compile-time type checking, Python uses dynamic typing. Type hints (Python 3.5+) are optional and not enforced at compile time, showing why C's function prototypes are valuable for type safety.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

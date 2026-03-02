@@ -1,0 +1,134 @@
+{
+  "topicId": "for-example",
+  "visuals": [
+    {
+      "id": "for-example-svg",
+      "title": "The fork-exec-wait Process Lifecycle",
+      "description": "Animated diagram showing how fork() duplicates the parent process, exec() replaces the child with a new program, and wait() synchronizes the parent with the child exit status.",
+      "type": "animated-svg",
+      "file": "assets/for-example.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "The fork-exec-wait Cycle",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Parent Process (PID: 1234)"
+          },
+          {
+            "id": "n2",
+            "label": "Call fork()"
+          },
+          {
+            "id": "n3",
+            "label": "Child Process (PID: 1235, copy of parent)"
+          },
+          {
+            "id": "n4",
+            "label": "Call exec() in child"
+          },
+          {
+            "id": "n5",
+            "label": "New Program Running (PID: 1235)"
+          },
+          {
+            "id": "n6",
+            "label": "Child Terminates"
+          },
+          {
+            "id": "n7",
+            "label": "Parent calls wait()"
+          },
+          {
+            "id": "n8",
+            "label": "Parent Resumes with exit status"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2",
+            "label": "initiates"
+          },
+          {
+            "from": "n2",
+            "to": "n3",
+            "label": "returns 0 to child"
+          },
+          {
+            "from": "n2",
+            "to": "n1",
+            "label": "returns child PID to parent"
+          },
+          {
+            "from": "n3",
+            "to": "n4",
+            "label": "child replaces itself"
+          },
+          {
+            "from": "n4",
+            "to": "n5",
+            "label": "memory image replaced"
+          },
+          {
+            "from": "n5",
+            "to": "n6",
+            "label": "program completes"
+          },
+          {
+            "from": "n1",
+            "to": "n7",
+            "label": "parent blocks"
+          },
+          {
+            "from": "n6",
+            "to": "n7",
+            "label": "exit status sent"
+          },
+          {
+            "from": "n7",
+            "to": "n8",
+            "label": "status collected"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "fork() Return Values",
+      "type": "table",
+      "content": {
+        "headers": ["Context", "Return Value", "Meaning"],
+        "rows": [
+          [
+            "Parent process",
+            "Child PID (positive integer)",
+            "fork succeeded, this is the child's PID"
+          ],
+          ["Child process", "0", "fork succeeded, this is the child"],
+          ["Error", "-1", "fork failed, no child created"]
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "exec() Family Naming Convention",
+      "type": "table",
+      "content": {
+        "headers": ["Suffix", "Meaning", "Example"],
+        "rows": [
+          ["l", "Arguments passed as list", "execl, execlp, execle"],
+          ["v", "Arguments passed as array (vector)", "execv, execvp, execve"],
+          ["p", "Searches PATH for executable", "execlp, execvp"],
+          ["e", "Custom environment specified", "execle, execve"]
+        ]
+      }
+    }
+  ]
+}

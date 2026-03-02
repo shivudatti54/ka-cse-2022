@@ -1,0 +1,35 @@
+{
+  "topicId": "classical-and-computer-viewing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Viewing Transformation Matrix Generation",
+      "description": "Algorithm to generate the viewing transformation matrix from VRP, VPN, and VUP",
+      "code": "FUNCTION GenerateViewMatrix(VRP, VPN, VUP):\n // Step 1: Translation to move VRP to origin\n T = TranslateMatrix(-VRP.x, -VRP.y, -VPN.z)\n \n // Step 2: Rotation to align VPN with -Z axis\n // Compute temporary axis\n R = RotationMatrix(tempX, tempY, tempZ)\n \n // Step 3: Ensure VUP aligns with Y after rotation\n // Combine transformations\n ViewMatrix = T * R\n \n RETURN ViewMatrix\n\n// Usage\nviewMatrix = GenerateViewMatrix(\n VRP = (0, 0, 10),\n VPN = (0, 0, -1),\n VUP = (0, 1, 0)\n)\nworldPoint = Transform(worldPoint, viewMatrix)",
+      "explanation": "The viewing transformation converts world coordinates to camera-relative coordinates by translating the VRP to origin and rotating to align the viewing direction with the -Z axis.",
+      "timeComplexity": "O(1) per transformation",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Perspective Projection Matrix",
+      "description": "Generates the perspective projection matrix with near and far planes",
+      "code": "FUNCTION PerspectiveMatrix(fov, aspect, near, far):\n // fov: field of view angle\n // aspect: width/height ratio\n // near, far: clipping planes\n \n f = 1.0 / tan(fov / 2.0)\n \n // Build perspective transformation matrix\n matrix[0][0] = f / aspect\n matrix[1][1] = f\n matrix[2][2] = (far + near) / (near - far)\n matrix[2][3] = (2 * far * near) / (near - far)\n matrix[3][2] = -1.0\n matrix[3][3] = 0.0\n \n RETURN matrix\n\n// Usage\nprojMatrix = PerspectiveMatrix(\n fov = 60 degrees,\n aspect = 16/9,\n near = 0.1,\n far = 100.0\n)",
+      "explanation": "The perspective matrix transforms coordinates such that x' = x/z and y' = y/z, creating the depth effect where objects appear smaller with distance.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Window to Viewport Transformation",
+      "description": "Maps coordinates from world window to screen viewport",
+      "code": "FUNCTION WindowToViewport(xw, yw, window, viewport):\n // window: {xmin, xmax, ymin, ymax} in world coords\n // viewport: {xmin, xmax, ymin, ymax} in screen coords\n \n // Calculate scaling factors\n sx = (viewport.xmax - viewport.xmin) / (window.xmax - window.xmin)\n sy = (viewport.ymax - viewport.ymin) / (window.ymax - window.ymin)\n \n // Calculate translation offsets\n tx = viewport.xmin - window.xmin * sx\n ty = viewport.ymin - window.ymin * sy\n \n // Transform point\n xv = xw * sx + tx\n yv = yw * sy + ty\n \n RETURN (xv, yv)\n\n// Example usage\nscreenPos = WindowToViewport(\n xw = 50, yw = 50,\n window = {xmin: 0, xmax: 100, ymin: 0, ymax: 100},\n viewport = {xmin: 0, xmax: 640, ymin: 0, ymax: 480}\n)",
+      "explanation": "This transformation scales and translates world coordinates to screen positions, maintaining the relative position within the window.",
+      "timeComplexity": "O(1) per point",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

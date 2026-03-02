@@ -1,0 +1,140 @@
+{
+  "topicId": "file-sharing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of file sharing semantics in operating systems. What are the different types of semantics?",
+      "keyPoints": [
+        "File sharing semantics define behavior when multiple processes access same file",
+        "UNIX semantics: changes immediately visible to all processes with file open",
+        "Session semantics: changes visible only after file is closed and reopened",
+        "Immutable semantics: once opened, file cannot be modified",
+        "Append semantics: only append operations allowed"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between exclusive (write) locks and shared (read) locks in file systems.",
+      "keyPoints": [
+        "Exclusive lock: only one process can access file for writing; blocks all other access",
+        "Shared lock: multiple processes can read simultaneously; blocks exclusive locks",
+        "Purpose: prevent data inconsistency during concurrent access",
+        "Release: both locks must be released after use"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is a deadlock in the context of file sharing? Explain the four necessary conditions for deadlock.",
+      "keyPoints": [
+        "Deadlock: circular wait where processes wait for locks held by each other",
+        "Mutual Exclusion: locks are non-sharable resources",
+        "Hold and Wait: processes hold locks while waiting for additional locks",
+        "No Preemption: locks cannot be forcibly taken away",
+        "Circular Wait: circular chain of processes each waiting for lock held by next"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the readers-writers problem. How does writer priority help prevent writer starvation?",
+      "keyPoints": [
+        "Readers-writers: multiple readers allowed simultaneously, writers need exclusive access",
+        "Writer starvation: readers keep arriving, writer never gets access",
+        "Writer priority solution: when writer is waiting, block new readers from starting",
+        "This ensures queued writer gets access once current readers finish",
+        "Fairness: balances concurrency with preventing indefinite waiting"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain copy-on-write (COW) technique in file sharing. How does it improve efficiency?",
+      "keyPoints": [
+        "COW: multiple processes share same data pages initially",
+        "No immediate copying of entire file on fork() or shared access",
+        "Copy created only when a process modifies data",
+        "Original data preserved for other processes",
+        "Reduces memory overhead and improves performance for read-heavy workloads"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between mandatory locking and advisory locking in UNIX systems.",
+      "keyPoints": [
+        "Advisory: OS provides lock mechanisms but doesn't enforce; processes must voluntarily check",
+        "Mandatory: OS enforces locks at kernel level; blocks unauthorized access",
+        "Mandatory requires special file permission (setgid + setgid bit)",
+        "Advisory is default in most UNIX systems",
+        "Mandatory can cause unexpected blocking of uncooperative processes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are file leases in distributed file systems? How do they improve consistency?",
+      "keyPoints": [
+        "Lease: time-limited lock granted to client in distributed systems",
+        "Client gets exclusive access for specified duration (e.g., 30-60 seconds)",
+        "Lease automatically expires after timeout",
+        "Server can grant file to another client after expiration",
+        "Improves consistency by preventing indefinite locks in distributed environment"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider two processes P1 and P2 both trying to access a shared file. Process P1 acquires a shared lock and later wants to upgrade it to an exclusive lock. Process P2 also wants to acquire a shared lock. Analyze potential deadlock scenarios and suggest solutions to prevent deadlock during lock upgrade.",
+      "keyPoints": [
+        "Deadlock Scenario: P1 has shared lock, wants exclusive; P2 has shared lock, wants exclusive upgrade",
+        "Both wait for each other's shared lock to release - circular wait",
+        "Solution 1: Upgrade should not wait - return error if cannot upgrade immediately",
+        "Solution 2: Release all locks before acquiring new lock (non-atomic but safer)",
+        "Solution 3: Use lock conversion primitives that handle this atomically",
+        "Prevent Hold-and-Wait: Acquire exclusive lock first before releasing shared",
+        "Prevent Circular Wait: Define lock acquisition order (total ordering)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a solution for the readers-writers problem with writer priority using semaphores. Explain how your solution prevents both reader starvation and writer starvation.",
+      "keyPoints": [
+        "Use: mutex (for readcount), rw_mutex (for writers), turnstile/queue for fairness",
+        "Variables: readcount (number of readers), mutex (protects readcount)",
+        "Writer priority: when writer waiting, new readers blocked at entry",
+        "Implementation: check if writer waiting before allowing new readers",
+        "Prevent writer starvation: queue ensures fair ordering",
+        "Prevent reader starvation (under no-writer scenario): allow concurrent readers",
+        "Uses semaphores: binary for mutual exclusion, counting for resource access"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the different file sharing semantics used in operating systems. Compare UNIX semantics, session semantics, and immutable semantics with respect to consistency, performance, and use cases.",
+      "keyPoints": [
+        "UNIX semantics: immediate visibility - writes visible to all processes with file open",
+        "Session semantics: changes visible to other users only after file close-reopen",
+        "Immutable semantics: file cannot be modified after creation - maximum consistency",
+        "Performance: UNIX most expensive (synchronization), immutable least (no locking)",
+        "Use cases: UNIX for local files, session for distributed workstations, immutable for configuration files",
+        "Trade-offs: consistency vs performance vs complexity",
+        "Considerations: caching, network delays, failure recovery"
+      ],
+      "marks": 10
+    }
+  ]
+}

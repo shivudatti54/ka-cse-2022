@@ -1,0 +1,55 @@
+{
+  "topicId": "wait4-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic wait() Usage",
+      "description": "Demonstrates basic wait() to prevent zombie process",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n \n if (pid == 0) {\n // Child process\n printf(\"Child (PID: %d) running...\\n\", getpid());\n sleep(2);\n printf(\"Child exiting with status 42\\n\");\n exit(42); // Exit with status 42\n } else {\n // Parent process\n int status;\n printf(\"Parent waiting for child (PID: %d)\\n\", pid);\n pid_t child_pid = wait(&status);\n \n if (child_pid > 0) {\n if (WIFEXITED(status)) {\n printf(\"Child %d exited normally with status: %d\\n\",\n child_pid, WEXITSTATUS(status));\n } else {\n printf(\"Child was killed by signal %d\\n\", WTERMSIG(status));\n }\n }\n }\n return 0;\n}",
+      "explanation": "This program forks a child process. The child does some work and exits with status 42. The parent calls wait() which blocks until the child terminates, then retrieves the exit status using WIFEXITED and WEXITSTATUS macros.",
+      "timeComplexity": "O(n) where n is time child runs",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "waitpid() with WNOHANG for Non-blocking Wait",
+      "description": "Shows how to use waitpid() with WNOHANG to avoid blocking",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n \n if (pid == 0) {\n // Child process - simulate long work\n printf(\"Child working...\\n\");\n sleep(5);\n exit(0);\n } else {\n // Parent - do other work while checking child\n int status;\n pid_t result;\n \n while ((result = waitpid(pid, &status, WNOHANG)) == 0) {\n printf(\"Parent: Child still running, doing other work...\\n\");\n sleep(1); // Do some other work\n }\n \n if (result > 0) {\n printf(\"Child finished! Status: %d\\n\", WEXITSTATUS(status));\n } else if (result == -1) {\n perror(\"waitpid error\");\n }\n }\n return 0;\n}",
+      "explanation": "The parent uses WNOHANG to check if child has terminated without blocking. This allows the parent to do other work while periodically checking the child's status. When waitpid() returns a positive value, the child has terminated.",
+      "timeComplexity": "O(child_runtime) with polling overhead",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "wait4() with Resource Usage",
+      "description": "Demonstrates wait4() to get resource usage information about child",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n#include <sys/resource.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n \n if (pid == 0) {\n // Child - do some CPU intensive work\n long sum = 0;\n for (int i = 0; i < 1000000; i++) {\n sum += i;\n }\n printf(\"Child computed: %ld\\n\", sum);\n exit(0);\n } else {\n // Parent - wait for child and get resource usage\n int status;\n struct rusage usage;\n \n pid_t result = wait4(pid, &status, 0, &usage);\n \n if (result > 0) {\n printf(\"Child PID: %d\\n\", result);\n printf(\"User CPU time: %ld.%06ld sec\\n\",\n usage.ru_utime.tv_sec, usage.ru_utime.tv_usec);\n printf(\"System CPU time: %ld.%06ld sec\\n\",\n usage.ru_stime.tv_sec, usage.ru_stime.tv_usec);\n printf(\"Max resident set size: %ld KB\\n\", usage.ru_maxrss);\n \n if (WIFEXITED(status)) {\n printf(\"Exit status: %d\\n\", WEXITSTATUS(status));\n }\n }\n }\n return 0;\n}",
+      "explanation": "wait4() is used to wait for a specific child process (by pid) and retrieve resource usage information including user CPU time, system CPU time, and maximum memory usage (ru_maxrss).",
+      "timeComplexity": "O(child_runtime)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Handling Multiple Children with waitpid()",
+      "description": "Parent creates multiple children and waits for all to complete",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n int num_children = 3;\n pid_t pids[num_children];\n \n // Create multiple child processes\n for (int i = 0; i < num_children; i++) {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n \n if (pid == 0) {\n // Each child does different work and exits with different status\n printf(\"Child %d (PID: %d) starting work...\\n\", i, getpid());\n sleep(i + 1); // Different sleep times\n int exit_status = (i + 1) * 10;\n printf(\"Child %d exiting with status %d\\n\", i, exit_status);\n exit(exit_status);\n } else {\n pids[i] = pid; // Store child PID\n }\n }\n \n // Parent waits for all children using waitpid with WNOHANG\n int remaining = num_children;\n int status;\n \n while (remaining > 0) {\n pid_t child = waitpid(-1, &status, WNOHANG);\n \n if (child > 0) {\n remaining--;\n if (WIFEXITED(status)) {\n printf(\"Parent: Child %d exited with status %d\\n\",\n child, WEXITSTATUS(status));\n } else {\n printf(\"Parent: Child %d killed by signal %d\\n\",\n child, WTERMSIG(status));\n }\n } else if (child == 0) {\n // No child has exited yet, do parent work\n printf(\"Parent doing other work...\\n\");\n sleep(1);\n } else {\n // Error\n perror(\"waitpid error\");\n break;\n }\n }\n \n printf(\"All children collected. Parent exiting.\\n\");\n return 0;\n}",
+      "explanation": "This demonstrates creating multiple child processes and waiting for all of them to complete using waitpid() with pid=-1 and WNOHANG option. The parent can do other work while periodically checking for terminated children.",
+      "timeComplexity": "O(max_child_runtime)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "SIGCHLD Handler to Prevent Zombies",
+      "description": "Using signal handler to automatically collect child status",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n#include <signal.h>\n\nvoid sigchld_handler(int sig) {\n int status;\n pid_t pid;\n \n // Reap all terminated children\n while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {\n if (WIFEXITED(status)) {\n printf(\"Handler: Child %d exited with status %d\\n\",\n pid, WEXITSTATUS(status));\n }\n }\n}\n\nint main() {\n // Install signal handler for SIGCHLD\n struct sigaction sa;\n sa.sa_handler = sigchld_handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;\n \n if (sigaction(SIGCHLD, &sa, NULL) == -1) {\n perror(\"sigaction\");\n exit(1);\n }\n \n // Fork some children\n for (int i = 0; i < 3; i++) {\n pid_t pid = fork();\n \n if (pid == 0) {\n // Child\n sleep(1);\n printf(\"Child %d exiting\\n\", getpid());\n exit(i);\n }\n }\n \n // Parent continues with other work\n // Children will be reaped by signal handler\n for (int i = 0; i < 5; i++) {\n printf(\"Parent doing work %d\\n\", i);\n sleep(1);\n }\n \n printf(\"Parent exiting\\n\");\n return 0;\n}",
+      "explanation": "A SIGCHLD handler automatically reaps zombie children when they terminate. Using WNOHANG inside the handler ensures we don't block. This prevents zombies without explicitly waiting in the main code.",
+      "timeComplexity": "O(n) for n children",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

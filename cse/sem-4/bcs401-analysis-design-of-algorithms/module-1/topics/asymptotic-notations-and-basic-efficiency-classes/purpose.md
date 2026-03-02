@@ -1,0 +1,1 @@
+To provide a comprehensive formal treatment of asymptotic notations and efficiency classes for B.Tech/MSc/MCA students, enabling them to analyze algorithm complexity with mathematical rigor and apply these concepts to compare algorithmic efficiency.

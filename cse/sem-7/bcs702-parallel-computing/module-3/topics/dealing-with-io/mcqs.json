@@ -1,0 +1,130 @@
+{
+  "topicId": "dealing-with-io",
+  "mcqs": [
+    {
+      "id": "q1",
+      "question": "In parallel computing, what is the primary challenge associated with I/O operations?",
+      "options": [
+        {
+          "key": "A",
+          "text": "I/O operations are inherently sequential and can become a performance bottleneck."
+        },
+        {
+          "key": "B",
+          "text": "I/O operations require specialized programming languages."
+        },
+        {
+          "key": "C",
+          "text": "I/O operations cannot be performed on distributed memory systems."
+        },
+        {
+          "key": "D",
+          "text": "I/O operations are faster than computation, causing idle processors."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "I/O operations often involve accessing a shared, slow resource (like a disk), which is fundamentally sequential. In a parallel system where many processors might need to read or write data simultaneously, this can create a major bottleneck, slowing down the entire application.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q2",
+      "question": "Which technique involves having a single process, often called the 'I/O aggregator', handle all read and write operations on behalf of the other processes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Collective I/O"
+        },
+        {
+          "key": "B",
+          "text": "Parallel File Systems"
+        },
+        {
+          "key": "C",
+          "text": "Master-Slave I/O"
+        },
+        {
+          "key": "D",
+          "text": "Data Sieving"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In the Master-Slave I/O model, a designated master process is responsible for all communication with the storage system. Other processes send their data to or receive it from the master, which serializes the requests. This simplifies coordination but can make the master a severe bottleneck.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q3",
+      "question": "What is the main goal of the Two-Phase I/O strategy?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To break a large I/O operation into two smaller, faster steps."
+        },
+        {
+          "key": "B",
+          "text": "To combine small, non-contiguous I/O requests from multiple processes into a few large, contiguous requests."
+        },
+        {
+          "key": "C",
+          "text": "To use two different file systems for redundancy during I/O."
+        },
+        {
+          "key": "D",
+          "text": "To perform a read operation in the first phase and a write operation in the second phase."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Two-Phase I/O is a collective I/O strategy designed to optimize performance. In the first phase, processes rearrange data among themselves. In the second phase, they perform large, contiguous writes to disk (or vice versa for reads). This avoids the inefficiency of many small, scattered I/O requests.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q4",
+      "question": "A parallel application running on 100 processors needs to write a large array distributed across all processes to a single file. Each process holds a small, non-contiguous piece of the final array. Which I/O interface is specifically designed to efficiently handle this 'non-contiguous' data pattern?",
+      "options": [
+        {
+          "key": "A",
+          "text": "POSIX I/O"
+        },
+        {
+          "key": "B",
+          "text": "MPI_File_write"
+        },
+        {
+          "key": "C",
+          "text": "MPI_File_write_at"
+        },
+        {
+          "key": "D",
+          "text": "MPI_File_write_all"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "MPI_IO provides the `MPI_File_write_all` function (and its collective counterparts) which allows each process to define a 'view' of the file using an MPI datatype. This view describes the non-contiguous pieces of data it owns. The MPI-IO implementation can then use this information to optimize the data access pattern, often by orchestrating a Two-Phase I/O operation behind the scenes.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "q5",
+      "question": "Considering the concept of 'data sieving' in MPI-IO, what is its primary mechanism for improving read performance for non-contiguous access patterns?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It compresses data before writing it to disk to reduce transfer size."
+        },
+        {
+          "key": "B",
+          "text": "It reads a large contiguous chunk of data into a temporary buffer and then extracts the needed non-contiguous pieces, reducing the number of actual read calls."
+        },
+        {
+          "key": "C",
+          "text": "It uses a probabilistic algorithm to guess which data will be needed next and pre-fetches it."
+        },
+        {
+          "key": "D",
+          "text": "It sieves out corrupted data blocks before they are read by the application."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Data sieving is an optimization where, instead of issuing many small I/O requests for non-contiguous data, the runtime reads a large, contiguous block (e.g., an entire row of a matrix) into a temporary buffer in memory. The application process then directly accesses the specific elements it needs from this buffer. This trades increased memory usage for a massive reduction in the number of expensive I/O system calls.",
+      "difficulty": "medium"
+    }
+  ]
+}

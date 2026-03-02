@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the concept of the copy constructor in C++. Why is it necessary, and what potential issue does it solve that a default member-wise copy might create?",
+    "expectedPoints": [
+      "A copy constructor is a special constructor that creates a new object as a copy of an existing object.",
+      "It is necessary for proper deep copying when a class contains dynamically allocated memory (e.g., pointers).",
+      "The default member-wise (shallow) copy would simply copy the pointer value, leading to multiple objects pointing to the same memory location, causing dangling pointers and double-free errors upon destruction."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the difference between object assignment and object initialization in C++. Provide a code snippet example for each case.",
+    "expectedPoints": [
+      "Initialization occurs when a new object is being created. Assignment occurs when a value is assigned to an already existing object.",
+      "Example of initialization (invokes copy constructor): `MyClass obj1 = obj2;` or `MyClass obj1(obj2);`",
+      "Example of assignment (invokes overloaded assignment operator): `MyClass obj1; obj1 = obj2;`"
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A class `String` contains a private member `char *str;` that points to a dynamically allocated C-style string. Outline the necessary steps to correctly implement the copy assignment operator (`operator=`) for this class to ensure exception-safe self-assignment handling and proper resource management.",
+    "expectedPoints": [
+      "Check for self-assignment: `if (this == &rhs) return *this;`",
+      "Deallocate the existing dynamically allocated memory for the current object: `delete[] str;`",
+      "Allocate new memory for the copy: `str = new char[strlen(rhs.str) + 1];`",
+      "Copy the data from the source object: `strcpy(str, rhs.str);`",
+      "Return a reference to the current object to allow for chaining: `return *this;`",
+      "Consider the strong exception guarantee by allocating the new memory before freeing the old, or using a copy-and-swap idiom."
+    ],
+    "marks": 10
+  }
+]

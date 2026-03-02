@@ -1,0 +1,35 @@
+{
+  "topicId": "the-programmers-interface",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Shader Program Creation",
+      "description": "Step-by-step process to create and use a shader program in OpenGL",
+      "code": "// Step 1: Create shader objects\nvertexShader = glCreateShader(GL_VERTEX_SHADER)\nfragmentShader = glCreateShader(GL_FRAGMENT_SHADER)\n\n// Step 2: Load and compile shader source\nglShaderSource(vertexShader, vertexShaderSource)\nglCompileShader(vertexShader)\nglShaderSource(fragmentShader, fragmentShaderSource)\nglCompileShader(fragmentShader)\n\n// Step 3: Check compilation errors\nif glGetShaderiv(vertexShader, GL_COMPILE_STATUS) == GL_FALSE:\n logError(glGetShaderInfoLog(vertexShader))\n\n// Step 4: Create and link program\nprogram = glCreateProgram()\nglAttachShader(program, vertexShader)\nglAttachShader(program, fragmentShader)\nglLinkProgram(program)\n\n// Step 5: Use the program\nglUseProgram(program)\n\n// Step 6: Set uniforms\nmodelMatrix = createModelMatrix()\nglUniformMatrix4fv(glGetUniformLocation(program, \"uModel\"), 1, modelMatrix)\n\n// Step 7: Draw\nglDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)",
+      "explanation": "This pseudocode demonstrates the complete workflow of creating a shader program: creating shader objects, loading source code, compiling, checking for errors, attaching to a program, linking, and finally using it for rendering.",
+      "timeComplexity": "O(n) for shader compilation where n is shader source length",
+      "spaceComplexity": "O(1) for API calls, O(n) for shader storage in GPU memory"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Vertex Buffer Setup with VAO",
+      "description": "Modern OpenGL approach to setting up vertex buffers and attributes using Vertex Array Objects",
+      "code": "// Step 1: Generate and bind VAO\nvao = glGenVertexArray()\nglBindVertexArray(vao)\n\n// Step 2: Generate and bind VBO for positions\nvboPositions = glGenBuffer()\nglBindBuffer(GL_ARRAY_BUFFER, vboPositions)\nglBufferData(GL_ARRAY_BUFFER, positionData, GL_STATIC_DRAW)\n\n// Step 3: Set up position attribute\nglEnableVertexAttribArray(0) // attribute index 0\nglVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0)\n\n// Step 4: Generate and bind VBO for colors\nvboColors = glGenBuffer()\nglBindBuffer(GL_ARRAY_BUFFER, vboColors)\nglBufferData(GL_ARRAY_BUFFER, colorData, GL_STATIC_DRAW)\n\n// Step 5: Set up color attribute\nglEnableVertexAttribArray(1) // attribute index 1\nglVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0)\n\n// Step 6: Generate and bind IBO\nibo = glGenBuffer()\nglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)\nglBufferData(GL_ELEMENT_ARRAY_BUFFER, indexData, GL_STATIC_DRAW)\n\n// Step 7: Unbind (optional)\nglBindVertexArray(0)\n\n// Later, to draw:\nglBindVertexArray(vao)\nglDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)",
+      "explanation": "VAOs encapsulate all VBO bindings and attribute configurations. Once set up, a single glBindVertexArray() call restores the entire state, simplifying draw calls and state management.",
+      "timeComplexity": "O(n) where n is number of vertices",
+      "spaceComplexity": "O(n) for vertex data storage in GPU memory, O(1) for attribute pointers"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Frame Buffer Object Setup for Off-Screen Rendering",
+      "description": "Creating an FBO to render scene to a texture instead of the screen",
+      "code": "// Step 1: Create texture for color attachment\ncolorTexture = glGenTexture()\nglBindTexture(GL_TEXTURE_2D, colorTexture)\nglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL)\nglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)\nglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)\n\n// Step 2: Create depth renderbuffer\ndepthRB = glGenRenderbuffer()\nglBindRenderbuffer(GL_RENDERBUFFER, depthRB)\nglRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height)\n\n// Step 3: Create and configure FBO\nfbo = glGenFramebuffer()\nglBindFramebuffer(GL_FRAMEBUFFER, fbo)\n\n// Attach color texture\nglFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0)\n\n// Attach depth renderbuffer\nglFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRB)\n\n// Step 4: Check FBO completeness\nstatus = glCheckFramebufferStatus(GL_FRAMEBUFFER)\nif status != GL_FRAMEBUFFER_COMPLETE:\n logError(\"FBO incomplete\")\n\n// Step 5: Unbind FBO (return to default framebuffer)\nglBindFramebuffer(GL_FRAMEBUFFER, 0)\n\n// To render to FBO:\nglBindFramebuffer(GL_FRAMEBUFFER, fbo)\nglViewport(0, 0, width, height)\n// ... render scene ...\n\n// To render to screen:\nglBindFramebuffer(GL_FRAMEBUFFER, 0)\nglViewport(0, 0, screenWidth, screenHeight)\n// Use colorTexture for post-processing",
+      "explanation": "FBOs allow rendering to textures instead of the screen. This is essential for post-processing effects (bloom, blur), shadow mapping, reflections, and any multi-pass rendering technique.",
+      "timeComplexity": "O(width \u00d7 height) for rendering to FBO",
+      "spaceComplexity": "O(width \u00d7 height) for color texture + O(width \u00d7 height) for depth buffer"
+    }
+  ]
+}

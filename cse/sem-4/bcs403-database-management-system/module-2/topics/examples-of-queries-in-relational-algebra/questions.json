@@ -1,0 +1,139 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the Selection operation in Relational Algebra with an example.",
+    "expectedPoints": [
+      "Selection (\u03c3) extracts rows that satisfy a given predicate",
+      "Example: \u03c3dept='CS'(Student) selects all students from CS department",
+      "It filters tuples based on condition, does not change attributes"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What is the difference between Natural Join and Theta Join?",
+    "expectedPoints": [
+      "Natural Join joins on common attribute names with equal values",
+      "Theta Join uses any comparison operator (=, <, >, \u2264, \u2265, \u2260) as condition",
+      "Natural Join automatically removes duplicate common columns",
+      "Theta Join explicitly specifies join condition"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Write a Relational Algebra query to find names of employees who work in 'IT' department.",
+    "expectedPoints": [
+      "Use Selection \u03c3dept='IT'(Employee) to filter IT employees",
+      "Use Projection \u03c0name(...) to get only names",
+      "Combined: \u03c0name(\u03c3dept='IT'(Employee))"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain the Division operation with an example where it is appropriate to use.",
+    "expectedPoints": [
+      "Division returns tuples from first relation that match ALL tuples in second relation",
+      "Used for 'for all' type queries",
+      "Example: Find students who have enrolled in ALL courses",
+      "R(CourseID) \u00f7 S(CourseID) gives student IDs who took every course"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "What are the conditions required for two relations to perform Union operation?",
+    "expectedPoints": [
+      "Both relations must have same number of attributes",
+      "Corresponding attributes must have compatible domains (same type)",
+      "Result removes duplicate tuples",
+      "This property is called Union-compatibility"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain Left Outer Join with an example.",
+    "expectedPoints": [
+      "Left Outer Join preserves all tuples from the left relation",
+      "Tuples from right relation that don't match get NULL values",
+      "Example: Employee \u22c8 LEFT OUTER JOIN Department keeps all employees even if no department",
+      "Useful when you want all records from main table regardless of matches"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "How can Intersection be expressed using other basic Relational Algebra operations?",
+    "expectedPoints": [
+      "Intersection (R \u2229 S) can be expressed as R - (R - S)",
+      "First find tuples in R not in S, then subtract from R",
+      "This gives tuples present in both R and S",
+      "Also equivalent to R - (R - S) = \u03c3(R) \u2229 \u03c3(S)"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Consider the following relations: Employee(EID, Name, Salary, DeptID), Department(DeptID, DeptName). Write Relational Algebra queries for: (a) Find names of all employees (b) Find employee names working in 'Sales' department (c) Find departments with total salary > 50000 (d) Find employees who work in all departments.",
+    "expectedPoints": [
+      "(a) \u03c0Name(Employee) (b) \u03c0Name(\u03c3DeptName='Sales'(Employee \u22c8 Department)) (c) \u03c0DeptName(\u03c3sum>50000(DeptID\u2309Salary(Employee) \u22c8 Department)) (d) Employee \u00f7 \u03c0DeptID(Department) or use division"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Explain the step-by-step execution of Natural Join between two relations R(A,B) and S(B,C). Show how it is derived from basic operations.",
+    "expectedPoints": [
+      "Step 1: Cartesian Product R \u00d7 S creates all combinations",
+      "Step 2: Selection \u03c3R.B=S.B filters tuples where B values match",
+      "Step 3: Projection removes duplicate B column",
+      "Result: \u03c0A,R.B,C(\u03c3R.B=S.B(R \u00d7 S))",
+      "Natural Join = \u03c0(R.B)(\u03c3R.B=S.B(R \u00d7 S)) - combines all three steps"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Given relations: Student(SID, SName, Age), Enroll(SID, CID), Course(CID, CName). Write Relational Algebra queries to find: (a) Names of students enrolled in 'DBMS' course (b) Names of students who enrolled in ALL courses (c) Names of students who did not enroll in any course (d) Courses in which at least 2 students are enrolled.",
+    "expectedPoints": [
+      "(a) \u03c0SName(\u03c3CName='DBMS'(Student \u22c8 Enroll \u22c8 Course)) (b) \u03c0SName(Student) \u00f7 \u03c0CID(Course) for all courses (c) \u03c0SName(Student - \u03c0SID(Enroll)) using set difference (d) \u03c0CID(\u03c3count\u22652(\u2309count(CID)(Enroll)))) - uses grouping"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Compare and contrast Inner Join, Left Outer Join, Right Outer Join, and Full Outer Join with examples and their applications.",
+    "expectedPoints": [
+      "Inner Join: Returns only matching tuples from both relations",
+      "Left Outer Join: Preserves all left tuples, NULL for non-matching right",
+      "Right Outer Join: Preserves all right tuples, NULL for non-matching left",
+      "Full Outer Join: Preserves all tuples from both, NULL for non-matching side",
+      "Applications: Inner for exact matches, Outer when you need ALL records from one/both tables"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  }
+]

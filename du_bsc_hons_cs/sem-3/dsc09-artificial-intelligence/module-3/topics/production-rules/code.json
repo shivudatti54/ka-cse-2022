@@ -1,0 +1,35 @@
+{
+  "topicId": "production-rules",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Production System Interpreter",
+      "description": "Demonstrates the core Recognize-Act cycle of a production system",
+      "code": "PRODUCTION-SYSTEM()\n  WorkingMemory \u2190 []  // Initial empty WM\n  ProductionMemory \u2190 LOAD-RULES()  // Load all production rules\n  \n  REPEAT\n    // MATCH PHASE\n    ActivatedRules \u2190 []\n    FOR EACH rule IN ProductionMemory\n      IF MATCH-CONDITIONS(rule.conditions, WorkingMemory) THEN\n        ADD rule TO ActivatedRules\n      END IF\n    END FOR\n    \n    // CONFLICT RESOLUTION PHASE\n    IF ActivatedRules IS EMPTY THEN\n      RETURN FAILURE  // No rules can fire\n    END IF\n    SelectedRule \u2190 CONFLICT-RESOLUTION(ActivatedRules)\n    \n    // ACT PHASE\n    EXECUTE-ACTIONS(SelectedRule.actions)\n    \n  UNTIL Goal-Reached() OR ActivatedRules IS EMPTY\n  RETURN SUCCESS\nEND",
+      "explanation": "This pseudocode shows the three-phase cycle: MATCH finds all rules whose conditions match current facts, CONFLICT RESOLUTION selects one rule when multiple rules match, and ACT executes the selected rule's actions on working memory.",
+      "timeComplexity": "O(R \u00d7 F \u00d7 C) - where R=rules, F=facts, C=conditions per rule",
+      "spaceComplexity": "O(W + P) - where W=working memory size, P=production memory size"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Forward Chaining Implementation",
+      "description": "Python implementation of forward chaining algorithm for a simple production system",
+      "code": "class ProductionSystem:\n    def __init__(self):\n        self.working_memory = set()  # Current facts\n        self.rules = []  # List of (conditions, actions)\n    \n    def add_rule(self, conditions, actions):\n        \"\"\"Add a production rule: conditions is a set of facts,\n           actions is a list of facts to add\"\"\"\n        self.rules.append((conditions, actions))\n    \n    def forward_chain(self, goal=None):\n        \"\"\"Data-driven reasoning: infer new facts from known facts\"\"\"\n        fired_rules = []\n        \n        while True:\n            rule_fired = False\n            \n            for conditions, actions in self.rules:\n                # Check if all conditions are satisfied\n                if conditions.issubset(self.working_memory):\n                    # Check if this rule hasn't already fired\n                    if (conditions, actions) not in fired_rules:\n                        # Execute actions (add new facts)\n                        for action in actions:\n                            if action not in self.working_memory:\n                                self.working_memory.add(action)\n                                print(f\"Rule fired: {conditions} \u2192 {action}\")\n                        \n                        fired_rules.append((conditions, actions))\n                        rule_fired = True\n                        \n                        # Check if goal reached\n                        if goal and goal in self.working_memory:\n                            return True, self.working_memory\n            \n            if not rule_fired:\n                break  # No more rules can fire\n        \n        return goal is None or goal in self.working_memory, self.working_memory\n\n# Example usage\nps = ProductionSystem()\nps.working_memory = {'bird(penguin)', 'penguin(penguin)'}\nps.add_rule(\n    {'bird(X)', 'NOT penguin(X)'},  \n    {'flies(X)'}\n)\nps.add_rule(\n    {'penguin(X)'},\n    {'NOT flies(X)'}\n)\n\nreached, facts = ps.forward_chain()\nprint(f\"Final facts: {facts}\")",
+      "explanation": "This Python code implements forward chaining. It starts with initial facts in working memory and repeatedly finds rules whose conditions are satisfied, executing their actions to add new facts. The process continues until no more rules can fire or the goal is reached.",
+      "timeComplexity": "O(R \u00d7 I) where R=rules, I=inferences until fixpoint",
+      "spaceComplexity": "O(W + R) where W=working memory, R=number of rules"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Backward Chaining Implementation",
+      "description": "Java implementation of backward chaining for goal-driven reasoning",
+      "code": "import java.util.*;\n\npublic class BackwardChainer {\n    private Map<String, List<Rule>> ruleMap = new HashMap<>();\n    private Set<String> facts = new HashSet<>();\n    \n    static class Rule {\n        String conclusion;\n        Set<String> conditions;\n        \n        Rule(String conclusion, String... conditions) {\n            this.conclusion = conclusion;\n            this.conditions = new HashSet<>(Arrays.asList(conditions));\n        }\n    }\n    \n    public void addRule(Rule rule) {\n        ruleMap.computeIfAbsent(rule.conclusion, k -> new ArrayList<>()).add(rule);\n    }\n    \n    public void addFact(String fact) {\n        facts.add(fact);\n    }\n    \n    public boolean prove(String goal, Set<String> visited) {\n        if (facts.contains(goal)) return true;\n        if (visited.contains(goal)) return false;\n        visited.add(goal);\n        \n        List<Rule> rules = ruleMap.get(goal);\n        if (rules == null) return false;\n        \n        for (Rule rule : rules) {\n            boolean allProven = true;\n            for (String condition : rule.conditions) {\n                if (!prove(condition, new HashSet<>(visited))) {\n                    allProven = false;\n                    break;\n                }\n            }\n            if (allProven) {\n                System.out.println(\"Proved: \" + goal + \" using rule: \" + rule.conditions + \" \u2192 \" + goal);\n                facts.add(goal);\n                return true;\n            }\n        }\n        return false;\n    }\n    \n    public static void main(String[] args) {\n        BackwardChainer bc = new BackwardChainer();\n        bc.addFact(\"fever\");\n        bc.addFact(\"cough\");\n        bc.addRule(new Rule(\"cold\", \"fever\", \"cough\"));\n        bc.addRule(new Rule(\"flu\", \"fever\", \"body_ache\"));\n        \n        boolean result = bc.prove(\"cold\", new HashSet<>());\n        System.out.println(\"Goal proved: \" + result);\n    }\n}",
+      "explanation": "This Java implementation demonstrates backward chaining (goal-driven reasoning). It starts with a goal hypothesis and recursively tries to prove all required conditions. If a condition can't be proven from facts or rules, it backtracks and tries another rule.",
+      "timeComplexity": "O(B^d) where B=average branches, d=depth of proof tree",
+      "spaceComplexity": "O(d) for recursion stack plus O(W) for working memory"
+    }
+  ]
+}

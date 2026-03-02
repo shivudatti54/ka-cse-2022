@@ -1,0 +1,39 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of the `sigaction` function in Unix system programming?",
+    "expectedPoints": [
+      "To examine and/or change the action (handler) associated with a specific signal.",
+      "It provides a more robust and flexible interface for signal management compared to the older `signal` function.",
+      "It allows the programmer to specify additional flags and metadata about how the signal should be handled."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the key differences between the `sigaction` function and the older `signal` function. List and briefly describe at least three advantages of using `sigaction`.",
+    "expectedPoints": [
+      "Reliable Signal Semantics: `sigaction` provides well-defined, consistent behavior across different UNIX versions, unlike `signal` which has varying historical implementations.",
+      "Additional Control: `sigaction` allows the programmer to block additional signals while the handler is executing using the `sa_mask` field, preventing race conditions.",
+      "Access to Signal Information: The handler function used with `sigaction` can receive additional context about the signal (e.g., sender's PID, UID) if the `SA_SIGINFO` flag is set, using the `siginfo_t` structure.",
+      "Ability to Restore Handler: The `sa_flags` field provides the `SA_RESETHAND` option to mimic the old `signal` behavior of resetting the handler to default upon entry, or the `SA_RESTART` flag to automatically restart interrupted system calls."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Write a complete C code snippet that demonstrates the use of `sigaction` to set up a handler for the `SIGINT` signal (Ctrl-C). The handler should print a custom message \"Caught SIGINT!\\n\" and then reset the terminal settings and exit gracefully. Explain the purpose of each major component of the `struct sigaction` you use and how they contribute to the program's behavior.",
+    "expectedPoints": [
+      "Code should include necessary headers (`<stdio.h>`, `<signal.h>`, `<stdlib.h>`, `<unistd.h>`).",
+      "Declaration of a handler function that takes an `int` signal number and prints the message.",
+      "In `main()`, a `struct sigaction` variable (`new_action`, `old_action`) is declared and initialized.",
+      "The `new_action.sa_handler` field is set to the custom handler function.",
+      "`sigemptyset` is used to initialize the `new_action.sa_mask` to ensure no additional signals are blocked in the handler (or specific signals are added with `sigaddset`).",
+      "The `new_action.sa_flags` is set to 0, indicating no special flags (or explained if `SA_RESTART` or others are used).",
+      "A call to `sigaction(SIGINT, &new_action, &old_action)` is made to install the new handler, optionally saving the old one.",
+      "An infinite loop (`while(1) pause();` or `sleep()`) is used to keep the program running to receive the signal.",
+      "Explanation: The `sa_handler` defines the function to be called. The `sa_mask` ensures the handler is not interrupted by other specified signals. The `sa_flags` modify the behavior, such as restarting system calls. The call to `sigaction` implements the change."
+    ],
+    "marks": 10
+  }
+]

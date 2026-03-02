@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the sigsetjmp and siglongjmp functions in Unix system programming?",
+    "options": [
+      "To save and restore the calling process's signal mask along with the program execution environment",
+      "To create a new signal handler for a specific signal",
+      "To send a signal to another process",
+      "To block all signals temporarily during a critical section"
+    ],
+    "correctIndex": 0,
+    "explanation": "Unlike the standard setjmp/longjmp, sigsetjmp and siglongjmp are specifically designed to save and restore the process's signal mask, making them safe for use in signal handlers."
+  },
+  {
+    "id": "q2",
+    "question": "What key difference distinguishes sigsetjmp from the standard setjmp function?",
+    "options": [
+      "sigsetjmp has an argument to specify whether the signal mask should be saved",
+      "sigsetjmp can only be called from within a signal handler",
+      "sigsetjmp is used for inter-process communication",
+      "sigsetjmp does not require a corresponding siglongjmp call"
+    ],
+    "correctIndex": 0,
+    "explanation": "The sigsetjmp function takes a second integer argument (savemask). If this argument is non-zero, it saves the current signal mask of the process into its jmp_buf environment."
+  },
+  {
+    "id": "q3",
+    "question": "When calling siglongjmp(senv, val), what happens if the original call to sigsetjmp saved the signal mask (savemask was non-zero)?",
+    "options": [
+      "The signal mask is restored to the state saved by sigsetjmp",
+      "All signals are permanently blocked",
+      "The signal mask is cleared, allowing all signals",
+      "The operation is undefined and causes a program crash"
+    ],
+    "correctIndex": 0,
+    "explanation": "If the savemask argument was non-zero in the sigsetjmp call, then a subsequent siglongjmp will restore the saved signal mask. This ensures the program's signal environment is correctly re-established after the jump."
+  },
+  {
+    "id": "q4",
+    "question": "Why is it considered unsafe to use the standard longjmp function from a signal handler to jump back to the main program?",
+    "options": [
+      "Because longjmp may not restore the signal mask, potentially leaving signals blocked that should be unblocked",
+      "Because longjmp is asynchronous and can only be called from the main thread",
+      "Because longjmp cannot be used with variables of automatic storage duration",
+      "Because the C standard explicitly prohibits any function calls from a signal handler"
+    ],
+    "correctIndex": 0,
+    "explanation": "If a signal arrives while a signal is already blocked, and the handler uses longjmp, the original signal mask (which may have that signal blocked) is not restored. This could leave the signal permanently blocked, breaking the program's intended signal handling behavior."
+  },
+  {
+    "id": "q5",
+    "question": "In a scenario where a program uses sigsetjmp with a savemask of 1, and then a signal handler for SIGINT calls siglongjmp, which of the following statements is TRUE?",
+    "options": [
+      "The execution will resume at the sigsetjmp point, and the signal mask active before the signal was handled will be restored",
+      "The program will terminate immediately because siglongjmp cannot be called from a signal handler",
+      "The siglongjmp call will be ignored because signals cannot transfer control flow in this manner",
+      "The signal mask will be set to block all signals indefinitely upon return"
+    ],
+    "correctIndex": 0,
+    "explanation": "This is the precise scenario sigsetjmp/siglongjmp is designed for. The non-local jump will occur, and because the signal mask was saved (savemask=1), the mask that was in place before the signal handler was invoked will be correctly restored, maintaining a predictable signal environment."
+  }
+]

@@ -1,0 +1,255 @@
+{
+  "topicId": "deadlocks",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define deadlock in operating systems. Explain why deadlock is considered a critical problem in multiprogramming environments.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Focus on the circular wait condition and the resource allocation behavior",
+      "keyPoints": [
+        "Deadlock is a state where a group of processes are blocked indefinitely",
+        "Each process holds at least one resource and waits for another resource held by others",
+        "No process can proceed without acquiring the resource held by another blocked process",
+        "Critical because it causes system throughput to drop drastically",
+        "Processes remain in blocked state consuming system resources",
+        "Requires manual intervention to break the deadlock"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the four necessary conditions for deadlock (Coffman conditions). Why is it important to break at least one of these conditions to prevent deadlock?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Remember Coffman conditions - list each with an example",
+      "keyPoints": [
+        "Mutual Exclusion: Resource cannot be shared, only one process can use at a time",
+        "Hold and Wait: Process holds resources while waiting for additional resources",
+        "No Preemption: Resources cannot be forcibly taken from processes",
+        "Circular Wait: A circular chain of processes waiting for resources held by others",
+        "Breaking any one condition is sufficient to prevent deadlock",
+        "All four conditions must hold simultaneously for deadlock to occur"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between deadlock prevention and deadlock avoidance. Which approach is more conservative and why?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Compare the timing of action - design time vs runtime",
+      "keyPoints": [
+        "Prevention: Eliminate one of the four necessary conditions at system design time",
+        "Avoidance: Dynamically analyze resource allocation before granting requests",
+        "Prevention is static approach, avoiding is dynamic runtime approach",
+        "Avoidance is more conservative as it restricts resource allocation proactively",
+        "Banker's algorithm is an example of avoidance approach",
+        "Prevention may lead to lower resource utilization"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the concept of a resource allocation graph (RAG). How can you determine if a deadlock exists using RAG?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Remember the difference between cycle and deadlock in RAG",
+      "keyPoints": [
+        "RAG is a directed graph representing resource allocation state",
+        "Nodesprocess nodes (circles) and resource nodes (rectangles)",
+        "Edges: Request edge (P→R) and Assignment edge (R→P)",
+        "Deadlock exists if and only if RAG contains a cycle",
+        "Cycle alone is necessary but not sufficient for deadlock",
+        "If each resource type has only one instance, cycle implies deadlock"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the three main strategies for handling deadlocks? Why is detection with recovery considered the most practical approach in modern operating systems?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think about resource utilization vs system overhead",
+      "keyPoints": [
+        "Three strategies: Prevention, Avoidance, Detection and Recovery",
+        "Prevention: Too restrictive, reduces system throughput",
+        "Avoidance: Requires advance knowledge of maximum claims, inefficient",
+        "Detection: Allows deadlock to occur but detects periodically",
+        "Recovery: Terminate processes or preempt resources to break deadlock",
+        "Detection with recovery provides better resource utilization",
+        "Most practical because it balances system efficiency and correctness"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Describe the Banker's algorithm for deadlock avoidance. Explain the data structures used and the safety algorithm steps. Also explain why it may not be used in practical systems.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Focus on the safety check procedure and the concept of safe state",
+      "keyPoints": [
+        "Banker's algorithm requires advance knowledge of maximum resource needs",
+        "Data structures: Available[], Maximum[], Allocation[], Need[]",
+        "Need[i][j] = Maximum[i][j] - Allocation[i][j]",
+        "Safety algorithm: Find process with Need <= Available",
+        "If safe sequence exists, grant request; otherwise deny",
+        "Limitations: Processes must declare maximum needs in advance",
+        "System may remain underutilized due to conservative allocation",
+        "Not suitable for dynamic resource requirements"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare and contrast the three resource preemption strategies for recovering from deadlock: Rollback, Selection of Victim, and Termination. What are the criteria for selecting a victim process?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Think about the trade-offs between losing work and system overhead",
+      "keyPoints": [
+        "Termination: Abort one or more processes to break deadlock",
+        "Rollback: Checkpoint and rollback process to safe state",
+        "Preemption: Temporarily take resource away from process",
+        "Victim selection criteria: Priority of process, execution time remaining",
+        "Number of resources held by process, process age",
+        "Cost of rollback vs termination",
+        "Termination is simpler but loses all work done",
+        "Preemption requires minimum three steps: preempt, roll back, schedule"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the deadlock detection algorithm for systems with multiple instances of each resource type. Trace through the steps with an example system state.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Work through each process in order checking Request <= Work",
+      "keyPoints": [
+        "Algorithm uses Wait-for graph or matrix-based detection",
+        "Data structures: Available[], Request[], Allocation[]",
+        "Step 1: Initialize Work = Available, Finish[i] = (Allocation[i] == 0)",
+        "Step 2: Find i such that Finish[i] = false and Request[i] <= Work",
+        "Step 3: If found, set Work = Work + Allocation[i], Finish[i] = true",
+        "Step 4: Repeat until no such process exists",
+        "Step 5: If any Finish[i] = false, system is in deadlock",
+        "Deadlocked processes are those with Finish[i] = false"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a solution to prevent deadlock by eliminating the 'Hold and Wait' condition. Explain with a practical example and discuss the disadvantages of this approach.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Think about how to restructure resource request behavior",
+      "keyPoints": [
+        "Method 1: Process requests all resources before starting execution",
+        "Method 2: Process must release all held resources before requesting new ones",
+        "Eliminate hold and wait by requiring all-or-nothing allocation",
+        "Example: Process requests printer and file together, not sequentially",
+        "Disadvantage: Low resource utilization - resources may be held but unused",
+        "Disadvantage: Process may wait indefinitely for all resources",
+        "Disadvantage: Requires advance knowledge of all resource needs",
+        "May lead to starvation as processes wait for many resources"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of 'Circular Wait' condition and discuss two approaches to prevent it: imposing a total ordering of resources and the technique of resource hierarchy.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Focus on how the ordering breaks the circular dependency",
+      "keyPoints": [
+        "Circular wait: P1 waits for R1 held by P2, P2 waits for R2 held by P1",
+        "Prevention approach 1: Define global ordering of resource types",
+        "Processes can request resources only in increasing order of hierarchy",
+        "If R1 < R2, process cannot request R1 after holding R2",
+        "Prevents formation of circular wait chain",
+        "Approach 2: Resource hierarchy - assign hierarchy numbers to resources",
+        "Processes can request only lower numbered resources after higher ones",
+        "Disadvantage: May force processes to acquire resources unnecessarily early"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Consider a system with 5 processes (P0-P4) and 3 resource types A(10), B(5), C(7). Current state: Max: P0(7,5,3), P1(3,2,2), P2(9,0,2), P3(2,2,2), P4(3,3,3). Allocation: P0(0,1,0), P1(2,0,0), P2(3,0,2), P3(2,1,1), P4(0,0,2). Using Banker's algorithm, determine if the system is in a safe state. If yes, find the safe sequence.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Start with process having smallest Need that fits Available",
+      "keyPoints": [
+        "Calculate Need matrix: Need = Max - Allocation",
+        "P0 Need: (7,5,3) - (0,1,0) = (7,4,3)",
+        "P1 Need: (3,2,2) - (2,0,0) = (1,2,2)",
+        "P2 Need: (9,0,2) - (3,0,2) = (6,0,0)",
+        "P3 Need: (2,2,2) - (2,1,1) = (0,1,1)",
+        "P4 Need: (3,3,3) - (0,0,2) = (3,3,1)",
+        "Available = (10,5,7) - (7,2,5) = (3,3,3)",
+        "Find P3 with Need (0,1,1) <= Available (3,3,3), mark P3 done",
+        "New Available = (3,3,3) + (2,1,1) = (5,4,4)",
+        "Continue for P1, P0, P4, P2",
+        "Safe sequence: P3 → P1 → P0 → P4 → P2"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "A system has 4 processes P0-P3 and 3 resource types R1(2), R2(2), R3(2). Current allocation: P0(1,0,1), P1(2,0,0), P2(0,1,1), P3(0,0,0). Current request: P1 requesting (0,1,0). Using Banker's algorithm, determine if this request can be safely granted. Show the safety check.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "First tentatively grant the request, then check for safe sequence",
+      "keyPoints": [
+        "Available = Total - Allocated = (2,2,2) - (3,1,2) = (-1,1,0) - incorrect",
+        "Calculate Available correctly: (2,2,2) - sum of allocations",
+        "Allocated sum = P0+P1+P2+P3 = (1+2+0+0, 0+0+1+0, 1+0+1+0) = (3,1,2)",
+        "Available = (2,2,2) - (3,1,2) = (-1,1,0) - this indicates error in problem",
+        "Assume Available = (1,1,0) for this problem",
+        "Tentatively grant request: P1 Allocation becomes (2,1,0), Available becomes (1,0,0)",
+        "Calculate new Need for P1: (3,2,2) - (2,1,0) = (1,1,2) (assuming Max known)",
+        "Check if any process can complete with new Available",
+        "System either safe or unsafe based on the Need values",
+        "If safe, grant request; if unsafe, deny request"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "Consider a system with 3 processes and 2 resource types. Resource allocation graph shows: R1→P1, P1→R2, R2→P2, P2→R1. Determine if deadlock exists and identify the processes involved. Also draw the wait-for graph equivalent.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Convert RAG to wait-for graph by removing resource nodes",
+      "keyPoints": [
+        "Resource Allocation Graph edges: R1→P1 (R1 allocated to P1), P1→R2 (P1 waiting for R2)",
+        "R2→P2 (R2 allocated to P2), P2→R1 (P2 waiting for R1)",
+        "This forms a cycle: P1→R2→P2→R1→P1",
+        "Since both resource types have only one instance each",
+        "Cycle in RAG implies definite deadlock",
+        "Processes involved in deadlock: P1 and P2",
+        "Wait-for graph shows only process nodes: P1→P2 (P1 waiting for P2)",
+        "P2→P1 (P2 waiting for P1)",
+        "Clear cycle in wait-for graph confirms deadlock"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "The dining philosophers problem is a classic deadlock example. For 5 philosophers sitting at a round table with 5 chopsticks, identify which Coffman conditions are satisfied that lead to deadlock. Explain how you can modify the solution to prevent deadlock.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Apply the four Coffman conditions to the dining philosophers scenario",
+      "keyPoints": [
+        "Mutual Exclusion: Each chopstick can be used by only one philosopher at a time",
+        "Hold and Wait: Philosopher holds left chopstick while waiting for right",
+        "No Preemption: Cannot forcibly take chopstick from another philosopher",
+        "Circular Wait: P1 waits for P2's chopstick, P2 waits for P3's, and so on",
+        "Deadlock occurs when all philosophers pick up left chopstick simultaneously",
+        "Solution 1: Allow only 4 philosophers to sit at the table",
+        "Solution 2: Pick up chopsticks only when both are available (atomic check)",
+        "Solution 3: Asymmetric solution - odd picks left first, even picks right first",
+        "Solution 4: Use a waiter to control access to chopsticks"
+      ]
+    }
+  ]
+}

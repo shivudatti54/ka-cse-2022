@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What is granularity in the context of database locking?",
+    "back": "Granularity refers to the size of a data item that can be locked. It ranges from coarse (entire database, tables) to fine (individual rows, attributes). The choice of granularity affects concurrency (fine is better) and overhead (coarse is better)."
+  },
+  {
+    "id": "f2",
+    "front": "What is the primary purpose of Multiple Granularity Locking (MGL)?",
+    "back": "The purpose of MGL is to allow transactions to lock data items at different levels of granularity (e.g., database, table, page, row) efficiently. This provides a way to balance the trade-off between high concurrency (many fine-grained locks) and low overhead (fewer coarse-grained locks)."
+  },
+  {
+    "id": "f3",
+    "front": "In MGL, what are the two main types of locks (modes) and their compatibility?",
+    "back": "1. Intention-Shared (IS): indicates an intention to read a finer granularity. 2. Intention-Exclusive (IX): indicates an intention to write a finer granularity. They are compatible if both transactions are only reading (IS/IS), but not if one is writing (IX/IX or IS/IX are not compatible)."
+  },
+  {
+    "id": "f4",
+    "front": "Describe the protocol a transaction must follow to lock a fine-grained item using MGL.",
+    "back": "1. Must lock all ancestors of the desired node (e.g., to lock a row, you must first lock the database, then the table, then the page) in an appropriate intention mode (IS for read, IX for write). 2. Then, lock the actual data item in the desired mode (S or X)."
+  },
+  {
+    "id": "f5",
+    "front": "What is the key advantage of using intention locks (IS, IX) in MGL?",
+    "back": "Intention locks allow a system to check for conflicting locks only at the level where they are explicitly set, rather than searching through all finer-grained locks. This significantly reduces the overhead of checking lock compatibility for coarse-grained objects."
+  }
+]

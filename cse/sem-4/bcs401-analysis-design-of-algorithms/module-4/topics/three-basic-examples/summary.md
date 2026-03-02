@@ -1,0 +1,3 @@
+# Three Basic Examples
+
+Dynamic Programming solves complex problems by decomposing them into overlapping subproblems with optimal substructure. This chapter covers three classic DP examples: (1) Fibonacci sequence—demonstrates exponential-to-polynomial improvement with O(n) time and O(1) space optimized solution; (2) Binomial Coefficient—uses Pascal's identity with O(n×k) complexity and space optimization from O(n×k) to O(k); (3) Minimum Coin Change—unbounded knapsack variant proving correctness through induction. The chapter contrasts memoization (top-down) and tabulation (bottom-up) approaches, establishing that DP achieves polynomial-time solutions where naive recursion fails exponentially.

@@ -1,0 +1,449 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1500">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1565c0"/>
+      <stop offset="100%" stop-color="#1976d2"/>
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="1500" fill="#f8f9fa"/>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 500; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes buildUp {
+      from { opacity: 0; transform: scaleY(0); }
+      to { opacity: 1; transform: scaleY(1); }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect { animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .draw-anim { stroke-dasharray: 500; stroke-dashoffset: 500; animation: drawLine 1.5s ease-out forwards; }
+    .build-anim { transform-origin: bottom; animation: buildUp 0.6s ease-out forwards; }
+  </style>
+
+  <!-- STEP 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to Frames in OpenGL! Today we'll explore framebuffers, the foundation of modern graphics rendering.">
+    <rect x="0" y="0" width="800" height="55" fill="url(#titleGrad)" rx="0"/>
+    <text x="400" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">Frames in OpenGL</text>
+    <text x="400" y="50" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#e3f2fd" text-anchor="middle">Understanding Framebuffers, Renderbuffers &amp; Double Buffering</text>
+  </g>
+
+  <!-- STEP 1: What is a Frame -->
+  <g class="step" id="step1" data-narration="A frame is a single image displayed on screen. In OpenGL, frames are stored in framebuffers - containers holding color, depth, and stencil data.">
+    <rect x="20" y="65" width="760" height="90" fill="url(#blueGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="85" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1565c0">What is a Frame in OpenGL?</text>
+    
+    <!-- Visual: Frame structure -->
+    <rect x="40" y="100" width="180" height="40" fill="#fff" stroke="#1976d2" stroke-width="2" rx="5"/>
+    <text x="130" y="122" font-family="Consolas, monospace" font-size="11" fill="#1565c0" text-anchor="middle">COLOR BUFFER</text>
+    <rect x="230" y="100" width="180" height="40" fill="#fff" stroke="#388e3c" stroke-width="2" rx="5"/>
+    <text x="320" y="122" font-family="Consolas, monospace" font-size="11" fill="#2e7d32" text-anchor="middle">DEPTH BUFFER</text>
+    <rect x="420" y="100" width="180" height="40" fill="#fff" stroke="#ff9800" stroke-width="2" rx="5"/>
+    <text x="510" y="122" font-family="Consolas, monospace" font-size="11" fill="#e65100" text-anchor="middle">STENCIL BUFFER</text>
+    
+    <path d="M510 95 L510 85 L780 85 L780 95" stroke="#9e9e9e" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+    <text x="640" y="80" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#757575">Framebuffer = Collection of buffers</text>
+  </g>
+
+  <!-- STEP 2: Why Framebuffers Matter -->
+  <g class="step" id="step2" data-narration="Framebuffers enable powerful techniques: post-processing effects, shadow mapping, and deferred rendering all rely on rendering to off-screen buffers.">
+    <rect x="20" y="165" width="760" height="90" fill="url(#greenGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="185" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#2e7d32">Why Framebuffers Matter</text>
+    
+    <!-- Visual: Applications -->
+    <g transform="translate(40, 200)">
+      <rect x="0" y="0" width="110" height="40" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="55" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Post-Processing</text>
+      <rect x="120" y="0" width="110" height="40" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="175" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Shadow Mapping</text>
+      <rect x="240" y="0" width="110" height="40" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="295" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Environment Maps</text>
+      <rect x="360" y="0" width="110" height="40" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="415" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Deferred Render</text>
+      <rect x="480" y="0" width="110" height="40" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="535" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Render to Texture</text>
+    </g>
+    <text x="40" y="260" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#388e3c">These techniques require off-screen rendering to Framebuffer Objects (FBOs)</text>
+  </g>
+
+  <!-- STEP 3: FBO Introduction -->
+  <g class="step" id="step3" data-narration="Framebuffer Objects (FBOs) are user-created off-screen rendering targets. Unlike the default framebuffer, FBOs exist in GPU memory for intermediate processing.">
+    <rect x="20" y="265" width="760" height="100" fill="url(#purpleGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="285" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#7b1fa2">Framebuffer Objects (FBOs)</text>
+    
+    <!-- Visual: FBO diagram -->
+    <rect x="40" y="300" width="200" height="50" fill="#fff" stroke="#9c27b0" stroke-width="2" rx="8"/>
+    <text x="140" y="325" font-family="Consolas, monospace" font-size="11" fill="#7b1fa2" text-anchor="middle">FBO Container</text>
+    
+    <!-- Attachments -->
+    <rect x="260" y="300" width="120" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" rx="5"/>
+    <text x="320" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#1565c0" text-anchor="middle">Color Attach</text>
+    <rect x="390" y="300" width="120" height="35" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+    <text x="450" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle">Depth Attach</text>
+    <rect x="520" y="300" width="120" height="35" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5" rx="5"/>
+    <text x="580" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e65100" text-anchor="middle">Stencil Attach</text>
+    
+    <!-- Arrows showing attachments -->
+    <path d="M240 320 L260 320" stroke="#9c27b0" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+    <path d="M360 320 L390 320" stroke="#9c27b0" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+    <path d="M510 320 L520 320" stroke="#9c27b0" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+    
+    <text x="660" y="320" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#7b1fa2">Created with</text>
+    <text x="660" y="335" font-family="Consolas, monospace" font-size="9" fill="#7b1fa2">glGenFramebuffers()</text>
+  </g>
+
+  <!-- STEP 4: FBO Creation Code -->
+  <g class="step" id="step4" data-narration="To create an FBO, first generate a framebuffer ID with glGenFramebuffers, then bind it with glBindFramebuffer to make it the active target.">
+    <rect x="20" y="375" width="760" height="100" fill="url(#blueGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="395" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1565c0">Creating an FBO - Step by Step</text>
+    
+    <!-- Code blocks -->
+    <g transform="translate(40, 410)">
+      <rect x="0" y="0" width="220" height="55" fill="#263238" rx="5"/>
+      <text x="10" y="18" font-family="Consolas, monospace" font-size="10" fill="#80cbc4">// Generate FBO</text>
+      <text x="10" y="32" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">GLuint fbo;</text>
+      <text x="10" y="46" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">glGenFramebuffers(1, &amp;fbo);</text>
+      
+      <rect x="230" y="0" width="220" height="55" fill="#263238" rx="5"/>
+      <text x="240" y="18" font-family="Consolas, monospace" font-size="10" fill="#80cbc4">// Bind FBO</text>
+      <text x="240" y="32" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">glBindFramebuffer</text>
+      <text x="240" y="46" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">  (GL_FRAMEBUFFER, fbo);</text>
+      
+      <rect x="460" y="0" width="220" height="55" fill="#263238" rx="5"/>
+      <text x="470" y="18" font-family="Consolas, monospace" font-size="10" fill="#80cbc4">// Check status</text>
+      <text x="470" y="32" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">glCheckFramebufferStatus</text>
+      <text x="470" y="46" font-family="Consolas, monospace" font-size="10" fill="#ffcc80">  (GL_FRAMEBUFFER);</text>
+    </g>
+    <text x="700" y="455" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1565c0" text-anchor="middle">Use GL_FRAMEBUFFER</text>
+    <text x="700" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1565c0" text-anchor="middle">for both read/write</text>
+  </g>
+
+  <!-- STEP 5: Attachments Overview -->
+  <g class="step" id="step5" data-narration="FBOs hold attachments - either textures or renderbuffers. Color attachments use GL_COLOR_ATTACHMENT0, depth uses GL_DEPTH_ATTACHMENT, and stencil uses GL_STENCIL_ATTACHMENT.">
+    <rect x="20" y="485" width="760" height="100" fill="url(#orangeGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="505" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#e65100">FBO Attachment Points</text>
+    
+    <!-- Attachment types table -->
+    <g transform="translate(40, 520)">
+      <!-- Color -->
+      <rect x="0" y="0" width="180" height="55" fill="#fff" stroke="#1976d2" stroke-width="1.5" rx="5"/>
+      <text x="90" y="18" font-family="Consolas, monospace" font-size="11" fill="#1565c0" text-anchor="middle">GL_COLOR_ATTACHMENT0</text>
+      <text x="90" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#757575" text-anchor="middle">First color output</text>
+      
+      <!-- Depth -->
+      <rect x="200" y="0" width="180" height="55" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="290" y="18" font-family="Consolas, monospace" font-size="11" fill="#2e7d32" text-anchor="middle">GL_DEPTH_ATTACHMENT</text>
+      <text x="290" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#757575" text-anchor="middle">Depth testing</text>
+      
+      <!-- Stencil -->
+      <rect x="400" y="0" width="180" height="55" fill="#fff" stroke="#ff9800" stroke-width="1.5" rx="5"/>
+      <text x="490" y="18" font-family="Consolas, monospace" font-size="11" fill="#e65100" text-anchor="middle">GL_STENCIL_ATTACHMENT</text>
+      <text x="490" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#757575" text-anchor="middle">Stencil testing</text>
+      
+      <!-- Combined -->
+      <rect x="600" y="0" width="140" height="55" fill="#fff" stroke="#9c27b0" stroke-width="1.5" rx="5"/>
+      <text x="670" y="18" font-family="Consolas, monospace" font-size="10" fill="#7b1fa2" text-anchor="middle">GL_DEPTH_</text>
+      <text x="670" y="30" font-family="Consolas, monospace" font-size="10" fill="#7b1fa2" text-anchor="middle">STENCIL_</text>
+      <text x="670" y="45" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#757575" text-anchor="middle">Combined format</text>
+    </g>
+  </g>
+
+  <!-- STEP 6: Renderbuffers -->
+  <g class="step" id="step6" data-narration="Renderbuffers are optimized storage for rendering but cannot be sampled by shaders. They're perfect for depth and stencil data you don't need to read back.">
+    <rect x="20" y="595" width="760" height="100" fill="url(#greenGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="615" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#2e7d32">Renderbuffer Objects</text>
+    
+    <!-- Comparison visual -->
+    <g transform="translate(40, 630)">
+      <rect x="0" y="0" width="280" height="55" fill="#fff" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+      <text x="140" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32" text-anchor="middle">Renderbuffer</text>
+      <text x="140" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#757575" text-anchor="middle">Fast storage • Cannot sample • Best for depth/stencil</text>
+      
+      <rect x="300" y="0" width="280" height="55" fill="#fff" stroke="#1976d2" stroke-width="1.5" rx="5"/>
+      <text x="440" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565c0" text-anchor="middle">Texture</text>
+      <text x="440" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#757575" text-anchor="middle">Can sample in shaders • More flexible • Slower</text>
+    </g>
+    
+    <!-- Code -->
+    <rect x="600" y="635" width="160" height="45" fill="#263238" rx="5"/>
+    <text x="610" y="655" font-family="Consolas, monospace" font-size="9" fill="#80cbc4">glGenRenderbuffers</text>
+    <text x="610" y="670" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">(1, &amp;rbo);</text>
+  </g>
+
+  <!-- STEP 7: Texture Attachment -->
+  <g class="step" id="step7" data-narration="To render to a texture, attach it to the FBO using glFramebufferTexture2D. This allows subsequent passes to sample the rendered image.">
+    <rect x="20" y="705" width="760" height="100" fill="url(#blueGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="725" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1565c0">Attaching a Texture to FBO</text>
+    
+    <!-- Visual flow -->
+    <g transform="translate(40, 740)">
+      <!-- Texture -->
+      <rect x="0" y="0" width="100" height="55" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"/>
+      <text x="50" y="22" font-family="Consolas, monospace" font-size="10" fill="#1565c0" text-anchor="middle">glGenTextures</text>
+      <text x="50" y="38" font-family="Consolas, monospace" font-size="9" fill="#1565c0" text-anchor="middle">→ GL_TEXTURE_2D</text>
+      
+      <path d="M110 27 L150 27" stroke="#1976d2" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+      
+      <!-- Attach call -->
+      <rect x="160" y="0" width="250" height="55" fill="#fff" stroke="#9c27b0" stroke-width="2" rx="5"/>
+      <text x="285" y="20" font-family="Consolas, monospace" font-size="10" fill="#7b1fa2" text-anchor="middle">glFramebufferTexture2D</text>
+      <text x="285" y="38" font-family="Consolas, monospace" font-size="9" fill="#7b1fa2" text-anchor="middle">(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,</text>
+      <text x="285" y="50" font-family="Consolas, monospace" font-size="9" fill="#7b1fa2" text-anchor="middle">GL_TEXTURE_2D, texture, 0);</text>
+    </g>
+    
+    <!-- Important note -->
+    <rect x="420" y="745" width="150" height="40" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="5"/>
+    <text x="495" y="763" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#e65100" text-anchor="middle">Creates renderable</text>
+    <text x="495" y="777" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#e65100" text-anchor="middle">texture attachment</text>
+  </g>
+
+  <!-- STEP 8: Framebuffer Completeness -->
+  <g class="step" id="step8" data-narration="Always check framebuffer completeness with glCheckFramebufferStatus before rendering. The FBO must meet specific criteria: matching dimensions, valid attachments, and not exceeding limits.">
+    <rect x="20" y="815" width="760" height="100" fill="url(#redGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="835" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#c62828">Framebuffer Completeness Check</text>
+    
+    <!-- Visual: Checklist -->
+    <g transform="translate(40, 855)">
+      <rect x="0" y="0" width="130" height="50" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <circle cx="20" cy="18" r="5" fill="#c62828"/>
+      <text x="30" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333">Same width/height</text>
+      <text x="65" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">for all attachments</text>
+      
+      <rect x="140" y="0" width="130" height="50" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <circle cx="160" cy="18" r="5" fill="#c62828"/>
+      <text x="170" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333">At least one</text>
+      <text x="205" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">attachment present</text>
+      
+      <rect x="280" y="0" width="130" height="50" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <circle cx="300" cy="18" r="5" fill="#c62828"/>
+      <text x="310" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333">Valid combinations</text>
+      <text x="345" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">of attachments</text>
+      
+      <rect x="420" y="0" width="130" height="50" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <circle cx="440" cy="18" r="5" fill="#c62828"/>
+      <text x="450" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333">Within max</text>
+      <text x="485" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">attachment limits</text>
+    </g>
+    
+    <!-- Code -->
+    <rect x="600" y="860" width="150" height="40" fill="#263238" rx="5"/>
+    <text x="610" y="878" font-family="Consolas, monospace" font-size="9" fill="#80cbc4">status =</text>
+    <text x="610" y="893" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">glCheckFramebufferStatus();</text>
+    <text x="675" y="808" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#c62828" font-weight="bold">⚠ MUST CHECK!</text>
+  </g>
+
+  <!-- STEP 9: Double Buffering -->
+  <g class="step" id="step9" data-narration="Double buffering uses front and back buffers to display only complete frames. The swap chain flips buffers when a frame is ready, preventing visual tearing.">
+    <rect x="20" y="925" width="760" height="100" fill="url(#purpleGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="945" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#7b1fa2">Double Buffering &amp; Swap Chain</text>
+    
+    <!-- Animation of double buffering -->
+    <g transform="translate(40, 960)">
+      <!-- Front buffer -->
+      <rect x="0" y="0" width="140" height="50" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"/>
+      <text x="70" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#1565c0" text-anchor="middle" font-weight="bold">FRONT BUFFER</text>
+      <text x="70" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1976d2" text-anchor="middle">(Currently Displayed)</text>
+      
+      <!-- Arrow -->
+      <path d="M150 25 L190 25" stroke="#9c27b0" stroke-width="2" fill="none"/>
+      <polygon points="190,25 180,20 180,30" fill="#9c27b0"/>
+      
+      <!-- Back buffer -->
+      <rect x="200" y="0" width="140" height="50" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"/>
+      <text x="270" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#2e7d32" text-anchor="middle" font-weight="bold">BACK BUFFER</text>
+      <text x="270" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#388e3c" text-anchor="middle">(Being Rendered To)</text>
+      
+      <!-- Swap arrow -->
+      <path d="M350 25 L380 25" stroke="#9c27b0" stroke-width="2" fill="none"/>
+      <text x="365" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#7b1fa2" text-anchor="middle">glfwSwapBuffers()</text>
+      
+      <!-- Result -->
+      <rect x="390" y="0" width="140" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+      <text x="460" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#e65100" text-anchor="middle" font-weight="bold">DISPLAY</text>
+      <text x="460" y="38" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#ff9800" text-anchor="middle">Smooth Animation</text>
+    </g>
+    <text x="600" y="975" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#7b1fa2">V-Sync: glSwapInterval(1)</text>
+  </g>
+
+  <!-- STEP 10: Two-Pass Rendering -->
+  <g class="step" id="step10" data-narration="Two-pass rendering first draws to an FBO texture, then samples that texture on a fullscreen quad. This enables post-processing effects like bloom or blur.">
+    <rect x="20" y="1035" width="760" height="100" fill="url(#orangeGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="1055" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#e65100">Two-Pass Rendering Pipeline</text>
+    
+    <!-- Pipeline flow -->
+    <g transform="translate(40, 1070)">
+      <!-- Pass 1 -->
+      <rect x="0" y="0" width="100" height="55" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"/>
+      <text x="50" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#1565c0" text-anchor="middle" font-weight="bold">PASS 1</text>
+      <text x="50" y="40" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1976d2" text-anchor="middle">Render to FBO</text>
+      
+      <path d="M110 27 L140 27" stroke="#ff9800" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+      
+      <!-- FBO -->
+      <rect x="150" y="10" width="60" height="35" fill="#fff" stroke="#9c27b0" stroke-width="1.5" rx="3"/>
+      <text x="180" y="30" font-family="Consolas, monospace" font-size="9" fill="#7b1fa2" text-anchor="middle">FBO</text>
+      
+      <path d="M220 27 L250 27" stroke="#ff9800" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+      
+      <!-- Pass 2 -->
+      <rect x="260" y="0" width="100" height="55" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="5"/>
+      <text x="310" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#2e7d32" text-anchor="middle" font-weight="bold">PASS 2</text>
+      <text x="310" y="40" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#388e3c" text-anchor="middle">Sample Texture</text>
+      
+      <path d="M370 27 L400 27" stroke="#ff9800" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+      
+      <!-- Screen -->
+      <rect x="410" y="0" width="100" height="55" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+      <text x="460" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e65100" text-anchor="middle" font-weight="bold">SCREEN</text>
+      <text x="460" y="40" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#ff9800" text-anchor="middle">Final Output</text>
+    </g>
+    
+    <!-- Code snippets -->
+    <rect x="540" y="1080" width="90" height="40" fill="#263238" rx="4"/>
+    <text x="550" y="1098" font-family="Consolas, monospace" font-size="8" fill="#80cbc4">// Pass 1</text>
+    <text x="550" y="1113" font-family="Consolas, monospace" font-size="8" fill="#ffcc80">glBindFramebuffer(FBO)</text>
+    
+    <rect x="640" y="1080" width="120" height="40" fill="#263238" rx="4"/>
+    <text x="650" y="1098" font-family="Consolas, monospace" font-size="8" fill="#80cbc4">// Pass 2</text>
+    <text x="650" y="1113" font-family="Consolas, monospace" font-size="8" fill="#ffcc80">glBindFramebuffer(0)</text>
+  </g>
+
+  <!-- STEP 11: Multiple Render Targets (MRT) -->
+  <g class="step" id="step11" data-narration="Multiple Render Targets let fragment shaders output to multiple color attachments simultaneously. Use glDrawBuffers to specify which attachments receive data.">
+    <rect x="20" y="1145" width="760" height="100" fill="url(#blueGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="1165" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1565c0">Multiple Render Targets (MRT)</text>
+    
+    <!-- MRT Visual -->
+    <g transform="translate(40, 1180)">
+      <!-- Fragment shader outputs -->
+      <rect x="0" y="0" width="120" height="55" fill="#fff" stroke="#1565c0" stroke-width="1.5" rx="5"/>
+      <text x="60" y="20" font-family="Consolas, monospace" font-size="9" fill="#1565c0" text-anchor="middle">Fragment Shader</text>
+      <text x="60" y="38" font-family="Consolas, monospace" font-size="9" fill="#1565c0" text-anchor="middle">out vec4 out0, out1;</text>
+      
+      <!-- Multiple outputs -->
+      <path d="M130 15 L160 15" stroke="#1976d2" stroke-width="1.5" fill="none"/>
+      <path d="M130 40 L160 40" stroke="#388e3c" stroke-width="1.5" fill="none"/>
+      
+      <!-- Multiple attachments -->
+      <rect x="170" y="0" width="80" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" rx="3"/>
+      <text x="210" y="18" font-family="Consolas, monospace" font-size="9" fill="#1565c0" text-anchor="middle">Color0</text>
+      
+      <rect x="170" y="40" width="80" height="35" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5" rx="3"/>
+      <text x="210" y="58" font-family="Consolas, monospace" font-size="9" fill="#2e7d32" text-anchor="middle">Color1</text>
+      
+      <!-- Draw buffers call -->
+      <rect x="280" y="10" width="200" height="55" fill="#263238" rx="5"/>
+      <text x="290" y="28" font-family="Consolas, monospace" font-size="9" fill="#80cbc4">// Enable MRT</text>
+      <text x="290" y="45" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">GLenum bufs[] = {</text>
+      <text x="350" y="58" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">GL_COLOR_ATTACHMENT0,</text>
+      <text x="420" y="45" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">GL_COLOR_ATTACHMENT1};</text>
+      <text x="380" y="28" font-family="Consolas, monospace" font-size="9" fill="#ffcc80">glDrawBuffers(2, bufs);</text>
+    </g>
+    <text x="660" y="1200" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1565c0">Deferred rendering</text>
+    <text x="660" y="1215" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#1565c0">uses MRT extensively</text>
+  </g>
+
+  <!-- STEP 12: Common Mistakes -->
+  <g class="step" id="step12" data-narration="Avoid these common mistakes: forgetting completeness checks, using renderbuffers when you need textures, mismatching attachment sizes, and not unbinding FBOs before screen rendering.">
+    <rect x="20" y="1255" width="760" height="90" fill="url(#redGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="1275" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="#c62828">⚠ Common Mistakes to Avoid</text>
+    
+    <!-- Mistake cards -->
+    <g transform="translate(40, 1285)">
+      <rect x="0" y="0" width="140" height="45" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <text x="70" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">No completeness check</text>
+      <text x="70" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">Always verify with</text>
+      <text x="70" y="43" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">glCheckFramebufferStatus</text>
+      
+      <rect x="150" y="0" width="140" height="45" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <text x="220" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Wrong viewport size</text>
+      <text x="220" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">Set glViewport to FBO</text>
+      <text x="220" y="43" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">dimensions</text>
+      
+      <rect x="300" y="0" width="140" height="45" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <text x="370" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Forgetting to unbind</text>
+      <text x="370" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">glBindFramebuffer(0)</text>
+      <text x="370" y="43" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">before screen render</text>
+      
+      <rect x="450" y="0" width="140" height="45" fill="#fff" stroke="#c62828" stroke-width="1" rx="5"/>
+      <text x="520" y="18" font-family="Segoe UI, Arial, sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="bold">Mismatched sizes</text>
+      <text x="520" y="35" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">All attachments must have</text>
+      <text x="520" y="43" font-family="Segoe UI, Arial, sans-serif" font-size="8" fill="#757575" text-anchor="middle">same width &amp; height</text>
+    </g>
+  </g>
+
+  <!-- STEP 13: Summary -->
+  <g class="step" id="step13" data-narration="In summary: FBOs enable off-screen rendering for advanced effects. Use renderbuffers for depth/stencil, textures for sampling. Always check completeness and use double buffering for smooth animation.">
+    <rect x="20" y="1355" width="760" height="80" fill="url(#titleGrad)" rx="10" filter="url(#shadow)"/>
+    <text x="40" y="1378" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" fill="white">Key Takeaways</text>
+    
+    <!-- Summary bullets -->
+    <g transform="translate(40, 1390)">
+      <circle cx="0" cy="0" r="4" fill="#e3f2fd"/>
+      <text x="15" y="4" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e3f2fd">FBOs provide off-screen rendering targets for advanced graphics techniques</text>
+      
+      <circle cx="400" cy="0" r="4" fill="#e3f2fd"/>
+      <text x="415" y="4" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e3f2fd">Renderbuffers: fast but not samplable • Textures: flexible but slower</text>
+      
+      <circle cx="0" cy="20" r="4" fill="#e3f2fd"/>
+      <text x="15" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e3f2fd">Always check framebuffer completeness before rendering</text>
+      
+      <circle cx="400" cy="20" r="4" fill="#e3f2fd"/>
+      <text x="415" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#e3f2fd">Double buffering prevents screen tearing • V-Sync controls frame rate</text>
+    </g>
+  </g>
+</svg>

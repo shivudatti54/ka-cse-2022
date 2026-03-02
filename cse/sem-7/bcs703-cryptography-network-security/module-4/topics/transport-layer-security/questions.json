@@ -1,0 +1,222 @@
+{
+  "topicId": "transport-layer-security",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the four protocols that constitute the TLS protocol suite and their functions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "TLS has two layers: upper layer protocols (handshake, alert, change cipher spec) and lower layer record protocol",
+      "keyPoints": [
+        "Handshake Protocol - establishes secure parameters and authenticates parties",
+        "Record Protocol - provides confidentiality and integrity for data transmission",
+        "Alert Protocol - conveys warning and fatal error messages",
+        "Change Cipher Spec Protocol - signals transition to encrypted communication"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "long",
+      "question": "Describe the TLS Handshake Protocol in detail, explaining each phase and the messages exchanged between client and server.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Trace the complete flow from ClientHello to Finished messages",
+      "keyPoints": [
+        "Phase 1: Hello messages - cipher suite negotiation, random values exchange, protocol version",
+        "Phase 2: Server authentication - server certificate, key exchange message, certificate request (optional)",
+        "Phase 3: Client authentication - client certificate (if requested), pre-master secret encrypted with server public key",
+        "Phase 4: Finished messages - verification of handshake using derived keys",
+        "Key derivation from pre-master secret to master secret to session keys"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is a cipher suite in TLS? Explain the components of a typical cipher suite notation with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Break down the cipher suite name into its three main components",
+      "keyPoints": [
+        "Cipher suite defines the cryptographic algorithms for key exchange, bulk encryption, and MAC",
+        "Key Exchange Algorithm: RSA, Diffie-Hellman, DHE, ECDHE",
+        "Bulk Encryption Algorithm: AES, 3DES, RC4 with key size (e.g., AES_256_GCM)",
+        "Message Authentication Code: SHA, MD5, HMAC",
+        "Example: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the TLS Record Protocol operations. How does it provide confidentiality and integrity?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "The record protocol is the lower layer that handles all data transmission",
+      "keyPoints": [
+        "Fragmentation - breaks data into records of manageable size",
+        "Compression - optionally compresses data (removed in TLS 1.3)",
+        "MAC addition - computes message authentication code for integrity",
+        "Encryption - encrypts plaintext + MAC using negotiated cipher",
+        "Fragmentation and transmission - adds header and sends to lower layer"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "long",
+      "question": "Compare TLS 1.2 and TLS 1.3. Explain the improvements introduced in TLS 1.3.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Focus on security improvements and performance enhancements",
+      "keyPoints": [
+        "Handshake reduction - TLS 1.3 completes handshake in 1-RTT vs 2-RTT in TLS 1.2",
+        "Removed insecure features - removed static RSA key exchange, MD5, SHA-1 in signatures",
+        "Authenticated Encryption - mandatory use of AEAD ciphers (GCM, ChaCha20-Poly1305)",
+        "Forward secrecy - mandatory for all key exchanges (DHE or ECDHE)",
+        "Simplified cipher suites - fewer options, only secure algorithms",
+        "0-RTT mode - optional early data transmission in subsequent connections"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the purpose of X.509 certificates in TLS? Explain how server authentication works in TLS.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Certificate verification involves chain of trust validation",
+      "keyPoints": [
+        "X.509 certificates bind a public key to an identity (server/organization)",
+        "Certificate contains: subject name, public key, issuer, validity period, digital signature",
+        "Server sends certificate during handshake phase",
+        "Client verifies certificate chain up to trusted CA root certificate",
+        "Client extracts server public key from certificate for key exchange"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the concept of Perfect Forward Secrecy (PFS) in TLS. How is it achieved and why is it important?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Think about the difference between static RSA key exchange and DHE/ECDHE",
+      "keyPoints": [
+        "PFS ensures that compromise of long-term keys does not compromise past session keys",
+        "Achieved using ephemeral key exchange (DHE or ECDHE)",
+        "Each session generates new temporary key pair, discarded after use",
+        "Protects against future key compromise or retroactive decryption",
+        "TLS 1.3 mandates PFS for all cipher suites",
+        "Without PFS, if master secret is compromised, all past sessions can be decrypted"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "short",
+      "question": "In TLS with RSA key exchange, if the pre-master secret is 48 bytes and client/server randoms are each 32 bytes, calculate the size of: (a) Master secret, (b) Key block derived for encryption and MAC keys.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Master secret is fixed at 48 bytes; key block depends on cipher suite",
+      "keyPoints": [
+        "Master secret is always 48 bytes (defined by TLS specification)",
+        "Key block length = (2 × encryption key length) + (2 × MAC key length) + (2 × IV length)",
+        "For AES-256-CBC with SHA-384: (2×32) + (2×48) + (2×16) = 64 + 96 + 32 = 192 bytes",
+        "Key block is derived using PRF with master secret and random values"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "short",
+      "question": "What are TLS alerts? Explain the difference between warning and fatal alerts with examples.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Remember: fatal alerts terminate the connection",
+      "keyPoints": [
+        "Alerts are notifications about connection state and errors",
+        "Warning alerts: close_notify, no_certificate, unsupported_certificate, etc.",
+        "Fatal alerts: unexpected_message, bad_record_mac, handshake_failure, illegal_parameter, etc.",
+        "Fatal alerts terminate the connection immediately",
+        "Alert messages include alert level (1=warning, 2=fatal) and alert description"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a secure web transaction using TLS. Explain how TLS provides confidentiality, integrity, and authentication for web traffic.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Walk through the complete TLS handshake for HTTPS",
+      "keyPoints": [
+        "Client initiates HTTPS connection to port 443",
+        "TLS Handshake: ClientHello/ServerHello exchange cipher suites and random values",
+        "Server sends X.509 certificate for authentication",
+        "Key exchange: client generates pre-master secret, encrypts with server public key",
+        "Both derive master secret and session keys",
+        "Confidentiality: data encrypted with symmetric cipher (AES)",
+        "Integrity: MAC/HMAC computed over data",
+        "Authentication: server proves ownership of private key matching certificate"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Calculate the time required to break TLS encryption using brute force for AES-256, assuming a supercomputer can test 10^18 keys per second. Express your answer in years.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Use logarithmic approach: log10(2^256) = 256 × log10(2)",
+      "keyPoints": [
+        "Number of possible keys for AES-256 = 2^256",
+        "2^256 ≈ 1.1579 × 10^77",
+        "Time = 2^256 / (10^18 keys/second)",
+        "Time = 1.1579 × 10^77 / 10^18 = 1.1579 × 10^59 seconds",
+        "Seconds in a year ≈ 3.154 × 10^7",
+        "Years = (1.1579 × 10^59) / (3.154 × 10^7) ≈ 3.67 × 10^51 years"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "Explain session resumption in TLS. How does it improve performance?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Session resumption avoids expensive public key cryptography",
+      "keyPoints": [
+        "Session resumption allows clients to reuse previously established TLS sessions",
+        "Client sends session ID from previous handshake in ClientHello",
+        "Server looks up matching session state from cache",
+        "Both parties derive new keys from cached master secret",
+        "Eliminates full handshake with public key operations",
+        "Reduces connection setup time to milliseconds vs seconds for full handshake"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "long",
+      "question": "Compare TLS and IPsec. Discuss their operational layers, scope of protection, and typical deployment scenarios.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Consider what each protocol protects and where it operates in the network stack",
+      "keyPoints": [
+        "TLS operates at transport layer (between application and TCP); IPsec at network layer",
+        "TLS protects individual application connections; IPsec protects all traffic between hosts/networks",
+        "TLS requires application changes (HTTPS); IPsec transparent to applications",
+        "IPsec provides endpoint authentication at network level; TLS at application level",
+        "IPsec often used for VPN, site-to-site protection; TLS for web, email, VPN (OpenVPN)",
+        "TLS vulnerable to middlebox issues; IPsec requires kernel-level implementation"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "What is client authentication in TLS? When is it used and how is it implemented?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Client authentication requires both parties to have certificates",
+      "keyPoints": [
+        "Client authentication allows server to verify client identity using certificates",
+        "Server requests certificate during handshake using certificate_request message",
+        "Client sends X.509 certificate and proves ownership with certificate_verify message",
+        "Signature computed over handshake messages using client's private key",
+        "Common in banking, corporate networks, e-government applications",
+        "Optional extension to basic server authentication"
+      ]
+    }
+  ]
+}

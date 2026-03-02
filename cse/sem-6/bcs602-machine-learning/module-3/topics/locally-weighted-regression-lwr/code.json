@@ -1,0 +1,33 @@
+{
+  "topicId": "locally-weighted-regression-lwr",
+  "examples": [
+    {
+      "id": "pseudocode-locally-weighted-regression",
+      "title": "Locally Weighted Regression Pseudocode",
+      "description": "Pseudocode for Locally Weighted Regression",
+      "language": "pseudocode",
+      "code": "ALGORITHM LocallyWeightedRegression\nINPUT: training data X, y, query point x_q, bandwidth τ\nOUTPUT: predicted value y_q\n\nBEGIN\n FOR EACH query point x_q:\n COMPUTE weights w^(i) for each training example using Gaussian kernel\n MINIMIZE weighted cost function J(θ) = Σ w^(i) * (y^(i) - θ^T x^(i))^2\n FIT local model using weighted least squares\n MAKE prediction y_q = θ^T x_q\n DISCARD model\n END FOR\nEND",
+      "explanation": "This pseudocode demonstrates the locally weighted regression algorithm. It iterates over each query point, computes weights for each training example using a Gaussian kernel, minimizes the weighted cost function, fits a local model using weighted least squares, makes a prediction, and discards the model."
+    },
+    {
+      "id": "python-locally-weighted-regression",
+      "title": "Locally Weighted Regression Python Implementation",
+      "description": "Python implementation of Locally Weighted Regression",
+      "language": "python",
+      "code": "import numpy as np\nfrom scipy.linalg import solve\n\ndef gaussian_kernel(x, x_q, tau):\n return np.exp(-((x - x_q) ** 2) / (2 * tau ** 2))\n\ndef locally_weighted_regression(X, y, x_q, tau):\n weights = gaussian_kernel(X, x_q, tau)\n X_weighted = np.vstack([np.ones_like(X), X]).T * weights[:, np.newaxis]\n y_weighted = y * weights\n theta = solve(X_weighted.T @ X_weighted, X_weighted.T @ y_weighted)\n return theta[0] + theta[1] * x_q\n",
+      "explanation": "This Python implementation demonstrates the locally weighted regression algorithm. It defines a Gaussian kernel function and a locally weighted regression function, which computes weights, fits a local model using weighted least squares, and makes a prediction.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-locally-weighted-regression",
+      "title": "Locally Weighted Regression C Implementation",
+      "description": "C implementation of Locally Weighted Regression",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <math.h>\n#include <stdlib.h>\n\n// Gaussian kernel function\ndouble gaussian_kernel(double x, double x_q, double tau) {\n return exp(-((x - x_q) * (x - x_q)) / (2 * tau * tau));\n}\n\n// Locally weighted regression function\ndouble locally_weighted_regression(double *X, double *y, double x_q, double tau, int n) {\n double *weights = malloc(n * sizeof(double));\n double X_weighted[n][2];\n double y_weighted[n];\n double theta[2];\n\n // Compute weights\n for (int i = 0; i < n; i++) {\n weights[i] = gaussian_kernel(X[i], x_q, tau);\n }\n\n // Compute X_weighted and y_weighted\n for (int i = 0; i < n; i++) {\n X_weighted[i][0] = 1 * weights[i];\n X_weighted[i][1] = X[i] * weights[i];\n y_weighted[i] = y[i] * weights[i];\n }\n\n // Solve for theta using weighted least squares\n // ...\n\n // Make prediction\n return theta[0] + theta[1] * x_q;\n}\n",
+      "explanation": "This C implementation demonstrates the locally weighted regression algorithm. It defines a Gaussian kernel function and a locally weighted regression function, which computes weights, fits a local model using weighted least squares, and makes a prediction.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

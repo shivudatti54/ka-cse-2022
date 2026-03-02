@@ -1,0 +1,45 @@
+{
+  "topicId": "contiguous-memory-allocation",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "First Fit Memory Allocation",
+      "description": "Implementation of First Fit algorithm for contiguous memory allocation",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_HOLES 10\n#define MAX_PROCESS 5\n\ntypedef struct {\n    int size;\n    bool allocated;\n} MemoryBlock;\n\nint firstFit(MemoryBlock memory[], int n, int processSize) {\n    for (int i = 0; i < n; i++) {\n        if (!memory[i].allocated && memory[i].size >= processSize) {\n            memory[i].allocated = true;\n            return i;  // Return index of allocated block\n        }\n    }\n    return -1;  // No suitable hole found\n}\n\n// Example: memory[] = {{30,false}, {20,false}, {15,false}, {40,false}}\n// processSize = 18\n// First Fit allocates to first block (30KB), returns index 0",
+      "explanation": "The First Fit algorithm scans memory from the beginning and allocates the first hole that is large enough. It returns quickly but may create large leftover holes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Best Fit Memory Allocation",
+      "description": "Implementation of Best Fit algorithm to find smallest suitable hole",
+      "code": "def best_fit(holes, process_size):\n    \"\"\"\n    holes: list of available memory block sizes\n    process_size: size of incoming process\n    Returns: index of best hole, or -1 if not found\n    \"\"\"\n    best_idx = -1\n    min_remaining = float('inf')\n    \n    for i, hole in enumerate(holes):\n        if hole >= process_size:\n            remaining = hole - process_size\n            if remaining < min_remaining:\n                min_remaining = remaining\n                best_idx = i\n    \n    if best_idx != -1:\n        holes[best_idx] -= process_size  # Allocate part of hole\n        if holes[best_idx] == 0:\n            holes.pop(best_idx)  # Remove exhausted hole\n    \n    return best_idx\n\n# Example usage:\nholes = [30, 20, 15, 40]\nprocess = 18\n# Result: Allocates to 20KB hole (index 1), remaining: 2KB\n# Result index: 1",
+      "explanation": "Best Fit searches all holes and selects the smallest one that can accommodate the process, minimizing wasted space but requiring full scan.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Worst Fit Memory Allocation",
+      "description": "Implementation of Worst Fit algorithm that always allocates largest hole",
+      "code": "#include <stdio.h>\n\nint worstFit(int holes[], int n, int processSize) {\n    int worstIdx = -1;\n    int maxHole = -1;\n    \n    // Find the largest hole\n    for (int i = 0; i < n; i++) {\n        if (holes[i] >= processSize && holes[i] > maxHole) {\n            maxHole = holes[i];\n            worstIdx = i;\n        }\n    }\n    \n    if (worstIdx != -1) {\n        // Allocate process, keep remaining as new hole\n        holes[worstIdx] -= processSize;\n        return worstIdx;\n    }\n    \n    return -1;  // No hole large enough\n}\n\n/* Example:\nholes = [10, 20, 15, 25]\nprocessSize = 12\n\nWorst Fit selects hole 25KB (index 3)\nAfter allocation: holes = [10, 20, 15, 13]\n*/",
+      "explanation": "Worst Fit chooses the largest available hole hoping to leave sufficiently large remaining space for future large allocations.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Memory Compaction Simulation",
+      "description": "Simulates memory compaction to combine all free holes",
+      "code": "def compact_memory(memory_blocks):\n    \"\"\"\n    memory_blocks: list of [size, allocated(bool)]\n    Returns: compacted memory layout\n    \"\"\"\n    # Step 1: Separate allocated and free blocks\n    allocated = [b for b in memory_blocks if b[1]]\n    free_blocks = [b[0] for b in memory_blocks if not b[1]]\n    \n    # Step 2: Calculate total free space\n    total_free = sum(free_blocks)\n    \n    # Step 3: Create compacted layout\n    compacted = allocated.copy()\n    compacted.append([total_free, False])  # One large free block\n    \n    return compacted\n\n# Example before compaction:\nmemory = [[30, True], [10, False], [25, True], \n          [15, False], [40, True], [30, False]]\n# After: [[30, True], [25, True], [40, True], [150, False]]\n\nprint(\"Memory after compaction:\", compact_memory(memory))",
+      "explanation": "Compaction moves all allocated blocks together, leaving one large contiguous free space. This eliminates external fragmentation but requires moving processes in memory.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

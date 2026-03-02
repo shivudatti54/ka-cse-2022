@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Parity Check Algorithm",
+      "description": "Implements even parity check for error detection",
+      "code": "FUNCTION CalculateParityBit(data)\n count = 0\n FOR each bit in data\n IF bit == 1 THEN\n count = count + 1\n END IF\n END FOR\n IF count % 2 == 0 THEN\n RETURN 0 // Even parity: no addition needed\n ELSE\n RETURN 1 // Odd: add 1 to make even\n END IF\nEND FUNCTION\n\nFUNCTION VerifyParityWithErrorCheck(receivedData, parityBit)\n calculatedParity = CalculateParityBit(receivedData)\n IF calculatedParity == parityBit THEN\n RETURN \"No Error Detected\"\n ELSE\n RETURN \"Error Detected\"\n END IF\nEND FUNCTION",
+      "explanation": "This algorithm calculates even parity by counting 1s in data. If count is even, parity bit is 0; if odd, parity bit is 1. Receiver performs same calculation and compares. Mismatch indicates error. Can only detect odd number of bit flips.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "CRC Generation Using Polynomial Division",
+      "description": "Demonstrates CRC-8 generation using polynomial division",
+      "code": "// CRC-8 Generator Polynomial: x^8 + x^2 + x + 1 (0x07)\nCONSTANT POLYNOMIAL = 0x07\n\nFUNCTION CalculateCRC8(dataBytes[])\n crc = 0x00\n FOR each byte in dataBytes\n crc = crc XOR byte\n FOR i = 0 TO 7\n IF (crc AND 0x80) != 0 THEN\n crc = (crc << 1) XOR POLYNOMIAL\n ELSE\n crc = crc << 1\n END IF\n END FOR\n END FOR\n RETURN crc\nEND FUNCTION\n\nFUNCTION TransmitFrame(dataBytes[])\n crc = CalculateCRC8(dataBytes)\n frame = dataBytes + [crc] // Append CRC\n RETURN frame\nEND FUNCTION\n\nFUNCTION VerifyFrame(receivedFrame[])\n data = receivedFrame[0 to length-2]\n receivedCRC = receivedFrame[length-1]\n calculatedCRC = CalculateCRC8(data)\n IF calculatedCRC == receivedCRC THEN\n RETURN \"Frame OK - No Error\"\n ELSE\n RETURN \"Error Detected - Request Retransmission\"\n END IF\nEND FUNCTION",
+      "explanation": "CRC uses polynomial division to generate check bits. The generator polynomial is agreed upon by sender and receiver. CRC is appended to data. Receiver divides received frame by same polynomial - if remainder is zero, no error detected. Detects all single-bit errors and burst errors up to polynomial degree.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Hamming Code Encoding and Error Correction",
+      "description": "Implements Hamming code for single-bit error detection and correction",
+      "code": "// Hamming Code (7,4) - 4 data bits, 3 parity bits\nFUNCTION EncodeHamming(dataBits[4])\n // Positions: 1=P1, 2=P2, 3=D1, 4=P4, 5=D2, 6=D3, 7=D4\n encoded[7]\n \n // Extract data bits\n encoded[3] = dataBits[0] // D1 at position 3\n encoded[5] = dataBits[1] // D2 at position 5\n encoded[6] = dataBits[2] // D3 at position 6\n encoded[7] = dataBits[3] // D4 at position 7\n \n // Calculate parity bits\n encoded[1] = encoded[3] XOR encoded[5] XOR encoded[7] // P1 covers D1,D2,D4\n encoded[2] = encoded[3] XOR encoded[6] XOR encoded[7] // P2 covers D1,D3,D4\n encoded[4] = encoded[5] XOR encoded[6] XOR encoded[7] // P4 covers D2,D3,D4\n \n RETURN encoded\nEND FUNCTION\n\nFUNCTION DetectAndCorrect(encoded[7])\n errorPosition = 0\n \n // Check each parity bit\n parity1 = encoded[1] XOR encoded[3] XOR encoded[5] XOR encoded[7]\n IF parity1 == 1 THEN errorPosition = errorPosition + 1\n \n parity2 = encoded[2] XOR encoded[3] XOR encoded[6] XOR encoded[7]\n IF parity2 == 1 THEN errorPosition = errorPosition + 2\n \n parity4 = encoded[4] XOR encoded[5] XOR encoded[6] XOR encoded[7]\n IF parity4 == 1 THEN errorPosition = errorPosition + 4\n \n IF errorPosition > 0 THEN\n encoded[errorPosition] = NOT encoded[errorPosition] // Flip error bit\n RETURN \"Error at position \" + errorPosition + \", Corrected\"\n ELSE\n RETURN \"No Error Detected\"\n END IF\nEND FUNCTION",
+      "explanation": "Hamming code encodes 4 data bits using 3 parity bits at positions 1,2,4 (powers of 2). Each parity bit covers specific data positions. For error detection, recalculate parity bits and form binary number indicating error position. If errorPosition is 3, bit 3 is corrupted. Flip the bit to correct. Can detect and correct single-bit errors.",
+      "timeComplexity": "O(n) where n=7",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

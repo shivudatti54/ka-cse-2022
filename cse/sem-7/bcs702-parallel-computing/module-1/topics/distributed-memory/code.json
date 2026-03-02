@@ -1,0 +1,35 @@
+{
+  "topicId": "distributed-memory",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "MPI Matrix-Vector Multiplication",
+      "description": "Parallel matrix-vector multiplication y = Ax using row-wise distribution. Each processor computes partial results for its rows, and results are gathered to the root process.",
+      "code": "BEGIN\n  // Assume A is n\u00d7n matrix, distributed by rows across P processors\n  // Each process gets n/P rows of A and corresponding elements of y\n  // Process 0 is root\n\n  // Broadcast vector x to all processes\n  IF rank == 0 THEN\n    FOR i = 1 TO P-1 DO\n      MPI_Send(x, n, MPI_DOUBLE, i, tag, comm)\n    END FOR\n  ELSE\n    MPI_Recv(x, n, MPI_DOUBLE, 0, tag, comm, status)\n  END IF\n\n  // Local computation: y_local = A_local \u00d7 x\n  FOR i = 0 TO local_rows-1 DO\n    y_local[i] = 0\n    FOR j = 0 TO n-1 DO\n      y_local[i] = y_local[i] + A_local[i][j] * x[j]\n    END FOR\n  END FOR\n\n  // Gather all partial results to root\n  IF rank == 0 THEN\n    y[0:local_rows-1] = y_local\n    FOR i = 1 TO P-1 DO\n      MPI_Recv(y_buffer, n/P, MPI_DOUBLE, i, tag, comm, status)\n      y[dest_offset:dest_offset+n/P-1] = y_buffer\n    END FOR\n  ELSE\n    MPI_Send(y_local, local_rows, MPI_DOUBLE, 0, tag, comm)\n  END IF\nEND",
+      "explanation": "The program distributes rows of matrix A across processors. Vector x must be broadcast to all workers. Each processor computes local dot products, and partial results are gathered to process 0. This demonstrates the typical SPMD pattern in distributed memory programming with collective communication for data distribution and result collection.",
+      "timeComplexity": "O(n\u00b2/P + n)",
+      "spaceComplexity": "O(n\u00b2/P + n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Halo Exchange for 2D Stencil",
+      "description": "Ghost cell exchange between 4 neighboring processes in a 2D processor grid. Each process exchanges boundary rows and columns with neighbors before stencil computation.",
+      "code": "BEGIN\n  // Assume process has local domain with ghost cells\n  // Grid dimensions: local_n \u00d7 local_n (including ghost cells)\n  // Neighbors: left, right, up, down (may be MPI_PROC_NULL for boundaries)\n\n  // Exchange with left neighbor: send column 1, receive column n-2\n  MPI_Sendrecv(local_domain[1:local_n-2][1], local_n-2, MPI_DOUBLE,\n               left, tag_left,\n               local_domain[1:local_n-2][local_n-1], local_n-2, MPI_DOUBLE,\n               right, tag_right, comm, status)\n\n  // Exchange with right neighbor: send column n-2, receive column 1\n  MPI_Sendrecv(local_domain[1:local_n-2][local_n-2], local_n-2, MPI_DOUBLE,\n               right, tag_right,\n               local_domain[1:local_n-2][0], local_n-2, MPI_DOUBLE,\n               left, tag_left, comm, status)\n\n  // Exchange with top neighbor: send row 1, receive row n-2\n  MPI_Sendrecv(local_domain[1][1:local_n-2], local_n-2, MPI_DOUBLE,\n               up, tag_up,\n               local_domain[local_n-1][1:local_n-2], local_n-2, MPI_DOUBLE,\n               down, tag_down, comm, status)\n\n  // Exchange with bottom neighbor: send row n-2, receive row 1\n  MPI_Sendrecv(local_domain[local_n-2][1:local_n-2], local_n-2, MPI_DOUBLE,\n               down, tag_down,\n               local_domain[0][1:local_n-2], local_n-2, MPI_DOUBLE,\n               up, tag_up, comm, status)\n\n  // Now perform stencil computation on interior points\n  FOR i = 2 TO local_n-3 DO\n    FOR j = 2 TO local_n-3 DO\n      new_domain[i][j] = (domain[i][j] + domain[i-1][j] + domain[i+1][j]\n                        + domain[i][j-1] + domain[i][j+1]) * 0.2\n    END FOR\n  END FOR\nEND",
+      "explanation": "The code demonstrates halo exchange using MPI_Sendrecv which atomically performs send and receive to avoid deadlock. Ghost cells store boundary data from neighbors, enabling each process to compute stencil values using only local data. The interior computation loop excludes ghost cell boundaries.",
+      "timeComplexity": "O(n\u00b2/P) per iteration",
+      "spaceComplexity": "O(n\u00b2/P)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "All-to-All Personalized Communication",
+      "description": "Complete exchange where every process sends a unique message to every other process. Demonstrates the most general communication pattern in distributed memory systems.",
+      "code": "BEGIN\n  // Each process has send_buffer of size P \u00d7 msg_size\n  // Process i sends send_buffer[i*msg_size:(i+1)*msg_size] to process i\n\n  // Initialize send buffers with unique data\n  FOR i = 0 TO P-1 DO\n    send_buffer[i*msg_size:(i+1)*msg_size] = generate_my_data_for_process(i)\n  END FOR\n\n  // Perform all-to-all using MPI_Alltoall\n  MPI_Alltoall(send_buffer, msg_size, MPI_DOUBLE,\n               recv_buffer, msg_size, MPI_DOUBLE, comm)\n\n  // After call, recv_buffer[j*msg_size:(j+1)*msg_size] contains\n  // the message received from process j\n\n  // Verification: each process should have P unique messages\n  FOR j = 0 TO P-1 DO\n    IF recv_buffer[j*msg_size] != expected_from_process(j) THEN\n      PRINT \"Error: unexpected message from process\", j\n    END IF\n  END FOR\nEND",
+      "explanation": "All-to-all communication is used in matrix transpose, FFT, and collective algorithms. Each process sends a unique message to every other process, and receives unique messages from all. The MPI_Alltoall call completes in O(P \u00d7 msg_size) time, representing O(P\u00b2) total message volume across the system.",
+      "timeComplexity": "O(P \u00d7 m) where m is message size per pair",
+      "spaceComplexity": "O(P \u00d7 m)"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "topicId": "secondary-storage-structure",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between seek time and rotational latency in disk access.",
+      "keyPoints": [
+        "Seek time is the time to move the read/write head to the correct track/cylinder",
+        "Rotational latency is the time waiting for the desired sector to rotate under the head",
+        "Seek time typically ranges from 2-10 ms, rotational latency depends on RPM",
+        "Seek time is usually the larger component of disk access time"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is disk caching? How does it improve system performance?",
+      "keyPoints": [
+        "Disk caching uses portion of RAM to store frequently accessed disk data",
+        "Reduces access time by serving reads from fast memory instead of slow disk",
+        "Write-back cache delays writes to disk, improving write performance",
+        "Cache hit ratio determines effectiveness - frequently accessed data stays in cache"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the SCAN disk scheduling algorithm with an example.",
+      "keyPoints": [
+        "Also known as elevator algorithm - moves arm in one direction servicing all requests",
+        "When it reaches the end, it reverses direction and services remaining requests",
+        "Reduces starvation compared to SSTF (all requests eventually get serviced",
+        "Example: arm at cylinder 50, requests at 10, 80, 30, 100 - goes 50\u219280\u2192100 then reverses to 30\u219210"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are the advantages and disadvantages of SSDs over traditional hard disks?",
+      "keyPoints": [
+        "Advantages: faster access time (no moving parts), lower latency, more durable, less power, silent operation",
+        "Disadvantages: higher cost per GB, limited write cycles, lower maximum storage capacity than HDD",
+        "SSDs use flash memory - electronic storage vs magnetic/mechanical in HDD",
+        "Best used for operating systems and frequently accessed data, HDD for mass storage"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of RAID Level 1 and RAID Level 5.",
+      "keyPoints": [
+        "RAID 1 (mirroring): duplicates data on two or more disks, provides fault tolerance but uses 50% capacity",
+        "RAID 5 (distributed parity): stripes data with distributed parity, can recover from single disk failure",
+        "RAID 1+0 combines mirroring and striping for best performance and reliability",
+        "RAID improves performance through parallelism and reliability through redundancy"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is disk formatting? Differentiate between low-level and high-level formatting.",
+      "keyPoints": [
+        "Low-level formatting: creates physical sector structure (tracks, sectors, inter-sector gaps) - done at factory",
+        "High-level (logical) formatting: creates file system structure (boot sector, FAT/inode tables, root directory)",
+        "Partitioning creates logical divisions before high-level formatting",
+        "Formatting prepares blank disk for storing files with appropriate file system"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Calculate the average rotational latency for a disk rotating at 7200 RPM.",
+      "keyPoints": [
+        "Formula: Average rotational latency = (1/2) \u00d7 (60/RPM) seconds",
+        "For 7200 RPM: (1/2) \u00d7 (60/7200) = 30/7200 = 0.004167 seconds",
+        "Average rotational latency = 4.167 milliseconds",
+        "This is the average time to wait for the desired sector assuming it could be anywhere on the track"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the disk access time formula. A disk has the following specifications: seek time = 5 ms, rotational speed = 10,000 RPM, transfer rate = 50 MB/s, and controller overhead = 1 ms. Calculate the time to read a 10 KB file assuming the required sector is already under the head.",
+      "keyPoints": [
+        "Disk access time = seek time + rotational latency + transfer time + controller overhead",
+        "Rotational latency = 60/(2\u00d710000) = 3 ms (average for 10000 RPM)",
+        "Transfer time = 10 KB / 50 MB/s = 10\u00d71024 / (50\u00d71024\u00d71024) = 0.2 ms approximately",
+        "Total = 5 + 3 + 0.2 + 1 = 9.2 ms (if sector not under head, add rotational latency)",
+        "If sector is under head, skip rotational latency: 5 + 0.2 + 1 = 6.2 ms"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare FCFS, SSTF, SCAN, and C-SCAN disk scheduling algorithms. Illustrate with an example where the initial head position is at cylinder 50 and pending requests are at cylinders: 95, 180, 34, 119, 11, 45, 62, 24. Calculate total head movement for each algorithm.",
+      "keyPoints": [
+        "FCFS: Serves in order of arrival - 50\u219295\u2192180\u219234\u2192119\u219211\u219245\u219262\u219224 = 20+85+146+85+108+34+17+38 = 533",
+        "SSTF: Shortest seek first - 50\u219245\u219234\u219224\u219211\u219262\u219295\u2192119\u2192180 = 5+11+10+13+51+33+24+61 = 208 (better than FCFS)",
+        "SCAN: Goes to end then reverses - 50\u219262\u219295\u2192119\u2192180\u219245\u219234\u219224\u219211 = 12+33+24+61+135+11+10+13 = 299",
+        "C-SCAN: Circular - returns to beginning: 50\u219262\u219295\u2192119\u2192180\u219211\u219224\u219234\u219245 = 12+33+24+61+169+13+10+11 = 333",
+        "SSTF gives minimum movement but may cause starvation; SCAN provides uniform wait time"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the physical structure of a magnetic hard disk. Explain terms like platter, track, sector, cylinder, and head. Also discuss factors that affect disk performance.",
+      "keyPoints": [
+        "Physical structure: one or more circular platters coated with magnetic material, mounted on a central spindle",
+        "Data organized in concentric circles called tracks, each track divided into sectors",
+        "Cylinder = all tracks at same radius across all surfaces - can be accessed without arm movement",
+        "Read/write heads float above surface on air cushion - one head per surface",
+        "Performance factors: seek time (arm movement), rotational latency (rotation wait), transfer rate",
+        "Other factors: controller overhead, queuing delay, disk cache hit ratio",
+        "Zone bit recording allows outer tracks to have more sectors, increasing capacity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain RAID technology. Discuss different RAID levels (0, 1, 5, 0+1, 1+0) in terms of performance, fault tolerance, and minimum number of disks required.",
+      "keyPoints": [
+        "RAID (Redundant Array of Independent Disks) combines multiple disks for performance and/or reliability",
+        "RAID 0: Striping only - no redundancy, minimum 2 disks, best performance but no fault tolerance",
+        "RAID 1: Mirroring - duplicates data, minimum 2 disks, 50% capacity, good fault tolerance",
+        "RAID 5: Distributed parity - minimum 3 disks, can recover from 1 disk failure, good read performance",
+        "RAID 0+1: Striping then mirroring - combines performance of RAID 0 and fault tolerance of RAID 1, minimum 4 disks",
+        "RAID 1+0: Mirroring then striping - more fault tolerant than 0+1, can survive multiple disk failures (if in different mirror sets)",
+        "Choice depends on requirements: performance vs reliability vs cost"
+      ],
+      "marks": 10
+    }
+  ]
+}

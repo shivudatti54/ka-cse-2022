@@ -1,0 +1,33 @@
+{
+  "topicId": "the-genesis-block",
+  "examples": [
+    {
+      "id": "pseudocode-genesis-block-creation",
+      "title": "Algorithm: Genesis Block Creation",
+      "description": "Pseudocode demonstrating genesis block creation",
+      "language": "pseudocode",
+      "code": "ALGORITHM CreateGenesisBlock\nINPUT: timestamp, message\nOUTPUT: genesisBlock\n\nBEGIN\n genesisBlock.height = 0\n genesisBlock.previousHash = NULL\n genesisBlock.timestamp = timestamp\n genesisBlock.message = message\n genesisBlock.coinbaseReward = 50 BTC (unspendable)\n RETURN genesisBlock\nEND",
+      "explanation": "This pseudocode illustrates the creation of a genesis block, including setting its height, previous hash, timestamp, and coinbase reward."
+    },
+    {
+      "id": "python-genesis-block-implementation",
+      "title": "Python: Genesis Block Implementation",
+      "description": "Python implementation of a genesis block",
+      "language": "python",
+      "code": "import hashlib\nimport time\n\nclass GenesisBlock:\n def __init__(self, timestamp, message):\n self.height = 0\n self.previousHash = '0' * 64\n self.timestamp = timestamp\n self.message = message\n self.coinbaseReward = 50 # unspendable\n\n def calculateHash(self):\n data = str(self.height) + self.previousHash + str(self.timestamp) + self.message\n return hashlib.sha256(data.encode()).hexdigest()\n\n# Example usage\ntimestamp = int(time.time())\nmessage = 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'\ngenesisBlock = GenesisBlock(timestamp, message)\nprint(genesisBlock.calculateHash())",
+      "explanation": "This Python implementation defines a GenesisBlock class with attributes for height, previous hash, timestamp, and coinbase reward. The calculateHash method computes the hash of the genesis block.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "c-genesis-block-implementation",
+      "title": "C: Genesis Block Implementation",
+      "description": "C implementation of a genesis block",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <time.h>\n#include <sha2.h>\n\ntypedef struct {\n int height;\n char previousHash[65];\n time_t timestamp;\n char message[256];\n int coinbaseReward;\n} GenesisBlock;\n\nvoid createGenesisBlock(GenesisBlock* block, time_t timestamp, const char* message) {\n block->height = 0;\n strcpy(block->previousHash, \"0\");\n block->timestamp = timestamp;\n strcpy(block->message, message);\n block->coinbaseReward = 50; // unspendable\n}\n\nvoid calculateHash(GenesisBlock* block, char* hash) {\n char data[256];\n sprintf(data, \"%d%s%ld%s\", block->height, block->previousHash, block->timestamp, block->message);\n SHA256_CTX ctx;\n SHA256_Init(&ctx);\n SHA256_Update(&ctx, data, strlen(data));\n SHA256_Final(hash, &ctx);\n}\n\nint main() {\n GenesisBlock block;\n time_t timestamp = time(NULL);\n const char* message = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n createGenesisBlock(&block, timestamp, message);\n char hash[65];\n calculateHash(&block, hash);\n printf(\"%s\\n\", hash);\n return 0;\n}",
+      "explanation": "This C implementation defines a GenesisBlock struct and functions to create and calculate the hash of a genesis block.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

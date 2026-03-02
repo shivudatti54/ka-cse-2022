@@ -1,0 +1,45 @@
+{
+  "topicId": "top-down-parsing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Recursive Descent Parser for S→aSb|ε",
+      "description": "Implements predictive parsing without backtracking for a simple grammar",
+      "code": "FUNCTION parse_S():\n IF current_token == 'a' THEN\n match('a')\n parse_S()\n match('b')\n ELSE IF current_token == '$' OR current_token == 'b' THEN\n // ε-production: do nothing, just return\n RETURN\n ELSE\n ERROR(\"Syntax error at S\")\n\nFUNCTION match(token):\n IF current_token == token THEN\n current_token = get_next_token()\n ELSE\n ERROR(\"Match failed\")\n\n// Main parsing driver\nFUNCTION parse():\n current_token = get_first_token()\n parse_S()\n IF current_token == '$' THEN\n PRINT \"Parsing successful\"\n ELSE\n PRINT \"Syntax error\"",
+      "explanation": "Each non-terminal has a function that checks the lookahead token to decide which production to use. The S() function uses 'a' to choose S→aSb production and accepts ε when lookahead is '$' or 'b'.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Predictive Parser Driver Algorithm",
+      "description": "Table-driven LL(1) parsing algorithm using stack",
+      "code": "// Predictive parsing driver\nFUNCTION predictive_parse(input, parse_table, start_symbol):\n stack = ['$', start_symbol] // Initialize stack\n pointer = 0 // Input pointer\n \n WHILE stack[top] != '$':\n X = stack[top]\n a = input[pointer] // Current input token\n \n IF X == a: // Terminal matches\n POP stack\n pointer = pointer + 1\n ELSE IF X is terminal: // Terminal doesn't match\n ERROR(\"Syntax error\")\n ELSE IF parse_table[X][a] is EMPTY:\n ERROR(\"Syntax error - no entry\")\n ELSE: // Non-terminal: use parse table\n production = parse_table[X][a]\n POP stack\n RHS = production.RHS // Right-hand side\n // Push RHS in reverse order\n FOR each symbol in RHS (reverse order):\n IF symbol != ε:\n PUSH symbol onto stack\n \n // After loop, stack should have '$'\n IF stack[top] == '$' AND a == '$':\n PRINT \"Accept\"\n ELSE\n PRINT \"Error\"",
+      "explanation": "The driver algorithm repeatedly checks the top of stack. If it matches the input, pops and advances. If it's a non-terminal, looks up the parse table and replaces with the production's RHS in reverse order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "FIRST Set Computation Algorithm",
+      "description": "Algorithm to compute FIRST sets for all grammar symbols",
+      "code": "FUNCTION compute_FIRST():\n // Initialize FIRST sets\n FOR each terminal t:\n FIRST(t) = {t}\n FOR each non-terminal N:\n FIRST(N) = {}\n \n REPEAT\n changed = FALSE\n \n FOR each production A → α:\n // Case 1: X is terminal\n IF first_symbol(α) is terminal t:\n IF t not in FIRST(A):\n ADD t to FIRST(A)\n changed = TRUE\n \n // Case 2: X is non-terminal\n IF first_symbol(α) is non-terminal X:\n IF ε in FIRST(X):\n // Add FIRST(X) - {ε} to FIRST(A)\n FOR each symbol in FIRST(X):\n IF symbol != ε AND symbol not in FIRST(A):\n ADD symbol to FIRST(A)\n changed = TRUE\n \n // Check second symbol, third symbol...\n FOR each symbol Yi in α:\n IF ε in FIRST(all previous symbols):\n IF first_symbol(Yi) is terminal t:\n ADD t to FIRST(A)\n ELSE IF first_symbol(Yi) is non-terminal Z:\n ADD FIRST(Z) - {ε} to FIRST(A)\n ELSE:\n // ε not in FIRST(X), just add FIRST(X)\n ADD FIRST(X) - {ε} to FIRST(A)\n \n // Case 3: α can derive ε (all symbols nullable)\n IF ALL symbols in α can derive ε:\n IF ε not in FIRST(A):\n ADD ε to FIRST(A)\n changed = TRUE\n \n UNTIL NOT changed\n \n RETURN FIRST sets",
+      "explanation": "The algorithm iteratively computes FIRST sets by adding terminals directly and non-terminal sets, handling ε-productions by checking if all preceding symbols can derive ε.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "LL(1) Parse Table Construction",
+      "description": "Algorithm to build LL(1) parsing table from FIRST and FOLLOW sets",
+      "code": "FUNCTION construct_parse_table(grammar):\n // Initialize parse table with empty entries\n parse_table = empty table\n \n // Compute FIRST and FOLLOW\n FIRST = compute_FIRST(grammar)\n FOLLOW = compute_FOLLOW(grammar)\n \n FOR each production A → α in grammar:\n // For each terminal a in FIRST(α)\n FOR each terminal a in FIRST(α):\n IF a != ε:\n parse_table[A][a] = A → α\n \n // If ε is in FIRST(α), add FOLLOW entries\n IF ε in FIRST(α):\n FOR each terminal b in FOLLOW(A):\n parse_table[A][b] = A → α\n \n // For $ (end of input)\n IF ε in FIRST(α) AND '$' in FOLLOW(A):\n parse_table[A]['$'] = A → α\n \n RETURN parse_table\n\n// Check if grammar is LL(1)\nFUNCTION is_LL1(parse_table):\n FOR each cell in parse_table:\n IF cell has MORE THAN ONE entry:\n RETURN FALSE // Conflict exists\n RETURN TRUE",
+      "explanation": "The parse table is filled by adding production A→α to column 'a' for each 'a' in FIRST(α). If α can derive ε, also add entries for all terminals in FOLLOW(A). Grammar is LL(1) if no cell has multiple entries (conflicts).",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs><marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="10" markerHeight="6" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#1976d2"/></marker></defs>
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="35" text-anchor="middle" font-size="21" font-weight="bold" fill="#1565c0">Tasking in OpenMP</text>
+  <g id="step0" class="step" data-narration="OpenMP tasking enables parallelism for irregular workloads that cannot be expressed as simple loop iterations. Tasks are units of work that can be created dynamically and scheduled across threads in the team.">
+    <text x="400" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">What is Tasking?</text>
+    <rect x="50" y="78" width="330" height="65" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="215" y="98" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">Loop Parallelism (for)</text>
+    <text x="215" y="115" text-anchor="middle" font-size="10" fill="#555">Fixed iterations, regular work</text>
+    <text x="215" y="131" text-anchor="middle" font-size="10" fill="#555">Great for arrays and matrices</text>
+    <rect x="420" y="78" width="330" height="65" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="585" y="98" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">Task Parallelism (task)</text>
+    <text x="585" y="115" text-anchor="middle" font-size="10" fill="#555">Dynamic creation, irregular work</text>
+    <text x="585" y="131" text-anchor="middle" font-size="10" fill="#555">Great for trees, graphs, recursion</text>
+  </g>
+  <g id="step1" class="step" data-narration="Tasks are created inside a parallel region using pragma omp task. A single directive ensures only one thread creates the tasks, while the rest of the team picks up and executes them from a task pool.">
+    <text x="400" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c">Task Creation Pattern</text>
+    <rect x="80" y="80" width="640" height="95" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="100" text-anchor="middle" font-size="11" font-weight="bold" fill="#388e3c">#pragma omp parallel</text>
+    <text x="400" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#9c27b0">#pragma omp single</text>
+    <text x="400" y="136" text-anchor="middle" font-size="10" fill="#555">{</text>
+    <text x="400" y="151" text-anchor="middle" font-size="10" fill="#555">#pragma omp task { process(image1); }</text>
+    <text x="400" y="166" text-anchor="middle" font-size="10" fill="#555">#pragma omp task { process(image2); }</text>
+    <text x="400" y="181" text-anchor="middle" font-size="10" fill="#555">}</text>
+  </g>
+  <g id="step2" class="step" data-narration="The single directive is critical in the tasking pattern. Without it, every thread would create duplicate tasks. With single, only one thread creates tasks while other threads wait at the implicit barrier, ready to execute tasks.">
+    <text x="400" y="210" text-anchor="middle" font-size="14" font-weight="bold" fill="#9c27b0">Why #pragma omp single?</text>
+    <rect x="50" y="235" width="330" height="75" rx="8" fill="#fce4ec" stroke="#e91e63" stroke-width="2"/>
+    <text x="215" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#e91e63">Without single</text>
+    <text x="215" y="275" text-anchor="middle" font-size="10" fill="#555">4 threads x 3 tasks = 12 tasks!</text>
+    <text x="215" y="292" text-anchor="middle" font-size="10" fill="#e91e63">Duplicate work created</text>
+    <rect x="420" y="235" width="330" height="75" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="585" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">With single</text>
+    <text x="585" y="275" text-anchor="middle" font-size="10" fill="#555">1 thread creates 3 tasks</text>
+    <text x="585" y="292" text-anchor="middle" font-size="10" fill="#388e3c">Other threads execute them</text>
+  </g>
+  <g id="step3" class="step" data-narration="The taskwait directive creates a synchronization point where the encountering thread waits for all its child tasks to complete. This is essential for establishing dependencies between tasks, such as waiting for partial results.">
+    <text x="400" y="335" text-anchor="middle" font-size="14" font-weight="bold" fill="#ff9800">Task Synchronization: taskwait</text>
+    <rect x="100" y="357" width="600" height="40" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="375" text-anchor="middle" font-size="12" font-weight="bold" fill="#ff9800">#pragma omp taskwait</text>
+    <text x="400" y="390" text-anchor="middle" font-size="10" fill="#555">Waits for all child tasks to finish before proceeding</text>
+    <rect x="100" y="407" width="180" height="32" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="190" y="427" text-anchor="middle" font-size="10" fill="#1976d2">Task A: compute()</text>
+    <rect x="310" y="407" width="180" height="32" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="400" y="427" text-anchor="middle" font-size="10" fill="#388e3c">Task B: compute()</text>
+    <rect x="520" y="407" width="180" height="32" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="610" y="427" text-anchor="middle" font-size="10" fill="#9c27b0">Task C: compute()</text>
+    <text x="400" y="457" text-anchor="middle" font-size="10" fill="#ff9800">--- taskwait: all must complete ---</text>
+  </g>
+  <g id="step4" class="step" data-narration="Tasking is ideal for recursive algorithms like tree traversal, merge sort, and Fibonacci. Each recursive call spawns a new task, and the runtime distributes these tasks across available threads for load balancing.">
+    <text x="400" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">Recursive Tasking Example</text>
+    <rect x="80" y="80" width="640" height="95" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="100" text-anchor="middle" font-size="11" font-weight="bold" fill="#1976d2">void traverse(node* p) {</text>
+    <text x="400" y="118" text-anchor="middle" font-size="10" fill="#555">if (p-&gt;left)</text>
+    <text x="400" y="133" text-anchor="middle" font-size="10" fill="#9c27b0">#pragma omp task</text>
+    <text x="400" y="148" text-anchor="middle" font-size="10" fill="#555">traverse(p-&gt;left);</text>
+    <text x="400" y="163" text-anchor="middle" font-size="10" fill="#555">if (p-&gt;right) traverse(p-&gt;right);</text>
+    <text x="400" y="178" text-anchor="middle" font-size="10" fill="#555">}</text>
+  </g>
+  <g id="step5" class="step" data-narration="Task data scoping follows special rules: variables from outside a task are firstprivate by default, meaning each task gets its own initialized copy. Shared variables in tasks need explicit shared clause to avoid copies.">
+    <text x="400" y="210" text-anchor="middle" font-size="14" font-weight="bold" fill="#e91e63">Task Data Scoping</text>
+    <rect x="50" y="235" width="330" height="70" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="215" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">firstprivate (default)</text>
+    <text x="215" y="275" text-anchor="middle" font-size="10" fill="#555">Each task gets own copy</text>
+    <text x="215" y="293" text-anchor="middle" font-size="10" fill="#555">Initialized from enclosing scope</text>
+    <rect x="420" y="235" width="330" height="70" rx="8" fill="#fce4ec" stroke="#e91e63" stroke-width="2"/>
+    <text x="585" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#e91e63">shared (explicit)</text>
+    <text x="585" y="275" text-anchor="middle" font-size="10" fill="#555">All tasks share same variable</text>
+    <text x="585" y="293" text-anchor="middle" font-size="10" fill="#e91e63">Must use shared() clause</text>
+  </g>
+  <g id="step6" class="step" data-narration="Key takeaways: use tasking for irregular parallelism, always wrap task creation in single, use taskwait for dependencies, remember firstprivate default scoping, and consider task granularity to avoid overhead from tiny tasks.">
+    <text x="400" y="335" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">Tasking Best Practices</text>
+    <rect x="60" y="357" width="320" height="24" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="220" y="373" text-anchor="middle" font-size="10" fill="#1976d2">1. Use for irregular, recursive work</text>
+    <rect x="60" y="386" width="320" height="24" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="220" y="402" text-anchor="middle" font-size="10" fill="#388e3c">2. Always use single for task creation</text>
+    <rect x="60" y="415" width="320" height="24" rx="4" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="220" y="431" text-anchor="middle" font-size="10" fill="#ff9800">3. Use taskwait for dependencies</text>
+    <rect x="420" y="357" width="320" height="24" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="580" y="373" text-anchor="middle" font-size="10" fill="#9c27b0">4. firstprivate is default for tasks</text>
+    <rect x="420" y="386" width="320" height="24" rx="4" fill="#fce4ec" stroke="#e91e63"/>
+    <text x="580" y="402" text-anchor="middle" font-size="10" fill="#e91e63">5. Avoid too-fine granularity</text>
+    <rect x="420" y="415" width="320" height="24" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="580" y="431" text-anchor="middle" font-size="10" fill="#1976d2">6. Use if clause for cutoff</text>
+  </g>
+</svg>

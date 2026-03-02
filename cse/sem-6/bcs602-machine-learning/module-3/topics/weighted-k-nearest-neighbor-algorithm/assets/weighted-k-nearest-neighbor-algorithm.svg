@@ -1,0 +1,509 @@
+<svg viewBox="0 0 800 1400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd"/>
+      <stop offset="100%" style="stop-color:#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0"/>
+      <stop offset="100%" style="stop-color:#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5"/>
+      <stop offset="100%" style="stop-color:#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee"/>
+      <stop offset="100%" style="stop-color:#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1976d2"/>
+      <stop offset="100%" style="stop-color:#1565c0"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes growHeight {
+      from { transform: scaleY(0); transform-origin: top; }
+      to { transform: scaleY(1); transform-origin: top; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    
+    .formula-text { font-family: 'Times New Roman', serif; font-style: italic; }
+    .title-text { font-family: Arial, sans-serif; font-weight: bold; }
+    .label-text { font-family: Arial, sans-serif; font-size: 10px; }
+    .small-text { font-family: Arial, sans-serif; font-size: 9px; }
+    
+    .draw-line {
+      stroke-dasharray: 300;
+      stroke-dashoffset: 300;
+      animation: drawLine 1.5s ease-out forwards;
+    }
+    
+    .grow-bar {
+      transform: scaleY(0);
+      transform-origin: left;
+      animation: growHeight 0.8s ease-out forwards;
+    }
+  </style>
+  
+  <!-- Background -->
+  <rect width="800" height="1400" fill="#f8f9fa"/>
+  
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to the Weighted K-Nearest-Neighbor Algorithm, an enhanced version of standard KNN that assigns importance based on distance.">
+    <rect x="50" y="15" width="700" height="45" rx="10" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial, sans-serif">Weighted K-Nearest-Neighbor (WKNN) Algorithm</text>
+    <text x="400" y="62" text-anchor="middle" fill="#546e7a" font-size="11" font-family="Arial, sans-serif">Machine Learning - Module 3</text>
+  </g>
+  
+  <!-- Step 1: Why WKNN Matters -->
+  <g class="step" id="step1" data-narration="Standard KNN treats all neighbors equally, but closer neighbors should have more influence on predictions than distant ones.">
+    <rect x="50" y="75" width="340" height="90" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="65" y="92" fill="#e65100" font-size="11" font-weight="bold" font-family="Arial">LIMITATION OF STANDARD KNN</text>
+    <text x="65" y="108" fill="#333" font-size="9" font-family="Arial">All K neighbors vote with</text>
+    <text x="65" y="120" fill="#333" font-size="9" font-family="Arial">equal weight = 1.0</text>
+    <text x="65" y="135" fill="#666" font-size="8" font-family="Arial">This can be problematic when</text>
+    <text x="65" y="147" fill="#666" font-size="8" font-family="Arial">neighbors have varying distances!</text>
+    
+    <!-- Visual: Equal voting -->
+    <circle cx="310" cy="120" r="25" fill="#fff" stroke="#ff9800" stroke-width="2"/>
+    <circle cx="310" cy="120" r="8" fill="#ff9800"/>
+    <text x="310" y="158" text-anchor="middle" fill="#666" font-size="8" font-family="Arial">Query</text>
+    
+    <!-- Equal vote lines -->
+    <line x1="335" y1="110" x2="360" y2="95" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="4"/>
+    <line x1="340" y1="125" x2="370" y2="125" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="4"/>
+    <line x1="335" y1="140" x2="360" y2="155" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="4"/>
+    <circle cx="365" cy="95" r="6" fill="#4caf50"/>
+    <circle cx="375" cy="125" r="6" fill="#4caf50"/>
+    <circle cx="365" cy="155" r="6" fill="#4caf50"/>
+    
+    <!-- Right side: The solution -->
+    <rect x="405" y="75" width="345" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="420" y="92" fill="#2e7d32" font-size="11" font-weight="bold" font-family="Arial">WKNN SOLUTION</text>
+    <text x="420" y="108" fill="#333" font-size="9" font-family="Arial">Assign weights based on</text>
+    <text x="420" y="120" fill="#333" font-size="9" font-family="Arial">distance: w = 1/d²</text>
+    <text x="420" y="135" fill="#666" font-size="8" font-family="Arial">Closer neighbors get</text>
+    <text x="420" y="147" fill="#666" font-size="8" font-family="Arial">higher weights!</text>
+    
+    <!-- Visual: Weighted voting -->
+    <circle cx="670" cy="120" r="25" fill="#fff" stroke="#4caf50" stroke-width="2"/>
+    <circle cx="670" cy="120" r="8" fill="#4caf50"/>
+    <text x="670" y="158" text-anchor="middle" fill="#666" font-size="8" font-family="Arial">Query</text>
+    
+    <!-- Weighted vote lines (varying thickness) -->
+    <line x1="695" y1="110" x2="720" y2="95" stroke="#4caf50" stroke-width="3" stroke-dasharray="4"/>
+    <line x1="700" y1="125" x2="730" y2="125" stroke="#4caf50" stroke-width="2" stroke-dasharray="4"/>
+    <line x1="695" y1="140" x2="720" y2="155" stroke="#4caf50" stroke-width="1" stroke-dasharray="4"/>
+    <circle cx="725" cy="95" r="8" fill="#ff9800"/>
+    <circle cx="735" cy="125" r="6" fill="#ff9800"/>
+    <circle cx="725" cy="155" r="4" fill="#ff9800"/>
+  </g>
+  
+  <!-- Step 2: Core Concept -->
+  <g class="step" id="step2" data-narration="The fundamental rule: The closer the neighbor, the higher its weight and influence on the prediction.">
+    <rect x="50" y="180" width="700" height="90" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="65" y="200" fill="#1565c0" font-size="11" font-weight="bold" font-family="Arial">CORE IDEA: Distance-Based Weighting</text>
+    
+    <!-- Formula display -->
+    <text x="65" y="225" fill="#333" font-size="10" font-family="Arial" class="formula-text">Weight of neighbor i: w<tspan baseline-shift="sub" font-size="8">i</tspan> = 1 / (d<tspan baseline-shift="sub" font-size="8">i</tspan><tspan baseline-shift="super" font-size="8">p</tspan>)</text>
+    <text x="280" y="225" fill="#666" font-size="9" font-family="Arial">where p is typically 2</text>
+    
+    <!-- Visual representation -->
+    <circle cx="500" cy="225" r="20" fill="#fff" stroke="#1976d2" stroke-width="2"/>
+    <text x="500" y="229" text-anchor="middle" fill="#1976d2" font-size="10" font-weight="bold">Q</text>
+    
+    <!-- Distance circles -->
+    <circle cx="500" cy="225" r="50" fill="none" stroke="#1976d2" stroke-width="1" stroke-dasharray="4"/>
+    <circle cx="500" cy="225" r="80" fill="none" stroke="#1976d2" stroke-width="1" stroke-dasharray="4"/>
+    
+    <!-- Neighbors at different distances -->
+    <circle cx="455" cy="225" r="5" fill="#388e3c">
+      <animate attributeName="r" values="0;5" dur="0.5s" fill="freeze"/>
+    </circle>
+    <text x="430" y="228" fill="#2e7d32" font-size="8" font-family="Arial">d=1</text>
+    <text x="448" y="238" fill="#2e7d32" font-size="7" font-family="Arial">w=1.0</text>
+    
+    <circle cx="560" cy="225" r="4" fill="#ff9800">
+      <animate attributeName="r" values="0;4" dur="0.5s" fill="freeze" begin="0.2s"/>
+    </circle>
+    <text x="580" y="228" fill="#e65100" font-size="8" font-family="Arial">d=2</text>
+    <text x="573" y="238" fill="#e65100" font-size="7" font-family="Arial">w=0.25</text>
+    
+    <circle cx="620" cy="225" r="3" fill="#f44336">
+      <animate attributeName="r" values="0;3" dur="0.5s" fill="freeze" begin="0.4s"/>
+    </circle>
+    <text x="645" y="228" fill="#c62828" font-size="8" font-family="Arial">d=3</text>
+    <text x="632" y="238" fill="#c62828" font-size="7" font-family="Arial">w=0.11</text>
+    
+    <text x="65" y="255" fill="#1565c0" font-size="9" font-family="Arial">Key Insight: Weight decreases rapidly as distance increases (inverse square law)</text>
+  </g>
+  
+  <!-- Step 3: Classification Process -->
+  <g class="step" id="step3" data-narration="For classification, WKNN calculates the weighted vote: sum of weights for each class, then predict the class with highest total weight.">
+    <rect x="50" y="285" width="700" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="65" y="305" fill="#7b1fa2" font-size="11" font-weight="bold" font-family="Arial">CLASSIFICATION PROCESS</text>
+    
+    <!-- Process steps -->
+    <g transform="translate(65, 320)">
+      <rect x="0" y="0" width="120" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="60" y="18" text-anchor="middle" fill="#1565c0" font-size="9" font-weight="bold">1. Calculate</text>
+      <text x="60" y="28" text-anchor="middle" fill="#1565c0" font-size="8">Distance</text>
+      
+      <line x1="125" y1="17" x2="145" y2="17" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+      
+      <rect x="150" y="0" width="120" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2"/>
+      <text x="210" y="18" text-anchor="middle" fill="#1565c0" font-size="9" font-weight="bold">2. Find K</text>
+      <text x="210" y="28" text-anchor="middle" fill="#1565c0" font-size="8">Neighbors</text>
+      
+      <line x1="275" y1="17" x2="295" y2="17" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+      
+      <rect x="300" y="0" width="120" height="35" rx="5" fill="#fff3e0" stroke="#ff9800"/>
+      <text x="360" y="18" text-anchor="middle" fill="#e65100" font-size="9" font-weight="bold">3. Assign</text>
+      <text x="360" y="28" text-anchor="middle" fill="#e65100" font-size="8">Weights</text>
+      
+      <line x1="425" y1="17" x2="445" y2="17" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+      
+      <rect x="450" y="0" width="120" height="35" rx="5" fill="#e8f5e9" stroke="#388e3c"/>
+      <text x="510" y="18" text-anchor="middle" fill="#2e7d32" font-size="9" font-weight="bold">4. Weighted</text>
+      <text x="510" y="28" text-anchor="middle" fill="#2e7d32" font-size="8">Vote</text>
+      
+      <line x1="575" y1="17" x2="595" y2="17" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+      
+      <rect x="600" y="0" width="80" height="35" rx="5" fill="#f3e5f5" stroke="#9c27b0"/>
+      <text x="640" y="22" text-anchor="middle" fill="#7b1fa2" font-size="9" font-weight="bold">Predict</text>
+    </g>
+    
+    <!-- Formula -->
+    <text x="65" y="365" fill="#333" font-size="10" font-family="Arial">Weighted Vote Formula:</text>
+    <text x="195" y="365" fill="#1565c0" font-size="10" font-family="Arial" class="formula-text">Class = argmax Σ(w<tspan baseline-shift="sub" font-size="8">i</tspan> × I(y<tspan baseline-shift="sub" font-size="8">i</tspan> = c))</text>
+    <text x="520" y="365" fill="#666" font-size="9" font-family="Arial">I = indicator function</text>
+  </g>
+  
+  <!-- Step 4: Regression Process -->
+  <g class="step" id="step4" data-narration="For regression, WKNN computes a weighted average: the sum of weights times target values, divided by total weight sum.">
+    <rect x="50" y="400" width="700" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="65" y="420" fill="#2e7d32" font-size="11" font-weight="bold" font-family="Arial">REGRESSION PROCESS</text>
+    
+    <text x="65" y="445" fill="#333" font-size="10" font-family="Arial">Weighted Average Formula:</text>
+    
+    <!-- Large formula box -->
+    <rect x="65" y="455" width="300" height="25" rx="4" fill="#fff" stroke="#388e3c" stroke-width="1"/>
+    <text x="215" y="472" text-anchor="middle" fill="#2e7d32" font-size="11" class="formula-text">
+      ŷ = <tspan>(Σ w<tspan baseline-shift="sub" font-size="8">i</tspan> × y<tspan baseline-shift="sub" font-size="8">i</tspan>)</tspan> / <tspan>(Σ w<tspan baseline-shift="sub" font-size="8">i</tspan>)</tspan>
+    </text>
+    
+    <!-- Explanation boxes -->
+    <rect x="380" y="455" width="160" height="25" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="460" y="467" text-anchor="middle" fill="#2e7d32" font-size="9">Σ w<tspan baseline-shift="sub" font-size="7">i</tspan> × y<tspan baseline-shift="sub" font-size="7">i</tspan> = weighted sum</text>
+    
+    <rect x="550" y="455" width="180" height="25" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="640" y="467" text-anchor="middle" fill="#2e7d32" font-size="9">Σ w<tspan baseline-shift="sub" font-size="7">i</tspan> = sum of all weights</text>
+    
+    <text x="65" y="492" fill="#666" font-size="9" font-family="Arial">Result: Smooth interpolation based on distance - closer points have more influence on the prediction</text>
+  </g>
+  
+  <!-- Step 5: Example - Fruit Classification -->
+  <g class="step" id="step5" data-narration="Let's walk through a classification example predicting fruit type (Orange vs Lemon) using K=5 neighbors.">
+    <rect x="50" y="500" width="700" height="130" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="65" y="520" fill="#e65100" font-size="11" font-weight="bold" font-family="Arial">EXAMPLE: Fruit Classification (K=5)</text>
+    
+    <!-- Data table header -->
+    <rect x="65" y="530" width="620" height="20" rx="3" fill="#ffe0b2"/>
+    <text x="100" y="544" fill="#333" font-size="9" font-weight="bold">Neighbor</text>
+    <text x="180" y="544" fill="#333" font-size="9" font-weight="bold">Distance (d)</text>
+    <text x="290" y="544" fill="#333" font-size="9" font-weight="bold">Class</text>
+    <text x="400" y="544" fill="#333" font-size="9" font-weight="bold">Weight (w=1/d²)</text>
+    <text x="530" y="544" fill="#333" font-size="9" font-weight="bold">Lemon Weight</text>
+    <text x="620" y="544" fill="#333" font-size="9" font-weight="bold">Orange Weight</text>
+    
+    <!-- Row 1 -->
+    <rect x="65" y="553" width="620" height="16" fill="#fff"/>
+    <text x="100" y="564" text-anchor="middle" fill="#333" font-size="8">1</text>
+    <text x="180" y="564" text-anchor="middle" fill="#333" font-size="8">1.0</text>
+    <circle cx="290" cy="561" r="5" fill="#ffeb3b" stroke="#f9a825"/>
+    <text x="305" y="564" fill="#333" font-size="8">Lemon</text>
+    <text x="430" y="564" text-anchor="middle" fill="#2e7d32" font-size="8" font-weight="bold">1.00</text>
+    <text x="565" y="564" text-anchor="middle" fill="#999" font-size="8">-</text>
+    <text x="655" y="564" text-anchor="middle" fill="#999" font-size="8">-</text>
+    
+    <!-- Row 2 -->
+    <rect x="65" y="570" width="620" height="16" fill="#fff8e1"/>
+    <text x="100" y="581" text-anchor="middle" fill="#333" font-size="8">2</text>
+    <text x="180" y="581" text-anchor="middle" fill="#333" font-size="8">1.5</text>
+    <circle cx="290" cy="578" r="5" fill="#ffeb3b" stroke="#f9a825"/>
+    <text x="305" y="581" fill="#333" font-size="8">Lemon</text>
+    <text x="430" y="581" text-anchor="middle" fill="#2e7d32" font-size="8" font-weight="bold">0.44</text>
+    <text x="565" y="581" text-anchor="middle" fill="#999" font-size="8">-</text>
+    <text x="655" y="581" text-anchor="middle" fill="#999" font-size="8">-</text>
+    
+    <!-- Row 3 -->
+    <rect x="65" y="587" width="620" height="16" fill="#fff"/>
+    <text x="100" y="598" text-anchor="middle" fill="#333" font-size="8">3</text>
+    <text x="180" y="598" text-anchor="middle" fill="#333" font-size="8">2.0</text>
+    <circle cx="290" cy="595" r="5" fill="#ff9800" stroke="#e65100"/>
+    <text x="305" y="598" fill="#333" font-size="8">Orange</text>
+    <text x="430" y="598" text-anchor="middle" fill="#999" font-size="8">-</text>
+    <text x="565" y="598" text-anchor="middle" fill="#2e7d32" font-size="8" font-weight="bold">0.25</text>
+    <text x="655" y="598" text-anchor="middle" fill="#999" font-size="8">-</text>
+    
+    <!-- Row 4 -->
+    <rect x="65" y="604" width="620" height="16" fill="#fff8e1"/>
+    <text x="100" y="615" text-anchor="middle" fill="#333" font-size="8">4</text>
+    <text x="180" y="615" text-anchor="middle" fill="#333" font-size="8">2.2</text>
+    <circle cx="290" cy="612" r="5" fill="#ff9800" stroke="#e65100"/>
+    <text x="305" y="615" fill="#333" font-size="8">Orange</text>
+    <text x="430" y="615" text-anchor="middle" fill="#999" font-size="8">-</text>
+    <text x="565" y="615" text-anchor="middle" fill="#2e7d32" font-size="8" font-weight="bold">0.21</text>
+    <text x="655" y="615" text-anchor="middle" fill="#999" font-size="8">-</text>
+    
+    <!-- Row 5 -->
+    <rect x="65" y="621" width="620" height="16" fill="#fff"/>
+    <text x="100" y="632" text-anchor="middle" fill="#333" font-size="8">5</text>
+    <text x="180" y="632" text-anchor="middle" fill="#333" font-size="8">3.0</text>
+    <circle cx="290" cy="629" r="5" fill="#ffeb3b" stroke="#f9a825"/>
+    <text x="305" y="632" fill="#333" font-size="8">Lemon</text>
+    <text x="430" y="632" text-anchor="middle" fill="#2e7d32" font-size="8" font-weight="bold">0.11</text>
+    <text x="565" y="632" text-anchor="middle" fill="#999" font-size="8">-</text>
+    <text x="655" y="632" text-anchor="middle" fill="#999" font-size="8">-</text>
+  </g>
+  
+  <!-- Step 6: Example Results -->
+  <g class="step" id="step6" data-narration="Comparing KNN vs WKNN: Standard KNN gives 3 votes to Lemon, while WKNN shows stronger confidence with 1.55 vs 0.46.">
+    <rect x="50" y="645" width="700" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="65" y="665" fill="#1565c0" font-size="11" font-weight="bold" font-family="Arial">EXAMPLE RESULTS: KNN vs WKNN Comparison</text>
+    
+    <!-- Standard KNN -->
+    <rect x="65" y="680" width="280" height="45" rx="6" fill="#fff" stroke="#1976d2"/>
+    <text x="205" y="695" text-anchor="middle" fill="#1565c0" font-size="10" font-weight="bold">Standard KNN (Majority Vote)</text>
+    <rect x="80" y="702" width="100" height="18" rx="3" fill="#fff3e0"/>
+    <text x="130" y="714" text-anchor="middle" fill="#e65100" font-size="9">Lemon: 3 votes</text>
+    <rect x="185" y="702" width="100" height="18" rx="3" fill="#e8f5e9"/>
+    <text x="235" y="714" text-anchor="middle" fill="#2e7d32" font-size="9">Orange: 2 votes</text>
+    <text x="205" y="728" text-anchor="middle" fill="#1565c0" font-size="9" font-weight="bold">→ Prediction: Lemon</text>
+    
+    <!-- Arrow -->
+    <text x="355" y="715" text-anchor="middle" fill="#666" font-size="20">vs</text>
+    
+    <!-- WKNN -->
+    <rect x="375" y="680" width="280" height="45" rx="6" fill="#fff" stroke="#388e3c"/>
+    <text x="515" y="695" text-anchor="middle" fill="#2e7d32" font-size="10" font-weight="bold">Weighted KNN (Weighted Vote)</text>
+    <rect x="390" y="702" width="110" height="18" rx="3" fill="#fff3e0"/>
+    <text x="445" y="714" text-anchor="middle" fill="#e65100" font-size="9">Lemon: 1.55</text>
+    <rect x="505" y="702" width="100" height="18" rx="3" fill="#e8f5e9"/>
+    <text x="555" y="714" text-anchor="middle" fill="#2e7d32" font-size="9">Orange: 0.46</text>
+    <text x="515" y="728" text-anchor="middle" fill="#2e7d32" font-size="9" font-weight="bold">→ Prediction: Lemon (stronger!)</text>
+    
+    <!-- Key insight -->
+    <text x="65" y="745" fill="#1565c0" font-size="9" font-family="Arial">Key Insight: WKNN provides confidence measure (1.55 vs 0.46) and handles ties better than standard KNN</text>
+  </g>
+  
+  <!-- Step 7: Weighting Functions -->
+  <g class="step" id="step7" data-narration="There are multiple weighting functions: inverse distance, Gaussian kernel, and rank-based weights, each with different characteristics.">
+    <rect x="50" y="745" width="700" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="65" y="765" fill="#7b1fa2" font-size="11" font-weight="bold" font-family="Arial">WEIGHTING FUNCTIONS</text>
+    
+    <!-- Three weighting methods -->
+    <!-- Method 1: Inverse Distance -->
+    <rect x="65" y="780" width="200" height="60" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="165" y="795" text-anchor="middle" fill="#7b1fa2" font-size="10" font-weight="bold">Inverse Distance</text>
+    <text x="165" y="812" text-anchor="middle" fill="#333" font-size="9" class="formula-text">w = 1/d</text>
+    <text x="165" y="825" text-anchor="middle" fill="#666" font-size="8">or w = 1/d²</text>
+    <text x="165" y="838" text-anchor="middle" fill="#999" font-size="7">Simple, most common</text>
+    
+    <!-- Method 2: Gaussian Kernel -->
+    <rect x="280" y="780" width="200" height="60" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="380" y="795" text-anchor="middle" fill="#7b1fa2" font-size="10" font-weight="bold">Gaussian Kernel</text>
+    <text x="380" y="812" text-anchor="middle" fill="#333" font-size="9" class="formula-text">w = exp(-d²/2σ²)</text>
+    <text x="380" y="825" text-anchor="middle" fill="#666" font-size="8">σ = bandwidth</text>
+    <text x="380" y="838" text-anchor="middle" fill="#999" font-size="7">Smooth, tunable locality</text>
+    
+    <!-- Method 3: Rank-based -->
+    <rect x="495" y="780" width="200" height="60" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="595" y="795" text-anchor="middle" fill="#7b1fa2" font-size="10" font-weight="bold">Rank-based</text>
+    <text x="595" y="812" text-anchor="middle" fill="#333" font-size="9" class="formula-text">w = 1/rank</text>
+    <text x="595" y="825" text-anchor="middle" fill="#666" font-size="8">or w = K - rank + 1</text>
+    <text x="595" y="838" text-anchor="middle" fill="#999" font-size="7">Simple ranking</text>
+    
+    <!-- Visual: Weight curves -->
+    <rect x="65" y="845" width="630" height="1" fill="#e1bee7"/>
+    
+    <!-- Graph showing weight curves -->
+    <line x1="65" y1="870" x2="220" y2="870" stroke="#666" stroke-width="1"/>
+    <line x1="65" y1="850" x2="65" y2="870" stroke="#666" stroke-width="1"/>
+    <text x="140" y="883" text-anchor="middle" fill="#666" font-size="7">Inverse (1/d²)</text>
+    <path d="M70 855 Q120 860 215 870" fill="none" stroke="#e65100" stroke-width="2"/>
+    
+    <line x1="280" y1="870" x2="435" y2="870" stroke="#666" stroke-width="1"/>
+    <line x1="280" y1="850" x2="280" y2="870" stroke="#666" stroke-width="1"/>
+    <text x="355" y="883" text-anchor="middle" fill="#666" font-size="7">Gaussian</text>
+    <path d="M285 855 Q350 855 430 870" fill="none" stroke="#7b1fa2" stroke-width="2"/>
+    
+    <line x1="495" y1="870" x2="650" y2="870" stroke="#666" stroke-width="1"/>
+    <line x1="495" y1="850" x2="495" y2="870" stroke="#666" stroke-width="1"/>
+    <text x="572" y="883" text-anchor="middle" fill="#666" font-size="7">Rank-based</text>
+    <path d="M500 855 L640 870" fill="none" stroke="#1976d2" stroke-width="2"/>
+  </g>
+  
+  <!-- Step 8: Advantages -->
+  <g class="step" id="step8" data-narration="WKNN offers higher accuracy, handles voting ties naturally, and provides more nuanced predictions by considering the degree of similarity.">
+    <rect x="50" y="860" width="340" height="100" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="65" y="880" fill="#2e7d32" font-size="11" font-weight="bold" font-family="Arial">ADVANTAGES OF WKNN</text>
+    
+    <g transform="translate(65, 895)">
+      <circle cx="10" cy="8" r="5" fill="#4caf50"/>
+      <text x="25" y="11" fill="#333" font-size="9">Higher accuracy than standard KNN</text>
+      
+      <circle cx="10" cy="28" r="5" fill="#4caf50"/>
+      <text x="25" y="31" fill="#333" font-size="9">Handles voting ties naturally</text>
+      
+      <circle cx="10" cy="48" r="5" fill="#4caf50"/>
+      <text x="25" y="51" fill="#333" font-size="9">Reduces impact of outliers</text>
+      
+      <circle cx="10" cy="68" r="5" fill="#4caf50"/>
+      <text x="25" y="71" fill="#333" font-size="9">Smoother decision boundaries</text>
+      
+      <circle cx="10" cy="88" r="5" fill="#4caf50"/>
+      <text x="25" y="91" fill="#333" font-size="9">Confidence measure in predictions</text>
+    </g>
+    
+    <!-- Disadvantages -->
+    <rect x="405" y="860" width="345" height="100" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="420" y="880" fill="#c62828" font-size="11" font-weight="bold" font-family="Arial">DISADVANTAGES & LIMITATIONS</text>
+    
+    <g transform="translate(420, 895)">
+      <circle cx="10" cy="8" r="5" fill="#ef5350"/>
+      <text x="25" y="11" fill="#333" font-size="9">More computationally expensive</text>
+      
+      <circle cx="10" cy="28" r="5" fill="#ef5350"/>
+      <text x="25" y="31" fill="#333" font-size="9">Sensitive to choice of K</text>
+      
+      <circle cx="10" cy="48" r="5" fill="#ef5350"/>
+      <text x="25" y="51" fill="#333" font-size="9">Requires meaningful distance metrics</text>
+      
+      <circle cx="10" cy="68" r="5" fill="#ef5350"/>
+      <text x="25" y="71" fill="#333" font-size="9">Curse of dimensionality in high dimensions</text>
+      
+      <circle cx="10" cy="88" r="5" fill="#ef5350"/>
+      <text x="25" y="91" fill="#333" font-size="9">Feature scaling is critical</text>
+    </g>
+  </g>
+  
+  <!-- Step 9: Applications -->
+  <g class="step" id="step9" data-narration="WKNN is used in recommendation systems, medical diagnosis, and financial forecasting where proximity indicates similarity.">
+    <rect x="50" y="975" width="700" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="65" y="995" fill="#1565c0" font-size="11" font-weight="bold" font-family="Arial">REAL-WORLD APPLICATIONS</text>
+    
+    <!-- Application cards -->
+    <rect x="65" y="1010" width="210" height="45" rx="6" fill="#fff" stroke="#1976d2"/>
+    <text x="170" y="1025" text-anchor="middle" fill="#1565c0" font-size="10" font-weight="bold">Recommendation Systems</text>
+    <text x="170" y="1040" text-anchor="middle" fill="#666" font-size="8">Priority to similar user preferences</text>
+    <text x="170" y="1052" text-anchor="middle" fill="#999" font-size="7">Netflix, Amazon suggestions</text>
+    
+    <rect x="290" y="1010" width="210" height="45" rx="6" fill="#fff" stroke="#1976d2"/>
+    <text x="395" y="1025" text-anchor="middle" fill="#1565c0" font-size="10" font-weight="bold">Medical Diagnosis</text>
+    <text x="395" y="1040" text-anchor="middle" fill="#666" font-size="8">Closer cases more relevant</text>
+    <text x="395" y="1052" text-anchor="middle" fill="#999" font-size="7">Disease prediction, treatment matching</text>
+    
+    <rect x="515" y="1010" width="210" height="45" rx="6" fill="#fff" stroke="#1976d2"/>
+    <text x="620" y="1025" text-anchor="middle" fill="#1565c0" font-size="10" font-weight="bold">Financial Forecasting</text>
+    <text x="620" y="1040" text-anchor="middle" fill="#666" font-size="8">Nuanced predictions</text>
+    <text x="620" y="1052" text-anchor="middle" fill="#999" font-size="7">Stock prices, risk assessment</text>
+  </g>
+  
+  <!-- Step 10: Summary Key Points -->
+  <g class="step" id="step10" data-narration="In summary, WKNN assigns higher importance to nearer neighbors using distance-based weighting for more accurate predictions.">
+    <rect x="50" y="1075" width="700" height="90" rx="8" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1095" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">KEY SUMMARY</text>
+    
+    <!-- Summary points -->
+    <g transform="translate(65, 1110)">
+      <rect x="0" y="0" width="150" height="50" rx="5" fill="rgba(255,255,255,0.2)"/>
+      <text x="75" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Weighting</text>
+      <text x="75" y="32" text-anchor="middle" fill="white" font-size="8">w = 1/d² (most common)</text>
+      <text x="75" y="44" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="7">Closer = Higher weight</text>
+      
+      <rect x="165" y="0" width="150" height="50" rx="5" fill="rgba(255,255,255,0.2)"/>
+      <text x="240" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Classification</text>
+      <text x="240" y="32" text-anchor="middle" fill="white" font-size="8">Weighted Vote</text>
+      <text x="240" y="44" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="7">argmax Σ(w × class)</text>
+      
+      <rect x="330" y="0" width="150" height="50" rx="5" fill="rgba(255,255,255,0.2)"/>
+      <text x="405" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Regression</text>
+      <text x="405" y="32" text-anchor="middle" fill="white" font-size="8">Weighted Average</text>
+      <text x="405" y="44" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="7">Σ(w×y) / Σw</text>
+      
+      <rect x="495" y="0" width="150" height="50" rx="5" fill="rgba(255,255,255,0.2)"/>
+      <text x="570" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Benefits</text>
+      <text x="570" y="32" text-anchor="middle" fill="white" font-size="8">More accurate</text>
+      <text x="570" y="44" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="7">Handles ties, outlier resistant</text>
+    </g>
+  </g>
+  
+  <!-- Step 11: Conclusion -->
+  <g class="step" id="step11" data-narration="By incorporating distance-based weighting, WKNN refines KNN's basic voting principle, leading to more precise and reliable predictions.">
+    <rect x="50" y="1180" width="700" height="70" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1202" text-anchor="middle" fill="#e65100" font-size="12" font-weight="bold" font-family="Arial">CONCLUSION</text>
+    <text x="400" y="1220" text-anchor="middle" fill="#333" font-size="10" font-family="Arial">By incorporating distance-based weighting, WKNN refines the basic majority voting principle of KNN,</text>
+    <text x="400" y="1235" text-anchor="middle" fill="#333" font-size="10" font-family="Arial">leading to more precise, reliable predictions with built-in confidence measures.</text>
+    <text x="400" y="1255" text-anchor="middle" fill="#1565c0" font-size="9" font-style="italic" font-family="Arial">This fundamental concept of weighting by similarity extends to kernel methods and advanced ML techniques.</text>
+  </g>
+  
+  <!-- Step 12: End card -->
+  <g class="step" id="step12" data-narration="Thank you for learning about Weighted K-Nearest-Neighbor Algorithm. Practice with examples to master this important machine learning concept.">
+    <rect x="50" y="1265" width="700" height="50" rx="10" fill="#eceff1" stroke="#cfd8dc" stroke-width="2"/>
+    <text x="400" y="1285" text-anchor="middle" fill="#546e7a" font-size="11" font-weight="bold" font-family="Arial">End of Module 3</text>
+    <text x="400" y="1300" text-anchor="middle" fill="#78909c" font-size="9" font-family="Arial">Weighted K-Nearest-Neighbor Algorithm</text>
+    <text x="400" y="1313" text-anchor="middle" fill="#90a4ae" font-size="8" font-family="Arial">2022 Scheme - CSE Branch</text>
+  </g>
+</svg>

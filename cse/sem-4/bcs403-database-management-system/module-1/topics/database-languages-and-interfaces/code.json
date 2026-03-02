@@ -1,0 +1,62 @@
+[
+  {
+    "id": "code-1",
+    "language": "sql",
+    "title": "Basic SELECT Query with Multiple Clauses",
+    "description": "Demonstrates the structure and order of SQL SELECT statement with WHERE, GROUP BY, HAVING, and ORDER BY",
+    "code": "SELECT department, COUNT(*) AS emp_count, AVG(salary) AS avg_salary\nFROM employees\nWHERE designation = 'Manager'\nGROUP BY department\nHAVING COUNT(*) > 5\nORDER BY avg_salary DESC;",
+    "explanation": "This query selects department, counts employees, and calculates average salary for managers, filters departments with more than 5 managers, orders by average salary descending.",
+    "complexity": {
+      "time": "O(n log n)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "sql",
+    "title": "Creating View",
+    "description": "Creating a view to simplify access to complex query results",
+    "code": "CREATE VIEW dept_salary_summary AS\nSELECT d.department_name, e.employee_id, e.first_name, e.salary\nFROM employees e\nJOIN departments d ON e.department_id = d.department_id\nWHERE e.salary > 50000\nORDER BY d.department_name, e.salary DESC;",
+    "explanation": "Creates a virtual table showing high-earning employees (salary > 50000) with department names, simplifying repeated queries.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "sql",
+    "title": "Stored Procedure with Parameters",
+    "description": "Demonstrates creating a stored procedure with input and output parameters",
+    "code": "CREATE OR REPLACE PROCEDURE get_employee_detail (\n p_emp_id IN NUMBER,\n p_name OUT VARCHAR2,\n p_salary OUT NUMBER\n)\nAS\nBEGIN\n SELECT first_name || ' ' || last_name, salary\n INTO p_name, p_salary\n FROM employees\n WHERE employee_id = p_emp_id;\nEND;\n/\n-- Calling the procedure\nDECLARE\n v_name VARCHAR2(100);\n v_salary NUMBER;\nBEGIN\n get_employee_detail(101, v_name, v_salary);\n DBMS_OUTPUT.PUT_LINE('Name: ' || v_name || ', Salary: ' || v_salary);\nEND;",
+    "explanation": "Stored procedure accepts employee ID as input and returns name and salary as output parameters, demonstrating reusable database logic.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "sql",
+    "title": "Trigger Example",
+    "description": "Creating a trigger to automatically update a last_modified timestamp",
+    "code": "CREATE TABLE employee_audit (\n audit_id NUMBER PRIMARY KEY,\n emp_id NUMBER,\n action_type VARCHAR2(10),\n change_date DATE\n);\n\nCREATE OR REPLACE TRIGGER trg_employee_audit\nAFTER INSERT OR UPDATE ON employees\nFOR EACH ROW\nBEGIN\n INSERT INTO employee_audit (audit_id, emp_id, action_type, change_date)\n VALUES (emp_audit_seq.NEXTVAL, :NEW.employee_id, \n CASE \n WHEN INSERTING THEN 'INSERT'\n WHEN UPDATING THEN 'UPDATE'\n END, SYSDATE);\nEND;",
+    "explanation": "Trigger automatically creates an audit log entry whenever an employee record is inserted or updated, maintaining history of changes.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "sql",
+    "title": "Embedded SQL in C Program",
+    "description": "Demonstrates how SQL is embedded in C programming language",
+    "code": "/* C Program with Embedded SQL */\n#include <stdio.h>\n\nEXEC SQL BEGIN DECLARE SECTION;\n int emp_id;\n char emp_name[50];\n float salary;\nEXEC SQL END DECLARE SECTION;\n\nEXEC SQL INCLUDE SQLCA;\n\nint main() {\n /* Connect to database */\n EXEC SQL CONNECT :username IDENTIFIED BY :password;\n \n /* Declare cursor */\n EXEC SQL DECLARE emp_cursor CURSOR FOR\n SELECT employee_id, first_name, salary\n FROM employees\n WHERE department_id = 10;\n \n /* Open and fetch */\n EXEC SQL OPEN emp_cursor;\n while (SQLCODE == 0) {\n EXEC SQL FETCH emp_cursor INTO :emp_id, :emp_name, :salary;\n printf(\"%d %s %.2f\\n\", emp_id, emp_name, salary);\n }\n EXEC SQL CLOSE emp_cursor;\n EXEC SQL COMMIT WORK;\n return 0;\n}",
+    "explanation": "Shows SQL embedded within C code using SQL preprocessor directives (EXEC SQL), demonstrating host language integration with database.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(1)"
+    }
+  }
+]

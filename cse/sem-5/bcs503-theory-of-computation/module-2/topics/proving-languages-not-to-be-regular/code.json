@@ -1,0 +1,25 @@
+{
+  "topicId": "proving-languages-not-to-be-regular",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Pumping Lemma Proof Structure for Non-Regularity",
+      "description": "General algorithm/template for proving language non-regular using Pumping Lemma",
+      "code": "PROVE_NON_REGULAR(Language L, String s):\nBEGIN\n // Step 1: Assume L is regular\n ASSUME L is regular\n \n // Step 2: Get pumping length p\n p ← pumping_length(L) // Exists by Pumping Lemma\n \n // Step 3: Choose string w in L with |w| ≥ p\n w ← choose_string(L, p) // Must satisfy conditions\n \n // Step 4: Consider all decompositions\n FOR each decomposition w = xyz WHERE |xy| ≤ p AND |y| > 0 DO\n found_counterexample ← FALSE\n \n // Try pumping up or down\n FOR i ← 0 TO 3 DO\n IF xy^iz ∉ L THEN\n found_counterexample ← TRUE\n BREAK\n END IF\n END FOR\n \n IF found_counterexample THEN\n RETURN \"L is not regular (Pumping Lemma violated)\"\n END IF\n END FOR\n \n RETURN \"Cannot prove non-regularity with this string\"\nEND",
+      "explanation": "This pseudocode shows the structure of a Pumping Lemma proof. The key is finding a string w and showing that no matter how we decompose it (with constraints), at least one pumped string falls outside L.",
+      "timeComplexity": "O(p² × iterations)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pythontuple",
+      "title": "Check Distinguishability for Myhill-Nerode",
+      "description": "Algorithm to check if two strings are distinguishable with respect to a language",
+      "code": "def distinguishable(x, y, language_L):\n '''\n Check if strings x and y are distinguishable w.r.t. language L\n Returns True if ∃z such that exactly one of xz, yz ∈ L\n '''\n # Check all possible suffixes z (finite check for practical purposes)\n for z in generate_all_suffixes(max_length=5):\n xz_in_L = (x + z) in language_L\n yz_in_L = (y + z) in language_L\n \n if xz_in_L != yz_in_L: # Exactly one in L\n return True, z # Distinguishable, z is witness\n \n return False, None # Indistinguishable\n\ndef find_distinguishable_set(strings, language_L):\n '''\n Find if given set has pairwise distinguishable strings\n '''\n distinguishable_pairs = []\n \n for i in range(len(strings)):\n for j in range(i + 1, len(strings)):\n is_dist, z = distinguishable(strings[i], strings[j], language_L)\n if is_dist:\n distinguishable_pairs.append((strings[i], strings[j], z))\n \n return distinguishable_pairs",
+      "explanation": "This code demonstrates the concept of distinguishability in Myhill-Nerode. Two strings are distinguishable if there exists a suffix that differentiates their membership in L.",
+      "timeComplexity": "O(n² × m)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

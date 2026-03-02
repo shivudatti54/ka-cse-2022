@@ -1,0 +1,47 @@
+{
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "CUDA Vector Addition Execution Flow",
+      "description": "Shows the complete workflow from host memory allocation to kernel execution and result retrieval",
+      "elements": [
+        "Host allocates arrays a, b, c",
+        "cudaMalloc allocates device memory d_a, d_b, d_c",
+        "cudaMemcpy H2D copies a, b to device",
+        "Kernel launch creates grid of thread blocks",
+        "Each thread computes c[i] = a[i] + b[i]",
+        "cudaMemcpy D2H copies results back to host",
+        "cudaFree releases device memory"
+      ],
+      "purpose": "Visualize the complete host-device interaction pipeline for vector addition, understanding data movement and parallel execution phases."
+    },
+    {
+      "id": "d-2",
+      "title": "Thread-Block-Grid Mapping for Vector Addition",
+      "description": "Illustrates how threads, blocks, and grid map to array indices in CUDA",
+      "elements": [
+        "Thread 0, Block 0 \u2192 index 0",
+        "Thread 1, Block 0 \u2192 index 1",
+        "Thread 255, Block 0 \u2192 index 255",
+        "Thread 0, Block 1 \u2192 index 256",
+        "Thread k, Block b \u2192 index = b \u00d7 blockDim + k",
+        "All threads execute kernel simultaneously"
+      ],
+      "purpose": "Understand the hierarchical thread organization and global index calculation formula for mapping parallel threads to sequential array elements."
+    },
+    {
+      "id": "d-3",
+      "title": "Memory Access Patterns: Coalesced vs Non-Coalesced",
+      "description": "Comparison of efficient coalesced access vs inefficient strided access in vector addition",
+      "elements": [
+        "Coalesced: Thread 0 reads a[0], Thread 1 reads a[1]... (contiguous)",
+        "Single memory transaction for warp (32 threads)",
+        "Non-coalesced: Thread 0 reads a[0], Thread 32 reads a[32]... (strided)",
+        "32 separate memory transactions - much slower",
+        "Result: 10x+ performance difference possible"
+      ],
+      "purpose": "Demonstrate why memory access pattern critically affects GPU performance and how to write coalesced memory access patterns."
+    }
+  ],
+  "topicId": "vector-addition"
+}

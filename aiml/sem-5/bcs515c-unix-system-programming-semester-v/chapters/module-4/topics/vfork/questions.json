@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of the vfork() system call, and how does its fundamental behavior differ from that of fork()?",
+    "expectedPoints": [
+      "The primary purpose of vfork() is to create a new process intended to perform an immediate exec() call, optimizing for efficiency.",
+      "Unlike fork(), vfork() does not create a copy of the parent's address space; the child process shares the parent's memory space until it calls exec() or _exit().",
+      "The parent process is suspended by vfork() until the child process either terminates or executes a new program."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Explain one major risk or dangerous programming pitfall associated with using vfork(). Provide a short code example illustrating the incorrect practice and describe the correct alternative.",
+    "expectedPoints": [
+      "A major risk is modifying any data in the shared address space (besides the variable used to store the return value of vfork) or calling any function before exec(), as this can corrupt the parent's state.",
+      "Incorrect example: `pid_t pid = vfork(); if (pid == 0) { global_variable++; exit(0); }`. Modifying a global variable is unsafe.",
+      "The correct alternative is for the child to only use _exit() or exec() and to avoid any other operations that might alter the shared memory."
+    ],
+    "marks": 10
+  },
+  {
+    "id": "sa3",
+    "question": "Identify the key scenario where vfork() might be preferred over the more common fork() system call.",
+    "expectedPoints": [
+      "vfork() is preferred in scenarios where maximum performance is critical and the sole purpose of the new process is to execute a different program via exec().",
+      "It is advantageous on older systems or in constrained environments because it avoids the overhead of duplicating the entire page tables and address space, which is a costly operation for fork().",
+      "Its use is highly specialized and generally limited to these performance-sensitive cases where an immediate exec() is guaranteed."
+    ],
+    "marks": 2
+  }
+]

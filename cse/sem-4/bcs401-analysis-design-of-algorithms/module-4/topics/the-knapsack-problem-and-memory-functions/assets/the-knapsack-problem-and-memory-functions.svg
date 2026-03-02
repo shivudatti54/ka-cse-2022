@@ -1,0 +1,455 @@
+<svg viewBox="0 0 800 1660" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976d2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565c0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#bbdefb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c8e6c9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffe0b2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e1bee7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffcdd2;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fillCell {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .formula { font-family: 'Courier New', monospace; }
+  </style>
+
+  <rect width="800" height="1660" fill="#f8f9fa"/>
+
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to our exploration of the Knapsack Problem, a fundamental optimization challenge in computer science and operations research.">
+    <rect x="10" y="10" width="780" height="50" rx="10" fill="url(#titleGradient)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" font-size="22" font-weight="bold" fill="white">The Knapsack Problem and Memory Functions</text>
+    <text x="400" y="60" text-anchor="middle" font-size="12" fill="#666">2022 Scheme - CSE Branch</text>
+  </g>
+
+  <!-- Step 1: Problem Definition -->
+  <g class="step" id="step1" data-narration="The Knapsack Problem asks: given items with weights and values, and a capacity limit, which items should we select to maximize total value?">
+    <rect x="20" y="80" width="760" height="85" rx="8" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="40" y="105" font-size="14" font-weight="bold" fill="#1976d2">Problem Definition</text>
+    <text x="40" y="125" font-size="11" fill="#333">Given n items with weights w[i] and values v[i], and knapsack capacity W,</text>
+    <text x="40" y="145" font-size="11" fill="#333">select items to maximize total value without exceeding weight capacity.</text>
+    <rect x="500" y="95" width="260" height="60" rx="5" fill="white" stroke="#1976d2" stroke-width="1"/>
+    <text x="630" y="115" text-anchor="middle" font-size="10" fill="#1976d2">Maximize Σ v[i] × x[i]</text>
+    <text x="630" y="135" text-anchor="middle" font-size="10" fill="#1976d2">Subject to Σ w[i] × x[i] ≤ W</text>
+  </g>
+
+  <!-- Step 2: Two Types -->
+  <g class="step" id="step2" data-narration="There are two variants: 0/1 Knapsack where items must be taken entirely, and Fractional Knapsack allowing partial items.">
+    <rect x="20" y="180" width="370" height="85" rx="8" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="35" y="205" font-size="13" font-weight="bold" fill="#e65100">0/1 Knapsack Problem</text>
+    <text x="35" y="225" font-size="10" fill="#333">Each item: taken completely (1) or left (0)</text>
+    <text x="35" y="245" font-size="10" fill="#333">Solution: Dynamic Programming O(n×W)</text>
+    <circle cx="370" cy="222" r="15" fill="#fff" stroke="#e65100" stroke-width="2"/>
+    <text x="370" y="227" text-anchor="middle" font-size="14" fill="#e65100">VS</text>
+    
+    <rect x="410" y="180" width="370" height="85" rx="8" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="425" y="205" font-size="13" font-weight="bold" fill="#2e7d32">Fractional Knapsack Problem</text>
+    <text x="425" y="225" font-size="10" fill="#333">Can take fractions of items (0 to 1)</text>
+    <text x="425" y="245" font-size="10" fill="#333">Solution: Greedy Algorithm O(n log n)</text>
+    <path d="M760 222 L790 222" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  </g>
+
+  <!-- Step 3: 0/1 DP Recurrence -->
+  <g class="step" id="step3" data-narration="For 0/1 Knapsack, we use dynamic programming with recurrence: either exclude the item or include it, whichever gives better value.">
+    <rect x="20" y="280" width="760" height="90" rx="8" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+    <text x="35" y="305" font-size="14" font-weight="bold" fill="#7b1fa2">0/1 Knapsack - Dynamic Programming Approach</text>
+    <text x="35" y="330" font-size="11" fill="#333">We create a DP table where dp[i][w] = max value using first i items with capacity w</text>
+    
+    <rect x="300" y="340" width="200" height="25" rx="4" fill="#fff" stroke="#7b1fa2"/>
+    <text x="400" y="357" text-anchor="middle" font-size="11" font-family="monospace" fill="#333">
+      <tspan>dp[i][w] = </tspan>
+      <tspan fill="#7b1fa2">dp[i-1][w]</tspan>
+      <tspan> if w[i] > w</tspan>
+    </text>
+    <rect x="510" y="340" width="260" height="25" rx="4" fill="#fff" stroke="#7b1fa2"/>
+    <text x="640" y="357" text-anchor="middle" font-size="11" font-family="monospace" fill="#333">
+      <tspan>max(</tspan>
+      <tspan fill="#7b1fa2">dp[i-1][w]</tspan>
+      <tspan>, </tspan>
+      <tspan fill="#2e7d32">dp[i-1][w-w[i]] + v[i]</tspan>
+      <tspan>) otherwise</tspan>
+    </text>
+  </g>
+
+  <!-- Step 4: DP Algorithm Steps -->
+  <g class="step" id="step4" data-narration="The DP algorithm has three key steps: create table, fill it using recurrence, and read the answer from dp[n][W].">
+    <rect x="20" y="385" width="760" height="85" rx="8" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="35" y="410" font-size="14" font-weight="bold" fill="#1976d2">Algorithm Steps</text>
+    
+    <rect x="35" y="425" width="60" height="35" rx="5" fill="#1976d2"/>
+    <text x="65" y="442" text-anchor="middle" font-size="10" fill="white">Step 1</text>
+    <text x="65" y="455" text-anchor="middle" font-size="9" fill="white">Create Table</text>
+    
+    <path d="M105 442 L130 442" stroke="#1976d2" stroke-width="1" marker-end="url(#arrowBlue)"/>
+    
+    <rect x="140" y="425" width="60" height="35" rx="5" fill="#1976d2"/>
+    <text x="170" y="442" text-anchor="middle" font-size="10" fill="white">Step 2</text>
+    <text x="170" y="455" text-anchor="middle" font-size="9" fill="white">Fill Table</text>
+    
+    <path d="M210 442 L235 442" stroke="#1976d2" stroke-width="1" marker-end="url(#arrowBlue)"/>
+    
+    <rect x="245" y="425" width="60" height="35" rx="5" fill="#1976d2"/>
+    <text x="275" y="442" text-anchor="middle" font-size="10" fill="white">Step 3</text>
+    <text x="275" y="455" text-anchor="middle" font-size="9" fill="white">Get Answer</text>
+    
+    <text x="380" y="440" font-size="10" fill="#333">Initialize (n+1)×(W+1) table with zeros</text>
+    <text x="380" y="455" font-size="10" fill="#333">For each item, compute max value for each capacity</text>
+    <text x="600" y="447" font-size="11" font-weight="bold" fill="#2e7d32">Answer = dp[n][W]</text>
+  </g>
+
+  <!-- Step 5: Example Problem Setup -->
+  <g class="step" id="step5" data-narration="Let's solve an example: n=3 items with weights [2,3,4], values [4,5,6], and capacity W=5.">
+    <rect x="20" y="485" width="760" height="85" rx="8" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="35" y="510" font-size="14" font-weight="bold" fill="#e65100">Example 1: DP Table Construction</text>
+    
+    <rect x="35" y="530" width="100" height="30" rx="4" fill="#fff"/>
+    <text x="85" y="545" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">Item</text>
+    <line x1="35" y1="560" x2="135" y2="560" stroke="#e65100" stroke-width="2"/>
+    <text x="55" y="565" font-size="9" fill="#333">1</text>
+    <text x="85" y="565" font-size="9" fill="#333">2</text>
+    <text x="115" y="565" font-size="9" fill="#333">3</text>
+    
+    <rect x="150" y="530" width="100" height="30" rx="4" fill="#fff"/>
+    <text x="200" y="545" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">Weight</text>
+    <line x1="150" y1="560" x2="250" y2="560" stroke="#e65100" stroke-width="2"/>
+    <text x="170" y="565" font-size="9" fill="#333">2</text>
+    <text x="200" y="565" font-size="9" fill="#333">3</text>
+    <text x="230" y="565" font-size="9" fill="#333">4</text>
+    
+    <rect x="265" y="530" width="100" height="30" rx="4" fill="#fff"/>
+    <text x="315" y="545" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">Value</text>
+    <line x1="265" y1="560" x2="365" y2="560" stroke="#e65100" stroke-width="2"/>
+    <text x="285" y="565" font-size="9" fill="#333">4</text>
+    <text x="315" y="565" font-size="9" fill="#333">5</text>
+    <text x="345" y="565" font-size="9" fill="#333">6</text>
+    
+    <rect x="450" y="530" width="100" height="30" rx="4" fill="#e65100"/>
+    <text x="500" y="547" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Capacity W = 5</text>
+  </g>
+
+  <!-- Step 6: DP Table Filled -->
+  <g class="step" id="step6" data-narration="The DP table shows maximum values. At capacity 5 with 3 items, we achieve value 9 by selecting items 1 and 2.">
+    <rect x="20" y="585" width="760" height="90" rx="8" fill="url(#redGradient)" filter="url(#shadow)"/>
+    <text x="35" y="610" font-size="14" font-weight="bold" fill="#c62828">DP Table - Filled Values</text>
+    
+    <!-- Table Header -->
+    <rect x="35" y="625" width="40" height="40" rx="3" fill="#fff" stroke="#c62828"/>
+    <text x="55" y="645" text-anchor="middle" font-size="9" fill="#333">Cap→</text>
+    <text x="55" y="658" text-anchor="middle" font-size="8" fill="#333">Item↓</text>
+    
+    <rect x="75" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="100" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">0</text>
+    <text x="100" y="658" text-anchor="middle" font-size="8" fill="#333">weight</text>
+    
+    <rect x="125" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="150" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">1</text>
+    
+    <rect x="175" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="200" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">2</text>
+    
+    <rect x="225" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="250" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">3</text>
+    
+    <rect x="275" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="300" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">4</text>
+    
+    <rect x="325" y="625" width="50" height="40" rx="3" fill="#ffcdd2" stroke="#c62828"/>
+    <text x="350" y="645" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">5</text>
+    
+    <!-- Row 0 -->
+    <rect x="35" y="665" width="40" height="25" rx="3" fill="#fff" stroke="#c62828"/>
+    <text x="55" y="680" text-anchor="middle" font-size="8" fill="#333">0</text>
+    <rect x="75" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="100" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="125" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="150" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="175" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="200" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="225" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="250" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="275" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="300" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="325" y="665" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="350" y="680" text-anchor="middle" font-size="9" fill="#333">0</text>
+    
+    <!-- Row 1 -->
+    <rect x="35" y="690" width="40" height="25" rx="3" fill="#fff" stroke="#c62828"/>
+    <text x="55" y="705" text-anchor="middle" font-size="8" fill="#333">1</text>
+    <rect x="75" y="690" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="100" y="705" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="125" y="690" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="150" y="705" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="175" y="690" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="200" y="705" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    <rect x="225" y="690" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="250" y="705" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    <rect x="275" y="690" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="300" y="705" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    <rect x="325" y="690" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="350" y="705" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    
+    <!-- Row 2 -->
+    <rect x="35" y="715" width="40" height="25" rx="3" fill="#fff" stroke="#c62828"/>
+    <text x="55" y="730" text-anchor="middle" font-size="8" fill="#333">2</text>
+    <rect x="75" y="715" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="100" y="730" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="125" y="715" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="150" y="730" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="175" y="715" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="200" y="730" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    <rect x="225" y="715" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="250" y="730" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">5</text>
+    <rect x="275" y="715" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="300" y="730" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">5</text>
+    <rect x="325" y="715" width="50" height="25" rx="3" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+    <text x="350" y="730" text-anchor="middle" font-size="10" font-weight="bold" fill="#f57f17">9</text>
+    
+    <!-- Row 3 -->
+    <rect x="35" y="740" width="40" height="25" rx="3" fill="#fff" stroke="#c62828"/>
+    <text x="55" y="755" text-anchor="middle" font-size="8" fill="#333">3</text>
+    <rect x="75" y="740" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="100" y="755" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="125" y="740" width="50" height="25" rx="3" fill="#fff"/>
+    <text x="150" y="755" text-anchor="middle" font-size="9" fill="#333">0</text>
+    <rect x="175" y="740" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="200" y="755" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">4</text>
+    <rect x="225" y="740" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="250" y="755" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">5</text>
+    <rect x="275" y="740" width="50" height="25" rx="3" fill="#e8f5e9"/>
+    <text x="300" y="755" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">6</text>
+    <rect x="325" y="740" width="50" height="25" rx="3" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+    <text x="350" y="755" text-anchor="middle" font-size="10" font-weight="bold" fill="#f57f17">9</text>
+    
+    <text x="420" y="655" font-size="10" fill="#333">Result: dp[3][5] = 9</text>
+    <text x="420" y="675" font-size="10" fill="#333">Selected: Items 1+2 (weights 2+3=5)</text>
+    <text x="420" y="695" font-size="10" fill="#333">Total Value: 4 + 5 = 9</text>
+    <rect x="420" y="710" width="100" height="25" rx="4" fill="#f57f17"/>
+    <text x="470" y="727" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Maximum = 9</text>
+  </g>
+
+  <!-- Step 7: Space Optimized DP -->
+  <g class="step" id="step7" data-narration="We can optimize space to O(W) by using a 1D array. Important: iterate capacity from W down to weight to prevent reusing items.">
+    <rect x="20" y="690" width="760" height="85" rx="8" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="35" y="715" font-size="14" font-weight="bold" fill="#2e7d32">Space-Optimized DP - O(W) Space</text>
+    <text x="35" y="740" font-size="11" fill="#333">Instead of 2D table, use 1D array. Iterate capacity in DESCENDING order to ensure each item is used only once.</text>
+    
+    <rect x="450" y="720" width="320" height="45" rx="5" fill="#fff" stroke="#2e7d32"/>
+    <text x="610" y="740" text-anchor="middle" font-size="10" font-family="monospace" fill="#333">for i = 1 to n:</text>
+    <text x="610" y="758" text-anchor="middle" font-size="10" font-family="monospace" fill="#333">for w = W down to w[i]:</text>
+    <text x="720" y="758" text-anchor="middle" font-size="10" font-family="monospace" fill="#c62828">dp[w] = max(dp[w], dp[w-w[i]] + v[i])</text>
+  </g>
+
+  <!-- Step 8: Fractional Knapsack -->
+  <g class="step" id="step8" data-narration="Fractional Knapsack uses a greedy approach based on value-to-weight ratio. Sort by ratio descending and select items greedily.">
+    <rect x="20" y="790" width="760" height="90" rx="8" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="35" y="815" font-size="14" font-weight="bold" fill="#1976d2">Fractional Knapsack - Greedy Approach</text>
+    <text x="35" y="840" font-size="11" fill="#333">Since we can take fractions, greedy works optimally. Calculate value/weight ratio for each item and sort descending.</text>
+    
+    <rect x="450" y="820" width="320" height="50" rx="5" fill="#fff" stroke="#1976d2"/>
+    <text x="610" y="840" text-anchor="middle" font-size="11" font-weight="bold" fill="#1976d2">Algorithm Steps:</text>
+    <text x="610" y="860" text-anchor="middle" font-size="10" fill="#333">1. Compute ratio v[i]/w[i] for each item</text>
+    <text x="710" y="860" text-anchor="middle" font-size="10" fill="#333">2. Sort by ratio descending</text>
+    <text x="760" y="860" text-anchor="middle" font-size="10" fill="#333">3. Select greedily</text>
+  </g>
+
+  <!-- Step 9: Fractional Example -->
+  <g class="step" id="step9" data-narration="For items with weights [10,20,30] and values [60,100,120], capacity 50: take all items 1 and 2, then 2/3 of item 3.">
+    <rect x="20" y="895" width="760" height="90" rx="8" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="35" y="920" font-size="14" font-weight="bold" fill="#e65100">Example 2: Fractional Knapsack Calculation</text>
+    
+    <text x="35" y="950" font-size="10" fill="#333">Given: weights [10,20,30], values [60,100,120], capacity W=50</text>
+    
+    <!-- Ratios -->
+    <rect x="35" y="960" width="70" height="20" rx="3" fill="#fff"/>
+    <text x="70" y="974" text-anchor="middle" font-size="9" fill="#333">Ratio 1:</text>
+    <text x="90" y="974" font-size="9" font-weight="bold" fill="#2e7d32">60/10=6</text>
+    
+    <rect x="120" y="960" width="70" height="20" rx="3" fill="#fff"/>
+    <text x="155" y="974" text-anchor="middle" font-size="9" fill="#333">Ratio 2:</text>
+    <text x="175" y="974" font-size="9" font-weight="bold" fill="#2e7d32">100/20=5</text>
+    
+    <rect x="205" y="960" width="70" height="20" rx="3" fill="#fff"/>
+    <text x="240" y="974" text-anchor="middle" font-size="9" fill="#333">Ratio 3:</text>
+    <text x="260" y="974" font-size="9" font-weight="bold" fill="#2e7d32">120/30=4</text>
+    
+    <!-- Sorted order -->
+    <text x="350" y="950" font-size="10" font-weight="bold" fill="#e65100">Sorted: Item1(6) → Item2(5) → Item3(4)</text>
+    
+    <!-- Selection -->
+    <rect x="350" y="965" width="420" height="15" rx="2" fill="#e8f5e9"/>
+    <text x="380" y="976" font-size="8" fill="#2e7d32">Item1: +60 (full)</text>
+    <text x="470" y="976" font-size="8" fill="#2e7d32">Item2: +100 (full)</text>
+    <text x="570" y="976" font-size="8" fill="#e65100">Item3: +80 (20/30)</text>
+    
+    <rect x="350" y="985" width="120" height="25" rx="4" fill="#2e7d32"/>
+    <text x="410" y="1002" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Total = 240</text>
+  </g>
+
+  <!-- Step 10: Memory Functions Concept -->
+  <g class="step" id="step10" data-narration="Memory functions provide top-down DP with memoization. Only compute subproblems when needed, storing results for reuse.">
+    <rect x="20" y="1000" width="760" height="90" rx="8" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1025" font-size="14" font-weight="bold" fill="#7b1fa2">Memory Functions - Top-Down DP</text>
+    <text x="35" y="1050" font-size="11" fill="#333">Instead of solving all subproblems (bottom-up), solve only needed ones using recursion with memoization (top-down).</text>
+    
+    <rect x="450" y="1020" width="320" height="60" rx="5" fill="#fff" stroke="#7b1fa2"/>
+    <text x="610" y="1040" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Key Characteristics:</text>
+    <text x="610" y="1058" text-anchor="middle" font-size="9" fill="#333">• Initialize table with -1 (invalid value)</text>
+    <text x="610" y="1073" text-anchor="middle" font-size="9" fill="#333">• Check if computed before calculating</text>
+  </g>
+
+  <!-- Step 11: Memory Function Code -->
+  <g class="step" id="step11" data-narration="The memory function checks dp[n][W] before computing. If not -1, return cached value; otherwise compute and store result.">
+    <rect x="20" y="1105" width="760" height="90" rx="8" fill="url(#redGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1130" font-size="14" font-weight="bold" fill="#c62828">Memory Function Implementation</text>
+    
+    <rect x="35" y="1150" width="240" height="35" rx="4" fill="#263238"/>
+    <text x="45" y="1165" font-size="8" font-family="monospace" fill="#a5d6a7">int knapSack(int W, int wt[], int val[], int n) {</text>
+    <text x="55" y="1180" font-size="8" font-family="monospace" fill="#a5d6a7">  if (n==0 || W==0) return 0;</text>
+    
+    <rect x="290" y="1150" width="240" height="35" rx="4" fill="#263238"/>
+    <text x="300" y="1165" font-size="8" font-family="monospace" fill="#a5d6a7">  if (dp[n][W] != -1) return dp[n][W];</text>
+    <text x="300" y="1180" font-size="8" font-family="monospace" fill="#81d4fa">// Memoized result</text>
+    
+    <rect x="545" y="1150" width="220" height="35" rx="4" fill="#263238"/>
+    <text x="555" y="1165" font-size="8" font-family="monospace" fill="#a5d6a7">  if (wt[n-1] > W)</text>
+    <text x="565" y="1180" font-size="8" font-family="monospace" fill="#a5d6a7">    dp[n][W] = knapSack(W, wt, val, n-1);</text>
+  </g>
+
+  <!-- Step 12: Memory vs Standard DP -->
+  <g class="step" id="step12" data-narration="Memory functions compute only necessary subproblems but have recursion overhead. Standard DP computes all subproblems systematically.">
+    <rect x="20" y="1210" width="760" height="85" rx="8" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1235" font-size="14" font-weight="bold" fill="#2e7d32">Memory Functions vs Standard DP</text>
+    
+    <rect x="35" y="1255" width="340" height="30" rx="5" fill="#fff" stroke="#2e7d32"/>
+    <text x="55" y="1270" font-size="10" font-weight="bold" fill="#2e7d32">Memory Function (Top-Down)</text>
+    <text x="205" y="1270" font-size="9" fill="#333">• Only computes needed subproblems</text>
+    <text x="320" y="1270" font-size="9" fill="#333">• Recursive overhead</text>
+    
+    <rect x="420" y="1255" width="340" height="30" rx="5" fill="#fff" stroke="#1976d2"/>
+    <text x="440" y="1270" font-size="10" font-weight="bold" fill="#1976d2">Standard DP (Bottom-Up)</text>
+    <text x="590" y="1270" font-size="9" fill="#333">• Computes all subproblems</text>
+    <text x="705" y="1270" font-size="9" fill="#333">• More predictable time</text>
+  </g>
+
+  <!-- Step 13: Complexity Analysis -->
+  <g class="step" id="step13" data-narration="Time complexity: O(n×W) for 0/1 DP, O(n log n) for Fractional. Space: O(n×W) standard, O(W) optimized for 0/1.">
+    <rect x="20" y="1310" width="760" height="85" rx="8" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1335" font-size="14" font-weight="bold" fill="#1976d2">Time and Space Complexity Analysis</text>
+    
+    <rect x="35" y="1355" width="170" height="30" rx="5" fill="#fff3e0" stroke="#e65100"/>
+    <text x="50" y="1372" font-size="10" font-weight="bold" fill="#e65100">0/1 Knapsack DP</text>
+    <text x="120" y="1372" font-size="9" fill="#333">Time: O(n×W)</text>
+    <text x="170" y="1372" font-size="9" fill="#333">Space: O(n×W)</text>
+    
+    <rect x="220" y="1355" width="170" height="30" rx="5" fill="#fff3e0" stroke="#e65100"/>
+    <text x="235" y="1372" font-size="10" font-weight="bold" fill="#e65100">Space Optimized</text>
+    <text x="305" y="1372" font-size="9" fill="#333">Time: O(n×W)</text>
+    <text x="355" y="1372" font-size="9" fill="#333">Space: O(W)</text>
+    
+    <rect x="405" y="1355" width="170" height="30" rx="5" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text x="420" y="1372" font-size="10" font-weight="bold" fill="#2e7d32">Fractional Greedy</text>
+    <text x="490" y="1372" font-size="9" fill="#333">Time: O(n log n)</text>
+    <text x="540" y="1372" font-size="9" fill="#333">Space: O(n)</text>
+    
+    <rect x="590" y="1355" width="180" height="30" rx="5" fill="#f3e5f5" stroke="#7b1fa2"/>
+    <text x="605" y="1372" font-size="10" font-weight="bold" fill="#7b1fa2">Memory Function</text>
+    <text x="680" y="1372" font-size="9" fill="#333">Time: O(n×W)*</text>
+    <text x="730" y="1372" font-size="9" fill="#333">Space: O(n×W)</text>
+    <text x="750" y="1372" font-size="7" fill="#7b1fa2">(*only needed)</text>
+  </g>
+
+  <!-- Step 14: Key Differences -->
+  <g class="step" id="step14" data-narration="Crucial distinction: greedy works for Fractional but fails for 0/1. DP works for 0/1 but not for Fractional's greedy approach.">
+    <rect x="20" y="1410" width="760" height="85" rx="8" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1435" font-size="14" font-weight="bold" fill="#e65100">Key Differences - Remember!</text>
+    
+    <rect x="35" y="1455" width="100" height="30" rx="5" fill="#c62828"/>
+    <text x="85" y="1473" text-anchor="middle" font-size="10" font-weight="bold" fill="white">0/1 Knapsack</text>
+    <text x="85" y="1488" text-anchor="middle" font-size="8" fill="white">Dynamic Programming</text>
+    
+    <path d="M145 1470 L195 1470" stroke="#e65100" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <text x="260" y="1465" font-size="11" font-weight="bold" fill="#333">Greedy</text>
+    <text x="260" y="1480" font-size="11" font-weight="bold" fill="#333">FAILS!</text>
+    
+    <rect x="350" y="1455" width="100" height="30" rx="5" fill="#2e7d32"/>
+    <text x="400" y="1473" text-anchor="middle" font-size="10" font-weight="bold" fill="white">Fractional</text>
+    <text x="400" y="1488" text-anchor="middle" font-size="8" fill="white">Greedy Works!</text>
+    
+    <text x="480" y="1475" font-size="10" fill="#333">Greedy fails for 0/1 because of</text>
+    <text x="480" y="1490" font-size="10" font-weight="bold" fill="#c62828">integer constraint (x[i] ∈ {0,1})</text>
+  </g>
+
+  <!-- Step 15: Exam Tips -->
+  <g class="step" id="step15" data-narration="Important exam tips: initialize memoization with -1, backtrack through DP table to find selected items, and iterate capacity descending.">
+    <rect x="20" y="1510" width="760" height="85" rx="8" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+    <text x="35" y="1535" font-size="14" font-weight="bold" fill="#7b1fa2">Exam Tips & Common Mistakes</text>
+    
+    <rect x="35" y="1555" width="350" height="30" rx="4" fill="#fff" stroke="#7b1fa2"/>
+    <text x="45" y="1570" font-size="9" fill="#333">✓ Initialize memoization with -1 (invalid value)</text>
+    <text x="280" y="1570" font-size="9" fill="#333">✓ Iterate w: W→w[i] (descending)</text>
+    
+    <rect x="400" y="1555" width="370" height="30" rx="4" fill="#fff" stroke="#7b1fa2"/>
+    <text x="410" y="1570" font-size="9" fill="#333">✓ Backtrack dp[n][W] to find selected items</text>
+    <text x="650" y="1570" font-size="9" fill="#333">✓ Don't use greedy for 0/1!</text>
+    
+    <text x="210" y="1605" font-size="11" font-weight="bold" fill="#c62828">✗ Common Mistake: Using greedy for 0/1 Knapsack</text>
+  </g>
+
+  <!-- Step 16: Summary -->
+  <g class="step" id="step16" data-narration="To summarize: 0/1 Knapsack uses DP with O(n×W), Fractional uses greedy O(n log n), and memory functions offer top-down memoization.">
+    <rect x="20" y="1610" width="760" height="40" rx="8" fill="url(#titleGradient)" filter="url(#shadow)"/>
+    <text x="400" y="1635" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Summary: 0/1→DP | Fractional→Greedy | Memory Functions→Top-Down Memoization</text>
+  </g>
+</svg>

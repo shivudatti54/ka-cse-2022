@@ -1,0 +1,162 @@
+{
+  "topicId": "multicasting-routing-mospf",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between Dense Mode and Sparse Mode multicast routing protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Dense Mode uses flood-and-prune approach suitable for densely populated groups",
+        "Sparse Mode uses explicit join messages suitable for widely distributed receivers",
+        "Dense Mode: DVMRP, PIM-DM; Sparse Mode: PIM-SM, CBT",
+        "Dense Mode has more state information, Sparse Mode scales better"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is Reverse Path Broadcasting (RPB) and how does it prevent loops in multicast routing?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "RPB forwards multicast packets only on interfaces leading toward receivers",
+        "Router checks if packet arrived on interface toward the source (RPF check)",
+        "If received on wrong interface, packet is dropped",
+        "This ensures each branch is reached exactly once without duplication"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the role of IGMP in multicast communication.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "IGMP is used by hosts to report multicast group memberships to local routers",
+        "Hosts send join messages to join a multicast group",
+        "Hosts send leave messages when they want to leave",
+        "Routers periodically query to discover group members on connected networks"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is MBONE and how does tunneling work in it?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "MBONE is the Multicast Backbone - virtual network for IP multicasting",
+        "Consists of multicast-enabled routers connected by tunnels",
+        "Tunneling encapsulates multicast packets in unicast packets",
+        "Allows multicast across networks that do not support multicast natively"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of Shared Tree vs Source-Specific Tree in multicast routing.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Shared Tree uses single tree rooted at Rendezvous Point (RP) shared by all sources",
+        "Source-Specific Tree creates separate tree from each source to receivers",
+        "Shared tree requires less router state but may have suboptimal paths",
+        "Source tree provides optimal paths but scales poorly with many sources"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How does MOSPF extend OSPF for multicast routing?",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "MOSPF introduces Group Membership LSAs to distribute group information",
+        "Routers maintain multicast group membership in their LSDB",
+        "Each router computes multicast distribution trees using SPF algorithm",
+        "Routes are computed on-demand when first multicast packet arrives"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the advantages and disadvantages of Shared Trees in multicast routing?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Advantages: Less router state memory, scales well with many sources, simpler configuration",
+        "Disadvantages: Potentially suboptimal paths from source to receiver, RP can become bottleneck",
+        "All traffic must go through RP even if direct path exists",
+        "Trade-off between scalability and optimal routing"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the operation of MOSPF protocol with emphasis on its components, message types, and how it builds multicast distribution trees.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "MOSPF is extension of OSPFv2 for multicast routing",
+        "Uses Group Membership LSA (new LSA type) to advertise group membership",
+        "Routers maintain local group membership database",
+        "When traffic arrives, router uses link-state database to compute source-group SPT",
+        "Router performs RPF check to prevent loops",
+        "On-demand calculation of routes rather than maintaining per-group state",
+        "Scalability issues with many groups - uses designated routers for summarization",
+        "Comparison with other protocols like DVMRP, PIM-SM"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the challenges in multicast routing and explain how different multicast routing protocols address these challenges.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Challenge 1: Scalability - protocols like CBT, PIM-SM use shared trees to reduce state",
+        "Challenge 2: Loop prevention - RPF check in DVMRP, source verification in MOSPF",
+        "Challenge 3: Optimal routing vs scalability trade-off",
+        "Challenge 4: Heterogeneous network support - tunneling for non-multicast networks",
+        "Challenge 5: Group management - IGMP for local membership, protocol-specific for inter-domain",
+        "Challenge 6: Dynamic membership - protocols handle receiver join/leave dynamically",
+        "Comparison of Dense Mode (flood) vs Sparse Mode (explicit join) approaches"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a multicast routing scenario and explain how DVMRP protocol would handle it with detailed explanation of its messages and tree building process.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "DVMRP uses Reverse Path Broadcasting for initial distribution",
+        "Prune messages remove branches without receivers",
+        "Graft messages rejoin pruned branches when new receivers join",
+        "Three phases: Initial flood, prune non-receivers, graft to rejoin",
+        "Uses distance vector approach with hop-count metric",
+        "Maintenance through periodic updates",
+        "Comparison with MOSPF link-state approach",
+        "Example topology showing source, routers, and receivers"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare and contrast Source-Specific Multicast (SSM) and Any-Source Multicast (ASM) models in terms of routing approaches, advantages, and limitations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "ASM: Receiver joins any source sending to a group; SSM: Receiver specifies source and group",
+        "ASM uses shared trees or source trees; SSM uses only source-specific trees",
+        "SSM advantages: Simpler, more secure (source known), no RP required",
+        "ASM advantages: Any source can send, more flexible",
+        "SSM limitations: Must know source address, more state per receiver",
+        "ASM issues: Shared tree bottleneck, potential source ambiguity",
+        "Protocols supporting SSM: PIM-SSM; ASM: PIM-SM, DVMRP, MOSPF"
+      ]
+    }
+  ]
+}

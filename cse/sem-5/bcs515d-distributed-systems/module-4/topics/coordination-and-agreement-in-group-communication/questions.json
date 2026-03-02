@@ -1,0 +1,160 @@
+{
+  "topicId": "coordination-and-agreement-in-group-communication",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between FIFO ordering and Causal ordering in group communication.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "FIFO: Messages from same sender maintain order at receiver",
+        "Causal: Based on happens-before relationship, if send(m2) after receive(m1), then m2 delivered after m1",
+        "FIFO is weaker than Causal ordering",
+        "Causal ordering implies FIFO but not vice versa"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the three properties required for Consensus? Explain each briefly.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Agreement: All correct processes decide on the same value",
+        "Validity: The decided value must have been proposed by some process",
+        "Termination: Every correct process eventually decides a value"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the Two-Phase Commit protocol and its two phases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Phase 1 (Prepare): Coordinator asks participants to prepare for commit",
+        "Participants vote Yes or No",
+        "Phase 2 (Commit/Abort): If all vote Yes, coordinator sends Commit; otherwise sends Abort",
+        "If coordinator fails during phase 1, participants may block"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is Virtual Synchrony? Explain its significance in group communication.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Messages sent in one communication step are delivered in that same step to all non-faulty members",
+        "Group membership view is consistent across all correct processes",
+        "Ensures all processes see the same sequence of group events",
+        "Important for building reliable distributed applications"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the Byzantine Agreement problem. How many processes are needed to tolerate f Byzantine failures?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Byzantine Agreement: Processes must agree on a value despite arbitrary (Byzantine) failures",
+        "In Byzantine failures, processes can send incorrect/contradictory information",
+        "Required: n > 3f processes to tolerate f Byzantine failures",
+        "For 1 Byzantine failure, minimum 4 processes are needed"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the difference between Atomic Multicast and Reliable Multicast?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Atomic Multicast: All-or-nothing delivery - either all receive or none receive",
+        "Reliable Multicast: Validity (eventual delivery) + Agreement (if one receives, all receive)",
+        "Atomic is stronger than reliable - implies total order and atomicity",
+        "Reliable ensures no message loss but doesn't guarantee all-or-nothing"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the three roles in the Paxos algorithm and their responsibilities.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Proposer: Proposes values, initiates consensus process",
+        "Acceptor: Receives proposals, promises to accept if majority agrees, accepts values",
+        "Learner: Learns the accepted value once consensus is reached",
+        "Majority of acceptors must agree for any decision"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the Paxos consensus algorithm in detail. Explain how it achieves consensus in the presence of failures. What are its safety and liveness guarantees?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Algorithm uses Prepare and Accept phases",
+        "Prepare phase: Proposer sends prepare(n) with proposal number n",
+        "Acceptors promise not to accept proposals with number less than n",
+        "Accept phase: Proposer sends accept(n, value) to majority of acceptors",
+        "If accepted by majority, value becomes chosen",
+        "Safety: No two proposals can be chosen (no inconsistency)",
+        "Liveness: If a value is proposed, eventually some value will be chosen (requires majority of acceptors working)",
+        "Works in asynchronous systems with failures"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the different types of message ordering in group communication: FIFO, Causal, and Total Order. Provide examples to illustrate each.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "FIFO Ordering: Messages from same sender delivered in send order. Example: Process P1 sends m1, m2; receiver delivers m1 then m2",
+        "Causal Ordering: Based on happens-before. If m2 is sent after m1 is received, m2 delivered after m1. Example: P1 receives m1, then sends m2; all receivers deliver m1 before m2",
+        "Total Order: All receivers see messages in same order. Example: If m1 delivered before m2 at P2, then m1 must be before m2 at P3 also",
+        "Relationships: Total order implies causal; causal implies FIFO; all are independent properties"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the Group Membership Service in distributed systems. What are its functions and how does it maintain consistent views?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Maintains list of processes in a group (active members)",
+        "Handles member join requests - new member added to group",
+        "Handles member voluntary leave - graceful removal",
+        "Handles member failures - detection and removal",
+        "Delivers view updates to all members consistently",
+        "View contains: unique view ID and list of member process IDs",
+        "Virtual synchrony ensures view changes delivered atomically",
+        "Provides membership change notification to applications",
+        "Critical for building reliable coordinated distributed applications"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the Byzantine Generals problem and the Byzantine Agreement algorithm. How does the algorithm achieve agreement despite Byzantine failures?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Byzantine Generals: n generals surrounding city, some may be traitors",
+        "Loyal generals must agree on same battle plan despite traitors",
+        "Algorithm: Each general collects opinions from others (OM(m) messages)",
+        "Recursive message exchange to reach agreement",
+        "With n > 3f generals, can tolerate f traitors",
+        "Each loyal general computes same decision regardless of traitors",
+        "Byzantine Agreement requires: Agreement, Validity, Termination",
+        "Impossibility result: No solution for n <= 3f"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fc-1",
+    "front": "What is an exception in ARM microcontroller?",
+    "back": "An exception is an event that disrupts normal program flow, requiring the processor to suspend current execution and handle the event. Examples include IRQ, FIQ, data abort, prefetch abort, and software interrupt."
+  },
+  {
+    "id": "fc-2",
+    "front": "What is IRQ (Interrupt Request) in ARM?",
+    "back": "IRQ is a standard priority interrupt in ARM architecture. It is a level-sensitive interrupt that can be masked. When triggered, the processor saves current state and jumps to the IRQ exception vector."
+  },
+  {
+    "id": "fc-3",
+    "front": "What is FIQ (Fast Interrupt Request) in ARM?",
+    "back": "FIQ is a high-priority, low-latency interrupt designed for time-critical operations. It can preempt IRQ and other exceptions, has dedicated banked registers, and can disable IRQ during its execution."
+  },
+  {
+    "id": "fc-4",
+    "front": "What is the ARM exception vector table?",
+    "back": "The vector table is a memory location containing branch instructions to exception handlers. It typically starts at address 0x00000000 and contains entries for Reset, Undefined, SWI, Prefetch Abort, Data Abort, IRQ, and FIQ."
+  },
+  {
+    "id": "fc-5",
+    "front": "How many banked registers does FIQ mode have?",
+    "back": "FIQ mode has 7 banked registers (r8-r14) plus CPSR and SPSR. This allows fast context switching without saving registers to memory, reducing interrupt latency."
+  },
+  {
+    "id": "fc-6",
+    "front": "How does FIQ achieve lower latency than IRQ?",
+    "back": "FIQ has dedicated banked registers (r8-r14), a private vector at 0x0000001C, can run at higher priority, and the FIQ bit in CPSR can disable IRQ. This eliminates register save/restore overhead."
+  },
+  {
+    "id": "fc-7",
+    "front": "What is the sequence when an exception occurs in ARM?",
+    "back": "1) Processor saves CPSR to SPSR_mode, 2) Saves return address to LR_mode, 3) Sets CPSR to exception mode, 4) Disables interrupts (if needed), 5) Jumps to exception vector, 6) Executes handler, 7) Returns using SUBS PC,LR,#4 or similar."
+  },
+  {
+    "id": "fc-8",
+    "front": "What is the difference between IRQ and FIQ priority?",
+    "back": "FIQ has higher priority than IRQ and can preempt IRQ execution. In standard ARM, only one FIQ can be pending at a time, while multiple IRQ sources can share IRQ line with prioritization in interrupt controller."
+  },
+  {
+    "id": "fc-9",
+    "front": "How do you return from an IRQ exception in ARM?",
+    "back": "Use 'SUBS PC, LR, #4' for IRQ mode (adjusts for pipeline) or 'MOVS PC, SPSR' to restore CPSR. For FIQ, use 'SUBS PC, LR, #4' after restoring banked registers."
+  },
+  {
+    "id": "fc-10",
+    "front": "What is interrupt latency in ARM microcontrollers?",
+    "back": "Interrupt latency is the time between interrupt request and execution of first instruction in interrupt handler. FIQ latency is typically 4 cycles vs 20+ cycles for IRQ due to banked registers and dedicated vector."
+  },
+  {
+    "id": "fc-11",
+    "front": "What is the role of CPSR in exception handling?",
+    "back": "CPSR (Current Program Status Register) contains I and F bits that disable IRQ (I=1) and FIQ (F=1) respectively. On exception entry, CPSR is copied to SPSR and mode bits are set to exception mode."
+  },
+  {
+    "id": "fc-12",
+    "front": "Can FIQ interrupt IRQ handling in ARM?",
+    "back": "Yes, FIQ has higher priority and can interrupt IRQ handling if FIQ is enabled. However, if F bit in CPSR is set (FIQ disabled), FIQ will remain pending until enabled."
+  },
+  {
+    "id": "fc-13",
+    "front": "What are the ARM exception modes?",
+    "back": "7 exception modes: User (USR), System (SYS), Supervisor (SVC), Abort (ABT), Undefined (UND), IRQ, and FIQ. Each has specific banked registers and privileges."
+  },
+  {
+    "id": "fc-14",
+    "front": "What is the FIQ disable mechanism in ARM?",
+    "back": "FIQ can be disabled by setting the F bit in CPSR using 'CPSID F' instruction or by writing to CPSR directly. When disabled, FIQ requests are latched but not taken until FIQ is enabled."
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "topicId": "pvr",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "BGP Route Selection Algorithm",
+      "description": "Algorithm demonstrating BGP's best path selection process using path attributes",
+      "code": "FUNCTION SelectBestPath(candidateRoutes)\nBEGIN\n // Filter invalid routes first\n validRoutes \u2190 REMOVE_INVALID(candidateRoutes)\n IF validRoutes IS EMPTY THEN\n RETURN NULL\n ENDIF\n\n // Step 1: Highest LOCAL-PREF\n bestRoutes \u2190 FIND_HIGHEST_LOCAL_PREF(validRoutes)\n\n // Step 2: Shortest AS-PATH length\n bestRoutes \u2190 FIND_SHORTEST_AS_PATH(bestRoutes)\n\n // Step 3: Lowest MED\n bestRoutes \u2190 FIND_LOWEST_MED(bestRoutes)\n\n // Step 4: Prefer eBGP over iBGP\n bestRoutes \u2190 FILTER_EBGP_ONLY(bestRoutes)\n\n // Step 5: Lowest IGP cost to NEXT-HOP\n bestRoutes \u2190 FIND_LOWEST_IGP_COST(bestRoutes)\n\n // Step 6: Lowest BGP Router ID (tiebreaker)\n bestRoute \u2190 FIND_LOWEST_ROUTER_ID(bestRoutes)\n\n RETURN bestRoute\nEND",
+      "explanation": "BGP uses hierarchical path selection criteria. Routes are progressively filtered until one remains. LOCAL-PREF is the first and most important criterion, followed by AS-PATH length, then MED. Router ID is final tiebreaker.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "AS-PATH Loop Detection Algorithm",
+      "description": "Algorithm to detect routing loops by checking if own AS number exists in the AS-PATH",
+      "code": "FUNCTION CheckForLoop(asPath, myASNumber)\nBEGIN\n // asPath is array of AS numbers in order\n // myASNumber is this router's AS\n\n FOR each asNumber IN asPath DO\n IF asNumber EQUALS myASNumber THEN\n // Loop detected - own AS found in path\n RETURN TRUE // Reject route\n ENDIF\n ENDFOR\n\n // No loop detected\n RETURN FALSE // Accept route\nEND\n\nFUNCTION ProcessBGPRoute(routeUpdate, myASNumber)\nBEGIN\n // Extract AS-PATH from route update\n asPath \u2190 routeUpdate.AS_PATH\n\n // Check for loop\n IF CheckForLoop(asPath, myASNumber) THEN\n LOG \"Route rejected: Loop detected - AS\" + myASNumber + \" in path\"\n RETURN REJECT_ROUTE\n ENDIF\n\n // Prepend own AS before advertising\n newAsPath \u2190 myASNumber + asPath\n routeUpdate.AS_PATH \u2190 newAsPath\n\n // Advertise to other neighbors\n ADVERTISE_ROUTE(routeUpdate)\n RETURN ACCEPT_ROUTE\nEND",
+      "explanation": "Before accepting any BGP route update, the router checks if its own AS number already exists in the AS-PATH attribute. If found, this indicates a routing loop and the route is rejected. When propagating routes, the router prepends its own AS number to the AS-PATH.",
+      "timeComplexity": "O(k) where k = length of AS-PATH",
+      "spaceComplexity": "O(k)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "BGP Policy Configuration Example",
+      "description": "Pseudocode demonstrating how to configure BGP routing policies using attributes",
+      "code": "// BGP Policy Configuration Example\n\n// Policy 1: Set LOCAL-PREF for outbound traffic selection\nPOLICY SetLocalPref\nBEGIN\n IF neighbor IN customerList THEN\n SET localPref = 200 // Prefer customer paths\n ELSE IF neighbor IN providerList THEN\n SET localPref = 100 // Default preference\n ELSE IF neighbor IN peerList THEN\n SET localPref = 150 // Peers preferred over providers\n ENDIF\n APPLY_TO routes\nEND\n\n// Policy 2: Filter routes based on AS-PATH\nPOLICY FilterASPath\nBEGIN\n FOR each route IN incomingRoutes DO\n IF route.asPath MATCHES \"^65001\" THEN\n // Accept routes originating from AS65001\n ACCEPT route\n ELSE IF route.asPath MATCHES \".*65002.*\" THEN\n // Reject if route passes through AS65002\n REJECT route\n ELSE\n ACCEPT route\n ENDIF\n ENDFOR\nEND\n\n// Policy 3: Set MED to influence inbound traffic\nPOLICY SetMED\nBEGIN\n FOR each route IN outboundRoutes DO\n IF interface IS primaryLink THEN\n SET med = 100 // Primary link preferred\n ELSE IF interface IS backupLink THEN\n SET med = 200 // Backup link\n ENDIF\n ENDFOR\nEND",
+      "explanation": "BGP policies allow network operators to control routing decisions beyond simple shortest-path selection. LOCAL-PREF controls outbound traffic paths, AS-PATH filtering provides security and policy enforcement, and MED influences how neighboring ASes send traffic to this AS.",
+      "timeComplexity": "O(n) per policy",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

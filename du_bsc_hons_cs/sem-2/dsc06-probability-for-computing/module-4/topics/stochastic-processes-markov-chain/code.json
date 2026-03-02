@@ -1,0 +1,15 @@
+{
+  "topicId": "stochastic-processes-markov-chain",
+  "examples": [
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Computing Steady-State Distribution",
+      "description": "Algorithm to find stationary distribution using Gauss-Jordan elimination",
+      "code": "ALGORITHM SteadyStateDistribution\nINPUT: Transition matrix P (n\u00d7n)\nOUTPUT: Stationary distribution \u03c0\n\nBEGIN\n  // Create augmented matrix [P^T - I | 0]\n  // We solve \u03c0P = \u03c0, which means (P^T - I)\u03c0 = 0\n  // Add constraint \u03a3\u03c0_i = 1\n  \n  CREATE matrix A of size n \u00d7 (n+1)\n  FOR i = 0 to n-1 DO\n    FOR j = 0 to n-1 DO\n      A[i][j] = P[j][i]  // Transpose\n    END FOR\n    A[i][i] = A[i][i] - 1  // Subtract 1 from diagonal\n    A[i][n] = 0  // Last column for constants\n  END FOR\n  \n  // Add constraint: sum of all \u03c0_i = 1\n  FOR j = 0 to n-1 DO\n    A[n-1][j] = 1\n  END FOR\n  A[n-1][n] = 1\n  \n  // Apply Gauss-Jordan elimination\n  FOR k = 0 to n-1 DO\n    // Find pivot\n    pivot = A[k][k]\n    FOR j = 0 to n DO\n      A[k][j] = A[k][j] / pivot\n    END FOR\n    \n    FOR i = 0 to n-1 DO\n      IF i \u2260 k THEN\n        factor = A[i][k]\n        FOR j = 0 to n DO\n          A[i][j] = A[i][j] - factor * A[k][j]\n        END FOR\n      END IF\n    END FOR\n  END FOR\n  \n  // Extract solution\n  FOR i = 0 to n-1 DO\n    \u03c0[i] = A[i][n]\n  END FOR\n  \n  RETURN \u03c0\nEND",
+      "explanation": "This algorithm solves the system of linear equations \u03c0 = \u03c0P (i.e., \u03c0(P - I) = 0) along with the constraint \u03a3\u03c0_i = 1 to find the unique stationary distribution for an irreducible Markov chain.",
+      "timeComplexity": "O(n\u00b3) due to Gauss-Jordan elimination",
+      "spaceComplexity": "O(n\u00b2) for matrix storage"
+    }
+  ]
+}

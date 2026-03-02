@@ -1,0 +1,45 @@
+{
+  "topicId": "operating-system-services",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Process Creation Service",
+      "description": "Demonstrates how OS creates a new process using system calls",
+      "code": "FUNCTION CreateProcess(programName, priority)\nBEGIN\n  // Allocate Process Control Block (PCB)\n  newProcess = ALLOCATE(PCB)\n  \n  // Initialize PCB\n  newProcess.processID = GenerateUniqueID()\n  newProcess.state = NEW\n  newProcess.programName = programName\n  newProcess.priority = priority\n  newProcess.programCounter = 0\n  newProcess.registers = InitializeRegisters()\n  newProcess.memoryList = EMPTY\n  newProcess.openFiles = EMPTY\n  newProcess.parentID = CurrentProcessID()\n  \n  // Load program into memory\n  newProcess.memoryList = LoadProgram(programName)\n  \n  // Add to ready queue\n  AddToReadyQueue(newProcess)\n  newProcess.state = READY\n  \n  RETURN newProcess.processID\nEND",
+      "explanation": "This pseudocode shows how an OS creates a new process by allocating a Process Control Block (PCB), initializing its attributes, loading the program into memory, and adding it to the ready queue for scheduling.",
+      "timeComplexity": "O(n) where n is memory loading time",
+      "spaceComplexity": "O(m) where m is memory required for PCB and program"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Memory Allocation Simulation",
+      "description": "Demonstrates basic memory allocation and deallocation concepts",
+      "code": "class MemoryManager:\n    def __init__(self, total_memory):\n        self.total_memory = total_memory\n        self.free_blocks = [(0, total_memory)]\n        self.allocated = {}\n    \n    def allocate(self, process_id, size):\n        # Find first fit block\n        for i, (start, end) in enumerate(self.free_blocks):\n            block_size = end - start\n            if block_size >= size:\n                # Allocate this block\n                self.allocated[process_id] = (start, start + size)\n                # Update free blocks\n                new_start = start + size\n                self.free_blocks.pop(i)\n                if block_size > size:\n                    self.free_blocks.insert(i, (new_start, end))\n                return True\n        return False  # No suitable block found\n    \n    def deallocate(self, process_id):\n        if process_id in self.allocated:\n            start, end = self.allocated.pop(process_id)\n            self.free_blocks.append((start, end))\n            self.free_blocks.sort()  # Sort by address\n            return True\n        return False\n    \n    def status(self):\n        return {\n            'total': self.total_memory,\n            'free': sum(e-s for s,e in self.free_blocks),\n            'allocated': len(self.allocated)\n        }\n\n# Example usage\nmm = MemoryManager(1000)\nmm.allocate('P1', 200)\nmm.allocate('P2', 300)\nmm.deallocate('P1')\nprint(mm.status())",
+      "explanation": "This Python code demonstrates first-fit memory allocation where the OS finds the first available memory block large enough for a process. It manages free and allocated memory blocks, simulating how operating systems handle memory allocation and deallocation.",
+      "timeComplexity": "O(n) for allocation search, O(n log n) for deallocation due to sorting",
+      "spaceComplexity": "O(n) where n is number of memory blocks"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "File Write Operation Service",
+      "description": "Demonstrates file management service using system calls",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Simulating file management service\nstruct FileControlBlock {\n    char filename[50];\n    int fileSize;\n    char permissions[10];\n    int currentPosition;\n    char buffer[1024];\n};\n\nint createFile(char *filename, char *permissions) {\n    struct FileControlBlock *fcb = \n        (struct FileControlBlock *)malloc(sizeof(struct FileControlBlock));\n    \n    if (fcb == NULL) {\n        return -1; // Error: cannot allocate\n    }\n    \n    strcpy(fcb->filename, filename);\n    strcpy(fcb->permissions, permissions);\n    fcb->fileSize = 0;\n    fcb->currentPosition = 0;\n    \n    // Add to file system directory\n    addToDirectory(fcb);\n    \n    return 0; // Success\n}\n\nint writeFile(struct FileControlBlock *fcb, char *data, int size) {\n    if (fcb == NULL || data == NULL) {\n        return -1; // Error\n    }\n    \n    // Check write permission\n    if (!hasWritePermission(fcb->permissions)) {\n        return -2; // Permission denied\n    }\n    \n    // Copy data to buffer\n    memcpy(fcb->buffer + fcb->currentPosition, data, size);\n    fcb->currentPosition += size;\n    fcb->fileSize += size;\n    \n    return size; // Bytes written\n}\n\nint deleteFile(char *filename) {\n    struct FileControlBlock *fcb = findInDirectory(filename);\n    \n    if (fcb == NULL) {\n        return -1; // File not found\n    }\n    \n    removeFromDirectory(fcb);\n    free(fcb);\n    \n    return 0; // Success\n}",
+      "explanation": "This C code simulates the file management service showing how the OS creates files using File Control Blocks (FCB), writes data to files with permission checking, and deletes files from the system.",
+      "timeComplexity": "O(1) for create and write, O(n) for delete/search",
+      "spaceComplexity": "O(1) per file for FCB, O(size) for file data buffer"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "I/O Device Management Simulation",
+      "description": "Demonstrates device driver and buffer management concepts",
+      "code": "import java.util.LinkedList;\nimport java.util.Queue;\n\nclass DeviceManager {\n    private String deviceName;\n    private boolean isBusy;\n    private Queue<IORequest> requestQueue;\n    private byte[] buffer;\n    private static final int BUFFER_SIZE = 4096;\n    \n    public DeviceManager(String name) {\n        this.deviceName = name;\n        this.isBusy = false;\n        this.requestQueue = new LinkedList<>();\n        this.buffer = new byte[BUFFER_SIZE];\n    }\n    \n    // Submit I/O request to device\n    public synchronized int submitRequest(IORequest request) {\n        requestQueue.add(request);\n        if (!isBusy) {\n            processNextRequest();\n        }\n        return 0; // Request queued\n    }\n    \n    // Process requests from queue (spooling)\n    private void processNextRequest() {\n        if (requestQueue.isEmpty()) {\n            isBusy = false;\n            return;\n        }\n        \n        isBusy = true;\n        IORequest request = requestQueue.poll();\n        \n        // Simulate device operation with buffering\n        performIO(request);\n    }\n    \n    private void performIO(IORequest request) {\n        // Buffer management: copy data to/from buffer\n        if (request.getType() == IORequest.WRITE) {\n            // Copy user data to system buffer\n            System.arraycopy(request.getData(), 0, buffer, 0, request.getSize());\n        }\n        \n        // Simulate actual I/O to device\n        System.out.println(deviceName + \" processing \" + request.getType() + \" request\");\n        \n        // After completion, process next request\n        processNextRequest();\n    }\n    \n    public boolean isBusy() {\n        return isBusy;\n    }\n}\n\nclass IORequest {\n    public static final int READ = 1;\n    public static final int WRITE = 2;\n    \n    private int type;\n    private byte[] data;\n    private int size;\n    \n    public IORequest(int type, byte[] data, int size) {\n        this.type = type;\n        this.data = data;\n        this.size = size;\n    }\n    \n    public int getType() { return type; }\n    public byte[] getData() { return data; }\n    public int getSize() { return size; }\n}\n\n// Example usage\npublic class DeviceManagementDemo {\n    public static void main(String[] args) {\n        DeviceManager printer = new DeviceManager(\"Printer\");\n        \n        // Simulate multiple print jobs (spooling)\n        printer.submitRequest(new IORequest(IORequest.WRITE, \"Job1\".getBytes(), 4));\n        printer.submitRequest(new IORequest(IORequest.WRITE, \"Job2\".getBytes(), 4));\n        printer.submitRequest(new IORequest(IORequest.WRITE, \"Job3\".getBytes(), 4));\n    }\n}",
+      "explanation": "This Java code demonstrates I/O Device Management showing device driver simulation, request queuing (spooling), buffer management, and how the OS handles multiple I/O requests efficiently.",
+      "timeComplexity": "O(n) for n requests in queue, each processed sequentially",
+      "spaceComplexity": "O(BUFFER_SIZE) for buffer + O(n) for request queue"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "topicId": "representing-chains-in-c",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What is a self-referential structure in C?",
+      "back": "A structure that contains a pointer to another variable of the same structure type. For chains, this is 'struct Node { int data; struct Node *next; };' which allows nodes to link to each other."
+    },
+    {
+      "id": "fc2",
+      "front": "How do you define a node using typedef for a singly linked list?",
+      "back": "typedef struct Node { int data; struct Node *next; } Node; -- This allows writing 'Node *head' instead of 'struct node *head' throughout the code."
+    },
+    {
+      "id": "fc3",
+      "front": "What is the correct way to allocate a new node with malloc in C?",
+      "back": "Node *newNode = (Node *)malloc(sizeof(Node)); -- Must include: type cast to Node*, sizeof(Node) for memory size, and NULL check after allocation."
+    },
+    {
+      "id": "fc4",
+      "front": "Why must you check for NULL after malloc?",
+      "back": "When malloc fails (system out of heap space), it returns NULL. Dereferencing a NULL pointer causes a segmentation fault (program crash). Always check: if (newNode == NULL) { printf(\"Memory allocation failed\\n\"); exit(1); }"
+    },
+    {
+      "id": "fc5",
+      "front": "What is the role of the head pointer in a linked list?",
+      "back": "The head pointer stores the memory address of the first node. It is the gateway to the entire chain — if you lose the head pointer, the entire chain becomes inaccessible (memory leak). Functions that modify head must return the new head value."
+    },
+    {
+      "id": "fc6",
+      "front": "How does NULL indicate the end of a linked list?",
+      "back": "The last node's next pointer is set to NULL, which represents 'no address' or 'end of chain'. While traversing, you check 'while (current != NULL)' — when current becomes NULL, you've reached the end."
+    },
+    {
+      "id": "fc7",
+      "front": "Compare time complexity: inserting at beginning vs end of a linked list",
+      "back": "Insert at beginning: O(1) — one pointer assignment, no traversal needed. Insert at end: O(n) — must traverse all n nodes to find the last node before linking."
+    },
+    {
+      "id": "fc8",
+      "front": "How do you reverse a linked list using three pointers?",
+      "back": "Use prev, current, and next: while (current != NULL) { next = current->next; current->next = prev; prev = current; current = next; } return prev; -- This reverses links one at a time until prev becomes the new head."
+    },
+    {
+      "id": "fc9",
+      "front": "How do you properly free an entire linked list without losing nodes?",
+      "back": "While (current != NULL) { nextNode = current->next; free(current); current = nextNode; } -- Must save nextNode BEFORE freeing current, otherwise the rest of the chain is lost."
+    },
+    {
+      "id": "fc10",
+      "front": "Compare arrays vs linked lists: memory layout and access by index",
+      "back": "Arrays use contiguous memory (adjacent locations), allowing O(1) random access by index. Linked lists use scattered heap memory, requiring O(n) traversal to access the k-th element since nodes are connected via pointers."
+    }
+  ]
+}

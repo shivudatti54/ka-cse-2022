@@ -1,0 +1,35 @@
+{
+  "topicId": "key-exchange-protocols",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python-like pseudocode",
+      "title": "Diffie-Hellman Key Exchange Implementation",
+      "description": "Implementation showing parameter generation, key computation, and shared secret derivation",
+      "code": "# Step 1: Generate DH Parameters (typically done once)\nFUNCTION generate_dh_parameters(security_bits=2048):\n    # Select a safe prime p = 2q + 1 where q is also prime\n    p = generate_safe_prime(security_bits)\n    q = (p - 1) // 2\n    \n    # Select a generator g of the subgroup of order q\n    g = select_generator(p, q)\n    \n    RETURN (p, g)\n\n# Step 2: Generate Private and Public Keys\nFUNCTION generate_key_pair(p, g):\n    # Private key: random integer in [1, p-2]\n    private_key = random_integer(2, p-2)\n    \n    # Public key: g^private_key mod p\n    public_key = pow(g, private_key, p)\n    \n    RETURN (private_key, public_key)\n\n# Step 3: Compute Shared Secret\nFUNCTION compute_shared_secret(their_public_key, my_private_key, p):\n    shared_secret = pow(their_public_key, my_private_key, p)\n    RETURN shared_secret\n\n# Step 4: Key Derivation using HKDF\nFUNCTION derive_keys(shared_secret, info, length=64):\n    # Apply hash to strengthen and expand\n    prk = HMAC-SHA256(shared_secret, b\"DH key expansion\")\n    okm = HKDF-expand(prk, info, length)\n    \n    encryption_key = okm[0:32]  # 256-bit AES key\n    mac_key = okm[32:64]        # 256-bit HMAC key\n    \n    RETURN (encryption_key, mac_key)",
+      "explanation": "This code demonstrates the complete DH key exchange process including parameter generation using safe primes, key pair generation, shared secret computation using modular exponentiation, and key derivation using HKDF to produce cryptographic keys suitable for encryption and authentication.",
+      "timeComplexity": "O(log p) for modular exponentiation using square-and-multiply",
+      "spaceComplexity": "O(1) besides input storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Station-to-Station (STS) Protocol",
+      "description": "Authenticated key exchange protocol with digital signatures providing MITM protection",
+      "code": "# STS Protocol - Alice and Bob each have signing keys\n\n# System Setup\nCERT_A = certificate_of(Alice)  # Contains Alice's public key, signed by CA\nCERT_B = certificate_of(Bob)\n\n# Step 1: Exchange Public Values (same as basic DH)\nAlice:\n    a = random(2, p-2)\n    g_a = pow(g, a, p)\n    SEND(g_a, CERT_A) TO Bob\n\nBob:\n    b = random(2, p-2)\n    g_b = pow(g, b, p)\n    SEND(g_b, CERT_B) TO Alice\n\n# Step 2: Sign and Exchange (provides authentication)\nAlice:\n    VERIFY(CERT_B) using trusted_CA_public_key\n    signature_A = SIGN(Alice_private_key, (g_a, g_b))\n    SEND(signature_A) TO Bob\n    \n    # Compute shared secret after verification\n    S = pow(g_b, a, p)\n\nBob:\n    VERIFY(CERT_A) using trusted_CA_public_key\n    signature_B = SIGN(Bob_private_key, (g_b, g_a))\n    SEND(signature_B) TO Alice\n    \n    # Compute shared secret\n    S = pow(g_a, b, p)\n\n# Step 3: Each party verifies received signature\nAlice:\n    VERIFY(signature_B, Bob_public_key, (g_b, g_a))\n    IF verification fails: ABORT\n\nBob:\n    VERIFY(signature_A, Alice_public_key, (g_a, g_b))\n    IF verification fails: ABORT",
+      "explanation": "STS extends basic DH with digital signatures. Each party signs the concatenation of both public values, proving they possess the private key corresponding to their certificate. An attacker (including MITM) cannot forge these signatures without the private key, thus preventing the attack.",
+      "timeComplexity": "O(log p) for DH operations + O(n) for signature verification",
+      "spaceComplexity": "O(1) besides certificate storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "PRNG Seeding from Key Exchange",
+      "description": "Using DH shared secret to seed a cryptographically secure PRNG",
+      "code": "# Using DH shared secret to seed a PRNG for continuous encryption\n\nFUNCTION establish_secure_channel(DH_parameters):\n    # Complete DH key exchange\n    (a, g_a) = generate_key_pair(p, g)\n    SEND g_a TO Bob\n    RECEIVE g_b FROM Bob\n    \n    shared_secret = pow(g_b, a, p)  # g^(ab) mod p\n    \n    # Key Derivation using HKDF\n    (enc_key, mac_key) = derive_keys(shared_secret, b\"secure channel\")\n    \n    # Initialize PRNG with derived key\n    prng = CTR_DRBG(entropy_input=enc_key, personalization_string=mac_key)\n    \n    RETURN prng\n\nFUNCTION encrypt_message(prng, plaintext):\n    # Generate keystream from PRNG\n    keystream = prng.generate(len(plaintext))\n    \n    # Encrypt using XOR (Stream cipher mode)\n    ciphertext = plaintext XOR keystream\n    \n    RETURN ciphertext\n\n# Security Properties:\n# 1. DH provides high-entropy seed (computationally infeasable to predict)\n# 2. HKDF ensures no related-key attacks between derived keys\n# 3. CTR_DRBG provides forward secrecy when reseeded for each session",
+      "explanation": "This demonstrates the critical connection between key exchange protocols and PRNGs. The DH shared secret serves as entropy input to a deterministic random bit generator (DRBG), which then produces the keystream for encryption. This ensures all session keys are unpredictable and cryptographically secure.",
+      "timeComplexity": "O(n) for PRNG generation where n is output length",
+      "spaceComplexity": "O(1) besides PRNG state storage"
+    }
+  ]
+}

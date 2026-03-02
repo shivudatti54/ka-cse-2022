@@ -1,0 +1,33 @@
+{
+  "topicId": "introduction-to-probability-based-learning",
+  "examples": [
+    {
+      "id": "pseudocode-naive-bayes-classifier",
+      "title": "Pseudocode: Naive Bayes Classifier",
+      "description": "A simple Naive Bayes classifier to demonstrate probability-based learning",
+      "language": "pseudocode",
+      "code": "ALGORITHM NaiveBayesClassifier\nINPUT: Training data X, labels Y\nOUTPUT: Predicted class label for new instance\n\nBEGIN\n # Calculate prior probabilities for each class\n FOR EACH class label y IN Y\n prior[y] = COUNT(y) / TOTAL_INSTANCES\n\n # Calculate conditional probabilities for each feature\n FOR EACH feature x IN X\n FOR EACH class label y IN Y\n conditional[x, y] = COUNT(x, y) / COUNT(y)\n\n # Predict class label for new instance\n FOR EACH new instance\n score = prior[y] * PRODUCT(conditional[x, y] FOR EACH feature x)\n RETURN class label with highest score\nEND",
+      "explanation": "This pseudocode demonstrates the basic steps of a Naive Bayes classifier, including calculating prior probabilities, conditional probabilities, and making predictions based on these probabilities."
+    },
+    {
+      "id": "python-naive-bayes-classifier",
+      "title": "Python: Naive Bayes Classifier",
+      "description": "A Python implementation of a Naive Bayes classifier",
+      "language": "python",
+      "code": "import numpy as np\nfrom collections import defaultdict\n\nclass NaiveBayesClassifier:\n def __init__(self):\n self.priors = {}\n self.conditionals = {}\n\n def fit(self, X, y):\n # Calculate prior probabilities\n for label in np.unique(y):\n self.priors[label] = np.mean(y == label)\n\n # Calculate conditional probabilities\n for feature in range(X.shape[1]):\n for label in np.unique(y):\n self.conditionals[(feature, label)] = np.mean(X[y == label, feature])\n\n def predict(self, X):\n scores = {}\n for label in self.priors:\n score = self.priors[label]\n for feature in range(X.shape[1]):\n score *= self.conditionals[(feature, label)] ** X[feature]\n scores[label] = score\n return max(scores, key=scores.get)\n\n# Example usage\nX = np.array([[1, 1], [1, 0], [0, 1], [0, 0]])\ny = np.array([1, 1, 0, 0])\n\nclf = NaiveBayesClassifier()\nclf.fit(X, y)\nprint(clf.predict(np.array([1, 1])))",
+      "explanation": "This Python implementation demonstrates a simple Naive Bayes classifier using NumPy. It calculates prior probabilities and conditional probabilities, then makes predictions based on these probabilities.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(n*m)"
+    },
+    {
+      "id": "c-naive-bayes-classifier",
+      "title": "C: Naive Bayes Classifier",
+      "description": "A C implementation of a Naive Bayes classifier",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Structure to hold prior and conditional probabilities\ntypedef struct {\n double prior;\n double* conditionals;\n} NaiveBayesClassifier;\n\n// Function to calculate prior probabilities\nvoid calculate_priors(NaiveBayesClassifier* clf, int* labels, int n_labels) {\n for (int i = 0; i < n_labels; i++) {\n clf->prior = (double)labels[i] / n_labels;\n }\n}\n\n// Function to calculate conditional probabilities\nvoid calculate_conditionals(NaiveBayesClassifier* clf, int** features, int n_features, int n_labels) {\n for (int i = 0; i < n_features; i++) {\n for (int j = 0; j < n_labels; j++) {\n clf->conditionals[i] = (double)features[i][j] / n_labels;\n }\n }\n}\n\n// Function to make predictions\nint predict(NaiveBayesClassifier* clf, int* features, int n_features) {\n double score = clf->prior;\n for (int i = 0; i < n_features; i++) {\n score *= clf->conditionals[i];\n }\n return score > 0.5;\n}\n\nint main() {\n // Example usage\n int labels[] = {1, 1, 0, 0};\n int features[][2] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};\n NaiveBayesClassifier clf;\n calculate_priors(&clf, labels, 4);\n calculate_conditionals(&clf, features, 2, 4);\n printf(\"%d\\n\", predict(&clf, features[0], 2));\n return 0;\n}",
+      "explanation": "This C implementation demonstrates a simple Naive Bayes classifier. It calculates prior probabilities and conditional probabilities, then makes predictions based on these probabilities.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(n*m)"
+    }
+  ]
+}

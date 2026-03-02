@@ -1,0 +1,150 @@
+{
+  "topicId": "segments",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the structure of a TCP segment header. List all fields in order with their sizes.",
+      "keyPoints": [
+        "Source Port (16 bits) - identifies sending application",
+        "Destination Port (16 bits) - identifies receiving application",
+        "Sequence Number (32 bits) - byte position in data stream",
+        "Acknowledgment Number (32 bits) - next expected byte",
+        "Data Offset (4 bits) - header length in 32-bit words",
+        "Reserved (6 bits) - for future use",
+        "Control Flags (6 bits) - URG, ACK, PSH, RST, SYN, FIN",
+        "Window Size (16 bits) - flow control",
+        "Checksum (16 bits) - error detection",
+        "Urgent Pointer (16 bits) - urgent data pointer",
+        "Options (0-40 bytes) - optional fields",
+        "Data (variable) - payload"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of the Sequence Number and Acknowledgment Number in TCP? How are they used to ensure reliable data transfer?",
+      "keyPoints": [
+        "Sequence Number: positions first data byte in segment within entire stream",
+        "Acknowledgment Number: confirms received bytes, indicates next expected byte",
+        "Enables detection of missing segments (gaps in sequence)",
+        "Sender retransmits if ACK not received within timeout",
+        "Cumulative ACK acknowledges all bytes up to specified number",
+        "Allows ordered delivery of data to application"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the TCP three-way handshake process. What flags are used and what information is exchanged?",
+      "keyPoints": [
+        "Step 1: Client sends SYN segment (SYN=1, seq=x)",
+        "Step 2: Server sends SYN+ACK (SYN=1, ACK=1, seq=y, ack=x+1)",
+        "Step 3: Client sends ACK (ACK=1, seq=x+1, ack=y+1)",
+        "Purpose: Synchronize sequence numbers, establish connection",
+        "After 3-way handshake, connection is ESTABLISHED",
+        "Sequence numbers are exchanged for reliable data transfer"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "How is TCP checksum calculated? Explain the role of the pseudo-header in this calculation.",
+      "keyPoints": [
+        "TCP checksum is 16-bit field for error detection",
+        "Pseudo-header is constructed with: Source IP (32-bit), Dest IP (32-bit), Protocol (8-bit=6), TCP Length (16-bit)",
+        "Pseudo-header + TCP header + data are summed as 16-bit words",
+        "One's complement of sum is stored as checksum",
+        "Receiver recalculates: if result = 0xFFFF, segment is valid",
+        "Pseudo-header ensures IP addresses aren't corrupted"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the significance of the Window Size field in TCP. How does it implement flow control?",
+      "keyPoints": [
+        "Window Size is 16-bit field indicating receive buffer capacity",
+        "Receiver advertises available buffer space in this field",
+        "Sender can transmit up to 'window' bytes without receiving ACK",
+        "Receiver sends updated Window Size in ACK segments",
+        "If Window = 0, sender must stop and wait (zero window)",
+        "Window Scaling option extends this to 16 bits for high-speed networks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are TCP options? List the commonly used options and their purposes.",
+      "keyPoints": [
+        "Options extend TCP header beyond minimum 20 bytes",
+        "Format: Kind (1 byte), Length (1 byte), Value (variable)",
+        "Maximum 40 bytes of options (since max header = 60 bytes)",
+        "Common options: MSS (Kind 2) - max segment size",
+        "Window Scaling (Kind 3) - expand window beyond 65535",
+        "Timestamp (Kind 8) - RTT estimation and PAWS",
+        "SACK (Kind 4,5) - selective acknowledgment of out-of-order data"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the difference between TCP and UDP segment structures. Why is UDP called a connectionless protocol?",
+      "keyPoints": [
+        "UDP header is 8 bytes fixed; TCP minimum header is 20 bytes",
+        "UDP has: Source Port, Dest Port, Length, Checksum (no seq/ack/window)",
+        "UDP is connectionless: no handshake, no state, no reliability",
+        "UDP doesn't guarantee delivery, order, or error correction",
+        "TCP provides: connection-oriented, reliable, ordered, flow-controlled",
+        "UDP is simpler, faster, used for real-time applications (DNS, VoIP)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A client sends a TCP segment with Sequence Number = 1000, Acknowledgment Number = 5000, and 800 bytes of data. The receiver's advertised window size is 2000 bytes. Answer the following: (a) What do these values mean? (b) What will be the sequence number of the next segment from client? (c) If the receiver responds with ACK = 1800, what does this indicate? (d) What happens if the receiver's window becomes 0?",
+      "keyPoints": [
+        "(a) Seq=1000: first data byte at position 1000; Ack=5000: expect byte 5000 next (all up to 4999 received); Window=2000: receiver buffer can accept 2000 bytes",
+        "(b) Next seq = 1000 + 800 = 1800",
+        "(c) ACK=1800 confirms all bytes up to 1799 received, next expected is 1800",
+        "(d) Zero window: sender stops transmitting, waits for Window Update (probe), uses persist timer to periodically check if window reopened"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the TCP connection termination process (four-way handshake). Why is it necessary to have four segments instead of two?",
+      "keyPoints": [
+        "Step 1: Client sends FIN (seq=x) - closes client-to-server direction",
+        "Step 2: Server sends ACK (ack=x+1) - acknowledges client's FIN",
+        "Step 3: Server sends FIN (seq=y) - closes server-to-client direction",
+        "Step 4: Client sends ACK (ack=y+1) - acknowledges server's FIN",
+        "Why 4-way: Each direction must be closed independently",
+        "Full duplex: data can flow both ways until explicitly closed",
+        "Server may have more data to send after receiving client's FIN (half-close)",
+        "After final ACK, both sides wait 2MSL (Maximum Segment Lifetime) before releasing resources"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Consider a scenario where a TCP segment arrives at the receiver with the following header fields: Data Offset = 7, Flags = 000110. (a) What is the header length? (b) What does the flag value indicate? (c) If the sequence number is 5000 and segment contains 100 bytes of data, what is the acknowledgment number expected in response? (d) What will be the next sequence number from sender?",
+      "keyPoints": [
+        "(a) Header length = 7 \u00d7 4 = 28 bytes (7 \u00d7 32-bit words)",
+        "(b) Flags = 000110 means bits 2 and 3 are set: PSH (push) and ACK (acknowledge). This is a data segment with push flag.",
+        "(c) ACK response should have Ack = 5000 + 100 = 5100 (next expected byte)",
+        "(d) Next sequence number = 5000 + 100 = 5100 (next byte position in stream)"
+      ],
+      "marks": 10
+    }
+  ]
+}

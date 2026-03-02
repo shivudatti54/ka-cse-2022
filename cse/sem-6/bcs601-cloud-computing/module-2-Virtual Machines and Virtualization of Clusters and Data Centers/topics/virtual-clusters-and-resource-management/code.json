@@ -1,0 +1,35 @@
+{
+  "topicId": "virtual-clusters-and-resource-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "First-Fit Decreasing VM Placement",
+      "description": "Algorithm to place VMs on physical hosts minimizing number of hosts used",
+      "code": "FUNCTION FFD-VM-PLACEMENT(vms, hosts):\n // vms: list of VM objects with resource requirements\n // hosts: list of host objects with capacity\n SORT vms DESCENDING BY cpu_requirement\n \n FOR EACH vm IN vms:\n placed = FALSE\n FOR EACH host IN hosts:\n IF host.hasCapacity(vm.cpu, vm.memory):\n host.allocate(vm)\n placed = TRUE\n BREAK\n IF NOT placed:\n newHost = createNewHost()\n newHost.allocate(vm)\n hosts.add(newHost)\n \n RETURN hosts\n\nFUNCTION hasCapacity(host, cpuReq, memReq):\n RETURN (host.cpu_used + cpuReq <= host.cpu_total) AND\n (host.memory_used + memReq <= host.memory_total)",
+      "explanation": "The FFD algorithm sorts VMs by resource requirements in descending order, then attempts to place each VM in the first host with sufficient capacity. This greedy approach typically achieves near-optimal bin utilization, reducing the number of physical hosts needed and improving energy efficiency through consolidation.",
+      "timeComplexity": "O(n \u00d7 m \u00d7 log n) where n = number of VMs, m = number of hosts (includes sorting)",
+      "spaceComplexity": "O(m + n) for storing VM and host objects"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Energy-Aware VM Consolidation",
+      "description": "Dynamic consolidation algorithm that migrates VMs to minimize active hosts while respecting SLA constraints",
+      "code": "FUNCTION energyAwareConsolidation(hosts, vms, slaThreshold):\n activeHosts = []\n migrationCandidates = []\n \n // Step 1: Identify overloaded hosts\n FOR EACH host IN hosts:\n IF host.utilization() > slaThreshold:\n migrationCandidates.addAll(selectVMsToMigrate(host))\n \n // Step 2: Migrate selected VMs\n FOR EACH vm IN migrationCandidates:\n targetHost = findBestTargetHost(vm, hosts, \"utilization\")\n IF targetHost != NULL:\n liveMigrate(vm, targetHost)\n activeHosts.add(targetHost)\n \n // Step 3: Power down underutilized hosts\n FOR EACH host IN hosts:\n IF host.utilization() < powerDownThreshold AND host.hasMigratedVMs():\n powerOff(host)\n activeHosts.remove(host)\n \n RETURN activeHosts\n\nFUNCTION findBestTargetHost(vm, hosts, policy):\n candidates = hosts.filter(h => h.hasCapacity(vm) AND !h.isOverloaded())\n IF policy == \"utilization\":\n RETURN candidates.minBy(h => h.utilization())\n ELSE IF policy == \"power\":\n RETURN candidates.minBy(h => h.powerConsumption())\n RETURN NULL",
+      "explanation": "This algorithm implements energy-aware consolidation in three phases: (1) detecting overloaded hosts based on SLA threshold, (2) migrating VMs to suitable targets to reduce load, and (3) powering down underutilized hosts. The findBestTargetHost function can use different policies to balance between utilization and power efficiency.",
+      "timeComplexity": "O(n \u00d7 m) for each migration decision, with up to k migrations",
+      "spaceComplexity": "O(n + m)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Kubernetes Pod Scheduling with Resource Requests",
+      "description": "Simplified scheduler demonstrating how Kubernetes places pods based on resource requests",
+      "code": "FUNCTION kubeScheduler(pod, nodes):\n // Step 1: Filter nodes by predicates\n qualifiedNodes = []\n FOR EACH node IN nodes:\n IF node.hasEnoughResources(pod.spec.resources.requests):\n IF pod.spec.nodeSelector matches node.labels:\n IF pod.spec.affinity compatible with node.pods:\n qualifiedNodes.add(node)\n \n // Step 2: Rank nodes by priorities\n scoredNodes = []\n FOR EACH node IN qualifiedNodes:\n score = 0\n score += (100 - node.utilization()) \u00d7 priorityWeight['leastRequested']\n score += podAffinityScore(pod, node) \u00d7 priorityWeight['podAffinity']\n score += nodeConditionScore(node) \u00d7 priorityWeight['nodeCondition']\n scoredNodes.add({node, score})\n \n // Step 3: Select highest scoring node\n RETURN scoredNodes.maxBy(s => s.score).node",
+      "explanation": "Kubernetes scheduler operates in two phases: filtering (predicates) eliminates nodes that cannot run the pod, and ranking (priorities) scores remaining nodes. Resource requests (not limits) are used for scheduling to ensure the node can accommodate the pod. This simplified version shows the core logic; actual scheduler includes many more predicates and priorities.",
+      "timeComplexity": "O(n) for filtering + O(n \u00d7 m) for scoring where n=nodes, m=pods per node",
+      "spaceComplexity": "O(n) for qualified nodes list"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "bus-structure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Memory Read Operation Using Bus",
+      "description": "Pseudocode demonstrating how CPU performs a memory read operation through the bus",
+      "code": "PROCEDURE MEMORY_READ(address)\nBEGIN\n    // Place address on address bus\n    ADDRESS_BUS \u2190 address\n    \n    // Assert memory read control signal\n    CONTROL_BUS.MEMORY_READ \u2190 TRUE\n    CONTROL_BUS.WRITE \u2190 FALSE\n    \n    // Wait for memory response (with wait states)\n    WHILE NOT CONTROL_BUS.READY DO\n        // Insert wait states\n        CLOCK_CYCLE \u2190 CLOCK_CYCLE + 1\n    END WHILE\n    \n    // Read data from data bus\n    DATA \u2190 DATA_BUS\n    \n    // Deassert control signals\n    CONTROL_BUS.MEMORY_READ \u2190 FALSE\n    \n    RETURN DATA\nEND",
+      "explanation": "This pseudocode shows the step-by-step process of a CPU reading data from memory: placing the address on the address bus, activating the memory read signal, waiting for the memory to respond, and then reading the data from the data bus.",
+      "timeComplexity": "O(w) where w is the number of wait states",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Bus Arbitration Controller in C",
+      "description": "C code demonstrating independent request arbitration logic",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define NUM_DEVICES 4\n\n// Device priority (lower number = higher priority)\nint device_priority[NUM_DEVICES] = {0, 1, 2, 3};\nbool bus_request[NUM_DEVICES] = {false, false, false, false};\nbool bus_grant[NUM_DEVICES] = {false, false, false, false};\nbool bus_busy = false;\n\n// Function to request the bus\nvoid request_bus(int device_id) {\n    if (device_id >= 0 && device_id < NUM_DEVICES) {\n        bus_request[device_id] = true;\n        printf(\"Device %d requested the bus\\n\", device_id);\n    }\n}\n\n// Function to release the bus\nvoid release_bus(int device_id) {\n    if (device_id >= 0 && device_id < NUM_DEVICES) {\n        bus_request[device_id] = false;\n        bus_grant[device_id] = false;\n        bus_busy = false;\n        printf(\"Device %d released the bus\\n\", device_id);\n    }\n}\n\n// Arbitration function - grants bus to highest priority requester\nvoid arbitration() {\n    if (bus_busy) return;\n    \n    for (int priority = 0; priority < NUM_DEVICES; priority++) {\n        for (int device = 0; device < NUM_DEVICES; device++) {\n            if (device_priority[device] == priority && bus_request[device]) {\n                bus_grant[device] = true;\n                bus_busy = true;\n                printf(\"Bus granted to Device %d (priority %d)\\n\", device, priority);\n                return;\n            }\n        }\n    }\n}\n\nint main() {\n    // Simulate arbitration scenario\n    request_bus(1);\n    request_bus(3);\n    arbitration();\n    \n    release_bus(1);\n    return 0;\n}",
+      "explanation": "This C program demonstrates independent request arbitration where multiple devices can request the bus simultaneously. The arbiter evaluates all requests and grants the bus to the device with the highest priority (lowest priority number).",
+      "timeComplexity": "O(n) where n is number of devices",
+      "spaceComplexity": "O(n) for storing request and grant flags"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Bus Bandwidth Calculator",
+      "description": "Python program to calculate bus bandwidth and analyze performance",
+      "code": "def calculate_bandwidth(data_bus_width_bits, clock_frequency_mhz, transfer_efficiency=1.0):\n    \"\"\"\n    Calculate bus bandwidth\n    \n    Args:\n        data_bus_width_bits: Width of data bus in bits\n        clock_frequency_mhz: Clock frequency in MHz\n        transfer_efficiency: Efficiency factor (0.0 to 1.0)\n    \n    Returns:\n        Bandwidth in MB/s\n    \"\"\"\n    # Convert bits to bytes\n    data_bus_width_bytes = data_bus_width_bits // 8\n    \n    # Calculate bandwidth: bytes per transfer \u00d7 transfers per second\n    bandwidth_mb_per_s = (data_bus_width_bytes * clock_frequency_mhz * transfer_efficiency)\n    \n    return bandwidth_mb_per_s\n\ndef compare_bus_configurations():\n    \"\"\"Compare different bus configurations\"\"\"\n    configurations = [\n        {\"name\": \"8-bit ISA Bus\", \"width\": 8, \"freq\": 8.33, \"efficiency\": 0.9},\n        {\"name\": \"16-bit ISA Bus\", \"width\": 16, \"freq\": 8.33, \"efficiency\": 0.9},\n        {\"name\": \"32-bit PCI Bus\", \"width\": 32, \"freq\": 33, \"efficiency\": 0.95},\n        {\"name\": \"64-bit PCI-X Bus\", \"width\": 64, \"freq\": 133, \"efficiency\": 0.95},\n        {\"name\": \"64-bit System Bus\", \"width\": 64, \"freq\": 400, \"efficiency\": 0.98},\n    ]\n    \n    print(\"Bus Configuration Comparison\")\n    print(\"=\" * 60)\n    \n    for config in configurations:\n        bw = calculate_bandwidth(\n            config[\"width\"], \n            config[\"freq\"], \n            config[\"efficiency\"]\n        )\n        print(f\"{config['name']:20s} | {bw:8.2f} MB/s\")\n\n# Example calculations\nif __name__ == \"__main__\":\n    # Calculate bandwidth for 32-bit bus at 100 MHz\n    bw = calculate_bandwidth(32, 100)\n    print(f\"32-bit bus at 100 MHz: {bw:.2f} MB/s\\n\")\n    \n    # Compare configurations\n    compare_bus_configurations()",
+      "explanation": "This Python program calculates bus bandwidth using the formula: Bandwidth = (Data Bus Width / 8) \u00d7 Clock Frequency \u00d7 Efficiency. It demonstrates how bus width and clock frequency affect data transfer rates.",
+      "timeComplexity": "O(n) where n is number of configurations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Daisy Chain Bus Arbitration",
+      "description": "Pseudocode demonstrating daisy chain arbitration mechanism",
+      "code": "// Daisy Chain Arbitration Algorithm\n\nCONSTANT NUM_DEVICES = 4\n\n// Device structure\nSTRUCTURE Device\n    id: INTEGER\n    priority: INTEGER  // Higher value = higher priority\n    request_line: BOOLEAN\n    grant_line: BOOLEAN\nENDSTRUCTURE\n\n// Initialize devices in priority order (device 0 = highest priority)\nARRAY devices[NUM_DEVICES] WITH Device\n\nPROCEDURE daisy_chain_arbiter()\nBEGIN\n    BOOLEAN grant_propagate \u2190 TRUE\n    \n    // Process devices in priority order (highest first)\n    FOR i \u2190 0 TO NUM_DEVICES - 1 DO\n        IF devices[i].request_line AND grant_propagate THEN\n            // Grant bus to this device\n            devices[i].grant_line \u2190 TRUE\n            grant_propagate \u2190 FALSE\n            PRINT \"Bus granted to Device \" + devices[i].id\n        ELSE\n            // Pass grant to next device in chain\n            devices[i].grant_line \u2190 FALSE\n        END IF\n    END FOR\nEND PROCEDURE\n\n// Simulate device requesting bus\nPROCEDURE device_request(device_id, request)\nBEGIN\n    devices[device_id].request_line \u2190 request\n    IF request THEN\n        PRINT \"Device \" + device_id + \" requests bus\"\n    END IF\nEND PROCEDURE\n\n// Example execution\nBEGIN\n    // Setup device priorities\n    devices[0].id \u2190 0\n    devices[1].id \u2190 1\n    devices[2].id \u2190 2\n    devices[3].id \u2190 3\n    \n    // Devices request bus\n    device_request(2, TRUE)  // Device 2 requests\n    device_request(3, TRUE)  // Device 3 requests\n    \n    // Run arbitration\n    daisy_chain_arbiter()\n    // Device 2 (higher priority) gets the bus\nEND",
+      "explanation": "In daisy chain arbitration, devices are connected in series. The grant signal propagates through the chain, and the first requesting device (highest priority) captures the grant signal, blocking it from reaching lower priority devices.",
+      "timeComplexity": "O(n) where n is number of devices in chain",
+      "spaceComplexity": "O(n) for storing device states"
+    }
+  ]
+}

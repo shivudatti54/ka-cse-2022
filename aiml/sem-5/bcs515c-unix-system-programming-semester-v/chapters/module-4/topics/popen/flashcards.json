@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What is the primary purpose of the `popen()` function in Unix system programming?",
+    "back": "The `popen()` function opens a process by creating a pipe, forking, and invoking the shell. It is used to establish a one-way communication channel (read or write) between the calling program and a shell command."
+  },
+  {
+    "id": "f2",
+    "front": "What is the function prototype for `popen()` and what are its two parameters?",
+    "back": "`FILE *popen(const char *command, const char *type);`\n\n- `command`: The shell command to be executed.\n- `type`: A string specifying the direction of data flow. \"r\" for reading from the command's standard output, \"w\" for writing to the command's standard input."
+  },
+  {
+    "id": "f3",
+    "front": "How do you close a stream opened by `popen()` and what is the significance of its return value?",
+    "back": "You close it using the `pclose()` function: `int pclose(FILE *stream);`. It does not just close the stream; it waits for the associated process to terminate and returns its exit status. This is crucial for proper process cleanup and avoiding zombie processes."
+  },
+  {
+    "id": "f4",
+    "front": "What is a key limitation of the `popen()` function regarding communication with the spawned process?",
+    "back": "A key limitation is that it only provides unidirectional communication. You can open a stream for either reading *or* writing, but not both simultaneously with the same `popen()` call."
+  },
+  {
+    "id": "f5",
+    "front": "What underlying system calls and operations does `popen()` typically perform to accomplish its task?",
+    "back": "`popen()` is a library function built on top of several core system calls:\n1. `pipe()`: To create the interprocess communication channel.\n2. `fork()`: To create a new child process.\n3. `dup2()`: To reassign the child's standard input or output to the pipe ends.\n4. `exec()` (often `execl(\"/bin/sh\", \"sh\", \"-c\", command, (char *)0)`): To replace the child process with the shell executing the command."
+  }
+]

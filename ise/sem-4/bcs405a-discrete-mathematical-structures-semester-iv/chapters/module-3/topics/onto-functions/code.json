@@ -1,0 +1,45 @@
+{
+  "topicId": "loss-functions",
+  "examples": [
+    {
+      "id": "regression-losses",
+      "title": "Regression Loss Functions",
+      "description": "Implementing MSE, MAE, and Huber loss with NumPy.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef mse_loss(y_true, y_pred):\n    \"\"\"Mean Squared Error: heavily penalizes large errors.\"\"\"\n    return np.mean((y_true - y_pred) ** 2)\n\ndef mae_loss(y_true, y_pred):\n    \"\"\"Mean Absolute Error: robust to outliers.\"\"\"\n    return np.mean(np.abs(y_true - y_pred))\n\ndef huber_loss(y_true, y_pred, delta=1.0):\n    \"\"\"Huber Loss: MSE for small errors, MAE for large errors.\"\"\"\n    error = y_true - y_pred\n    is_small = np.abs(error) <= delta\n    small_loss = 0.5 * error ** 2\n    large_loss = delta * (np.abs(error) - 0.5 * delta)\n    return np.mean(np.where(is_small, small_loss, large_loss))\n\n# Compare on data with outlier\ny_true = np.array([1.0, 2.0, 3.0, 100.0])  # 100 is outlier\ny_pred = np.array([1.1, 2.2, 2.9, 3.0])\n\nprint(\"Predictions vs True (with outlier):\")\nprint(f\"True: {y_true}\")\nprint(f\"Pred: {y_pred}\")\nprint(f\"\\nMSE Loss:   {mse_loss(y_true, y_pred):.2f}\")  # Dominated by outlier\nprint(f\"MAE Loss:   {mae_loss(y_true, y_pred):.2f}\")  # More balanced\nprint(f\"Huber Loss: {huber_loss(y_true, y_pred):.2f}\")  # Compromise",
+      "explanation": "MSE is heavily affected by the outlier (100). MAE treats all errors linearly. Huber combines both approaches for robust regression.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "classification-losses",
+      "title": "Classification Loss Functions",
+      "description": "Implementing Binary and Categorical Cross-Entropy.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef binary_cross_entropy(y_true, y_pred, epsilon=1e-15):\n    \"\"\"Binary Cross-Entropy for binary classification.\"\"\"\n    # Clip predictions to avoid log(0)\n    y_pred = np.clip(y_pred, epsilon, 1 - epsilon)\n    return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))\n\ndef categorical_cross_entropy(y_true, y_pred, epsilon=1e-15):\n    \"\"\"Categorical Cross-Entropy for multi-class classification.\"\"\"\n    y_pred = np.clip(y_pred, epsilon, 1 - epsilon)\n    return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))\n\n# Binary classification example\ny_true_binary = np.array([1, 0, 1, 1])\ny_pred_binary = np.array([0.9, 0.1, 0.8, 0.3])  # Last one is wrong but confident\n\nprint(\"Binary Classification:\")\nprint(f\"True: {y_true_binary}\")\nprint(f\"Pred: {y_pred_binary}\")\nprint(f\"BCE Loss: {binary_cross_entropy(y_true_binary, y_pred_binary):.4f}\")\n\n# Multi-class classification (one-hot encoded)\ny_true_multi = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])\ny_pred_multi = np.array([[0.8, 0.1, 0.1], [0.2, 0.7, 0.1], [0.1, 0.2, 0.7]])\n\nprint(\"\\nMulti-class Classification:\")\nprint(f\"CCE Loss: {categorical_cross_entropy(y_true_multi, y_pred_multi):.4f}\")",
+      "explanation": "Cross-entropy penalizes confident wrong predictions heavily (-log(0.1) is large). Epsilon prevents log(0) errors. One-hot encoding for multi-class.",
+      "timeComplexity": "O(n * classes)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "loss-gradients",
+      "title": "Computing Loss Gradients",
+      "description": "Deriving and implementing gradients for backpropagation.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef mse_gradient(y_true, y_pred):\n    \"\"\"Gradient of MSE w.r.t. predictions: d/dy_pred = 2(y_pred - y_true)/n\"\"\"\n    n = len(y_true)\n    return 2 * (y_pred - y_true) / n\n\ndef bce_gradient(y_true, y_pred, epsilon=1e-15):\n    \"\"\"Gradient of BCE w.r.t. predictions.\"\"\"\n    y_pred = np.clip(y_pred, epsilon, 1 - epsilon)\n    n = len(y_true)\n    return (-y_true / y_pred + (1 - y_true) / (1 - y_pred)) / n\n\ndef softmax_crossentropy_gradient(y_true, y_pred):\n    \"\"\"\n    Combined gradient for softmax + cross-entropy.\n    Beautiful result: gradient = y_pred - y_true\n    \"\"\"\n    return y_pred - y_true\n\n# Example: Softmax + Cross-Entropy gradient\ny_true = np.array([0, 1, 0])  # Class 1 is correct\ny_pred = np.array([0.2, 0.5, 0.3])  # Softmax output\n\nprint(\"Softmax + Cross-Entropy Gradient:\")\nprint(f\"True (one-hot): {y_true}\")\nprint(f\"Predicted (softmax): {y_pred}\")\nprint(f\"Gradient: {softmax_crossentropy_gradient(y_true, y_pred)}\")\nprint(\"\\nNote: Gradient is simply (prediction - target)!\")",
+      "explanation": "The softmax + cross-entropy combination gives an elegant gradient: just prediction minus target. This makes implementation clean and avoids numerical issues.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "pytorch-losses",
+      "title": "Loss Functions in PyTorch",
+      "description": "Using PyTorch's built-in loss functions.",
+      "language": "python",
+      "code": "import torch\nimport torch.nn as nn\n\n# Sample data\ny_true_reg = torch.tensor([1.0, 2.0, 3.0, 4.0])\ny_pred_reg = torch.tensor([1.1, 2.2, 2.8, 4.1])\n\ny_true_binary = torch.tensor([1.0, 0.0, 1.0, 1.0])\ny_pred_binary = torch.tensor([0.9, 0.2, 0.8, 0.6])\n\ny_true_multi = torch.tensor([0, 2, 1])  # Class indices\ny_pred_multi = torch.tensor([\n    [2.0, 0.5, 0.3],   # Should be class 0\n    [0.1, 0.5, 2.5],   # Should be class 2\n    [0.3, 2.0, 0.5]    # Should be class 1\n])  # Raw logits (no softmax)\n\n# Regression losses\nprint(\"Regression Losses:\")\nprint(f\"MSE:   {nn.MSELoss()(y_pred_reg, y_true_reg):.4f}\")\nprint(f\"MAE:   {nn.L1Loss()(y_pred_reg, y_true_reg):.4f}\")\nprint(f\"Huber: {nn.HuberLoss()(y_pred_reg, y_true_reg):.4f}\")\n\n# Classification losses\nprint(\"\\nClassification Losses:\")\nprint(f\"BCE:   {nn.BCELoss()(y_pred_binary, y_true_binary):.4f}\")\nprint(f\"CE:    {nn.CrossEntropyLoss()(y_pred_multi, y_true_multi):.4f}\")\n\n# Note: CrossEntropyLoss expects raw logits, not softmax output\nprint(\"\\nNote: nn.CrossEntropyLoss combines LogSoftmax + NLLLoss\")",
+      "explanation": "PyTorch provides optimized loss functions. CrossEntropyLoss expects raw logits (applies softmax internally). BCELoss expects probabilities (use BCEWithLogitsLoss for raw scores).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

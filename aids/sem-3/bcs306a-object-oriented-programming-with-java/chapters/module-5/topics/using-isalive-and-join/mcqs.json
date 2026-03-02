@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In Java threading, what is the primary purpose of the Thread.isAlive() method?",
+    "options": [
+      "To check if a thread has started and has not yet terminated",
+      "To pause the execution of the current thread",
+      "To force a thread to wait for another thread to finish",
+      "To check if a thread is currently in the running state"
+    ],
+    "correctIndex": 0,
+    "explanation": "The isAlive() method returns true if the thread has been started and has not yet died (i.e., its run() method has not finished executing). It does not indicate if the thread is currently running or just runnable."
+  },
+  {
+    "id": "q2",
+    "question": "What will happen if the main thread calls the join() method on a Thread object 't' that has already finished its execution?",
+    "options": [
+      "The main thread will continue immediately without blocking.",
+      "The main thread will be blocked indefinitely.",
+      "A compile-time error will occur.",
+      "A NullPointerException will be thrown."
+    ],
+    "correctIndex": 0,
+    "explanation": "The join() method only causes the current thread to wait if the target thread is still alive. If the thread 't' has already terminated, the join() call returns immediately, allowing the main thread to continue."
+  },
+  {
+    "id": "q3",
+    "question": "Consider the following code snippet. What is the most likely output?\n\n```java\nThread t = new Thread(() -> System.out.print(\"B\"));\nt.start();\nSystem.out.print(\"A\");\nif(t.isAlive()) {\n    System.out.print(\"C\");\n}\n```",
+    "options": [
+      "The output could be 'ABC', 'ACB', or 'BAC'",
+      "The output will always be 'ABC'",
+      "The output will always be 'ACB'",
+      "The output will always be 'BAC'"
+    ],
+    "correctIndex": 0,
+    "explanation": "Due to the unpredictable nature of thread scheduling, the order of execution between the main thread and thread 't' is not guaranteed. The 'A' from the main thread and the 'B' from thread 't' can print in any order. The isAlive() check happens after the main thread prints 'A', so 'C' will only print if 't' is still running at that moment, which adds another layer of timing dependency."
+  },
+  {
+    "id": "q4",
+    "question": "A programmer wants the main thread to wait for three worker threads (t1, t2, t3) to complete, but does not care about the order in which they finish. Which of the following code blocks achieves this correctly and efficiently?",
+    "options": [
+      "t1.start(); t2.start(); t3.start(); t1.join(); t2.join(); t3.join();",
+      "t1.start(); t1.join(); t2.start(); t2.join(); t3.start(); t3.join();",
+      "if(!t1.isAlive() && !t2.isAlive() && !t3.isAlive()) { /* proceed */ }",
+      "while(t1.isAlive() || t2.isAlive() || t3.isAlive()) { /* empty loop */ }"
+    ],
+    "correctIndex": 0,
+    "explanation": "Starting all threads first allows them to run concurrently, maximizing efficiency. The subsequent join() calls then make the main thread wait for each one to finish, in a fixed order. This is correct because join() returns immediately for any thread that has already finished, so the main thread will proceed as soon as the last of the three threads completes. The other options either run threads sequentially (losing concurrency) or use an inefficient active wait loop."
+  },
+  {
+    "id": "q5",
+    "question": "In a complex application, a master thread creates and starts 10 worker threads. The master thread must perform a specific cleanup task only after at least 7 of these worker threads have completed, but cannot afford to be blocked waiting for the remaining 3. Which combination of threading methods is most suitable for implementing this logic?",
+    "options": [
+      "Use a synchronized counter and the wait()/notify() mechanism.",
+      "Call join() on all 10 worker threads.",
+      "Use a loop to check isAlive() on all worker threads in a busy-wait.",
+      "Call join() with a timeout parameter on each thread."
+    ],
+    "correctIndex": 0,
+    "explanation": "A synchronized counter, incremented by each worker thread upon completion, is the optimal solution. When a worker finishes, it can increment the counter and notify the master thread. The master thread can wait() until the counter reaches 7. This avoids the busy-wait penalty of polling isAlive() and is more precise and efficient than using join(), which would block the master until specific threads finish rather than waiting for a count threshold."
+  }
+]

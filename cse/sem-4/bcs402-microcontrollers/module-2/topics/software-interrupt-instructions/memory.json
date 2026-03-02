@@ -1,0 +1,85 @@
+{
+  "topicId": "software-interrupt-instructions",
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "INT Instruction Sequence",
+      "content": "When INT executes: FLAGS \u2192 CS \u2192 IP. Remember as 'First Save Flags, Then Code Segment, Then Instruction Pointer' (F-S-C-I). The last pushed is first popped by IRET."
+    },
+    {
+      "id": "m-2",
+      "title": "IRET Restores in Reverse",
+      "content": "IRET pops in reverse order: IP \u2190 CS \u2190 FLAGS. Think of it as 'In Reverse Pop Order' (IRP) - whatever INT pushed last, IRET pops first."
+    },
+    {
+      "id": "m-3",
+      "title": "INT vs INTO",
+      "content": "INT always fires (unconditional), INTO checks Overflow (conditional). Remember: INTerrupt = INTermittent always; INTO = INTermittent only if Overflow."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "IVT",
+      "expansion": "Interrupt Vector Table",
+      "usage": "256-entry table at 0:0 containing CS:IP addresses of ISR handlers"
+    },
+    {
+      "term": "ISR",
+      "expansion": "Interrupt Service Routine",
+      "usage": "Special subroutine executed in response to an interrupt"
+    },
+    {
+      "term": "IRET",
+      "expansion": "Interrupt RETURN",
+      "usage": "Instruction to return from ISR and restore processor state"
+    },
+    {
+      "term": "INT",
+      "expansion": "INTerrupt (software)",
+      "usage": "Instruction to generate a software interrupt with type number n"
+    },
+    {
+      "term": "INTO",
+      "expansion": "INTerrupt on Overflow",
+      "usage": "Conditional software interrupt triggered if OF=1"
+    },
+    {
+      "term": "IF",
+      "expansion": "Interrupt Flag",
+      "usage": "Flag that enables/disables maskable hardware interrupts"
+    },
+    {
+      "term": "TF",
+      "expansion": "Trap Flag",
+      "usage": "Enables single-step mode for debugging"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Stack during INT",
+      "visualization": "Draw a stack growing downward. Show FLAGS pushed first (lowest), then CS, then IP on top. When IRET executes, IP pops first (top), then CS, then FLAGS."
+    },
+    {
+      "concept": "IVT Memory Layout",
+      "visualization": "Draw 256 boxes in a row at address 0:0. Each box is 4 bytes (2 for IP, 2 for CS). Box 0 at 0-3, Box 1 at 4-7, Box n at (n\u00d74) to (n\u00d74+3)."
+    },
+    {
+      "concept": "INT Execution Flow",
+      "visualization": "Draw flowchart: Execute INT n \u2192 Push FLAGS \u2192 Push CS \u2192 Push IP \u2192 Clear TF, IF \u2192 Load CS:IP from IVT[n\u00d74] \u2192 Execute ISR."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Software Interrupt",
+      "analogy": "Like calling a manager (INT instruction) to handle a special request within a company. The normal work (main program) pauses, the manager handles the issue (ISR), then returns to normal work (IRET)."
+    },
+    {
+      "concept": "IVT as Phonebook",
+      "analogy": "The Interrupt Vector Table is like a company's emergency phonebook. Each emergency type (0-255) has a specific phone number (CS:IP address) to call the right person (ISR)."
+    },
+    {
+      "concept": "INT vs Hardware Interrupt",
+      "analogy": "Software interrupt is like deciding to take a coffee break yourself (self-initiated). Hardware interrupt is like a phone ringing (externally triggered) - you must answer it."
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "topicId": "firmware-and-bootloader",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between firmware and application software with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Firmware is stored in non-volatile memory, provides low-level hardware control, runs at system startup",
+        "Application software runs at higher abstraction level, depends on OS",
+        "Examples: BIOS/UEFI as firmware; Microsoft Word as application software"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of POST in the boot process? Describe the typical tests performed.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "POST verifies hardware functionality before OS loading",
+        "Tests include: memory test (RAM), keyboard/controller check, video adapter test, drive detection",
+        "If errors occur, POST displays error codes or beep patterns"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the multi-stage bootloader concept and explain why it is needed.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "First-stage bootloader in ROM initializes basic hardware",
+        "Second-stage bootloader in flash memory provides more features",
+        "Needed because ROM size is limited; complex boot functions require more code space",
+        "Second stage loads OS kernel from various boot devices"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "List and explain three advantages of UEFI over traditional BIOS.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Faster boot time due to no need for legacy device initialization",
+        "GPT partitioning support (disks >2TB, >4 partitions)",
+        "Secure Boot prevents unauthorized OS loaders",
+        "Graphical user interface with mouse support",
+        "Pre-boot networking and runtime services"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is secure boot and how does it protect the system from malware?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Secure Boot is a UEFI feature that verifies digital signatures",
+        "Only bootloaders and OS loaders with valid certificates can execute",
+        "Prevents rootkits and bootkits from infecting boot process",
+        "Uses public key cryptography to validate each boot component"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the role of SPI flash memory in embedded firmware storage.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SPI Flash provides non-volatile storage for firmware in embedded systems",
+        "Accessed via Serial Peripheral Interface protocol",
+        "Can be electrically erased and reprogrammed (updates possible)",
+        "Typical capacity ranges from few KB to several MB",
+        "Cost-effective compared to other memory types"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Describe the chain loading technique used in bootloaders with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Chain loading allows one bootloader to load another bootloader",
+        "Useful for multi-boot systems (e.g., GRUB loading Windows Boot Manager)",
+        "First bootloader reads partition boot sector of specified partition",
+        "Passes control to secondary bootloader which loads its respective OS",
+        "Common in dual-boot scenarios"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the complete boot process from power-on to operating system loading in a typical x86 system.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Power ON: CPU resets, starts executing from fixed address (FFFFFFF0h in real mode)",
+        "BIOS/UEFI execution from ROM chip",
+        "POST: Power-On Self-Test checks RAM, keyboard, video, drives",
+        "Boot device selection from CMOS/UEFI settings",
+        "MBR/GPT reading: First sector loaded to 0x7C00",
+        "Bootloader code examines partition table",
+        "Loads OS kernel from boot partition",
+        "Kernel decompression (if compressed)",
+        "OS kernel initialization begins",
+        "Control transferred to OS (system call: OS takes over)"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a two-stage bootloader for an embedded ARM system. Explain each component and its responsibilities.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Stage 1 (ROM/Mask ROM): Initial CPU setup, pin multiplexing, basic clock initialization, loads stage 2 from flash",
+        "Stage 2 (Flash memory): DDR/SDRAM initialization, more complex hardware setup, loads kernel from NAND/eMMC/SD card",
+        "U-Boot as stage 2 bootloader: Provides command interface, environment variables, network support",
+        "Boot sequence: ROM code → Initialize NAND controller → Copy U-Boot to RAM → Execute U-Boot → Load kernel via tftp/SD/NAND → Boot kernel",
+        "Memory addresses: ROM at 0x00000000, Flash at 0x10000000, RAM at 0x20000000"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare BIOS and UEFI in detail under the following categories: architecture, boot process, security, and limitations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Architecture: BIOS - 16-bit real mode, 1MB address space; UEFI - 32/64-bit protected mode, no 1MB limit",
+        "Boot Process: BIOS - legacy INT 13h disk access, slow; UEFI - EFI Runtime Services, faster boot",
+        "Security: BIOS - no secure boot, vulnerable to rootkits; UEFI - Secure Boot with digital signatures",
+        "Limitations: BIOS - max 2TB disk, 4 primary partitions; UEFI - supports 9.4ZB disks, unlimited partitions with GPT",
+        "Additional: BIOS has no GUI, limited hardware initialization; UEFI has GUI, networking in pre-boot"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the firmware update mechanism in embedded systems. Discuss security considerations and best practices.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Firmware Update Methods: In-system programming via bootloader, JTAG/SWD debugging, OTA (Over-The-Air) updates for IoT",
+        "Update Process: New firmware downloaded → stored in separate partition → CRC/MD5 verification → signature validation → atomic swap",
+        "Security Considerations: Digital signatures required (RSA/ECDSA), secure key storage, rollback protection, encrypted transport (TLS)",
+        "Best Practices: Dual-bank flash (old + new firmware), watchdog timer to recover failed updates, signed firmware only, secure boot validation, encrypted storage",
+        "Risks: Bricked device if update fails, malicious firmware injection, rollback attacks"
+      ]
+    }
+  ]
+}

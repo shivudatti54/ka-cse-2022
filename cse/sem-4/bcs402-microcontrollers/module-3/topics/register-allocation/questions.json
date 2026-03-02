@@ -1,0 +1,127 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the concept of register banking in 8051 microcontroller and its advantages.",
+    "expectedPoints": [
+      "Register banking provides 4 separate register banks (Bank 0-3) in RAM",
+      "Each bank contains R0-R7 registers",
+      "Selected via PSW register's RS0 and RS1 bits",
+      "Allows fast context switching without memory copying",
+      "Useful in embedded systems for quick task switching and interrupt handling"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Distinguish between caller-saved and callee-saved registers with examples.",
+    "expectedPoints": [
+      "Caller-saved: can be overwritten by called function, caller must save if needed (e.g., accumulator in 8051)",
+      "Callee-saved: must preserve value across function call, called function saves/restores (e.g., stack pointer)",
+      "Calling convention defines which registers belong to each category",
+      "Prevents data loss during function calls in microcontrollers"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "What is register spilling? When does it occur and what are its implications?",
+    "expectedPoints": [
+      "Spilling moves variable values from registers to stack memory",
+      "Occurs when more variables are simultaneously live than available registers",
+      "Implications: slower execution due to memory access, increased stack usage",
+      "Trade-off between register efficiency and execution speed"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Describe live variable analysis and its role in register allocation.",
+    "expectedPoints": [
+      "Live variable analysis determines which variables will be used in future before being redefined",
+      "A variable is live if its current value will be read before being overwritten",
+      "Constructs live intervals showing variable lifetime from definition to last use",
+      "Enables detection of non-overlapping lifetimes for register sharing"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "List and explain four general-purpose registers in 8051 and their primary purposes.",
+    "expectedPoints": [
+      "Accumulator (A): Primary register for arithmetic/logic operations",
+      "B Register: Used for multiplication/division and as auxiliary accumulator",
+      "R0-R7: General-purpose registers in active bank for data storage",
+      "DPTR: 16-bit register for external data memory access and lookup tables"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain the difference between local and global register allocation.",
+    "expectedPoints": [
+      "Local: operates within single basic block, simpler, faster, less optimal",
+      "Global: considers entire program flow, analyzes across all blocks, better optimization",
+      "Global allocation uses liveness analysis across function/procedure",
+      "Trade-off: complexity vs register efficiency"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "long",
+    "question": "Explain the register allocation process in microcontrollers with reference to interference graph and graph coloring algorithm.",
+    "expectedPoints": [
+      "Interference graph: nodes represent variables, edges connect simultaneously live variables",
+      "Graph coloring: assign registers (colors) to nodes such that adjacent nodes have different colors",
+      "Chaitin's algorithm: simplify by removing low-degree nodes, push to stack, spill if needed",
+      "K-coloring problem: find K colors where K = number of available registers",
+      "Process: build graph \u2192 simplify \u2192 select \u2192 spill if necessary \u2192 reassign colors"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Explain the calling convention conventions in microcontroller programming with reference to parameter passing, register preservation, and stack frame.",
+    "expectedPoints": [
+      "Parameter passing: registers first (R0-R3 in ARM, A/B in 8051), then stack",
+      "Return values: accumulator or specific registers",
+      "Callee-saved: SP, BP, and frame pointer must be preserved",
+      "Caller-saved: temporary registers can be clobbered",
+      "Stack frame: return address, saved registers, local variables, outgoing parameters",
+      "Proper convention ensures function interoperability"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Design a register allocation strategy for a microcontroller with 8 general-purpose registers to efficiently execute the following code segment:\nint a, b, c, d, e;\na = x + y;\nb = a * 2;\nc = b - a;\nd = c + a;\ne = d * b;\nShow which registers would be allocated to each variable and identify any spills.",
+    "expectedPoints": [
+      "Analyze variable lifetimes:\na: defined at line 1, used at 2,3,4 \u2192 live through lines 2-4",
+      "b: defined at 2, used at 3,4,5 \u2192 live through lines 3-5",
+      "c: defined at 3, used at 4 \u2192 live through line 4",
+      "d: defined at 4, used at 5 \u2192 live through line 5",
+      "e: defined at 5 \u2192 final result",
+      "Maximum 3 registers needed simultaneously (a,b,c at line 4)",
+      "With 8 registers: no spills needed, efficient allocation possible",
+      "Show sample allocation: R0=a, R1=b, R2=c, R3=d, R4=e"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

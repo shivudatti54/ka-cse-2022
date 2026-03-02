@@ -1,0 +1,132 @@
+{
+  "topicId": "spam-reduction",
+  "svg": {
+    "file": "assets/spam-reduction.svg",
+    "animated": true
+  },
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "CSP Enforcement Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Browser requests page"
+          },
+          {
+            "id": "n2",
+            "label": "Server responds with HTML + CSP Header"
+          },
+          {
+            "id": "n3",
+            "label": "Browser parses HTML & CSP policy"
+          },
+          {
+            "id": "n4",
+            "label": "Browser attempts to load/execute resource"
+          },
+          {
+            "id": "n5",
+            "label": "Resource allowed by policy?"
+          },
+          {
+            "id": "n6",
+            "label": "Load/Execute Resource (Allowed)"
+          },
+          {
+            "id": "n7",
+            "label": "Block Resource (Violation)"
+          },
+          {
+            "id": "n8",
+            "label": "Send violation report to report-uri (if configured)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n6",
+            "label": "Yes"
+          },
+          {
+            "from": "n5",
+            "to": "n7",
+            "label": "No"
+          },
+          {
+            "from": "n7",
+            "to": "n8"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "CSP Deployment Phases",
+      "type": "sequence",
+      "content": {
+        "nodes": [
+          {
+            "id": "p1",
+            "label": "Phase 1: Report-Only Mode (test policy without blocking)"
+          },
+          {
+            "id": "p2",
+            "label": "Phase 2: Eliminate unsafe-inline using nonces or hashes"
+          },
+          {
+            "id": "p3",
+            "label": "Phase 3: Enforce policy and monitor via report-uri"
+          }
+        ],
+        "edges": [
+          {
+            "from": "p1",
+            "to": "p2"
+          },
+          {
+            "from": "p2",
+            "to": "p3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Key CSP Directives for XSS Prevention",
+      "type": "table",
+      "content": {
+        "headers": ["Directive", "Purpose", "XSS Impact"],
+        "rows": [
+          ["script-src", "Controls which scripts can execute", "Primary XSS defense"],
+          ["default-src", "Fallback for all resource types", "Baseline restriction"],
+          [
+            "'nonce-<value>'",
+            "Allows specific inline scripts with matching nonce",
+            "Replaces unsafe-inline"
+          ],
+          ["'sha256-...'", "Allows inline scripts matching a hash", "Replaces unsafe-inline"],
+          ["report-uri", "Sends violation reports to server", "Attack detection"]
+        ]
+      }
+    }
+  ]
+}

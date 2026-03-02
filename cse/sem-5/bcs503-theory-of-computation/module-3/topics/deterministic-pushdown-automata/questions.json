@@ -1,0 +1,171 @@
+{
+  "topicId": "deterministic-pushdown-automata",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Deterministic Pushdown Automata (DPDA) and state how it differs from Non-deterministic PDA.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DPDA is a 7-tuple (Q, Σ, Γ, δ, q0, Z0, F) where δ is deterministic transition function",
+        "Difference: In DPDA, for each (state, input, stack-top), there is at most ONE transition",
+        "In NPDA, there can be multiple transitions (non-deterministic choices)",
+        "DPDA cannot recognize all CFLs while NPDA can recognize all CFLs"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the two methods of acceptance in DPDA? Explain each briefly.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Acceptance by Final State: String accepted if after consuming input, machine reaches a final state",
+        "Acceptance by Empty Stack: String accepted if after consuming input, stack becomes empty",
+        "Both methods are equivalent in power - can convert between them",
+        "DCFL = languages accepted by DPDA by empty stack = languages accepted by DPDA by final state"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "State and explain the determinism condition for a PDA to be deterministic.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "For any (state q, input symbol a, stack symbol X), there must be at most ONE transition",
+        "If δ(q, a, X) is defined, then δ(q, ε, X) must NOT be defined (no ε-move on same stack symbol)",
+        "If δ(q, ε, X) is defined, then for no 'a' should δ(q, a, X) be defined",
+        "This ensures unique computation path - no branching or guessing"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is an Instantaneous Description (ID) in DPDA? How is a move defined between IDs?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ID is a triple (q, w, γ) representing current state, remaining input, and stack contents",
+        "q ∈ Q is current state, w ∈ Σ* is remaining input, γ ∈ Γ* is stack (top at left)",
+        "A move ⊢ is defined: (q, aw, Xγ) ⊢ (p, w, αγ) if δ(q, a, X) = (p, α)",
+        "For ε-move: (q, w, Xγ) ⊢ (p, w, αγ) if δ(q, ε, X) = (p, α)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "List any four properties of Deterministic Context-Free Languages (DCFL).",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DCFL is closed under complement (important for parsing)",
+        "DCFL is closed under intersection with regular languages",
+        "DCFL is NOT closed under union",
+        "DCFL is NOT closed under Kleene star",
+        "DCFL has deterministic parsing - exactly one parse tree per string",
+        "All regular languages are DCFL, and DCFL ⊂ CFL"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Draw and explain the formal model of DPDA with all its components.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "DPDA = (Q, Σ, Γ, δ, q0, Z0, F)",
+        "Q: finite set of states",
+        "Σ: input alphabet",
+        "Γ: stack alphabet",
+        "δ: transition function Q × Σ × Γ → Q × Γ*",
+        "q0: initial state",
+        "Z0: initial stack symbol (bottom marker)",
+        "F: set of final states (may be empty for empty stack acceptance)"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Show that every DFA can be simulated by a DPDA.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Given DFA M = (Q, Σ, δ_M, q0, F)",
+        "Construct DPDA P = (Q, Σ, {Z0}, δ, q0, Z0, F)",
+        "Define δ_P(q, a, Z0) = (δ_M(q, a), Z0) for all q ∈ Q, a ∈ Σ",
+        "The stack is never used (always contains Z0)",
+        "P accepts by final state exactly when M accepts",
+        "Thus Regular ⊂ DCFL as every regular language is DCFL"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a Deterministic Pushdown Automata to accept the language L = {a^n b^n | n ≥ 1} by empty stack. Show the transition function and explain working.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DPDA: M = ({q0, q1}, {a, b}, {Z0, a}, δ, q0, Z0, ∅)",
+        "Transitions:",
+        "δ(q0, a, Z0) = (q0, aZ0) - push first 'a'",
+        "δ(q0, a, a) = (q0, aa) - push subsequent 'a's",
+        "δ(q0, b, a) = (q1, ε) - pop one 'a' for each 'b'",
+        "δ(q1, b, a) = (q1, ε) - continue popping",
+        "δ(q1, ε, Z0) = (q0, ε) - accept when empty",
+        "Working: Push all a's, then pop while reading b's. If counts match, stack empties → accept. If b's exhaust early or extra b's → reject."
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a DPDA to accept the language L = {wcw^R | w ∈ {a, b}*} by final state. Explain with an example trace.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "DPDA: M = ({q0, q1, q2}, {a, b, c}, {Z0, X}, δ, q0, Z0, {q2})",
+        "Transitions:",
+        "q0: read w, push symbols - δ(q0, a, Z0) = (q0, XZ0), δ(q0, b, Z0) = (q0, XZ0), δ(q0, a, X) = (q0, aX), δ(q0, b, X) = (q0, bX)",
+        "q0 → q1 on 'c': δ(q0, c, X) = (q1, X)",
+        "q1: read w^R, pop matching - δ(q1, a, a) = (q1, ε), δ(q1, b, b) = (q1, ε)",
+        "q1 → q2 when stack back to Z0: δ(q1, ε, Z0) = (q2, Z0)",
+        "Example: Input 'abcba' - push a,b,c,b then pop matching, reach q2 → accept"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare DPDA and NPDA. Show that NPDA is more powerful than DPDA by giving an example.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "DPDA: deterministic transitions (at most one per configuration)",
+        "NPDA: non-deterministic - can have multiple transitions, uses 'guessing'",
+        "Power comparison: NPDA can recognize all CFLs, DPDA only DCFLs",
+        "NPDA > DPDA: NPDA accepts languages DPDAs cannot",
+        "Example: L = {ww^R | w ∈ {a, b}*} (palindromes)",
+        "NPDA: guess midpoint, push first half, compare second half",
+        "DPDA: cannot guess - no deterministic way to know when halfway",
+        "Thus NPDAs are strictly more powerful than DPDAs",
+        "Regular ⊂ DCFL ⊂ CFL (proper inclusions)"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the concept of configuration in DPDA. Show how the computation of DPDA can be represented as a sequence of IDs with an example.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Configuration/ID = (q, w, γ) where q=state, w=remaining input, γ=stack",
+        "Initial configuration for input w: (q0, w, Z0)",
+        "Move relation ⊢: (q, aw, Xγ) ⊢ (p, w, αγ) if δ(q, a, X) = (p, α)",
+        "For ε-move: (q, w, Xγ) ⊢ (p, w, αγ) if δ(q, ε, X) = (p, α)",
+        "Computation: sequence of IDs from initial to accepting",
+        "Example for L = {a^n b^n}: Input 'aabb'",
+        "(q0, aabb, Z0) ⊢ (q0, abb, aZ0) ⊢ (q0, bb, aaZ0) ⊢ (q1, b, aZ0) ⊢ (q1, ε, Z0) → Accept"
+      ]
+    }
+  ]
+}

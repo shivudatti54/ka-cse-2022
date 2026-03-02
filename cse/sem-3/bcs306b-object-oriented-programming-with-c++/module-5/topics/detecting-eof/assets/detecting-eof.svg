@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" width="100%" height="100%" data-topic-id="detecting-eof">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a90e2"/>
+      <stop offset="100%" stop-color="#2c5aa0"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#50c878"/>
+      <stop offset="100%" stop-color="#2e8b57"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#d32f2f"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffa726"/>
+      <stop offset="100%" stop-color="#f57c00"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9c27b0"/>
+      <stop offset="100%" stop-color="#6a1b9a"/>
+    </linearGradient>
+  </defs>
+  <text x="210" y="20" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a237e" text-anchor="middle">Detecting EOF</text>
+  <g data-narration="WRONG: while(!file.eof()) checks eof BEFORE reading. The last successful read doesnt set eof, so loop tries one more read, fails, but still processes old data.">
+    <rect x="20" y="40" width="180" height="70" rx="10" ry="10" fill="url(#redGrad)" stroke="#b71c1c" stroke-width="2"/>
+    <text x="110" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">WRONG Pattern</text>
+    <text x="110" y="80" font-family="Arial, sans-serif" font-size="9" fill="#ffebee" text-anchor="middle">while(!file.eof())</text>
+    <text x="110" y="95" font-family="Arial, sans-serif" font-size="9" fill="#ffebee" text-anchor="middle">Processes data twice</text>
+  </g>
+  <g data-narration="CORRECT: while(file >> var) uses the read operation itself as condition. It returns false when read fails including at EOF, preventing duplicate processing.">
+    <rect x="220" y="40" width="180" height="70" rx="10" ry="10" fill="url(#greenGrad)" stroke="#1b5e20" stroke-width="2"/>
+    <text x="310" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">CORRECT Pattern</text>
+    <text x="310" y="80" font-family="Arial, sans-serif" font-size="9" fill="#e8f5e9" text-anchor="middle">while(file &gt;&gt; var)</text>
+    <text x="310" y="95" font-family="Arial, sans-serif" font-size="9" fill="#e8f5e9" text-anchor="middle">Reads once only</text>
+  </g>
+  <g data-narration="Stream state flags: goodbit (no errors), eofbit (end reached), failbit (logical error like type mismatch), badbit (serious hardware error).">
+    <rect x="20" y="130" width="180" height="70" rx="10" ry="10" fill="url(#blueGrad)" stroke="#1a237e" stroke-width="2"/>
+    <text x="110" y="150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">State Flags</text>
+    <text x="110" y="170" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">good, eof</text>
+    <text x="110" y="185" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">fail, bad</text>
+  </g>
+  <g data-narration="The eof() function returns true only AFTER a read operation has failed due to reaching end of file. It does NOT predict the next read will fail.">
+    <rect x="220" y="130" width="180" height="70" rx="10" ry="10" fill="url(#purpleGrad)" stroke="#4a148c" stroke-width="2"/>
+    <text x="310" y="150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">eof() Function</text>
+    <text x="310" y="170" font-family="Arial, sans-serif" font-size="9" fill="#f3e5f5" text-anchor="middle">Set AFTER read fails</text>
+    <text x="310" y="185" font-family="Arial, sans-serif" font-size="9" fill="#f3e5f5" text-anchor="middle">Not before</text>
+  </g>
+  <g data-narration="Streams convert to bool: true means good state (equivalent to !fail()), false means error or EOF. Use if(file) to check stream health.">
+    <rect x="20" y="220" width="180" height="70" rx="10" ry="10" fill="url(#orangeGrad)" stroke="#e65100" stroke-width="2"/>
+    <text x="110" y="240" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Bool Conversion</text>
+    <text x="110" y="260" font-family="Arial, sans-serif" font-size="9" fill="#fff3e0" text-anchor="middle">if (file) good</text>
+    <text x="110" y="275" font-family="Arial, sans-serif" font-size="9" fill="#fff3e0" text-anchor="middle">if (!file) error</text>
+  </g>
+  <g data-narration="Call clear() to reset all error flags after EOF or errors. Essential before reusing a stream or seeking back: file.clear(); file.seekg(0);.">
+    <rect x="220" y="220" width="180" height="70" rx="10" ry="10" fill="url(#blueGrad)" stroke="#1a237e" stroke-width="2"/>
+    <text x="310" y="240" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">clear() Method</text>
+    <text x="310" y="260" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">Resets error flags</text>
+    <text x="310" y="275" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">Before reusing stream</text>
+  </g>
+  <text x="210" y="320" font-family="Arial, sans-serif" font-size="11" fill="#424242" text-anchor="middle">eof() set AFTER read fails, not before</text>
+  <text x="210" y="340" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="middle">Use read operation as loop condition</text>
+  <text x="210" y="360" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="middle">Never use while(!file.eof()) pattern</text>
+</svg>

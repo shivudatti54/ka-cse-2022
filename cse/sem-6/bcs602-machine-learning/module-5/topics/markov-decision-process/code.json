@@ -1,0 +1,45 @@
+{
+  "topicId": "markov-decision-process",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python-pseudocode",
+      "title": "Value Iteration Algorithm",
+      "description": "Algorithm to compute optimal value function and policy in an MDP",
+      "code": "function VALUE_ITERATION(S, A, P, R, gamma, theta):\n // Initialize value function\n V = zeros(|S|)\n \n repeat\n delta = 0\n for each state s in S:\n v = V(s)\n // Bellman optimality update\n V(s) = max_a sum_{s'} P(s'|s,a) * (R(s,a,s') + gamma * V(s'))\n delta = max(delta, abs(v - V(s)))\n until delta < theta\n \n // Extract optimal policy\n for each state s in S:\n pi(s) = argmax_a sum_{s'} P(s'|s,a) * (R(s,a,s') + gamma * V(s'))\n \n return V, pi",
+      "explanation": "Value Iteration iteratively applies Bellman optimality update until convergence. It computes V* and then derives π*. Time: O(|S|² |A|) per iteration. Space: O(|S|).",
+      "timeComplexity": "O(|S|² × |A| × iterations)",
+      "spaceComplexity": "O(|S|)"
+    },
+    {
+      "id": "code-2",
+      "language": "python-pseudocode",
+      "title": "Policy Evaluation",
+      "description": "Computing the value function for a given policy",
+      "code": "function POLICY_EVALUATION(pi, S, A, P, R, gamma, theta):\n // Initialize value function\n V = zeros(|S|)\n \n repeat\n delta = 0\n for each state s in S:\n v = V(s)\n // Bellman equation for given policy\n V(s) = sum_a pi(a|s) * sum_{s'} P(s'|s,a) * (R(s,a,s') + gamma * V(s'))\n delta = max(delta, abs(v - V(s)))\n until delta < theta\n \n return V",
+      "explanation": "Policy Evaluation computes V^π for a fixed policy π by iteratively applying the Bellman equation. It is the first step in Policy Iteration.",
+      "timeComplexity": "O(|S|² × |A| × iterations)",
+      "spaceComplexity": "O(|S|)"
+    },
+    {
+      "id": "code-3",
+      "language": "python-pseudocode",
+      "title": "Policy Iteration Algorithm",
+      "description": "Finding optimal policy by alternating evaluation and improvement",
+      "code": "function POLICY_ITERATION(S, A, P, R, gamma, theta):\n // Initialize random policy\n pi = random_policy(|S|, |A|)\n \n repeat\n // Step 1: Policy Evaluation\n V = POLICY_EVALUATION(pi, S, A, P, R, gamma, theta)\n \n // Step 2: Policy Improvement\n policy_stable = TRUE\n for each state s in S:\n old_action = pi(s)\n // Greedy policy improvement\n pi(s) = argmax_a sum_{s'} P(s'|s,a) * (R(s,a,s') + gamma * V(s'))\n if old_action != pi(s):\n policy_stable = FALSE\n until policy_stable = TRUE\n \n return pi, V // Returns optimal policy and value function",
+      "explanation": "Policy Iteration alternates between computing V^π (evaluation) and improving π using V^π (improvement). It converges to optimal policy in finite MDPs. Often faster than Value Iteration despite more iterations.",
+      "timeComplexity": "O(|S|² × |A| × iterations) per iteration, typically fewer iterations than Value Iteration",
+      "spaceComplexity": "O(|S|)"
+    },
+    {
+      "id": "code-4",
+      "language": "python-pseudocode",
+      "title": "Simple Grid World MDP Setup",
+      "description": "Defining an MDP for a simple 4x3 grid world problem",
+      "code": "// Define Grid World MDP\nSTATES = [(x,y) for x in 0:3 for y in 0:2] // 12 states\nACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']\n\n// Transition function P(s'|s,a)\n// With 0.8 probability intended move, 0.2 probability random slip\nfunction TRANSITION(s, a):\n intended = MOVE(s, a) // Intended next state\n slip1, slip2 = GET_SLIP_STATES(s, a) // Slip to these with 0.1 each\n if intended is within bounds:\n return {intended: 0.8, slip1: 0.1, slip2: 0.1}\n else:\n // Bounce back to same state\n return {s: 0.8, slip1: 0.1, slip2: 0.1}\n\n// Reward function\nfunction REWARD(s, a, s'):\n if s' == GOAL: return +1\n else if s' == PIT: return -1\n else: return -0.04 // Small step cost\n\nGAMMA = 0.9 // Discount factor",
+      "explanation": "This sets up a classic grid world MDP. States are grid positions. Actions have stochastic outcomes (intended move 80%, slip 20%). Rewards: +1 for goal, -1 for pit, small negative for each step (to encourage shortest path).",
+      "timeComplexity": "N/A - Setup only",
+      "spaceComplexity": "O(|S| × |A|)"
+    }
+  ]
+}

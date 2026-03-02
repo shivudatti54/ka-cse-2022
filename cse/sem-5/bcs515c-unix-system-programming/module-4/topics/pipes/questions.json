@@ -1,0 +1,170 @@
+{
+  "topicId": "pipes",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between anonymous pipes and named pipes (FIFOs) in Unix.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Anonymous pipes are created using pipe() system call and work only between related processes (parent-child)",
+        "Named pipes (FIFOs) appear as special files in filesystem using mkfifo() and allow unrelated processes to communicate",
+        "Anonymous pipes are unidirectional; named pipes can also be accessed like regular files for bidirectional communication"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of the pipe() system call? Explain its parameters and return values.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "pipe() creates an anonymous pipe and returns two file descriptors",
+        "The array parameter stores fd[0] for read end and fd[1] for write end",
+        "Returns 0 on success, -1 on failure with errno set",
+        "Used for parent-child process communication"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe what happens when a process writes to a pipe that has no readers. Also explain the scenario when reading from an empty pipe.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Writing to pipe with no readers causes SIGPIPE signal or EPIPE error from write()",
+        "This signals the writer that the pipe has no consumers",
+        "Reading from empty pipe blocks until data is available (unless O_NONBLOCK)",
+        "When all writers close, read() returns 0 (EOF)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the use of dup() and dup2() system calls in the context of pipes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "dup() duplicates a file descriptor to the lowest available number",
+        "dup2() duplicates to a specific file descriptor number",
+        "Used to redirect stdin/stdout to pipe ends",
+        "Common pattern: dup2(pipefd[1], STDOUT_FILENO) to redirect output to pipe"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the steps involved in creating a pipe between a parent and child process for inter-process communication.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Parent calls pipe() to create pipe before fork()",
+        "Parent forks to create child process",
+        "Child closes unused end (e.g., read end if sending)",
+        "Parent closes unused end (e.g., write end if receiving)",
+        "Communication proceeds using read/write on respective ends",
+        "Close ends when done to signal EOF"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is PIPE_BUF? Why is it important in pipe operations?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "PIPE_BUF is the maximum number of bytes guaranteed to be written atomically",
+        "Typically 4096 bytes on most Unix systems",
+        "Writes smaller than PIPE_BUF are guaranteed to be atomic",
+        "Larger writes may be interleaved with other process writes",
+        "Ensures data integrity in concurrent pipe operations"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain how shell pipelines (e.g., cmd1 | cmd2) work internally.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Shell creates a pipe using pipe() system call",
+        "Shell forks two child processes",
+        "In first child: redirects stdout to pipe write end, closes unnecessary ends",
+        "In second child: redirects stdin to pipe read end, closes unnecessary ends",
+        "Both children exec the respective commands",
+        "Parent closes both pipe ends and waits for children"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program that demonstrates communication between parent and child processes using pipes. The child should send its process ID to the parent.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Create pipe using pipe() before fork()",
+        "Fork to create child process",
+        "Child: close read end, convert PID to string, write to pipe, close write end",
+        "Parent: close write end, read from pipe, display received PID, close read end",
+        "Proper error handling for fork(), pipe(), read(), write()",
+        "Wait for child process using wait()",
+        "Correct use of file descriptor management"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain named pipes (FIFOs) in detail. How do they differ from anonymous pipes? Write a program demonstrating communication between two unrelated processes using FIFO.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "FIFO created using mkfifo() or mknod()",
+        "Appears as special file in filesystem (ls -l shows 'p' type)",
+        "Unrelated processes can open and use it like regular file",
+        "Named pipe remains in filesystem until unlinked",
+        "Need to open FIFO at both ends for communication",
+        "Demonstrate with two separate programs: writer and reader",
+        "Both processes open FIFO, one writes, one reads",
+        "Handle blocking open() appropriately"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write a complete C program that implements a simple shell pipeline: it should execute 'ls | wc -l' functionality using pipe() system calls.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create pipe using pipe()",
+        "Fork first child for 'ls' command",
+        "First child: redirect stdout to pipe write end, close unnecessary ends, exec 'ls'",
+        "Fork second child for 'wc' command",
+        "Second child: redirect stdin to pipe read end, close unnecessary ends, exec 'wc -l'",
+        "Parent closes both pipe ends, waits for both children",
+        "Proper error handling throughout",
+        "Use dup2() for redirection",
+        "Use waitpid() or wait() for child processes"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the various pipe attributes and limitations in Unix/Linux including buffering, atomicity, and process relationships.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Default buffer size is 65536 bytes in modern Linux",
+        "PIPE_BUF (4096 bytes) guarantees atomic writes",
+        "Pipes are unidirectional - need two for bidirectional",
+        "Only work between related processes (anonymous) or any processes (FIFO)",
+        "Data flow is byte stream, not message boundaries",
+        "Reading is FIFO ordered",
+        "Kernel maintains pipe buffer; read removes data from buffer",
+        "Closing write end sends EOF to reader",
+        "Pipe ends are inherited across fork()",
+        "Maximum number of pipes per process limited by RLIMIT_NOFILE"
+      ]
+    }
+  ]
+}

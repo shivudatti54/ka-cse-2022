@@ -1,0 +1,180 @@
+{
+  "topicId": "transactions",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "Which method marks an Android SQLite transaction for commit?",
+      "options": [
+        {
+          "key": "A",
+          "text": "commitTransaction()"
+        },
+        {
+          "key": "B",
+          "text": "setTransactionSuccessful()"
+        },
+        {
+          "key": "C",
+          "text": "endTransaction()"
+        },
+        {
+          "key": "D",
+          "text": "saveTransaction()"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "setTransactionSuccessful() marks the current transaction for commit. When endTransaction() is subsequently called, it will commit the changes. Without this call, endTransaction() rolls back.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq2",
+      "question": "What happens when endTransaction() is called without calling setTransactionSuccessful()?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The transaction is committed automatically"
+        },
+        {
+          "key": "B",
+          "text": "The transaction is rolled back"
+        },
+        {
+          "key": "C",
+          "text": "An exception is thrown"
+        },
+        {
+          "key": "D",
+          "text": "The database becomes corrupted"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "If setTransactionSuccessful() was not called before endTransaction(), the transaction is automatically rolled back, undoing all operations performed within the transaction.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "Why do batch inserts perform significantly better inside a transaction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Transactions use a faster insert algorithm"
+        },
+        {
+          "key": "B",
+          "text": "Each insert without a transaction creates its own implicit transaction with disk I/O"
+        },
+        {
+          "key": "C",
+          "text": "Transactions compress the data before writing"
+        },
+        {
+          "key": "D",
+          "text": "Transactions bypass the SQLite engine"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Without an explicit transaction, SQLite wraps each individual operation in its own implicit transaction, causing a disk sync for each. A single explicit transaction batches all operations into one disk sync, dramatically reducing I/O.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "In which block should endTransaction() always be placed?",
+      "options": [
+        {
+          "key": "A",
+          "text": "try block"
+        },
+        {
+          "key": "B",
+          "text": "catch block"
+        },
+        {
+          "key": "C",
+          "text": "finally block"
+        },
+        {
+          "key": "D",
+          "text": "if block"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "endTransaction() must be placed in the finally block to ensure it is always called, even if an exception occurs. This releases the database lock and prevents deadlocks.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "Which Room annotation is used to run a DAO method inside a database transaction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "@Atomic"
+        },
+        {
+          "key": "B",
+          "text": "@Transaction"
+        },
+        {
+          "key": "C",
+          "text": "@Transactional"
+        },
+        {
+          "key": "D",
+          "text": "@Commit"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The @Transaction annotation in Room ensures that all database operations within the annotated method are executed inside a single transaction. Room handles begin/commit/rollback automatically.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq6",
+      "question": "What is the primary reason transactions should NOT include network calls?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Network calls are not supported in SQLite"
+        },
+        {
+          "key": "B",
+          "text": "Long-running transactions hold the database lock and block other operations"
+        },
+        {
+          "key": "C",
+          "text": "Network calls automatically commit the transaction"
+        },
+        {
+          "key": "D",
+          "text": "SQLite does not support concurrent connections"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Network calls are slow and unpredictable. Including them in a transaction keeps the database lock held for a long time, blocking other database operations and potentially causing ANR errors.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq7",
+      "question": "Which ACID property ensures that if one operation in a transaction fails, all operations are undone?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Consistency"
+        },
+        {
+          "key": "B",
+          "text": "Isolation"
+        },
+        {
+          "key": "C",
+          "text": "Atomicity"
+        },
+        {
+          "key": "D",
+          "text": "Durability"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Atomicity means all operations in a transaction succeed or all fail. If any operation fails and setTransactionSuccessful() is not called, endTransaction() rolls back all changes.",
+      "difficulty": "medium"
+    }
+  ]
+}

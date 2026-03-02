@@ -1,0 +1,55 @@
+{
+  "topicId": "random-access-file",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Find File Size Using fseek and ftell",
+      "description": "Program to calculate and display the size of a file in bytes",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    FILE *fp;\n    long fileSize;\n    \n    fp = fopen(\"data.dat\", \"rb\");\n    if (fp == NULL) {\n        printf(\"File cannot be opened.\\n\");\n        return 1;\n    }\n    \n    // Move to end of file\n    if (fseek(fp, 0, SEEK_END) != 0) {\n        printf(\"fseek failed.\\n\");\n        fclose(fp);\n        return 1;\n    }\n    \n    // Get current position (which is file size)\n    fileSize = ftell(fp);\n    printf(\"File size: %ld bytes\\n\", fileSize);\n    \n    fclose(fp);\n    return 0;\n}",
+      "explanation": "Opens file in binary mode, seeks to end using SEEK_END with zero offset, then ftell() returns the position which equals total file size in bytes.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Read Nth Record from Random Access File",
+      "description": "Program to read a specific record (by number) from a file of fixed-size records",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Student {\n    int roll;\n    char name[30];\n    float marks;\n};\n\nint main() {\n    FILE *fp;\n    struct Student s;\n    int recordNum;\n    \n    fp = fopen(\"students.dat\", \"rb\");\n    if (fp == NULL) {\n        printf(\"Error opening file.\\n\");\n        return 1;\n    }\n    \n    printf(\"Enter record number to read (1-based): \");\n    scanf(\"%d\", &recordNum);\n    \n    // Calculate offset: (recordNum - 1) * size of each record\n    // Using 0-based indexing internally\n    if (fseek(fp, (recordNum - 1) * sizeof(struct Student), SEEK_SET) != 0) {\n        printf(\"Error seeking to record.\\n\");\n        fclose(fp);\n        return 1;\n    }\n    \n    // Read the record\n    if (fread(&s, sizeof(struct Student), 1, fp) == 1) {\n        printf(\"Roll: %d\\n\", s.roll);\n        printf(\"Name: %s\\n\", s.name);\n        printf(\"Marks: %.2f\\n\", s.marks);\n    } else {\n        printf(\"Record not found or read error.\\n\");\n    }\n    \n    fclose(fp);\n    return 0;\n}",
+      "explanation": "Opens file in binary read mode, calculates byte offset for the nth record using (n-1)*sizeof(record), uses fseek() to position, then fread() retrieves the record.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Update Record in Random Access File",
+      "description": "Program to modify an existing record at a specific position",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Employee {\n    int empId;\n    char name[40];\n    float salary;\n};\n\nint main() {\n    FILE *fp;\n    struct Employee emp;\n    int targetId;\n    float newSalary;\n    \n    fp = fopen(\"employees.dat\", \"r+b\");  // read/write binary\n    if (fp == NULL) {\n        printf(\"Cannot open file.\\n\");\n        return 1;\n    }\n    \n    printf(\"Enter Employee ID to update: \");\n    scanf(\"%d\", &targetId);\n    printf(\"Enter new salary: \");\n    scanf(\"%f\", &newSalary);\n    \n    // Read and search for employee\n    while (fread(&emp, sizeof(struct Employee), 1, fp) == 1) {\n        if (emp.empId == targetId) {\n            // Move back one record position\n            fseek(fp, -sizeof(struct Employee), SEEK_CUR);\n            \n            emp.salary = newSalary;\n            \n            // Write updated record\n            fwrite(&emp, sizeof(struct Employee), 1, fp);\n            fflush(fp);  // Ensure data is written to disk\n            \n            printf(\"Salary updated successfully.\\n\");\n            fclose(fp);\n            return 0;\n        }\n    }\n    \n    printf(\"Employee not found.\\n\");\n    fclose(fp);\n    return 0;\n}",
+      "explanation": "Opens file in r+b mode for read/write, searches sequentially but can also seek directly using (id-1)*sizeof(emp), uses fseek() to move back one record, updates with fwrite(), and fflush() ensures immediate disk write.",
+      "timeComplexity": "O(n) worst case, O(1) if using direct access by ID",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Display Records in Reverse Order",
+      "description": "Program to read and display all records of a file in reverse order without storing in memory",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Product {\n    int id;\n    char name[30];\n    float price;\n};\n\nint main() {\n    FILE *fp;\n    struct Product p;\n    long fileSize, numRecords, i;\n    \n    fp = fopen(\"products.dat\", \"rb\");\n    if (fp == NULL) {\n        printf(\"Cannot open file.\\n\");\n        return 1;\n    }\n    \n    // Find file size\n    fseek(fp, 0, SEEK_END);\n    fileSize = ftell(fp);\n    numRecords = fileSize / sizeof(struct Product);\n    \n    printf(\"Records in reverse order:\\n\");\n    \n    // Read from last record to first\n    for (i = numRecords; i >= 1; i--) {\n        fseek(fp, (i - 1) * sizeof(struct Product), SEEK_SET);\n        fread(&p, sizeof(struct Product), 1, fp);\n        \n        printf(\"ID: %d, Name: %s, Price: %.2f\\n\", \n               p.id, p.name, p.price);\n    }\n    \n    fclose(fp);\n    return 0;\n}",
+      "explanation": "Finds file size using fseek+ftell, calculates total number of records, then iterates from last to first using fseek() to position each time and fread() to retrieve records. No arrays used - processes one record at a time.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "python",
+      "title": "Random Access File in Python",
+      "description": "Python equivalent demonstrating random access using seek() and tell()",
+      "code": "import os\n\n# Define record structure (similar to C struct)\nRECORD_SIZE = 40  # bytes per record\n\ndef get_file_size(filename):\n    '''Find file size using seek and tell'''\n    with open(filename, 'rb') as f:\n        f.seek(0, 2)  # Seek to end (SEEK_END = 2)\n        return f.tell()\n\ndef read_record(filename, record_num):\n    '''Read nth record (1-based index)'''\n    with open(filename, 'rb') as f:\n        # Calculate offset: (record_num - 1) * size\n        offset = (record_num - 1) * RECORD_SIZE\n        f.seek(offset)  # Random access to position\n        data = f.read(RECORD_SIZE)\n        return data\n\ndef update_record(filename, record_num, new_data):\n    '''Update specific record'''\n    with open(filename, 'r+b') as f:\n        offset = (record_num - 1) * RECORD_SIZE\n        f.seek(offset)\n        f.write(new_data)\n        f.flush()\n\ndef display_reverse(filename):\n    '''Display records in reverse order'''\n    file_size = get_file_size(filename)\n    num_records = file_size // RECORD_SIZE\n    \n    with open(filename, 'rb') as f:\n        for i in range(num_records, 0, -1):\n            f.seek((i - 1) * RECORD_SIZE)\n            record = f.read(RECORD_SIZE)\n            print(record)",
+      "explanation": "Python's file seek() and tell() work identically to C's fseek() and ftell(). seek(offset, origin) where origin: 0=SEEK_SET, 1=SEEK_CUR, 2=SEEK_END. Python handles binary mode similarly.",
+      "timeComplexity": "O(1) for single record access",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

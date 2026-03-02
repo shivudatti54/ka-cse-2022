@@ -1,0 +1,125 @@
+{
+  "topicId": "shared-memory-programming-with-openmp-openmp-pragm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the fork-join execution model in OpenMP and why it is suitable for iterative parallel algorithms. Give an example of a pragma that implements this model.",
+      "keyPoints": [
+        "Fork-join: main thread spawns team of threads at parallel region",
+        "Threads execute concurrently and synchronize at end",
+        "Suitable for iterative algorithms with independent iterations",
+        "Example: #pragma omp parallel for creates parallel execution for loop iterations",
+        "Each thread gets subset of iterations, results combined at barrier"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between 'private', 'firstprivate', and 'lastprivate' clauses in OpenMP with respect to variable initialization, scope, and final value propagation.",
+      "keyPoints": [
+        "private: uninitialized copies, no value propagation",
+        "firstprivate: initialized with master's value, useful when initial value needed",
+        "lastprivate: copies final iteration's value back to original variable",
+        "All create new storage per thread",
+        "lastprivate important for propagating loop results to sequential code"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is false sharing? Explain how it affects performance in OpenMP programs and suggest methods to avoid it.",
+      "keyPoints": [
+        "False sharing: threads modify different variables on same cache line",
+        "Cache coherency causes invalidation on each write",
+        "Performance degradation can be severe despite no true data dependency",
+        "Detection requires cache line analysis",
+        "Solutions: padding, struct rearrangement, thread-local aggregation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare static, dynamic, and guided scheduling in OpenMP with respect to load balancing, overhead, and suitable use cases.",
+      "keyPoints": [
+        "Static: compile-time distribution, low overhead, best for uniform workloads",
+        "Dynamic: runtime assignment, better load balancing, higher overhead for small chunks",
+        "Guided: starts large, decreases exponentially, adaptive between static and dynamic",
+        "Chunk size affects granularity and overhead trade-offs",
+        "Runtime: allows environment variable control without code changes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the OpenMP pragma for parallelizing a reduction operation to compute the sum of array elements. Explain how the reduction clause handles thread-private copies and final combination.",
+      "keyPoints": [
+        "Syntax: #pragma omp parallel for reduction(+:sum)",
+        "Each thread gets private sum initialized to 0 (identity for +)",
+        "Threads compute partial sums on their subset",
+        "At barrier, partial sums combined using + operator",
+        "Combines in tree-like fashion for O(log P) complexity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of loop-carried dependencies and why naive parallelization can produce incorrect results. How can such loops be parallelized correctly?",
+      "keyPoints": [
+        "Loop-carried: iteration i depends on value from iteration i-1",
+        "Naive parallel execution breaks this dependency, producing wrong results",
+        "Correct parallelization requires: algorithm restructuring, eliminating dependency, or using techniques like recurrence solvers",
+        "Sometimes parallelization is impossible without changing algorithm",
+        "Examples: prefix sum, recursive calculations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Develop an OpenMP program to compute numerical integration using the Trapezoidal Rule. The program should: (a) partition the interval [a,b] into N subintervals, (b) distribute iterations across threads, (c) use reduction for accurate sum, (d) handle thread synchronization properly. Write complete code with appropriate pragmas and explain the data sharing attributes used.",
+      "keyPoints": [
+        "Define f(x) function for integration",
+        "Calculate h = (b-a)/N for trapezoidal width",
+        "Use #pragma omp parallel for reduction(+:total)",
+        "Each thread computes sum of f(x_i) for assigned iterations",
+        "Total area = h * (f(a) + f(b) + 2*sum) or h*(0.5*f(a) + sum + 0.5*f(b))",
+        "Data sharing: N, a, b, h shared; i, local_sum private; total reduction"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider a producer-consumer pattern where multiple threads produce items and multiple threads consume them from a shared bounded buffer. (a) Identify potential race conditions and synchronization issues. (b) Write OpenMP code with proper synchronization to ensure thread safety. (c) Analyze the performance implications of different synchronization approaches.",
+      "keyPoints": [
+        "Race conditions: buffer overflow (produce into full buffer), buffer underflow (consume from empty)",
+        "Need: mutex for buffer access, condition variables for empty/full states",
+        "Using critical sections serializes access, affecting parallelism",
+        "Atomic operations can improve performance for simple operations",
+        "Solution: bounded buffer with head/tail indices, proper locking",
+        "Performance: minimize critical section duration, avoid false sharing"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive and explain Amdahl's Law in the context of parallel computing. Given a program with 90% parallelizable portion, calculate the maximum speedup achievable with 2, 4, 8, and 16 processors. What are the limitations of Amdahl's Law and how do modern architectures address them?",
+      "keyPoints": [
+        "Amdahl's Law: S = 1/(1-P + P/N) where P=parallel fraction, N=processors",
+        "For P=0.90: S(2)=1.8, S(4)=3.2, S(8)=4.7, S(16)=6.4",
+        "Shows diminishing returns with increasing processors",
+        "Limitations: assumes fixed problem size, ignores overhead, doesn't account for memory hierarchy",
+        "Gustafson's Law addresses scaled problem size",
+        "Modern solutions: increase P through algorithm redesign, use specialized accelerators"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "topicId": "gpio-configuration",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "What is the primary purpose of a Schmitt trigger on a GPIO input?",
+      "options": [
+        { "key": "A", "text": "To increase the output current drive capability" },
+        { "key": "B", "text": "To provide hysteresis and clean up noisy input signals" },
+        { "key": "C", "text": "To act as an internal pull-up resistor" },
+        { "key": "D", "text": "To configure the pin as an open-drain output" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A Schmitt trigger has different voltage thresholds for low-to-high and high-to-low transitions. This hysteresis prevents the input from oscillating when the signal voltage is near the logic threshold, which is common in noisy environments or with slow-rising signals.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "A microcontroller pin is left configured as a digital input with no external connections. Why might the read value be unpredictable?",
+      "options": [
+        { "key": "A", "text": "The output driver is conflicting with the input buffer" },
+        { "key": "B", "text": "The pin is in a floating state, susceptible to electrical noise" },
+        { "key": "C", "text": "The analog multiplexer is not disabled" },
+        { "key": "D", "text": "The pin is stuck in open-drain mode" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "An unconnected input pin is said to be 'floating.' It has no defined voltage level and can easily pick up stray electromagnetic interference from the environment, causing the digital input buffer to see random high and low values.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq3",
+      "question": "Which GPIO mode is essential for implementing the I²C communication protocol?",
+      "options": [
+        { "key": "A", "text": "Push-Pull Output" },
+        { "key": "B", "text": "Analog Input" },
+        { "key": "C", "text": "Open-Drain Output" },
+        { "key": "D", "text": "Digital Input with Pull-Up" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "I²C is a multi-master bus protocol. Open-drain output allows multiple devices to drive the same line without risk of contention (where one device tries to drive high while another drives low, which would cause a short circuit). The bus relies on a single external pull-up resistor to bring the line high.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "What is the sequence of register operations to configure a GPIO pin as an output and set its initial state to high? (Assume AVR-style registers: DDRx, PORTx)",
+      "options": [
+        { "key": "A", "text": "1. Set PORTx bit. 2. Set DDRx bit." },
+        { "key": "B", "text": "1. Set DDRx bit. 2. Set PORTx bit." },
+        { "key": "C", "text": "1. Clear DDRx bit. 2. Clear PORTx bit." },
+        { "key": "D", "text": "Only setting the DDRx bit is required." }
+      ],
+      "correctAnswer": "B",
+      "explanation": "First, the Data Direction Register (DDRx) must be configured to define the pin as an output. Then, the Data Output Register (PORTx) is written to define the logic level (high or low) that the output driver will assert. Doing it in the reverse order might cause a brief glitch on the output pin.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "When configuring a pin for use as an Analog-to-Digital Converter (ADC) input, why is it often recommended to disable the digital input buffer?",
+      "options": [
+        { "key": "A", "text": "To prevent the output driver from overheating" },
+        {
+          "key": "B",
+          "text": "To reduce power consumption and prevent noise from the digital circuitry affecting the analog measurement"
+        },
+        { "key": "C", "text": "To enable the internal pull-up resistor for the ADC" },
+        { "key": "D", "text": "To allow the pin to operate at a higher voltage range" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The digital input buffer, which includes the Schmitt trigger, can inject switching noise (from its own power supply) onto the analog signal path, reducing ADC accuracy. Disabling it eliminates this noise source and also reduces the pin's power consumption, as the buffer is no longer constantly sampling the input.",
+      "difficulty": "hard"
+    }
+  ]
+}

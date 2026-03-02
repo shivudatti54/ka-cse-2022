@@ -1,0 +1,174 @@
+{
+  "topicId": "memory-layout-of-a-c-program",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the five main segments of C program memory layout with their purposes.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Text/Code Segment - stores compiled machine code instructions",
+        "Data Segment - stores initialized global and static variables",
+        "BSS Segment - stores uninitialized global and static variables (zero-initialized)",
+        "Heap Segment - used for dynamic memory allocation at runtime",
+        "Stack Segment - stores function calls, local variables, return addresses"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the difference between Stack and Heap memory? Give at least three differences.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Stack is static allocation (determined at compile time), Heap is dynamic allocation (at runtime)",
+        "Stack grows downward, Heap grows upward",
+        "Stack is managed automatically, Heap is managed by programmer",
+        "Stack has limited size, Heap is limited by system memory",
+        "Stack follows LIFO order, Heap does not have ordering",
+        "Local variables go to Stack, dynamically allocated variables go to Heap"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain what happens when a function is called in terms of Stack memory allocation.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "A new stack frame (activation record) is created",
+        "Return address is pushed onto stack",
+        "Function parameters are copied onto stack",
+        "Space for local variables is allocated",
+        "After function returns, stack frame is popped/deallocated"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Where are the following stored: (a) Global variable, (b) Static variable, (c) Local variable, (d) Dynamic memory pointer variable?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Global variable: Data segment (if initialized) or BSS (if uninitialized)",
+        "Static variable: Data segment (if initialized) or BSS (if uninitialized)",
+        "Local variable: Stack segment (automatic storage)",
+        "Dynamic memory pointer: Stack segment (the pointer itself), actual data in Heap"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is BSS segment? Why is it used in memory layout?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "BSS stands for Block Started by Symbol",
+        "Stores uninitialized global and static variables",
+        "OS automatically initializes BSS to zero",
+        "More memory-efficient than storing zeros in executable file",
+        "Reduces executable file size since only the size of uninitialized data is stored, not actual zeros"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of stack overflow and heap overflow.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Stack overflow: Stack grows beyond its allocated memory region",
+        "Usually caused by excessive recursion or large local arrays",
+        "Heap overflow: Heap exhausts available system memory",
+        "Caused by excessive dynamic allocation without freeing",
+        "Both result in program crash or undefined behavior"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the contents of a stack frame (activation record)?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Return address - where to resume after function returns",
+        "Function parameters - values passed to the function",
+        "Saved registers - register values to restore later",
+        "Local variables - automatic variables declared in function",
+        "Previous frame pointer - for stack unwinding during debugging"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "With a neat diagram, explain the complete memory layout of a C program showing all segments and their relative positions in memory addresses.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Diagram showing Text at lowest addresses (0x00000000)",
+        "Data segment above Text (initialized globals)",
+        "BSS segment above Data (uninitialized globals)",
+        "Heap above BSS, grows upward toward Stack",
+        "Stack at highest addresses, grows downward toward Heap",
+        "Gap between Heap and Stack is unused virtual address space",
+        "Mention environmental variables and command-line arguments in Stack",
+        "Mention kernel space vs user space distinction",
+        "Explain that actual addresses vary with ASLR"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C program to demonstrate different memory segments. Print addresses of various types of variables to show their storage locations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Include global variable (Data/BSS)",
+        "Include static variable (Data/BSS)",
+        "Include local variable (Stack)",
+        "Include dynamically allocated memory (Heap)",
+        "Use printf with %p to print addresses",
+        "Explain how addresses show relative positions in memory",
+        "Show that Stack addresses are high, Heap addresses are lower than Stack",
+        "Show that global/static addresses are much lower than Stack"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the memory allocation process when a C program executes, from loading to program termination.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "OS creates process and allocates virtual address space",
+        "Kernel loads program and creates memory layout",
+        "Text segment loaded with machine code",
+        "Data segment initialized with values from executable",
+        "BSS segment allocated and zero-initialized by OS",
+        "Stack created with environment and command-line arguments",
+        "Program counter starts at main() in Text segment",
+        "Function calls create/destroy stack frames",
+        "malloc() allocates from Heap, free() returns to Heap",
+        "Program termination releases all resources back to OS"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare static memory allocation and dynamic memory allocation in C with respect to memory segment used, allocation time, advantages, and disadvantages.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Static: compile-time, Dynamic: runtime",
+        "Static uses Data/Stack, Dynamic uses Heap",
+        "Static: fixed size, Dynamic: size can change",
+        "Static: automatic management (no free needed), Dynamic: manual management (must free)",
+        "Static advantages: faster, no memory leaks, simpler",
+        "Static disadvantages: fixed size, may waste memory",
+        "Dynamic advantages: flexible, can handle unknown sizes at compile time",
+        "Dynamic disadvantages: slower, memory leaks possible, fragmentation"
+      ]
+    }
+  ]
+}

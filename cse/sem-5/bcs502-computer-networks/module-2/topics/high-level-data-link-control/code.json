@@ -1,0 +1,45 @@
+{
+  "topicId": "high-level-data-link-control",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "HDLC Bit Stuffing Algorithm",
+      "description": "Algorithm to perform bit stuffing on data before transmission",
+      "code": "FUNCTION bitStuff(data):\n stuffed = \"\"\n count = 0\n FOR each bit in data:\n stuffed = stuffed + bit\n IF bit == '1':\n count = count + 1\n ELSE:\n count = 0\n IF count == 5:\n stuffed = stuffed + '0'\n count = 0\n RETURN stuffed",
+      "explanation": "The sender inserts a '0' after every five consecutive '1' bits to prevent the flag sequence (01111110) from appearing in the data stream.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "HDLC Frame Reception and Destuffing",
+      "description": "Algorithm to destuff received data and verify frame integrity",
+      "code": "FUNCTION destuffAndValidate(stuffedData):\n data = \"\"\n count = 0\n FOR each bit in stuffedData:\n IF bit == '1':\n count = count + 1\n ELSE:\n count = 0\n data = data + bit\n IF count == 5:\n # Skip the next '0' (stuffed bit)\n count = 0\n ELSE:\n IF bit == '0':\n data = data + bit\n RETURN data",
+      "explanation": "The receiver removes '0' bits that follow five consecutive '1' bits, restoring the original data stream.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "HDLC FCS Generation (CRC-CCITT)",
+      "description": "Algorithm to generate 16-bit Frame Check Sequence",
+      "code": "FUNCTION generateFCS(data):\n # CRC-CCITT polynomial: x^16 + x^12 + x^5 + 1\n polynomial = 0x1021\n crc = 0xFFFF # Initial value\n FOR each byte in data:\n crc = crc XOR (byte << 8)\n FOR i = 0 to 7:\n IF (crc & 0x8000) != 0:\n crc = (crc << 1) XOR polynomial\n ELSE:\n crc = crc << 1\n crc = crc AND 0xFFFF\n RETURN crc",
+      "explanation": "FCS uses CRC-CCITT polynomial for robust error detection. Both sender and receiver compute FCS; mismatch indicates transmission error.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "HDLC Sliding Window Protocol",
+      "description": "Algorithm for managing send and receive windows in HDLC",
+      "code": "CONSTANT WINDOW_SIZE = 7\nFUNCTION sendFrame(seqNum, data):\n IF (seqNum - lastAckedSeq) < WINDOW_SIZE:\n frame = createFrame(seqNum, data)\n send(frame)\n startTimer(seqNum)\n RETURN TRUE\n ELSE:\n RETURN FALSE # Window full, must wait\n\nFUNCTION handleAck(receiveSeq):\n IF receiveSeq > lastAckedSeq:\n stopTimer(lastAckedSeq)\n lastAckedSeq = receiveSeq\n RETURN TRUE\n RETURN FALSE\n\nFUNCTION handleTimeout(seqNum):\n # Go-back-N: retransmit from seqNum\n FOR i = seqNum to lastSentSeq:\n retransmit(i)",
+      "explanation": "HDLC uses sliding window protocol for efficient data transfer. Send window controls unacknowledged frames; receive window accepts in-order frames.",
+      "timeComplexity": "O(n) for retransmission",
+      "spaceComplexity": "O(WINDOW_SIZE)"
+    }
+  ]
+}

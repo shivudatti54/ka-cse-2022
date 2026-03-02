@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Check if Two Graphs are Isomorphic",
+    "description": "Basic algorithm to check isomorphism between two graphs with same vertices and edges",
+    "code": "// Simple isomorphism check (naive approach)\nFUNCTION IsIsomorphic(G1, G2):\n IF |V(G1)| != |V(G2)| OR |E(G1)| != |E(G2)|:\n RETURN false\n \n // Check degree sequences match\n degSeq1 = Sort([degree(v) for v in V(G1)])\n degSeq2 = Sort([degree(v) for v in V(G2)])\n \n IF degSeq1 != degSeq2:\n RETURN false\n \n // For small graphs, try all permutations\n FOR each permutation P of V(G2):\n IF IsAdjacencyPreserving(G1, G2, P):\n RETURN true\n \n RETURN false\n\nFUNCTION IsAdjacencyPreserving(G1, G2, P):\n FOR each edge (u,v) in E(G1):\n IF edge (P[u], P[v]) not in E(G2):\n RETURN false\n RETURN true",
+    "explanation": "This algorithm checks necessary conditions first (vertex count, edge count, degree sequence), then attempts to find a bijection that preserves adjacency. The naive approach has O(n! \u00d7 m) complexity, making it impractical for large graphs.",
+    "complexity": {
+      "time": "O(n! \u00d7 m)",
+      "space": "O(n + m)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Find All Paths Between Two Vertices",
+    "description": "Algorithm to find all simple paths between two vertices using backtracking",
+    "code": "// Find all paths from source to destination\nFUNCTION FindAllPaths(G, source, dest):\n paths = []\n currentPath = [source]\n visited = Set()\n DFS(source, dest, currentPath, visited, paths)\n RETURN paths\n\nFUNCTION DFS(current, dest, path, visited, paths):\n IF current == dest:\n paths.add(Copy(path))\n RETURN\n \n FOR each neighbor v of current:\n IF v not in visited:\n visited.add(v)\n path.append(v)\n DFS(v, dest, path, visited, paths)\n path.removeLast()\n visited.remove(v)\n\n// Example usage:\n// G with vertices A,B,C,D,E\n// FindAllPaths(G, 'A', 'D') returns all paths from A to D",
+    "explanation": "This backtracking algorithm explores all possible paths from source to destination, avoiding cycles by tracking visited vertices. Each path found is a simple path (no vertex repeats).",
+    "complexity": {
+      "time": "O(V! ) in worst case",
+      "space": "O(V) for recursion stack"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Check for Cycle Using DFS",
+    "description": "Algorithm to detect if a cycle exists in an undirected graph",
+    "code": "// Detect cycle in undirected graph\nFUNCTION HasCycle(G):\n visited = Set()\n parent = Dictionary()\n \n FOR each vertex v in V(G):\n IF v not in visited:\n IF DFSHasCycle(G, v, visited, parent):\n RETURN true\n RETURN false\n\nFUNCTION DFSHasCycle(G, u, visited, parent):\n visited.add(u)\n \n FOR each neighbor v of u:\n IF v not in visited:\n parent[v] = u\n IF DFSHasCycle(G, v, visited, parent):\n RETURN true\n ELSE IF v != parent.get(u):\n // Found a back edge - cycle exists\n RETURN true\n \n RETURN false\n\n// Example: In graph with triangle, DFS from A finds B and C,\n// when exploring from B, finds C which is visited and not parent -> cycle",
+    "explanation": "The algorithm uses DFS with parent tracking. A cycle exists if we find a visited vertex that is not the parent of current vertex. This works for undirected graphs.",
+    "complexity": {
+      "time": "O(V + E)",
+      "space": "O(V)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "pseudocode",
+    "title": "Generate All Subgraphs of a Graph",
+    "description": "Algorithm to generate all possible subgraphs of a given graph",
+    "code": "// Generate all subgraphs of G\nFUNCTION GenerateSubgraphs(G):\n n = |V(G)|\n subgraphs = []\n vertices = List(V(G))\n \n // For each subset of vertices (excluding empty)\n FOR subsetMask from 1 to (2^n) - 1:\n // Get vertex subset\n Vsub = []\n FOR i from 0 to n-1:\n IF (subsetMask >> i) & 1 == 1:\n Vsub.add(vertices[i])\n \n // Create induced subgraph on Vsub\n Esub = []\n FOR each edge (u,v) in E(G):\n IF u in Vsub AND v in Vsub:\n Esub.add((u,v))\n \n subgraphs.add(Graph(Vsub, Esub))\n \n RETURN subgraphs\n\n// To generate spanning subgraphs:\n// Fix vertex set = all vertices, iterate through edge subsets\n// Number of spanning subgraphs = 2^|E|",
+    "explanation": "This generates all induced subgraphs by iterating through all vertex subsets. For spanning subgraphs, fix all vertices and iterate through edge subsets. Total induced subgraphs = 2^n - 1 (excluding empty).",
+    "complexity": {
+      "time": "O(2^n \u00d7 E)",
+      "space": "O(2^n \u00d7 E)"
+    }
+  }
+]

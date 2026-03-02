@@ -1,0 +1,45 @@
+{
+  "topicId": "hash-functions-mac",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Hash Implementation using hashlib",
+      "description": "Demonstrates SHA-256 hashing in Python with salt for password storage",
+      "code": "import hashlib\nimport secrets\n\ndef hash_password(password, salt=None):\n    if salt is None:\n        salt = secrets.token_hex(16)\n    \n    # Multiple iterations for security (key stretching)\n    result = password + salt\n    for i in range(100000):\n        result = hashlib.sha256(result.encode()).hexdigest()\n    \n    return salt, result\n\ndef verify_password(password, salt, stored_hash):\n    computed_hash = hash_password(password, salt)[1]\n    return computed_hash == stored_hash\n\n# Usage example\nsalt, hashed = hash_password(\"my_secure_password\")\nprint(f\"Salt: {salt}\")\nprint(f\"Hash: {hashed}\")\nprint(f\"Verification: {verify_password('my_secure_password', salt, hashed)}\")",
+      "explanation": "Shows proper password hashing with salt and iteration. Uses SHA-256 with 100,000 rounds to slow brute-force attacks. Salt ensures rainbow table resistance.",
+      "timeComplexity": "O(n \u00d7 r) where n=input size, r=iterations",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "HMAC Implementation using hashlib",
+      "description": "Demonstrates HMAC-SHA256 for message authentication",
+      "code": "import hmac\nimport hashlib\n\ndef generate_hmac(message, key):\n    \"\"\"Generate HMAC-SHA256 tag for message\"\"\"\n    return hmac.new(\n        key.encode(),\n        message.encode(),\n        hashlib.sha256\n    ).hexdigest()\n\ndef verify_hmac(message, key, tag):\n    \"\"\"Verify HMAC tag using constant-time comparison\"\"\"\n    computed_tag = generate_hmac(message, key)\n    # Use hmac.compare_constant_time for timing attack prevention\n    return hmac.compare_digest(computed_tag, tag)\n\n# Usage\nkey = \"shared_secret_key_123\"\nmessage = \"Transfer $1000 to account 98765\"\n\ntag = generate_hmac(message, key)\nprint(f\"Message: {message}\")\nprint(f\"HMAC Tag: {tag}\")\nprint(f\"Verification: {verify_hmac(message, key, tag)}\")\nprint(f\"Wrong key test: {verify_hmac(message, 'wrong_key', tag)}\")",
+      "explanation": "Demonstrates HMAC generation and verification. Uses constant-time comparison to prevent timing attacks. Key and message can be any length.",
+      "timeComplexity": "O(n) where n=message length",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "MD5 Hash Implementation",
+      "description": "Basic MD5 hash implementation demonstration in C",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n// Note: In production, use OpenSSL or mhash library\n// This is a conceptual demonstration\n\n/* MD5 Context Structure */\ntypedef struct {\n    unsigned int count[2];\n    unsigned int state[4];\n    unsigned char buffer[64];\n} MD5_CTX;\n\n/* MD5 Constants */\n#define F(x, y, z) ((x & y) | (~x & z))\n#define G(x, y, z) ((x & z) | (y & ~z))\n#define H(x, y, z) (x ^ y ^ z)\n#define I(x, y, z) (y ^ (x | ~z))\n\nvoid MD5Init(MD5_CTX *context) {\n    context->count[0] = context->count[1] = 0;\n    context->state[0] = 0x67452301;\n    context->state[1] = 0xefcdab89;\n    context->state[2] = 0x98badcfe;\n    context->state[3] = 0x10325476;\n}\n\n/* Example usage would call MD5Update and MD5Final */\nint main() {\n    MD5_CTX context;\n    MD5Init(&context);\n    printf(\"MD5 initialized - state: %08x %08x %08x %08x\\n\",\n           context.state[0], context.state[1], \n           context.state[2], context.state[3]);\n    printf(\"WARNING: MD5 is cryptographically broken!\\n\");\n    printf(\"Use SHA-256 or SHA-3 for security.\\n\");\n    return 0;\n}",
+      "explanation": "Shows MD5 structure but warns about insecurity. In practice, use established libraries like OpenSSL. MD5 collisions are easily generated.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "MAC Comparison - HMAC vs CMAC",
+      "description": "Java implementation showing both HMAC and CMAC for message authentication",
+      "code": "import javax.crypto.Mac;\nimport javax.crypto.Cipher;\nimport javax.crypto.spec.SecretKeySpec;\nimport javax.crypto.spec.IvParameterSpec;\nimport java.security.InvalidKeyException;\nimport java.security.NoSuchAlgorithmException;\n\npublic class MACComparison {\n    \n    // HMAC-SHA256\n    public static String generateHMAC(String message, String key) \n            throws NoSuchAlgorithmException, InvalidKeyException {\n        Mac mac = Mac.getInstance(\"HmacSHA256\");\n        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), \"HmacSHA256\");\n        mac.init(secretKey);\n        byte[] hmacBytes = mac.doFinal(message.getBytes());\n        return bytesToHex(hmacBytes);\n    }\n    \n    // CMAC (using AES)\n    public static String generateCMAC(String message, String key) \n            throws Exception {\n        // CMAC uses AES in CBC mode with proper key derivation\n        Cipher cipher = Cipher.getInstance(\"AES/ECB/NoPadding\");\n        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), \"AES\");\n        cipher.init(Cipher.ENCRYPT_MODE, secretKey);\n        \n        // Pad message to 16-byte block\n        byte[] messageBytes = message.getBytes();\n        byte[] padded = new byte[16];\n        System.arraycopy(messageBytes, 0, padded, 0, \n                        Math.min(messageBytes.length, 16));\n        \n        byte[] cmacBytes = cipher.doFinal(padded);\n        return bytesToHex(cmacBytes);\n    }\n    \n    private static String bytesToHex(byte[] bytes) {\n        StringBuilder sb = new StringBuilder();\n        for (byte b : bytes) {\n            sb.append(String.format(\"%02x\", b));\n        }\n        return sb.toString();\n    }\n    \n    public static void main(String[] args) throws Exception {\n        String message = \"Important Message\";\n        String key = \"my_secret_key_12345678901234\";\n        \n        String hmac = generateHMAC(message, key);\n        String cmac = generateCMAC(message, key);\n        \n        System.out.println(\"HMAC-SHA256: \" + hmac);\n        System.out.println(\"CMAC-AES:    \" + cmac);\n        System.out.println(\"Both provide integrity + authentication\");\n    }\n}",
+      "explanation": "Shows Java implementations of both HMAC (hash-based) and CMAC (cipher-based). HMAC is generally preferred when hash functions are available.",
+      "timeComplexity": "O(n) for both",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

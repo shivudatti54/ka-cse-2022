@@ -1,0 +1,45 @@
+{
+  "topicId": "multiple-linear-regression",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Multiple Linear Regression using NumPy",
+      "description": "Implementation of MLR using normal equations in Python",
+      "code": "import numpy as np\n\ndef multiple_linear_regression(X, y):\n    # X: matrix of predictors (n samples x p features)\n    # y: target vector (n samples,)\n    # Add intercept column (column of ones)\n    n = X.shape[0]\n    X_b = np.column_stack([np.ones((n, 1)), X])\n    \n    # OLS solution: \u03b2 = (X'X)\u207b\u00b9X'y\n    beta = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y\n    \n    # Predictions\n    y_pred = X_b @ beta\n    \n    # Calculate R-squared\n    ss_res = np.sum((y - y_pred) ** 2)\n    ss_tot = np.sum((y - np.mean(y)) ** 2)\n    r_squared = 1 - (ss_res / ss_tot)\n    \n    return beta, y_pred, r_squared\n\n# Example usage\nX = np.array([[1000, 3, 10, 5],\n              [1500, 4, 5, 3],\n              [1200, 3, 8, 4],\n              [800, 2, 15, 8]])\ny = np.array([250000, 350000, 280000, 180000])\n\nbeta, predictions, r2 = multiple_linear_regression(X, y)\nprint(f\"Coefficients: {beta}\")\nprint(f\"Predictions: {predictions}\")\nprint(f\"R-squared: {r2}\")",
+      "explanation": "This implementation uses the normal equation \u03b2 = (X'X)\u207b\u00b9X'y to compute OLS estimates. The intercept is added as a column of ones. R-squared measures model fit.",
+      "timeComplexity": "O(n \u00d7 p\u00b2 + p\u00b3)",
+      "spaceComplexity": "O(n \u00d7 p + p\u00b2)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Gradient Descent for Multiple Linear Regression",
+      "description": "Iterative optimization approach to find optimal coefficients",
+      "code": "import numpy as np\n\ndef gradient_descent_mlr(X, y, learning_rate=0.01, n_iterations=1000):\n    # X: features (without intercept), y: target\n    n_samples, n_features = X.shape\n    \n    # Initialize coefficients to zero\n    beta = np.zeros(n_features + 1)  # +1 for intercept\n    \n    # Add bias term (intercept)\n    X_b = np.column_stack([np.ones((n_samples, 1)), X])\n    \n    for i in range(n_iterations):\n        # Predictions\n        y_pred = X_b @ beta\n        \n        # Calculate gradient\n        gradient = (2/n_samples) * X_b.T @ (y_pred - y)\n        \n        # Update coefficients\n        beta = beta - learning_rate * gradient\n    \n    # Final predictions\n    y_pred = X_b @ beta\n    \n    # Calculate metrics\n    mse = np.mean((y - y_pred) ** 2)\n    rmse = np.sqrt(mse)\n    \n    return beta, y_pred, rmse\n\n# Example usage\nX = np.array([[1000, 3, 10],\n              [1500, 4, 5],\n              [1200, 3, 8],\n              [800, 2, 15]])\ny = np.array([250000, 350000, 280000, 180000])\n\nbeta, predictions, rmse = gradient_descent_mlr(X, y, learning_rate=0.0000001, n_iterations=10000)\nprint(f\"Coefficients (intercept, \u03b21, \u03b22, \u03b23): {beta}\")\nprint(f\"RMSE: {rmse}\")",
+      "explanation": "Gradient descent iteratively updates coefficients by moving in the direction of the negative gradient of the cost function (MSE). Learning rate controls step size.",
+      "timeComplexity": "O(n \u00d7 p \u00d7 iterations)",
+      "spaceComplexity": "O(n \u00d7 p + p)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "VIF Calculation for Multicollinearity Detection",
+      "description": "Code to calculate Variance Inflation Factor for each predictor",
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\n\ndef calculate_vif(X, feature_names):\n    \"\"\"\n    Calculate Variance Inflation Factor for each feature.\n    VIF > 10 indicates severe multicollinearity.\n    \"\"\"\n    n_features = X.shape[1]\n    vif_values = []\n    \n    for i in range(n_features):\n        # Get all columns except column i\n        X_other = np.delete(X, i, axis=1)\n        y_vif = X[:, i]\n        \n        # Fit linear regression: X_i ~ X_other\n        model = LinearRegression()\n        model.fit(X_other, y_vif)\n        \n        # Calculate R-squared\n        r_squared = model.score(X_other, y_vif)\n        \n        # Calculate VIF\n        if r_squared < 1:\n            vif = 1 / (1 - r_squared)\n        else:\n            vif = float('inf')\n        \n        vif_values.append(vif)\n    \n    return dict(zip(feature_names, vif_values))\n\n# Example usage\nX = np.array([[1000, 3, 10, 5],\n              [1500, 4, 5, 3],\n              [1200, 3, 8, 4],\n              [800, 2, 15, 8],\n              [1100, 3, 9, 4]])\n\nfeature_names = ['Area', 'Bedrooms', 'Age', 'Distance']\nvif = calculate_vif(X, feature_names)\n\nprint(\"VIF Values:\")\nfor feature, value in vif.items():\n    status = \"HIGH\" if value > 10 else \"OK\"\n    print(f\"{feature}: {value:.2f} - {status}\")",
+      "explanation": "VIF measures how much the variance of a coefficient is inflated due to multicollinearity. It is calculated by regressing each predictor on all other predictors. VIF = 1/(1-R\u00b2) where R\u00b2 is from this regression.",
+      "timeComplexity": "O(p\u00b2 \u00d7 n)",
+      "spaceComplexity": "O(n \u00d7 p)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Adjusted R-squared and Model Comparison",
+      "description": "Calculate adjusted R-squared and compare models with different numbers of predictors",
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\n\ndef calculate_metrics(X, y, model):\n    \"\"\"Calculate R-squared and Adjusted R-squared.\"\"\"\n    n = len(y)\n    p = X.shape[1]  # Number of predictors\n    \n    # R-squared\n    r_squared = model.score(X, y)\n    \n    # Adjusted R-squared\n    adj_r_squared = 1 - (1 - r_squared) * (n - 1) / (n - p - 1)\n    \n    # Predictions\n    y_pred = model.predict(X)\n    \n    # RMSE\n    rmse = np.sqrt(np.mean((y - y_pred) ** 2))\n    \n    return r_squared, adj_r_squared, rmse\n\n# Example: Compare models with different predictors\nX_full = np.array([[1000, 3, 10, 5],\n                   [1500, 4, 5, 3],\n                   [1200, 3, 8, 4],\n                   [800, 2, 15, 8],\n                   [1100, 3, 9, 4],\n                   [900, 2, 12, 6]])\ny = np.array([250000, 350000, 280000, 180000, 260000, 200000])\n\n# Full model (all 4 predictors)\nmodel_full = LinearRegression()\nmodel_full.fit(X_full, y)\nr2_full, adj_r2_full, rmse_full = calculate_metrics(X_full, y, model_full)\n\n# Reduced model (2 predictors only)\nX_reduced = X_full[:, :2]\nmodel_reduced = LinearRegression()\nmodel_reduced.fit(X_reduced, y)\nr2_red, adj_r2_red, rmse_red = calculate_metrics(X_reduced, y, model_reduced)\n\nprint(\"Full Model (4 predictors):\")\nprint(f\"  R\u00b2: {r2_full:.4f}, Adjusted R\u00b2: {adj_r2_full:.4f}, RMSE: {rmse_full:.2f}\")\n\nprint(\"\\nReduced Model (2 predictors):\")\nprint(f\"  R\u00b2: {r2_red:.4f}, Adjusted R\u00b2: {adj_r2_red:.4f}, RMSE: {rmse_red:.2f}\")\n\nprint(\"\\nConclusion:\")\nif adj_r2_full > adj_r2_red:\n    print(\"Full model is preferred based on Adjusted R\u00b2\")\nelse:\n    print(\"Reduced model is preferred (less complex, similar fit)\")",
+      "explanation": "This code demonstrates why Adjusted R-squared is important. Adding predictors always increases R\u00b2 but may decrease or not affect Adjusted R\u00b2 if predictors are not useful.",
+      "timeComplexity": "O(n \u00d7 p\u00b2)",
+      "spaceComplexity": "O(n \u00d7 p)"
+    }
+  ]
+}

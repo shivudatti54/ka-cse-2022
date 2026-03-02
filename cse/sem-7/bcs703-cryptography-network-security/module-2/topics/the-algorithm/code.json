@@ -1,0 +1,35 @@
+{
+  "topicId": "the-algorithm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Basic LCG Implementation",
+      "description": "Implementation of Linear Congruential Generator with configurable parameters",
+      "code": "class LCG:\n def __init__(self, seed, a, c, m):\n self.state = seed\n self.a = a\n self.c = c\n self.m = m\n \n def next(self):\n self.state = (self.a * self.state + self.c) % self.m\n return self.state\n \n def next_float(self):\n return self.next() / self.m\n\n# Example: Park-Miller minimal standard\nlcg = LCG(seed=1, a=16807, c=0, m=2147483647)\nfor i in range(10):\n print(lcg.next())",
+      "explanation": "Standard LCG implementation showing the recurrence relation. Park-Miller uses prime modulus 2\u00b3\u00b9-1 and multiplier 16807 (primitive root) to achieve period m-1.",
+      "timeComplexity": "O(1) per output",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Hull-Dobell Verification",
+      "description": "Code to verify if LCG parameters satisfy Hull-Dobell conditions for full period",
+      "code": "import math\n\ndef prime_factors(n):\n factors = []\n d = 2\n while d * d <= n:\n while n % d == 0:\n factors.append(d)\n n //= d\n d += 1\n if n > 1:\n factors.append(n)\n return factors\n\ndef hull_dobell_full_period(a, c, m):\n # Condition 1: gcd(c, m) = 1\n if math.gcd(c, m) != 1:\n return False, \"gcd(c,m) \u2260 1\"\n \n # Condition 2: prime factors of m divide (a-1)\n factors = prime_factors(m)\n for p in factors:\n if (a - 1) % p != 0:\n return False, f\"p={p} does not divide (a-1)\"\n \n # Condition 3: if 4|m then 4|(a-1)\n if m % 4 == 0 and (a - 1) % 4 != 0:\n return False, \"4|m but 4 \u2224 (a-1)\"\n \n return True, \"Full period achievable\"\n\n# Test with m=31, a=3, c=1\nprint(hull_dobell_full_period(3, 1, 31))",
+      "explanation": "Implements Hull-Dobell Theorem conditions to check if LCG can achieve maximum period. Returns boolean and reason for failure if not achievable.",
+      "timeComplexity": "O(\u221am) for prime factorization",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "LCG Parameter Recovery Attack",
+      "description": "Demonstrates how to recover LCG parameters from consecutive outputs (educational purpose)",
+      "code": "def recover_lcg_params(x0, x1, x2):\n \"\"\"\n Recover parameters (a, c, m) from 3 consecutive outputs.\n Uses: x1 = (a*x0 + c) mod m\n x2 = (a*x1 + c) mod m\n Subtracting: x2 - x1 = a*(x1 - x0) mod m\n \n This is a simplified version. Full attack uses lattice reduction.\n \"\"\"\n # Solve for a: a = (x2 - x1) / (x1 - x0) mod m\n # Without knowing m, this is under-determined\n \n # For demonstration: find m as GCD of differences\n d1 = x1 - x0\n d2 = x2 - x1\n m_candidate = abs(d2 - d1) # Simplified estimate\n \n # In practice: use lattice reduction for large parameters\n print(f\"Given: X\u2080={x0}, X\u2081={x1}, X\u2082={x2}\")\n print(f\"Differences: d1={d1}, d2={d2}\")\n print(\"Full attack requires lattice reduction (LLL algorithm)\")\n\n# Example with known parameters\n# m=31, a=3, c=0, seed=1\n# Sequence: 1, 3, 9, 27, 19, ...\nrecover_lcg_params(1, 3, 9)",
+      "explanation": "Shows the basic idea behind LCG parameter recovery. Real attacks use Coppersmith's algorithm or LLL lattice reduction. This explains why LCGs are cryptographically insecure.",
+      "timeComplexity": "O(k\u00b3) for lattice reduction where k is parameter dimension",
+      "spaceComplexity": "O(k\u00b2)"
+    }
+  ]
+}

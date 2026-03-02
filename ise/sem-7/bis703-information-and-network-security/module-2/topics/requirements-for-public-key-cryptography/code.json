@@ -1,0 +1,35 @@
+{
+  "topicId": "requirements-for-public-key-cryptography",
+  "examples": [
+    {
+      "id": "key-generation",
+      "title": "Key Pair Generation",
+      "description": "Generate ECDSA key pair using secp256k1",
+      "language": "python",
+      "code": "from ecdsa import SigningKey, SECP256k1\nimport hashlib\nimport os\n\ndef generate_key_pair():\n    # Generate private key from secure random\n    private_key = SigningKey.generate(curve=SECP256k1)\n    public_key = private_key.get_verifying_key()\n    \n    return {\n        'private_key': private_key.to_string().hex(),\n        'public_key': public_key.to_string().hex(),\n        'private_key_bytes': len(private_key.to_string()),\n        'public_key_bytes': len(public_key.to_string())\n    }\n\nkeys = generate_key_pair()\nprint(f\"Private Key ({keys['private_key_bytes']} bytes):\")\nprint(f\"  {keys['private_key'][:32]}...\")\nprint(f\"\\nPublic Key ({keys['public_key_bytes']} bytes):\")\nprint(f\"  {keys['public_key'][:32]}...\")",
+      "explanation": "Private keys are 32 bytes (256 bits) of secure random data. Public keys are 64 bytes (uncompressed) derived via elliptic curve multiplication on secp256k1.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "bitcoin-address",
+      "title": "Bitcoin Address Generation",
+      "description": "Generate Bitcoin address from public key",
+      "language": "python",
+      "code": "import hashlib\n\ndef hash160(data: bytes) -> bytes:\n    \"\"\"SHA-256 followed by RIPEMD-160.\"\"\"\n    sha256 = hashlib.sha256(data).digest()\n    ripemd160 = hashlib.new('ripemd160', sha256).digest()\n    return ripemd160\n\ndef to_base58(data: bytes) -> str:\n    \"\"\"Simplified Base58 encoding.\"\"\"\n    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'\n    num = int.from_bytes(data, 'big')\n    result = ''\n    while num > 0:\n        num, remainder = divmod(num, 58)\n        result = alphabet[remainder] + result\n    # Handle leading zeros\n    for byte in data:\n        if byte == 0:\n            result = '1' + result\n        else:\n            break\n    return result\n\ndef generate_bitcoin_address(public_key_hex: str) -> str:\n    # Add 0x04 prefix for uncompressed public key\n    pub_key_bytes = bytes.fromhex('04' + public_key_hex)\n    \n    # Hash160: SHA256 then RIPEMD160\n    h160 = hash160(pub_key_bytes)\n    \n    # Add version byte (0x00 for mainnet)\n    versioned = b'\\x00' + h160\n    \n    # Calculate checksum (first 4 bytes of double SHA256)\n    checksum = hashlib.sha256(hashlib.sha256(versioned).digest()).digest()[:4]\n    \n    # Base58 encode\n    return to_base58(versioned + checksum)\n\n# Example (simulated public key)\npub_key = 'a' * 128  # 64 bytes in hex\naddress = generate_bitcoin_address(pub_key)\nprint(f\"Bitcoin Address: {address}\")",
+      "explanation": "Bitcoin addresses use Hash160 (SHA256 + RIPEMD160), version byte, checksum, and Base58 encoding. This creates recognizable addresses starting with '1' or '3'.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "ethereum-address",
+      "title": "Ethereum Address Generation",
+      "description": "Generate Ethereum address from public key",
+      "language": "python",
+      "code": "from Crypto.Hash import keccak\n\ndef keccak256(data: bytes) -> bytes:\n    \"\"\"Keccak-256 hash (Ethereum's hash function).\"\"\"\n    k = keccak.new(digest_bits=256)\n    k.update(data)\n    return k.digest()\n\ndef generate_ethereum_address(public_key_hex: str) -> str:\n    \"\"\"\n    Generate Ethereum address from public key.\n    Public key should be 64 bytes (without 04 prefix).\n    \"\"\"\n    pub_key_bytes = bytes.fromhex(public_key_hex)\n    \n    # Keccak-256 hash of public key\n    hash_bytes = keccak256(pub_key_bytes)\n    \n    # Take last 20 bytes\n    address_bytes = hash_bytes[-20:]\n    \n    # Add 0x prefix\n    return '0x' + address_bytes.hex()\n\n# Checksum encoding (EIP-55)\ndef checksum_encode(address: str) -> str:\n    address = address.lower().replace('0x', '')\n    hash_str = keccak256(address.encode()).hex()\n    \n    result = '0x'\n    for i, char in enumerate(address):\n        if char.isdigit():\n            result += char\n        elif int(hash_str[i], 16) >= 8:\n            result += char.upper()\n        else:\n            result += char.lower()\n    return result\n\n# Example\npub_key = 'a' * 128  # 64 bytes\naddr = generate_ethereum_address(pub_key)\nprint(f\"Ethereum Address: {addr}\")\nprint(f\"With Checksum: {checksum_encode(addr)}\")",
+      "explanation": "Ethereum addresses are the last 20 bytes of Keccak-256 hash of the public key, prefixed with '0x'. EIP-55 adds checksum via mixed-case encoding.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

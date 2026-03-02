@@ -1,0 +1,35 @@
+{
+  "topicId": "virtual-machines",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Simple Virtual Machine Monitor Pseudocode",
+      "description": "Basic pseudocode demonstrating VMM functions of resource allocation and VM management",
+      "code": "VMM-CREATE-VM(config)\nBEGIN\n  CREATE newVM\n  newVM.vcpu = config.cpuCount\n  newVM.memory = config.memorySize\n  newVM.disk = config.diskSize\n  newVM.state = STOPPED\n  RETURN newVM\nEND\n\nVMM-START-VM(vm)\nBEGIN\n  IF vm.state = STOPPED THEN\n    ALLOCATE-HARDWARE-RESOURCES(vm)\n    LOAD-GUEST-OS(vm)\n    vm.state = RUNNING\n    SCHEDULE-VM(vm)\n  ENDIF\nEND\n\nVMM-SCHEDULE-VM(vm)\nBEGIN\n  WHILE vm.state = RUNNING\n    DISPATCH-VM(vm)\n    SAVE-VM-CONTEXT(vm)\n    RUNNING-VMs = GET-RUNNING-VMS()\n    NEXT-VM = SELECT-SCHEDULING-ALGORITHM(RUNNING-VMs)\n  ENDWHILE\nEND",
+      "explanation": "This pseudocode demonstrates basic VMM operations: creating VMs with specified resources, starting VMs by loading guest OS, and CPU scheduling among multiple running VMs.",
+      "timeComplexity": "O(n) for scheduling where n is number of VMs",
+      "spaceComplexity": "O(n) for maintaining VM states",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "VM Resource Allocation Simulation in Python",
+      "description": "Python code simulating how hypervisor allocates CPU and memory resources to multiple VMs",
+      "code": "class VirtualMachine:\n    def __init__(self, vm_id, cpu_cores, memory_mb):\n        self.vm_id = vm_id\n        self.cpu_cores = cpu_cores\n        self.memory_mb = memory_mb\n        self.state = 'STOPPED'\n\nclass Hypervisor:\n    def __init__(self, total_cpu_cores, total_memory_mb):\n        self.total_cpu_cores = total_cpu_cores\n        self.total_memory_mb = total_memory_mb\n        self.available_cpu = total_cpu_cores\n        self.available_memory = total_memory_mb\n        self.vms = []\n\n    def create_vm(self, vm_id, cpu_cores, memory_mb):\n        if (cpu_cores <= self.available_cpu and \n            memory_mb <= self.available_memory):\n            vm = VirtualMachine(vm_id, cpu_cores, memory_mb)\n            self.vms.append(vm)\n            self.available_cpu -= cpu_cores\n            self.available_memory -= memory_mb\n            return f\"VM {vm_id} created successfully\"\n        return f\"Insufficient resources for VM {vm_id}\"\n\n    def start_vm(self, vm_id):\n        for vm in self.vms:\n            if vm.vm_id == vm_id:\n                vm.state = 'RUNNING'\n                return f\"VM {vm_id} started\"\n        return f\"VM {vm_id} not found\"\n\n# Example Usage\nhv = Hypervisor(total_cpu_cores=16, total_memory_mb=65536)\nprint(hv.create_vm(\"VM1\", 4, 8192))\nprint(hv.create_vm(\"VM2\", 4, 8192))\nprint(hv.start_vm(\"VM1\"))",
+      "explanation": "This Python code simulates a basic hypervisor managing CPU and memory resources. It demonstrates resource allocation, tracking available resources, and VM state management.",
+      "timeComplexity": "O(n) for VM lookup and resource checks",
+      "spaceComplexity": "O(n) for storing n VM objects",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "VM Snapshot Management Pseudocode",
+      "description": "Pseudocode for creating and restoring VM snapshots",
+      "code": "SNAPSHOT-CREATE(vm, snapshotName)\nBEGIN\n  snapshot = ALLOCATE-SNAPSHOT-STRUCT()\n  snapshot.name = snapshotName\n  snapshot.timestamp = CURRENT-TIME()\n  snapshot.memoryState = CAPTURE-VM-MEMORY(vm)\n  snapshot.diskState = COPY-VM-DISK(vm.disk)\n  snapshot.cpuState = SAVE-VM-REGISTERS(vm)\n  vm.snapshots.add(snapshot)\n  RETURN snapshot\nEND\n\nSNAPSHOT-RESTORE(vm, snapshotName)\nBEGIN\n  snapshot = FIND-SNAPSHOT(vm.snapshots, snapshotName)\n  IF snapshot = NULL THEN\n    RETURN \"Snapshot not found\"\n  ENDIF\n  \n  PAUSE-VM(vm)\n  RESTORE-VM-REGISTERS(vm, snapshot.cpuState)\n  RESTORE-VM-MEMORY(vm, snapshot.memoryState)\n  COPY-DISK-IMAGE(vm.disk, snapshot.diskState)\n  vm.state = snapshot.savedState\n  RETURN \"Snapshot restored successfully\"\nEND\n\nSNAPSHOT-LIST(vm)\nBEGIN\n  FOR EACH snap IN vm.snapshots\n    PRINT snap.name, snap.timestamp\n  ENDFOR\nEND",
+      "explanation": "This pseudocode shows VM snapshot operations: creating snapshots by capturing memory, disk, and CPU state; restoring snapshots to return VM to previous state; and listing available snapshots.",
+      "timeComplexity": "O(1) for create/restore (excluding I/O), O(n) for list with n snapshots",
+      "spaceComplexity": "O(vm.memory + vm.disk) for storing snapshot data",
+      "language": "pseudocode"
+    }
+  ]
+}

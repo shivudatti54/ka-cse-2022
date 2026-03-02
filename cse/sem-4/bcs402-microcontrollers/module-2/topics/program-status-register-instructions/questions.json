@@ -1,0 +1,156 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the purpose and function of the Program Status Register (PSR) in ARM microcontrollers. List the four condition flags and their meanings.",
+    "expectedPoints": [
+      "PSR contains processor state including condition flags, mode bits, interrupt enable bits",
+      "N (Negative) flag: set when result is negative (signed)",
+      "Z (Zero) flag: set when result is zero",
+      "C (Carry) flag: set when unsigned carry/borrow occurs",
+      "V (Overflow) flag: set when signed overflow occurs"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Differentiate between CPSR and SPSR. When is SPSR used?",
+    "expectedPoints": [
+      "CPSR = Current PSR holds current processor state at any time",
+      "SPSR = Saved PSR saves CPSR value when exception is taken",
+      "SPSR is automatically loaded with CPSR on exception entry",
+      "SPSR is restored to CPSR on exception return (using SUBS PC,LR,#4 or similar)",
+      "Only one SPSR exists per privilege mode"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain the difference between CMP, CMN, TST, and TEQ instructions. For each instruction, mention the operation performed and state which flags are affected.",
+    "expectedPoints": [
+      "CMP: Subtracts operand from register, sets NZCV, result discarded",
+      "CMN: Adds operand to register, sets NZCV, result discarded",
+      "TST: Bitwise AND of operands, sets N,Z,C flags (C cleared), result discarded",
+      "TEQ: Bitwise XOR of operands, sets N,Z,C flags (C unchanged), result discarded",
+      "All are compare/test instructions - they set flags without storing result"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Write ARM assembly code to check if bit 4 of register R0 is set. Explain the instructions used.",
+    "expectedPoints": [
+      "Use TST instruction: TST R0, #0x10 (or #16)",
+      "TST performs AND operation between R0 and mask value",
+      "If bit is set, result is non-zero, Z flag is cleared",
+      "Use conditional branch: BNE (branch if Z=0) or BEQ (branch if Z=1)",
+      "Explain: 0x10 = 0b00010000 tests only bit 4"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Explain the MRS and MSR instructions. Give examples of how to read and write to CPSR fields.",
+    "expectedPoints": [
+      "MRS Rd, CPSR - copies CPSR to Rd (read flags/mode)",
+      "MSR CPSR_all, Rd - writes entire CPSR from Rd",
+      "MSR CPSR_flg, Rd - writes only flag bits (bits 31-28)",
+      "MSR CPSR_ctl, Rd - writes only control bits (mode, IRQ/FIQ disable)",
+      "Used for saving/restoring processor state, changing processor mode"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "List at least 8 ARM condition codes with their meanings and the flag states required for execution.",
+    "expectedPoints": [
+      "EQ - Equal (Z=1), NE - Not Equal (Z=0)",
+      "CS/HS - Carry Set/Higher or Same (C=1), CC/LO - Carry Clear/Lower (C=0)",
+      "MI - Minus (N=1), PL - Plus (N=0)",
+      "VS - Overflow Set (V=1), VC - Overflow Clear (V=0)",
+      "GT - Greater Than (Z=0 and N=V), LT - Less Than (N!=V)",
+      "GE - Greater or Equal (N=V), LE - Less or Equal (Z=1 or N!=V)",
+      "AL - Always (always executes)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "long",
+    "question": "Explain the signed and unsigned comparison operations in ARM. How are the flags used to determine greater than, less than, and equal conditions for both signed and unsigned numbers?",
+    "expectedPoints": [
+      "For unsigned comparison: HI (C=1 and Z=0), LS (C=0 or Z=1), HS/CS (C=1), LO/CC (C=0)",
+      "For signed comparison: GT uses (Z=0 and N=V), LT uses (N!=V), GE uses (N=V), LE uses (Z=1 or N!=V)",
+      "C flag for unsigned: indicates carry out (addition) or borrow (subtraction)",
+      "V flag for signed: indicates overflow when signs don't match expected",
+      "Z flag for equality in both signed and unsigned",
+      "N flag indicates sign of result for signed operations",
+      "Example: CMP R0,R1 with R0=5,R1=10: 5-10=-5 (N=1,V=0 if no overflow), so R0<R1"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Write an ARM assembly program to find the largest of three numbers stored in memory locations. Explain the logic and use of conditional instructions.",
+    "expectedPoints": [
+      "Load three values from memory into registers (e.g., LDR R0, [R1], LDR R2, [R3], LDR R4, [R5])",
+      "Use CMP to compare first two numbers: CMP R0,R2",
+      "Use conditional move: MOVGT R6,R0 (if R0>R2) else MOVLE R2",
+      "Compare result with third number: CMP R6,R4",
+      "Use conditional move again to get largest: MOVGT R7,R6, MOVLE R7,R4",
+      "Explain each comparison sets flags, conditional execution saves branches",
+      "Alternatively use BGT/BLT conditional branch labels",
+      "Explain that GT/LT check N and V flags together for signed comparison"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Explain how exceptions are handled in ARM with respect to PSR. Describe the automatic saving and restoring of PSR and the role of SPSR.",
+    "expectedPoints": [
+      "When exception occurs: CPSR is automatically copied to SPSR of target mode",
+      "Processor mode changes to corresponding exception mode (SVC, IRQ, FIQ, etc.)",
+      "PC is saved to LR (link register) with offset (e.g., LR-4 for IRQ)",
+      "CPSR mode bits change to exception mode, interrupts may be disabled automatically",
+      "To return from exception: use SUBS PC,LR,#4 (or appropriate offset) for IRQ",
+      "This instruction restores SPSR to CPSR and moves LR to PC",
+      "Explain example: IRQ exception saves CPSR to SPSR_irq, PC to LR_irq, enters IRQ mode",
+      "On return: SUBS PC,LR,#4 restores SPSR to CPSR, resumes interrupted code"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Design an ARM subroutine that checks whether a number is positive, negative, or zero. Explain the use of flag-checking conditional instructions.",
+    "expectedPoints": [
+      "Use CMP R0,#0 to compare number with zero",
+      "This sets N flag if R0<0 (negative), Z flag if R0=0, clears both if positive",
+      "Use conditional branches based on flags",
+      "BEQ Zero (branch if Z=1) - number is zero",
+      "BMI Negative (branch if N=1) - number is negative",
+      "BPL Positive (branch if N=0 and Z=0) - number is positive",
+      "Alternative using flags directly: check Z for zero, then N for negative, else positive",
+      "Explain each conditional checks specific flag combinations",
+      "Return codes in R0: 0=zero, 1=positive, 2=negative"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  }
+]

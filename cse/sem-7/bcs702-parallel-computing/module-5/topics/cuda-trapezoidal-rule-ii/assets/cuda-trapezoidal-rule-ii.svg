@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs><marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="10" markerHeight="6" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#1976d2"/></marker></defs>
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">CUDA Trapezoidal Rule</text>
+  
+  <g id="step0" class="step" data-narration="The trapezoidal rule on GPU uses thousands of parallel threads. Each thread computes one trapezoid area, then shared memory reduction combines all partial sums into the final integral.">
+    <text x="400" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">MPI vs CUDA: Parallelism Scale</text>
+    <rect x="40" y="70" width="340" height="70" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="210" y="95" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">MPI / OpenMP</text>
+    <text x="210" y="115" text-anchor="middle" font-size="11" fill="#555">4 to 1000 parallel units</text>
+    <text x="210" y="132" text-anchor="middle" font-size="10" fill="#666">Each processes many trapezoids</text>
+    <rect x="420" y="70" width="340" height="70" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="590" y="95" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">CUDA</text>
+    <text x="590" y="115" text-anchor="middle" font-size="11" fill="#555">100,000+ threads</text>
+    <text x="590" y="132" text-anchor="middle" font-size="10" fill="#666">Each thread does one trapezoid</text>
+  </g>
+  
+  <g id="step1" class="step" data-narration="CUDA workflow: allocate device memory with cudaMalloc, copy parameters host-to-device, launch kernel with grid of blocks, then copy partial sums back and sum on host.">
+    <text x="400" y="165" text-anchor="middle" font-size="14" font-weight="bold" fill="#ff9800">CUDA Integration Workflow</text>
+    <rect x="30" y="185" width="145" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="102" y="208" text-anchor="middle" font-size="10" fill="#1976d2">1. cudaMalloc</text>
+    <path d="M175 202 L195 202" stroke="#888" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="200" y="185" width="145" height="35" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="272" y="208" text-anchor="middle" font-size="10" fill="#388e3c">2. H2D params</text>
+    <path d="M345 202 L365 202" stroke="#888" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="370" y="185" width="145" height="35" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="442" y="208" text-anchor="middle" font-size="10" fill="#ff9800">3. kernel&lt;&lt;&lt;G,B&gt;&gt;&gt;</text>
+    <path d="M515 202 L535 202" stroke="#888" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="540" y="185" width="145" height="35" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="612" y="208" text-anchor="middle" font-size="10" fill="#9c27b0">4. D2H + reduce</text>
+    <text x="400" y="245" text-anchor="middle" font-size="11" fill="#666">Each thread evaluates f(x_i) where x_i = a + i*h for its assigned subinterval</text>
+  </g>
+  
+  <g id="step2" class="step" data-narration="The kernel maps each thread to a subinterval using global index i equals threadIdx plus blockIdx times blockDim. The guard condition if i less than equals n prevents overflow.">
+    <text x="400" y="270" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c">Thread Mapping Formula</text>
+    <rect x="80" y="290" width="640" height="75" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="315" text-anchor="middle" font-size="11" font-weight="bold" fill="#388e3c">int i = blockIdx.x * blockDim.x + threadIdx.x;</text>
+    <text x="400" y="340" text-anchor="middle" font-size="11" fill="#333">double x = a + i * h;  // point where function is evaluated</text>
+    <text x="400" y="360" text-anchor="middle" font-size="11" fill="#333">if (i <= n) {  // guard against extra threads beyond n+1 points</text>
+    <text x="430" y="378" text-anchor="middle" font-size="10" fill="#555">mySum = f(x);</text>
+    <text x="430" y="393" text-anchor="middle" font-size="10" fill="#555">if (i==0 || i==n) mySum *= 0.5;  // half weight for endpoints</text>
+  </g>
+  
+  <g id="step3" class="step" data-narration="Shared memory reduction: threads store values in sdata, then cooperatively sum using a tree pattern. Each step halves the stride and syncthreads ensures all threads finish before proceeding.">
+    <text x="400" y="415" text-anchor="middle" font-size="14" font-weight="bold" fill="#9c27b0">Parallel Reduction in Shared Memory</text>
+    <text x="400" y="438" text-anchor="middle" font-size="10" fill="#666">__shared__ double sdata[];  // block-local storage for fast access</text>
+    <rect x="50" y="448" width="55" height="22" rx="3" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="77" y="463" text-anchor="middle" font-size="8" fill="#1976d2">T0</text>
+    <rect x="110" y="448" width="55" height="22" rx="3" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="137" y="463" text-anchor="middle" font-size="8" fill="#388e3c">T1</text>
+    <rect x="170" y="448" width="55" height="22" rx="3" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="197" y="463" text-anchor="middle" font-size="8" fill="#ff9800">T2</text>
+    <rect x="230" y="448" width="55" height="22" rx="3" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="257" y="463" text-anchor="middle" font-size="8" fill="#9c27b0">T3</text>
+    <text x="350" y="460" text-anchor="middle" font-size="9" fill="#888">Step 1: s[0]+=s[1], s[2]+=s[3]</text>
+    <rect x="50" y="478" width="115" height="22" rx="3" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="107" y="493" text-anchor="middle" font-size="8" fill="#1976d2">T0(combined)</text>
+    <rect x="170" y="478" width="115" height="22" rx="3" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="227" y="493" text-anchor="middle" font-size="8" fill="#ff9800">T2(combined)</text>
+    <text x="330" y="490" text-anchor="middle" font-size="9" fill="#888">Step 2: s[0]+=s[2]</text>
+    <rect x="50" y="508" width="235" height="22" rx="3" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="167" y="523" text-anchor="middle" font-size="9" fill="#388e3c">T0: Block Sum (32 threads → 1 value)</text>
+    <text x="400" y="548" text-anchor="middle" font-size="10" fill="#666">log2(blockDim.x) steps, stride halves each iteration, syncthreads between steps</text>
+  </g>
+  
+  <g id="step4" class="step" data-narration="Block results stored in global memory: each block writes its partial sum to d_partialSums array. The host then sums all block results and multiplies by h to get the final integral.">
+    <text x="400" y="570" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2">Block Results and Final Summation</text>
+    <rect x="30" y="585" width="130" height="20" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="95" y="599" text-anchor="middle" font-size="8" fill="#1976d2">Block 0 partial</text>
+    <rect x="165" y="585" width="130" height="20" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="230" y="599" text-anchor="middle" font-size="8" fill="#388e3c">Block 1 partial</text>
+    <rect x="300" y="585" width="130" height="20" rx="4" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="365" y="599" text-anchor="middle" font-size="8" fill="#ff9800">Block 2 partial</text>
+    <text x="440" y="599" text-anchor="middle" font-size="8" fill="#888">...</text>
+    <rect x="480" y="585" width="130" height="20" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="545" y="599" text-anchor="middle" font-size="8" fill="#9c27b0">Block N partial</text>
+    <text x="650" y="599" text-anchor="middle" font-size="9" fill="#333">integral = h × Σ(block_sums)</text>
+  </g>
+</svg>

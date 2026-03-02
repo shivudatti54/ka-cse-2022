@@ -1,0 +1,45 @@
+{
+  "topicId": "ipv4-ipv6-protocols",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "IPv4 Subnet Calculator",
+      "description": "Calculates network address, broadcast, first/last usable hosts from IP/CIDR",
+      "code": "def calculate_subnet(ip_cidr):\n    ip, prefix = ip_cidr.split('/')\n    prefix = int(prefix)\n    \n    # Convert IP to 32-bit integer\n    octets = list(map(int, ip.split('.')))\n    ip_int = (octets[0] << 24) + (octets[1] << 16) + (octets[2] << 8) + octets[3]\n    \n    # Create subnet mask\n    mask = (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF\n    \n    # Calculate network and broadcast\n    network = ip_int & mask\n    broadcast = network | (~mask & 0xFFFFFFFF)\n    \n    # Calculate usable range\n    first_usable = network + 1 if prefix < 31 else None\n    last_usable = broadcast - 1 if prefix < 31 else None\n    \n    # Convert back to dotted decimal\n    def int_to_ip(x):\n        return f\"{(x >> 24) & 255}.{(x >> 16) & 255}.{(x >> 8) & 255}.{x & 255}\"\n    \n    return {\n        'network': int_to_ip(network),\n        'broadcast': int_to_ip(broadcast),\n        'first_usable': int_to_ip(first_usable) if first_usable else 'N/A',\n        'last_usable': int_to_ip(last_usable) if last_usable else 'N/A',\n        'total_hosts': 2 ** (32 - prefix),\n        'usable_hosts': 2 ** (32 - prefix) - 2 if prefix < 31 else 0\n    }\n\n# Example usage\nresult = calculate_subnet('192.168.50.130/26')\nprint(result)",
+      "explanation": "This function takes an IP address in CIDR notation and calculates key subnet information including network address, broadcast address, usable host range, and total number of hosts.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "IPv4 to IPv6 Dual Stack Configuration Algorithm",
+      "description": "Algorithm for configuring a host to support both IPv4 and IPv6 simultaneously",
+      "code": "ALGORITHM DualStackConfiguration\nBEGIN\n    // Step 1: Check if network supports IPv6\n    IF IPv6Supported() THEN\n        // Configure IPv6 address using SLAAC\n        ipv6_address = SLAAC_Configure()\n        // Or use DHCPv6 if configured\n        IF DHCPv6_Enabled() THEN\n            ipv6_address = DHCPv6_Request()\n        ENDIF\n        ADD_Route(ipv6_address, \"default\")\n    ENDIF\n    \n    // Step 2: Configure IPv4 (always supported)\n    ipv4_address = DHCPv4_Request()\n    IF DHCPv4_Failed() THEN\n        ipv4_address = APIPA_Assign()  // 169.254.0.0/16\n    ENDIF\n    ADD_Route(ipv4_address, \"default\")\n    \n    // Step 3: Set DNS resolution preference\n    SET DNS_Resolution_Preference(\"IPv6_First\")\n    \n    // Step 4: Test connectivity\n    IF Ping(\"ipv6.google.com\") SUCCESS THEN\n        RETURN \"IPv6_Active\"\n    ELSE IF Ping(\"ipv4.google.com\") SUCCESS THEN\n        RETURN \"IPv4_Active\"\n    ELSE\n        RETURN \"No_Connectivity\"\n    ENDIF\nEND",
+      "explanation": "This algorithm demonstrates how a host configures both IPv4 and IPv6 stack, attempting to obtain addresses through SLAAC/DHCPv6 for IPv6 and DHCPv4/APIPA for IPv4, then tests connectivity preferring IPv6.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "IPv4 Header Structure Definition",
+      "description": "C structure representing IPv4 packet header",
+      "code": "#include <stdio.h>\n#include <stdint.h>\n\n// IPv4 Header Structure (20 bytes without options)\ntypedef struct {\n    uint8_t  version_ihl;    // Version (4 bits) + IHL (4 bits)\n    uint8_t  tos;            // Type of Service\n    uint16_t total_length;  // Total packet length\n    uint16_t identification; // Identification for fragmentation\n    uint8_t  flags_fragment; // Flags (3 bits) + Fragment Offset (13 bits)\n    uint8_t  ttl;            // Time to Live\n    uint8_t  protocol;       // Protocol (TCP=6, UDP=17, ICMP=1)\n    uint16_t checksum;       // Header Checksum\n    uint32_t src_ip;         // Source IP Address\n    uint32_t dst_ip;         // Destination IP Address\n    // Options follow if IHL > 5\n} IPv4Header;\n\nvoid parse_ipv4_header(unsigned char *buffer) {\n    IPv4Header *ip = (IPv4Header *)buffer;\n    \n    uint8_t version = (ip->version_ihl >> 4) & 0x0F;\n    uint8_t ihl = ip->version_ihl & 0x0F;\n    uint8_t header_len = ihl * 4;\n    \n    printf(\"Version: %d\\n\", version);\n    printf(\"Header Length: %d bytes\\n\", header_len);\n    printf(\"TTL: %d\\n\", ip->ttl);\n    printf(\"Protocol: %d\\n\", ip->protocol);\n}\n\n// Note: IP addresses stored in network byte order (big-endian)\n// Need ntohl() to convert to host byte order for display",
+      "explanation": "This C structure demonstrates how IPv4 header fields are packed into a 20-byte structure. The version and IHL are combined in the first byte. Network byte order (big-endian) is used for multi-byte fields.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "IPv6 EUI-64 Address Generation",
+      "description": "Generate IPv6 address from MAC address using EUI-64 format",
+      "code": "def mac_to_eui64(mac_address):\n    \"\"\"\n    Convert MAC address to EUI-64 interface identifier\n    and generate link-local IPv6 address\n    \"\"\"\n    # Remove colons and convert to uppercase\n    mac = mac_address.replace(':', '').upper()\n    \n    # Split MAC into two parts\n    oui = mac[:6]  # Organization Unique Identifier\n    nic = mac[6:]  # Network Interface Controller\n    \n    # Insert FFFE in the middle\n    eui_64 = oui + 'FFFE' + nic\n    \n    # Convert to binary and flip the universal/local bit (7th bit)\n    eui_int = int(eui_64, 16)\n    eui_int ^= 0x0200000000000000  # Flip the U/L bit\n    \n    # Format as 8 groups of 2 hex digits\n    eui_formatted = format(eui_int, '016X')\n    \n    # Construct IPv6 link-local address\n    groups = [eui_formatted[i:i+4] for i in range(0, 16, 4)]\n    ipv6_link_local = 'fe80::' + ':'.join(groups)\n    \n    return {\n        'original_mac': mac_address,\n        'eui64': ':'.join([eui_formatted[i:i+4] for i in range(0, 16, 4)]),\n        'ipv6_link_local': ipv6_link_local\n    }\n\n# Example usage\nresult = mac_to_eui64('00:1A:2B:3C:4D:5E')\nprint(f\"MAC: {result['original_mac']}\")\nprint(f\"EUI-64: {result['eui64']}\")\nprint(f\"IPv6 Link-Local: {result['ipv6_link_local']}\")\n# Output: fe80::21a:2bff:fe3c:4d5e",
+      "explanation": "This algorithm converts a 48-bit MAC address to a 64-bit EUI-64 interface identifier by inserting FFFE and flipping the universal/local bit, then forms the link-local IPv6 address with fe80::/10 prefix.",
+      "timeComplexity": "O(n) where n is string length",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

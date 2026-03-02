@@ -1,0 +1,148 @@
+{
+  "topicId": "join-dependencies-and-fifth-normal-form",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of Join Dependency in database normalization.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Join Dependency (JD) is a constraint where relation R equals the natural join of its projections",
+        "It ensures no spurious tuples are generated when decomposed relations are rejoined",
+        "Formal definition: R(A,B,C) has JD if R = πAB(R) ⋈ πBC(R) ⋈ πAC(R)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define Fifth Normal Form (5NF) and state its conditions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "5NF is also known as Project-Join Normal Form (PJNF)",
+        "A relation is in 5NF if every nontrivial join dependency is implied by its candidate keys",
+        "The relation cannot be further decomposed losslessly"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is a lossless-join decomposition? Explain with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Lossless-join decomposition ensures original relation can be reconstructed by joining decomposed relations",
+        "No spurious tuples are generated after join",
+        "Example: R(A,B,C) decomposed to R1(A,B) and R2(B,C) is lossless if B is candidate key of either R1 or R2"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Distinguish between 4NF and 5NF with respect to dependencies handled.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "4NF handles multi-valued dependencies (MVDs)",
+        "5NF handles join dependencies (JDs)",
+        "4NF: R is in 4NF if for every MVD X ↠ Y, X is a superkey",
+        "5NF: R is in 5NF if every JD is implied by candidate keys"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is an irreducible join dependency?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "An irreducible join dependency cannot be derived from smaller join dependencies",
+        "It has no trivial dependencies in its definition",
+        "It is fundamental and cannot be split into independent smaller JDs"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the test procedure to check if a relation is in 5NF.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Step 1: Identify all possible decompositions of the relation",
+        "Step 2: For each decomposition, attempt to rejoin the decomposed relations",
+        "Step 3: If any decomposition yields lossless join, the relation is not in 5NF",
+        "Step 4: If no decomposition yields lossless join, relation is in 5NF"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is dependency preservation? Why is it important?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Dependency preservation means all original functional dependencies can be derived from decomposed relations",
+        "Important because it allows local checking of constraints without joins",
+        "Ensures integrity constraints can be enforced efficiently at table level"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider relation R(A,B,C,D) with candidate key {A,B,C,D}. There exists a join dependency: R = R1(A,B) ⋈ R2(B,C) ⋈ R3(C,D). Determine whether R is in 5NF. Explain the steps involved.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Since candidate key is {A,B,C,D}, this is the only key",
+        "The join dependency involves three relations R1, R2, R3",
+        "For R to not be in 5NF, this JD must not be implied by candidate keys",
+        "But since {A,B,C,D} is the only key and decomposition creates smaller relations, this JD is not implied by candidate keys",
+        "Therefore R is NOT in 5NF and should be decomposed to R1(A,B), R2(B,C), R3(C,D)"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain cyclic join dependency with a suitable example. How is it resolved?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Cyclic JD occurs when relation requires joining three or more relations in a cycle",
+        "Example: SUPPLY(Supplier, Part, Project) with constraints creating cyclic dependencies",
+        "If supplier S supplies part P to project J, this creates cyclic dependencies between three tables",
+        "Resolution: Decompose into three relations: SUPPLIER_PART(Supplier, Part), PART_PROJECT(Part, Project), PROJECT_SUPPLIER(Project, Supplier)",
+        "This decomposition is lossless and preserves all join dependencies"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare BCNF, 4NF, and 5NF. Discuss the type of dependencies each handles and practical implications for database design.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "BCNF: Handles functional dependencies - X → Y where X is superkey",
+        "4NF: Handles multi-valued dependencies - X ↠ Y where X is superkey",
+        "5NF: Handles join dependencies - R = ⋈(R1, R2, ..., Rn) where JDs not implied by keys",
+        "Practical implications: Higher NF reduces redundancy but increases complexity",
+        "Trade-off between normalization (storage efficiency) and query performance (joins)"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "A relation R(A,B,C) has functional dependency A → B and join dependency R = R1(A,B) ⋈ R2(B,C). Is R in 5NF? Justify your answer with reasoning.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "First check if in BCNF: A → B, A is not a superkey (since C is not determined), so not in BCNF",
+        "For 5NF, check if the join dependency is implied by candidate keys",
+        "Candidate key is {A,C} since A → B and A is determined by A,C",
+        "The join dependency R1(A,B) ⋈ R2(B,C) is not implied by candidate key {A,C}",
+        "Therefore R is NOT in 5NF",
+        "Decomposition needed: R1(A,B) and R2(A,C) or according to the join dependency"
+      ]
+    }
+  ]
+}

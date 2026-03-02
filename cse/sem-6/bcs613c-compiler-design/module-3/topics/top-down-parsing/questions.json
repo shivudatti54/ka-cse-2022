@@ -1,0 +1,158 @@
+{
+  "topicId": "top-down-parsing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between recursive descent parsing and predictive parsing with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Recursive descent uses multiple functions (one per non-terminal) and may require backtracking",
+        "Predictive parsing uses a parse table and 1-token lookahead, no backtracking",
+        "Recursive descent example: function A() checks each production",
+        "Predictive parsing example: LL(1) table-driven parser"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is left recursion? How does it affect top-down parsing and what is the method to eliminate it?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Left recursion: when a non-terminal has productions starting with itself",
+        "Causes infinite recursion in recursive descent parsers",
+        "Elimination method: convert A→Aα|β to A→βA', A'→αA'|ε",
+        "Right-recursive version allows finite parsing"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Define FIRST and FOLLOW sets. Why are they important in LL(1) parsing?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "FIRST(α): set of terminals that can be first symbol of strings derived from α",
+        "FOLLOW(A): set of terminals that can appear immediately after A in sentential forms",
+        "Used to construct LL(1) parse table",
+        "Needed to determine which production applies when ε-productions exist"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is left factoring? Give an example of a grammar before and after left factoring.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Left factoring: extracting common prefixes from productions",
+        "Example: A→aB|aC becomes A→aA', A'→B|C",
+        "Makes grammar suitable for predictive parsing",
+        "Removes predict conflict in LL(1) parse table"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Construct the LL(1) parse table for the grammar: S→aS|bA, A→b|ε",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Compute FIRST and FOLLOW sets",
+        "FIRST(S)={a,b}, FIRST(A)={b,ε}",
+        "FOLLOW(S)={$}, FOLLOW(A)={b,$}",
+        "Parse table entries for each (non-terminal, terminal) pair",
+        "Empty cells indicate errors or handle appropriately"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the working of a predictive parser with a stack. Show the parsing steps for input \"ab\" using the grammar: S→aA, A→b|ε",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Stack initially contains $ and start symbol S",
+        "If top is non-terminal, replace with RHS from parse table",
+        "If top is terminal, match with input and pop",
+        "Continue until stack is empty and input is consumed",
+        "Steps: push S, replace with aA, match a, replace A with ε, match b, accept"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the conditions for a grammar to be LL(1)? Explain with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Grammar must not be ambiguous",
+        "No left recursion in grammar",
+        "No common prefixes (or left factored)",
+        "Should be possible to determine production with 1 token lookahead",
+        "Example of non-LL(1): A→aB|cB has conflict"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider grammar: E→E+T|T, T→T*F|F, F→(E)|id. (a) Show that this grammar is not LL(1). (b) Remove left recursion. (c) Left factor the resulting grammar. (d) Compute FIRST and FOLLOW sets for the transformed grammar.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Part (a): Left recursion causes infinite derivation, common prefix not present but recursion is issue",
+        "Part (b): E→TE', E'→+TE'|ε, T→FT', T'→*FT'|ε",
+        "Part (c): Already factored after left recursion removal",
+        "Part (d): FIRST and FOLLOW computations for all non-terminals",
+        "FIRST(E)={ (, id }, FIRST(E')={+, ε}, FIRST(T)={ (, id }, FIRST(T')={*, ε}, FIRST(F)={ (, id }",
+        "FOLLOW sets: FOLLOW(E)={$, )}, FOLLOW(E')={$, )}, FOLLOW(T)={+, $, )}, FOLLOW(T')={+, $, )}, FOLLOW(F)={*, +, $, )}"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain LL(1) parsing in detail. How is the parse table constructed? Trace the parsing of input \"id+id*id\" using appropriate grammar.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "LL(1) parsing definition: Left-to-right, Leftmost derivation, 1 lookahead",
+        "Components: input buffer, stack, parse table, driver algorithm",
+        "Parse table construction steps: compute FIRST/FOLLOW, fill entries",
+        "Driver algorithm: while stack not empty - match/pop/replace actions",
+        "Detailed trace with steps showing stack contents, input, and actions",
+        "Accept when both stack empty and input consumed"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a recursive descent parser for the grammar: S→aSb|ε. Explain how you would implement it and discuss whether this grammar is LL(1).",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Recursive descent function for S checks first token",
+        "If input starts with 'a', match 'a', recurse for S, then match 'b'",
+        "If input is not 'a' (or ε wanted), return true (accept ε production)",
+        "Grammar is LL(1): FIRST(S)={a,ε}, no conflicts",
+        "Parse table would have entries for (S,a) and (S,$)",
+        "No backtracking needed - deterministic choice"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "For grammar: S→ASB|ε, A→a, B→b (a) Compute FIRST and FOLLOW sets. (b) Is this grammar LL(1)? Justify. (c) Construct LL(1) parse table. (d) Parse input \"aabb\" showing all steps.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Part (a): FIRST(S)={a,ε}, FIRST(A)={a}, FIRST(B)={b}",
+        "FOLLOW(S)={b,$}, FOLLOW(A)={b}, FOLLOW(B)={$}",
+        "Part (b): Grammar is LL(1) - no left recursion, no common prefixes",
+        "Part (c): Parse table with entries for S→ASB (a,b), S→ε (b,$)",
+        "Part (d): Step-by-step parsing: push S, expand with ASB, match a, expand A, match a, expand B, match b, accept"
+      ]
+    }
+  ]
+}

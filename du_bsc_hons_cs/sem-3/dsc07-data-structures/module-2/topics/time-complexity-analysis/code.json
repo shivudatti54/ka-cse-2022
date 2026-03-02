@@ -1,0 +1,35 @@
+{
+  "topicId": "time-complexity-analysis",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Linear Search - O(n) Time Complexity",
+      "description": "Demonstrates linear time complexity where execution time grows linearly with input size. The algorithm checks each element sequentially until the target is found.",
+      "code": "def linear_search(arr, target):\n    \"\"\"\n    Linear Search Algorithm\n    Best Case: O(1) - when target is at first position\n    Worst Case: O(n) - when target is at last position or not found\n    Average Case: O(n)\n    \"\"\"\n    for i in range(len(arr)):\n        if arr[i] == target:\n            return i  # Target found at index i\n    return -1  # Target not found\n\n# Test the function\ndata = [10, 25, 33, 47, 58, 62, 79, 85, 91, 100]\ntarget = 62\nresult = linear_search(data, target)\nprint(f\"Element {target} found at index: {result}\")\n\n# Test with non-existent element\ntarget = 50\nresult = linear_search(data, target)\nprint(f\"Element {target} found at index: {result}\")",
+      "explanation": "The function iterates through the array exactly n times in the worst case. Each iteration performs constant-time operations (comparison). Therefore, time complexity is O(n). Space complexity is O(1) as only a few variables are used regardless of input size.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Bubble Sort - O(n²) Time Complexity",
+      "description": "Demonstrates quadratic time complexity using nested loops. Bubble sort repeatedly swaps adjacent elements if they are in wrong order, causing the runtime to grow quadratically with input size.",
+      "code": "def bubble_sort(arr):\n    \"\"\"\n    Bubble Sort Algorithm\n    Best Case: O(n) - when array is already sorted (with optimization)\n    Worst Case: O(n²) - when array is reverse sorted\n    Average Case: O(n²)\n    \"\"\"\n    n = len(arr)\n    for i in range(n):\n        # Optimization: track if any swap occurred\n        swapped = False\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                # Swap adjacent elements\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n                swapped = True\n        # If no swapping occurred, array is already sorted\n        if not swapped:\n            break\n    return arr\n\n# Test the function\ndata = [64, 34, 25, 12, 22, 11, 90]\nprint(f\"Original array: {data}\")\nsorted_data = bubble_sort(data.copy())\nprint(f\"Sorted array: {sorted_data}\")\n\n# Trace through first pass\ndata_trace = [5, 1, 4, 2, 8]\nprint(f\"\\nTracing first pass on {data_trace}:\")\nfor j in range(len(data_trace) - 1):\n    if data_trace[j] > data_trace[j + 1]:\n        data_trace[j], data_trace[j + 1] = data_trace[j + 1], data_trace[j]\n        print(f\"  After swap: {data_trace}\")",
+      "explanation": "Bubble sort uses two nested loops. The outer loop runs n times, and the inner loop runs n-i-1 times for each iteration i. This results in n*(n-1)/2 comparisons, which simplifies to O(n²). With the optimization (early exit), best case becomes O(n) when array is already sorted. Space complexity is O(1) as sorting is done in-place.",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Binary Search - O(log n) Time Complexity",
+      "description": "Demonstrates logarithmic time complexity, one of the most efficient algorithms. Binary search divides the search space in half with each iteration, making it ideal for sorted arrays.",
+      "code": "def binary_search(arr, target):\n    \"\"\"\n    Binary Search Algorithm (Iterative)\n    Best Case: O(1) - when target is at middle position\n    Worst Case: O(log n) - when target is not found\n    Average Case: O(log n)\n    \n    Prerequisite: Array must be sorted\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    \n    while left <= right:\n        # Calculate middle index (avoids overflow in other languages)\n        mid = left + (right - left) // 2\n        \n        # Check if target is at mid\n        if arr[mid] == target:\n            return mid\n        # If target is greater, ignore left half\n        elif arr[mid] < target:\n            left = mid + 1\n        # If target is smaller, ignore right half\n        else:\n            right = mid - 1\n    \n    return -1  # Target not found\n\ndef binary_search_recursive(arr, target, left=None, right=None):\n    \"\"\"Recursive version of Binary Search\"\"\"\n    if left is None:\n        left = 0\n    if right is None:\n        right = len(arr) - 1\n    \n    if left > right:\n        return -1\n    \n    mid = left + (right - left) // 2\n    \n    if arr[mid] == target:\n        return mid\n    elif arr[mid] < target:\n        return binary_search_recursive(arr, target, mid + 1, right)\n    else:\n        return binary_search_recursive(arr, target, left, mid - 1)\n\n# Test the function with sorted data\nsorted_data = [2, 3, 4, 10, 40, 50, 60, 70, 80, 90]\ntarget = 40\n\nresult = binary_search(sorted_data, target)\nprint(f\"Iterative - Element {target} found at index: {result}\")\n\nresult_recursive = binary_search_recursive(sorted_data, target)\nprint(f\"Recursive - Element {target} found at index: {result_recursive}\")\n\n# Demonstrate logarithmic reduction\nprint(\"\\nDemonstrating log n reduction:\")\nn = 16\niterations = 0\nwhile n >= 1:\n    iterations += 1\n    print(f\"  Iteration {iterations}: Search space size = {n}\")\n    n = n // 2\nprint(f\"Total iterations for n=16: {iterations} (log₂16 = 4)\")",
+      "explanation": "Binary search works on the divide-and-conquer principle. With each iteration, the search space is reduced by half. If we start with n elements, after k iterations we have n/2^k elements. We stop when n/2^k = 1, giving us k = log₂n. This makes time complexity O(log n). For n=16, only 4 iterations are needed (log₂16 = 4). Space complexity is O(1) for iterative version and O(log n) for recursive version due to call stack.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

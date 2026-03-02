@@ -1,0 +1,45 @@
+{
+  "topicId": "popen",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Read Command Output with popen()",
+      "description": "Demonstrates reading output from 'ls' command using popen() in read mode",
+      "code": "#include <stdio.h>\n\nint main() {\n FILE *fp;\n char buffer[1024];\n\n fp = popen(\"ls -l\", \"r\");\n if (!fp) {\n perror(\"popen failed\");\n return 1;\n }\n\n while (fgets(buffer, sizeof(buffer), fp) != NULL) {\n printf(\"LS Output: %s\", buffer);\n }\n\n int status = pclose(fp);\n return WEXITSTATUS(status);\n}",
+      "explanation": "1. popen() executes 'ls -l' and returns FILE pointer\n2. fgets() reads pipe output line by line\n3. pclose() closes stream and waits for command completion\n4. WEXITSTATUS checks child process exit status",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Write to Command with popen()",
+      "description": "Sends data to 'grep' command through popen() in write mode",
+      "code": "#include <stdio.h>\n\nint main() {\n FILE *fp = popen(\"grep 'important'\", \"w\");\n if (!fp) {\n perror(\"popen failed\");\n return 1;\n }\n\n fprintf(fp, \"This is important\\n\");\n fprintf(fp, \"This is not\\n\");\n fprintf(fp, \"important message\\n\");\n\n pclose(fp);\n return 0;\n}",
+      "explanation": "1. popen() with 'w' mode connects to grep's stdin\n2. fprintf() writes filtered data to command\n3. Output shows only lines containing 'important'\n4. Always close with pclose() to avoid zombies",
+      "timeComplexity": "O(m)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Error Handling with popen()",
+      "description": "Proper error checking for popen/pclose operations",
+      "code": "#include <stdio.h>\n#include <errno.h>\n#include <sys/wait.h>\n\nint main() {\n FILE *fp = popen(\"invalid_command\", \"r\");\n if (!fp) {\n printf(\"popen error: %s\\n\", strerror(errno));\n return 1;\n }\n\n // ... processing would go here ...\n\n int status = pclose(fp);\n if (status == -1) {\n perror(\"pclose error\");\n } else {\n printf(\"Command exited with status %d\\n\", WEXITSTATUS(status));\n }\n return 0;\n}",
+      "explanation": "1. Check popen() return for NULL\n2. Use errno to identify errors\n3. Check pclose() return value\n4. WEXITSTATUS interprets exit code",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Algorithm: popen() Implementation Steps",
+      "description": "Manual implementation using pipe(), fork(), and exec()",
+      "code": "ALGORITHM PopenEmulation\nBEGIN\n 1. Create pipe using pipe()\n 2. Fork new process\n 3. IF child process:\n a. Close unused pipe end\n b. dup2() to redirect stdin/stdout\n c. Close original pipe descriptors\n d. execvp() target command\n 4. ELSE parent process:\n a. Close unused pipe end\n b. Return FILE stream for remaining pipe end\nEND",
+      "explanation": "1. pipe() creates communication channel\n2. fork() creates child process\n3. dup2() connects pipe to stdin/stdout\n4. exec() replaces child process image\n5. Parent manages pipe as stream",
+      "timeComplexity": "O(1) setup + command runtime",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

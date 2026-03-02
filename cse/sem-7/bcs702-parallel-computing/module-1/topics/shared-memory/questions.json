@@ -1,0 +1,53 @@
+{
+  "topicId": "shared-memory",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Why is it necessary to use semaphores in conjunction with shared memory? (2-3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "Shared memory allows direct, concurrent access by multiple processes",
+        "This concurrent access can lead to race conditions where outcome depends on execution order",
+        "Semaphores provide synchronization (mutual exclusion) to prevent race conditions and ensure data consistency"
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Explain the producer-consumer problem and how it can be solved using shared memory and three semaphores. Describe the role of each semaphore. (5-10 marks)",
+      "type": "long",
+      "keyPoints": [
+        "Definition: Producers generate data and place it in a buffer; consumers remove and process that data",
+        "Problem: Must synchronize so producers don't overfill and consumers don't consume from empty buffer",
+        "Shared Memory: Creates the shared buffer accessible by both producers and consumers",
+        "Semaphore mutex (init=1): Binary semaphore for mutual exclusion on buffer access",
+        "Semaphore empty (init=N): Counting semaphore tracking empty buffer slots",
+        "Semaphore full (init=0): Counting semaphore tracking filled buffer slots",
+        "Producer: Wait(empty) -> Wait(mutex) -> Produce -> Signal(mutex) -> Signal(full)",
+        "Consumer: Wait(full) -> Wait(mutex) -> Consume -> Signal(mutex) -> Signal(empty)"
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "List and briefly explain the five system calls used for System V shared memory operations. (5 marks)",
+      "type": "short",
+      "keyPoints": [
+        "ftok(): Generates an IPC key from a pathname and project identifier",
+        "shmget(): Creates or retrieves a shared memory segment using the key, returns shmid",
+        "shmat(): Attaches the segment to the calling process's address space",
+        "shmdt(): Detaches the segment from the process's address space",
+        "shmctl(): Performs control operations such as IPC_RMID to remove the segment"
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "What is kernel persistence in the context of System V IPC, and why is it important for shared memory management? (3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "System V IPC objects (shared memory, semaphores) persist in the kernel until explicitly deleted or system reboot",
+        "Even after all processes detach, the segment remains allocated in kernel memory",
+        "Programmers must use shmctl(IPC_RMID) to clean up; otherwise resources are leaked",
+        "ipcs and ipcrm commands can view and remove orphaned IPC objects"
+      ]
+    }
+  ]
+}

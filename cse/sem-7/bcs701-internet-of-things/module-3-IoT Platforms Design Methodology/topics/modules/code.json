@@ -1,0 +1,55 @@
+{
+  "topicId": "modules",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Sensor Module Structure",
+      "description": "Designing a module for sensor interface in IoT systems",
+      "code": "ALGORITHM CreateSensorModule\nBEGIN\n MODULE SensorInterface\n FUNCTION init_sensor()\n Initialize hardware connection\n Return connection object\n \n FUNCTION read_sensor(sensor)\n Read raw data from sensor\n Convert to meaningful units\n Return processed value\n END MODULE\nEND",
+      "explanation": "Defines a module with initialization and data reading functions. init_sensor handles hardware setup, read_sensor performs data acquisition and conversion.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python: Sensor Interface Module",
+      "description": "Implementation of sensor interface module for temperature sensor",
+      "code": "# File: sensor.py\nimport Adafruit_DHT\n\ndef initialize_dht(pin=4):\n \"\"\"Initialize DHT22 sensor on specified GPIO pin\"\"\"\n return Adafruit_DHT.DHT22(pin)\n\ndef read_temperature(sensor):\n \"\"\"Read temperature value from sensor\"\"\"\n humidity, temp = Adafruit_DHT.read_retry(sensor)\n return temp\n",
+      "explanation": "Uses Adafruit library for DHT22 sensor. initialize_dht sets up hardware, read_temperature handles data collection with error retries.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: Modular IoT Application Flow",
+      "description": "Main program structure using multiple IoT modules",
+      "code": "ALGORITHM MainIoTProgram\nBEGIN\n IMPORT SensorModule\n IMPORT DataModule\n IMPORT CommsModule\n \n sensor = SensorModule.initialize()\n WHILE True\n raw_data = SensorModule.read(sensor)\n processed = DataModule.process(raw_data)\n CommsModule.transmit(processed)\n SLEEP 60\n END WHILE\nEND",
+      "explanation": "Shows typical IoT workflow: initialize hardware, collect data, process, transmit, and repeat. Demonstrates separation of concerns through modules.",
+      "timeComplexity": "O(1) per iteration",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Python: Main Weather Monitoring Program",
+      "description": "Integration of modules for complete IoT system",
+      "code": "# File: main.py\nfrom sensor import initialize_dht, read_temperature\nfrom data_processor import celsius_to_fahrenheit\nfrom mqtt_client import publish_data\nimport time\n\ndef main():\n dht_sensor = initialize_dht()\n \n while True:\n temp_c = read_temperature(dht_sensor)\n temp_f = celsius_to_fahrenheit(temp_c)\n publish_data('weather/temp', temp_f)\n time.sleep(60)\n\nif __name__ == '__main__':\n main()",
+      "explanation": "Imports functionality from dedicated modules. Combines sensor reading, data conversion, and MQTT communication in a loop.",
+      "timeComplexity": "O(1) per loop",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "python",
+      "title": "Python: Using Standard Library Modules",
+      "description": "Leveraging Python's built-in modules for IoT tasks",
+      "code": "# File: data_logger.py\nimport json\nimport time\nfrom datetime import datetime\n\ndef create_log_entry(sensor_type, value):\n return {\n 'timestamp': datetime.now().isoformat(),\n 'sensor': sensor_type,\n 'value': value,\n 'unit': '°C'\n }\n\ndef save_log(entry):\n with open('sensor_log.json', 'a') as f:\n f.write(json.dumps(entry) + '\\n')",
+      "explanation": "Demonstrates using datetime for timestamps and json for serialization. Shows file handling for data logging.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+sql
+SELECT AVG(Salary) AS AverageSalary FROM Employees;

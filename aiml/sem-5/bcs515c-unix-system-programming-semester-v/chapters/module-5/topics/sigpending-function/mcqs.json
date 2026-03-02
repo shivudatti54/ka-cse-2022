@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What does the sigpending function in UNIX System Programming return?",
+    "options": [
+      "A set of signals that are blocked from delivery and currently pending",
+      "The number of pending signals for the process",
+      "The signal mask of the calling process",
+      "The action associated with a specific pending signal"
+    ],
+    "correctIndex": 0,
+    "explanation": "The sigpending function retrieves the set of signals that are currently pending for the calling process, meaning they have been raised but are blocked and therefore not yet delivered."
+  },
+  {
+    "id": "q2",
+    "question": "Which header file must be included to use the sigpending function?",
+    "options": [
+      "<signal.h>",
+      "<unistd.h>",
+      "<sys/types.h>",
+      "<sys/wait.h>"
+    ],
+    "correctIndex": 0,
+    "explanation": "The sigpending function is declared in the <signal.h> header file, which contains the declarations for signal handling functions and related data types like sigset_t."
+  },
+  {
+    "id": "q3",
+    "question": "What is the function prototype for sigpending?",
+    "options": [
+      "int sigpending(sigset_t *set);",
+      "void sigpending(int sig);",
+      "sigset_t sigpending(void);",
+      "int sigpending(int sig, sigset_t *set);"
+    ],
+    "correctIndex": 0,
+    "explanation": "The correct prototype is 'int sigpending(sigset_t *set);'. It takes a pointer to a sigset_t where the pending signal set is stored and returns 0 on success or -1 on error."
+  },
+  {
+    "id": "q4",
+    "question": "A signal becomes pending for a process when it is generated but not immediately delivered. Which of the following scenarios is most likely to cause a signal to be pending?",
+    "options": [
+      "The signal is blocked by the process's signal mask",
+      "The process is in a zombie state",
+      "The signal is sent from a child process",
+      "The process is executing a system call"
+    ],
+    "correctIndex": 0,
+    "explanation": "A signal becomes pending primarily when the process has currently blocked that specific signal (using sigprocmask). The signal is generated but cannot be delivered until it is unblocked, causing it to remain in a pending state."
+  },
+  {
+    "id": "q5",
+    "question": "Consider a multithreaded program where the main thread blocks SIGUSR1 and then a helper thread (with a default signal mask) receives that signal. If the main thread then calls sigpending, what will it find?",
+    "options": [
+      "SIGUSR1 will NOT be in the returned set, as signals are directed to individual threads",
+      "SIGUSR1 will be in the returned set, as the signal is pending for the entire process",
+      "The result is undefined and depends on the thread implementation",
+      "sigpending can only be called by the thread that received the signal"
+    ],
+    "correctIndex": 0,
+    "explanation": "In the POSIX threads model, signals can be directed to specific threads. If a signal is generated for a thread that has not blocked it (like the helper thread), it is delivered immediately to that thread's signal handler. It does not become pending for the entire process, so the main thread's call to sigpending would not include it."
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "topicId": "register-stack-organization",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "PUSH Operation in Register Stack",
+      "description": "Demonstrates how PUSH works in register stack organization with overflow checking",
+      "code": "ALGORITHM PUSH_REG_STACK\nINPUT: value to push\nBEGIN\n  IF (stack_pointer >= max_registers) THEN\n    // Register stack full - need to spill\n    SPILL_TO_MEMORY(stack_pointer, value)\n    stack_pointer = stack_pointer + 1\n  ELSE\n    register_stack[stack_pointer] = value\n    stack_pointer = stack_pointer + 1\n  END IF\n  RETURN stack_pointer\nEND",
+      "explanation": "The PUSH operation checks if register stack has space. If full, it spills oldest entry to memory before pushing. Stack pointer is incremented after push.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n) where n is number of register slots"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "POP Operation in Register Stack",
+      "description": "Demonstrates POP with underflow handling",
+      "code": "ALGORITHM POP_REG_STACK\nBEGIN\n  IF (stack_pointer <= 0) THEN\n    // Register stack empty - underflow error\n    RAISE_UNDERFLOW_ERROR()\n    RETURN NULL\n  ELSE\n    stack_pointer = stack_pointer - 1\n    value = register_stack[stack_pointer]\n    // Check if we need to fill from memory spill area\n    IF (memory_spill_present AND stack_pointer < min_register) THEN\n      value = FILL_FROM_MEMORY()\n    END IF\n    RETURN value\n  END IF\nEND",
+      "explanation": "POP decrements stack pointer first (for downward-growing stack), retrieves value. If values were spilled to memory, they are restored when needed.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Function Prologue and Epilogue",
+      "description": "Demonstrates stack frame setup and teardown in register stack organization",
+      "code": "def function_prologue(param_count, local_count, frame_pointer):\n    # Save old frame pointer\n    old_fp = frame_pointer\n    # Allocate space for locals (simulate decrementing stack pointer)\n    new_fp = frame_pointer - 4  # space for saved FP\n    # Save callee-saved registers (simulated)\n    saved_registers = [0] * 4  # save 4 registers\n    # Create stack frame\n    stack_frame = {\n        'return_address': None,\n        'old_fp': old_fp,\n        'params': [None] * param_count,\n        'locals': [None] * local_count,\n        'saved_regs': saved_registers\n    }\n    return new_fp, stack_frame\n\ndef function_epilogue(frame_pointer, return_value, old_fp):\n    # Place return value in designated register\n    result_register = return_value\n    # Restore frame pointer\n    restored_fp = old_fp\n    # Return to caller\n    return result_register, restored_fp\n\n# Example usage\nfp, frame = function_prologue(param_count=3, local_count=5, frame_pointer=1000)\nprint(f\"Stack frame created at FP={fp}\")\nprint(f\"Frame contains: {len(frame['locals'])} locals, {len(frame['params'])} params\")\nresult, restored_fp = function_epilogue(fp, 42, frame['old_fp'])\nprint(f\"Returned: {result}, Restored FP: {restored_fp}\")",
+      "explanation": "This code demonstrates the Prologue (setting up stack frame, saving FP) and Epilogue (returning value, restoring FP) phases of function execution.",
+      "timeComplexity": "O(n) where n is local variable count",
+      "spaceComplexity": "O(n) for stack frame allocation"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Register Stack with Spilling Implementation",
+      "description": "C implementation showing register stack with automatic spilling to memory",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define REG_STACK_SIZE 8\n#define SPILL_THRESHOLD 6\n\ntypedef struct {\n    int registers[REG_STACK_SIZE];\n    int sp;  // Stack Pointer\n    int fp;  // Frame Pointer\n    int *spill_area;  // Memory backup for overflow\n    int spill_count;\n} RegisterStack;\n\nvoid init_stack(RegisterStack *s) {\n    s->sp = 0;\n    s->fp = -1;\n    s->spill_area = NULL;\n    s->spill_count = 0;\n}\n\nvoid push(RegisterStack *s, int value) {\n    if (s->sp >= REG_STACK_SIZE) {\n        // Spill to memory\n        s->spill_area = realloc(s->spill_area, (s->spill_count + 1) * sizeof(int));\n        s->spill_area[s->spill_count++] = value;\n        printf(\"Spilled to memory: %d\\n\", value);\n    } else {\n        s->registers[s->sp++] = value;\n    }\n}\n\nint pop(RegisterStack *s) {\n    if (s->sp > 0) {\n        return s->registers[--s->sp];\n    } else if (s->spill_count > 0) {\n        return s->spill_area[--s->spill_count];\n    }\n    printf(\"Stack Underflow!\\n\");\n    return -1;\n}\n\nint main() {\n    RegisterStack stack;\n    init_stack(&stack);\n    \n    printf(\"Pushing values 10 to 15:\\n\");\n    for (int i = 10; i <= 15; i++) {\n        push(&stack, i);\n    }\n    \n    printf(\"\\nPopping values:\\n\");\n    for (int i = 0; i < 6; i++) {\n        printf(\"Pop: %d\\n\", pop(&stack));\n    }\n    \n    return 0;\n}",
+      "explanation": "This C implementation demonstrates register stack with automatic spilling to memory when all registers are full. It shows push/pop operations, overflow handling through memory spilling, and underflow detection.",
+      "timeComplexity": "O(1) for register operations, O(n) for spill operations",
+      "spaceComplexity": "O(REG_STACK_SIZE + spill_count)"
+    }
+  ]
+}

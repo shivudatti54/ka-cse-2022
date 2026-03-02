@@ -1,0 +1,140 @@
+{
+  "topicId": "allocation-methods",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain contiguous allocation method and list two of its major disadvantages.",
+      "keyPoints": [
+        "Contiguous allocation stores each file in consecutive disk blocks",
+        "Disadvantage 1: External fragmentation - cannot allocate large files even when total free space is sufficient",
+        "Disadvantage 2: Must know file size at creation time or relocate entire file if it grows",
+        "Disadvantage 3: Difficult to implement dynamic file growth"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "How does linked allocation solve the external fragmentation problem? Why does it still have poor random access performance?",
+      "keyPoints": [
+        "Linked allocation stores file blocks scattered across the disk using pointers",
+        "Each block contains pointer to next block in the file",
+        "No need for consecutive blocks - any free block can be used",
+        "Random access is slow because you must follow pointers from start to reach desired block",
+        "Accessing nth block requires accessing n-1 previous blocks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is an index block in indexed allocation? How does it support both sequential and direct access?",
+      "keyPoints": [
+        "Index block is a special block containing pointers to all data blocks of a file",
+        "For sequential access: read pointers in order and access corresponding data blocks",
+        "For direct/random access: use index block to directly find the pointer to the nth block and access it immediately",
+        "All block addresses are available in one place - the index block"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between internal fragmentation and external fragmentation in file allocation methods.",
+      "keyPoints": [
+        "Internal fragmentation: Wasted space within allocated units because allocated space is larger than needed data",
+        "Caused by fixed block/cluster sizes; more pronounced with larger clusters",
+        "External fragmentation: Free disk space is scattered in small chunks; cannot allocate contiguous space for large files",
+        "Contiguous allocation suffers most from external fragmentation",
+        "Linked and indexed allocation minimize external fragmentation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Describe the free space management technique using a bit vector (bitmap). Mention one advantage and one disadvantage.",
+      "keyPoints": [
+        "Bit vector maintains one bit for each disk block",
+        "Bit value 0 = free block, 1 = allocated block (or vice versa)",
+        "Advantage: Fast allocation - scan bitmap to find required number of consecutive free blocks",
+        "Disadvantage: Requires memory proportional to disk size; for large disks, bitmap can be very large",
+        "Alternative: Free list/linked list of free blocks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the structure of a Unix inode. How does it support large files using multilevel indexing?",
+      "keyPoints": [
+        "Inode (index node) contains file metadata and block pointers",
+        "Contains fixed number of direct pointers (typically 12) for small files",
+        "Contains single indirect, double indirect, and triple indirect pointers",
+        "Single indirect: points to index block pointing to data blocks",
+        "Double indirect: points to index of index blocks - allows access to (block size/pointer size)^2 blocks",
+        "Triple indirect: extends this further for very large files"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare the three allocation methods (contiguous, linked, indexed) with respect to: (a) Sequential access speed (b) Random access speed (c) External fragmentation",
+      "keyPoints": [
+        "Sequential access: Contiguous fastest, Indexed good, Linked moderate",
+        "Random access: Indexed fastest, Contiguous good, Linked very slow (O(n))",
+        "External fragmentation: Contiguous severe, Linked minimal, Indexed minimal",
+        "Summary table helps demonstrate understanding of trade-offs"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "With the help of a diagram, explain the three primary file allocation methods: Contiguous, Linked, and Indexed. Discuss the advantages and disadvantages of each method.",
+      "keyPoints": [
+        "Contiguous allocation: Single continuous region per file, explain with diagram showing consecutive blocks 5-9 for file A",
+        "Linked allocation: Scattered blocks with pointers, show diagram with block chain: 2->8->5->12",
+        "Indexed allocation: Separate index block, show diagram with index block pointing to data blocks",
+        "Contiguous advantages: Fast sequential/random access, simple to implement",
+        "Contiguous disadvantages: External fragmentation, file size must be known",
+        "Linked advantages: No external fragmentation, flexible file growth",
+        "Linked disadvantages: Slow random access, pointer overhead",
+        "Indexed advantages: Fast direct access, no external fragmentation",
+        "Indexed disadvantages: Extra storage for index block, larger files need multilevel index"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the File Allocation Table (FAT) system. How does it implement linked allocation? What are the advantages and limitations of the FAT system?",
+      "keyPoints": [
+        "FAT is a data structure that maintains a table with one entry per disk block",
+        "Each FAT entry contains the block number of the next block in the file (-1 or EOF indicates end)",
+        "FAT table is cached in memory for fast access",
+        "Implements linked allocation - file's blocks are linked through FAT entries rather than within blocks",
+        "Advantages: Keeps entire file structure in memory, fast sequential access, supports linked allocation without per-block pointers",
+        "Limitations: Entire FAT must fit in memory - limits disk size, slow for very large files, no security features, vulnerable to corruption"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the multilevel index structure used in Unix file systems (inodes). How does it handle small, medium, and large files efficiently? Explain with examples.",
+      "keyPoints": [
+        "Inode contains: inode number, permissions, timestamps, size, link count",
+        "Block pointers: 12 direct pointers, 1 single indirect, 1 double indirect, 1 triple indirect",
+        "Small files (up to 12 blocks): Use only direct pointers - 12 x 4KB = 48KB for typical block size",
+        "Medium files: Use single indirect block - adds block size / 4 = 1024 pointers for additional blocks",
+        "Large files: Use double and triple indirect pointers for exponentially larger capacity",
+        "Example: With 4KB block and 4-byte pointers, single indirect adds 1024 blocks, double indirect adds 1024 x 1024 blocks",
+        "This design balances efficiency for small files while supporting very large files"
+      ],
+      "marks": 10
+    }
+  ]
+}

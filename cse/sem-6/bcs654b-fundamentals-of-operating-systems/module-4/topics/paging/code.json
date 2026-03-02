@@ -1,0 +1,33 @@
+{
+  "topicId": "paging",
+  "examples": [
+    {
+      "id": "pseudocode-page-table-lookup",
+      "title": "Algorithm: Page Table Lookup",
+      "description": "Pseudocode demonstrating page table lookup",
+      "language": "pseudocode",
+      "code": "ALGORITHM PageTableLookup\nINPUT: pageTable, logicalAddress, pageSize\nOUTPUT: physicalAddress\n\nBEGIN\n page := logicalAddress / pageSize\n frame := pageTable[page]\n offset := logicalAddress % pageSize\n physicalAddress := frame * pageSize + offset\n RETURN physicalAddress\nEND",
+      "explanation": "Step-by-step explanation of page table lookup"
+    },
+    {
+      "id": "python-page-table-implementation",
+      "title": "Python: Page Table Implementation",
+      "description": "Python implementation of a page table",
+      "language": "python",
+      "code": "class PageTable:\n def __init__(self, pageSize):\n self.pageSize = pageSize\n self.table = {}\n\n def addEntry(self, page, frame):\n self.table[page] = frame\n\n def lookup(self, logicalAddress):\n page = logicalAddress // self.pageSize\n frame = self.table.get(page)\n if frame is None:\n raise ValueError('Page not found')\n offset = logicalAddress % self.pageSize\n physicalAddress = frame * self.pageSize + offset\n return physicalAddress\n\n# Example usage\npageSize = 4096\npageTable = PageTable(pageSize)\npageTable.addEntry(0, 10)\nlogicalAddress = 5000\nphysicalAddress = pageTable.lookup(logicalAddress)\nprint(physicalAddress)",
+      "explanation": "Key implementation details of page table in Python",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-tlb-implementation",
+      "title": "C: TLB Implementation",
+      "description": "C implementation of a Translation Lookaside Buffer (TLB)",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define TLB_SIZE 10\n\ntypedef struct {\n int page;\n int frame;\n} TLBEntry;\n\nTLBEntry tlb[TLB_SIZE];\nint tlbIndex = 0;\n\nvoid addTLBEntry(int page, int frame) {\n tlb[tlbIndex].page = page;\n tlb[tlbIndex].frame = frame;\n tlbIndex = (tlbIndex + 1) % TLB_SIZE;\n}\n\nint lookupTLB(int page) {\n for (int i = 0; i < TLB_SIZE; i++) {\n if (tlb[i].page == page) {\n return tlb[i].frame;\n }\n }\n return -1;\n}\n\nint main() {\n addTLBEntry(0, 10);\n int frame = lookupTLB(0);\n printf('%d\\n', frame);\n return 0;\n}",
+      "explanation": "Key implementation details of TLB in C",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

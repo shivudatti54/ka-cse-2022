@@ -1,0 +1,95 @@
+{
+  "topicId": "role-of-cache-memory",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What are the three cache mapping techniques?",
+      "back": "1. **Direct-Mapped**: Each block maps to one line\n   Line = Block mod Lines\n\n2. **Fully Associative**: Block can go anywhere\n   Needs CAM for parallel search\n\n3. **Set-Associative**: Block maps to one set\n   Set = Block mod Sets\n   Any line within set OK",
+      "tags": [
+        "mapping",
+        "basic"
+      ]
+    },
+    {
+      "id": "fc-2",
+      "front": "How is a memory address partitioned for cache?",
+      "back": "Address = [Tag | Index | Offset]\n\n- **Offset**: log2(line size) bits\n  Selects byte within cache line\n\n- **Index**: log2(number of sets) bits\n  Selects cache set\n\n- **Tag**: remaining bits\n  Identifies specific block",
+      "tags": [
+        "addressing",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the 3 Cs model of cache misses?",
+      "back": "**C**ompulsory (Cold):\n- First access to block\n- Reduce: Prefetching\n\n**C**apacity:\n- Cache too small\n- Reduce: Larger cache\n\n**C**onflict:\n- Multiple blocks map to same set\n- Reduce: Higher associativity",
+      "tags": [
+        "misses",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-4",
+      "front": "Compare Write-Through vs Write-Back policies",
+      "back": "**Write-Through**:\n- Writes to cache AND memory\n- Memory always consistent\n- Slower, more traffic\n\n**Write-Back**:\n- Writes to cache only\n- Updates memory on eviction\n- Needs dirty bit\n- Faster, less traffic",
+      "tags": [
+        "policies",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the AMAT formula?",
+      "back": "AMAT = Hit Time + Miss Rate x Miss Penalty\n\nFor multi-level:\nAMAT = T_L1 + M_L1 x (T_L2 + M_L2 x T_mem)\n\nWhere:\n- T = Access time\n- M = Miss rate",
+      "tags": [
+        "formula",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-6",
+      "front": "What are common replacement policies?",
+      "back": "1. **LRU** (Least Recently Used)\n   - Best theoretical, expensive\n\n2. **FIFO** (First In First Out)\n   - Simple, ignores usage\n\n3. **Random**\n   - Simplest, surprisingly good\n\n4. **Pseudo-LRU**\n   - Approximates LRU cheaply\n   - Used in 4/8-way caches",
+      "tags": [
+        "replacement",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-7",
+      "front": "Calculate: 32KB, 4-way cache, 64B lines - how many sets?",
+      "back": "Step 1: Total lines\nLines = 32KB / 64B = 512 lines\n\nStep 2: Number of sets\nSets = Lines / Ways = 512 / 4 = 128 sets\n\nEach set has 4 lines (4-way)",
+      "tags": [
+        "calculation",
+        "example"
+      ]
+    },
+    {
+      "id": "fc-8",
+      "front": "What is a victim cache?",
+      "back": "Small fully-associative cache that holds recently evicted blocks.\n\nPurpose:\n- Reduces conflict misses\n- Gives evicted blocks second chance\n\nTypical size: 4-16 lines\nChecked on main cache miss",
+      "tags": [
+        "optimization",
+        "advanced"
+      ]
+    },
+    {
+      "id": "fc-9",
+      "front": "What is write-allocate vs no-write-allocate?",
+      "back": "**Write-Allocate** (Fetch on Write):\n- On write miss, fetch block first\n- Then write to cache\n- Pairs with write-back\n\n**No-Write-Allocate** (Write Around):\n- On write miss, write to memory only\n- Don't load into cache\n- Pairs with write-through",
+      "tags": [
+        "policies",
+        "advanced"
+      ]
+    },
+    {
+      "id": "fc-10",
+      "front": "Why is fully associative cache rarely used for large caches?",
+      "back": "Cost and speed issues:\n\n1. Needs comparator for EACH line\n   - 1000 lines = 1000 comparators\n\n2. Parallel comparison is expensive\n   - More power, more area\n\n3. Replacement logic complex\n   - LRU among 1000 lines?\n\nSolution: Set-associative is practical compromise",
+      "tags": [
+        "trade-offs",
+        "important"
+      ]
+    }
+  ]
+}

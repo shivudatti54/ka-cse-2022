@@ -1,0 +1,59 @@
+{
+  "topicId": "semaphores",
+  "examples": [
+    {
+      "id": "semaphore-for-mutual-exclusion-c",
+      "title": "C: Semaphore for Mutual Exclusion",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <pthread.h>\n#include <semaphore.h>\n\nsem_t mutex;\nint counter = 0;\n\nvoid* increment(void* arg) {\n for (int i = 0; i < 100000; i++) {\n sem_wait(&mutex); // P operation\n counter++; // Critical section\n sem_post(&mutex); // V operation\n }\n return NULL;\n}\n\nint main() {\n pthread_t t1, t2;\n \n sem_init(&mutex, 0, 1); // Binary semaphore\n \n pthread_create(&t1, NULL, increment, NULL);\n pthread_create(&t2, NULL, increment, NULL);\n \n pthread_join(t1, NULL);\n pthread_join(t2, NULL);\n \n sem_destroy(&mutex);\n \n printf(\"Counter: %d (expected: 200000)\\n\", counter);\n return 0;\n}"
+    },
+    {
+      "id": "semaphore-for-mutual-exclusion-python",
+      "title": "Python: Semaphore for Mutual Exclusion",
+      "language": "python",
+      "code": "import threading\n\n# Python's threading.Semaphore\nmutex = threading.Semaphore(1) # Binary semaphore\ncounter = 0\n\ndef increment():\n global counter\n for _ in range(100000):\n mutex.acquire() # wait (P)\n counter += 1 # Critical section\n mutex.release() # signal (V)\n\nt1 = threading.Thread(target=increment)\nt2 = threading.Thread(target=increment)\n\nt1.start()\nt2.start()\nt1.join()\nt2.join()\n\nprint(f\"Counter: {counter} (expected: 200000)\")"
+    },
+    {
+      "id": "semaphore-for-mutual-exclusion-java",
+      "title": "Java: Semaphore for Mutual Exclusion",
+      "language": "java",
+      "code": "import java.util.concurrent.Semaphore;\n\npublic class SemaphoreExample {\n static Semaphore mutex = new Semaphore(1);\n static int counter = 0;\n \n public static void main(String[] args) throws Exception {\n Runnable task = () -> {\n for (int i = 0; i < 100000; i++) {\n try {\n mutex.acquire(); // wait\n counter++; // Critical section\n mutex.release(); // signal\n } catch (InterruptedException e) {\n Thread.currentThread().interrupt();\n }\n }\n };\n \n Thread t1 = new Thread(task);\n Thread t2 = new Thread(task);\n \n t1.start(); t2.start();\n t1.join(); t2.join();\n \n System.out.println(\"Counter: \" + counter);\n }\n}"
+    },
+    {
+      "id": "counting-semaphore-for-resource-pool-c",
+      "title": "C: Counting Semaphore for Resource Pool",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <pthread.h>\n#include <semaphore.h>\n#include <unistd.h>\n\n#define NUM_RESOURCES 3\n#define NUM_THREADS 5\n\nsem_t resources;\n\nvoid* use_resource(void* arg) {\n int id = *(int*)arg;\n \n printf(\"Thread %d: Waiting for resource\\n\", id);\n sem_wait(&resources); // Acquire resource\n \n printf(\"Thread %d: Using resource\\n\", id);\n sleep(1); // Simulate resource usage\n \n printf(\"Thread %d: Releasing resource\\n\", id);\n sem_post(&resources); // Release resource\n \n return NULL;\n}\n\nint main() {\n pthread_t threads[NUM_THREADS];\n int ids[NUM_THREADS];\n \n sem_init(&resources, 0, NUM_RESOURCES);\n \n for (int i = 0; i < NUM_THREADS; i++) {\n ids[i] = i;\n pthread_create(&threads[i], NULL, use_resource, &ids[i]);\n }\n \n for (int i = 0; i < NUM_THREADS; i++) {\n pthread_join(threads[i], NULL);\n }\n \n sem_destroy(&resources);\n return 0;\n}"
+    },
+    {
+      "id": "counting-semaphore-for-resource-pool-python",
+      "title": "Python: Counting Semaphore for Resource Pool",
+      "language": "python",
+      "code": "import threading\nimport time\n\nNUM_RESOURCES = 3\nNUM_THREADS = 5\n\n# Counting semaphore\nresources = threading.Semaphore(NUM_RESOURCES)\n\ndef use_resource(thread_id):\n print(f\"Thread {thread_id}: Waiting for resource\")\n resources.acquire()\n \n print(f\"Thread {thread_id}: Using resource\")\n time.sleep(1) # Simulate usage\n \n print(f\"Thread {thread_id}: Releasing resource\")\n resources.release()\n\nthreads = []\nfor i in range(NUM_THREADS):\n t = threading.Thread(target=use_resource, args=(i,))\n threads.append(t)\n t.start()\n\nfor t in threads:\n t.join()\n\nprint(\"All threads completed\")"
+    },
+    {
+      "id": "counting-semaphore-for-resource-pool-java",
+      "title": "Java: Counting Semaphore for Resource Pool",
+      "language": "java",
+      "code": "import java.util.concurrent.Semaphore;\n\npublic class CountingSemaphore {\n static final int NUM_RESOURCES = 3;\n static final int NUM_THREADS = 5;\n static Semaphore resources = new Semaphore(NUM_RESOURCES);\n \n public static void main(String[] args) {\n for (int i = 0; i < NUM_THREADS; i++) {\n final int id = i;\n new Thread(() -> {\n try {\n System.out.println(\"Thread \" + id + \": Waiting\");\n resources.acquire();\n \n System.out.println(\"Thread \" + id + \": Using resource\");\n Thread.sleep(1000);\n \n System.out.println(\"Thread \" + id + \": Releasing\");\n resources.release();\n } catch (InterruptedException e) {\n Thread.currentThread().interrupt();\n }\n }).start();\n }\n }\n}"
+    },
+    {
+      "id": "semaphore-for-ordering-synchronization-c",
+      "title": "C: Semaphore for Ordering (Synchronization)",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <pthread.h>\n#include <semaphore.h>\n\nsem_t sync_sem;\n\nvoid* task_A(void* arg) {\n printf(\"A: Doing work before signal\\n\");\n // S1 must happen before S2\n printf(\"A: Signal sent\\n\");\n sem_post(&sync_sem); // Signal B to continue\n return NULL;\n}\n\nvoid* task_B(void* arg) {\n printf(\"B: Waiting for signal\\n\");\n sem_wait(&sync_sem); // Wait for A's signal\n printf(\"B: Received signal, continuing\\n\");\n // S2 happens after S1\n return NULL;\n}\n\nint main() {\n pthread_t tA, tB;\n \n sem_init(&sync_sem, 0, 0); // Start at 0\n \n // Start B first, but it will wait for A\n pthread_create(&tB, NULL, task_B, NULL);\n pthread_create(&tA, NULL, task_A, NULL);\n \n pthread_join(tA, NULL);\n pthread_join(tB, NULL);\n \n sem_destroy(&sync_sem);\n return 0;\n}"
+    },
+    {
+      "id": "semaphore-for-ordering-synchronization-python",
+      "title": "Python: Semaphore for Ordering (Synchronization)",
+      "language": "python",
+      "code": "import threading\nimport time\n\n# Semaphore initialized to 0 for ordering\nsync_sem = threading.Semaphore(0)\n\ndef task_A():\n print(\"A: Doing work (S1)\")\n time.sleep(0.5)\n print(\"A: Signaling B\")\n sync_sem.release() # Signal B\n\ndef task_B():\n print(\"B: Waiting for A's signal\")\n sync_sem.acquire() # Wait for A\n print(\"B: Received signal, doing work (S2)\")\n\n# Start B first, but S2 will only run after S1\ntB = threading.Thread(target=task_B)\ntA = threading.Thread(target=task_A)\n\ntB.start()\ntA.start()\n\ntA.join()\ntB.join()\n\nprint(\"Order guaranteed: S1 before S2\")"
+    },
+    {
+      "id": "semaphore-for-ordering-synchronization-java",
+      "title": "Java: Semaphore for Ordering (Synchronization)",
+      "language": "java",
+      "code": "import java.util.concurrent.Semaphore;\n\npublic class SemaphoreOrdering {\n static Semaphore sync = new Semaphore(0);\n \n public static void main(String[] args) throws Exception {\n Thread taskB = new Thread(() -> {\n try {\n System.out.println(\"B: Waiting for signal\");\n sync.acquire(); // Wait\n System.out.println(\"B: Continuing (S2)\");\n } catch (InterruptedException e) {\n Thread.currentThread().interrupt();\n }\n });\n \n Thread taskA = new Thread(() -> {\n System.out.println(\"A: Doing work (S1)\");\n try { Thread.sleep(500); } catch (Exception e) {}\n System.out.println(\"A: Signaling B\");\n sync.release(); // Signal\n });\n \n taskB.start();\n taskA.start();\n \n taskA.join();\n taskB.join();\n }\n}"
+    }
+  ]
+}

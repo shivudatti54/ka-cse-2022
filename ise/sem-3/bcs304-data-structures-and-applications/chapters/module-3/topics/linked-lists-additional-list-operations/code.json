@@ -1,0 +1,65 @@
+{
+  "topicId": "linked-lists-additional-list-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Reverse Linked List",
+      "description": "Iterative algorithm to reverse a singly linked list in-place",
+      "code": "ALGORITHM ReverseList(head)\nBEGIN\n    prev \u2190 NULL\n    curr \u2190 head\n    WHILE curr \u2260 NULL DO\n        next \u2190 curr.next\n        curr.next \u2190 prev\n        prev \u2190 curr\n        curr \u2190 next\n    END WHILE\n    RETURN prev\nEND",
+      "explanation": "Three pointers traverse the list. Each node's next pointer is redirected to previous node. At end, prev becomes new head.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Find Middle Element",
+      "description": "Find middle node using slow and fast pointer technique",
+      "code": "def find_middle(head):\n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    \n    return slow\n\n# For even length, returns second middle\n# For odd length, returns single middle",
+      "explanation": "Slow pointer moves one node, fast moves two. When fast reaches end, slow is at middle. For even length, returns second of two middle nodes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Detect Cycle - Floyd's Algorithm",
+      "description": "Detect if linked list has a cycle using two pointers moving at different speeds",
+      "code": "struct Node {\n    int data;\n    struct Node* next;\n};\n\nint detectCycle(struct Node* head) {\n    struct Node *slow = head, *fast = head;\n    \n    while (fast != NULL && fast->next != NULL) {\n        slow = slow->next;\n        fast = fast->next->next;\n        \n        if (slow == fast)\n            return 1; // Cycle detected\n    }\n    return 0; // No cycle\n}",
+      "explanation": "If there's a cycle, fast pointer will eventually lap slow pointer and they will meet. Meeting proves cycle exists.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Nth Node From End",
+      "description": "Find nth node from end using two pointers without finding length",
+      "code": "def nth_from_end(head, n):\n    first = head\n    second = head\n    \n    # Move first pointer n positions ahead\n    for i in range(n):\n        if first is None:\n            return None\n        first = first.next\n    \n    # Move both pointers together\n    while first:\n        first = first.next\n        second = second.next\n    \n    return second",
+      "explanation": "First pointer goes n steps ahead, then both pointers advance together. When first reaches end, second is at nth node from end.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Merge Two Sorted Lists",
+      "description": "Merge two sorted linked lists into one sorted list",
+      "code": "ALGORITHM MergeSorted(list1, list2)\nBEGIN\n    dummy \u2190 Node(-1)\n    tail \u2190 dummy\n    \n    WHILE list1 \u2260 NULL AND list2 \u2260 NULL DO\n        IF list1.data \u2264 list2.data THEN\n            tail.next \u2190 list1\n            list1 \u2190 list1.next\n        ELSE\n            tail.next \u2190 list2\n            list2 \u2190 list2.next\n        END IF\n        tail \u2190 tail.next\n    END WHILE\n    \n    IF list1 \u2260 NULL THEN\n        tail.next \u2190 list1\n    ELSE\n        tail.next \u2190 list2\n    END IF\n    \n    RETURN dummy.next\nEND",
+      "explanation": "Dummy node simplifies head handling. Compare elements from both lists, attach smaller to result. Attach remaining list when other exhausts.",
+      "timeComplexity": "O(m+n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-6",
+      "language": "python",
+      "title": "Check Palindrome",
+      "description": "Check if linked list represents a palindrome number",
+      "code": "def is_palindrome(head):\n    # Step 1: Find middle\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    \n    # Step 2: Reverse second half\n    prev = None\n    curr = slow\n    while curr:\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    \n    # Step 3: Compare halves\n    left = head\n    right = prev\n    while right:  # Only need to check second half\n        if left.val != right.val:\n            return False\n        left = left.next\n        right = right.next\n    \n    return True",
+      "explanation": "Find middle, reverse second half in-place, compare first half with reversed second half. For odd length, middle element is automatically skipped.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

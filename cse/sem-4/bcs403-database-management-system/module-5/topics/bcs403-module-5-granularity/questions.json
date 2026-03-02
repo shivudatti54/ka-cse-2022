@@ -1,0 +1,141 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the concept of granularity of data items in DBMS. What are the different levels of granularity?",
+    "expectedPoints": [
+      "Definition of granularity as the size of data items that can be locked",
+      "Levels from coarse to fine: Database \u2192 File \u2192 Page \u2192 Record \u2192 Field",
+      "Explanation that coarse granularity means large data items, fine granularity means small items",
+      "Trade-off between concurrency and overhead"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What are the six lock modes in Multiple Granularity Locking? Explain any two intent locks with their purpose.",
+    "expectedPoints": [
+      "List six modes: IS, IX, S, SIX, X, NL",
+      "IS (Intent Shared): indicates intention to read lower-level items",
+      "IX (Intent Exclusive): indicates intention to modify lower-level items",
+      "Purpose: efficient lock management in hierarchical structure"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain the lock compatibility matrix for Multiple Granularity Locking with an example.",
+    "expectedPoints": [
+      "Matrix shows which locks can be held simultaneously",
+      "IS compatible with IS, S, IX",
+      "IX compatible with IS, IX",
+      "S compatible only with IS, S, IX",
+      "X compatible only with NL",
+      "SIX compatible only with IS",
+      "Example: If transaction A holds S lock, transaction B can request IS but not X lock"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "What is lock escalation? When and why does it occur?",
+    "expectedPoints": [
+      "Definition: conversion of fine-grained locks to coarse-grained locks",
+      "Triggered when number of locks exceeds threshold",
+      "Reasons: reduces lock management overhead, saves memory",
+      "Trade-off: may reduce concurrency but improves performance"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Compare coarse granularity locking and fine granularity locking with respect to concurrency and overhead.",
+    "expectedPoints": [
+      "Coarse: low overhead, less memory, fewer operations, but lower concurrency",
+      "Fine: high concurrency, more locks, higher memory and CPU overhead",
+      "Fine suitable for transactions accessing few items",
+      "Coarse suitable for transactions accessing many items"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Why are intent locks necessary in Multiple Granularity Locking? Explain with an example.",
+    "expectedPoints": [
+      "Purpose: indicate presence of locks at lower levels in hierarchy",
+      "Avoids scanning entire tree to check compatibility",
+      "Example: If a transaction holds IX lock on database, it indicates it may modify records; other transactions can quickly determine compatibility without checking each record",
+      "Improves lock management efficiency"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "long",
+    "question": "Draw and explain the lock compatibility matrix for Multiple Granularity Locking. For each lock mode, show which locks it is compatible with.",
+    "expectedPoints": [
+      "Draw 6x6 matrix with lock modes as rows and columns",
+      "Explain compatibility entries: IS compatible with IS, S, IX; IX compatible with IS, IX; S compatible with IS, S, IX; SIX compatible with IS only; X compatible with NL only; NL compatible with all",
+      "Explain why certain incompatibilities exist (e.g., X needs exclusive access)",
+      "Provide at least 2 examples showing lock grant/denial scenarios"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Explain the Multiple Granularity Locking protocol with special reference to the lock acquisition and release procedure. How does it ensure serializability?",
+    "expectedPoints": [
+      "Explain hierarchy of locks (database, file, page, record)",
+      "Lock acquisition: top-down manner (root to leaf)",
+      "Lock release: bottom-up manner (leaf to root)",
+      "Rules: Before acquiring S or X lock on a node, must have IS or IX on parent; Before acquiring X on node, must have IX or SIX on parent",
+      "Two-phase locking: growing phase (acquire locks) and shrinking phase (release locks)",
+      "Ensures serializability by preventing dirty reads and unrepeatable reads"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "A transaction wants to modify a specific record in a file while simultaneously reading the entire file. Explain the locking protocol followed. What locks will be acquired and at what levels?",
+    "expectedPoints": [
+      "Use SIX lock on file (S component for reading entire file, IX component for intention to modify)",
+      "Use X lock on specific record for modification",
+      "Explain why SIX is appropriate: allows reading all records while indicating intent to modify descendants",
+      "Explain lock hierarchy: SIX on file node, X on record leaf",
+      "Explain compatibility: Other transactions can read file (S lock), but cannot modify any record (X lock prevents)"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Discuss the advantages and disadvantages of coarse granularity and fine granularity locking. Under what circumstances would you prefer one over the other?",
+    "expectedPoints": [
+      "Coarse advantages: Less memory, lower overhead, fewer lock operations, faster",
+      "Coarse disadvantages: Lower concurrency, more lock conflicts",
+      "Fine advantages: Higher concurrency, fewer conflicts, better for few-item access",
+      "Fine disadvantages: High overhead, more memory, complex management",
+      "Choose coarse for: batch operations, full-table scans, few large transactions",
+      "Choose fine for: OLTP, transactions accessing few rows, high concurrency requirements",
+      "Lock escalation as a dynamic adaptation technique"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  }
+]

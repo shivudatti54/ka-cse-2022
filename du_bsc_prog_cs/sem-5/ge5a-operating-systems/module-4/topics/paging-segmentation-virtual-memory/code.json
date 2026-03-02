@@ -1,0 +1,45 @@
+{
+  "topicId": "paging-segmentation-virtual-memory",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FIFO Page Replacement Algorithm",
+      "description": "Implementation of First-In-First-Out page replacement algorithm",
+      "code": "ALGORITHM FIFO-Page-Replace\nINPUT: Reference string, Number of frames\nOUTPUT: Number of page faults\n\nBEGIN\n  frames \u2190 empty queue\n  faults \u2190 0\n  \n  FOR each page IN reference_string DO\n    IF page NOT IN frames THEN\n      faults \u2190 faults + 1\n      IF frames is full THEN\n        // Remove oldest page (front of queue)\n        old_page \u2190 frames.dequeue()\n      END IF\n      // Add new page to queue\n      frames.enqueue(page)\n    END IF\n  END FOR\n  \n  RETURN faults\nEND",
+      "explanation": "FIFO maintains pages in arrival order. When a new page is needed and all frames are full, it removes the page that has been in memory the longest. Simple to implement but doesn't consider page usage patterns.",
+      "timeComplexity": "O(n) where n is number of references",
+      "spaceComplexity": "O(f) where f is number of frames"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "LRU Page Replacement Algorithm",
+      "description": "Implementation of Least Recently Used page replacement using counters",
+      "code": "ALGORITHM LRU-Page-Replace\nINPUT: Reference string, Number of frames\nOUTPUT: Number of page faults\n\nBEGIN\n  frames \u2190 empty set\n  counters \u2190 empty map  // page \u2192 counter\n  time \u2190 0\n  faults \u2190 0\n  \n  FOR each page IN reference_string DO\n    time \u2190 time + 1\n    \n    IF page IN frames THEN\n      // Update counter for referenced page\n      counters[page] \u2190 time\n    ELSE\n      faults \u2190 faults + 1\n      IF frames is full THEN\n        // Find page with smallest counter (LRU)\n        lru_page \u2190 frames.min(counters)\n        frames.remove(lru_page)\n        counters.remove(lru_page)\n      END IF\n      frames.add(page)\n      counters[page] \u2190 time\n    END IF\n  END FOR\n  \n  RETURN faults\nEND",
+      "explanation": "LRU tracks when each page was last used. When replacement is needed, it removes the page that hasn't been used for the longest time. Better performance than FIFO but requires hardware support for accurate tracking.",
+      "timeComplexity": "O(n \u00d7 f) where n=references, f=frames",
+      "spaceComplexity": "O(f)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "TLB Lookup Simulation",
+      "description": "Python implementation of TLB-assisted address translation",
+      "code": "class TLB:\n    def __init__(self, size):\n        self.size = size\n        self.entries = {}  # page_num -> frame_num\n    \n    def lookup(self, page_num):\n        if page_num in self.entries:\n            return self.entries[page_num], True  # Hit\n        return None, False  # Miss\n    \n    def update(self, page_num, frame_num):\n        if len(self.entries) >= self.size:\n            # Simple FIFO eviction for demo\n            first_key = next(iter(self.entries))\n            del self.entries[first_key]\n        self.entries[page_num] = frame_num\n\ndef translate_address(virtual_addr, tlb, page_table):\n    page_num = virtual_addr // 4096  # Assuming 4KB pages\n    offset = virtual_addr % 4096\n    \n    # Try TLB first\n    frame_num, hit = tlb.lookup(page_num)\n    \n    if not hit:\n        # TLB miss - check page table\n        if page_num in page_table:\n            frame_num = page_table[page_num]\n            tlb.update(page_num, frame_num)\n        else:\n            raise PageFaultException()\n    \n    physical_addr = frame_num * 4096 + offset\n    return physical_addr, hit",
+      "explanation": "This code demonstrates TLB lookup. On a TLB hit, address translation is fast. On a miss, page table is consulted and the entry is added to TLB. Real TLBs use associative memory for parallel search.",
+      "timeComplexity": "O(1) average with TLB hit, O(n) worst case for page table",
+      "spaceComplexity": "O(TLB_size + page_table_size)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Two-Level Page Table Address Translation",
+      "description": "C program demonstrating two-level hierarchical paging address translation",
+      "code": "#include <stdio.h>\n#include <stdint.h>\n\n// Assume: 32-bit address, 4KB pages\n// Page offset: 12 bits\n// Each page table fits in one page: 1024 entries = 4KB\n// Level 1: 10 bits, Level 2: 10 bits, Offset: 12 bits\n\n#define PAGE_OFFSET_BITS 12\n#define PTE_BITS 10\n#define PAGE_SIZE 4096\n\ntypedef struct {\n    uint32_t valid:1;\n    uint32_t frame_num:20;\n    uint32_t protection:3;\n} PTE;\n\nuint32_t translate_address(uint32_t virtual_addr, PTE* level1_table, PTE** level2_tables) {\n    // Extract page numbers\n    uint32_t offset = virtual_addr & (PAGE_SIZE - 1);\n    uint32_t page2 = (virtual_addr >> PAGE_OFFSET_BITS) & ((1 << PTE_BITS) - 1);\n    uint32_t page1 = (virtual_addr >> (PAGE_OFFSET_BITS + PTE_BITS)) & ((1 << PTE_BITS) - 1);\n    \n    // Check level 1 entry\n    PTE l1_entry = level1_table[page1];\n    if (!l1_entry.valid) {\n        printf(\"Page Fault!\\n\");\n        return 0xFFFFFFFF;\n    }\n    \n    // Get level 2 page table\n    PTE* l2_table = level2_tables[l1_entry.frame_num];\n    \n    // Check level 2 entry\n    PTE l2_entry = l2_table[page2];\n    if (!l2_entry.valid) {\n        printf(\"Page Fault!\\n\");\n        return 0xFFFFFFFF;\n    }\n    \n    // Construct physical address\n    uint32_t physical_addr = (l2_entry.frame_num << PAGE_OFFSET_BITS) | offset;\n    return physical_addr;\n}",
+      "explanation": "Two-level paging reduces memory overhead for large address spaces. Only needed second-level page tables are allocated. This is used in modern 32-bit and 64-bit systems with appropriate levels.",
+      "timeComplexity": "O(1) for translation with cached entries",
+      "spaceComplexity": "O(2^10 \u00d7 page_size for each level)"
+    }
+  ]
+}

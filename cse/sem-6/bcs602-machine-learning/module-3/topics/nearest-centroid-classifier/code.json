@@ -1,0 +1,35 @@
+{
+  "topicId": "nearest-centroid-classifier",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Nearest Centroid Classifier Implementation",
+      "description": "Complete implementation of NCC with training, prediction, and shrinkage regularization",
+      "code": "import numpy as np\n\nclass NearestCentroidClassifier:\n def __init__(self, shrinkage_parameter=0.0):\n self.shrinkage = shrinkage_parameter\n self.centroids = {}\n self.global_mean = None\n \n def fit(self, X, y):\n # Compute class centroids\n classes = np.unique(y)\n for c in classes:\n X_c = X[y == c]\n self.centroids[c] = np.mean(X_c, axis=0)\n \n # Compute global mean for shrinkage\n self.global_mean = np.mean(X, axis=0)\n \n # Apply shrinkage if specified\n if self.shrinkage > 0:\n for c in self.centroids:\n self.centroids[c] = (1 - self.shrinkage) * self.centroids[c] + \\\n self.shrinkage * self.global_mean\n \n def predict(self, X):\n predictions = []\n for x in X:\n distances = {}\n for c, centroid in self.centroids.items():\n distances[c] = np.linalg.norm(x - centroid) # Euclidean\n predictions.append(min(distances, key=distances.get))\n return np.array(predictions)",
+      "explanation": "This implementation computes class centroids during fit() and predicts by finding the nearest centroid using Euclidean distance. The shrinkage parameter allows regularization to prevent overfitting.",
+      "timeComplexity": "Training: O(n\u00d7d), Prediction: O(k\u00d7d) per sample",
+      "spaceComplexity": "O(k\u00d7d) - stores only centroids, not training data"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Decision Boundary Computation",
+      "description": "Derive the linear decision boundary equation between two class centroids",
+      "code": "import numpy as np\n\ndef compute_decision_boundary(c1, c2):\n \"\"\"\n Compute the linear decision boundary between two centroids.\n The boundary is the perpendicular bisector of c1-c2.\n \"\"\"\n # Midpoint\n midpoint = (c1 + c2) / 2\n \n # Normal vector (direction from c1 to c2)\n normal = c2 - c1\n \n # Decision boundary: normal \u00b7 (x - midpoint) = 0\n # This expands to: normal \u00b7 x = normal \u00b7 midpoint\n \n print(f\"Centroid 1: {c1}\")\n print(f\"Centroid 2: {c2}\")\n print(f\"Midpoint: {midpoint}\")\n print(f\"Normal vector: {normal}\")\n print(f\"Decision boundary: {normal[0]}x\u2081 + {normal[1]}x\u2082 = {np.dot(normal, midpoint)}\")\n \n return midpoint, normal\n\n# Example: c1 = [2,3], c2 = [8,7]\nc1 = np.array([2, 3])\nc2 = np.array([8, 7])\nm, n = compute_decision_boundary(c1, c2)",
+      "explanation": "This code computes the equation of the linear decision boundary. The boundary is perpendicular to the line connecting centroids and passes through the midpoint. For 2D data, this gives a line equation.",
+      "timeComplexity": "O(d) where d is dimensionality",
+      "spaceComplexity": "O(d)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "NCC with Cosine Similarity",
+      "description": "NCC variant using cosine similarity instead of Euclidean distance for high-dimensional/text data",
+      "code": "import numpy as np\nfrom sklearn.preprocessing import normalize\n\nclass CosineNearestCentroid:\n def __init__(self, use_l2_normalize=True):\n self.use_l2 = use_l2_normalize\n self.centroids = {}\n \n def fit(self, X, y):\n classes = np.unique(y)\n for c in classes:\n X_c = X[y == c]\n centroid = np.mean(X_c, axis=0)\n if self.use_l2:\n centroid = centroid / np.linalg.norm(centroid)\n self.centroids[c] = centroid\n \n def predict(self, X):\n predictions = []\n for x in X:\n if self.use_l2:\n x_norm = x / np.linalg.norm(x)\n else:\n x_norm = x\n \n similarities = {}\n for c, centroid in self.centroids.items():\n # Cosine similarity = dot product for normalized vectors\n similarities[c] = np.dot(x_norm, centroid)\n \n # Assign to class with highest cosine similarity\n predictions.append(max(similarities, key=similarities.get))\n return np.array(predictions)",
+      "explanation": "Cosine similarity measures the angle between vectors rather than Euclidean distance. This works better for high-dimensional data like text embeddings where magnitude differences are less important than directional alignment.",
+      "timeComplexity": "Prediction: O(k\u00d7d) per sample",
+      "spaceComplexity": "O(k\u00d7d)"
+    }
+  ]
+}

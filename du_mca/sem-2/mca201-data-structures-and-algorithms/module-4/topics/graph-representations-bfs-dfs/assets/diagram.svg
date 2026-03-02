@@ -1,0 +1,315 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="graph-representations-bfs-dfs">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="50%" style="stop-color:#f0f8ff"/>
+      <stop offset="100%" style="stop-color:#e8f0f8"/>
+    </linearGradient>
+    <linearGradient id="matrixGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="listGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="bfsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="dfsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fa709a"/>
+      <stop offset="100%" style="stop-color:#fee140"/>
+    </linearGradient>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideInUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      @keyframes drawLine {
+        from { stroke-dashoffset: 50; }
+        to { stroke-dashoffset: 0; }
+      }
+      .fade-in { animation: fadeIn 1s ease-out forwards; }
+      .slide-in { animation: slideIn 0.8s ease-out forwards; }
+      .slide-in-up { animation: slideInUp 0.8s ease-out forwards; }
+      .pulse { animation: pulse 2s ease-in-out infinite; }
+      .draw-line {
+        stroke-dasharray: 50;
+        animation: drawLine 1s ease-out forwards;
+      }
+      .section-box {
+        fill: white;
+        stroke: #ccc;
+        stroke-width: 1;
+        rx: 8;
+      }
+      .title-text {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+        fill: #2c3e50;
+      }
+      .label-text {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 12px;
+        fill: #34495e;
+      }
+      .small-text {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 10px;
+        fill: #7f8c8d;
+      }
+      .node {
+        fill: #3498db;
+        stroke: #2980b9;
+        stroke-width: 2;
+      }
+      .node-bfs {
+        fill: #4facfe;
+        stroke: #00f2fe;
+        stroke-width: 2;
+      }
+      .node-dfs {
+        fill: #fa709a;
+        stroke: #fee140;
+        stroke-width: 2;
+      }
+      .edge {
+        stroke: #7f8c8d;
+        stroke-width: 2;
+      }
+      .matrix-cell {
+        fill: white;
+        stroke: #ddd;
+      }
+      .matrix-cell-filled {
+        fill: #667eea;
+      }
+    </style>
+  </defs>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title Section -->
+  <g data-narration="Introduction to Graph Representations and Traversal Algorithms">
+    <text x="210" y="28" text-anchor="middle" class="title-text">Graph Representations: BFS &amp; DFS</text>
+    <rect x="20" y="38" width="380" height="2" fill="#ddd" rx="1"/>
+  </g>
+  
+  <!-- Section 1: Example Graph -->
+  <g transform="translate(30, 55)" data-narration="Example Graph with 4 nodes">
+    <rect x="0" y="0" width="120" height="70" class="section-box"/>
+    <text x="60" y="18" text-anchor="middle" class="label-text" style="font-weight:bold;">Example Graph</text>
+    <!-- Node 0 -->
+    <circle cx="30" cy="45" r="10" class="node"/>
+    <text x="30" y="49" text-anchor="middle" fill="white" font-size="10" font-family="Arial">0</text>
+    <!-- Node 1 -->
+    <circle cx="90" cy="25" r="10" class="node"/>
+    <text x="90" y="29" text-anchor="middle" fill="white" font-size="10" font-family="Arial">1</text>
+    <!-- Node 2 -->
+    <circle cx="90" cy="55" r="10" class="node"/>
+    <text x="90" y="59" text-anchor="middle" fill="white" font-size="10" font-family="Arial">2</text>
+    <!-- Edges -->
+    <line x1="38" y1="40" x2="82" y2="28" class="edge"/>
+    <line x1="38" y1="50" x2="82" y2="52" class="edge"/>
+    <line x1="80" y1="25" x2="80" y2="45" class="edge"/>
+    <!-- Node labels -->
+    <text x="15" y="65" class="small-text">0→1,2</text>
+    <text x="75" y="75" class="small-text">1→2</text>
+  </g>
+  
+  <!-- Section 2: Adjacency Matrix -->
+  <g transform="translate(160, 55)" data-narration="Adjacency Matrix: 2D array showing connections">
+    <rect x="0" y="0" width="115" height="70" class="section-box"/>
+    <text x="57" y="18" text-anchor="middle" class="label-text" style="font-weight:bold; fill:#667eea;">Adjacency Matrix</text>
+    <!-- Matrix grid -->
+    <rect x="10" y="25" width="95" height="40" fill="#f8f9fa" rx="3"/>
+    <!-- Column headers -->
+    <text x="22" y="35" class="small-text" fill="#555">0</text>
+    <text x="42" y="35" class="small-text" fill="#555">1</text>
+    <text x="62" y="35" class="small-text" fill="#555">2</text>
+    <text x="82" y="35" class="small-text" fill="#555">3</text>
+    <!-- Row header -->
+    <text x="8" y="47" class="small-text" fill="#555">0</text>
+    <text x="8" y="57" class="small-text" fill="#555">1</text>
+    <text x="8" y="67" class="small-text" fill="#555">2</text>
+    <!-- Matrix values row 0 -->
+    <rect x="18" y="40" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="38" y="40" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="58" y="40" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="78" y="40" width="14" height="10" fill="#ddd" rx="2"/>
+    <!-- Matrix values row 1 -->
+    <rect x="18" y="52" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="38" y="52" width="14" height="10" fill="#ddd" rx="2"/>
+    <rect x="58" y="52" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="78" y="52" width="14" height="10" fill="#ddd" rx="2"/>
+    <!-- Matrix values row 2 -->
+    <rect x="18" y="64" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="38" y="64" width="14" height="10" class="matrix-cell-filled" rx="2"/>
+    <rect x="58" y="64" width="14" height="10" fill="#ddd" rx="2"/>
+    <rect x="78" y="64" width="14" height="10" fill="#ddd" rx="2"/>
+    <!-- Complexity badge -->
+    <rect x="70" y="3" width="40" height="12" fill="url(#matrixGradient)" rx="6"/>
+    <text x="90" y="12" text-anchor="middle" fill="white" font-size="8">O(V²)</text>
+  </g>
+  
+  <!-- Section 3: Adjacency List -->
+  <g transform="translate(285, 55)" data-narration="Adjacency List: Array of linked lists storing neighbors">
+    <rect x="0" y="0" width="115" height="70" class="section-box"/>
+    <text x="57" y="18" text-anchor="middle" class="label-text" style="font-weight:bold; fill:#11998e;">Adjacency List</text>
+    <!-- List representation -->
+    <rect x="10" y="25" width="95" height="40" fill="#f8f9fa" rx="3"/>
+    <!-- Array elements -->
+    <rect x="15" y="30" width="20" height="12" fill="#11998e" rx="2"/>
+    <text x="25" y="39" text-anchor="middle" fill="white" font-size="9">0:</text>
+    <text x="40" y="39" class="small-text" fill="#333">1,2</text>
+    
+    <rect x="15" y="45" width="20" height="12" fill="#11998e" rx="2"/>
+    <text x="25" y="54" text-anchor="middle" fill="white" font-size="9">1:</text>
+    <text x="40" y="54" class="small-text" fill="#333">2</text>
+    
+    <rect x="60" y="30" width="20" height="12" fill="#11998e" rx="2"/>
+    <text x="70" y="39" text-anchor="middle" fill="white" font-size="9">2:</text>
+    <text x="85" y="39" class="small-text" fill="#333">0</text>
+    
+    <rect x="60" y="45" width="20" height="12" fill="#11998e" rx="2"/>
+    <text x="70" y="54" text-anchor="middle" fill="white" font-size="9">3:</text>
+    <text x="85" y="54" class="small-text" fill="#333">-</text>
+    
+    <!-- Complexity badge -->
+    <rect x="70" y="3" width="40" height="12" fill="url(#listGradient)" rx="6"/>
+    <text x="90" y="12" text-anchor="middle" fill="white" font-size="8">O(V+E)</text>
+  </g>
+  
+  <!-- Section 4: BFS Algorithm -->
+  <g transform="translate(30, 140)" data-narration="Breadth-First Search: Level-by-level exploration using Queue">
+    <rect x="0" y="0" width="185" height="110" class="section-box"/>
+    <rect x="0" y="0" width="185" height="22" fill="url(#bfsGradient)" rx="8"/>
+    <text x="92" y="16" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Arial">BFS (Breadth-First)</text>
+    
+    <!-- Queue visualization -->
+    <text x="15" y="35" class="label-text" fill="#4facfe" font-weight="bold">Queue:</text>
+    <rect x="55" y="26" width="120" height="18" fill="#e8f4f8" rx="4"/>
+    <text x="65" y="39" class="small-text" fill="#333">Start with 0</text>
+    <text x="115" y="39" class="small-text" fill="#333">→1,2</text>
+    
+    <!-- Steps -->
+    <text x="15" y="60" class="label-text" font-weight="bold">Steps:</text>
+    <text x="15" y="75" class="small-text">1. Dequeue 0, visit neighbors</text>
+    <text x="15" y="88" class="small-text">2. Enqueue 1, 2</text>
+    <text x="15" y="101" class="small-text">3. Process 1→2 (already visited)</text>
+    
+    <!-- Features -->
+    <rect x="120" y="50" width="60" height="50" fill="#e8f8f5" rx="5"/>
+    <text x="150" y="65" text-anchor="middle" class="small-text" fill="#27ae60" font-weight="bold">Shortest</text>
+    <text x="150" y="78" text-anchor="middle" class="small-text" fill="#27ae60" font-weight="bold">Path</text>
+    <text x="150" y="91" text-anchor="middle" class="small-text" fill="#333">O(V+E)</text>
+  </g>
+  
+  <!-- Section 5: DFS Algorithm -->
+  <g transform="translate(225, 140)" data-narration="Depth-First Search: Deep exploration using Stack/Recursion">
+    <rect x="0" y="0" width="175" height="110" class="section-box"/>
+    <rect x="0" y="0" width="175" height="22" fill="url(#dfsGradient)" rx="8"/>
+    <text x="87" y="16" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Arial">DFS (Depth-First)</text>
+    
+    <!-- Stack visualization -->
+    <text x="15" y="35" class="label-text" fill="#e74c3c" font-weight="bold">Stack:</text>
+    <rect x="55" y="26" width="110" height="18" fill="#fde8e8" rx="4"/>
+    <text x="65" y="39" class="small-text" fill="#333">0→2→3</text>
+    
+    <!-- Steps -->
+    <text x="15" y="60" class="label-text" font-weight="bold">Steps:</text>
+    <text x="15" y="75" class="small-text">1. Push 0, explore depth</text>
+    <text x="15" y="88" class="small-text">2. Go deep to 2→3</text>
+    <text x="15" y="101" class="small-text">3. Backtrack when stuck</text>
+    
+    <!-- Features -->
+    <rect x="115" y="50" width="55" height="50" fill="#fdf2e9" rx="5"/>
+    <text x="142" y="65" text-anchor="middle" class="small-text" fill="#e67e22" font-weight="bold">Cycle</text>
+    <text x="142" y="78" text-anchor="middle" class="small-text" fill="#e67e22" font-weight="bold">Detection</text>
+    <text x="142" y="91" text-anchor="middle" class="small-text" fill="#333">O(V+E)</text>
+  </g>
+  
+  <!-- Section 6: Comparison -->
+  <g transform="translate(30, 265)" data-narration="Comparison of BFS and DFS: Memory, Use Cases, Trade-offs">
+    <rect x="0" y="0" width="370" height="120" class="section-box"/>
+    <text x="185" y="18" text-anchor="middle" class="label-text" style="font-weight:bold; font-size:14;">BFS vs DFS Comparison</text>
+    
+    <!-- BFS Column -->
+    <rect x="15" y="30" width="165" height="82" fill="#e8f4fc" rx="5"/>
+    <text x="97" y="48" text-anchor="middle" class="label-text" fill="#2980b9" font-weight="bold">BFS</text>
+    <text x="25" y="65" class="small-text">• Queue data structure</text>
+    <text x="25" y="78" class="small-text">• Level-order traversal</text>
+    <text x="25" y="91" class="small-text">• Shortest path (unweighted)</text>
+    <text x="25" y="104" class="small-text">• More memory: O(V)</text>
+    
+    <!-- VS -->
+    <text x="200" y="75" text-anchor="middle" class="label-text" fill="#95a5a6" font-weight="bold" font-size="16">VS</text>
+    
+    <!-- DFS Column -->
+    <rect x="220" y="30" width="135" height="82" fill="#fde8e8" rx="5"/>
+    <text x="287" y="48" text-anchor="middle" class="label-text" fill="#c0392b" font-weight="bold">DFS</text>
+    <text x="230" y="65" class="small-text">• Stack/Recursion</text>
+    <text x="230" y="78" class="small-text">• Depth-first exploration</text>
+    <text x="230" y="91" class="small-text">• Cycle detection, Topo sort</text>
+    <text x="230" y="104" class="small-text">• Less memory: O(V)</text>
+    
+    <!-- Arrow to applications -->
+    <path d="M 185 115 L 185 125 L 185 120" stroke="#7f8c8d" stroke-width="1.5" fill="none"/>
+    <rect x="280" y="115" width="60" height="15" fill="#9b59b6" rx="7"/>
+    <text x="310" y="126" text-anchor="middle" fill="white" font-size="9">Use Cases</text>
+  </g>
+  
+  <!-- Section 7: Use Cases -->
+  <g transform="translate(30, 355)" data-narration="Real-world applications: Web crawlers, GPS, Social networks">
+    <rect x="0" y="0" width="370" height="38" fill="#f8f9fa" rx="5"/>
+    <text x="185" y="15" text-anchor="middle" class="label-text" fill="#8e44ad" font-weight="bold">Real-World Applications</text>
+    
+    <g transform="translate(20, 22)">
+      <rect x="0" y="0" width="80" height="18" fill="#3498db" rx="4"/>
+      <text x="40" y="13" text-anchor="middle" fill="white" font-size="9">Web Crawlers</text>
+    </g>
+    <g transform="translate(108, 22)">
+      <rect x="0" y="0" width="55" height="18" fill="#e74c3c" rx="4"/>
+      <text x="27" y="13" text-anchor="middle" fill="white" font-size="9">GPS Nav</text>
+    </g>
+    <g transform="translate(170, 22)">
+      <rect x="0" y="0" width="75" height="18" fill="#27ae60" rx="4"/>
+      <text x="37" y="13" text-anchor="middle" fill="white" font-size="9">Social Networks</text>
+    </g>
+    <g transform="translate(252, 22)">
+      <rect x="0" y="0" width="60" height="18" fill="#f39c12" rx="4"/>
+      <text x="30" y="13" text-anchor="middle" fill="white" font-size="9">Maze Solve</text>
+    </g>
+    <g transform="translate(318, 22)">
+      <rect x="0" y="0" width="70" height="18" fill="#9b59b6" rx="4"/>
+      <text x="35" y="13" text-anchor="middle" fill="white" font-size="9">Recommendation</text>
+    </g>
+  </g>
+  
+  <!-- Animated highlights -->
+  <circle cx="60" cy="85" r="8" fill="none" stroke="#3498db" stroke-width="2" class="pulse" opacity="0.5"/>
+  <circle cx="210" cy="85" r="8" fill="none" stroke="#667eea" stroke-width="2" class="pulse" opacity="0.5" style="animation-delay:0.5s"/>
+  <circle cx="340" cy="85" r="8" fill="none" stroke="#11998e" stroke-width="2" class="pulse" opacity="0.5" style="animation-delay:1s"/>
+  
+  <!-- Connection arrows between sections -->
+  <path d="M 150 125 L 150 140" stroke="#bdc3c7" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#bdc3c7"/>
+    </marker>
+  </defs>
+</svg>

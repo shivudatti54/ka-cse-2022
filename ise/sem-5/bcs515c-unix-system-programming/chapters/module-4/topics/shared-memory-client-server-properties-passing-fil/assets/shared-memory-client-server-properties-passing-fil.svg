@@ -1,0 +1,143 @@
+<svg width="420" height="400" data-topic-id="shared-memory-client-server-properties-passing-file" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Shared Memory Client-Server Properties Passing File</title>
+  <footer>End of animation</footer>
+
+  <!-- Gradient background with pastel colors -->
+  <defs>
+    <linearGradient id="pastel-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C7B8EA" stop-opacity="1" />
+      <stop offset="100%" stop-color="#C5CAE9" stop-opacity="1" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="400" fill="url(#pastel-gradient)" rx="10" />
+  <!-- Client-Server Properties Section -->
+  <section data-narration="Client-Server Properties">
+    <h2>Client-Server Properties</h2>
+    <p>A client-server system has several properties that define its behavior.</p>
+    <ul>
+      <li>
+        <span>Client</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(requestor)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+      <li>
+        <span>Server</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(provider)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+    </ul>
+    <animate transition="all 2s" begin="0s" dur="5s">
+      <circle cx="210" cy="50" r="20" fill="#66CCCC" />
+    </animate>
+  </section>
+
+  <!-- Request-Response Model Section -->
+  <section data-narration="Request-Response Model">
+    <h2>Request-Response Model</h2>
+    <p>In this model, the client sends a request to the server and receives a response.</p>
+    <ul>
+      <li>
+        <span>Client</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(requests)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+      <li>
+        <span>Server</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(responds)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+    </ul>
+    <animate transition="all 2s" begin="0s" dur="5s">
+      <circle cx="210" cy="150" r="20" fill="#66CCCC" />
+    </animate>
+  </section>
+
+  <!-- Synchronous-Asynchronous Model Section -->
+  <section data-narration="Synchronous-Asynchronous Model">
+    <h2>Synchronous-Asynchronous Model</h2>
+    <p>In this model, the client waits for the response from the server or receives it asynchronously.</p>
+    <ul>
+      <li>
+        <span>Client</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(waits)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+      <li>
+        <span>Server</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(responds)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+    </ul>
+    <animate transition="all 2s" begin="0s" dur="5s">
+      <circle cx="210" cy="250" r="20" fill="#66CCCC" />
+    </animate>
+  </section>
+
+  <!-- Shared Memory Region Section -->
+  <section data-narration="Shared Memory Region">
+    <h2>Shared Memory Region</h2>
+    <p>A shared memory region is a region of memory that can be accessed by multiple processes.</p>
+    <ul>
+      <li>
+        <span>Shared Memory Region</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(shared)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+      <li>
+        <span>Process Address Space</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">(private)</span>
+        <span style="background-color: #1A1D23; color: #66CCCC;">)</span>
+      </li>
+    </ul>
+    <animate transition="all 2s" begin="0s" dur="5s">
+      <circle cx="210" cy="350" r="20" fill="#66CCCC" />
+    </animate>
+  </section>
+
+  <!-- Shm_open System Call Section -->
+  <section data-narration="Shm_open System Call">
+    <h2>Shm_open System Call</h2>
+    <p>The Shm_open system call is used to create a shared memory region.</p>
+    <pre>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+
+int main() {
+    int shm_fd = shm_open("my_shm", O_RDWR | O_CREAT, 0644);
+    if (shm_fd == -1) {
+        perror("shm_open");
+        return 1;
+    }
+
+    struct shmid_ds sb;
+    if (fstat(shm_fd, &sb) == -1) {
+        perror("fstat");
+        return 1;
+    }
+
+    int *shared_data = mmap(NULL, sb.ss_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (shared_data == MAP_FAILED) {
+        perror("mmap");
+        return 1;
+    }
+
+    *shared_data = 10;
+    printf("%d\n", *shared_data);
+
+    munmap(shared_data, sb.ss_size);
+    close(shm_fd);
+    return 0;
+}
+</pre>
+  </section>
+
+  <!-- Arrow markers for connections -->
+  <path d="M 50 100 L 140 100" stroke="#66CCCC" stroke-width="2" fill="none" />
+  <path d="M 50 200 L 140 200" stroke="#66CCCC" stroke-width="2" fill="none" />
+  <path d="M 50 300 L 140 300" stroke="#66CCCC" stroke-width="2" fill="none" />
+
+  <title>Shared Memory Client-Server Properties Passing File</title>
+</svg>

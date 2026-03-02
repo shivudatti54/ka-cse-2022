@@ -1,0 +1,45 @@
+{
+  "topicId": "queues-implementations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Linear Queue using Array",
+      "description": "Implementation of basic queue operations using static array",
+      "code": "STRUCTURE LinearQueue\n  DECLARE MAX_SIZE = 10\n  DECLARE queue[MAX_SIZE]\n  DECLARE front = -1\n  DECLARE rear = -1\nENDSTRUCTURE\n\nPROCEDURE isEmpty()\n  IF front == -1 THEN\n    RETURN TRUE\n  ELSE\n    RETURN FALSE\n  ENDIF\nENDPROCEDURE\n\nPROCEDURE isFull()\n  IF rear == MAX_SIZE - 1 THEN\n    RETURN TRUE\n  ELSE\n    RETURN FALSE\n  ENDIF\nENDPROCEDURE\n\nPROCEDURE enqueue(item)\n  IF isFull() THEN\n    PRINT \"Queue Overflow!\"\n    RETURN\n  ENDIF\n  IF front == -1 THEN\n    front = 0\n  ENDIF\n  rear = rear + 1\n  queue[rear] = item\nENDPROCEDURE\n\nPROCEDURE dequeue()\n  IF isEmpty() THEN\n    PRINT \"Queue Underflow!\"\n    RETURN NULL\n  ENDIF\n  item = queue[front]\n  IF front == rear THEN\n    front = -1\n    rear = -1\n  ELSE\n    front = front + 1\n  ENDIF\n  RETURN item\nENDPROCEDURE\n\nPROCEDURE display()\n  IF isEmpty() THEN\n    PRINT \"Queue is empty\"\n    RETURN\n  ENDIF\n  FOR i FROM front TO rear DO\n    PRINT queue[i]\n  ENDFOR\nENDPROCEDURE",
+      "explanation": "Basic queue implementation with static array. Note: Suffers from phantom overflow problem where space cannot be reused after deletions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Circular Queue Implementation",
+      "description": "Python implementation of circular queue solving space utilization problem",
+      "code": "class CircularQueue:\n    def __init__(self, size):\n        self.size = size\n        self.queue = [None] * size\n        self.front = -1\n        self.rear = -1\n    \n    def isEmpty(self):\n        return self.front == -1\n    \n    def isFull(self):\n        return (self.rear + 1) % self.size == self.front\n    \n    def enqueue(self, item):\n        if self.isFull():\n            print(\"Queue Overflow!\")\n            return\n        if self.front == -1:\n            self.front = 0\n        self.rear = (self.rear + 1) % self.size\n        self.queue[self.rear] = item\n    \n    def dequeue(self):\n        if self.isEmpty():\n            print(\"Queue Underflow!\")\n            return None\n        item = self.queue[self.front]\n        if self.front == self.rear:\n            self.front = -1\n            self.rear = -1\n        else:\n            self.front = (self.front + 1) % self.size\n        return item\n    \n    def display(self):\n        if self.isEmpty():\n            print(\"Queue is empty\")\n            return\n        i = self.front\n        while True:\n            print(self.queue[i], end=\" \")\n            if i == self.rear:\n                break\n            i = (i + 1) % self.size\n        print()\n\n# Example usage\nq = CircularQueue(5)\nq.enqueue(10); q.enqueue(20); q.enqueue(30)\nq.dequeue(); q.dequeue()\nq.enqueue(40); q.enqueue(50); q.enqueue(60)",
+      "explanation": "Circular queue uses modulo operator to wrap rear pointer around. The condition (rear+1)%N == front checks for full state, keeping one slot empty to distinguish from empty state.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Queue using Linked List (C)",
+      "description": "Dynamic queue implementation using linked list with nodes",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    int data;\n    struct Node* next;\n};\n\nstruct Queue {\n    struct Node *front;\n    struct Node *rear;\n};\n\nstruct Queue* createQueue() {\n    struct Queue* q = (struct Queue*)malloc(sizeof(struct Queue));\n    q->front = q->rear = NULL;\n    return q;\n}\n\nint isEmpty(struct Queue* q) {\n    return q->front == NULL;\n}\n\nvoid enqueue(struct Queue* q, int value) {\n    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));\n    newNode->data = value;\n    newNode->next = NULL;\n    \n    if (q->rear == NULL) {\n        q->front = q->rear = newNode;\n        return;\n    }\n    q->rear->next = newNode;\n    q->rear = newNode;\n}\n\nint dequeue(struct Queue* q) {\n    if (isEmpty(q)) {\n        printf(\"Queue Underflow!\\n\");\n        return -1;\n    }\n    struct Node* temp = q->front;\n    int value = temp->data;\n    q->front = q->front->next;\n    \n    if (q->front == NULL) {\n        q->rear = NULL;\n    }\n    free(temp);\n    return value;\n}\n\nvoid display(struct Queue* q) {\n    struct Node* temp = q->front;\n    while (temp != NULL) {\n        printf(\"%d \", temp->data);\n        temp = temp->next;\n    }\n    printf(\"\\n\");\n}",
+      "explanation": "Linked list implementation provides dynamic size - no overflow until memory is exhausted. Enqueue adds at rear (tail), dequeue removes from front (head).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "BFS Algorithm using Queue",
+      "description": "Breadth-First Search implementation demonstrating queue application in graph traversal",
+      "code": "from collections import deque\n\ndef bfs(graph, start):\n    visited = set()\n    queue = deque([start])\n    visited.add(start)\n    traversal = []\n    \n    print(\"BFS Traversal Steps:\")\n    step = 1\n    \n    while queue:\n        vertex = queue.popleft()\n        traversal.append(vertex)\n        print(f\"Step {step}: Dequeue {vertex}, visited: {visited}\")\n        step += 1\n        \n        for neighbor in graph[vertex]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n                print(f\"  Enqueue {neighbor}\")\n    \n    return traversal\n\n# Example graph (adjacency list)\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['F'],\n    'F': []\n}\n\nprint(\"Graph:\", graph)\nprint(\"\\n\")\nresult = bfs(graph, 'A')\nprint(\"\\nBFS Result:\", result)\n\n# Output:\n# BFS Traversal Steps:\n# Step 1: Dequeue A, visited: {'A'}\n#   Enqueue B\n#   Enqueue C\n# Step 2: Dequeue B, visited: {'A', 'B'}\n#   Enqueue D\n#   Enqueue E\n# Step 3: Dequeue C, visited: {'A', 'B', 'C'}\n#   Enqueue F\n# Step 4: Dequeue D\n# Step 5: Dequeue E\n# Step 6: Dequeue F\n# \n# BFS Result: ['A', 'B', 'C', 'D', 'E', 'F']",
+      "explanation": "BFS uses a queue to explore vertices level by level. Starting from source, we enqueue all unvisited neighbors, then process them in FIFO order ensuring shortest path in unweighted graphs.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

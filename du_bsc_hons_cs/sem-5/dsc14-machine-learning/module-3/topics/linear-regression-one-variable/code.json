@@ -1,0 +1,35 @@
+{
+  "topicId": "linear-regression-one-variable",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Linear Regression from Scratch using Gradient Descent",
+      "description": "Implements simple linear regression (y = mx + b) from first principles using gradient descent optimization",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# Sample data: Hours studied vs Exam scores\nX = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])\ny = np.array([35, 42, 48, 52, 58, 62, 68, 72, 78, 85])\n\n# Initialize parameters\nm = 0  # slope\nb = 0  # intercept\nlearning_rate = 0.01\nepochs = 1000\nn = len(X)\n\n# Gradient descent\nfor i in range(epochs):\n    y_pred = m * X + b\n    \n    # Calculate gradients\n    dm = (-2/n) * sum(X * (y - y_pred))\n    db = (-2/n) * sum(y - y_pred)\n    \n    # Update parameters\n    m = m - learning_rate * dm\n    b = b - learning_rate * db\n\n# Make predictions\nX_test = 7.5\nprediction = m * X_test + b\n\nprint(f\"Learned slope (m): {m:.4f}\")\nprint(f\"Learned intercept (b): {b:.4f}\")\nprint(f\"Prediction for {X_test} hours: {prediction:.2f} marks\")\n\n# Plot results\nplt.scatter(X, y, color='blue', label='Actual data')\nplt.plot(X, m * X + b, color='red', label='Regression line')\nplt.xlabel('Hours Studied')\nplt.ylabel('Exam Score')\nplt.legend()\nplt.title('Linear Regression from Scratch')\nplt.show()",
+      "explanation": "1. We define sample data (hours studied vs exam scores). 2. Initialize slope m=0 and intercept b=0. 3. Run gradient descent for 1000 epochs: calculate predictions, compute gradients using partial derivatives of MSE loss, update parameters. 4. After training, m and b represent the best-fit line. 5. Use the learned model to predict score for 7.5 hours of study.",
+      "timeComplexity": "O(epochs * n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Linear Regression using Scikit-learn",
+      "description": "Demonstrates using sklearn's LinearRegression for the same problem with additional model evaluation metrics",
+      "code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import mean_squared_error, r2_score\n\n# Dataset: Area (sq ft) vs Price (lakhs)\nX = np.array([[500], [700], [900], [1100], [1300], [1500], [1700], [1900], [2100], [2300]])\ny = np.array([15, 22, 28, 35, 42, 48, 55, 62, 68, 75])\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# Create and train model\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\n\n# Predictions\ny_train_pred = model.predict(X_train)\ny_test_pred = model.predict(X_test)\n\n# Model parameters\nprint(f\"Slope (coefficient): {model.coef_[0]:.4f}\")\nprint(f\"Intercept: {model.intercept_:.4f}\")\nprint(f\"Equation: Price = {model.coef_[0]:.4f} * Area + {model.intercept_:.4f}\")\n\n# Evaluation metrics\ntrain_mse = mean_squared_error(y_train, y_train_pred)\ntest_mse = mean_squared_error(y_test, y_test_pred)\ntrain_r2 = r2_score(y_train, y_train_pred)\ntest_r2 = r2_score(y_test, y_test_pred)\n\nprint(f\"\\nTraining MSE: {train_mse:.4f}\")\nprint(f\"Testing MSE: {test_mse:.4f}\")\nprint(f\"Training R²: {train_r2:.4f}\")\nprint(f\"Testing R²: {test_r2:.4f}\")\n\n# Predict for new house\nnew_area = np.array([[1200]])\npredicted_price = model.predict(new_area)\nprint(f\"\\nPredicted price for 1200 sq ft: ₹{predicted_price[0]:.2f} lakhs\")",
+      "explanation": "1. Import sklearn's LinearRegression and metrics. 2. Prepare data as 2D array for sklearn. 3. Split into train/test sets (80/20). 4. Create LinearRegression object and fit on training data. 5. The model learns coef_ (slope) and intercept_ automatically using least squares. 6. Evaluate using MSE (Mean Squared Error) and R² (coefficient of determination). 7. R² close to 1 indicates good fit. 8. Make predictions on new data.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Closed-Form Solution (Normal Equation) with Feature Scaling",
+      "description": "Implements linear regression using the closed-form normal equation (θ = (X^T X)^(-1) X^T y) with manual feature scaling for better numerical stability",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# Dataset: Years of Experience vs Salary (in thousands)\n# Normal equation works better with matrix operations\nX_raw = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).reshape(-1, 1)\ny = np.array([30, 35, 40, 45, 50, 55, 60, 70, 75, 85])\n\n# Feature Scaling (Standardization)\n# X_scaled = (X - mean) / std\nX_mean = X_raw.mean()\nX_std = X_raw.std()\nX_scaled = (X_raw - X_mean) / X_std\n\n# Add bias column (column of ones) for intercept\nn_samples = X_scaled.shape[0]\nX_b = np.c_[np.ones((n_samples, 1)), X_scaled]\n\n# Normal Equation: θ = (X^T X)^(-1) X^T y\n# Using pseudoinverse for numerical stability\ntheta = np.linalg.pinv(X_b.T @ X_b) @ X_b.T @ y\n\nintercept = theta[0]\nslope = theta[1]\n\nprint(f\"Scaled parameters: intercept={intercept:.4f}, slope={slope:.4f}\")\n\n# Convert back to original scale\n# y = slope_original * x + intercept_original\n# slope_original = slope / X_std\n# intercept_original = intercept - (slope * X_mean / X_std)\nslope_original = slope / X_std\nintercept_original = intercept - (slope * X_mean / X_std)\n\nprint(f\"\\nOriginal scale equation:\")\nprint(f\"Salary = {slope_original:.4f} * Experience + {intercept_original:.4f}\")\n\n# Predictions\nX_test = np.array([[4.5]])\nX_test_scaled = (X_test - X_mean) / X_std\nX_test_b = np.c_[np.ones((1, 1)), X_test_scaled]\nprediction = X_test_b @ theta\n\nprint(f\"\\nPrediction for 4.5 years experience: ₹{prediction[0]:.2f}k\")\n\n# Plot\nplt.scatter(X_raw, y, color='blue', label='Actual data')\nX_line = np.linspace(1, 10, 100).reshape(-1, 1)\ny_line = slope_original * X_line + intercept_original\nplt.plot(X_line, y_line, color='red', label='Fitted line')\nplt.xlabel('Years of Experience')\nplt.ylabel('Salary (₹ thousands)')\nplt.legend()\nplt.title('Linear Regression using Normal Equation')\nplt.show()",
+      "explanation": "1. Raw data is scaled using standardization: (x - mean) / std. This prevents numerical issues in matrix operations. 2. Add bias column of ones to X matrix for intercept term. 3. Apply Normal Equation: θ = (X^T X)^(-1) X^T y. Using np.linalg.pinv for pseudoinverse handles singular matrices gracefully. 4. Parameters are learned in scaled space, then converted back to original scale using the scaling formulas. 5. This method is direct (no iteration) but computationally expensive for large datasets (O(n³)).",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

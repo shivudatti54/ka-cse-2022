@@ -1,0 +1,57 @@
+[
+  {
+    "id": "q1",
+    "question": "What happens when a virtual function is inherited by a derived class in C++?",
+    "options": [
+      "The derived class can override the function to provide its own implementation.",
+      "The derived class cannot override the function; it must use the base class version.",
+      "The virtual attribute is lost, and the function becomes non-virtual in the derived class.",
+      "The derived class must declare it as virtual again to maintain the property."
+    ],
+    "correctIndex": 0,
+    "explanation": "The 'virtual' attribute is inherited. Once a function is declared virtual in a base class, it remains virtual in all derived classes, which can then choose to override it."
+  },
+  {
+    "id": "q2",
+    "question": "If a base class function `void speak()` is declared virtual, and a derived class provides an implementation for `void speak()` without using the `virtual` keyword, what is the result?",
+    "options": [
+      "The derived class function is still virtual because the attribute is inherited.",
+      "The derived class function is no longer virtual, breaking the polymorphism.",
+      "The code will not compile because the `virtual` keyword is missing.",
+      "The function becomes a new, non-virtual function that hides the base class version."
+    ],
+    "correctIndex": 0,
+    "explanation": "The `virtual` keyword is not required in the derived class override. The function remains virtual due to inheritance, ensuring polymorphism still works correctly."
+  },
+  {
+    "id": "q3",
+    "question": "Consider the code: `class Base { public: virtual void print() { cout << \"Base\"; } }; class Derived : public Base { public: void print() { cout << \"Derived\"; } };`. If we have `Base* obj = new Derived(); obj->print();`, what is output?",
+    "options": ["Derived", "Base", "Compilation Error", "Runtime Error"],
+    "correctIndex": 0,
+    "explanation": "Because `print()` is virtual in the base class, the attribute is inherited by `Derived`. The call `obj->print()` uses dynamic dispatch to execute the `Derived` class's override."
+  },
+  {
+    "id": "q4",
+    "question": "In a multi-level inheritance hierarchy (A -> B -> C), if a function is declared virtual in class A, and class B overrides it, which class's function will be called by a pointer of type A pointing to an object of type C, assuming C does NOT override the function?",
+    "options": [
+      "Class B's function",
+      "Class A's function",
+      "Class C's function (which is not defined, causing an error)",
+      "The call is ambiguous and will not compile"
+    ],
+    "correctIndex": 0,
+    "explanation": "The virtual mechanism uses the most derived override in the object's hierarchy. Since C does not provide an override, the most recent override (from B) is found and executed through the virtual function table."
+  },
+  {
+    "id": "q5",
+    "question": "What is the outcome of the following code?\n```cpp\nclass Base {\npublic:\n    virtual void foo() { cout << \"Base\"; }\n};\nclass Derived : public Base {\npublic:\n    void foo() override { cout << \"Derived\"; }\n};\nint main() {\n    Derived d;\n    Base b = d; // Object slicing occurs here\n    b.foo();\n    return 0;\n}\n```",
+    "options": [
+      "Prints 'Base' because object slicing removes the derived part, making the virtual mechanism irrelevant for the sliced object.",
+      "Prints 'Derived' because the virtual attribute is inherited and the vptr is copied.",
+      "The behavior is undefined.",
+      "A compiler error occurs due to the object assignment."
+    ],
+    "correctIndex": 0,
+    "explanation": "Object slicing occurs when a derived object is assigned to a base object. The derived part is chopped off, leaving a pure Base object. Its vptr points to Base's vtable, so Base::foo() is called. This is a key pitfall demonstrating that polymorphism only works with pointers or references."
+  }
+]

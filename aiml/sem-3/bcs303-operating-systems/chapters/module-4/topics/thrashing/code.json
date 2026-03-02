@@ -1,0 +1,45 @@
+{
+  "topicId": "thrashing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Page Fault Frequency Control Algorithm",
+      "description": "Algorithm to monitor and control thrashing using page fault frequency",
+      "code": "ALGORITHM PFF_Control\nBEGIN\n    SET upper_threshold = 0.7  // 70% page fault rate\n    SET lower_threshold = 0.1  // 10% page fault rate\n    \n    FOR each process P IN ready_queue DO\n        SET faults = CountPageFaults(P, time_interval)\n        SET accesses = CountMemoryAccesses(P, time_interval)\n        SET fault_rate = faults / accesses\n        \n        IF fault_rate > upper_threshold THEN\n            // Process thrashing - allocate more frames\n            AllocateFrames(P, additional_frames)\n        ELSE IF fault_rate < lower_threshold THEN\n            // Process not utilizing frames efficiently\n            ReclaimFrames(P, reclaim_count)\n        END IF\n    END FOR\n    \n    IF system_wide_fault_rate > critical_limit THEN\n        // System-wide thrashing - suspend a process\n        P = SelectProcessToSuspend()\n        SuspendProcess(P)\n    END IF\nEND",
+      "explanation": "This algorithm monitors each process's page fault rate over a time interval. If the rate exceeds the upper threshold, more frames are allocated to prevent thrashing. If below the lower threshold, frames are reclaimed for other processes. If the entire system is thrashing, a process is suspended.",
+      "timeComplexity": "O(n) where n = number of processes",
+      "spaceComplexity": "O(1) besides process control blocks"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Working Set Calculation",
+      "description": "Python code to calculate working set and detect potential thrashing",
+      "code": "def calculate_working_set(reference_string, window_size):\n    \"\"\"\n    Calculate the working set for a given reference string and window size.\n    \"\"\"\n    working_sets = []\n    \n    for i in range(len(reference_string)):\n        start = max(0, i - window_size + 1)\n        window = reference_string[start:i+1]\n        ws = set(window)  # Unique pages in window\n        working_sets.append(ws)\n    \n    return working_sets\n\ndef check_thrashing(working_sets, allocated_frames):\n    \"\"\"\n    Check if working set size exceeds allocated frames (thrashing condition).\n    \"\"\"\n    for i, ws in enumerate(working_sets):\n        if len(ws) > allocated_frames:\n            print(f\"Time {i}: THRASHING - Working set {len(ws)} > Frames {allocated_frames}\")\n            return True\n    return False\n\n# Example usage\nreference_string = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]\nwindow_size = 4\nallocated_frames = 3\n\nws = calculate_working_set(reference_string, window_size)\nprint(\"Working sets:\", ws)\nprint(\"Thrashing detected:\", check_thrashing(ws, allocated_frames))",
+      "explanation": "This code simulates working set calculation. It tracks which pages have been referenced within a sliding window (representing recent time). If the working set size (unique pages in window) exceeds the allocated frames, thrashing will occur.",
+      "timeComplexity": "O(m*n) where m=reference length, n=window size",
+      "spaceComplexity": "O(w) where w=window size for set storage"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Thrashing Detection Simulation",
+      "description": "C program to simulate thrashing detection using page fault counting",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX_FRAMES 10\n#define MAX_PAGES 20\n\ntypedef struct {\n    int page_id;\n    int valid;\n} Frame;\n\nint page_faults = 0;\nFrame frames[MAX_FRAMES];\n\n// Check if page is in memory\nint isPageInMemory(int page) {\n    for (int i = 0; i < MAX_FRAMES; i++) {\n        if (frames[i].valid && frames[i].page_id == page)\n            return 1;\n    }\n    return 0;\n}\n\n// Simple FIFO page replacement\nvoid handlePageFault(int page) {\n    // Find first empty frame or replace using FIFO\n    static int hand = 0;\n    \n    // If all frames full, replace oldest\n    for (int i = 0; i < MAX_FRAMES; i++) {\n        if (!frames[i].valid) {\n            frames[i].page_id = page;\n            frames[i].valid = 1;\n            page_faults++;\n            return;\n        }\n    }\n    \n    // Replace oldest (FIFO)\n    frames[hand].page_id = page;\n    hand = (hand + 1) % MAX_FRAMES;\n    page_faults++;\n}\n\n// Simulate thrashing by processing reference string\nvoid simulateThrashing(int ref_string[], int ref_len) {\n    printf(\"Simulating with %d frames...\\n\", MAX_FRAMES);\n    \n    for (int i = 0; i < ref_len; i++) {\n        if (!isPageInMemory(ref_string[i])) {\n            handlePageFault(ref_string[i]);\n            printf(\"Page fault at reference %d\\n\", ref_string[i]);\n        }\n    }\n    \n    printf(\"Total page faults: %d\\n\", page_faults);\n    printf(\"Fault rate: %.2f%%\\n\", (float)page_faults/ref_len * 100);\n    \n    if ((float)page_faults/ref_len > 0.5)\n        printf(\"WARNING: System is THRASHING!\\n\");\n}\n\nint main() {\n    int reference[] = {1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5};\n    int length = sizeof(reference) / sizeof(reference[0]);\n    \n    simulateThrashing(reference, length);\n    return 0;\n}",
+      "explanation": "This C program simulates a basic paging system with FIFO replacement. It tracks page faults and calculates the fault rate. If the fault rate exceeds 50%, it warns about thrashing. The simulation demonstrates how insufficient frames lead to more page faults.",
+      "timeComplexity": "O(n*f) where n=references, f=number of frames",
+      "spaceComplexity": "O(f) for frame storage"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Process Suspension Controller",
+      "description": "Java code to manage process suspension when thrashing is detected",
+      "code": "import java.util.*;\n\npublic class ThrashingController {\n    private List<Process> activeProcesses;\n    private List<Process> suspendedProcesses;\n    private int totalFrames;\n    private int availableFrames;\n    \n    public ThrashingController(int totalFrames) {\n        this.totalFrames = totalFrames;\n        this.availableFrames = totalFrames;\n        this.activeProcesses = new ArrayList<>();\n        this.suspendedProcesses = new ArrayList<>();\n    }\n    \n    public void monitorAndControl() {\n        for (Process p : activeProcesses) {\n            double faultRate = p.getPageFaultRate();\n            \n            if (faultRate > 0.7) {\n                // High fault rate - thrashing detected\n                if (availableFrames > p.getAllocatedFrames()) {\n                    allocateMoreFrames(p);\n                } else {\n                    // Must suspend another process first\n                    suspendLowestPriorityProcess();\n                    allocateMoreFrames(p);\n                }\n            }\n        }\n    }\n    \n    private void suspendLowestPriorityProcess() {\n        Process lowest = Collections.min(activeProcesses, \n            Comparator.comparingInt(Process::getPriority));\n        \n        activeProcesses.remove(lowest);\n        suspendedProcesses.add(lowest);\n        availableFrames += lowest.getAllocatedFrames();\n        lowest.suspend();\n        \n        System.out.println(\"Suspended process: \" + lowest.getPid());\n    }\n    \n    private void allocateMoreFrames(Process p) {\n        int current = p.getAllocatedFrames();\n        int needed = current + 5; // Add 5 more frames\n        availableFrames -= 5;\n        p.setAllocatedFrames(needed);\n    }\n    \n    public void resumeProcess(Process p) {\n        if (availableFrames >= p.getMinFrames()) {\n            suspendedProcesses.remove(p);\n            activeProcesses.add(p);\n            availableFrames -= p.getMinFrames();\n            p.setAllocatedFrames(p.getMinFrames());\n            p.resume();\n        }\n    }\n}\n\nclass Process {\n    private int pid;\n    private int allocatedFrames;\n    private double pageFaultRate;\n    private int priority;\n    \n    public int getPageFaultRate() { return pageFaultRate; }\n    public int getAllocatedFrames() { return allocatedFrames; }\n    public void setAllocatedFrames(int f) { allocatedFrames = f; }\n    public int getPriority() { return priority; }\n    public int getPid() { return pid; }\n    public int getMinFrames() { return 10; }\n    public void suspend() { /* Save state to disk */ }\n    public void resume() { /* Restore state from disk */ }\n}",
+      "explanation": "This Java implementation demonstrates a thrashing control system using process suspension. When a process exceeds the high fault rate threshold (70%), it either gets more frames or another process is suspended to free frames. The lowest priority process is selected for suspension to minimize impact.",
+      "timeComplexity": "O(n log n) for finding lowest priority process",
+      "spaceComplexity": "O(n) for storing process lists"
+    }
+  ]
+}

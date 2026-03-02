@@ -1,0 +1,75 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a237e">Message Call Transaction</text>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/></marker>
+  </defs>
+  
+  <g id="step0" class="step" data-narration="Message call transactions are the primary way to interact with deployed smart contracts on Ethereum by invoking their functions with encoded data.">
+    <text x="400" y="55" text-anchor="middle" font-size="12" fill="#616161">How Ethereum users and contracts invoke smart contract functions</text>
+  </g>
+  
+  <g id="step1" class="step" data-narration="A message call contains four key fields: from (caller address), to (contract address), value (optional ETH), and data (function selector plus arguments).">
+    <rect x="50" y="70" width="700" height="80" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#1976d2">Message Call Transaction Fields</text>
+    <rect x="70" y="105" width="150" height="35" rx="4" fill="#fff" stroke="#90caf9">
+      <text x="145" y="122" text-anchor="middle" font-size="10" fill="#333">From: caller EOA</text>
+    </rect>
+    <rect x="235" y="105" width="150" height="35" rx="4" fill="#e8f5e9" stroke="#a5d6a7">
+      <text x="310" y="122" text-anchor="middle" font-size="10" fill="#2e7d32" font-weight="bold">To: contract address</text>
+    </rect>
+    <rect x="400" y="105" width="150" height="35" rx="4" fill="#fff" stroke="#90caf9">
+      <text x="475" y="122" text-anchor="middle" font-size="10" fill="#333">Value: optional ETH</text>
+    </rect>
+    <rect x="565" y="105" width="170" height="35" rx="4" fill="#fff3e0" stroke="#ffcc80">
+      <text x="650" y="122" text-anchor="middle" font-size="10" fill="#e65100" font-weight="bold">Data: selector + args</text>
+    </rect>
+  </g>
+  
+  <g id="step2" class="step" data-narration="The function selector is the first 4 bytes of the keccak256 hash of the function signature, used to identify which function to call on the contract.">
+    <rect x="50" y="160" width="700" height="60" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="182" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">Function Selector: First 4 Bytes of keccak256 Hash</text>
+    <text x="400" y="202" text-anchor="middle" font-size="11" fill="#333">Example: keccak256("transfer(address,uint256)") = </text>
+    <text x="400" y="216" text-anchor="middle" font-size="11" fill="#d84315" font-weight="bold">0xa9059cbb...</text>
+  </g>
+  
+  <g id="step3" class="step" data-narration="The EVM receives the transaction, loads the target contract code, executes the specified function with provided arguments, and returns the execution result.">
+    <text x="400" y="240" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a237e">EVM Execution Flow</text>
+    <rect x="40" y="255" width="130" height="40" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="105" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#1976d2">Receive Call</text>
+    <line x1="170" y1="275" x2="195" y2="275" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="195" y="255" width="130" height="40" rx="6" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="260" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#e65100">Load Code</text>
+    <line x1="325" y1="275" x2="350" y2="275" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="350" y="255" width="130" height="40" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="415" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#388e3c">Execute</text>
+    <line x1="480" y1="275" x2="505" y2="275" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="505" y="255" width="130" height="40" rx="6" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="570" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">Return Result</text>
+    <line x1="635" y1="275" x2="660" y2="275" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="660" y="255" width="100" height="40" rx="6" fill="#ffebee" stroke="#ef5350" stroke-width="2"/>
+    <text x="710" y="280" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">Update State</text>
+  </g>
+  
+  <g id="step4" class="step" data-narration="Contracts can call other contracts internally. Each internal call forwards a portion of the remaining gas, allowing complex multi-contract interactions.">
+    <rect x="50" y="305" width="700" height="50" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="330" text-anchor="middle" font-size="12" font-weight="bold" fill="#2e7d32">Internal Contract Calls: Contract A → Contract B → Contract C (gas forwarded)</text>
+  </g>
+  
+  <g id="step5" class="step" data-narration="View functions read data without modifying state (free, no gas). State-changing functions modify storage and require gas payment for execution.">
+    <rect x="80" y="365" width="640" height="45" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="400" y="385" text-anchor="middle" font-size="11" font-weight="bold" fill="#7b1fa2">View/Pure Functions: Read-only, no gas when called externally</text>
+    <text x="400" y="402" text-anchor="middle" font-size="11" fill="#333">State-changing Functions: Modify storage, emit events, cost gas</text>
+  </g>
+  
+  <g id="step6" class="step" data-narration="Transaction receipts contain important data including execution status, gas used, and event logs that dApps use to track contract activity.">
+    <rect x="50" y="420" width="700" height="55" rx="8" fill="#e0f7fa" stroke="#00acc1" stroke-width="2"/>
+    <text x="400" y="442" text-anchor="middle" font-size="12" font-weight="bold" fill="#00838f">Transaction Receipt: Status, Gas Used, Event Logs</text>
+    <text x="400" y="462" text-anchor="middle" font-size="11" fill="#333">Event logs enable off-chain applications to monitor contract activity efficiently</text>
+  </g>
+  
+  <g id="step7" class="step" data-narration="Every DeFi action like token swaps on Uniswap, NFT mints, and DAO votes uses message calls to invoke smart contract functions.">
+    <rect x="50" y="485" width="700" height="50" rx="8" fill="#fff9c4" stroke="#fbc02d" stroke-width="2"/>
+    <text x="400" y="510" text-anchor="middle" font-size="12" font-weight="bold" fill="#f57f17">Real-World: Token swaps, NFT minting, DAO voting — all use message calls</text>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Briefly explain the basic principle of timestamp ordering concurrency control. What is the fundamental rule used to determine if a read or write operation should be allowed to proceed?",
+    "expectedPoints": [
+      "Each transaction is assigned a unique timestamp upon its start.",
+      "The protocol ensures that all read and write operations are executed in timestamp order.",
+      "For a read operation: the required data item must have been written by the most recent transaction (with the largest timestamp) that is smaller than the reader's timestamp.",
+      "For a write operation: the transaction must be the one that would have written the data item last (i.e., it must have the largest timestamp among all transactions that have written it) to be valid."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe a scenario that demonstrates the 'Thomas Write Rule' and explain why it is a crucial optimization in the basic timestamp ordering protocol.",
+    "expectedPoints": [
+      "Scenario: A later transaction T_late (with timestamp TS_late) issues a write(X) operation, but finds a previously written value from an older transaction T_old (with timestamp TS_old) where TS_old < TS_late. However, another transaction T_mid (TS_old < TS_mid < TS_late) has already read the value written by T_old.",
+      "Basic T/O would reject T_late's write because it's not the most recent writer, causing an unnecessary abort.",
+      "The Thomas Write Rule states: If a write operation from T_late is 'too late' (a later transaction has already read a value that would be overwritten), the write operation can be safely ignored or skipped instead of aborting T_late.",
+      "This is an optimization because it prevents an unnecessary abort, increasing system throughput, while still maintaining serializability."
+    ],
+    "marks": 10
+  },
+  {
+    "id": "sa3",
+    "question": "What is the primary drawback of the basic Timestamp Ordering (T/O) protocol, and how does the Strict Timestamp Ordering protocol attempt to address it?",
+    "expectedPoints": [
+      "The primary drawback of basic T/O is that it does not guarantee recoverability or cascadeless schedules. A transaction might read an uncommitted value written by another transaction, which later aborts.",
+      "Strict T/O addresses this by delaying read and write operations until the transactions that wrote the most recent committed versions of the data items have committed.",
+      "Specifically, a read operation on data item X issued by transaction T is delayed until the transaction that wrote the current version of X (the write with the largest timestamp less than T's timestamp) has committed.",
+      "Similarly, a write operation by T is delayed until all transactions that had written the previous value of X (with timestamps smaller than T's) have committed. This ensures strict schedules, preventing dirty reads and allowing easy recovery from aborts."
+    ],
+    "marks": 10
+  }
+]

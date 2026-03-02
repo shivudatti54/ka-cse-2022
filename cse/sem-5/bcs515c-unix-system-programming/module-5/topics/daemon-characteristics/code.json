@@ -1,0 +1,45 @@
+{
+  "topicId": "daemon-characteristics",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Daemon Creation - Basic Implementation",
+      "description": "Complete C program demonstrating daemon creation with all standard steps",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <time.h>\n\nvoid daemonize() {\n pid_t pid;\n int fd;\n \n // Step 1: First fork\n pid = fork();\n if (pid < 0) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n // Parent exits\n exit(EXIT_SUCCESS);\n }\n \n // Child continues - become session leader\n if (setsid() < 0) {\n perror(\"setsid failed\");\n exit(EXIT_FAILURE);\n }\n \n // Step 2: Optional second fork\n pid = fork();\n if (pid < 0) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n // First child exits\n exit(EXIT_SUCCESS);\n }\n \n // Grandchild continues as true daemon\n \n // Step 3: Change working directory to root\n chdir(\"/\");\n \n // Step 4: Set file creation mask\n umask(0);\n \n // Step 5: Close standard file descriptors\n close(STDIN_FILENO);\n close(STDOUT_FILENO);\n close(STDERR_FILENO);\n \n // Step 6: Redirect to /dev/null\n fd = open(\"/dev/null\", O_RDWR);\n dup2(fd, STDIN_FILENO);\n dup2(fd, STDOUT_FILENO);\n dup2(fd, STDERR_FILENO);\n close(fd);\n}\n\nint main() {\n FILE *logfile;\n \n daemonize();\n \n // Daemon now runs in background\n logfile = fopen(\"/tmp/daemon.log\", \"a\");\n if (logfile != NULL) {\n fprintf(logfile, \"Daemon started at %s\", ctime(&(time_t){time(NULL)}));\n fclose(logfile);\n }\n \n // Daemon does its work here\n while(1) {\n sleep(30);\n // Periodic tasks\n }\n \n return 0;\n}",
+      "explanation": "This C program demonstrates the complete daemonization process: fork and parent exit, setsid to detach from terminal, optional second fork for security, chdir to root directory, umask setting, closing standard file descriptors, and redirecting to /dev/null. The daemon then writes to a log file and runs an infinite loop.",
+      "timeComplexity": "O(1) daemonize + O(n) work",
+      "spaceComplexity": "O(1) minimal footprint"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Signal Handling in Daemons",
+      "description": "Pseudocode showing proper signal handling for daemon processes",
+      "code": "DAEMON SIGNAL HANDLER\n=======================\n\nVARIABLES:\n running = TRUE\n reload_config = FALSE\n\nFUNCTION setup_signal_handlers():\n // Install SIGHUP handler for config reload\n signal(SIGHUP, handle_sighup)\n \n // Install SIGTERM for graceful shutdown\n signal(SIGTERM, handle_sigterm)\n \n // Install SIGCHLD to reap children\n signal(SIGCHLD, handle_sigchld)\n \n // Ignore SIGHUP during reload to prevent race\n // Will be unblocked after reload completes\n\nFUNCTION handle_sighup(signal_number):\n reload_config = TRUE\n log(\"SIGHUP received, reloading configuration...\")\n reload_configuration()\n reload_config = FALSE\n\nFUNCTION handle_sigterm(signal_number):\n log(\"SIGTERM received, shutting down gracefully...\")\n cleanup_resources()\n close_log_file()\n running = FALSE\n\nFUNCTION handle_sigchld(signal_number):\n WHILE (child_pid = waitpid(-1, NULL, WNOHANG)) > 0:\n log(\"Child process %d terminated\", child_pid)\n // Prevents zombie processes\n\nFUNCTION daemon_main_loop():\n setup_signal_handlers()\n \n WHILE running == TRUE:\n process_requests()\n sleep(1)\n \n EXIT 0",
+      "explanation": "Demonstrates proper signal handling in daemon processes: SIGHUP for configuration reload without restart, SIGTERM for graceful shutdown, and SIGCHLD handling to prevent zombie processes. This is essential for production daemons.",
+      "timeComplexity": "O(n) per request + O(1) signal handling",
+      "spaceComplexity": "O(n) per child process"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "Systemd Service Unit Example",
+      "description": "Example systemd unit file for a daemon service",
+      "code": "[Unit]\nDescription=My Custom Daemon Service\nDocumentation=man:myd(8)\nAfter=network.target\nWants=network.target\n\n[Service]\nType=simple\nExecStart=/usr/bin/myd --config /etc/myd.conf\nExecReload=/bin/kill -HUP $MAINPID\nRestart=on-failure\nRestartSec=5\nUser=mysql\nGroup=mysql\nStandardOutput=journal\nStandardError=journal\n\n# Environment settings\nEnvironment=\"MYD_HOME=/var/lib/myd\"\n\n# Resource limits\nLimitNOFILE=65536\nLimitNPROC=4096\n\n[Install]\nWantedBy=multi-user.target\n\n# Commands:\n# systemctl start myd.service\n# systemctl stop myd.service\n# systemctl reload myd.service\n# systemctl status myd.service\n# journalctl -u myd.service",
+      "explanation": "Shows how modern Linux systems use systemd to manage daemons. The unit file defines service properties: type (simple/oneshot/forking), startup command, restart policies, user/group to run as, logging to journal, and dependency relationships with other services.",
+      "timeComplexity": "O(1) systemd management overhead",
+      "spaceComplexity": "O(1) service definition"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "inetd/xinetd Configuration Pattern",
+      "description": "Demonstrates how transient daemons are spawned by inetd super-server",
+      "code": "INETD CONFIGURATION (inetd.conf)\n================================\n\nFORMAT:\n<service_name> <socket_type> <protocol> <wait> <user> <path> <args>\n\nEXAMPLE ENTRIES:\nftp stream tcp nowait root /usr/sbin/ftpd ftpd -l\ntelnet stream tcp nowait root /usr/sbin/telnetd telnetd\nfinger stream tcp nowait nobody /usr/sbin/fingerd fingerd -w\n\nPARAMETERS:\n- service_name: port/service name from /etc/services\n- socket_type: stream (TCP) or dgram (UDP)\n- protocol: tcp, udp, or tcp6/udp6\n- wait: nowait (spawn new process) or wait (single process)\n- user: username to run daemon as\n- path: absolute path to daemon executable\n- args: command line arguments\n\nWORKFLOW:\n1. inetd listens on configured ports\n2. Connection request arrives on port\n3. inetd forks and execs the specified daemon\n4. Daemon handles the request\n5. Daemon exits after completing request\n6. inetd continues listening\n\nADVANTAGE: Resources saved - service runs only when needed\nDISADVANTAGE: Startup overhead for each new connection",
+      "explanation": "Shows how inetd operates as a meta-daemon that spawns other services on demand. This is the traditional approach for services that aren't constantly busy, reducing memory usage by not running all services continuously.",
+      "timeComplexity": "O(1) listen + O(s) service + O(1) exit",
+      "spaceComplexity": "O(1) per spawned service instance"
+    }
+  ]
+}

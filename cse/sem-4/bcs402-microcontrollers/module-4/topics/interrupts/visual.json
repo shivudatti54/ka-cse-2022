@@ -1,0 +1,126 @@
+{
+  "topicId": "interrupts",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Interrupt Processing Flow",
+      "description": "A sequential flowchart showing the complete lifecycle of interrupt handling from interrupt occurrence to return to normal execution",
+      "elements": [
+        "Step 1: Interrupt source generates interrupt signal",
+        "Step 2: CPU completes current instruction execution",
+        "Step 3: Processor saves current state (PC, CPSR to LR)",
+        "Step 4: Processor switches to IRQ/FIQ mode",
+        "Step 5: Processor loads PC with interrupt vector address from Vector Table",
+        "Step 6: ISR (Interrupt Service Routine) executes",
+        "Step 7: ISR restores saved state from LR",
+        "Step 8: Return to interrupted program execution",
+        "Arrows showing sequential flow with branching for IRQ/FIQ paths"
+      ],
+      "purpose": "Students understand the step-by-step sequence of interrupt processing, essential for understanding interrupt latency and designing ISRs"
+    },
+    {
+      "id": "diagram-2",
+      "title": "ARM Interrupt Vector Table Structure",
+      "description": "Memory layout showing the ARM vector table with 8 exception vectors and their addresses",
+      "elements": [
+        "Vector Table base address (0x00000000 or 0xFFFF0000 for high vectors)",
+        "8 vector entries in order: Reset, Undefined Instruction, Software Interrupt (SWI), Prefetch Abort, Data Abort, IRQ, FIQ",
+        "Each vector contains a branch instruction (LPC or MOV to PC)",
+        "Adjacent to vector table: IRQ handler address storage",
+        "Memory addresses shown (0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C)",
+        "Arrows from each vector to corresponding handler routine"
+      ],
+      "purpose": "Students learn the fixed structure of ARM vector table, understand vectored interrupts, and can locate handler addresses in memory for system design"
+    },
+    {
+      "id": "diagram-3",
+      "title": "Interrupt Controller Architecture",
+      "description": "Block diagram showing how multiple external interrupt sources connect to CPU through an interrupt controller",
+      "elements": [
+        "Multiple external devices (UART, Timer, GPIO, ADC, External Pin) as interrupt sources",
+        "Interrupt Controller (PLIC or VIC) block with priority encoder",
+        "IRQ and FIQ output lines to ARM processor",
+        "Interrupt Enable Register (IER) and Interrupt Pending Register (IPR) shown inside controller",
+        "Priority levels (0-7) assigned to each interrupt source",
+        "Software can enable/disable individual interrupts via enable register",
+        "Arrows showing signal flow from devices through controller to CPU"
+      ],
+      "purpose": "Students understand how multiple interrupt sources are managed, the role of interrupt controllers in prioritization, and how to configure interrupts in microcontrollers"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Polling vs Interrupt-Driven I/O Comparison",
+      "description": "Two-panel diagram contrasting polling method with interrupt-driven method",
+      "elements": [
+        "Left Panel - Polling: CPU continuously reads device status register in loop, CPU circles back repeatedly, CPU wastes cycles checking non-ready devices, device serviced only when CPU gets to it",
+        "Right Panel - Interrupt-Driven: CPU executes main program, device generates interrupt when ready, CPU immediately suspends and services device, CPU returns to main program",
+        "Time axis showing CPU utilization difference",
+        "Clear visual difference in efficiency between methods"
+      ],
+      "purpose": "Students visually understand why interrupts are superior to polling, reinforcing the necessity of interrupts for efficient CPU utilization"
+    },
+    {
+      "id": "diagram-5",
+      "title": "ARM Exception Modes and Stack Usage",
+      "description": "Diagram showing ARM processor modes and their associated banked registers relevant to interrupt handling",
+      "elements": [
+        "6 privilege modes shown: User (USR), System (SYS), Supervisor (SVC), IRQ, Abort (ABT), FIQ",
+        "Banked registers highlighted for IRQ and FIQ modes (r13_IRQ/r14_IRQ, SPSR_IRQ for IRQ; r8_FIQ-r14_FIQ, SPSR_FIQ for FIQ)",
+        "Stack pointers (SP) for each mode",
+        "Link Register (LR) showing where to return after exception",
+        "CPSR and SPSR registers shown",
+        "Mode transitions via arrows with exception types",
+        "Stack memory regions labeled for each mode"
+      ],
+      "purpose": "Students understand ARM's banked register mechanism, how exceptions preserve state, and the importance of proper stack initialization for each mode"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison-table",
+      "title": "Maskable vs Non-Maskable Interrupts",
+      "content": "Two-column comparison: Maskable Interrupts (IRQ) - Can be ignored by setting I bit in CPSR, Lower priority, Used for general peripherals (UART, Timer, GPIO), Can be enabled/disabled dynamically, More frequent in systems; Non-Maskable Interrupts (NMI/FIQ) - Cannot be ignored, Highest priority, Used for critical events (power failure, hardware fault), Always enabled, Reserved for most critical system events"
+    },
+    {
+      "type": "flowchart",
+      "title": "Interrupt Handling Decision Tree",
+      "content": "Flowchart showing how processor decides between interrupt sources: Power ON → Initialize Vector Table → Enable Interrors → Main Program Running → Interrupt Occurs? → YES → Check Priority → Check FIQ first (higher) → If FIQ: Save State → Execute FIQ Handler → Restore State → Return; If IRQ: Save State → Check IRQ Sources → Execute IRQ Handler → Restore State → Return; NO → Continue Main Program"
+    },
+    {
+      "type": "classification-chart",
+      "title": "ARM Interrupt Source Classification",
+      "content": "Hierarchical classification: Interrupts divided into (1) Exceptions - Reset, Undefined Instruction, Software Interrupt (SWI), Prefetch Abort, Data Abort; (2) Interrupts - IRQ (General Purpose), FIQ (Fast Interrupt); Each type shows vector address, mode entered, and typical handler purpose"
+    },
+    {
+      "type": "comparison-table",
+      "title": "Interrupt-Driven I/O vs DMA Transfer",
+      "content": "Comparison for data transfer of 1000 bytes: Interrupt-Driven I/O - CPU involved in each byte transfer, 1000 interrupts generated, High CPU overhead, Simple hardware (no DMA controller), Suitable for low data volumes; DMA Transfer - DMA controller handles data movement, Single interrupt for completion, Low CPU overhead, Complex hardware, Suitable for large data blocks (disk, network, audio)"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "INTERRUPTS",
+      "branches": [
+        "Definition - Signal requiring immediate attention, suspends current execution",
+        "Types - Hardware (external devices), Software/Traps (system calls), Exceptions (errors)",
+        "Processing Steps - Save state→Vector→Handler→Restore→Return",
+        "Key Components - Vector Table, ISR, Interrupt Controller, Priority Encoder",
+        "ARM Specific - IRQ (maskable), FIQ (fast/non-maskable), 7 exception modes",
+        "Performance - Latency (time to respond), Throughput (data rate)",
+        "Advanced - DMA reduces interrupts, Nested interrupts, Interrupt Coalescing"
+      ],
+      "purpose": "Comprehensive overview connecting all interrupt concepts, showing relationships between types, processing, hardware components, and performance considerations for exam preparation"
+    }
+  ],
+  "visuals": [
+    {
+      "id": "interrupts-svg",
+      "title": "Interrupts",
+      "description": "Visual diagram for interrupts",
+      "type": "animated-svg",
+      "file": "assets/interrupts.svg",
+      "svgContent": "<placeholder>",
+      "animated": true
+    }
+  ]
+}

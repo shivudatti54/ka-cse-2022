@@ -1,0 +1,35 @@
+{
+  "topicId": "computational-aspects",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Linear Congruential Generator Implementation",
+      "description": "Basic LCG algorithm showing the recurrence relation for pseudorandom number generation",
+      "code": "FUNCTION LCG(seed, a, c, m):\n state \u2190 seed\n WHILE true DO\n state \u2190 (a * state + c) MOD m\n OUTPUT state\n END WHILE\nEND FUNCTION\n\n// Example parameters (MINSTD)\na \u2190 48271\nc \u2190 0\nm \u2190 2147483647\nseed \u2190 system_entropy()\n\n// Generate sequence:\n// X\u2081 = (48271 \u00d7 seed) mod 2147483647\n// X\u2082 = (48271 \u00d7 X\u2081) mod 2147483647\n// ...",
+      "explanation": "This is a simple LCG implementation. The parameters shown are from the 'MINSTD' generator. While computationally efficient O(1), it is NOT cryptographically secure because the linear structure allows parameter recovery via Berlekamp-Massey algorithm.",
+      "timeComplexity": "O(1) per output",
+      "spaceComplexity": "O(1)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Blum Blum Shub Generator",
+      "description": "Cryptographically secure PRNG based on quadratic residues modulo composite n",
+      "code": "FUNCTION BBS_SETUP(p, q):\n // p, q are primes \u2261 3 (mod 4)\n n \u2190 p * q\n seed \u2190 random_prime(n)\n state \u2190 (seed * seed) MOD n\n RETURN (n, state)\nEND FUNCTION\n\nFUNCTION BBS_GENERATE(n, state, bits):\n outputs \u2190 empty_list\n FOR i = 1 TO bits DO\n state \u2190 (state * state) MOD n\n // Extract least significant bit\n output_bit \u2190 state AND 1\n APPEND output_bit TO outputs\n END FOR\n RETURN outputs\nEND FUNCTION\n\n// Example usage:\np \u2190 7 // In practice: 512-bit prime\nq \u2190 11 // In practice: 512-bit prime\n(n, state) \u2190 BBS_SETUP(p, q)\nrandom_bits \u2190 BBS_GENERATE(n, state, 128)",
+      "explanation": "BBS security relies on the integer factorization problem. Computing square roots modulo n = p\u00b7q is computationally infeasible without knowing p and q. Only 1-2 LSBs are extracted per iteration to maintain security properties.",
+      "timeComplexity": "O(k\u00b2) per iteration (k-bit multiplication)",
+      "spaceComplexity": "O(k) for state storage",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "CTR_DRBG (Counter Mode PRNG)",
+      "description": "NIST standardized cryptographic PRNG using block cipher in counter mode",
+      "code": "FUNCTION CTR_DRBG_INstantiate(entropy, personalization):\n key \u2190 0x00...00 // 128 or 256 bits\n counter \u2190 0\n seed_material \u2190 entropy \u2295 personalization\n key \u2190 KDF(key, seed_material) // Key derivation\n RETURN (key, counter, 0) // (key, counter, reseed_counter)\nEND FUNCTION\n\nFUNCTION CTR_DRBG_GENERATE(key, counter, requested_bits):\n output \u2190 empty_string\n blocks \u2190 ceil(requested_bits / block_size)\n \n FOR i = 1 TO blocks DO\n block \u2190 AES_ENCRYPT(key, counter)\n output \u2190 output || block\n counter \u2190 counter + 1\n END FOR\n \n // Update internal state\n key \u2190 AES_ENCRYPT(key, counter)\n counter \u2190 counter + 1\n \n RETURN (output[0:requested_bits], key, counter)\nEND FUNCTION\n\n// Generate 256 random bits:\nentropy \u2190 get_system_entropy() // 256+ bits\n(key, counter, _) \u2190 CTR_DRBG_INstantiate(entropy, \"app-specific-string\")\n(random_bytes, key, counter) \u2190 CTR_DRBG_GENERATE(key, counter, 256)",
+      "explanation": "CTR_DRBG is a NIST standard offering efficient, parallelizable random bit generation. Forward security is achieved as each output updates the key. Backward security requires periodic reseeding from entropy source. Parallelizable due to counter increment pattern.",
+      "timeComplexity": "O(n/block_size) block cipher calls",
+      "spaceComplexity": "O(1) besides key and counter",
+      "language": "pseudocode"
+    }
+  ]
+}

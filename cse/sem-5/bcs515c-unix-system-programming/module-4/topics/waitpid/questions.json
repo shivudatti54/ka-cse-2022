@@ -1,0 +1,152 @@
+{
+  "topicId": "waitpid",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the purpose of waitpid() system call and list its three parameters.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "waitpid() allows parent process to wait for specific child termination",
+        "pid: specifies which child to wait for (-1 for any, >0 for specific, 0 for process group, <-1 for group ID)",
+        "status: pointer to store termination information (or NULL)",
+        "options: flags like WNOHANG (non-blocking), WUNTRACED, WCONTINUED"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a zombie process? How can it be prevented?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Zombie is a terminated process whose entry remains in process table",
+        "Created when parent doesn't call wait()/waitpid() to read exit status",
+        "Prevention: parent must call wait()/waitpid() to reap child",
+        "Alternatively: parent can ignore child death (signal SIGCHLD ignored) or terminate first"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between wait() and waitpid() system calls.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "wait() waits for any single child to terminate",
+        "waitpid() can wait for a specific child by PID",
+        "waitpid() offers non-blocking option via WNOHANG",
+        "waitpid() can wait for process group members",
+        "wait() is simpler but less flexible"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the various values that can be passed as the first parameter (pid) to waitpid().",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "pid > 0: wait for child with that specific PID",
+        "pid = 0: wait for any child in same process group",
+        "pid = -1: wait for any child (like wait())",
+        "pid < -1: wait for any child whose process group ID equals |pid|"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write a C code snippet demonstrating the use of waitpid() with WNOHANG to reap multiple terminated children.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Fork child processes in a loop",
+        "Use waitpid(-1, &status, WNOHANG) in a loop",
+        "Check return value: >0 means child reaped, 0 means no terminated children, -1 means error",
+        "Use WIFEXITED and WEXITSTATUS to get exit codes",
+        "Loop continues until all children terminated (ECHILD error)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the WIFEXITED and WEXITSTATUS macros with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "WIFEXITED(status): returns true if child terminated normally via exit() or return",
+        "WEXITSTATUS(status): extracts 8-bit exit code (0-255)",
+        "Example: if(WIFEXITED(status)) { int code = WEXITSTATUS(status); }",
+        "Always check WIFEXITED before using WEXITSTATUS",
+        "These are defined in <sys/wait.h>"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the different options available in waitpid()? Explain each briefly.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "WNOHANG: return immediately if no child has terminated (non-blocking)",
+        "WUNTRACED: report status of stopped child processes (for job control)",
+        "WCONTINUED: report status of resumed child processes",
+        "Options can be combined using bitwise OR (|)",
+        "These allow flexible process status monitoring"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the complete process of process termination and waiting in Unix. Include zombie process formation and how waitpid() helps in proper resource cleanup.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Child calls exit() or returns from main()",
+        "Kernel stores exit status and signal info in process table",
+        "Child state changes to zombie - still in table but not running",
+        "Parent calls waitpid() to read status",
+        "Kernel clears child entry and releases resources",
+        "If parent doesn't wait - zombie persists until parent exits",
+        "Proper waiting prevents resource leaks",
+        "waitpid() provides more control than wait()"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C program that creates 5 child processes. Each child should exit with a unique exit code. The parent should use waitpid() to reap children in order of their termination and display each child's exit code.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Include <sys/wait.h> and <unistd.h>",
+        "Fork 5 children in loop with unique exit codes (i from 1 to 5)",
+        "Parent stores child PIDs in array",
+        "Use waitpid() with WNOHANG in loop to check termination",
+        "Use WIFEXITED to check normal termination",
+        "Use WEXITSTATUS to extract exit code",
+        "Print child PID and exit code",
+        "Handle ECHILD when no children left",
+        "Proper error handling"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the various status macros provided in <sys/wait.h> header file. Give examples of when each would be used.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "WIFEXITED: normal termination check",
+        "WEXITSTATUS: get exit code (after WIFEXITED)",
+        "WIFSIGNALED: killed by signal check",
+        "WTERMSIG: get signal number (after WIFSIGNALED)",
+        "WIFSTOPPED: stopped process check (job control)",
+        "WSTOPSIG: get stop signal (after WIFSTOPPED)",
+        "WIFCONTINUED: resumed process check",
+        "Example scenarios: normal exit, signal death, stopped/continued processes"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "topicId": "data-processing-instructions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between ADD and ADDC instructions in 8051 with respect to flag behavior and use in multi-byte arithmetic.",
+      "keyPoints": [
+        "ADD adds source to accumulator without carry; ADDC adds source + carry flag",
+        "ADD clears or sets C based on result; ADDC includes C in addition",
+        "For multi-byte: first byte uses ADD, subsequent bytes use ADDC to propagate carry",
+        "Both affect AC and OV flags based on result"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the flag behavior for MUL AB and DIV AB instructions in 8051 microcontroller.",
+      "keyPoints": [
+        "MUL: C always cleared; OV set if B\u22600 after multiplication (result>255)",
+        "DIV: C always cleared; OV set only if B=0 (illegal division)",
+        "In both MUL and DIV, C is always 0 after execution",
+        "OV in DIV is undefined except when dividing by zero (OV=1)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain how the DA (Decimal Adjust) instruction works in 8051 and when it is necessary.",
+      "keyPoints": [
+        "DA adjusts accumulator for BCD (Binary Coded Decimal) addition results",
+        "Adds 0x06 if lower nibble >9 or AC=1 (corrects lower digit)",
+        "Adds 0x60 if higher nibble >9 or C=1 (corrects upper digit)",
+        "Adds 0x66 if both conditions require correction",
+        "Essential after ADD/ADDC when operands are in BCD format"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between RLC, RRC, RL, and RR instructions in 8051 with respect to the carry flag.",
+      "keyPoints": [
+        "RLC: rotates left through carry - MSB goes to C, C goes to LSB",
+        "RRC: rotates right through carry - LSB goes to C, C goes to MSB",
+        "RL: rotates left - MSB goes to LSB, no carry involvement",
+        "RR: rotates right - LSB goes to MSB, no carry involvement",
+        "All rotate instructions affect the carry flag except RL and RR"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write an 8051 assembly program to add two 16-bit numbers stored at locations 0x30:0x31 (low:high) and 0x32:0x33. Store the result at 0x34:0x35.",
+      "keyPoints": [
+        "Load low byte of first number into A, add low byte of second using ADD",
+        "Store result at 0x34, use carry for high byte addition",
+        "Load high byte of first number, add high byte of second using ADDC",
+        "Store result at 0x35 (ADDC propagates carry from low byte addition)",
+        "Need MOVX or direct addressing to access external RAM if needed"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Explain the overflow detection mechanism in 8051 arithmetic operations. How is the overflow flag (OV) calculated, and when does overflow occur for signed arithmetic?",
+      "keyPoints": [
+        "OV = C6 XOR C7: XOR of carry into and out of bit 7 (sign bit)",
+        "Overflow occurs when: positive + positive = negative, or negative + negative = positive",
+        "For unsigned: check Carry flag; For signed: check Overflow flag",
+        "ADD, ADDC, SUBB all set OV based on signed arithmetic rules",
+        "Example: 127 + 127 = 254 (0x7F + 0x7F = 0xFE, negative result \u2192 OV=1)",
+        "Example: -128 + -128: 0x80 + 0x80 = 0x100, result exceeds 8-bit range, OV=1"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Discuss the logical (ANL, ORL, XRL) and bit manipulation (CPL, CLR, SETB) instructions in 8051 with respect to addressing modes and flag effects.",
+      "keyPoints": [
+        "ANL: bitwise AND - does NOT affect C flag, may affect AC, OV undefined",
+        "ORL: bitwise OR - same flag behavior as ANL (C unchanged)",
+        "XRL: bitwise XOR - same flag behavior (C unchanged, affects AC)",
+        "CPL: complements a bit or accumulator byte - no flag modification",
+        "CLR: clears accumulator or bit - no flag modification",
+        "SETB: sets carry or direct bit to 1 - no other flags affected",
+        "Addressing modes: register (Rn), direct, @Ri (indirect), immediate (#data)",
+        "For bit operations: direct bit addressing (0x20-0x2F RAM, SFR bits)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design an 8051 program to multiply two 8-bit unsigned numbers using the MUL instruction and explain the result format.",
+      "keyPoints": [
+        "MUL AB multiplies unsigned 8-bit values in A and B",
+        "16-bit result: low byte in A (accumulator), high byte in B register",
+        "Carry always cleared after MUL, overflow if result > 255 (B \u2260 0 after)",
+        "Program: Load first operand to A, second to B, execute MUL AB",
+        "Result extraction: A contains low byte, B contains high byte",
+        "If multiplying by constant, use MOV B,#constant before MUL",
+        "Example: 0x50 \u00d7 0x02 = 0xA0: A=0xA0, B=0x00, C=0, OV=0"
+      ],
+      "marks": 10
+    }
+  ]
+}

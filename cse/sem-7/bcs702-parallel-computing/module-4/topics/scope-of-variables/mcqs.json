@@ -1,0 +1,384 @@
+{
+  "topicId": "scope-of-variables",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Consider the following OpenMP code:\n\nint x = 5;\n#pragma omp parallel num_threads(4)\n{\n    x = x + 1;\n}\nprintf(\"%d\\n\", x);\n\nWhat is the output and why?",
+      "options": [
+        {
+          "key": "A",
+          "text": "9 (each of 4 threads increments x, and the final value is 5 + 4 = 9)"
+        },
+        {
+          "key": "B",
+          "text": "Undefined (data race on shared variable x)"
+        },
+        {
+          "key": "C",
+          "text": "5 (x is private by default)"
+        },
+        {
+          "key": "D",
+          "text": "6 (only the master thread executes the increment)"
+        },
+        {
+          "key": "B",
+          "text": "Undefined (data race on shared variable x)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Variable 'x' is shared by default (declared before the parallel region). The statement 'x = x + 1' involves a read of x followed by a write to x. With 4 threads executing concurrently, the order of reads and writes is non-deterministic, resulting in a data race. The output could be any value between 6 and 9 depending on thread scheduling, or could change between program runs.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Given the code below, which variable(s) require explicit data-sharing attribute specification when using '#pragma omp parallel default(none)'?\n\nint a = 10;\nfloat b = 3.14;\nint main() {\n    int c = 5;\n    #pragma omp parallel default(none) private(c)\n    {\n        int d = a + c; // uses a, c\n        b = b + 1.0;   // uses b\n    }\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only variable 'a'"
+        },
+        {
+          "key": "B",
+          "text": "Variables 'a' and 'b'"
+        },
+        {
+          "key": "C",
+          "text": "Variables 'a', 'b', and 'c'"
+        },
+        {
+          "key": "D",
+          "text": "Variable 'd' only"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "With default(none), the programmer must explicitly specify data-sharing attributes. Variable 'a' (global) is shared but must be listed as shared(a). Variable 'b' (global) is shared but must be listed as shared(b). Variable 'c' is declared inside main() and appears in the parallel region, so private(c) is explicitly specified. Variable 'd' is private by default (declared inside the parallel block).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What is the final value of 'sum' after executing this OpenMP code with 4 threads?\n\nint sum = 0;\n#pragma omp parallel for reduction(+:sum)\nfor (int i = 1; i <= 100; i++) {\n    sum += i;\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "100 (only last iteration contributes)"
+        },
+        {
+          "key": "B",
+          "text": "5050 (correct sum of 1 to 100)"
+        },
+        {
+          "key": "C",
+          "text": "0 (reduction initializes to identity)"
+        },
+        {
+          "key": "D",
+          "text": "Undefined due to race condition"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The reduction clause creates a private copy of 'sum' for each thread, initialized to the identity value for '+' (which is 0). Each thread computes a partial sum and at the end, the OpenMP runtime combines all partial sums using the '+' operator. The sum 1+2+...+100 = 5050 is the correct result. The reduction ensures atomic combination of results.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "In the following code, what will be printed for variable 'i' after the parallel region?\n\nint i = 100;\n#pragma omp parallel for private(i)\nfor (i = 0; i < 4; i++) {\n    // Each thread has its own copy of i\n}\nprintf(\"i = %d\\n\", i);",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "3"
+        },
+        {
+          "key": "C",
+          "text": "100"
+        },
+        {
+          "key": "D",
+          "text": "4"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The 'private' clause creates an uninitialized copy of 'i' for each thread. The loop iteration uses this private copy, but these modifications do NOT affect the original 'i' variable. After the parallel for completes, the original 'i' retains its value of 100. If lastprivate(i) were used instead, 'i' would be 3 (the value from the last iteration).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Which OpenMP clause should be used to initialize private copies with values from the master thread?",
+      "options": [
+        {
+          "key": "A",
+          "text": "private"
+        },
+        {
+          "key": "B",
+          "text": "firstprivate"
+        },
+        {
+          "key": "C",
+          "text": "shared"
+        },
+        {
+          "key": "D",
+          "text": "copyin"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'firstprivate' clause combines the behavior of 'private' with automatic initialization. Each thread's private copy is initialized with the value that the variable had in the master thread before entering the parallel region. This is essential when the initial value of a variable matters for computation in each thread.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Analyze this code and identify the race condition:\n\nint counter = 0;\n#pragma omp parallel num_threads(8)\n{\n    // Each thread increments counter 1000 times\n    for (int j = 0; j < 1000; j++)\n        counter++;\n}\nprintf(\"Counter: %d\\n\", counter);\n\nWhat is the actual value of counter most likely to be?",
+      "options": [
+        {
+          "key": "A",
+          "text": "8000 (8 threads \u00d7 1000 increments)"
+        },
+        {
+          "key": "B",
+          "text": "1000 (serial execution due to implicit barrier)"
+        },
+        {
+          "key": "C",
+          "text": "Less than 8000 due to lost updates"
+        },
+        {
+          "key": "D",
+          "text": "Greater than 8000 due to increments adding extra values"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "This code has a classic race condition. The statement 'counter++' is not atomic\u2014it involves: (1) read counter from memory to register, (2) increment register, (3) write register back to memory. When multiple threads execute concurrently, they may read the same value before either writes, causing lost updates. The actual value is non-deterministic but typically significantly less than 8000 (e.g., 4500-7000). The fix is to use '#pragma omp atomic' or 'reduction(+:counter)'.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the purpose of 'threadprivate' in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To share variables between threads within a single parallel region"
+        },
+        {
+          "key": "B",
+          "text": "To preserve variable values across multiple parallel regions in the same thread"
+        },
+        {
+          "key": "C",
+          "text": "To create a single shared variable accessible by all threads"
+        },
+        {
+          "key": "D",
+          "text": "To allocate variables in thread-local heap memory"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'threadprivate' directive makes file-scope or static variables persist as thread-local across multiple parallel region invocations. Each thread retains its own copy with its own value throughout the program's execution. Unlike 'private' which creates fresh copies for each parallel region, 'threadprivate' maintains state between parallel regions.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Given the following code with '#pragma omp parallel for lastprivate(x)', what value is printed?\n\nint x = 1;\n#pragma omp parallel for lastprivate(x)\nfor (int i = 1; i <= 4; i++) {\n    x = i * 2;\n}\nprintf(\"x = %d\\n\", x);",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 (original value preserved)"
+        },
+        {
+          "key": "B",
+          "text": "8 (x = 4*2 from last iteration)"
+        },
+        {
+          "key": "C",
+          "text": "Random value"
+        },
+        {
+          "key": "D",
+          "text": "0"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'lastprivate' clause copies the value of the private variable from the last iteration (or last section in sections) back to the original variable after the parallel region. Here, the loop iterations execute in some order determined by the runtime, but the last iteration has i=4, so x=8 is assigned. The final value of x is 8.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Which of the following is NOT a valid data-sharing attribute clause in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "shared"
+        },
+        {
+          "key": "B",
+          "text": "private"
+        },
+        {
+          "key": "C",
+          "text": "global"
+        },
+        {
+          "key": "D",
+          "text": "firstprivate"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "OpenMP defines these data-sharing attributes: shared, private, firstprivate, lastprivate, reduction, threadprivate, and default. 'global' is not a valid OpenMP clause. Variables have default sharing based on their scope (file-scope variables are shared, automatic variables are shared unless in a task or private context).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What does 'default(none)' help prevent?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Deadlocks in critical sections"
+        },
+        {
+          "key": "B",
+          "text": "Accidental data races from implicitly shared variables"
+        },
+        {
+          "key": "C",
+          "text": "False sharing performance issues"
+        },
+        {
+          "key": "D",
+          "text": "Stack overflow in parallel regions"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'default(none)' clause forces explicit specification of data-sharing attributes for every variable referenced in the parallel region. This defensive programming practice helps prevent accidental data races that occur when variables are implicitly shared by default. Programmers must consciously decide whether each variable should be shared, private, firstprivate, lastprivate, or reduction.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "In a nested parallel region, how are variables from the outer parallel region treated by default?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Private in the inner region"
+        },
+        {
+          "key": "B",
+          "text": "Shared in the inner region"
+        },
+        {
+          "key": "C",
+          "text": "Firstprivate in the inner region"
+        },
+        {
+          "key": "D",
+          "text": "Threadprivate in the inner region"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "By default, variables that are shared in the outer parallel region remain shared in nested (inner) parallel regions. Each thread in the inner region can access the same shared memory locations as threads in the outer region. The programmer can override this with explicit data-sharing attributes in the inner parallel directive.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is the identity element for the 'reduction(+:var)' clause in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "0"
+        },
+        {
+          "key": "C",
+          "text": "-1"
+        },
+        {
+          "key": "D",
+          "text": "var (unchanged)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "For the addition operator (+), the identity element is 0 because x + 0 = x. OpenMP reduction initializes each thread's private copy to this identity value. Different operators have different identities: max: smallest value (INT_MIN for int), min: largest value (INT_MAX), *: 1, &: all bits 1, |: 0, ^: 0.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Consider this code with '#pragma omp single'. Which variables are guaranteed to have consistent values across all threads after the construct?\n\nint a = 5;\n#pragma omp parallel\n{\n    #pragma omp single\n    {\n        a = 10;\n    }\n    // Value of 'a' here?\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "a = 10 in all threads"
+        },
+        {
+          "key": "B",
+          "text": "a = 5 in all threads"
+        },
+        {
+          "key": "C",
+          "text": "a may be 5 or 10 depending on thread timing"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The '#pragma omp single' construct ensures that only one thread executes the block, and all other threads wait until it completes. The update to 'a' (a = 10) happens before other threads proceed past the single region. Since 'a' is shared by default, all threads will see a = 10 after the single region. An implicit barrier exists at the end of single (unless 'nowait' is specified).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "Which clause should be used to fix this code to correctly compute the product?\n\ndouble result = 1.0;\n#pragma omp parallel for\nfor (int i = 1; i <= 10; i++) {\n    result *= i;\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "private(result)"
+        },
+        {
+          "key": "B",
+          "text": "shared(result)"
+        },
+        {
+          "key": "C",
+          "text": "reduction(*:result)"
+        },
+        {
+          "key": "D",
+          "text": "firstprivate(result)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The multiplication operation requires the 'reduction(*:result)' clause. This creates a private copy of 'result' initialized to 1.0 (the identity for multiplication) for each thread. Each thread computes a partial product, and the runtime combines them using the '*' operator at the end. Without reduction, there would be a race condition on 'result'. Using private(result) would give incorrect results as the original result would remain 1.0.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What is the scope of loop index variable 'i' in '#pragma omp parallel for'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Shared"
+        },
+        {
+          "key": "B",
+          "text": "Private"
+        },
+        {
+          "key": "C",
+          "text": "Firstprivate"
+        },
+        {
+          "key": "D",
+          "text": "Lastprivate"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Loop index variables in a parallel for loop are implicitly private. Each thread gets its own copy of the loop index, initialized appropriately for its iteration range. The index cannot be shared because each thread needs its own value to iterate through its assigned iterations. The index variable is private even without explicit 'private(i)' clause.",
+      "difficulty": "easy"
+    }
+  ]
+}

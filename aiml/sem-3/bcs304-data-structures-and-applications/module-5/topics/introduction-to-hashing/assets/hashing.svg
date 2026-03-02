@@ -1,0 +1,360 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideDown {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes arrowFlow {
+        0%, 100% { stroke-dashoffset: 0; }
+        50% { stroke-dashoffset: 10; }
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+      }
+
+      @keyframes collisionBlink {
+        0%, 100% { fill: #ff6b6b; }
+        50% { fill: #ff3333; }
+      }
+
+      @keyframes chainSlide {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+
+      @keyframes highlight {
+        0%, 100% { fill: #00ff88; }
+        50% { fill: #00cc66; }
+      }
+
+      .title {
+        animation: slideDown 1s ease-out;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        animation: fadeIn 1.5s ease-out;
+        font-family: Arial, sans-serif;
+      }
+
+      .hash-slot {
+        animation: fadeIn 0.8s ease-out;
+        transition: fill 0.3s;
+      }
+
+      .hash-arrow {
+        animation: arrowFlow 2s ease-in-out infinite;
+        stroke-dasharray: 5, 5;
+      }
+
+      .key-box {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .collision-highlight {
+        animation: collisionBlink 1.5s ease-in-out infinite;
+      }
+
+      .chain-node {
+        animation: chainSlide 1s ease-out;
+      }
+
+      .performance-highlight {
+        animation: highlight 2s ease-in-out infinite;
+      }
+
+      .label-text {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+      }
+
+      .index-text {
+        font-family: monospace;
+        font-size: 11px;
+      }
+
+      .comparison-text {
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+      }
+    </style>
+
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#00d4ff" />
+    </marker>
+
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ff6b6b" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#1a1a2e"/>
+
+  <!-- Title Section -->
+  <g data-narration="Introduction to hashing, a data structure that provides O(1) average-case performance for search, insert, and delete operations">
+    <text x="400" y="35" fill="#ffe66d" font-size="28" text-anchor="middle" class="title">
+      Introduction to Hashing
+    </text>
+    <text x="400" y="58" fill="#e0e0e0" font-size="14" text-anchor="middle" class="subtitle">
+      O(1) average-case search, insert, and delete
+    </text>
+  </g>
+
+  <!-- Left Side - Hash Table Visualization -->
+  <g data-narration="A hash table uses a hash function to map keys to array indices. Here we see keys 25, 43, and 78 being hashed to slots 5, 3, and 8 respectively">
+    <!-- Hash Table Label -->
+    <text x="120" y="95" fill="#ffe66d" font-size="16" text-anchor="middle" class="label-text" font-weight="bold">
+      Hash Table
+    </text>
+
+    <!-- Hash Table Array (10 slots, indices 0-9) -->
+    <g id="hash-table-slots">
+      <!-- Slot 0 -->
+      <rect x="70" y="110" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot"/>
+      <text x="50" y="127" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">0:</text>
+
+      <!-- Slot 1 -->
+      <rect x="70" y="138" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.1s"/>
+      <text x="50" y="155" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">1:</text>
+
+      <!-- Slot 2 -->
+      <rect x="70" y="166" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.2s"/>
+      <text x="50" y="183" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">2:</text>
+
+      <!-- Slot 3 - Contains 43 -->
+      <rect x="70" y="194" width="50" height="28" fill="#00d4ff" fill-opacity="0.3" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.3s"/>
+      <text x="50" y="211" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">3:</text>
+      <text x="95" y="211" fill="#ffe66d" font-size="14" text-anchor="middle" font-weight="bold">43</text>
+
+      <!-- Slot 4 -->
+      <rect x="70" y="222" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.4s"/>
+      <text x="50" y="239" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">4:</text>
+
+      <!-- Slot 5 - Contains 25, collision with 15 -->
+      <rect x="70" y="250" width="50" height="28" fill="#ff6b6b" fill-opacity="0.4" stroke="#ff6b6b" stroke-width="3" class="hash-slot collision-highlight" style="animation-delay: 0.5s"/>
+      <text x="50" y="267" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">5:</text>
+      <text x="95" y="267" fill="#ffe66d" font-size="14" text-anchor="middle" font-weight="bold">25</text>
+
+      <!-- Slot 6 -->
+      <rect x="70" y="278" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.6s"/>
+      <text x="50" y="295" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">6:</text>
+
+      <!-- Slot 7 -->
+      <rect x="70" y="306" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.7s"/>
+      <text x="50" y="323" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">7:</text>
+
+      <!-- Slot 8 - Contains 78 -->
+      <rect x="70" y="334" width="50" height="28" fill="#00d4ff" fill-opacity="0.3" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.8s"/>
+      <text x="50" y="351" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">8:</text>
+      <text x="95" y="351" fill="#ffe66d" font-size="14" text-anchor="middle" font-weight="bold">78</text>
+
+      <!-- Slot 9 -->
+      <rect x="70" y="362" width="50" height="28" fill="none" stroke="#00d4ff" stroke-width="2" class="hash-slot" style="animation-delay: 0.9s"/>
+      <text x="50" y="379" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">9:</text>
+    </g>
+
+    <!-- Keys being hashed -->
+    <g id="input-keys">
+      <!-- Key 25 -->
+      <rect x="180" y="249" width="45" height="30" fill="#00d4ff" stroke="#ffe66d" stroke-width="2" rx="5" class="key-box" style="animation-delay: 0.5s"/>
+      <text x="202.5" y="269" fill="#1a1a2e" font-size="14" text-anchor="middle" font-weight="bold">25</text>
+      <text x="248" y="266" fill="#e0e0e0" font-size="11" class="label-text">h(25)=5</text>
+
+      <!-- Arrow from 25 to slot 5 -->
+      <path d="M 180 264 L 125 264" stroke="#00d4ff" stroke-width="2" fill="none"
+            marker-end="url(#arrowhead)" class="hash-arrow" style="animation-delay: 0.5s"/>
+
+      <!-- Key 43 -->
+      <rect x="180" y="193" width="45" height="30" fill="#00d4ff" stroke="#ffe66d" stroke-width="2" rx="5" class="key-box" style="animation-delay: 0.3s"/>
+      <text x="202.5" y="213" fill="#1a1a2e" font-size="14" text-anchor="middle" font-weight="bold">43</text>
+      <text x="248" y="210" fill="#e0e0e0" font-size="11" class="label-text">h(43)=3</text>
+
+      <!-- Arrow from 43 to slot 3 -->
+      <path d="M 180 208 L 125 208" stroke="#00d4ff" stroke-width="2" fill="none"
+            marker-end="url(#arrowhead)" class="hash-arrow" style="animation-delay: 0.3s"/>
+
+      <!-- Key 78 -->
+      <rect x="180" y="333" width="45" height="30" fill="#00d4ff" stroke="#ffe66d" stroke-width="2" rx="5" class="key-box" style="animation-delay: 0.8s"/>
+      <text x="202.5" y="353" fill="#1a1a2e" font-size="14" text-anchor="middle" font-weight="bold">78</text>
+      <text x="248" y="350" fill="#e0e0e0" font-size="11" class="label-text">h(78)=8</text>
+
+      <!-- Arrow from 78 to slot 8 -->
+      <path d="M 180 348 L 125 348" stroke="#00d4ff" stroke-width="2" fill="none"
+            marker-end="url(#arrowhead)" class="hash-arrow" style="animation-delay: 0.8s"/>
+
+      <!-- Key 15 - COLLISION -->
+      <rect x="180" y="291" width="45" height="30" fill="#ff6b6b" stroke="#ffe66d" stroke-width="2" rx="5" class="key-box collision-highlight" style="animation-delay: 1.2s"/>
+      <text x="202.5" y="311" fill="#1a1a2e" font-size="14" text-anchor="middle" font-weight="bold">15</text>
+      <text x="248" y="308" fill="#ff6b6b" font-size="11" class="label-text" font-weight="bold">h(15)=5</text>
+
+      <!-- Arrow from 15 to slot 5 (collision) -->
+      <path d="M 180 306 L 125 264" stroke="#ff6b6b" stroke-width="2" fill="none"
+            marker-end="url(#arrowhead-red)" class="hash-arrow" style="animation-delay: 1.2s"/>
+
+      <!-- Collision Label -->
+      <text x="155" y="281" fill="#ff6b6b" font-size="12" text-anchor="middle" font-weight="bold" class="label-text">
+        COLLISION!
+      </text>
+    </g>
+  </g>
+
+  <!-- Right Side - Collision Resolution -->
+  <g data-narration="When a collision occurs, we need a resolution strategy. Two common methods are separate chaining and linear probing">
+    <!-- Collision Resolution Label -->
+    <text x="555" y="95" fill="#ffe66d" font-size="16" text-anchor="middle" class="label-text" font-weight="bold">
+      Collision Resolution
+    </text>
+
+    <!-- Separate Chaining -->
+    <g id="separate-chaining">
+      <text x="470" y="125" fill="#e0e0e0" font-size="13" class="label-text" font-weight="bold">
+        1. Separate Chaining
+      </text>
+
+      <!-- Chaining visualization -->
+      <rect x="430" y="140" width="50" height="35" fill="none" stroke="#00d4ff" stroke-width="2"/>
+      <text x="415" y="160" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">5:</text>
+
+      <!-- First node in chain (25) -->
+      <rect x="490" y="145" width="40" height="25" fill="#00d4ff" stroke="#ffe66d" stroke-width="2" rx="3" class="chain-node"/>
+      <text x="510" y="162" fill="#1a1a2e" font-size="12" text-anchor="middle" font-weight="bold">25</text>
+
+      <!-- Arrow -->
+      <path d="M 530 157.5 L 548 157.5" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+      <!-- Second node in chain (15) -->
+      <rect x="550" y="145" width="40" height="25" fill="#00d4ff" stroke="#ffe66d" stroke-width="2" rx="3" class="chain-node" style="animation-delay: 0.3s"/>
+      <text x="570" y="162" fill="#1a1a2e" font-size="12" text-anchor="middle" font-weight="bold">15</text>
+
+      <!-- NULL pointer -->
+      <path d="M 590 157.5 L 608 157.5" stroke="#00d4ff" stroke-width="2" fill="none"/>
+      <text x="615" y="162" fill="#e0e0e0" font-size="10" class="index-text">NULL</text>
+
+      <!-- Description -->
+      <text x="540" y="195" fill="#e0e0e0" font-size="11" text-anchor="middle" class="label-text">
+        Each slot contains a linked list
+      </text>
+    </g>
+
+    <!-- Linear Probing -->
+    <g id="linear-probing">
+      <text x="470" y="235" fill="#e0e0e0" font-size="13" class="label-text" font-weight="bold">
+        2. Linear Probing
+      </text>
+
+      <!-- Probing visualization -->
+      <!-- Slot 5 (occupied) -->
+      <rect x="430" y="250" width="50" height="30" fill="#ff6b6b" fill-opacity="0.4" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="415" y="268" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">5:</text>
+      <text x="455" y="268" fill="#ffe66d" font-size="12" text-anchor="middle" font-weight="bold">25</text>
+
+      <!-- Arrow showing probe -->
+      <path d="M 485 265 L 520 265" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead-red)" class="hash-arrow"/>
+
+      <!-- Slot 6 (15 placed here) -->
+      <rect x="525" y="250" width="50" height="30" fill="#00d4ff" fill-opacity="0.3" stroke="#00d4ff" stroke-width="2"/>
+      <text x="510" y="268" fill="#e0e0e0" font-size="10" text-anchor="end" class="index-text">6:</text>
+      <text x="550" y="268" fill="#ffe66d" font-size="12" text-anchor="middle" font-weight="bold">15</text>
+
+      <!-- Label -->
+      <text x="505" y="255" fill="#ff6b6b" font-size="9" class="label-text" font-weight="bold">occupied</text>
+      <text x="600" y="255" fill="#00d4ff" font-size="9" class="label-text" font-weight="bold">next empty</text>
+
+      <!-- Description -->
+      <text x="540" y="300" fill="#e0e0e0" font-size="11" text-anchor="middle" class="label-text">
+        Probe next slot until empty found
+      </text>
+    </g>
+
+    <!-- Hash Function Display -->
+    <g id="hash-function">
+      <rect x="410" y="320" width="270" height="70" fill="#00d4ff" fill-opacity="0.1" stroke="#00d4ff" stroke-width="2" rx="8"/>
+      <text x="545" y="345" fill="#ffe66d" font-size="14" text-anchor="middle" font-weight="bold">
+        Hash Function
+      </text>
+      <text x="545" y="365" fill="#e0e0e0" font-size="13" text-anchor="middle" class="label-text">
+        h(key) = key mod table_size
+      </text>
+      <text x="545" y="382" fill="#e0e0e0" font-size="11" text-anchor="middle" class="label-text" font-style="italic">
+        Example: h(25) = 25 mod 10 = 5
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom - Comparison Table -->
+  <g data-narration="Comparing time complexities: hash tables provide O(1) average-case performance, much faster than unsorted arrays at O(n) or sorted arrays at O(log n). The load factor, defined as n divided by m, significantly affects hash table performance">
+    <!-- Table Title -->
+    <text x="400" y="425" fill="#ffe66d" font-size="15" text-anchor="middle" class="label-text" font-weight="bold">
+      Performance Comparison
+    </text>
+
+    <!-- Table Border -->
+    <rect x="150" y="435" width="500" height="150" fill="#00d4ff" fill-opacity="0.05" stroke="#00d4ff" stroke-width="2" rx="8"/>
+
+    <!-- Column Headers -->
+    <text x="250" y="460" fill="#ffe66d" font-size="12" text-anchor="middle" class="comparison-text" font-weight="bold">
+      Data Structure
+    </text>
+    <text x="450" y="460" fill="#ffe66d" font-size="12" text-anchor="middle" class="comparison-text" font-weight="bold">
+      Search Time
+    </text>
+    <text x="580" y="460" fill="#ffe66d" font-size="12" text-anchor="middle" class="comparison-text" font-weight="bold">
+      Insert/Delete
+    </text>
+
+    <!-- Divider Line -->
+    <line x1="170" y1="468" x2="630" y2="468" stroke="#00d4ff" stroke-width="1"/>
+
+    <!-- Row 1: Unsorted Array -->
+    <text x="250" y="490" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      Unsorted Array
+    </text>
+    <text x="450" y="490" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      O(n)
+    </text>
+    <text x="580" y="490" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      O(1) / O(n)
+    </text>
+
+    <!-- Row 2: Sorted Array -->
+    <text x="250" y="515" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      Sorted Array
+    </text>
+    <text x="450" y="515" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      O(log n)
+    </text>
+    <text x="580" y="515" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text">
+      O(n) / O(n)
+    </text>
+
+    <!-- Row 3: Hash Table (Highlighted) -->
+    <rect x="170" y="525" width="460" height="25" fill="#00ff88" fill-opacity="0.2" stroke="#00ff88" stroke-width="2" rx="5" class="performance-highlight"/>
+    <text x="250" y="542" fill="#e0e0e0" font-size="12" text-anchor="middle" class="comparison-text" font-weight="bold">
+      Hash Table
+    </text>
+    <text x="450" y="542" fill="#00ff88" font-size="13" text-anchor="middle" class="comparison-text" font-weight="bold">
+      O(1) avg
+    </text>
+    <text x="580" y="542" fill="#00ff88" font-size="13" text-anchor="middle" class="comparison-text" font-weight="bold">
+      O(1) avg
+    </text>
+
+    <!-- Load Factor Info -->
+    <rect x="170" y="560" width="460" height="18" fill="#ffe66d" fill-opacity="0.1" stroke="#ffe66d" stroke-width="1" rx="3"/>
+    <text x="400" y="572" fill="#ffe66d" font-size="11" text-anchor="middle" class="label-text" font-style="italic">
+      Load Factor α = n/m (items/table_size) affects performance
+    </text>
+  </g>
+
+</svg>

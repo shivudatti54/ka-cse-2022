@@ -1,0 +1,2 @@
+# Representations Of Graphs
+This study material provides comprehensive theoretical and practical coverage of graph representation techniques for students/students/students. It establishes formal definitions, presents mathematical proofs for key properties (symmetry, complexity bounds), includes complete C implementations, and develops analytical skills through comparative analysis. The content bridges conceptual understanding with implementation details, preparing students to select appropriate representations based on graph characteristics and operational requirements.

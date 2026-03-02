@@ -1,0 +1,165 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the steps involved in mapping a weak entity type to relational schema with an example.",
+    "expectedPoints": [
+      "Identify the owner entity and weak entity",
+      "Include all attributes of weak entity in new relation",
+      "Add the primary key of owner entity as foreign key",
+      "The combination of owner PK and weak entity's partial key forms composite primary key",
+      "Example: Payment (weak) owned by Account (regular) - AccountNumber becomes FK in Payment"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "How is a binary M:N relationship mapped to relational schema? Explain with example.",
+    "expectedPoints": [
+      "Create a new relation for the relationship",
+      "Include primary keys of both participating entities as foreign keys",
+      "These foreign keys together form the composite primary key",
+      "Include any attributes of the relationship",
+      "Example: Student and Course with Enroll relationship - creates Enroll(StudentID, CourseID, Grade)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Differentiate between entity integrity and referential integrity with examples.",
+    "expectedPoints": [
+      "Entity Integrity: Primary key cannot be NULL - every entity must have unique identifier",
+      "Referential Integrity: Foreign key must reference existing tuple or be NULL",
+      "Example: Student(SID, Name) - SID cannot be NULL (entity integrity)",
+      "Enroll(SID, CID) - SID must exist in Student or be NULL (referential integrity)",
+      "Violations create orphan records"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "How are multivalued and derived attributes handled in ER-to-Relational mapping?",
+    "expectedPoints": [
+      "Multivalued: Create separate relation with entity's PK as FK and the attribute",
+      "Derived: Do NOT store - compute at runtime from other stored attributes",
+      "Example: Employee with PhoneNumbers(multivalued) and Age(derived from DOB)",
+      "Employee(EmpID, Name, DOB) and Phone(EmpID, PhoneNumber)",
+      "Age is calculated when needed from DOB and current date"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Explain mapping of ternary relationships with an example.",
+    "expectedPoints": [
+      "Ternary relationship involves 3 entity types",
+      "Create new relation including primary keys of all 3 entities as foreign keys",
+      "The combination of all 3 foreign keys forms the composite primary key",
+      "Include any relationship attributes",
+      "Example: Project with Employee and Department - Creates ProjectAssign(ProjectID, EmpID, DeptID, Role)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "How are recursive (unary) relationships mapped? Explain for both 1:1 and 1:N cases.",
+    "expectedPoints": [
+      "Recursive relationships involve same entity type on both sides",
+      "For 1:1 and 1:N: Add foreign key to the same entity relation referencing its own PK",
+      "For M:N: Create separate relation with two foreign keys to the same entity",
+      "Example: Employee supervises Employee - Employee table has ManagerID FK referencing EmpID",
+      "M:N case: Needs separate relation like WorksWith(EmployeeID1, EmployeeID2)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "Describe mapping of composite attributes in ER-to-Relational transformation.",
+    "expectedPoints": [
+      "Composite attributes have multiple component attributes",
+      "Each simple component is included as separate attribute in relation",
+      "Composite attribute name is replaced by its components",
+      "Example: Address(Street, City, State, ZipCode) stored as separate columns",
+      "The logical structure remains while physical implementation flattens the composite"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Consider an ER diagram for a Library Management System with entities: Member(MemberID, Name, Address, DateOfJoin), Book(BookID, Title, Author, ISBN), Publisher(PublisherID, Name, Address). Relationships: Member borrows Book (with attributes BorrowDate, ReturnDate) - a Member can borrow many Books, a Book can be borrowed by many Members. Publisher publishes Book - one Publisher can publish many Books, one Book has one Publisher. Draw relational schemas after mapping and specify primary keys, foreign keys, and integrity constraints.",
+    "expectedPoints": [
+      "Member(MemberID(PK), Name, Address, DateOfJoin)",
+      "Book(BookID(PK), Title, Author, ISBN, PublisherID(FK))",
+      "Publisher(PublisherID(PK), Name, Address)",
+      "Borrow(MemberID(FK), BookID(FK), BorrowDate, ReturnDate, PRIMARY KEY(MemberID, BookID))",
+      "Referential integrity: PublisherID references Publisher, MemberID references Member, BookID references Book",
+      "MemberID and BookID in Borrow are foreign keys forming composite PK",
+      "Additional constraints: ReturnDate > BorrowDate, etc."
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Map the following ER diagram to relational schema: Entities: Department(DeptID, Name, Location), Employee(EmpID, Name, Salary, DateOfBirth). Relationships: Department manages Employee (1:N), Employee works on Project with attribute Hours (M:N), Employee reports to Employee (recursive 1:N for hierarchy). Provide complete relational schema with keys and constraints.",
+    "expectedPoints": [
+      "Department(DeptID(PK), Name, Location)",
+      "Employee(EmpID(PK), Name, Salary, DateOfBirth, DeptID(FK), ManagerID(FK))",
+      "Project(ProjectID(PK), Name, etc.)",
+      "WorksOn(EmpID(FK), ProjectID(FK), Hours, PRIMARY KEY(EmpID, ProjectID))",
+      "Constraints: DeptID references Department, ManagerID references Employee (self-join)",
+      "For recursive: Employee has ManagerID as FK to Employee.EmpID",
+      "WorksOn represents M:N between Employee and Project with Hours attribute"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "A University has Entities: Student(StudentID, Name, DOB), Course(CourseID, Title, Credits), Instructor(InstructorID, Name, Specialization). Relationships: Student enrols in Course (M:N with Grade), Instructor teaches Course (1:N or 1:1), Instructor advises Student (1:N). Map this ER diagram to relational schema, clearly indicating primary keys, foreign keys, and integrity constraints.",
+    "expectedPoints": [
+      "Student(StudentID(PK), Name, DOB, AdvisorID(FK))",
+      "Course(CourseID(PK), Title, Credits, InstructorID(FK))",
+      "Instructor(InstructorID(PK), Name, Specialization)",
+      "Enroll(StudentID(FK), CourseID(FK), Grade, PRIMARY KEY(StudentID, CourseID))",
+      "Referential integrity: AdvisorID references Instructor, InstructorID in Course references Instructor",
+      "Student to Instructor (advising): FK in Student",
+      "Course to Instructor (teaches): FK in Course",
+      "Enroll is intersection table for M:N with Grade attribute"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Explain the complete process of ER-to-Relational mapping with all mapping rules. Include: (i) Regular and weak entities, (ii) All types of attributes, (iii) Binary relationships with different cardinalities, (iv) N-ary relationships, (v) Integrity constraints.",
+    "expectedPoints": [
+      "Step 1: Map regular entities - create relation with all simple attributes, PK is entity's identifier",
+      "Step 2: Map weak entities - add owner PK as FK, composite PK with partial key",
+      "Step 3: Map attributes - simple: direct; composite: flatten; multivalued: separate; derived: skip",
+      "Step 4: Map binary relationships - 1:1: choose side for FK; 1:N: FK in N side; M:N: intersection table",
+      "Step 5: Map N-ary: create relation with all participating entity PKs as FKs forming composite PK",
+      "Step 6: Map unary - add FK to same table or create intersection table",
+      "Step 7: Specify integrity - entity integrity (PK not NULL), referential integrity (FK valid or NULL), participation constraints (NOT NULL for total participation)"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

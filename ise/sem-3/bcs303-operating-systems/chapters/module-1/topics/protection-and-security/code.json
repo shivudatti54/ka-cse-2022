@@ -1,0 +1,45 @@
+{
+  "topicId": "protection-and-security",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Access Check Algorithm",
+      "description": "Demonstrates basic permission checking mechanism similar to UNIX file permissions",
+      "code": "ALGORITHM CheckAccess(user, file, requestedOperation)\nBEGIN\n  IF user.id == file.owner.id THEN\n    RETURN CheckPermission(file.ownerPermissions, requestedOperation)\n  ELSE IF user.group == file.group THEN\n    RETURN CheckPermission(file.groupPermissions, requestedOperation)\n  ELSE\n    RETURN CheckPermission(file.otherPermissions, requestedOperation)\n  ENDIF\nEND\n\nFUNCTION CheckPermission(permissions, operation)\nBEGIN\n  SWITCH operation OF\n    CASE READ: RETURN permissions.read\n    CASE WRITE: RETURN permissions.write\n    CASE EXECUTE: RETURN permissions.execute\n  ENDSWITCH\nEND",
+      "explanation": "This algorithm mimics UNIX file permission checking. It first checks if the user is the owner, then checks group membership, and finally falls back to 'others' permissions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Role-Based Access Control Implementation",
+      "description": "Demonstrates RBAC with users, roles, and permissions",
+      "code": "class RBACSystem:\n    def __init__(self):\n        self.users = {}      # user_id -> set of roles\n        self.roles = {}       # role_id -> set of permissions\n        self.permissions = {\n            'read': 1,\n            'write': 2,\n            'execute': 4\n        }\n    \n    def assign_role(self, user_id, role_id):\n        if user_id not in self.users:\n            self.users[user_id] = set()\n        self.users[user_id].add(role_id)\n    \n    def assign_permission(self, role_id, permission):\n        if role_id not in self.roles:\n            self.roles[role_id] = set()\n        self.roles[role_id].add(permission)\n    \n    def check_access(self, user_id, required_permission):\n        if user_id not in self.users:\n            return False\n        \n        for role in self.users[user_id]:\n            if role in self.roles:\n                if required_permission in self.roles[role]:\n                    return True\n        return False\n\n# Example usage\nrbac = RBACSystem()\nrbac.assign_permission('admin', 'read')\nrbac.assign_permission('admin', 'write')\nrbac.assign_permission('admin', 'execute')\nrbac.assign_role('user1', 'admin')\nprint(rbac.check_access('user1', 'write'))  # True",
+      "explanation": "This Python implementation shows how RBAC works: users are assigned roles, roles have permissions, and access is checked by verifying if user's roles have the required permission.",
+      "timeComplexity": "O(n) where n = number of roles per user",
+      "spaceComplexity": "O(u + r) where u = users, r = roles"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Capability-Based Access Implementation",
+      "description": "Demonstrates capability list concept where each process carries its access rights",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_CAPABILITIES 10\n\ntypedef struct {\n    char resource_id[50];\n    bool can_read;\n    bool can_write;\n    bool can_execute;\n} Capability;\n\ntypedef struct {\n    int pid;\n    Capability capabilities[MAX_CAPABILITIES];\n    int cap_count;\n} Process;\n\nbool check_capability(Process *proc, char *resource_id, char op) {\n    for (int i = 0; i < proc->cap_count; i++) {\n        if (strcmp(proc->capabilities[i].resource_id, resource_id) == 0) {\n            switch(op) {\n                case 'r': return proc->capabilities[i].can_read;\n                case 'w': return proc->capabilities[i].can_write;\n                case 'x': return proc->capabilities[i].can_execute;\n            }\n        }\n    }\n    return false;\n}\n\nvoid add_capability(Process *proc, char *res_id, bool r, bool w, bool x) {\n    if (proc->cap_count < MAX_CAPABILITIES) {\n        strcpy(proc->capabilities[proc->cap_count].resource_id, res_id);\n        proc->capabilities[proc->cap_count].can_read = r;\n        proc->capabilities[proc->cap_count].can_write = w;\n        proc->capabilities[proc->cap_count].can_execute = x;\n        proc->cap_count++;\n    }\n}",
+      "explanation": "This C code demonstrates capability-based access control where each process (subject) carries its own list of capabilities (tokens) that specify what resources it can access and what operations are permitted.",
+      "timeComplexity": "O(n) where n = number of capabilities",
+      "spaceComplexity": "O(c) where c = MAX_CAPABILITIES per process"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Authentication Check Algorithm",
+      "description": "Demonstrates multi-factor authentication verification process",
+      "code": "ALGORITHM AuthenticateUser(username, password, biometric_data, token_code)\nBEGIN\n  // Step 1: Verify password\n  IF NOT VerifyPassword(username, password) THEN\n    RETURN AUTH_FAILED\n  ENDIF\n  \n  // Step 2: If two-factor enabled, verify token\n  IF user.two_factor_enabled THEN\n    IF NOT VerifyToken(username, token_code) THEN\n      RETURN AUTH_FAILED\n    ENDIF\n  ENDIF\n  \n  // Step 3: If biometric required, verify biometric\n  IF user.biometric_required THEN\n    IF NOT VerifyBiometric(username, biometric_data) THEN\n      RETURN AUTH_FAILED\n    ENDIF\n  ENDIF\n  \n  // Step 4: Generate session token\n  session_token = GenerateSessionToken(username)\n  RETURN AUTH_SUCCESS + session_token\nEND\n\nFUNCTION GenerateSessionToken(username)\nBEGIN\n  timestamp = GetCurrentTime()\n  random_value = GenerateRandom(64)\n  token = Hash(username + timestamp + random_value)\n  RETURN token\nEND",
+      "explanation": "This algorithm demonstrates multi-factor authentication combining knowledge factor (password), possession factor (token), and inherence factor (biometric). Only after all factors are verified is a session token generated.",
+      "timeComplexity": "O(1) for each verification step",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

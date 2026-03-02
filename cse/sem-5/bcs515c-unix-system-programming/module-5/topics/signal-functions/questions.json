@@ -1,0 +1,137 @@
+{
+  "topicId": "signal-functions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between signal() and sigaction() functions in Unix. Why is sigaction() preferred for critical applications?",
+      "keyPoints": [
+        "signal() is simpler but behavior varies across Unix implementations",
+        "sigaction() provides POSIX-standard reliable signal handling",
+        "sigaction() allows setting sa_flags for control (SA_RESTART, SA_NODEFER)",
+        "sigaction() permits blocking signals during handler execution via sa_mask",
+        "sigaction() provides consistent behavior across different Unix systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the purpose and usage of the sigprocmask() function. How is it useful in protecting critical sections in a program?",
+      "keyPoints": [
+        "sigprocmask() examines or changes the signal mask",
+        "It can add (SIG_BLOCK), remove (SIG_UNBLOCK), or replace (SIG_SETMASK) signals",
+        "Used to block certain signals during critical operations",
+        "Prevents race conditions when modifying shared resources",
+        "Returns 0 on success, -1 on error"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are zombie processes in the context of signal handling? How can they be prevented?",
+      "keyPoints": [
+        "Zombie processes occur when parent doesn't wait for terminated child",
+        "Child's process table entry remains until parent reads status",
+        "SIGCHLD signal notifies parent of child termination",
+        "Solutions: signal(SIGCHLD, SIG_IGN) or handler with wait()",
+        "Modern systems support SA_NOCLDWAIT flag in sigaction"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Write a short note on the sigsuspend() function and explain how it differs from using sigprocmask() followed by pause().",
+      "keyPoints": [
+        "sigsuspend() atomically replaces signal mask and suspends process",
+        "Avoids race condition between sigprocmask() and pause()",
+        "If done separately, a signal could arrive between them and be missed",
+        "Syntax: int sigsuspend(const sigset_t *mask)",
+        "Returns only when signal handler is executed, never returns on success"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of pending signals in Unix. What happens when a blocked signal is sent to a process?",
+      "keyPoints": [
+        "Pending signals are those that have been raised but are currently blocked",
+        "Each signal has at most one pending entry (not queued in standard POSIX)",
+        "When unblocked, the pending signal is delivered",
+        "sigpending() retrieves the set of pending signals",
+        "Multiple occurrences of same signal while blocked are merged to one"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between reliable and unreliable signals in Unix. How did POSIX improve signal handling?",
+      "keyPoints": [
+        "Early Unix had unreliable signals that could be lost",
+        "Reliable signals queue each occurrence; handlers don't reset",
+        "POSIX introduced sigaction() for consistent behavior",
+        "SA_RESTART flag handles system call restartability",
+        "POSIX ensures signal handlers remain installed after being invoked"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the role of alarm() and pause() functions in implementing a simple timeout mechanism in client-server communication.",
+      "keyPoints": [
+        "alarm(seconds) schedules SIGALRM after specified seconds",
+        "pause() suspends process until signal arrives",
+        "Together they implement timeout waiting for events",
+        "alarm(0) cancels any pending alarm",
+        "Returns from pause() only when signal handler executes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program that demonstrates proper signal handling using sigaction(). The program should: (a) Set up a signal handler for SIGINT, (b) Block SIGINT during handler execution, (c) Use sigpending() to check for pending signals, and (d) Properly handle the signal without creating zombie processes.",
+      "keyPoints": [
+        "Use struct sigaction with sa_handler or sa_sigaction",
+        "Set sa_flags = SA_RESTART for syscall restart",
+        "Set sa_mask to block signals during handler",
+        "Use sigemptyset() to initialize signal sets",
+        "Demonstrate sigpending() to check blocked signals",
+        "Handle SIGCHLD to prevent zombies"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a critical section protection mechanism using sigsuspend(). Compare this approach with using sigprocmask() alone and explain why the atomic operation of sigsuspend() is necessary to avoid race conditions.",
+      "keyPoints": [
+        "Problem: signal can arrive between sigprocmask() and pause()",
+        "sigsuspend() atomically changes mask and suspends",
+        "Code pattern: save old mask, set new mask, suspend, restore old mask",
+        "Prevents window where signal could be missed",
+        "Explain with timeline diagram showing race window"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the client-server model in Unix where the server handles multiple client requests using fork(). Discuss the signal handling considerations including: (a) handling child termination, (b) preventing zombie processes, (c) handling server shutdown signals, and (d) implementing signal-based communication between client and server.",
+      "keyPoints": [
+        "Server uses fork() to create child for each client",
+        "Parent must wait for children to prevent zombies",
+        "SIGCHLD handler with wait() or SIG_IGN",
+        "Server catches SIGTERM/SIGINT for graceful shutdown",
+        "Signals can be used as simple notification mechanism",
+        "Consider using sigaction() for reliable handling"
+      ],
+      "marks": 10
+    }
+  ]
+}

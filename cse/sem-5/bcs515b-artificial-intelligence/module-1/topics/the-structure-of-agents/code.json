@@ -1,0 +1,55 @@
+{
+  "topicId": "the-structure-of-agents",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Reflex Agent - Vacuum Cleaner",
+      "description": "Implements a simple reflex agent for vacuum cleaner world using condition-action rules",
+      "code": "// Simple Reflex Agent for Vacuum Cleaner\nFUNCTION SimpleReflexVacuum(percept) RETURNS action\n LOCAL STATIC: rules = set of condition-action rules\n \n state <- InterpretInput(percept)\n rule <- RULE-MATCH(state, rules)\n action <- rule.ACTION\n RETURN action\n\n// Rule Set Example\nRULES = [\n {IF state = [Dirty, LocationA] THEN action = Suck},\n {IF state = [Dirty, LocationB] THEN action = Suck},\n {IF state = [Clean, LocationA] THEN action = MoveRight},\n {IF state = [Clean, LocationB] THEN action = MoveLeft}\n]",
+      "explanation": "This simple reflex agent uses condition-action rules (if-then statements) to map percepts directly to actions. It has no internal state memory and only reacts to current perception.",
+      "timeComplexity": "O(1) per action",
+      "spaceComplexity": "O(1) - just stores rules"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Model-Based Reflex Agent",
+      "description": "Demonstrates a model-based reflex agent that maintains internal world state",
+      "code": "// Model-Based Reflex Agent\nFUNCTION ModelBasedReflexAgent(percept) RETURNS action\n LOCAL STATIC: state, worldModel, rules\n \n // Update state based on current percept and previous action\n state <- UPDATE-STATE(state, action, percept, worldModel)\n \n // Find matching rule\n rule <- RULE-MATCH(state, rules)\n action <- rule.ACTION\n RETURN action\n\n// Update State Function\nFUNCTION UPDATE-STATE(state, action, percept, model)\n // Update internal state representation\n state.location <- percept.currentLocation\n state.dirty <- percept.dirtyStatus\n state.time <- state.time + 1\n \n // If we moved, update position in model\n IF action = MoveRight THEN state.position.x <- state.position.x + 1\n IF action = MoveLeft THEN state.position.x <- state.position.x - 1\n \n RETURN state",
+      "explanation": "Model-based agents maintain internal state (world model) that gets updated based on percepts and actions taken. This allows handling partially observable environments.",
+      "timeComplexity": "O(1) state update, O(n) rule matching",
+      "spaceComplexity": "O(s) for state storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Goal-Based Agent - Navigation",
+      "description": "A goal-based agent that plans actions to reach destination",
+      "code": "// Goal-Based Agent for Navigation\nFUNCTION GoalBasedNavigator(percept) RETURNS action\n LOCAL STATIC: state, goal, problem, search\n \n // Update state from percept\n state <- UPDATE-STATE(state, percept)\n \n // Check if goal reached\n IF GOAL-TEST(state, goal) THEN RETURN NoOp\n \n // Find goal-directed action\n problem <- FORMULATE-PROBLEM(state, goal)\n action <- SEARCH(problem, search)\n RETURN action\n\n// Problem Formulation\nFUNCTION FORMULATE-PROBLEM(state, goal)\n RETURN Problem(\n initialState: state.currentPosition,\n actions: [MoveNorth, MoveSouth, MoveEast, MoveWest],\n goalTest: position == goal.destination,\n stepCost: 1\n )\n\n// Simple Search\nFUNCTION SEARCH(problem, method) RETURNS action\n path <- BFS(problem) // Breadth-first search\n RETURN First(path.actions)",
+      "explanation": "Goal-based agents consider future consequences by formulating goals and finding sequences of actions to achieve those goals.",
+      "timeComplexity": "O(b^d) where b=branching, d=depth to goal",
+      "spaceComplexity": "O(b^d)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Utility-Based Agent",
+      "description": "Demonstrates utility-based decision making with utility function",
+      "code": "// Utility-Based Agent\nFUNCTION UtilityBasedAgent(percept) RETURNS action\n LOCAL STATIC: state, utilityFunction\n \n state <- UPDATE-STATE(state, percept)\n \n // Evaluate all possible actions\n actions <- POSSIBLE-ACTIONS(state)\n \n bestAction <- None\n bestUtility <- -infinity\n \n FOR EACH action IN actions\n // Consider all possible outcomes\n outcomes <- GENERATE-OUTCOMES(state, action)\n expectedUtility <- 0\n FOR EACH outcome IN outcomes\n prob <- outcome.probability\n utility <- UTILITY(outcome.state, utilityFunction)\n expectedUtility <- expectedUtility + (prob * utility)\n \n IF expectedUtility > bestUtility THEN\n bestUtility <- expectedUtility\n bestAction <- action\n \n RETURN bestAction\n\n// Utility Function Example\nFUNCTION UTILITY(state, utilityFunction)\n RETURN (state.safety * 0.5) + (state.speed * 0.3) + (state.comfort * 0.2)",
+      "explanation": "Utility-based agents use a utility function to assign numerical values to different states, allowing optimization among multiple competing goals.",
+      "timeComplexity": "O(a * o) where a=actions, o=outcomes",
+      "spaceComplexity": "O(s) for state"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Learning Agent Architecture",
+      "description": "Shows the complete learning agent with critic and feedback loop",
+      "code": "// Learning Agent\nFUNCTION LearningAgent(percept) RETURNS action\n LOCAL STATIC: performanceElement, learningElement, critic, problemGenerator\n \n // Performance element generates action\n action <- performanceElement.Execute(percept)\n \n // Critic evaluates performance\n feedback <- critic.Evaluate(percept, action)\n \n // Learning element improves performance element\n learningElement.LEARN(feedback)\n \n // Problem generator suggests exploratory actions\n IF problemGenerator.ShouldExplore() THEN\n action <- problemGenerator.Suggest()\n \n RETURN action\n\n// Example Critic (for game-playing)\nFUNCTION Evaluate(percept, action) RETURNS feedback\n oldScore <- percept.previousScore\n newScore <- percept.currentScore\n improvement <- newScore - oldScore\n RETURN PerformanceFeedback(\n improvement: improvement,\n action: action,\n percept: percept\n )",
+      "explanation": "Learning agents have four components: performance element (acts), critic (evaluates), learning element (improves), and problem generator (suggests new experiences).",
+      "timeComplexity": "Varies by learning algorithm",
+      "spaceComplexity": "Depends on learned knowledge storage"
+    }
+  ]
+}

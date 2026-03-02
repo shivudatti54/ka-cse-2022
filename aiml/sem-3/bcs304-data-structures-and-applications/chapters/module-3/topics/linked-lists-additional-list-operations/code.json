@@ -1,0 +1,45 @@
+{
+  "topicId": "linked-lists-additional-list-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Find Middle Element Using Slow Fast Pointers",
+      "description": "Single pass algorithm to find middle of linked list",
+      "code": "FUNCTION FindMiddle(head)\n  IF head = NULL THEN\n    RETURN NULL\n  ENDIF\n  \n  slow = head\n  fast = head\n  \n  WHILE fast != NULL AND fast.next != NULL DO\n    slow = slow.next\n    fast = fast.next.next\n  ENDWHILE\n  \n  RETURN slow  // Middle element\nEND FUNCTION",
+      "explanation": "Slow pointer moves one step, fast moves two steps. When fast reaches end, slow is at middle. For even-length lists, returns second middle.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Find Nth Node From End",
+      "description": "Two pointer technique to find nth node from end in one pass",
+      "code": "FUNCTION FindNthFromEnd(head, n)\n  IF head = NULL OR n <= 0 THEN\n    RETURN NULL\n  ENDIF\n  \n  first = head\n  second = head\n  \n  // Move first pointer n nodes ahead\n  FOR i = 1 TO n DO\n    IF first = NULL THEN\n      RETURN NULL  // n exceeds length\n    ENDIF\n    first = first.next\n  ENDFOR\n  \n  // Move both pointers together\n  WHILE first != NULL DO\n    second = second.next\n    first = first.next\n  ENDWHILE\n  \n  RETURN second\nEND FUNCTION",
+      "explanation": "First pointer moves n nodes ahead, then both pointers move together. When first reaches end, second pointer is at nth position from end.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Reverse Linked List Iteratively",
+      "description": "Iterative algorithm to reverse linked list links",
+      "code": "FUNCTION ReverseList(head)\n  prev = NULL\n  current = head\n  \n  WHILE current != NULL DO\n    nextNode = current.next  // Save next\n    current.next = prev      // Reverse link\n    prev = current            // Move prev forward\n    current = nextNode        // Move current forward\n  ENDWHILE\n  \n  RETURN prev  // New head\nEND FUNCTION",
+      "explanation": "Uses three pointers to reverse each link. prev starts NULL, current traverses list. Each node's next is changed to point to previous node.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Detect Cycle Using Floyd's Algorithm",
+      "description": "Python implementation of cycle detection",
+      "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef hasCycle(head):\n    if not head or not head.next:\n        return False\n    \n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        \n        if slow == fast:\n            return True\n    \n    return False\n\ndef findCycleStart(head):\n    if not head or not head.next:\n        return None\n    \n    # Find meeting point\n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            break\n    \n    if not fast or not fast.next:\n        return None\n    \n    # Move slow to head, keep fast at meeting\n    slow = head\n    while slow != fast:\n        slow = slow.next\n        fast = fast.next\n    \n    return slow",
+      "explanation": "hasCycle returns boolean if cycle exists. findCycleStart finds the node where cycle begins using the mathematical relationship that distance from head to cycle start equals distance from meeting point to cycle start.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

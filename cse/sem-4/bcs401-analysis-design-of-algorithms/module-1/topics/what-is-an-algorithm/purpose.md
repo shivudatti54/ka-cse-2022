@@ -1,0 +1,3 @@
+# What Is An Algorithm
+
+This content introduces the fundamental concept of algorithms, which is essential for students beginning their study of Analysis and Design of Algorithms. It establishes the theoretical foundation needed before tackling algorithm analysis, time/space complexity, and design techniques. The purpose is to ensure students understand not just what an algorithm is, but the formal requirements and characteristics that distinguish valid algorithms from arbitrary computational procedures. This knowledge is prerequisite to understanding how to analyze and compare algorithm efficiencies.

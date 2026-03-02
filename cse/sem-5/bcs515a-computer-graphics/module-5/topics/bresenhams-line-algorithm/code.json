@@ -1,0 +1,35 @@
+{
+  "topicId": "bresenhams-line-algorithm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Bresenham's Line Algorithm - Basic",
+      "description": "Standard implementation for lines with slope between 0 and 1",
+      "code": "ALGORITHM BresenhamLine(x1, y1, x2, y2)\nBEGIN\n // Ensure line goes from left to right\n IF x1 > x2 THEN\n SWAP(x1, x2)\n SWAP(y1, y2)\n ENDIF\n \n dx = x2 - x1\n dy = y2 - y1\n \n // Initial decision parameter\n p = 2 * dy - dx\n \n x = x1\n y = y1\n \n PLOT(x, y)\n \n WHILE x < x2 DO\n x = x + 1\n IF p < 0 THEN\n // Choose lower pixel\n p = p + 2 * dy\n ELSE\n // Choose upper pixel\n y = y + 1\n p = p + 2 * dy - 2 * dx\n ENDIF\n PLOT(x, y)\n ENDWHILE\nEND",
+      "explanation": "This is the basic Bresenham algorithm for lines with slope between 0 and 1. The decision parameter p determines which pixel to choose at each step. If p < 0, the line passes below the midpoint so we choose the lower pixel; otherwise we choose the upper pixel and move diagonally.",
+      "timeComplexity": "O(dx)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Bresenham's Line Algorithm - General",
+      "description": "Complete implementation handling all octants and slopes",
+      "code": "ALGORITHM BresenhamLineGeneral(x1, y1, x2, y2)\nBEGIN\n dx = ABS(x2 - x1)\n dy = ABS(y2 - y1)\n \n // Determine octant and set step directions\n sx = 1 IF x2 >= x1 ELSE -1\n sy = 1 IF y2 >= y1 ELSE -1\n \n // Initialize decision parameter\n IF dx > dy THEN\n // Shallow line (|slope| < 1)\n err = dx / 2\n WHILE x != x2 DO\n PLOT(x, y)\n err = err - dy\n IF err < 0 THEN\n y = y + sy\n err = err + dx\n ENDIF\n x = x + sx\n ENDWHILE\n ELSE\n // Steep line (|slope| > 1)\n err = dy / 2\n WHILE y != y2 DO\n PLOT(x, y)\n err = err - dx\n IF err < 0 THEN\n x = x + sx\n err = err + dy\n ENDIF\n y = y + sy\n ENDWHILE\n ENDIF\n PLOT(x2, y2)\nEND",
+      "explanation": "This generalized version handles all line orientations by checking if |dx| > |dy| (shallow line) or |dy| > |dx| (steep line). For steep lines, it swaps the roles of x and y, iterating along the y-axis instead.",
+      "timeComplexity": "O(max(dx,dy))",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Bresenham's Algorithm in C",
+      "description": "Practical C implementation for graphics applications",
+      "code": "void bresenhamLine(int x1, int y1, int x2, int y2) {\n int dx = abs(x2 - x1);\n int dy = abs(y2 - y1);\n int sx = (x1 < x2) ? 1 : -1;\n int sy = (y1 < y2) ? 1 : -1;\n int err = dx - dy;\n \n while(1) {\n drawPixel(x1, y1); // Plot current pixel\n \n if (x1 == x2 && y1 == y2) break;\n \n int e2 = 2 * err;\n \n if (e2 > -dy) {\n err -= dy;\n x1 += sx;\n }\n \n if (e2 < dx) {\n err += dx;\n y1 += sy;\n }\n }\n}",
+      "explanation": "This C implementation uses the error variable approach which is equivalent to the decision parameter. The error represents the accumulated difference. At each step, we check if moving horizontally or vertically reduces the error. This version handles all slopes and directions.",
+      "timeComplexity": "O(max(dx,dy))",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

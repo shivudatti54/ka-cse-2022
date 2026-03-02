@@ -1,0 +1,45 @@
+{
+  "topicId": "2-4-trees-b-trees",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "B-Tree Search Algorithm",
+      "description": "Recursive search algorithm to find a key in a B-Tree",
+      "code": "FUNCTION BTreeSearch(x, k)\n    i = 1\n    WHILE i <= x.n AND k > x.key[i]\n        i = i + 1\n    END WHILE\n    \n    IF i <= x.n AND k == x.key[i]\n        RETURN (x, i)  // Key found at node x, position i\n    END IF\n    \n    IF x.leaf\n        RETURN NIL  // Key not found\n    END IF\n    \n    RETURN BTreeSearch(x.child[i], k)  // Recurse into child\nEND FUNCTION",
+      "explanation": "Starting from root, we find the appropriate child by comparing k with keys. If k matches a key, we return success. If we reach a leaf without finding k, it doesn't exist in the tree.",
+      "timeComplexity": "O(log\u209c n)",
+      "spaceComplexity": "O(t) for recursion stack"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "B-Tree Node Class Implementation",
+      "description": "Python implementation of B-Tree node structure with insert functionality",
+      "code": "class BTreeNode:\n    def __init__(self, t, leaf=False):\n        self.t = t  # minimum degree\n        self.leaf = leaf\n        self.keys = []\n        self.children = []\n    \n    def split_child(self, i):\n        \"\"\"Split full child node at index i\"\"\"\n        new_node = BTreeNode(self.t, self.leaf)\n        old_node = self.children[i]\n        \n        # Move median key to current node\n        median_idx = self.t - 1\n        self.keys.insert(i, old_node.keys[median_idx])\n        \n        # Move second half keys to new node\n        new_node.keys = old_node.keys[self.t:]\n        old_node.keys = old_node.keys[:self.t-1]\n        \n        # Move children if not leaf\n        if not self.leaf:\n            new_node.children = old_node.children[self.t:]\n            old_node.children = old_node.children[:self.t]\n    \n    def insert_non_full(self, k):\n        \"\"\"Insert key into node that is not full\"\"\"\n        i = len(self.keys) - 1\n        \n        if self.leaf:\n            # Find position and insert\n            while i >= 0 and k < self.keys[i]:\n                i -= 1\n            self.keys.insert(i+1, k)\n        else:\n            # Find child to descend\n            while i >= 0 and k < self.keys[i]:\n                i -= 1\n            i += 1\n            \n            # Split child if full\n            if len(self.children[i].keys) == 2*self.t - 1:\n                self.split_child(i)\n                if k > self.keys[i]:\n                    i += 1\n            \n            self.children[i].insert_non_full(k)",
+      "explanation": "This implementation shows the core B-Tree structure with split operation and non-full insertion. The split operation moves the median key up, and insertion maintains sorted order.",
+      "timeComplexity": "O(log n) for insert",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "B-Tree Insertion in C",
+      "description": "C implementation showing B-Tree node structure and insert operation",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define T 3  // Minimum degree\n\ntypedef struct BTreeNode {\n    int keys[2*T - 1];\n    struct BTreeNode *children[2*T];\n    int numKeys;\n    int isLeaf;\n} BTreeNode;\n\nBTreeNode* createNode(int isLeaf) {\n    BTreeNode* node = (BTreeNode*)malloc(sizeof(BTreeNode));\n    node->numKeys = 0;\n    node->isLeaf = isLeaf;\n    return node;\n}\n\nvoid splitChild(BTreeNode* parent, int index) {\n    BTreeNode* child = parent->children[index];\n    BTreeNode* newNode = createNode(child->isLeaf);\n    \n    // New node gets t-1 keys from child\n    newNode->numKeys = T - 1;\n    for (int j = 0; j < T - 1; j++)\n        newNode->keys[j] = child->keys[j + T];\n    \n    // Move children if not leaf\n    if (!child->isLeaf) {\n        for (int j = 0; j < T; j++)\n            newNode->children[j] = child->children[j + T];\n    }\n    \n    // Reduce keys in child\n    child->numKeys = T - 1;\n    \n    // Move parent child pointers\n    for (int j = parent->numKeys; j > index; j--)\n        parent->children[j + 1] = parent->children[j];\n    parent->children[index + 1] = newNode;\n    \n    // Move median key up to parent\n    for (int j = parent->numKeys - 1; j >= index; j--)\n        parent->keys[j + 1] = parent->keys[j];\n    parent->keys[index] = child->keys[T - 1];\n    parent->numKeys++;\n}",
+      "explanation": "This C implementation demonstrates the split operation - the heart of B-Tree maintenance. When a child node becomes full (2t-1 keys), it splits into two nodes with t-1 keys each, and the median key moves to the parent.",
+      "timeComplexity": "O(t) per split, O(log n) total",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "B-Tree Search and Traversal",
+      "description": "Java implementation showing search and level-order traversal",
+      "code": "class BTree {\n    private int t;  // minimum degree\n    private Node root;\n    \n    private class Node {\n        int[] keys;\n        Node[] children;\n        int n;  // current number of keys\n        boolean leaf;\n        \n        Node(boolean leaf) {\n            this.leaf = leaf;\n            this.keys = new int[2*t - 1];\n            this.children = new Node[2*t];\n            this.n = 0;\n        }\n    }\n    \n    public Node search(int k) {\n        return search(root, k);\n    }\n    \n    private Node search(Node x, int k) {\n        int i = 0;\n        while (i < x.n && k > x.keys[i])\n            i++;\n        \n        if (i < x.n && k == x.keys[i])\n            return x;  // Found\n        \n        if (x.leaf)\n            return null;  // Not found\n        \n        return search(x.children[i], k);\n    }\n    \n    public void traverse() {\n        traverse(root);\n    }\n    \n    private void traverse(Node x) {\n        if (x != null) {\n            int i;\n            for (i = 0; i < x.n; i++) {\n                if (!x.leaf)\n                    traverse(x.children[i]);\n                System.out.print(x.keys[i] + \" \");\n            }\n            if (!x.leaf)\n                traverse(x.children[i]);\n        }\n    }\n}",
+      "explanation": "This Java implementation shows the B-Tree search algorithm and in-order traversal. The search compares keys sequentially and descends to the appropriate child. Traversal processes left subtree, key, then right subtree recursively.",
+      "timeComplexity": "Search O(log n), Traversal O(n)",
+      "spaceComplexity": "O(log n) for recursion"
+    }
+  ]
+}

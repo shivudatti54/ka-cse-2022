@@ -1,0 +1,136 @@
+{
+  "topicId": "request-reply-protocols",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between synchronous and asynchronous request-reply protocols with use cases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Synchronous: Client blocks until response arrives - used in simple queries, database lookups",
+        "Asynchronous: Client continues processing, response handled via callback/promise/future - used in high-performance systems, distributed transactions",
+        "Trade-off: simplicity vs throughput/scalability"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the three delivery semantics in request-reply protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "At-most-once: Request delivered at most once (may be lost), no duplicates - simplest to implement",
+        "At-least-once: Request guaranteed delivery, may have duplicates - requires retries, server must be idempotent",
+        "Exactly-once: Request executed exactly once - most desirable but hardest, requires coordination and acknowledgments"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is RPC? Explain the steps involved in a Remote Procedure Call.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "RPC enables executing procedures on remote machines as if local",
+        "Steps: Client calls local stub → Stub marshals parameters → Request sent over network → Server skeleton unmarshals → Actual procedure executed → Result marshalled → Response sent → Client stub unmarshals → Result returned to client"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the importance of timeouts and retries in request-reply protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Timeouts prevent infinite waiting when requests/responses lost",
+        "Timeout value must account for network latency and server processing time",
+        "Retries must consider idempotency - non-idempotent operations risk duplicate execution",
+        "Exponential backoff prevents thundering herd in distributed systems"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Compare TCP and UDP for implementing request-reply protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "TCP: Reliable, ordered, connection-oriented - guarantees delivery, higher latency due to handshake and congestion control",
+        "UDP: Unreliable, no connection overhead - lower latency, suitable for one-shot queries, requires application-level reliability",
+        "Choice depends on requirements: reliability vs latency, query complexity, expected load"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is idempotency? Why is it important in request-reply protocols?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Idempotent operations produce same result regardless of execution count",
+        "Important for at-least-once delivery: safe to retry without side effects",
+        "Examples: GET, PUT, DELETE are idempotent in HTTP; POST is not",
+        "Non-idempotent operations require exactly-once semantics or careful duplicate detection"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a reliable request-reply protocol over UDP. Explain how you handle lost packets, duplicates, and ordering.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Add sequence numbers and transaction IDs to identify unique requests",
+        "Implement acknowledgments for received requests and responses",
+        "Timeout and retransmit if acknowledgment not received within expected time",
+        "Maintain sent-but-unacked requests for retransmission",
+        "Use duplicate detection at server (track processed transaction IDs)",
+        "For ordering: sequence numbers and buffering out-of-order messages",
+        "Trade-off: complexity vs reliability - document assumptions and failure modes"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the architecture of RPC and discuss its advantages and limitations compared to local procedure calls.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "RPC Architecture: Client stub, Network, Server skeleton, Server implementation",
+        "Advantages: Location transparency, Enables distributed computing, Reuse of server capabilities, Language independence (IDL)",
+        "Limitations: Network latency (cannot match local call speed), Partial failure handling, No shared memory semantics, Security boundaries, Debugging complexity",
+        "Performance considerations: Serialization overhead, Connection pooling, Async RPC"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the differences between stateless and stateful server designs in request-reply protocols. When would you choose each?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Stateless: No session state, each request self-contained, easy horizontal scaling, better fault tolerance",
+        "Stateful: Server maintains session info, can optimize with connection reuse, enables transactions",
+        "Stateless preferred for: Web services, microservices, high availability, load balancing scenarios",
+        "Stateful preferred for: Database connections, gaming, real-time collaboration, where context matters",
+        "Trade-offs: Stateless has more data per request, stateful has session management complexity"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare REST and RPC architectural styles for web services. Which would you choose for different scenarios?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "RPC: Action-oriented, operation-based (getUser, updateOrder), tightly coupled, often uses SOAP/XML or gRPC",
+        "REST: Resource-oriented, noun-based (/users, /orders), uses HTTP methods, loose coupling, stateless",
+        "REST advantages: Caching, readability, widespread adoption, browser compatibility",
+        "RPC advantages: Fine-grained operations, better for complex actions, type-safe contracts (gRPC)",
+        "Choose REST for: CRUD operations, public APIs, caching-important scenarios",
+        "Choose RPC for: Complex business logic, real-time systems, internal microservices with performance needs"
+      ]
+    }
+  ]
+}

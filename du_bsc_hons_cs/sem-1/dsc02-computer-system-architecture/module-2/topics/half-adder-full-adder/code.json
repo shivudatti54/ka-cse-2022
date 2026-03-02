@@ -1,0 +1,35 @@
+{
+  "topicId": "half-adder-full-adder",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Half Adder Implementation Using Logic Gates",
+      "description": "Implements a Half Adder circuit using Python logical operators. The Half Adder adds two single-bit binary numbers and produces a sum and carry output.",
+      "code": "# Half Adder - Adds two 1-bit numbers\n# Truth Table:\n# A B | Sum Carry\n# 0 0 |  0   0\n# 0 1 |  1   0\n# 1 0 |  1   0\n# 1 1 |  0   1\n\ndef half_adder(a, b):\n    \"\"\"\n    Implements Half Adder using XOR and AND gates\n    \n    Sum = A XOR B (equivalent to A + B mod 2)\n    Carry = A AND B\n    \"\"\"\n    sum_bit = a ^ b  # XOR gate\n    carry_bit = a & b  # AND gate\n    return sum_bit, carry_bit\n\n# Test all combinations\nprint(\"Half Adder Truth Table:\")\nprint(\"A | B | Sum | Carry\")\nprint(\"-\" * 20)\n\nfor a in [0, 1]:\n    for b in [0, 1]:\n        s, c = half_adder(a, b)\n        print(f\"{a} | {b} |  {s}  |   {c}\")",
+      "explanation": "The half adder takes two binary inputs (A and B). The sum output is calculated using XOR (which gives 1 when inputs differ), and the carry output is calculated using AND (which gives 1 only when both inputs are 1). This represents binary addition without considering carry from previous bit.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Full Adder Implementation Using Half Adders",
+      "description": "Implements a Full Adder which adds three 1-bit numbers (A, B, and Carry-in). This is used in ripple carry adders for multi-bit addition.",
+      "code": "# Full Adder - Adds three 1-bit numbers\n# Truth Table:\n# A B Cin | Sum Cout\n# 0 0  0  |  0   0\n# 0 0  1  |  1   0\n# 0 1  0  |  1   0\n# 0 1  1  |  0   1\n# 1 0  0  |  1   0\n# 1 0  1  |  0   1\n# 1 1  0  |  0   1\n# 1 1  1  |  1   1\n\ndef half_adder(a, b):\n    \"\"\"Half adder for internal calculation\"\"\"\n    return a ^ b, a & b\n\ndef full_adder(a, b, cin):\n    \"\"\"\n    Implements Full Adder using two Half Adders\n    \n    Step 1: Add A and B using half adder -> sum1, carry1\n    Step 2: Add sum1 and Cin using half adder -> sum, carry2\n    Step 3: OR carry1 and carry2 -> final carry\n    \n    Sum = A XOR B XOR Cin\n    Carry = (A AND B) OR (B AND Cin) OR (A AND Cin)\n    \"\"\"\n    # First half adder: A + B\n    sum1, carry1 = half_adder(a, b)\n    \n    # Second half adder: sum1 + Cin\n    sum_out, carry2 = half_adder(sum1, cin)\n    \n    # Final carry is OR of both carries\n    carry_out = carry1 | carry2\n    \n    return sum_out, carry_out\n\n# Test all 8 combinations\nprint(\"Full Adder Truth Table:\")\nprint(\"A | B | Cin | Sum | Cout\")\nprint(\"-\" * 25)\n\nfor a in [0, 1]:\n    for b in [0, 1]:\n        for cin in [0, 1]:\n            s, c = full_adder(a, b, cin)\n            print(f\"{a} | {b} |  {cin}  |  {s}  |   {c}\")",
+      "explanation": "The full adder extends half adder by including carry-in from previous bit. It uses two half adders: first adds A and B, second adds the result to carry-in. The final carry is computed by ORing the intermediate carries. This forms the building block for multi-bit binary addition.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "4-bit Ripple Carry Adder Using Full Adders",
+      "description": "Implements a 4-bit Ripple Carry Adder by cascading four full adders. This demonstrates how multi-bit binary addition is performed in digital computers.",
+      "code": "def half_adder(a, b):\n    \"\"\"Half adder for bit addition\"\"\"\n    return a ^ b, a & b\n\ndef full_adder(a, b, cin):\n    \"\"\"Full adder for three bit addition\"\"\"\n    sum1, carry1 = half_adder(a, b)\n    sum_out, carry2 = half_adder(sum1, cin)\n    carry_out = carry1 | carry2\n    return sum_out, carry_out\n\ndef ripple_carry_adder(a4, a3, a2, a1, b4, b3, b2, b1):\n    \"\"\"\n    4-bit Ripple Carry Adder\n    Cascades 4 full adders to add two 4-bit numbers\n    \n    A = A4A3A2A1 (most significant to least significant)\n    B = B4B3B2B1\n    \"\"\"\n    # Add LSBs (position 1) - no carry-in\n    s1, c1 = full_adder(a1, b1, 0)\n    \n    # Add position 2\n    s2, c2 = full_adder(a2, b2, c1)\n    \n    # Add position 3\n    s3, c3 = full_adder(a3, b3, c2)\n    \n    # Add MSBs (position 4)\n    s4, carry_out = full_adder(a4, b4, c3)\n    \n    return (s4, s3, s2, s1), carry_out\n\ndef binary_to_decimal(b4, b3, b2, b1):\n    \"\"\"Convert 4-bit binary to decimal\"\"\"\n    return (b4 * 8) + (b3 * 4) + (b2 * 2) + b1\n\n# Example 1: Add 5 + 3 = 8 (0101 + 0011 = 1000)\nprint(\"=\" * 50)\nprint(\"Example 1: 5 + 3\")\nprint(\"A = 0101 (5), B = 0011 (3)\")\nresult, cout = ripple_carry_adder(0,1,0,1, 0,0,1,1)\nprint(f\"Result: {''.join(map(str, result))} (decimal: {binary_to_decimal(*result)})\")\nprint(f\"Carry Out: {cout}\")\n\n# Example 2: Add 7 + 9 = 16 (0111 + 1001 = 10000)\nprint(\"\\n\" + \"=\" * 50)\nprint(\"Example 2: 7 + 9\")\nprint(\"A = 0111 (7), B = 1001 (9)\")\nresult, cout = ripple_carry_adder(0,1,1,1, 1,0,0,1)\nprint(f\"Result: {''.join(map(str, result))} (decimal: {binary_to_decimal(*result)})\")\nprint(f\"Carry Out: {cout} (overflow in 4-bit!)\")\n\n# Example 3: Add 15 + 1 = 16 (1111 + 0001 = 10000)\nprint(\"\\n\" + \"=\" * 50)\nprint(\"Example 3: 15 + 1\")\nprint(\"A = 1111 (15), B = 0001 (1)\")\nresult, cout = ripple_carry_adder(1,1,1,1, 0,0,0,1)\nprint(f\"Result: {''.join(map(str, result))} (decimal: {binary_to_decimal(*result)})\")\nprint(f\"Carry Out: {cout} (overflow in 4-bit!)\")",
+      "explanation": "The 4-bit Ripple Carry Adder demonstrates practical binary addition as done in computer processors. Each full adder passes its carry output to the next higher bit position. The 'ripple' effect shows how carries propagate through the chain. This is the fundamental building block for ALU (Arithmetic Logic Unit) in CPUs. Note that 4-bit addition can result in overflow (carry out = 1) when result exceeds 15.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

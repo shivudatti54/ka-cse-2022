@@ -1,0 +1,110 @@
+{
+  "topicId": "gpus",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between a Streaming Multiprocessor (SM) and a CUDA core. How do they relate to GPU parallelism?",
+      "keyPoints": [
+        "SM is the fundamental processing unit containing multiple CUDA cores",
+        "CUDA cores are individual arithmetic logic units (ALUs) that execute instructions",
+        "Multiple threads run concurrently on an SM through warp scheduling",
+        "An SM can execute multiple warps simultaneously through time-slicing",
+        "GPU parallelism comes from having many SMs, each running many threads"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the memory hierarchy in a CUDA GPU, listing at least three different memory types and their characteristics.",
+      "keyPoints": [
+        "Global memory: largest capacity, highest latency, accessible by all threads",
+        "Shared memory: small capacity, low latency, shared within a block",
+        "Registers: fastest, per-thread storage, limited availability",
+        "Local memory: off-chip, used when registers overflow",
+        "Constant memory: read-only, cached for broadcast access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is memory coalescing? Why is it important for GPU performance? Provide an example of coalesced vs non-coalesced access pattern.",
+      "keyPoints": [
+        "Coalesced access: consecutive threads access consecutive memory addresses",
+        "Enables single memory transaction for multiple requests",
+        "Improves bandwidth utilization significantly",
+        "Example coalesced: C[i] = A[i] + B[i] for all i",
+        "Example non-coalsced: C[i] = A[i*stride] where stride \u2260 block size"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the thread-block-bgrid model in CUDA. How do you determine the appropriate block size and grid size for a kernel?",
+      "keyPoints": [
+        "Threads are grouped into blocks, blocks form a grid",
+        "Block size chosen based on: resources per block, parallelism per block",
+        "Grid size = ceil(N/blockSize) for N elements",
+        "Consider SM capacity: registers, shared memory per block",
+        "Trade-off between occupancy and resource utilization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is warp divergence and how does it affect GPU performance? Suggest one method to minimize warp divergence.",
+      "keyPoints": [
+        "Warp divergence: threads in same warp take different paths due to conditionals",
+        "Results in serialized execution of different code paths",
+        "Reduces effective parallelism within the warp",
+        "Minimization: restructure code to avoid branching within warps",
+        "Use predicated execution or loop restructuring to reduce divergence"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Write a CUDA kernel for matrix multiplication (C = A \u00d7 B) where A and B are N\u00d7N matrices. Assume matrices are stored in row-major order. Discuss the optimization strategies you would apply to improve performance.",
+      "keyPoints": [
+        "Basic kernel: each thread computes one element C[i][j]",
+        "Load appropriate rows from A and columns from B",
+        "Optimizations: use shared memory for tile-based multiplication",
+        "Coalesced global memory access for rows of A and columns of B",
+        "Register usage, warp alignment, occupancy considerations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare and contrast CPU and GPU architectures for parallel computing. Under what circumstances would you choose GPU computing over CPU computing? Provide examples of applications suitable for each.",
+      "keyPoints": [
+        "CPU: fewer cores, complex control logic, high single-thread performance",
+        "GPU: thousands of simple cores, optimized for throughput",
+        "GPU suitable for: data-parallel, throughput-oriented workloads",
+        "Examples GPU: deep learning, image processing, scientific simulations",
+        "Examples CPU: task-parallel, complex branching, low-latency requirements"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a CUDA program to perform parallel reduction (sum of all elements in an array). Explain the algorithm, the kernel implementation, and analyze its time complexity. How would you optimize this for modern GPUs?",
+      "keyPoints": [
+        "Reduction: binary tree pattern combining adjacent elements",
+        "Parallel reduction: each thread pairs and adds elements",
+        "Multiple phases reducing array size by half each iteration",
+        "Time complexity: O(log n) with n processors",
+        "Optimizations: bank conflict avoidance, warp-level primitives",
+        "Shared memory usage, loop unrolling for last warp"
+      ],
+      "marks": 10
+    }
+  ]
+}

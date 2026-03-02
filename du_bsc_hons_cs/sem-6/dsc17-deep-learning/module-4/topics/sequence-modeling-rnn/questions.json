@@ -1,0 +1,159 @@
+{
+  "topicId": "sequence-modeling-rnn",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the problem of vanishing gradients in basic RNNs and how LSTM addresses it.",
+      "keyPoints": [
+        "Basic RNNs suffer from vanishing gradients when backpropagating through many time steps",
+        "Long chains of multiplications make gradients shrink exponentially",
+        "LSTM uses gating mechanisms (forget, input, output gates) to control information flow",
+        "Cell state acts as a highway for gradients to flow unchanged",
+        "Gates use sigmoid and tanh to learn what to remember and forget"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between many-to-one, one-to-many, and many-to-many RNN architectures with one example each.",
+      "keyPoints": [
+        "Many-to-one: multiple inputs produce single output (e.g., sentiment analysis)",
+        "One-to-many: single input produces sequence (e.g., image captioning)",
+        "Many-to-many: sequence input produces sequence output (e.g., machine translation, POS tagging)",
+        "Encoder-decoder is a special case of many-to-many with different input/output lengths"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of teacher forcing in RNN training? Discuss its advantages and potential drawback.",
+      "keyPoints": [
+        "Teacher forcing uses ground truth previous output as input during training instead of model's prediction",
+        "Advantage: Faster convergence during training as model receives correct previous input",
+        "Drawback: During inference, model uses its own predictions which may be incorrect, causing error accumulation",
+        "Solution: Scheduled sampling gradually transitions from teacher forcing to free running"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the architecture of GRU and state how it differs from LSTM.",
+      "keyPoints": [
+        "GRU has two gates: Update gate and Reset gate",
+        "Update gate controls how much previous knowledge to keep vs. new information to add",
+        "Reset gate determines how much past information to ignore",
+        "GRU combines cell state and hidden state into one",
+        "GRU has fewer parameters than LSTM (fewer matrix multiplications)",
+        "GRU trains faster but LSTM may perform better on complex long-sequence tasks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is attention mechanism in sequence modeling? How does it solve the bottleneck problem?",
+      "keyPoints": [
+        "Attention allows decoder to access all encoder hidden states at each output step",
+        "Instead of encoding entire sequence into one fixed vector, creates context from weighted sum",
+        "Weights (attention scores) determined by relevance of each input position",
+        "Solves bottleneck problem of Seq2Seq for long sequences",
+        "Enables model to focus on relevant parts when generating each output"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Derive the forward propagation equations for a basic RNN.",
+      "keyPoints": [
+        "ht = tanh(Wxh\u00b7xt + Whh\u00b7ht-1 + bh) - hidden state at time t",
+        "yt = Why\u00b7ht + by - output at time t",
+        "Where Wxh is input-to-hidden weight, Whh is hidden-to-hidden (recurrent) weight",
+        "tanh squashes values to [-1,1] range",
+        "Hidden state ht captures information from all previous time steps"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain bidirectional RNNs with use cases where they are particularly useful.",
+      "keyPoints": [
+        "Bidirectional RNN processes sequence in both forward and backward directions",
+        "Uses two separate hidden layers that combine at output",
+        "Useful when complete context requires knowing both past and future",
+        "Applications: POS tagging, NER, machine translation, speech recognition",
+        "Not suitable for real-time streaming where future input unavailable"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain Backpropagation Through Time (BPTT) in detail. Discuss its computational complexity and methods to handle vanishing/exploding gradients.",
+      "keyPoints": [
+        "BPTT unrolls RNN through all time steps into a feedforward network",
+        "Forward pass computes hidden states and outputs sequentially",
+        "Loss computed at each time step or final step",
+        "Backward pass computes gradients from last time step to first",
+        "Truncated BPTT limits backprop to k time steps for efficiency",
+        "Vanishing gradients: Use LSTM/GRU gates, proper initialization, residual connections",
+        "Exploding gradients: Gradient clipping by threshold",
+        "Complexity: O(T) time and space per forward-backward pass"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the LSTM architecture in detail with equations for each gate. Explain how the cell state enables long-term memory preservation.",
+      "keyPoints": [
+        "LSTM has forget gate: ft = \u03c3(Wf\u00b7[ht-1, xt] + bf) - decides what to discard",
+        "Input gate: it = \u03c3(Wi\u00b7[ht-1, xt] + bi), C\u0303t = tanh(WC\u00b7[ht-1, xt] + bc) - decides new info",
+        "Cell state update: Ct = ft\u00b7Ct-1 + it\u00b7C\u0303t - combines old and new information",
+        "Output gate: ot = \u03c3(Wo\u00b7[ht-1, xt] + bo), ht = ot\u00b7tanh(Ct) - decides output",
+        "Cell state acts as information highway with only linear interactions",
+        "Linear forget gate (sigmoid near 1) allows gradients to flow unchanged",
+        "Gates learn what to store/retrieve enabling capture of long-term dependencies"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the sequence-to-sequence (Seq2Seq) architecture for machine translation. Discuss the encoder-decoder framework and how attention mechanism improves it.",
+      "keyPoints": [
+        "Seq2Seq maps variable length input to variable length output",
+        "Encoder: RNN processes input sequence, final hidden state captures context",
+        "Decoder: Another RNN generates output sequence token by token",
+        "Problem: Fixed-size context vector becomes information bottleneck for long sequences",
+        "Attention mechanism: At each decoder step, compute attention weights over all encoder states",
+        "Context vector = weighted sum of encoder hidden states",
+        "Decoder uses context + previous hidden state to generate output",
+        "Attention allows model to focus on relevant input parts, handle long sequences better",
+        "Types: Global attention (all encoder states) vs Local attention (window)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare LSTM and GRU architectures. Under what circumstances would you choose one over the other?",
+      "keyPoints": [
+        "LSTM: 3 gates (forget, input, output) + cell state + hidden state",
+        "GRU: 2 gates (update, reset) + combines cell state into hidden state",
+        "GRU has fewer parameters (less memory, faster training)",
+        "LSTM has more expressiveness with explicit cell state",
+        "Choose GRU when: limited data, faster training needed, simpler model sufficient",
+        "Choose LSTM when: complex long-term dependencies, sufficient data, maximum performance",
+        "Empirical: Both perform similarly on many tasks, differences often negligible",
+        "LSTM preferred for tasks requiring precise memory control, GRU for resource-constrained scenarios"
+      ],
+      "marks": 10
+    }
+  ]
+}

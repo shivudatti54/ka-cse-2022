@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of the 'init' function in a smart contract creation transaction, and what key component does it return?",
+    "expectedPoints": [
+      "The 'init' function is the constructor logic executed only once during contract deployment.",
+      "Its primary purpose is to initialize the contract's initial state and set up its storage.",
+      "It must return the contract's initial approved program (AP) code, which is then stored on the blockchain and executed for every subsequent call."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the lifecycle of a contract creation transaction, from its submission to the network to its final state on the blockchain. What are the key differences between this and a standard value-transfer transaction?",
+    "expectedPoints": [
+      "The transaction is signed and broadcast to the network, where miners/validators include it in a new block.",
+      "During execution, the 'init' code is run. If it executes successfully, a new contract account is created at a deterministically generated address.",
+      "The contract's account is populated with the returned AP code and the initialized storage; the transaction sender pays gas fees for the computation and storage.",
+      "Key differences from a value-transfer: it has no 'to' address, its payload is executable code (init), and its result is a new account with associated code, not just a balance change."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A developer writes a flawed 'init' function that consumes all the gas provided, fails, and throws an exception. Analyze the state changes on the blockchain that result from this failed contract creation transaction. Furthermore, explain how this outcome demonstrates a core security principle of the blockchain execution environment.",
+    "expectedPoints": [
+      "No contract account is created because the initialization logic did not complete successfully.",
+      "The transaction is still recorded on the blockchain as a failed transaction, and the sender is charged gas fees for all computation performed up to the point of failure (i.e., no refunds).",
+      "Any state changes attempted by the 'init' function before the failure are reverted, ensuring no partial or invalid state is persisted.",
+      "This demonstrates the 'all-or-nothing' atomic execution principle of blockchain. Transactions are atomic units: they either succeed completely and change state, or they fail completely and revert all changes, maintaining the consistency and integrity of the global state."
+    ],
+    "marks": 10
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of framing at the data link layer?",
+    "options": [
+      "To convert IP addresses to MAC addresses",
+      "To delineate the start and end of a sequence of bits transmitted over the network",
+      "To compress the data for efficient transmission",
+      "To encrypt the data for security"
+    ],
+    "correctIndex": 1,
+    "explanation": "Framing is the fundamental function of the data link layer. It provides a way for the receiver to recognize where a frame begins and ends amidst a stream of raw bits, ensuring the data is correctly packaged and unpackaged."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following is a common method used for framing that relies on a specific bit pattern to signal the start and end of a frame?",
+    "options": [
+      "Character Count",
+      "Flag Bytes with Byte Stuffing",
+      "Checksum Calculation",
+      "Flow Control"
+    ],
+    "correctIndex": 1,
+    "explanation": "Flag bytes (like the standard HDLC flag 01111110) are used to mark the frame boundaries. Byte stuffing is the technique used to ensure this flag pattern does not accidentally appear in the data payload, preserving the integrity of the frame."
+  },
+  {
+    "id": "q3",
+    "question": "What problem does bit stuffing specifically solve in the context of framing?",
+    "options": [
+      "It prevents the receiver's buffer from overflowing.",
+      "It corrects single-bit errors that occur during transmission.",
+      "It ensures the flag sequence (e.g., 01111110) does not appear in the data field of the frame.",
+      "It compresses the frame header to reduce overhead."
+    ],
+    "correctIndex": 2,
+    "explanation": "Bit stuffing is a technique where an extra '0' bit is inserted after every consecutive five '1' bits in the data. This prevents the data from accidentally containing the same bit pattern as the flag sequence, which would cause the receiver to mistakenly interpret it as a frame boundary."
+  },
+  {
+    "id": "q4",
+    "question": "A system uses the character count method for framing. If the first byte of a frame is 5, but a transmission error alters this byte to be 7, what is the most likely consequence?",
+    "options": [
+      "Only the first frame will be lost; synchronization will be regained for the next frame.",
+      "The receiver will lose frame synchronization for the next several frames until the next valid count is found.",
+      "The error will be caught by the frame's checksum, and the frame will be discarded correctly.",
+      "The receiver will correctly interpret 7 bytes of data and then seamlessly continue with the next frame."
+    ],
+    "correctIndex": 1,
+    "explanation": "The character count method is vulnerable to this single error. The receiver, believing the frame is 7 bytes long, will misinterpret the boundaries of the next several frames. It will not know where the next valid count field is, leading to a cascading failure of synchronization until a valid count is eventually found by chance."
+  },
+  {
+    "id": "q5",
+    "question": "Comparing the Flag Bytes with Byte Stuffing method to the Character Count method, which is a key advantage that makes Flag Bytes more robust and widely used?",
+    "options": [
+      "It has a lower overhead for very small frames.",
+      "It does not require a field to specify the length of the frame, making the header smaller.",
+      "A single error in the length field of a Character Count frame can cause a loss of synchronization for multiple subsequent frames, whereas an error in a stuffed byte in a Flag Byte frame typically only affects that single frame.",
+      "It is inherently more secure and provides better encryption for the data payload."
+    ],
+    "correctIndex": 2,
+    "explanation": "This is the critical advantage. In the Character Count method, an error in the count field disrupts the receiver's ability to find the start of the next frame. In the Flag Bytes method, the receiver simply scans for the next flag sequence. An error might corrupt one frame's data or cause a stuffing/desuffitting error, but the next flag will reliably resynchronize the receiver, containing the damage to a single frame."
+  }
+]

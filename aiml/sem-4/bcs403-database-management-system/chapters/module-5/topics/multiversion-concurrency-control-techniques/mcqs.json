@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary goal of Multiversion Concurrency Control (MVCC)?",
+    "options": [
+      "To allow multiple transactions to access the same data concurrently without blocking",
+      "To enforce strict two-phase locking for all transactions",
+      "To eliminate the need for transaction logging",
+      "To increase the physical storage requirements of the database"
+    ],
+    "correctIndex": 0,
+    "explanation": "MVCC's main goal is to increase concurrency by allowing readers to see a consistent snapshot of data without blocking writers, and vice versa, by maintaining multiple versions of data items."
+  },
+  {
+    "id": "q2",
+    "question": "In MVCC, when a transaction writes a data item, what does it typically create?",
+    "options": [
+      "A new version of the data item with a unique timestamp",
+      "An exclusive lock on the data item for the duration of the transaction",
+      "A log entry to be used for transaction rollback only",
+      "A shared lock that allows other transactions to read the previous version"
+    ],
+    "correctIndex": 0,
+    "explanation": "A key mechanism of MVCC is that a write operation does not overwrite the existing data value but creates a new version of it, often timestamped to manage visibility to other transactions."
+  },
+  {
+    "id": "q3",
+    "question": "How does MVCC typically prevent dirty reads?",
+    "options": [
+      "A transaction is only allowed to read versions of data that were committed before the transaction began.",
+      "All read operations require obtaining a shared lock on the data item.",
+      "It uses a strict scheduling protocol to serialize all read operations.",
+      "It immediately writes all changes to disk before the transaction commits."
+    ],
+    "correctIndex": 0,
+    "explanation": "A transaction operating under MVCC is given a consistent snapshot of the database as of its start time. It can only see versions of data that were committed before its start, making dirty reads impossible."
+  },
+  {
+    "id": "q4",
+    "question": "Which of the following is a significant challenge or trade-off associated with using MVCC?",
+    "options": [
+      "Increased storage overhead due to maintaining multiple versions of data",
+      "Inability to handle concurrent write operations",
+      "Requiring all transactions to obtain exclusive locks for writes",
+      "Slower read performance due to mandatory locking"
+    ],
+    "correctIndex": 0,
+    "explanation": "The main trade-off for the increased concurrency provided by MVCC is the storage and management overhead. The system must retain old versions of data items until it is certain no active transaction needs to see them."
+  },
+  {
+    "id": "q5",
+    "question": "Consider two transactions, T1 (start time=100, commit time=150) and T2 (start time=125, commit time=175). In a timestamp-based MVCC system, if T2 attempts to update a row that was updated by T1, what is a likely outcome to ensure serializability?",
+    "options": [
+      "T2's write operation will be aborted because it would be based on an outdated version (a write-after-write conflict).",
+      "T2 will overwrite T1's update since it started after T1.",
+      "The system will create a branch of the data to accommodate both updates.",
+      "T2 will be forced to wait until T1 commits before proceeding with its write."
+    ],
+    "correctIndex": 0,
+    "explanation": "T2 began after T1 started but before T1 committed. If T2's write is based on the version of data that existed before T1's update (which is now committed and is the new current version), it is attempting to modify a state that is no longer current. This is a conflict, and to preserve serializability, T2 is typically aborted and must be restarted."
+  }
+]

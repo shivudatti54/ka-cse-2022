@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "In UNIX system programming, what is the primary purpose of the wait3() system call, and how does it differ from the basic wait() call?",
+    "expectedPoints": [
+      "Wait3() allows a process to wait for state changes in its child processes, similar to wait().",
+      "Its key difference is the provision of an additional 'options' argument, enabling more control (e.g., WNOHANG for non-blocking operation).",
+      "It also provides resource usage information about the terminated child via a struct rusage pointer, which wait() does not."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the parameters and return value of the wait3() system call. Describe a common use case where its non-blocking option (WNOHANG) would be essential.",
+    "expectedPoints": [
+      "Parameters: int *status (to store termination status), int options (e.g., WNOHANG), struct rusage *rusage (for resource stats).",
+      "Return value: On success, the PID of the terminated child; 0 if WNOHANG was used and no child has exited; -1 on error.",
+      "A common use case for WNOHANG is within an event loop (e.g., in a server or shell) where the parent must continue processing or accept new commands without blocking while periodically checking for exited children."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Critically analyze the wait3() system call. Discuss its advantages, its limitations that led to the development of waitpid(), and why it is now considered largely obsolete on modern systems.",
+    "expectedPoints": [
+      "Advantages: Provided more functionality than wait(), specifically non-blocking operation and detailed resource usage statistics.",
+      "Key limitations: It could only wait for any child (not a specific one), and its rusage reporting was inconsistent across different UNIX variants.",
+      "It is obsolete because waitpid() offers a superior, more flexible interface\u2014it allows waiting for a specific process or process group and provides the same WNOHANG option. The wait4() call, when available, combines the specificity of waitpid() with the resource usage of wait3(). Modern programs should use waitpid() or wait4() instead."
+    ],
+    "marks": 10
+  }
+]

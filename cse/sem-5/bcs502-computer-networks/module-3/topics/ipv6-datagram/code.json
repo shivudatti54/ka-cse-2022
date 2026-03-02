@@ -1,0 +1,35 @@
+{
+  "topicId": "ipv6-datagram",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "IPv6 Address Compression Algorithm",
+      "description": "Algorithm to compress IPv6 address representation using :: notation",
+      "code": "PROCEDURE CompressIPv6(address)\n BEGIN\n // Split address into 8 groups of 16-bit hex values\n groups ← Split(address, ':')\n \n // Find longest sequence of consecutive zero groups\n maxZeroStart ← -1\n maxZeroLength ← 0\n currentStart ← -1\n currentLength ← 0\n \n FOR i ← 0 TO 7 DO\n IF groups[i] = \"0000\" THEN\n IF currentStart = -1 THEN\n currentStart ← i\n currentLength ← 1\n ELSE\n currentLength ← currentLength + 1\n END IF\n ELSE\n IF currentLength > maxZeroLength THEN\n maxZeroLength ← currentLength\n maxZeroStart ← currentStart\n END IF\n currentStart ← -1\n currentLength ← 0\n END IF\n END FOR\n \n // Check end of array\n IF currentLength > maxZeroLength AND currentLength ≥ 2 THEN\n maxZeroLength ← currentLength\n maxZeroStart ← currentStart\n END IF\n \n // Replace only if sequence length ≥ 2\n IF maxZeroLength ≥ 2 THEN\n compressed ← \"\"\n FOR i ← 0 TO maxZeroStart-1 DO\n compressed ← compressed + groups[i] + \":\"\n END FOR\n compressed ← compressed + \"::\"\n FOR i ← maxZeroStart+maxZeroLength TO 7 DO\n compressed ← compressed + groups[i] + \":\"\n END FOR\n RETURN RemoveTrailingColon(compressed)\n ELSE\n RETURN address\n END IF\n END",
+      "explanation": "This algorithm finds the longest consecutive sequence of zero groups and replaces with ::, remembering :: can only be used once per address. Groups are already stripped of leading zeros before this step.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "IPv6 Fragmentation at Source",
+      "description": "Demonstrates how source node fragments large IPv6 packets",
+      "code": "PROCEDURE IPv6Fragment(source, destination, packet, pathMTU)\n BEGIN\n IF packet.size > pathMTU THEN\n // Calculate number of fragments\n maxPayload ← pathMTU - 40 // Subtract IPv6 header size\n fragmentSize ← (maxPayload / 8) * 8 // Align to 8-byte boundary\n numFragments ← ceil(packet.payloadSize / fragmentSize)\n \n offset ← 0\n identification ← GenerateRandom32Bit()\n \n FOR i ← 0 TO numFragments-1 DO\n fragment ← CreateIPv6Packet()\n fragment.source ← packet.source\n fragment.destination ← packet.destination\n fragment.nextHeader ← 44 // Fragment header\n fragment.hopLimit ← 64\n fragment.payload ← packet.payload[offset TO offset+fragmentSize-1]\n \n // Add Fragment Header\n fragment.fragmentHeader.nextHeader ← packet.nextHeader\n fragment.fragmentHeader.offset ← offset / 8\n fragment.fragmentHeader.M ← (i < numFragments - 1) ? 1 : 0\n fragment.fragmentHeader.identification ← identification\n \n Send(fragment)\n offset ← offset + fragmentSize\n END FOR\n ELSE\n Send(packet) // No fragmentation needed\n END IF\n END",
+      "explanation": "IPv6 fragmentation is done only by source. Fragment offset is in 8-byte units. M flag = 1 means more fragments follow, 0 means last fragment. Identification helps reassembly.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "SLAAC Address Configuration",
+      "description": "Stateless Address Autoconfiguration process in IPv6",
+      "code": "PROCEDURE SLAACConfiguration(interface)\n BEGIN\n // Step 1: Generate Link-Local Address\n linkLocalPrefix ← \"FE80::\"\n interfaceID ← GenerateEUI64(interface.macAddress)\n linkLocalAddress ← linkLocalPrefix + \"/10\" + interfaceID\n \n // Step 2: Perform Duplicate Address Detection (DAD)\n IF DAD(interface, linkLocalAddress) = FAILED THEN\n // Address not unique, use alternative\n interfaceID ← GenerateRandom64()\n linkLocalAddress ← linkLocalPrefix + interfaceID\n DAD(interface, linkLocalAddress)\n END IF\n \n // Step 3: Send Router Solicitation\n rs ← CreateICMPv6RouterSolicitation()\n rs.source ← linkLocalAddress\n rs.destination ← \"FF02::2\" // All routers\n Send(rs)\n \n // Step 4: Receive Router Advertisement\n ra ← Receive()\n prefixList ← ParsePrefixes(ra)\n \n // Step 5: Configure Global Address(es)\n FOR EACH prefix IN prefixList DO\n globalAddress ← prefix.network + interfaceID\n DAD(interface, globalAddress)\n AddToAddressTable(globalAddress)\n END FOR\n END\n\nFUNCTION GenerateEUI64(mac)\n BEGIN\n // Insert FFFE in middle of MAC\n eui ← mac[0:3] + \"FFFE\" + mac[4:6]\n // Toggle universal/local bit\n eui[0] ← eui[0] XOR 0x02\n RETURN eui\n END",
+      "explanation": "SLAAC allows hosts to auto-configure without DHCP server. Router Advertisement provides network prefix, host provides interface ID. DAD ensures no duplicate addresses exist on link.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

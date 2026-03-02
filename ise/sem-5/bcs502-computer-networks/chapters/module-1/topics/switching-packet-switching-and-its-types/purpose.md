@@ -1,0 +1,8 @@
+**Why it matters:**
+Learning about packet switching and its types is crucial in understanding modern computer networks, as it enables efficient data transmission and reduces network congestion. This topic is essential in the field of data communications, as it forms the foundation for various network protocols and architectures. By grasping packet switching, individuals can design and implement effective network systems, ensuring reliable and fast data exchange. This knowledge is vital in today's interconnected world, where data-driven economies rely on efficient communication networks.
+
+**Real-world applications:**
+Packet switching has numerous real-world applications, including but not limited to, Internet Protocol (IP) networks, Virtual Private Networks (VPNs), and cloud computing. These technologies rely on packet switching to transmit data efficiently over long distances, enabling global communication and data transfer. Moreover, packet switching is also used in wireless networks, such as Wi-Fi and cellular networks, to facilitate data transmission between devices.
+
+**Connection to other concepts:**
+Packet switching is closely related to other concepts in computer networks, including network protocols (e.g., TCP/IP), network models (e.g., OSI model), and network architectures (e.g., LAN, WAN). Understanding packet switching helps individuals comprehend the underlying mechanics of these concepts, allowing them to design and implement more efficient and reliable network systems. Additionally, packet switching is also connected to concepts such as network congestion, latency, and quality of service (QoS), which are critical in ensuring a seamless user experience in modern networks.

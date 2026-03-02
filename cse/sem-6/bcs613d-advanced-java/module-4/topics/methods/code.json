@@ -1,0 +1,55 @@
+{
+  "topicId": "methods",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Servlet Lifecycle Process",
+      "description": "Demonstrates the sequence of methods called during a servlet's lifecycle",
+      "code": "ALGORITHM ServletLifecycle\nBEGIN\n INITIALIZE servlet with config parameters\n HANDLE incoming requests through service method\n ROUTE to appropriate doGet/doPost based on HTTP method\n DESTROY servlet when container shuts down\nEND",
+      "explanation": "1. INITIALIZE: init() method called once during servlet initialization\n2. HANDLE: service() method routes requests to doGet/doPost\n3. DESTROY: destroy() called during servlet termination",
+      "timeComplexity": "O(1) per lifecycle phase",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Basic Servlet with Lifecycle Methods",
+      "description": "Implementation of init(), doGet(), and destroy() methods in a servlet",
+      "code": "import javax.servlet.*;\nimport javax.servlet.http.*;\nimport java.io.*;\n\npublic class SimpleServlet extends HttpServlet {\n public void init(ServletConfig config) throws ServletException {\n super.init(config);\n // Initialization code\n }\n \n protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\n response.setContentType(\"text/html\");\n PrintWriter out = response.getWriter();\n out.println(\"<h1>Hello from doGet</h1>\");\n }\n \n public void destroy() {\n // Cleanup code\n }\n}",
+      "explanation": "1. init(): Called once during servlet initialization\n2. doGet(): Handles GET requests\n3. destroy(): Called when servlet is taken out of service",
+      "timeComplexity": "O(1) per request",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Handling POST Request with Parameters",
+      "description": "Using doPost() method to process form data",
+      "code": "protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\n String username = request.getParameter(\"username\");\n String password = request.getParameter(\"password\");\n \n response.setContentType(\"text/html\");\n PrintWriter out = response.getWriter();\n out.println(\"<p>Username: \" + username + \"</p>\");\n out.println(\"<p>Password: \" + password + \"</p>\");\n}",
+      "explanation": "1. Retrieves parameters using request.getParameter()\n2. Processes and outputs received data",
+      "timeComplexity": "O(n) where n is input size",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Setting Cookies in a Servlet",
+      "description": "Creating and adding cookies to the HTTP response",
+      "code": "protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\n Cookie userCookie = new Cookie(\"lastVisit\", new java.util.Date().toString());\n userCookie.setMaxAge(60*60*24); // 1 day\n response.addCookie(userCookie);\n \n response.getWriter().println(\"Cookie set successfully\");\n}",
+      "explanation": "1. Creates Cookie object with name-value pair\n2. Sets max age for persistence\n3. Adds cookie to response using addCookie()",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "java",
+      "title": "JSP Lifecycle Methods Implementation",
+      "description": "Overriding jspInit() and jspDestroy() in a JSP page",
+      "code": "<%@ page language=\"java\" contentType=\"text/html; charset=UTF-8\"%>\n<%!\n public void jspInit() {\n System.out.println(\"JSP Initialized\");\n }\n \n public void jspDestroy() {\n System.out.println(\"JSP Destroyed\");\n }\n%>\n<html>\n<body>\n <h1>JSP Lifecycle Demo</h1>\n</body>\n</html>",
+      "explanation": "1. jspInit(): Called during JSP initialization\n2. jspDestroy(): Called when JSP is removed\n3. _jspService() is auto-generated",
+      "timeComplexity": "O(1) per lifecycle phase",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

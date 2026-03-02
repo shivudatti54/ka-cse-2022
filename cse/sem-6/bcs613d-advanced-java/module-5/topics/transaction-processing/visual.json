@@ -1,0 +1,118 @@
+{
+  "topicId": "transaction-processing",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Transaction Life Cycle Flow",
+      "description": "A flowchart showing the complete lifecycle of a database transaction from initiation to completion",
+      "elements": [
+        "Start Node (Transaction Begin) → Decision Diamond (Operation Success?) → Two paths: Success Path leads to Commit, Failure Path leads to Rollback → End Node",
+        "States shown: Active, Partially Committed, Committed, Aborted",
+        "Arrows with labels: execute SQL, commit, rollback, network failure, system crash",
+        "Color coding: Green for success path, Red for failure/rollback path"
+      ],
+      "purpose": "Students understand the complete flow of transaction processing including success and failure scenarios, and learn when commit versus rollback is appropriate"
+    },
+    {
+      "id": "diagram-2",
+      "title": "ACID Properties Architecture",
+      "description": "Block diagram showing how each ACID property contributes to transaction integrity",
+      "elements": [
+        "Central box: 'Database Transaction'",
+        "Four surrounding boxes connected to center: Atomicity (all-or-nothing), Consistency (valid state), Isolation (concurrent execution), Durability (permanent results)",
+        "Each property box contains a real-world example icon",
+        "Arrows show relationships between properties",
+        "Bottom section shows how JDBC methods enforce each property"
+      ],
+      "purpose": "Students visualize how ACID properties work together to ensure reliable database operations and which JDBC methods implement each property"
+    },
+    {
+      "id": "diagram-3",
+      "title": "JDBC Transaction Management Architecture",
+      "description": "Class diagram showing JDBC objects and their transaction-related methods",
+      "elements": [
+        "Connection interface box with methods: setAutoCommit(boolean), commit(), rollback(), setSavepoint(), setTransactionIsolation(int)",
+        "Statement interface box below Connection",
+        "Transaction state box showing: Auto-commit ON/OFF modes",
+        "Visual arrows showing data flow from Application → Connection → Statement → Database",
+        "Insets showing code snippets for each method call"
+      ],
+      "purpose": "Students understand the JDBC API structure for transaction management and which methods to use for different transaction scenarios"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Bank Transfer Transaction Sequence",
+      "description": "Sequence diagram showing a money transfer between two accounts with transaction handling",
+      "elements": [
+        "Vertical swimlanes: Java Application, Connection, Database",
+        "Horizontal arrows: 1) setAutoCommit(false), 2) UPDATE account_a SET balance = balance - 1000, 3) UPDATE account_b SET balance = balance + 1000, 4) commit()",
+        "Failure scenario path shown with dashed lines: exception occurs → rollback()",
+        "Timeline showing order of operations",
+        "Success and failure outcome boxes at bottom"
+      ],
+      "purpose": "Students apply transaction concepts to a real banking scenario and see exactly where commit and rollback are called in a practical context"
+    },
+    {
+      "id": "diagram-5",
+      "title": "Savepoint Transaction Flow",
+      "description": "Flow diagram showing nested transactions using savepoints for partial rollbacks",
+      "elements": [
+        "Main transaction starts at top",
+        "Savepoint nodes shown as diamond shapes: Savepoint1 after first operation, Savepoint2 after second operation",
+        "Three SQL operation boxes between savepoints",
+        "Branching paths: If operation 2 fails → rollback to Savepoint1 → continue with operation 3 → commit",
+        "If operation 3 fails → rollback to Savepoint2 only operation 3 is undone",
+        "Legend showing: rollback to savepoint vs full rollback"
+      ],
+      "purpose": "Students learn how to implement fine-grained transaction control using savepoints for partial rollbacks in complex scenarios"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison-table",
+      "title": "JDBC Transaction Methods Comparison",
+      "content": "Table with columns: Method Name, Purpose, Parameters, Return Type, Example Use Case. Rows: setAutoCommit(boolean autoCommit) - enables/disables auto-commit mode, commit() - makes all changes permanent, rollback() - undoes all changes, rollback(Savepoint sp) - undoes changes to savepoint, setTransactionIsolation(int level) - sets isolation level, setSavepoint() - creates unnamed savepoint, setSavepoint(String name) - creates named savepoint"
+    },
+    {
+      "type": "flowchart",
+      "title": "Transaction State Transition Diagram",
+      "content": "Flowchart showing states: Active (executing SQL) → Partially Committed (after last SQL, before commit) → Committed (permanent) OR Aborted (rollback). Also shows Active → Aborted on rollback. Arrows labeled with events causing transitions: execute SQL, commit, rollback, system failure"
+    },
+    {
+      "type": "comparison-table",
+      "title": "Isolation Levels Comparison",
+      "content": "Table with rows for each isolation level: TRANSACTION_READ_UNCOMMITTED (allows dirty reads, non-repeatable reads, phantom reads), TRANSACTION_READ_COMMITTED (prevents dirty reads), TRANSACTION_REPEATABLE_READ (prevents dirty and non-repeatable reads), TRANSACTION_SERIALIZABLE (prevents all three). Columns: Level Constant, Dirty Read, Non-Repeatable Read, Phantom Read, Performance Impact"
+    },
+    {
+      "type": "flowchart",
+      "title": "Auto-Commit Mode Decision Flow",
+      "content": "Decision flowchart: Start → Should multiple operations be atomic? → If YES: setAutoCommit(false) → Execute all operations → Check for errors → If error: rollback, If success: commit. If NO: setAutoCommit(true) or keep default → Each operation automatically committed → End. Shows when to use manual vs auto-commit mode"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Transaction Processing in JDBC",
+      "branches": [
+        "ACID Properties (Atomicity, Consistency, Isolation, Durability)",
+        "Transaction Methods (setAutoCommit, commit, rollback, savepoints)",
+        "Transaction States (Active, Committed, Aborted)",
+        "Isolation Levels (Read Uncommitted, Read Committed, Repeatable Read, Serializable)",
+        "Error Handling (try-catch with rollback, automatic rollback on exceptions)",
+        "Real-World Applications (Banking transfers, Order processing, Inventory management)"
+      ],
+      "purpose": "Comprehensive overview connecting transaction concepts, JDBC API methods, transaction states, and practical applications for exam preparation and concept reinforcement"
+    },
+    {
+      "centralConcept": "JDBC Transaction Management",
+      "branches": [
+        "Connection Object (manages transaction lifecycle)",
+        "Auto-Commit Mode (default true, manual control needed for transactions)",
+        "Commit Operation (makes changes permanent in database)",
+        "Rollback Operation (reverts all uncommitted changes)",
+        "Savepoints (enable partial rollback in complex transactions)",
+        "Isolation Levels (control concurrency side effects)"
+      ],
+      "purpose": "Focused mind map on JDBC-specific transaction management showing how the Connection interface provides all transaction control capabilities and when to use each feature"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "thread-libraries",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Thread Creation with Mutex Sync",
+      "description": "Demonstrates basic thread creation and mutex synchronization to protect shared resources",
+      "code": "ALGORITHM ThreadSafeCounter\nBEGIN\n CREATE mutex\n INIT counter = 0\n\n FUNCTION worker_thread()\n BEGIN\n LOCK(mutex)\n counter += 1\n UNLOCK(mutex)\n END\n\n CREATE threads[2]\n FOR i = 0 TO 1\n threads[i] = CREATE_THREAD(worker_thread)\n\n FOR ALL threads\n JOIN_THREAD(thread)\n\n PRINT counter\nEND",
+      "explanation": "1. CREATE mutex initializes synchronization primitive\n2. LOCK/UNLOCK ensures atomic counter update\n3. CREATE_THREAD spawns parallel execution\n4. JOIN_THREAD ensures thread completion",
+      "timeComplexity": "O(1) per lock/unlock operation",
+      "spaceComplexity": "O(1) for mutex + counter"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Pthreads Shared Counter",
+      "description": "C implementation using pthreads with mutex to prevent race conditions",
+      "code": "#include <pthread.h>\n#include <stdio.h>\n\nint counter = 0;\npthread_mutex_t lock;\n\nvoid* increment(void* arg) {\n pthread_mutex_lock(&lock);\n for (int i = 0; i < 1000; i++) {\n counter++;\n }\n pthread_mutex_unlock(&lock);\n return NULL;\n}\n\nint main() {\n pthread_t t1, t2;\n pthread_mutex_init(&lock, NULL);\n\n pthread_create(&t1, NULL, increment, NULL);\n pthread_create(&t2, NULL, increment, NULL);\n\n pthread_join(t1, NULL);\n pthread_join(t2, NULL);\n\n printf(\"Final counter: %d\\n\", counter);\n pthread_mutex_destroy(&lock);\n return 0;\n}",
+      "explanation": "1. pthread_mutex_init initializes mutex\n2. pthread_create spawns threads\n3. Mutex protects counter during increments\n4. pthread_join waits for thread completion\n5. Always destroy mutex after use",
+      "timeComplexity": "O(n) where n=number of increments",
+      "spaceComplexity": "O(1) for mutex"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Java Synchronized Threads",
+      "description": "Thread synchronization using Java's synchronized keyword",
+      "code": "class Counter implements Runnable {\n private int count = 0;\n\n public synchronized void increment() {\n count++;\n }\n\n public void run() {\n for (int i = 0; i < 1000; i++) {\n increment();\n }\n }\n\n public static void main(String[] args) throws InterruptedException {\n Counter c = new Counter();\n\n Thread t1 = new Thread(c);\n Thread t2 = new Thread(c);\n\n t1.start();\n t2.start();\n\n t1.join();\n t2.join();\n\n System.out.println(\"Count: \" + c.count);\n }\n}",
+      "explanation": "1. synchronized method provides intrinsic lock\n2. Runnable interface enables thread creation\n3. join() ensures main thread waits\n4. Shared Counter instance enables thread communication",
+      "timeComplexity": "O(n) for n increments",
+      "spaceComplexity": "O(1) for lock"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Python Threading with Semaphore",
+      "description": "Resource access control using semaphores in Python",
+      "code": "import threading\n\nsem = threading.Semaphore(3)\n\ndef access_resource(thread_id):\n sem.acquire()\n print(f\"Thread {thread_id} accessing resource\")\n # Simulate work\n threading.Event().wait(0.5)\n print(f\"Thread {thread_id} releasing resource\")\n sem.release()\n\nthreads = []\nfor i in range(5):\n t = threading.Thread(target=access_resource, args=(i,))\n t.start()\n threads.append(t)\n\nfor t in threads:\n t.join()",
+      "explanation": "1. Semaphore(3) allows 3 concurrent accesses\n2. acquire()/release() manage permits\n3. Event().wait() simulates processing time\n4. Multiple threads compete for limited resources",
+      "timeComplexity": "O(1) for semaphore operations",
+      "spaceComplexity": "O(1) for semaphore"
+    }
+  ]
+}

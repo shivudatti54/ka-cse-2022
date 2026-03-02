@@ -1,0 +1,73 @@
+{
+  "topicId": "fork-exec",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "What is the return value of the fork() system call in the parent process?",
+      "options": [
+        { "key": "A", "text": "The process ID (PID) of the child process" },
+        { "key": "B", "text": "0" },
+        { "key": "C", "text": "1" },
+        { "key": "D", "text": "The process ID (PID) of the parent process" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "On success, fork() returns the PID of the newly created child process to the parent, and 0 is returned to the child.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "Which of the following exec() functions searches for the executable file using the PATH environment variable?",
+      "options": [
+        { "key": "A", "text": "execl() and execv()" },
+        { "key": "B", "text": "execlp() and execvp()" },
+        { "key": "C", "text": "execle() and execve()" },
+        { "key": "D", "text": "All exec() functions use PATH" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Only the functions with the 'p' suffix (execlp and execvp) perform a path search. The others require an absolute or relative path.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "After a successful exec() call, which of the following attributes of the process remains the same?",
+      "options": [
+        { "key": "A", "text": "The memory image (text, data, stack segments)" },
+        { "key": "B", "text": "The process ID (PID)" },
+        { "key": "C", "text": "The values of all global variables" },
+        { "key": "D", "text": "The program counter (instruction pointer)" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The exec() functions replace the current process's memory image with a new program, but the process ID (PID) does not change.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "What is the primary risk if a parent process does not call wait() or waitpid() after forking a child?",
+      "options": [
+        { "key": "A", "text": "The child process will terminate immediately" },
+        { "key": "B", "text": "The parent process will become a zombie" },
+        {
+          "key": "C",
+          "text": "The child process will become a zombie if it terminates before the parent"
+        },
+        { "key": "D", "text": "The system will run out of process table entries immediately" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "If a parent does not wait for its child, the child entry remains in the process table as a zombie (defunct process) until the parent terminates. This consumes system resources.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq5",
+      "question": "Consider the code: `if (fork() || fork()) { printf(\"X\"); }`. How many times will 'X' be printed?",
+      "options": [
+        { "key": "A", "text": "1" },
+        { "key": "B", "text": "2" },
+        { "key": "C", "text": "3" },
+        { "key": "D", "text": "4" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The first fork creates Parent P and Child C1. In P, fork() returns C1's PID (non-zero), so the OR condition is true, P prints 'X' and does not call the second fork. In C1, the first fork returns 0, so it must evaluate the second fork(). This second fork creates a grandchild C2. For C1, the second fork returns C2's PID (non-zero), so it prints 'X'. The grandchild C2 is never in the if condition because it's created by the second fork inside the condition. So, P and C1 print, totaling 3 times.",
+      "difficulty": "hard"
+    }
+  ]
+}

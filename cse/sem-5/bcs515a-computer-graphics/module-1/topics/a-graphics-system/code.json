@@ -1,0 +1,35 @@
+{
+  "topicId": "a-graphics-system",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Frame Buffer Initialization",
+      "description": "Pseudocode to initialize a frame buffer for a given resolution and color depth",
+      "code": "PROCEDURE InitFrameBuffer(width, height, colorDepth)\n pixels ← width × height\n bytesPerPixel ← colorDepth / 8\n frameBufferSize ← pixels × bytesPerPixel\n \n ALLOCATE frameBuffer[frameBufferSize]\n \n FOR i ← 0 TO frameBufferSize-1 DO\n frameBuffer[i] ← 0 // Clear to black\n END FOR\n \n RETURN frameBuffer\nEND PROCEDURE",
+      "explanation": "This procedure allocates and initializes a frame buffer with given dimensions and color depth, clearing all pixels to black (0). The frame buffer stores pixel data that will be displayed on screen.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(width × height × colorDepth)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Double Buffering Implementation",
+      "description": "Demonstrates the concept of double buffering to prevent flicker",
+      "code": "PROCEDURE DoubleBufferDemo()\n frontBuffer ← InitFrameBuffer(1024, 768, 24)\n backBuffer ← InitFrameBuffer(1024, 768, 24)\n \n REPEAT\n // Draw on back buffer\n ClearBuffer(backBuffer, BLACK)\n DrawScene(backBuffer)\n \n // Swap buffers atomically\n temp ← frontBuffer\n frontBuffer ← backBuffer\n backBuffer ← temp\n \n // Display front buffer\n DisplayBuffer(frontBuffer)\n UNTIL userQuit\nEND PROCEDURE",
+      "explanation": "Double buffering uses two buffers - one for display and one for drawing. The swap operation is atomic to prevent tearing. This eliminates flicker as the user never sees partially drawn frames.",
+      "timeComplexity": "O(1) per frame",
+      "spaceComplexity": "O(2 × frameBufferSize)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Pixel Color Setting in Frame Buffer",
+      "description": "Setting pixel color at specific coordinates",
+      "code": "PROCEDURE SetPixel(buffer, x, y, color, width)\n // Calculate buffer offset\n offset ← (y × width) + x\n \n // Store RGB values (24-bit color)\n buffer[offset + 0] ← color.Red\n buffer[offset + 1] ← color.Green\n buffer[offset + 2] ← color.Blue\nEND PROCEDURE\n\nPROCEDURE GetPixel(buffer, x, y, width)\n offset ← (y × width) + x\n color.Red ← buffer[offset + 0]\n color.Green ← buffer[offset + 1]\n color.Blue ← buffer[offset + 2]\n RETURN color\nEND PROCEDURE",
+      "explanation": "These procedures demonstrate how to read and write individual pixels in the frame buffer. Each pixel's color is stored as 3 consecutive bytes (RGB) at the calculated memory offset.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

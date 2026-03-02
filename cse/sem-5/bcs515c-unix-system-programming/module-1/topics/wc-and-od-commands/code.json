@@ -1,0 +1,55 @@
+{
+  "topicId": "wc-and-od-commands",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Count Lines in Multiple Files",
+      "description": "Script to count lines in all text files in current directory",
+      "code": "#!/bin/bash\n# Count lines in all .txt files\necho \"File Analysis Report\"\necho \"=====================\"\nfor file in *.txt; do\n if [ -f \"$file\" ]; then\n lines=$(wc -l < \"$file\")\n echo \"$file: $lines lines\"\n fi\ndone\necho \"=====================\"\necho \"Total lines: $(wc -l *.txt | tail -1)\"",
+      "explanation": "This script iterates through all .txt files and displays line count for each file. The final line uses tail -1 to get the grand total from wc output.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "Binary File Hex Dump",
+      "description": "Display first 64 bytes of a binary file in hex format",
+      "code": "# Display first 64 bytes in hex with no address column\nod -A n -t x1 -N 64 -v binaryfile.bin\n\n# Explanation:\n# -A n : No address column (clean output)\n# -t x1 : Hex format, 1 byte per value\n# -N 64 : Only read first 64 bytes\n# -v : Show all lines (no duplicate suppression)",
+      "explanation": "This command is useful for examining file headers or magic numbers at the start of binary files. The hex format helps identify file type signatures.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "Find Longest Line in File",
+      "description": "Use wc -L to find the longest line in a file",
+      "code": "# Find longest line length\nwc -L filename.txt\n\n# Find which line is longest (using grep with line numbers)\ncat -n filename.txt | while read num line; do\n len=${#line}\n if [ $len -gt $max ]; then\n max=$len\n longest_line=$num\n fi\ndone\necho \"Longest line is at line $longest_line with $max characters\"",
+      "explanation": "wc -L prints the length of the longest line in characters. For finding which line is longest, we need additional processing with a loop.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "bash",
+      "title": "OD for ASCII Character Display",
+      "description": "Display file content as ASCII characters side by side with octal",
+      "code": "# Display file with ASCII interpretation\nod -A d -t c -v myfile.txt\n\n# Output format:\n# 0000000 H e l l o \\n W o r l d \\n\n# Explanation:\n# -A d : Decimal addresses\n# -t c : Show as ASCII characters\n# -v : Show all lines (no * for duplicates)\n# Non-printable shown as: \\0, \\a, \\b, \\f, \\n, \\r, \\t, \\v",
+      "explanation": "The -t c option is excellent for viewing text files and identifying hidden characters like tabs, newlines, or null bytes in the file.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "bash",
+      "title": "Word Count Statistics Script",
+      "description": "Comprehensive file statistics using multiple wc options",
+      "code": "#!/bin/bash\n# Get complete statistics for a file\nFILE=$1\nif [ ! -f \"$FILE\" ]; then\n echo \"File not found: $FILE\"\n exit 1\nfi\n\necho \"Statistics for: $FILE\"\necho \"==========================\"\nwc -l -w -c -m -L \"$FILE\" | awk '{\n print \"Lines: \" $1\n print \"Words: \" $2\n print \"Bytes: \" $3\n print \"Characters: \" $4\n print \"Max Line: \" $5 \" characters\"\n}'",
+      "explanation": "This script provides a formatted report showing all wc statistics: lines, words, bytes, characters, and maximum line length in a readable format.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

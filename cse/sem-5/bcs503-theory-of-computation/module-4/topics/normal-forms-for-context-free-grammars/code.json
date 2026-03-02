@@ -1,0 +1,45 @@
+{
+  "topicId": "normal-forms-for-context-free-grammars",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CYK Algorithm",
+      "description": "Parsing algorithm that requires grammar in CNF",
+      "code": "FUNCTION CYK(w, grammar):\n n = length(w)\n // Create table for substrings\n CREATE table T[n][n]\n \n // Initialize diagonal with terminals\n FOR i = 0 to n-1:\n FOR each production A → w[i]:\n T[i][i].add(A)\n \n // Fill table for longer substrings\n FOR len = 2 to n:\n FOR i = 0 to n-len:\n j = i + len - 1\n FOR k = i to j-1:\n FOR each production A → BC:\n IF B in T[i][k] AND C in T[k+1][j]:\n T[i][j].add(A)\n \n // Check if start symbol derives full string\n RETURN S in T[0][n-1]",
+      "explanation": "The CYK algorithm parses a string by dynamic programming. It builds a table where T[i][j] contains all non-terminals that can derive the substring from position i to j. Requires grammar in CNF form.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Remove ε-Productions",
+      "description": "Algorithm to eliminate nullable productions from CFG",
+      "code": "FUNCTION RemoveEpsilon(grammar):\n // Find nullable non-terminals\n nullable = {}\n REPEAT:\n changed = false\n FOR each production A → α:\n IF α contains only terminals: continue\n IF all symbols in α are in nullable:\n IF A not in nullable:\n nullable.add(A)\n changed = true\n UNTIL NOT changed\n \n // Generate new productions\n newProductions = {}\n FOR each production A → α:\n FOR each subset of nullable positions in α:\n β = α with symbols at positions removed\n IF β is not empty:\n newProductions.add(A → β)\n \n // Remove ε-productions from original\n RETURN grammar without ε-productions ∪ newProductions",
+      "explanation": "This algorithm finds all nullable non-terminals (those that can derive ε) and then generates new productions by removing nullable symbols in all possible combinations.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Remove Unit Productions",
+      "description": "Algorithm to eliminate unit productions (A→B)",
+      "code": "FUNCTION RemoveUnit(grammar):\n // Compute unit closure for each non-terminal\n FOR each non-terminal A:\n unitClosure[A] = {A}\n REPEAT:\n changed = false\n FOR each unit production B → C:\n IF B in unitClosure[A]:\n IF C not in unitClosure[A]:\n unitClosure[A].add(C)\n changed = true\n UNTIL NOT changed\n \n // Generate new non-unit productions\n newProductions = {}\n FOR each non-terminal A:\n FOR each B in unitClosure[A]:\n FOR each production B → α (non-unit):\n newProductions.add(A → α)\n \n RETURN newProductions",
+      "explanation": "This computes the transitive closure of unit productions, then replaces each unit production A→B with all non-unit productions that B can derive.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Convert to Binary Form",
+      "description": "Split productions with more than 2 non-terminals",
+      "code": "FUNCTION ToBinaryForm(grammar):\n newProductions = {}\n counter = 0\n \n FOR each production A → α:\n IF length(α) ≤ 2:\n newProductions.add(A → α)\n ELSE:\n // Split: A → X₁ X₂ ... Xₖ where k > 2\n // Create k-2 new variables\n symbols = list(α)\n current = symbols[0]\n \n FOR i = 1 to length(symbols)-2:\n newVar = X_{counter}\n counter = counter + 1\n newProductions.add(current → symbols[i] newVar)\n current = newVar\n \n // Add final production\n newProductions.add(current → symbols[length(symbols)-2] symbols[length(symbols)-1])\n \n RETURN newProductions",
+      "explanation": "This algorithm introduces new non-terminals to break down productions with more than 2 symbols on the RHS into a chain of binary productions, as required by CNF.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

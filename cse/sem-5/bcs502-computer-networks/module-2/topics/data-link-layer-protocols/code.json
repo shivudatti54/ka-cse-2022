@@ -1,0 +1,35 @@
+{
+  "topicId": "data-link-layer-protocols",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Bit Stuffing Algorithm",
+      "description": "Algorithm to insert stuffed bits in data transmission",
+      "code": "PROCEDURE BitStuff(data):\n stuffedData = empty string\n consecutiveOnes = 0\n \n FOR each bit in data:\n IF bit == '1':\n consecutiveOnes = consecutiveOnes + 1\n ELSE:\n consecutiveOnes = 0\n \n stuffedData = stuffedData + bit\n \n IF consecutiveOnes == 5:\n stuffedData = stuffedData + '0'\n consecutiveOnes = 0\n \n RETURN stuffedData\n\nPROCEDURE BitDestuff(stuffedData):\n data = empty string\n consecutiveOnes = 0\n \n FOR each bit in stuffedData:\n IF bit == '1':\n consecutiveOnes = consecutiveOnes + 1\n ELSE:\n consecutiveOnes = 0\n \n data = data + bit\n \n IF consecutiveOnes == 5:\n skip next bit (the stuffed '0')\n consecutiveOnes = 0\n \n RETURN data",
+      "explanation": "Bit stuffing prevents the flag pattern (01111110) from appearing in the data by inserting a '0' after every five consecutive '1' bits. The receiver removes these stuffed bits to recover original data.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Stop-and-Wait ARQ Protocol",
+      "description": "Implementation of Stop-and-Wait sender and receiver",
+      "code": "// SENDER\nWHILE data to send:\n frame = createFrame(seqNum)\n send(frame)\n startTimer(frame)\n \n WAIT for ACK or timeout:\n IF ACK received:\n stopTimer(frame)\n seqNum = 1 - seqNum // toggle\n getNextData()\n \n ELSE IF timeout:\n // retransmit same frame\n send(frame)\n startTimer(frame)\n\n// RECEIVER\nWHILE true:\n frame = receive()\n \n IF frame.seqNum == expectedSeqNum:\n deliverData(frame.data)\n sendACK(expectedSeqNum)\n expectedSeqNum = 1 - expectedSeqNum\n \n ELSE:\n // duplicate or out-of-order\n sendACK(1 - expectedSeqNum) // ACK last received",
+      "explanation": "Sender sends one frame and waits for ACK before sending next. If timeout occurs, it retransmits. Receiver delivers only if sequence number matches expected, otherwise sends duplicate ACK.",
+      "timeComplexity": "O(n) per frame",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "CRC Calculation",
+      "description": "CRC-32 polynomial division for error detection",
+      "code": "PROCEDURE CalculateCRC(data, generator):\n // generator for CRC-32: 0x04C11DB7\n // Append r-1 zeros to data (r = generator degree)\n paddedData = data + zeros(generator.degree - 1)\n \n // Perform polynomial division using XOR\n FOR i = 0 TO paddedData.length - generator.degree:\n IF paddedData[i] == '1':\n FOR j = 0 TO generator.degree:\n paddedData[i+j] = paddedData[i+j] XOR generator[j]\n \n // Remainder is the CRC value\n CRC = last (generator.degree - 1) bits of paddedData\n RETURN CRC\n\nPROCEDURE VerifyCRC(receivedData, generator):\n CRC = CalculateCRC(receivedData, generator)\n IF CRC == 0:\n RETURN true // No error detected\n ELSE:\n RETURN false // Error detected",
+      "explanation": "CRC uses polynomial division to detect errors. The sender computes remainder using generator polynomial and appends it. Receiver divides the received frame by same polynomial - if remainder is zero, no error.",
+      "timeComplexity": "O(n × m)",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

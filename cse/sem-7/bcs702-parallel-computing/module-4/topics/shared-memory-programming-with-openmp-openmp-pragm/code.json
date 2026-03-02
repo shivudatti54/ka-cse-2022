@@ -1,0 +1,35 @@
+{
+  "topicId": "shared-memory-programming-with-openmp-openmp-pragm",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Parallel Reduction for Array Sum",
+      "description": "OpenMP program demonstrating reduction clause to compute sum of array elements in parallel.",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nint main() {\n    int N = 1000000;\n    double A[N];\n    double sum = 0.0;\n    \n    // Initialize array\n    for (int i = 0; i < N; i++) {\n        A[i] = 1.0;\n    }\n    \n    // Parallel reduction\n    #pragma omp parallel for reduction(+:sum)\n    for (int i = 0; i < N; i++) {\n        sum += A[i];\n    }\n    \n    printf(\"Sum = %f\\n\", sum);\n    return 0;\n}",
+      "explanation": "Each thread gets a private copy of 'sum' initialized to 0. Threads compute partial sums for their assigned iterations. At the implicit barrier, partial sums are combined using the + operator. The final result is stored in the original 'sum' variable. The loop index 'i' is automatically private.",
+      "timeComplexity": "O(N/P + log P) where P is thread count",
+      "spaceComplexity": "O(P) for private sum copies + O(1) additional space"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Producer-Consumer with Critical Sections",
+      "description": "Implementation of producer-consumer pattern using OpenMP critical sections for thread-safe buffer operations.",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\n#define BUFFER_SIZE 10\n#define NUM_ITEMS 50\n\nint buffer[BUFFER_SIZE];\nint in = 0, out = 0;\nint count = 0;\n\nvoid producer(int id) {\n    for (int i = 0; i < NUM_ITEMS; i++) {\n        #pragma omp critical(producer)\n        {\n            while (count == BUFFER_SIZE); // Buffer full\n            buffer[in] = i;\n            in = (in + 1) % BUFFER_SIZE;\n            count++;\n            printf(\"Producer %d produced item %d\\n\", id, i);\n        }\n    }\n}\n\nvoid consumer(int id) {\n    for (int i = 0; i < NUM_ITEMS; i++) {\n        #pragma omp critical(consumer)\n        {\n            while (count == 0); // Buffer empty\n            int item = buffer[out];\n            out = (out + 1) % BUFFER_SIZE;\n            count--;\n            printf(\"Consumer %d consumed item %d\\n\", id, item);\n        }\n    }\n}\n\nint main() {\n    #pragma omp parallel num_threads(4)\n    {\n        int tid = omp_get_thread_num();\n        if (tid < 2) producer(tid);\n        else consumer(tid);\n    }\n    return 0;\n}",
+      "explanation": "Two producers and two consumers operate on a shared bounded buffer. The 'critical' sections ensure mutual exclusion - only one thread can execute the buffer operations at a time, preventing race conditions. Note: This is a simplified implementation; in practice, condition variables would be used for efficient blocking rather than busy-waiting.",
+      "timeComplexity": "O(NUM_ITEMS) per producer/consumer with serialization overhead",
+      "spaceComplexity": "O(BUFFER_SIZE) for shared buffer + O(1) per thread"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Task-Based Parallel Quicksort",
+      "description": "OpenMP task directive for parallelizing quicksort recursively, demonstrating dynamic task creation and synchronization.",
+      "code": "#include <stdio.h>\n#include <omp.h>\n\nvoid quicksort(int arr[], int low, int high) {\n    if (low < high) {\n        int pivot = arr[high];\n        int i = low - 1;\n        \n        for (int j = low; j < high; j++) {\n            if (arr[j] <= pivot) {\n                i++;\n                int temp = arr[i];\n                arr[i] = arr[j];\n                arr[j] = temp;\n            }\n        }\n        int temp = arr[i + 1];\n        arr[i + 1] = arr[high];\n        arr[high] = temp;\n        int pi = i + 1;\n        \n        // Create tasks for recursive calls\n        #pragma omp task\n        quicksort(arr, low, pi - 1);\n        \n        #pragma omp task\n        quicksort(arr, pi + 1, high);\n        \n        // Wait for both subarrays to be sorted\n        #pragma omp taskwait\n    }\n}\n\nint main() {\n    int arr[] = {10, 7, 8, 9, 1, 5};\n    int n = sizeof(arr) / sizeof(arr[0]);\n    \n    #pragma omp parallel\n    {\n        #pragma omp single\n        quicksort(arr, 0, n - 1);\n    }\n    \n    printf(\"Sorted array: \");\n    for (int i = 0; i < n; i++)\n        printf(\"%d \", arr[i]);\n    printf(\"\\n\");\n    return 0;\n}",
+      "explanation": "The quicksort algorithm naturally creates independent subproblems ideal for task parallelism. The '#pragma omp task' creates explicit work units for recursive calls that can be executed by any available thread. The '#pragma omp taskwait' ensures both subproblems complete before returning, maintaining correctness. This approach handles irregular parallelism efficiently.",
+      "timeComplexity": "O(n log n) average case, work divided among P threads",
+      "spaceComplexity": "O(log n) call stack depth, O(P) task queue potential"
+    }
+  ]
+}

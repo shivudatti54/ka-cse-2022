@@ -1,0 +1,2 @@
+# Doubly Linked List
+This module provides comprehensive coverage of Doubly Linked List (DLL) data structure for students/students/students. It establishes theoretical foundations through formal proofs, implements all essential operations with proper complexity analysis, and demonstrates practical applications in real-world scenarios. The content bridges conceptual understanding with implementation skills, preparing students for advanced data structure topics and algorithmic problem-solving.

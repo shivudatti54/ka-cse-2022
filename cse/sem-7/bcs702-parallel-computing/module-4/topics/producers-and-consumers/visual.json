@@ -1,0 +1,44 @@
+{
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "Producer-Consumer Architecture",
+      "description": "Shows producer threads generating data, shared bounded buffer with synchronization primitives, and consumer threads consuming data",
+      "elements": [
+        "Producer Thread(s) \u2192 Shared Buffer \u2190 Consumer Thread(s)",
+        "Empty Semaphore (counts empty slots)",
+        "Full Semaphore (counts filled slots)",
+        "Mutex (protects critical section)"
+      ],
+      "purpose": "Illustrate the overall architecture and data flow in producer-consumer problem"
+    },
+    {
+      "id": "d-2",
+      "title": "Circular Buffer State Machine",
+      "description": "Three-state diagram showing buffer transitions: Empty \u2194 Partially Filled \u2194 Full, with producer and consumer actions triggering transitions",
+      "elements": [
+        "Empty state (0 items) --(produce)--> Partial",
+        "Partial --(produce)--> Full",
+        "Full --(consume)--> Partial",
+        "Partial --(consume)--> Empty",
+        "wait(empty) blocks at Full",
+        "wait(full) blocks at Empty"
+      ],
+      "purpose": "Visualize valid buffer states and transitions for synchronization correctness"
+    },
+    {
+      "id": "d-3",
+      "title": "False Sharing Visualization",
+      "description": "Shows CPU cache lines and how adjacent buffer slots in different cache lines vs same cache line affect producer-consumer performance",
+      "elements": [
+        "CPU Core 1 (Producer) cache line with Slot 0",
+        "CPU Core 2 (Consumer) cache line with Slot 1",
+        "Case A: Slots aligned to cache lines - no false sharing",
+        "Case B: Slots share cache line - false sharing causes invalidation",
+        "Memory bus traffic arrows showing unnecessary transfers in Case B"
+      ],
+      "purpose": "Explain performance impact of data layout on cache behavior"
+    }
+  ],
+  "topicId": "producers-and-consumers"
+}

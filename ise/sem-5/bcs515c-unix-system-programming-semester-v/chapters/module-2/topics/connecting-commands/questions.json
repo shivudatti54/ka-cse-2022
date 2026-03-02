@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose and function of a pipe (|) in Unix shell programming. How does it facilitate connecting commands?",
+    "expectedPoints": [
+      "A pipe connects the standard output (stdout) of one command directly to the standard input (stdin) of another command.",
+      "It allows for the creation of a 'pipeline' where multiple simple commands can be chained together to perform a complex operation without the need for temporary files.",
+      "The shell creates a temporary, unnamed FIFO (First-In-First-Out) buffer in the kernel for the data to pass through, and the commands on either side of the pipe run concurrently."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast the use of a pipe (|) with command substitution using backticks (`command`) or $(command). Describe a scenario where you would use one over the other.",
+    "expectedPoints": [
+      "A pipe streams the output of one command as input to the next, ideal for processing data in a continuous flow (e.g., `ps aux | grep httpd`).",
+      "Command substitution is used to capture the standard output of a command and use it as an argument or part of a string for another command (e.g., `echo \"The date is $(date)\"`).",
+      "Pipes are for sequential data processing between programs, while command substitution is for embedding a command's result into the command line of another. One would use a pipe for filtering or transforming a data stream and command substitution to use a command's output as a parameter."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Describe in detail the sequence of system calls a shell performs to execute the pipeline `ls -l | grep '.txt' | wc -l`. Explain the role of `fork()`, `exec()`, `pipe()`, and `dup2()`/`close()` in this process.",
+    "expectedPoints": [
+      "The shell creates two pipes, one between the `ls` and `grep` processes, and another between the `grep` and `wc` processes, using the `pipe()` system call.",
+      "For each command (`ls`, `grep`, `wc`), the shell uses `fork()` to create a new child process. Each child then uses `dup2()` to redirect its standard input/output to the appropriate ends of the pipes before closing unused file descriptors.",
+      "Each child process then uses an `exec()` system call (e.g., `execlp`) to overlay itself with the actual command executable. The parent shell process waits for all children to complete using `wait()`."
+    ],
+    "marks": 10
+  }
+]

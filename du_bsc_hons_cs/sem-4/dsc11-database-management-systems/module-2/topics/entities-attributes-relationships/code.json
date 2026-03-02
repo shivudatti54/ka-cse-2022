@@ -1,0 +1,45 @@
+{
+  "topicId": "entities-attributes-relationships",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "ER to Relational Mapping - Strong Entity",
+      "description": "Converting a strong entity with different attribute types to a relational table",
+      "code": "// ER ENTITY: STUDENT\n// Attributes: StudentID (PK, Simple), Name (Simple), Address (Composite), Phone (Multi-valued), Age (Derived)\n\nCREATE TABLE Student (\n    StudentID INT PRIMARY KEY,\n    Name VARCHAR(50) NOT NULL,\n    Street VARCHAR(50),\n    City VARCHAR(30),\n    State VARCHAR(30),\n    PinCode VARCHAR(10),\n    DateOfBirth DATE NOT NULL\n);\n\n// Multi-valued attribute Phone becomes separate table\nCREATE TABLE StudentPhone (\n    StudentID INT,\n    PhoneNumber VARCHAR(15),\n    PRIMARY KEY (StudentID, PhoneNumber),\n    FOREIGN KEY (StudentID) REFERENCES Student(StudentID)\n);\n\n// Note: Derived attribute Age NOT stored - computed from DateOfBirth",
+      "explanation": "Strong entities map directly to tables. Simple and composite attributes become columns. Multi-valued attributes become separate tables with foreign key reference. Derived attributes are not stored.",
+      "timeComplexity": "N/A (DDL)",
+      "spaceComplexity": "Depends on data storage requirements"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "ER to Relational Mapping - Weak Entity",
+      "description": "Mapping a weak entity with identifying relationship to tables",
+      "code": "// ER: EMPLOYEE (Strong) -> Has -> DEPENDENT (Weak)\n// Employee: EmployeeID (PK), Name, Department\n// Dependent: DependentName (Partial Key), Relationship\n\nCREATE TABLE Employee (\n    EmployeeID INT PRIMARY KEY,\n    EmpName VARCHAR(50) NOT NULL,\n    Department VARCHAR(30)\n);\n\nCREATE TABLE Dependent (\n    EmployeeID INT,\n    DependentName VARCHAR(50),\n    Relationship VARCHAR(20),\n    PRIMARY KEY (EmployeeID, DependentName),\n    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)\n        ON DELETE CASCADE\n);\n\n// The primary key of Dependent is (EmployeeID + DependentName)\n// Foreign key also serves as primary key (composite)\n// ON DELETE CASCADE ensures dependent deleted when employee deleted",
+      "explanation": "Weak entities map to tables with composite primary key formed by owner's primary key and weak entity's partial key. Foreign key references the owner table. CASCADE delete maintains referential integrity.",
+      "timeComplexity": "N/A (DDL)",
+      "spaceComplexity": "Dependent table size typically much smaller than Employee"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "ER to Relational Mapping - Binary Relationships",
+      "description": "Mapping 1:1, 1:N, and M:N relationships to tables",
+      "code": "// CASE 1: 1:1 Relationship - Department has one Manager (Employee)\nCREATE TABLE Department (\n    DeptID INT PRIMARY KEY,\n    DeptName VARCHAR(30),\n    ManagerID INT UNIQUE,  // UNIQUE ensures 1:1\n    FOREIGN KEY (ManagerID) REFERENCES Employee(EmployeeID)\n);\n\n// CASE 2: 1:N Relationship - Department has many Employees\nCREATE TABLE Employee (\n    EmployeeID INT PRIMARY KEY,\n    EmpName VARCHAR(50),\n    DeptID INT,  // Foreign key in 'many' side\n    FOREIGN KEY (DeptID) REFERENCES Department(DeptID)\n);\n\n// CASE 3: M:N Relationship - Student enrolls in Courses\nCREATE TABLE Student (\n    StudentID INT PRIMARY KEY,\n    Name VARCHAR(50)\n);\n\nCREATE TABLE Course (\n    CourseID INT PRIMARY KEY,\n    CourseName VARCHAR(30)\n);\n\n// Junction table for M:N (includes relationship attributes)\nCREATE TABLE Enrollment (\n    StudentID INT,\n    CourseID INT,\n    EnrollmentDate DATE,\n    Grade CHAR(2),\n    PRIMARY KEY (StudentID, CourseID),\n    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),\n    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)\n);",
+      "explanation": "1:1: Foreign key can be on either side (usually where participation is total). 1:N: Foreign key goes on the 'many' side. M:N: Requires junction table with combined primary key and foreign keys to both tables.",
+      "timeComplexity": "O(n) for basic queries, O(n\u00b2) for join-heavy queries on M:N",
+      "spaceComplexity": "Junction table stores M\u00d7N pairs maximum"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "ER Diagram Validation - Check Entity Attributes",
+      "description": "Python program to validate basic ER modeling rules",
+      "code": "class Entity:\n    def __init__(self, name, attributes, key_attributes):\n        self.name = name\n        self.attributes = attributes  # List of attribute names\n        self.key_attributes = key_attributes  # Primary key attributes\n    \n    def is_valid_entity(self):\n        \"\"\"Check if entity has at least one attribute and a key\"\"\"\n        if not self.attributes:\n            return False, \"Entity must have at least one attribute\"\n        if not self.key_attributes:\n            return False, \"Entity must have a primary key\"\n        for key in self.key_attributes:\n            if key not in self.attributes:\n                return False, f\"Key {key} not in attributes\"\n        return True, \"Valid entity\"\n\nclass Relationship:\n    def __init__(self, name, entities, cardinality):\n        self.name = name\n        self.entities = entities  # List of participating entities\n        self.cardinality = cardinality  # '1:1', '1:N', 'M:N'\n    \n    def validate_cardinality(self):\n        \"\"\"Validate cardinality format\"\"\"\n        valid = ['1:1', '1:N', 'N:1', 'M:N']\n        if self.cardinality not in valid:\n            return False, f\"Invalid cardinality. Use: {valid}\"\n        return True, \"Valid cardinality\"\n\n# Example usage\nstudent = Entity(\"Student\", [\"StudentID\", \"Name\", \"Age\"], [\"StudentID\"])\nvalid, msg = student.is_valid_entity()\nprint(f\"Entity validation: {msg}\")\n\nenroll = Relationship(\"Enrolls\", [\"Student\", \"Course\"], \"M:N\")\nvalid, msg = enroll.validate_cardinality()\nprint(f\"Relationship validation: {msg}\")",
+      "explanation": "This program demonstrates basic ER model validation rules: entities must have attributes and keys, relationships must have valid cardinalities. Useful for checking database designs programmatically.",
+      "timeComplexity": "O(1) for each validation function",
+      "spaceComplexity": "O(1) - small fixed memory for objects"
+    }
+  ]
+}

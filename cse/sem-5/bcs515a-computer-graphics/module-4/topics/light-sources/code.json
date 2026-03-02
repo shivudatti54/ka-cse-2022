@@ -1,0 +1,55 @@
+{
+  "topicId": "light-sources",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Phong Illumination Calculation",
+      "description": "Computes Phong lighting model for a single light source",
+      "code": "// Phong Illumination Model\n// Input: surface normal N, light direction L, view direction V\n// Material: ka, kd, ks, shininess n\n// Light: Ia (ambient), Ii (intensity)\n\nFUNCTION PhongIllumination(N, L, V, ka, kd, ks, n, Ia, Ii):\n // Normalize all vectors\n N = normalize(N)\n L = normalize(L)\n V = normalize(V)\n \n // Ambient component\n I_ambient = ka * Ia\n \n // Diffuse component (Lambert)\n NdotL = dot(N, L)\n IF NdotL > 0 THEN:\n I_diffuse = kd * Ii * NdotL\n ELSE:\n I_diffuse = 0\n \n // Specular component\n R = reflect(-L, N) // R = 2(N·L)N - L\n RdotV = dot(R, V)\n IF RdotV > 0 AND NdotL > 0 THEN:\n I_specular = ks * Ii * (RdotV ^ n)\n ELSE:\n I_specular = 0\n \n // Total illumination\n RETURN I_ambient + I_diffuse + I_specular\nEND FUNCTION",
+      "explanation": "The Phong model combines three light components: ambient for base illumination, diffuse for matte surfaces following Lambert's law, and specular for shiny highlights. The reflection vector is computed using the built-in reflect function.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Point Light Attenuation",
+      "description": "Calculates light intensity attenuation based on distance",
+      "code": "// Point Light Attenuation\n// d = distance from light to surface\n// c1, c2, c3 = attenuation coefficients\n\nFUNCTION CalculateAttenuation(d, c1, c2, c3):\n // Avoid division by zero\n IF d < 0.001 THEN:\n RETURN 1.0\n \n // Standard attenuation formula\n attenuation = 1.0 / (c1 + c2 * d + c3 * d * d)\n \n // Clamp to reasonable range\n RETURN clamp(attenuation, 0.0, 1.0)\nEND FUNCTION\n\n// Example usage:\n// Close range (d=1): f(1) = 1/(0 + 1 + 0) = 1.0\n// Medium (d=5): f(5) = 1/(0 + 5 + 25) = 0.033\n// Far (d=10): f(10) = 1/(0 + 10 + 100) = 0.009",
+      "explanation": "Attenuation simulates real-world light falloff. Quadratic term (c3*d²) dominates at long distances, creating realistic light falloff. Typical values: c1=1, c2=0, c3=1 for physically accurate inverse-square falloff.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Gouraud Shading Implementation",
+      "description": "Vertex-based shading interpolation across polygon",
+      "code": "// Gouraud Shading - Vertex-based\n\nSTRUCTURE Vertex:\n position: vec3\n normal: vec3\n color: vec3\nEND STRUCTURE\n\nSTRUCTURE Polygon:\n vertices: array[3] of Vertex\nEND STRUCTURE\n\nFUNCTION GouraudShade(polygon, light, material):\n // Step 1: Calculate lighting at each vertex\n FOR EACH vertex IN polygon.vertices:\n vertex.color = PhongIllumination(\n vertex.normal,\n light.direction,\n camera.position, // View direction\n material.ka, material.kd, material.ks,\n material.shininess,\n light.ambient, light.diffuse\n )\n \n // Step 2: Interpolate across polygon for each pixel\n // (Done by rasterizer using barycentric coordinates)\n FOR EACH pixel ON polygon:\n // Linear interpolation of vertex colors\n pixel.color = interpolate(polygon.vertices[0].color,\n polygon.vertices[1].color,\n polygon.vertices[2].color,\n barycentric_coords)\n \n RETURN pixel_colors\nEND FUNCTION",
+      "explanation": "Gouraud shading computes lighting at vertices during vertex processing, then the rasterizer interpolates these color values across the polygon. Efficient but may miss specular highlights within polygons.",
+      "timeComplexity": "O(V) where V is vertices",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Spotlight Intensity Calculation",
+      "description": "Calculates spotlight contribution based on cone angle and falloff",
+      "code": "// Spotlight Intensity Calculation\n// L = direction from light to surface point (normalized)\n// D = spotlight direction (normalized)\n// cutoff = cone angle in radians\n// exponent = falloff control\n\nFUNCTION SpotlightIntensity(L, D, cutoff, exponent):\n // Angle between light direction and spotlight axis\n cos_angle = dot(-L, D) // -L because L points toward light\n \n // Angle of the cone edge\n cos_cutoff = cos(cutoff)\n \n // Check if point is inside the cone\n IF cos_angle < cos_cutoff THEN:\n RETURN 0.0 // Outside cone - no illumination\n \n // Calculate falloff from center to edge\n // Higher exponent = sharper edge\n spot = (cos_angle - cos_cutoff) / (1.0 - cos_cutoff)\n spot = spot ^ exponent\n \n RETURN spot\nEND FUNCTION\n\n// Combined with other lighting:\n// total = ambient + diffuse + specular * spotlight_factor",
+      "explanation": "The spotlight calculation determines if a surface point falls within the light cone. The exponent controls how quickly light fades from center (high = sharp edge) to outside (low = soft edge).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Blinn-Phong Lighting",
+      "description": "More efficient specular calculation using halfway vector",
+      "code": "// Blinn-Phong Illumination (optimized Phong)\n// Replaces R·V with N·H where H is halfway vector\n\nFUNCTION BlinnPhong(N, L, V, ka, kd, ks, n, Ia, Ii):\n N = normalize(N)\n L = normalize(L)\n V = normalize(V)\n \n // Ambient\n I_ambient = ka * Ia\n \n // Diffuse (same as Phong)\n NdotL = max(0, dot(N, L))\n I_diffuse = kd * Ii * NdotL\n \n // Blinn-Phong specular (halfway vector)\n H = normalize(L + V) // Halfway vector\n NdotH = dot(N, H)\n \n IF NdotH > 0 THEN:\n I_specular = ks * Ii * (NdotH ^ n)\n ELSE:\n I_specular = 0\n \n RETURN I_ambient + I_diffuse + I_specular\nEND FUNCTION\n\n// Key advantage: H always in upper hemisphere,\n// avoids R·V negatives that occur when V opposite to R",
+      "explanation": "Blinn-Phong replaces reflection vector computation with halfway vector (H), which is computationally cheaper. The H vector is always in the upper hemisphere avoiding sign issues. Standard in modern GPU pipelines.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

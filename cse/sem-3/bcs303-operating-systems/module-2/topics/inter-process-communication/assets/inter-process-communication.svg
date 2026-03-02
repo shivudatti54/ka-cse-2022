@@ -1,0 +1,437 @@
+<svg viewBox="0 0 800 1700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd"/>
+      <stop offset="100%" style="stop-color:#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0"/>
+      <stop offset="100%" style="stop-color:#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5"/>
+      <stop offset="100%" style="stop-color:#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee"/>
+      <stop offset="100%" style="stop-color:#ffcdd2"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff9800"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fillIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect { animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .step path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 1s ease-out forwards; }
+    .highlight { animation: pulse 2s ease-in-out infinite; }
+  </style>
+  
+  <rect width="800" height="1700" fill="#f8f9fa"/>
+  
+  <!-- Title Slide -->
+  <g class="step" id="step0" data-narration="Welcome to Inter-Process Communication. We explore how processes cooperate and exchange data in operating systems.">
+    <rect x="50" y="10" width="700" height="45" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" font-size="20" font-weight="bold" fill="#1565c0">Inter-Process Communication (IPC)</text>
+    <text x="400" y="70" text-anchor="middle" font-size="12" fill="#666">Operating Systems - Module 3</text>
+  </g>
+  
+  <!-- Independent vs Cooperating -->
+  <g class="step" id="step1" data-narration="Processes can be independent (working alone) or cooperating (sharing data). Independent processes cannot affect each other.">
+    <rect x="20" y="70" width="370" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="205" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#2e7d32">Independent Process</text>
+    <text x="205" y="108" text-anchor="middle" font-size="9" fill="#333">• Does NOT share data</text>
+    <text x="205" y="122" text-anchor="middle" font-size="9" fill="#333">• Cannot affect/be affected</text>
+    <text x="205" y="136" text-anchor="middle" font-size="9" fill="#333">• Deterministic execution</text>
+    <text x="205" y="150" text-anchor="middle" font-size="9" fill="#333">• Same input = Same output</text>
+    
+    <rect x="410" y="70" width="370" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="595" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">Cooperating Process</text>
+    <text x="595" y="108" text-anchor="middle" font-size="9" fill="#333">• SHARES data with others</text>
+    <text x="595" y="122" text-anchor="middle" font-size="9" fill="#333">• Can affect/be affected</text>
+    <text x="595" y="136" text-anchor="middle" font-size="9" fill="#333">• Non-deterministic</text>
+    <text x="595" y="150" text-anchor="middle" font-size="9" fill="#333">• Requires synchronization</text>
+  </g>
+  
+  <!-- Reasons for Process Cooperation -->
+  <g class="step" id="step2" data-narration="Processes cooperate for four key reasons: Information sharing, Computation speedup, Modularity, and Convenience (ICMC).">
+    <rect x="20" y="170" width="760" height="85" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#6a1b9a">Why Process Cooperation? (ICMC Mnemonic)</text>
+    <rect x="40" y="205" width="170" height="40" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="125" y="225" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">I - Information Sharing</text>
+    <text x="125" y="240" text-anchor="middle" font-size="8" fill="#666">Same info, concurrent access</text>
+    
+    <rect x="225" y="205" width="170" height="40" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="310" y="225" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">C - Computation Speedup</text>
+    <text x="310" y="240" text-anchor="middle" font-size="8" fill="#666">Parallel subtasks execution</text>
+    
+    <rect x="410" y="205" width="170" height="40" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="495" y="225" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">M - Modularity</text>
+    <text x="495" y="240" text-anchor="middle" font-size="8" fill="#666">Separate processes/threads</text>
+    
+    <rect x="595" y="205" width="170" height="40" rx="6" fill="#fff" stroke="#9c27b0"/>
+    <text x="680" y="225" text-anchor="middle" font-size="10" font-weight="bold" fill="#9c27b0">C - Convenience</text>
+    <text x="680" y="240" text-anchor="middle" font-size="8" fill="#666">Multiple tasks in parallel</text>
+  </g>
+  
+  <!-- IPC Models Overview -->
+  <g class="step" id="step3" data-narration="Two fundamental IPC models exist: Shared Memory (fast, direct access) and Message Passing (via OS kernel).">
+    <rect x="20" y="270" width="760" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#1565c0">Two Fundamental IPC Models</text>
+    
+    <!-- Shared Memory side -->
+    <rect x="50" y="310" width="320" height="35" rx="6" fill="#1976d2"/>
+    <text x="210" y="333" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Shared Memory</text>
+    <text x="210" y="355" text-anchor="middle" font-size="9" fill="#333">Processes share memory region directly</text>
+    
+    <!-- Message Passing side -->
+    <rect x="430" y="310" width="320" height="35" rx="6" fill="#ff9800"/>
+    <text x="590" y="333" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Message Passing</text>
+    <text x="590" y="355" text-anchor="middle" font-size="9" fill="#333">Processes exchange via kernel messages</text>
+  </g>
+  
+  <!-- Shared Memory Model Diagram -->
+  <g class="step" id="step4" data-narration="In Shared Memory, processes read and write directly to a common memory region. OS sets up the region initially.">
+    <rect x="20" y="370" width="760" height="100" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="400" y="392" text-anchor="middle" font-size="13" font-weight="bold" fill="#2e7d32">Shared Memory Model</text>
+    
+    <!-- Process A -->
+    <rect x="60" y="405" width="100" height="55" rx="6" fill="#4caf50"/>
+    <text x="110" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Process A</text>
+    <text x="110" y="440" text-anchor="middle" font-size="8" fill="#e8f5e9">read/write</text>
+    
+    <!-- Process B -->
+    <rect x="640" y="405" width="100" height="55" rx="6" fill="#4caf50"/>
+    <text x="690" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Process B</text>
+    <text x="690" y="440" text-anchor="middle" font-size="8" fill="#e8f5e9">read/write</text>
+    
+    <!-- Shared Memory Region -->
+    <rect x="200" y="395" width="400" height="65" rx="8" fill="#81c784" stroke="#2e7d32" stroke-width="2"/>
+    <text x="400" y="415" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Shared Memory Region</text>
+    <rect x="220" y="425" width="80" height="25" rx="4" fill="#a5d6a7"/>
+    <text x="260" y="442" text-anchor="middle" font-size="8" fill="#1b5e20">Buffer</text>
+    <rect x="310" y="425" width="80" height="25" rx="4" fill="#a5d6a7"/>
+    <text x="350" y="442" text-anchor="middle" font-size="8" fill="#1b5e20">Data</text>
+    <rect x="400" y="425" width="80" height="25" rx="4" fill="#a5d6a7"/>
+    <text x="440" y="442" text-anchor="middle" font-size="8" fill="#1b5e20">Data</text>
+    <rect x="490" y="425" width="80" height="25" rx="4" fill="#a5d6a7"/>
+    <text x="530" y="442" text-anchor="middle" font-size="8" fill="#1b5e20">Data</text>
+    
+    <!-- Arrows -->
+    <path d="M160 435 L200 435" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    <path d="M600 435 L560 435" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    
+    <!-- Kernel box -->
+    <rect x="320" y="470" width="160" height="25" rx="4" fill="#e0e0e0"/>
+    <text x="400" y="487" text-anchor="middle" font-size="9" fill="#333">Kernel (sets up region)</text>
+  </g>
+  
+  <!-- Producer-Consumer Problem -->
+  <g class="step" id="step5" data-narration="The Producer-Consumer problem is classic IPC: producer makes items, consumer uses them, with a buffer in between.">
+    <rect x="20" y="485" width="760" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="400" y="507" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">Producer-Consumer Problem</text>
+    
+    <!-- Producer -->
+    <rect x="50" y="520" width="120" height="40" rx="6" fill="#ff9800"/>
+    <text x="110" y="540" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Producer</text>
+    <text x="110" y="553" text-anchor="middle" font-size="8" fill="#fff3e0">Produces items</text>
+    
+    <!-- Arrow -->
+    <path d="M180 540 L250 540" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <text x="215" y="532" text-anchor="middle" font-size="8" fill="#e65100">write</text>
+    
+    <!-- Buffer -->
+    <rect x="260" y="510" width="280" height="60" rx="8" fill="#ffe0b2" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="535" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Buffer</text>
+    <text x="400" y="555" text-anchor="middle" font-size="8" fill="#333">Shared circular array (size N)</text>
+    
+    <!-- Arrow -->
+    <path d="M550 540 L620 540" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <text x="585" y="532" text-anchor="middle" font-size="8" fill="#e65100">read</text>
+    
+    <!-- Consumer -->
+    <rect x="630" y="520" width="120" height="40" rx="6" fill="#ff9800"/>
+    <text x="690" y="540" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Consumer</text>
+    <text x="690" y="553" text-anchor="middle" font-size="8" fill="#fff3e0">Consumes items</text>
+  </g>
+  
+  <!-- Bounded Buffer Implementation -->
+  <g class="step" id="step6" data-narration="Bounded buffer uses circular array with 'in' (producer writes here) and 'out' (consumer reads here) pointers.">
+    <rect x="20" y="585" width="760" height="100" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="400" y="607" text-anchor="middle" font-size="13" font-weight="bold" fill="#c62828">Bounded Buffer Implementation</text>
+    
+    <!-- Buffer array -->
+    <rect x="50" y="625" width="60" height="50" rx="4" fill="#ef9a9a" stroke="#c62828"/>
+    <text x="80" y="650" text-anchor="middle" font-size="9" fill="#c62828">0</text>
+    <text x="80" y="665" text-anchor="middle" font-size="7" fill="#333">A</text>
+    
+    <rect x="110" y="625" width="60" height="50" rx="4" fill="#ef9a9a" stroke="#c62828"/>
+    <text x="140" y="650" text-anchor="middle" font-size="9" fill="#c62828">1</text>
+    <text x="140" y="665" text-anchor="middle" font-size="7" fill="#333">B</text>
+    
+    <rect x="170" y="625" width="60" height="50" rx="4" fill="#ef9a9a" stroke="#c62828"/>
+    <text x="200" y="650" text-anchor="middle" font-size="9" fill="#c62828">2</text>
+    <text x="200" y="665" text-anchor="middle" font-size="7" fill="#333">C</text>
+    
+    <rect x="230" y="625" width="60" height="50" rx="4" fill="#fff"/>
+    <text x="260" y="650" text-anchor="middle" font-size="9" fill="#999">3</text>
+    
+    <rect x="290" y="625" width="60" height="50" rx="4" fill="#fff"/>
+    <text x="320" y="650" text-anchor="middle" font-size="9" fill="#999">4</text>
+    
+    <!-- Labels -->
+    <text x="80" y="695" text-anchor="middle" font-size="8" fill="#c62828">in=0</text>
+    <text x="200" y="695" text-anchor="middle" font-size="8" fill="#c62828">out=2</text>
+    
+    <!-- Code snippets -->
+    <rect x="400" y="620" width="360" height="70" rx="6" fill="#263238"/>
+    <text x="410" y="640" text-anchor="start" font-size="9" fill="#4fc3f7" font-family="monospace">item buffer[N];</text>
+    <text x="410" y="658" text-anchor="start" font-size="9" fill="#81c784" font-family="monospace">int in = 0;  // producer writes</text>
+    <text x="410" y="676" text-anchor="start" font-size="9" fill="#ffb74d" font-family="monospace">int out = 0; // consumer reads</text>
+    <text x="580" y="658" text-anchor="start" font-size="8" fill="#999" font-family="monospace">// N=5</text>
+  </g>
+  
+  <!-- Buffer Full/Empty Conditions -->
+  <g class="step" id="step7" data-narration="Buffer is FULL when (in+1) % N equals out. Buffer is EMPTY when in equals out. One slot is wasted to distinguish states.">
+    <rect x="20" y="700" width="760" height="75" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="722" text-anchor="middle" font-size="13" font-weight="bold" fill="#6a1b9a">Buffer States &amp; Limitations</text>
+    
+    <rect x="50" y="735" width="220" height="30" rx="6" fill="#fff" stroke="#6a1b9a"/>
+    <text x="160" y="755" text-anchor="middle" font-size="10" fill="#6a1b9a">Buffer FULL: (in+1)%N == out</text>
+    
+    <rect x="290" y="735" width="220" height="30" rx="6" fill="#fff" stroke="#6a1b9a"/>
+    <text x="400" y="755" text-anchor="middle" font-size="10" fill="#6a1b9a">Buffer EMPTY: in == out</text>
+    
+    <rect x="530" y="735" width="230" height="30" rx="6" fill="#fff" stroke="#c62828"/>
+    <text x="645" y="755" text-anchor="middle" font-size="10" fill="#c62828">Max N-1 items (1 slot wasted)</text>
+  </g>
+  
+  <!-- Message Passing Model -->
+  <g class="step" id="step8" data-narration="Message Passing uses send() and receive() operations. The kernel manages message queues between processes.">
+    <rect x="20" y="790" width="760" height="100" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="400" y="812" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">Message Passing Model</text>
+    
+    <!-- Process A -->
+    <rect x="60" y="830" width="100" height="50" rx="6" fill="#ff9800"/>
+    <text x="110" y="852" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Process P</text>
+    <text x="110" y="868" text-anchor="middle" font-size="8" fill="#fff3e0">send(msg)</text>
+    
+    <!-- Kernel/Message Queue -->
+    <rect x="200" y="825" width="400" height="60" rx="8" fill="#ffe0b2" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="848" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Kernel Message Queue / Mailbox</text>
+    <rect x="280" y="858" width="240" height="20" rx="4" fill="#fff"/>
+    <text x="400" y="873" text-anchor="middle" font-size="8" fill="#333">send() → [msg1][msg2] → receive()</text>
+    
+    <!-- Process B -->
+    <rect x="640" y="830" width="100" height="50" rx="6" fill="#ff9800"/>
+    <text x="690" y="852" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">Process Q</text>
+    <text x="690" y="868" text-anchor="middle" font-size="8" fill="#fff3e0">receive(msg)</text>
+    
+    <!-- Arrows -->
+    <path d="M160 855 L200 855" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <path d="M600 855 L560 855" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  </g>
+  
+  <!-- Direct Communication -->
+  <g class="step" id="step9" data-narration="Direct Communication explicitly names the recipient (send(P, msg)) or sender (receive(Q, msg)). Links auto-establish between pairs.">
+    <rect x="20" y="905" width="370" height="80" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="205" y="927" text-anchor="middle" font-size="12" font-weight="bold" fill="#1565c0">Direct Communication</text>
+    <text x="205" y="948" text-anchor="middle" font-size="9" fill="#333">send(P, message) - name recipient</text>
+    <text x="205" y="963" text-anchor="middle" font-size="9" fill="#333">receive(Q, message) - name sender</text>
+    <text x="205" y="978" text-anchor="middle" font-size="8" fill="#666">Link: exactly 2 processes, 1 link per pair</text>
+    
+    <!-- Diagram for direct -->
+    <rect x="50" y="985" width="60" height="35" rx="4" fill="#1976d2"/>
+    <text x="80" y="1002" text-anchor="middle" font-size="8" fill="#fff">P</text>
+    <path d="M110 1002 L160 1002" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <rect x="170" y="985" width="60" height="35" rx="4" fill="#1976d2"/>
+    <text x="200" y="1002" text-anchor="middle" font-size="8" fill="#fff">Q</text>
+    
+    <!-- Indirect Communication -->
+    <rect x="410" y="905" width="370" height="80" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="595" y="927" text-anchor="middle" font-size="12" font-weight="bold" fill="#2e7d32">Indirect Communication (Mailboxes)</text>
+    <text x="595" y="948" text-anchor="middle" font-size="9" fill="#333">send(A, message) - to mailbox A</text>
+    <text x="595" y="963" text-anchor="middle" font-size="9" fill="#333">receive(A, message) - from mailbox A</text>
+    <text x="595" y="978" text-anchor="middle" font-size="8" fill="#666">Link: shared mailbox, 2+ processes</text>
+    
+    <!-- Diagram for indirect -->
+    <rect x="450" y="990" width="40" height="30" rx="4" fill="#388e3c"/>
+    <text x="470" y="1007" text-anchor="middle" font-size="7" fill="#fff">P1</text>
+    <rect x="530" y="990" width="40" height="30" rx="4" fill="#388e3c"/>
+    <text x="550" y="1007" text-anchor="middle" font-size="7" fill="#fff">P2</text>
+    <rect x="610" y="975" width="60" height="45" rx="4" fill="#81c784" stroke="#2e7d32"/>
+    <text x="640" y="995" text-anchor="middle" font-size="8" font-weight="bold" fill="#1b5e20">Mailbox</text>
+    <text x="640" y="1008" text-anchor="middle" font-size="7" fill="#1b5e20">A</text>
+    <rect x="700" y="990" width="40" height="30" rx="4" fill="#388e3c"/>
+    <text x="720" y="1007" text-anchor="middle" font-size="7" fill="#fff">P3</text>
+    <path d="M490 1005 L610 998" stroke="#388e3c" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+    <path d="M670 997 L700 1005" stroke="#388e3c" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  </g>
+  
+  <!-- Synchronization Types -->
+  <g class="step" id="step10" data-narration="Synchronization can be blocking (sender waits) or non-blocking (sender continues). Both blocking = rendezvous.">
+    <rect x="20" y="1015" width="760" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1037" text-anchor="middle" font-size="13" font-weight="bold" fill="#c62828">Synchronization: Blocking vs Non-blocking</text>
+    
+    <!-- Blocking send -->
+    <rect x="40" y="1055" width="170" height="35" rx="6" fill="#fff" stroke="#c62828"/>
+    <text x="125" y="1073" text-anchor="middle" font-size="9" fill="#c62828">Blocking Send</text>
+    <text x="125" y="1085" text-anchor="middle" font-size="7" fill="#666">Sender waits for receiver</text>
+    
+    <!-- Non-blocking send -->
+    <rect x="230" y="1055" width="170" height="35" rx="6" fill="#fff" stroke="#388e3c"/>
+    <text x="315" y="1073" text-anchor="middle" font-size="9" fill="#388e3c">Non-blocking Send</text>
+    <text x="315" y="1085" text-anchor="middle" font-size="7" fill="#666">Sender continues immediately</text>
+    
+    <!-- Blocking receive -->
+    <rect x="420" y="1055" width="170" height="35" rx="6" fill="#fff" stroke="#c62828"/>
+    <text x="505" y="1073" text-anchor="middle" font-size="9" fill="#c62828">Blocking Receive</text>
+    <text x="505" y="1085" text-anchor="middle" font-size="7" fill="#666">Waits until message arrives</text>
+    
+    <!-- Non-blocking receive -->
+    <rect x="610" y="1055" width="170" height="35" rx="6" fill="#fff" stroke="#388e3c"/>
+    <text x="695" y="1073" text-anchor="middle" font-size="9" fill="#388e3c">Non-blocking Receive</text>
+    <text x="695" y="1085" text-anchor="middle" font-size="7" fill="#666">Returns null if no message</text>
+  </g>
+  
+  <!-- Buffering Types -->
+  <g class="step" id="step11" data-narration="Message queues have three capacities: Zero (rendezvous), Bounded (sender blocks when full), Unbounded (never blocks).">
+    <rect x="20" y="1115" width="760" height="75" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1137" text-anchor="middle" font-size="13" font-weight="bold" fill="#6a1b9a">Buffer Capacity Types</text>
+    
+    <rect x="40" y="1155" width="230" height="25" rx="6" fill="#fff" stroke="#6a1b9a"/>
+    <text x="155" y="1172" text-anchor="middle" font-size="9" fill="#6a1b9a">Zero Capacity: Rendezvous</text>
+    
+    <rect x="285" y="1155" width="230" height="25" rx="6" fill="#fff" stroke="#6a1b9a"/>
+    <text x="400" y="1172" text-anchor="middle" font-size="9" fill="#6a1b9a">Bounded: Finite queue (size n)</text>
+    
+    <rect x="530" y="1155" width="230" height="25" rx="6" fill="#fff" stroke="#6a1b9a"/>
+    <text x="645" y="1172" text-anchor="middle" font-size="9" fill="#6a1b9a">Unbounded: Infinite queue</text>
+  </g>
+  
+  <!-- Comparison Table -->
+  <g class="step" id="step12" data-narration="Shared Memory is faster but harder to program. Message Passing is slower but easier and better for distributed systems.">
+    <rect x="20" y="1205" width="760" height="110" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1227" text-anchor="middle" font-size="13" font-weight="bold" fill="#1565c0">Shared Memory vs Message Passing</text>
+    
+    <!-- Header -->
+    <rect x="30" y="1240" width="740" height="20" rx="4" fill="#1565c0"/>
+    <text x="150" y="1254" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">Aspect</text>
+    <text x="395" y="1254" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">Shared Memory</text>
+    <text x="640" y="1254" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">Message Passing</text>
+    
+    <!-- Row 1 -->
+    <rect x="30" y="1260" width="740" height="18" rx="3" fill="#e3f2fd"/>
+    <text x="150" y="1273" text-anchor="middle" font-size="8" fill="#333">Speed</text>
+    <text x="395" y="1273" text-anchor="middle" font-size="8" fill="#2e7d32">Faster (direct access)</text>
+    <text x="640" y="1273" text-anchor="middle" font-size="8" fill="#e65100">Slower (kernel calls)</text>
+    
+    <!-- Row 2 -->
+    <rect x="30" y="1278" width="740" height="18" rx="3" fill="#fff"/>
+    <text x="150" y="1291" text-anchor="middle" font-size="8" fill="#333">Synchronization</text>
+    <text x="395" y="1291" text-anchor="middle" font-size="8" fill="#2e7d32">Programmer handles</text>
+    <text x="640" y="1291" text-anchor="middle" font-size="8" fill="#e65100">OS handles</text>
+    
+    <!-- Row 3 -->
+    <rect x="30" y="1296" width="740" height="18" rx="3" fill="#e3f2fd"/>
+    <text x="150" y="1309" text-anchor="middle" font-size="8" fill="#333">Programming</text>
+    <text x="395" y="1309" text-anchor="middle" font-size="8" fill="#2e7d32">Difficult (race conditions)</text>
+    <text x="640" y="1309" text-anchor="middle" font-size="8" fill="#e65100">Easier (no conflicts)</text>
+    
+    <!-- Row 4 -->
+    <rect x="30" y="1314" width="740" height="18" rx="3" fill="#fff"/>
+    <text x="150" y="1327" text-anchor="middle" font-size="8" fill="#333">Distributed Systems</text>
+    <text x="395" y="1327" text-anchor="middle" font-size="8" fill="#2e7d32">Difficult</text>
+    <text x="640" y="1327" text-anchor="middle" font-size="8" fill="#e65100">Well-suited</text>
+  </g>
+  
+  <!-- Exam Tips -->
+  <g class="step" id="step13" data-narration="Key exam points: Draw diagrams, memorize bounded buffer code, know full/empty conditions, ICMC reasons, and comparisons.">
+    <rect x="20" y="1330" width="760" height="90" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1352" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">Exam Tips &amp; Key Formulas</text>
+    
+    <rect x="40" y="1365" width="170" height="45" rx="6" fill="#fff"/>
+    <text x="125" y="1380" text-anchor="middle" font-size="8" font-weight="bold" fill="#e65100">Producer Code</text>
+    <text x="125" y="1395" text-anchor="middle" font-size="7" fill="#333">while(((in+1)%N)==out);</text>
+    <text x="125" y="1407" text-anchor="middle" font-size="7" fill="#333">buffer[in]=item; in=(in+1)%N;</text>
+    
+    <rect x="225" y="1365" width="170" height="45" rx="6" fill="#fff"/>
+    <text x="310" y="1380" text-anchor="middle" font-size="8" font-weight="bold" fill="#e65100">Consumer Code</text>
+    <text x="310" y="1395" text-anchor="middle" font-size="7" fill="#333">while(in==out);</text>
+    <text x="310" y="1407" text-anchor="middle" font-size="7" fill="#333">item=buffer[out]; out=(out+1)%N;</text>
+    
+    <rect x="410" y="1365" width="170" height="45" rx="6" fill="#fff"/>
+    <text x="495" y="1380" text-anchor="middle" font-size="8" font-weight="bold" fill="#e65100">Full Condition</text>
+    <text x="495" y="1398" text-anchor="middle" font-size="9" fill="#c62828">(in + 1) % N == out</text>
+    <text x="495" y="1412" text-anchor="middle" font-size="8" fill="#333">Max N-1 items</text>
+    
+    <rect x="595" y="1365" width="170" height="45" rx="6" fill="#fff"/>
+    <text x="680" y="1380" text-anchor="middle" font-size="8" font-weight="bold" fill="#e65100">Empty Condition</text>
+    <text x="680" y="1398" text-anchor="middle" font-size="9" fill="#2e7d32">in == out</text>
+    <text x="680" y="1412" text-anchor="middle" font-size="8" fill="#333">Rendezvous = both blocking</text>
+  </g>
+  
+  <!-- Summary -->
+  <g class="step" id="step14" data-narration="We covered IPC fundamentals: Independent vs Cooperating processes, Shared Memory and Message Passing models, and the Producer-Consumer paradigm.">
+    <rect x="20" y="1435" width="760" height="65" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1460" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">Summary: What We Learned</text>
+    <text x="400" y="1485" text-anchor="middle" font-size="10" fill="#333">Independent processes work alone | Cooperating processes share data and require IPC</text>
+  </g>
+  
+  <g class="step" id="step15" data-narration="Shared Memory offers fast direct access but requires careful synchronization. Message Passing is easier but slower. Choose based on your use case.">
+    <rect x="20" y="1515" width="760" height="65" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1540" text-anchor="middle" font-size="14" font-weight="bold" fill="#1565c0">Key Takeaways</text>
+    <text x="400" y="1565" text-anchor="middle" font-size="10" fill="#333">Use Shared Memory for speed &amp; large data | Use Message Passing for modularity &amp; distributed systems</text>
+  </g>
+  
+  <g class="step" id="step16" data-narration="Direct communication names processes explicitly. Indirect uses mailboxes for better modularity. Synchronization types determine blocking behavior.">
+    <rect x="20" y="1595" width="760" height="65" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1620" text-anchor="middle" font-size="14" font-weight="bold" fill="#6a1b9a">Communication &amp; Synchronization</text>
+    <text x="400" y="1645" text-anchor="middle" font-size="10" fill="#333">Direct: explicit naming | Indirect: via mailboxes | Blocking: waits | Non-blocking: continues | Both blocking = rendezvous</text>
+  </g>
+
+  <!-- Decorative elements -->
+  <g class="step" id="step17" data-narration="Thank you for learning about Inter-Process Communication. Practice with diagrams and code to master this essential OS concept.">
+    <rect x="250" y="1675" width="300" height="30" rx="8" fill="url(#greenGrad)"/>
+    <text x="400" y="1695" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">End of IPC Concepts</text>
+  </g>
+</svg>

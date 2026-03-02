@@ -1,0 +1,167 @@
+{
+  "topicId": "sigcld-semantics",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the zombie process and how it can be prevented.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "A zombie is a terminated child process whose entry remains in process table until parent collects exit status",
+        "Parent must call wait()/waitpid() to collect exit status and remove entry",
+        "Using SA_NOCLDWAIT flag in sigaction() prevents zombies",
+        "Using double-fork technique or ignoring SIGCHLD also prevents zombies"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between wait() and waitpid() system calls.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "wait() blocks until any child terminates, waitpid() offers more options",
+        "waitpid() can wait for specific PID using first argument",
+        "waitpid() supports WNOHANG for non-blocking",
+        "waitpid() supports WUNTRACED for stopped processes",
+        "waitpid() can wait for process groups"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of SA_NOCLDSTOP and SA_NOCLDWAIT flags in sigaction()?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SA_NOCLDSTOP: prevents SIGCHLD delivery when child stops",
+        "SA_NOCLDWAIT: prevents child from becoming zombie on termination",
+        "SA_NOCLDSTOP is useful when only termination matters",
+        "SA_NOCLDWAIT automatically reaps children without parent involvement"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the SIGCLD/SIGCHLD signal and its significance in Unix process management.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SIGCLD/SIGCHLD sent to parent when child terminates",
+        "Allows parent to collect child exit status",
+        "Prevents zombie processes when handled properly",
+        "Essential for proper resource cleanup and preventing process table exhaustion"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Describe the double-fork technique for preventing zombie processes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Parent forks child, child forks grandchild, then child exits",
+        "Grandchild becomes orphan adopted by init",
+        "init automatically reaps grandchild when it terminates",
+        "Original parent doesn't need to wait for grandchild",
+        "Useful for creating daemon processes"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write a SIGCHLD signal handler that properly handles multiple child terminations.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use waitpid() with WNOHANG in a loop",
+        "Loop until waitpid() returns no more children",
+        "Use -1 as PID to wait for any child",
+        "Check return value > 0 for each child reaped",
+        "Handle ECHILD when no more children"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the default behavior of SIGCHLD in Linux and its implications.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Default disposition is SIG_IGN (ignore)",
+        "Child exit status is discarded automatically",
+        "Zombies are automatically reaped by init",
+        "Parent need not call wait() to prevent zombies",
+        "Trade-off: exit status information is lost"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program that demonstrates proper handling of SIGCHLD signal using sigaction() and waitpid(). Include proper signal handler with WNOHANG to handle multiple child terminations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use sigaction() to set up signal handler with SA_RESTART",
+        "Write signal handler using waitpid(-1, NULL, WNOHANG) in loop",
+        "Fork multiple child processes",
+        "Child processes do work and exit with status",
+        "Parent handles multiple SIGCHLD deliveries properly",
+        "No zombie processes should remain",
+        "Clean exit handling and status collection"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain in detail the various states of a child process and the role of SIGCHLD in process termination. Include zombie, orphan, and adopted states.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Running state: child executing",
+        "Stopped state: child paused, SIGCHLD can be sent with SA_NOCLDSTOP disabled",
+        "Terminated state: child exited but not collected - becomes zombie",
+        "Zombie state: process table entry retained until wait() called",
+        "Orphan state: parent died before child",
+        "init adoption: orphaned processes adopted by init (PID 1)",
+        "init automatically calls wait() to reap orphans",
+        "SIGCHLD triggers collection of exit status"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare signal() and sigaction() for SIGCHLD handling. Explain why sigaction() is preferred in production code.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "signal() behavior varies across Unix implementations",
+        "sigaction() provides portable, POSIX-standard behavior",
+        "sigaction() allows setting flags like SA_RESTART, SA_NOCLDSTOP, SA_NOCLDWAIT",
+        "sigaction() with SA_SIGINFO provides additional siginfo_t information",
+        "sigaction() handler remains installed after signal delivery",
+        "signal() may reset handler to SIG_DFL on some systems",
+        "sigaction() allows blocking other signals during handler execution",
+        "Better reliability and predictability for production systems"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Design a robust process management system that handles multiple child processes, prevents zombies, and properly collects exit status of each terminated child.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use sigaction() with SA_RESTART for reliable signal handling",
+        "Implement signal handler with waitpid(-1, NULL, WNOHANG) loop",
+        "Maintain data structure (array/list) to track child PIDs",
+        "Collect exit status using waitpid(pid, &status, 0)",
+        "Handle different exit scenarios: normal, signal, crash",
+        "Implement proper error handling for fork() failures",
+        "Consider using poll/select for I/O from children",
+        "Clean shutdown handling for all children"
+      ]
+    }
+  ]
+}

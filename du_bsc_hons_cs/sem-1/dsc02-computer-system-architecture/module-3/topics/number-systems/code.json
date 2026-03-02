@@ -1,0 +1,35 @@
+{
+  "topicId": "number-systems",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Decimal to Binary, Octal, and Hexadecimal Conversion",
+      "description": "Converts a decimal number to binary, octal, and hexadecimal representations using Python built-in functions and manual algorithms",
+      "code": "# Method 1: Using built-in functions\ndecimal_num = 42\n\nbinary_num = bin(decimal_num)\noctal_num = oct(decimal_num)\nhex_num = hex(decimal_num)\n\nprint(f\"Decimal: {decimal_num}\")\nprint(f\"Binary: {binary_num}\")\nprint(f\"Octal: {octal_num}\")\nprint(f\"Hexadecimal: {hex_num}\")\n\n# Method 2: Manual conversion algorithm\ndef decimal_to_binary(n):\n    if n == 0:\n        return '0'\n    binary = ''\n    while n > 0:\n        binary = str(n % 2) + binary\n        n = n // 2\n    return binary\n\ndef decimal_to_octal(n):\n    if n == 0:\n        return '0'\n    octal = ''\n    while n > 0:\n        octal = str(n % 8) + octal\n        n = n // 8\n    return octal\n\ndef decimal_to_hexadecimal(n):\n    if n == 0:\n        return '0'\n    hex_chars = '0123456789ABCDEF'\n    hex_num = ''\n    while n > 0:\n        hex_num = hex_chars[n % 16] + hex_num\n        n = n // 16\n    return hex_num\n\n# Test manual conversion\nnum = 255\nprint(f\"\\nManual Conversion for {num}:\")\nprint(f\"Binary: {decimal_to_binary(num)}\")\nprint(f\"Octal: {decimal_to_octal(num)}\")\nprint(f\"Hexadecimal: {decimal_to_hexadecimal(num)}\")",
+      "explanation": "This example demonstrates two approaches to convert decimal numbers to other bases. The built-in functions (bin(), oct(), hex()) provide quick conversion with '0b', '0o', '0x' prefixes. The manual algorithms use repeated division by the target base, collecting remainders to build the result string. For example, 42 in binary is 101010 (32+8+2).",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(log n)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Binary to Decimal Conversion and Binary Arithmetic Operations",
+      "description": "Converts binary strings to decimal and performs binary arithmetic operations including addition, subtraction, multiplication, and division",
+      "code": "def binary_to_decimal(binary_str):\n    # Remove '0b' prefix if present\n    if binary_str.startswith('0b'):\n        binary_str = binary_str[2:]\n    \n    decimal = 0\n    power = len(binary_str) - 1\n    \n    for digit in binary_str:\n        decimal += int(digit) * (2 ** power)\n        power -= 1\n    \n    return decimal\n\ndef binary_addition(bin1, bin2):\n    dec1 = binary_to_decimal(bin1)\n    dec2 = binary_to_decimal(bin2)\n    result = dec1 + dec2\n    return bin(result)[2:]\n\ndef binary_subtraction(bin1, bin2):\n    dec1 = binary_to_decimal(bin1)\n    dec2 = binary_to_decimal(bin2)\n    result = dec1 - dec2\n    if result < 0:\n        return '-' + bin(-result)[2:]\n    return bin(result)[2:]\n\ndef binary_multiplication(bin1, bin2):\n    dec1 = binary_to_decimal(bin1)\n    dec2 = binary_to_decimal(bin2)\n    result = dec1 * dec2\n    return bin(result)[2:]\n\n# Test conversions\nbinary_num = '11010'\ndecimal_result = binary_to_decimal(binary_num)\nprint(f\"Binary {binary_num} = Decimal {decimal_result}\")\n\n# Test arithmetic\nprint(f\"\\nBinary Arithmetic Operations:\")\nprint(f\"1010 + 1100 = {binary_addition('1010', '1100')}\")\nprint(f\"1100 - 1010 = {binary_subtraction('1100', '1010')}\")\nprint(f\"1010 * 110 = {binary_multiplication('1010', '110')}\")",
+      "explanation": "This example converts binary to decimal using positional values (each bit multiplied by 2^position). Binary arithmetic is performed by converting to decimal, computing the result, and converting back. Example: '11010' = 1×2^4 + 1×2^3 + 0×2^2 + 1×2^1 + 0×2^0 = 16+8+0+2+0 = 26.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Two's Complement Representation for Signed Numbers",
+      "description": "Demonstrates two's complement representation for signed binary numbers, including conversion to/from two's complement and range calculations",
+      "code": "def to_twos_complement(number, bits=8):\n    \"\"\"Convert a signed integer to two's complement binary\"\"\"\n    if number >= 0:\n        return format(number, f'0{bits}b')\n    else:\n        # For negative: 2^bits + number (handles wrap-around)\n        positive_rep = (2 ** bits) + number\n        return format(positive_rep, f'0{bits}b')\n\ndef from_twos_complement(binary_str, bits=8):\n    \"\"\"Convert two's complement binary to signed integer\"\"\"\n    if not binary_str.startswith('0b'):\n        binary_str = '0b' + binary_str\n    \n    value = int(binary_str, 2)\n    \n    # If MSB is 1, it's negative - subtract 2^bits\n    if value >= 2 ** (bits - 1):\n        value = value - (2 ** bits)\n    \n    return value\n\ndef twos_complement_range(bits):\n    \"\"\"Calculate min and max values for n-bit two's complement\"\"\"\n    min_val = -(2 ** (bits - 1))\n    max_val = (2 ** (bits - 1)) - 1\n    return min_val, max_val\n\n# Display ranges\nprint(\"Two's Complement Range:\")\nfor bits in [4, 8, 16, 32]:\n    min_v, max_v = twos_complement_range(bits)\n    print(f\"{bits}-bit: {min_v} to {max_v}\")\n\n# Convert positive and negative numbers\nprint(\"\\nConvert to Two's Complement (8-bit):\")\nfor num in [1, 42, -1, -42, -128]:\n    tc = to_twos_complement(num, 8)\n    print(f\"{num:4d} -> {tc}\")\n\n# Convert back from two's complement\nprint(\"\\nConvert from Two's Complement (8-bit):\")\ntest_cases = ['00000001', '00101010', '11111111', '11010110', '10000000']\nfor binary in test_cases:\n    decimal = from_twos_complement(binary, 8)\n    print(f\"{binary} -> {decimal:4d}\")",
+      "explanation": "Two's complement is the standard method for representing signed integers in computers. For n bits, the range is -2^(n-1) to 2^(n-1)-1. Positive numbers have the same binary representation as unsigned. Negative numbers are represented as 2^n + number (e.g., -1 in 8-bit is 256-1=255 = 11111111). The MSB indicates sign: 0=positive, 1=negative.",
+      "timeComplexity": "O(bits)",
+      "spaceComplexity": "O(bits)"
+    }
+  ]
+}

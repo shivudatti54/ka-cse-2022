@@ -1,0 +1,33 @@
+{
+  "topicId": "sqlite-database-in-android",
+  "examples": [
+    {
+      "id": "pseudocode-create-table",
+      "title": "Algorithm: Create Table",
+      "description": "Pseudocode to create a table in SQLite database",
+      "language": "pseudocode",
+      "code": "ALGORITHM CreateTable\nINPUT: tableName, columns\nOUTPUT: None\n\nBEGIN\n 1. Connect to SQLite database\n 2. Create table with given name and columns\n 3. Handle any errors\nEND",
+      "explanation": "Step-by-step explanation of creating a table in SQLite database"
+    },
+    {
+      "id": "java-sqliteopenhelper",
+      "title": "Java: SQLiteOpenHelper",
+      "description": "Java implementation of SQLiteOpenHelper to manage database creation and version upgrades",
+      "language": "java",
+      "code": "public class NotesDatabaseHelper extends SQLiteOpenHelper {\n // Database Info\n private static final String DATABASE_NAME = \"notesDatabase.db\";\n private static final int DATABASE_VERSION = 1;\n\n // Table and column names\n private static final String TABLE_NOTES = NotesContract.NotesEntry.TABLE_NAME;\n private static final String COLUMN_ID = NotesContract.NotesEntry._ID;\n private static final String COLUMN_TITLE = NotesContract.NotesEntry.COLUMN_NAME_TITLE;\n private static final String COLUMN_DESCRIPTION = NotesContract.NotesEntry.COLUMN_NAME_DESCRIPTION;\n private static final String COLUMN_TIMESTAMP = NotesContract.NotesEntry.COLUMN_NAME_TIMESTAMP;\n\n // Constructor\n public NotesDatabaseHelper(Context context) {\n super(context, DATABASE_NAME, null, DATABASE_VERSION);\n }\n\n // Called when database is created for the first time\n @Override\n public void onCreate(SQLiteDatabase db) {\n String CREATE_NOTES_TABLE = \"CREATE TABLE \" + TABLE_NOTES + \"(\" + COLUMN_ID + \" INTEGER PRIMARY KEY AUTOINCREMENT,\" + COLUMN_TITLE + \" TEXT NOT NULL,\" + COLUMN_DESCRIPTION + \" TEXT,\" + COLUMN_TIMESTAMP + \" DATETIME DEFAULT CURRENT_TIMESTAMP\" + \")\";\n db.execSQL(CREATE_NOTES_TABLE);\n }\n\n // Called when database version is upgraded\n @Override\n public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {\n if (oldVersion != newVersion) {\n // Simplest implementation: Drop old table and create new one\n db.execSQL(\"DROP TABLE IF EXISTS \" + TABLE_NOTES);\n onCreate(db);\n }\n }\n}",
+      "explanation": "Key implementation details of SQLiteOpenHelper in Java",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "java-crud-operations",
+      "title": "Java: CRUD Operations",
+      "description": "Java implementation of CRUD operations using SQLiteDatabase",
+      "language": "java",
+      "code": "public class NotesDao {\n private SQLiteDatabase database;\n private NotesDatabaseHelper dbHelper;\n\n public NotesDao(Context context) {\n dbHelper = new NotesDatabaseHelper(context);\n }\n\n // Insert a new note\n public long insertNote(String title, String description) {\n database = dbHelper.getWritableDatabase();\n ContentValues values = new ContentValues();\n values.put(NotesContract.NotesEntry.COLUMN_NAME_TITLE, title);\n values.put(NotesContract.NotesEntry.COLUMN_NAME_DESCRIPTION, description);\n // Insert row and return new row ID\n long newRowId = database.insert(NotesContract.NotesEntry.TABLE_NAME, null, values);\n database.close();\n return newRowId;\n }\n\n // Query all notes\n public List<Note> getAllNotes() {\n List<Note> notes = new ArrayList<>();\n database = dbHelper.getReadableDatabase();\n // Define columns to retrieve\n String[] projection = {\n NotesContract.NotesEntry._ID,\n NotesContract.NotesEntry.COLUMN_NAME_TITLE,\n NotesContract.NotesEntry.COLUMN_NAME_DESCRIPTION,\n NotesContract.NotesEntry.COLUMN_NAME_TIMESTAMP\n };\n // Query the database\n Cursor cursor = database.query(\n NotesContract.NotesEntry.TABLE_NAME, // Table name\n projection, // Columns to return\n null, // WHERE clause\n null, // WHERE values\n null, // GROUP BY\n null, // HAVING\n NotesContract.NotesEntry.COLUMN_NAME_TIMESTAMP + \" DESC\" // ORDER BY\n );\n // Iterate through results\n while (cursor.moveToNext()) {\n int id = cursor.getInt(cursor.getColumnIndexOrThrow(NotesContract.NotesEntry._ID));\n String title = cursor.getString(cursor.getColumnIndexOrThrow(NotesContract.NotesEntry.COLUMN_NAME_TITLE));\n String description = cursor.getString(cursor.getColumnIndexOrThrow(NotesContract.NotesEntry.COLUMN_NAME_DESCRIPTION));\n String timestamp = cursor.getString(cursor.getColumnIndexOrThrow(NotesContract.NotesEntry.COLUMN_NAME_TIMESTAMP));\n Note note = new Note(id, title, description, timestamp);\n notes.add(note);\n }\n cursor.close();\n database.close();\n return notes;\n }\n}",
+      "explanation": "Key implementation details of CRUD operations in Java",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

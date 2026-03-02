@@ -1,0 +1,2 @@
+# Queues
+This module provides comprehensive coverage of queue data structures for students/students/students, covering theoretical foundations, formal definitions with mathematical notation, implementation details for both array-based and linked list-based approaches, complexity analysis with proofs, and the circular queue solution to memory wastage. The content prepares students for advanced algorithm analysis and system design applications.

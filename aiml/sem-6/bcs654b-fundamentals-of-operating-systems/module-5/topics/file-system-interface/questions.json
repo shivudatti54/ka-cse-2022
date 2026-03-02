@@ -1,0 +1,157 @@
+{
+  "topicId": "file-system-interface",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between sequential access and direct (random) access methods for files. Under what circumstances would you choose one over the other?",
+      "keyPoints": [
+        "Sequential access reads/writes records in order, one after another, like tape; pointer moves only forward",
+        "Direct access allows positioning to any record directly using seek(), like magnetic disk",
+        "Choose sequential for: log files, streaming data, simple text files where you process\u4ece\u5934\u5230\u5c3e",
+        "Choose direct for: database systems, file editors, random access to large structured files",
+        "Direct access requires lseek() system call to position file pointer"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the structure of the open file table in an operating system. Explain why two levels (system-wide and per-process) are needed.",
+      "keyPoints": [
+        "Two-level table: System-wide table entry shared by all processes + Per-process table entry per process",
+        "System-wide table stores: file offset, access mode, flags, pointer to i-node",
+        "Per-process table stores: file descriptor, file pointer to system entry",
+        "Two levels needed because: file position is per-process (each process has own position in same file), but file itself (inode) is system-wide shared",
+        "Enables: independent file positions for forked processes, proper sharing semantics, efficient resource management"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are file attributes? List and explain at least five important file attributes stored by modern operating systems.",
+      "keyPoints": [
+        "File attributes/metadata describe a file, not its content",
+        "Name: identifier used by users and programs",
+        "Type: indicates file format (regular, directory, device, etc.)",
+        "Size: current file length in bytes",
+        "Permissions: who can read/write/execute (owner, group, others)",
+        "Timestamps: creation time, modification time, access time",
+        "Location: pointer to disk blocks (via inode)",
+        "Owner/Group: user and group IDs for protection"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the purpose of file buffering in operating systems. How does it improve performance, and what are potential disadvantages?",
+      "keyPoints": [
+        "Buffering temporarily stores data in memory during I/O operations",
+        "Purpose: reduces number of physical disk I/O operations by accumulating data",
+        "How it works: writes go to buffer first, actual disk write happens when buffer full or file closed",
+        "Improves performance: bulk transfers are faster than many small I/O operations",
+        "Disadvantages: data loss if system crashes before buffer flushed; delayed writes; complexity in maintaining consistency",
+        "Related to caching: caching keeps frequently accessed data in memory for fast retrieval"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the purpose of file locks in operating systems? Explain the difference between shared locks and exclusive locks.",
+      "keyPoints": [
+        "File locks coordinate concurrent access to files by multiple processes",
+        "Prevent race conditions and ensure data consistency",
+        "Shared Lock (Read Lock): multiple processes can hold simultaneously; allows reading only",
+        "Exclusive Lock (Write Lock): only one process can hold; prevents both reads and writes",
+        "Can be advisory (processes cooperate) or mandatory (OS enforces)",
+        "Examples: flock(), fcntl() in Unix; LockFile() in Windows"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between absolute path names and relative path names in file systems. Give examples and explain when each is appropriate.",
+      "keyPoints": [
+        "Absolute path: starts from root directory, complete path from / (Unix) or drive letter (Windows)",
+        "Relative path: interpreted from current working directory",
+        "Absolute example: /home/user/documents/report.txt or C:\\Users\\Admin\\file.txt",
+        "Relative example: ./docs/notes.txt or ../project/main.c",
+        "When to use absolute: when exact location known, scripts, configuration files",
+        "When to use relative: within project directories, portable applications, when current directory context matters",
+        "cd command changes relative path interpretation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Describe what happens internally when a process calls the open() system call to open a file. What data structures are updated?",
+      "keyPoints": [
+        "Kernel checks file existence and permissions",
+        "Allocates a file descriptor from process's file descriptor table",
+        "Creates/updates entry in system-wide open file table",
+        "File pointer initialized to 0 (or end of file for O_APPEND)",
+        "Returns file descriptor to process",
+        "If O_CREAT and file doesn't exist, creates new file",
+        "If error (no permission, file not found), returns -1",
+        "Data structures updated: per-process FD table + system-wide open file table + inode reference count incremented"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A process opens a file using open(\"data.txt\", O_RDWR | O_CREAT, 0644) and gets file descriptor 3. Then it performs: lseek(3, 100, SEEK_SET); read(3, buffer, 50); write(3, buffer, 30); close(3); Explain in detail what happens at each step, including the state of file descriptors, file position pointer, and any system tables involved.",
+      "keyPoints": [
+        "open() with O_RDWR|O_CREAT: Creates file if not exists, opens for read-write, returns fd=3, position=0",
+        "lseek(3, 100, SEEK_SET): Sets file position pointer to offset 100 from start",
+        "read(3, buffer, 50): Reads 50 bytes starting at offset 100, advances position to 150, data copied to buffer",
+        "write(3, buffer, 30): Writes 30 bytes from buffer at current position (150), advances position to 180; may extend file if needed",
+        "close(3): Releases file descriptor 3, removes entry from per-process table, decrements system table reference count; if last reference, flushes buffers to disk",
+        "System tables: Per-process table entry 3 points to system-wide entry; system entry has offset 180, mode RDWR, pointer to inode",
+        "If another process had same file open, its position would be independent"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the various file protection mechanisms provided by operating systems. How do they prevent unauthorized access? Explain with examples how permissions work in typical UNIX/Linux systems.",
+      "keyPoints": [
+        "File protection mechanisms: Passwords (not common), Access Control Lists (ACLs), UNIX permissions",
+        "UNIX permissions: Owner/Group/Others classification with Read/Write/Execute permissions",
+        "Permission bits: 9 bits (rwxr-xr-x) representing owner(3), group(3), others(3)",
+        "read (r): view file contents; write (w): modify; execute (x): run program",
+        "Directory permissions: r=list files, w=add/remove files, x=access (cd into) directory",
+        "chmod command changes permissions (e.g., chmod 755 file)",
+        "Also: special bits - SUID, SGID, Sticky bit for additional control",
+        "ACLs provide finer-grained control: specific users/groups with specific permissions",
+        "Kernel checks permissions on every open() call against process's UID/GID",
+        "Superuser (root) bypasses most permission checks"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Consider a scenario where multiple processes need to access the same file concurrently. Discuss the potential problems that can arise and the solutions provided by the operating system to ensure correct and efficient file access.",
+      "keyPoints": [
+        "Problems: Race conditions, data inconsistency, lost updates when multiple processes write",
+        "Process A reads 100 bytes, Process B reads same 100 bytes simultaneously, both modify, both write back - last write wins, first lost (lost update problem)",
+        "File locking solutions: Advisory locks (processes voluntarily check locks), Mandatory locks (OS enforces)",
+        "Types: Shared locks (multiple readers), Exclusive locks (single writer)",
+        "Atomic operations: O_APPEND flag ensures writes go to end atomically",
+        "flock() for whole-file locks, fcntl() for record-level locking",
+        "fcntl() with F_SETLKW blocks until lock available (wait), F_SETLK returns error if blocked (non-wait)",
+        "Lock inheritance: locks are NOT inherited across fork() but CAN be inherited across exec()",
+        "Deadlock possibility: if processes hold different locks and wait for each other's locks",
+        "Modern solutions: Memory-mapped files (mmap), file leases, mandatory byte-range locks"
+      ],
+      "marks": 10
+    }
+  ]
+}

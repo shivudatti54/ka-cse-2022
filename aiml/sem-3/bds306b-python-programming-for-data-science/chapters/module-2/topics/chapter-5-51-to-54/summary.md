@@ -1,0 +1,53 @@
+# Chapter 5 (5.1 to 5.4) Summary
+
+- **5.1: Introduction to Descriptive Statistics**
+  - Definition: Descriptive statistics is the process of summarizing and describing the basic features of a dataset.
+  - Important Concepts:
+    - Measures of central tendency (mean, median, mode)
+    - Measures of variability (range, variance, standard deviation)
+  - Key Formulas:
+    - Mean: Σx / N
+    - Median: (Σx) / N (when N is odd), ((Σx1) + (Σx2)) / N (when N is even)
+    - Mode: The most frequently occurring value
+    - Range: Maximum value - Minimum value
+    - Variance: Σ(x - μ)^2 / N
+    - Standard Deviation: √Variance
+  - Theorems:
+    - Central Limit Theorem (CLT): The distribution of sample means approaches a normal distribution as sample size increases
+
+- **5.2: Probability Theory**
+  - Definition: Probability is a measure of the likelihood of an event occurring.
+  - Important Concepts:
+    - Basic probability rules (complement rule, addition rule, multiplication rule)
+    - Conditional probability
+    - Bayes' theorem
+  - Key Formulas:
+    - Probability of an event: P(A) = Number of favorable outcomes / Total number of possible outcomes
+    - Conditional probability: P(A|B) = P(A and B) / P(B)
+    - Bayes' theorem: P(A|B) = P(B|A) \* P(A) / P(B)
+  - Theorems:
+    - Law of total probability: P(A) = Σ P(A|B_i) \* P(B_i)
+
+- **5.3: Probability Distribution**
+  - Definition: A probability distribution is a function that assigns probabilities to different values of a random variable.
+  - Important Concepts:
+    - Types of probability distributions (Bernoulli, binomial, Poisson, normal)
+    - Properties of probability distributions (mean, variance, standard deviation)
+  - Key Formulas:
+    - Mean: μ = ΣxP(x)
+    - Variance: σ^2 = Σ(x - μ)^2 P(x)
+    - Standard Deviation: σ = √Variance
+  - Theorems:
+    - Central Limit Theorem (CLT): The distribution of sample means approaches a normal distribution as sample size increases
+
+- **5.4: Inference**
+  - Definition: Inference is the process of making conclusions or decisions based on sample data.
+  - Important Concepts:
+    - Types of inference ( descriptive, inferential)
+    - Confidence intervals
+    - Hypothesis testing
+  - Key Formulas:
+    - Confidence interval: CI = x̄ ± (Z \* (σ / √N))
+    - Hypothesis testing: H_0: μ = μ_0 vs. H_1: μ ≠ μ_0
+  - Theorems:
+    - Sampling distribution of the mean: The distribution of sample means approaches a normal distribution as sample size increases

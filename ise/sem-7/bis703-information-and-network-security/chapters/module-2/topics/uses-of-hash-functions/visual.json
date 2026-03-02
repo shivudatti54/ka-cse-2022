@@ -1,0 +1,246 @@
+{
+  "topicId": "uses-of-hash-functions",
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "Merkle-Damgard Hash Construction",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Message (M)"
+          },
+          {
+            "id": "n2",
+            "label": "Pad Message"
+          },
+          {
+            "id": "n3",
+            "label": "Split into Blocks (M1, M2, ... Mn)"
+          },
+          {
+            "id": "n4",
+            "label": "Initialization Vector (IV)"
+          },
+          {
+            "id": "n5",
+            "label": "Compression Function (f)"
+          },
+          {
+            "id": "n6",
+            "label": "Intermediate Hash (H1)"
+          },
+          {
+            "id": "n7",
+            "label": "Final Hash (Hn)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n5",
+            "label": "M1"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n6"
+          },
+          {
+            "from": "n6",
+            "to": "n5",
+            "label": "H_i-1"
+          },
+          {
+            "from": "n3",
+            "to": "n5",
+            "label": "M_i",
+            "style": "dashed"
+          },
+          {
+            "from": "n5",
+            "to": "n7",
+            "label": "After last block"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Data Integrity Verification",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "File"
+          },
+          {
+            "id": "n2",
+            "label": "Hash Function H()"
+          },
+          {
+            "id": "n3",
+            "label": "Digest"
+          },
+          {
+            "id": "n4",
+            "label": "Send File + Digest"
+          },
+          {
+            "id": "n5",
+            "label": "Receiver: Recompute Hash"
+          },
+          {
+            "id": "n6",
+            "label": "Compare Digests"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" },
+          { "from": "n5", "to": "n6" }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Password Storage with Salted Hash",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Password"
+          },
+          {
+            "id": "n2",
+            "label": "Random Salt"
+          },
+          {
+            "id": "n3",
+            "label": "Concatenate: Password + Salt"
+          },
+          {
+            "id": "n4",
+            "label": "SHA-256 Hash"
+          },
+          {
+            "id": "n5",
+            "label": "Store Hash + Salt in DB"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n3" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" }
+        ]
+      }
+    },
+    {
+      "id": "d4",
+      "title": "Digital Signature using Hash",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Large Message (M)"
+          },
+          {
+            "id": "n2",
+            "label": "Hash H(M)"
+          },
+          {
+            "id": "n3",
+            "label": "Small Digest (h)"
+          },
+          {
+            "id": "n4",
+            "label": "Sign with Private Key"
+          },
+          {
+            "id": "n5",
+            "label": "Signature"
+          },
+          {
+            "id": "n6",
+            "label": "Verify with Public Key"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" },
+          { "from": "n5", "to": "n6" }
+        ]
+      }
+    },
+    {
+      "id": "d5",
+      "title": "Blockchain Hash Chain",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Block 1 (Data + Nonce + PrevHash=0)"
+          },
+          {
+            "id": "n2",
+            "label": "Hash1"
+          },
+          {
+            "id": "n3",
+            "label": "Block 2 (Data + Nonce + PrevHash=Hash1)"
+          },
+          {
+            "id": "n4",
+            "label": "Hash2"
+          },
+          {
+            "id": "n5",
+            "label": "Block 3 (Data + Nonce + PrevHash=Hash2)"
+          },
+          {
+            "id": "n6",
+            "label": "Hash3"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" },
+          { "from": "n5", "to": "n6" }
+        ]
+      }
+    }
+  ],
+  "visuals": [
+    {
+      "id": "uses-of-hash-functions-svg",
+      "title": "Uses of Cryptographic Hash Functions",
+      "description": "Animated visual showing four key applications of hash functions: data integrity verification, password storage with salting, digital signatures, and blockchain hash chains, along with essential security properties.",
+      "type": "animated-svg",
+      "file": "assets/uses-of-hash-functions.svg",
+      "animated": true
+    }
+  ]
+}

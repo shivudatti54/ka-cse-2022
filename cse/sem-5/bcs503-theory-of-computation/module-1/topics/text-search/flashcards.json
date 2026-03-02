@@ -1,0 +1,65 @@
+{
+  "topicId": "text-search",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "How can text pattern matching be framed as a language recognition problem in automata theory?",
+      "back": "Given pattern P of length m and text T of length n, we define the language L = {w \u2208 \u03a3* | P is a substring of w}. The text search problem becomes: Does the automaton accepting L accept T? Equivalently, find all positions i where the prefix of T ending at position i is in L."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the construction of an NFA from a pattern string for text search?",
+      "back": "For pattern P = p\u2081p\u2082...p\u2098, construct an NFA with m+1 states (q\u2080, q\u2081, ..., q\u2098). For i = 0 to m-1, add transition \u03b4(q\u1d62, p\u1d62\u208a\u2081) = q\u1d62\u208a\u2081. All states q\u2081 to q\u2098 are accepting states. On input text T, if the NFA reaches state q\u2098 at position j, pattern ends at position j."
+    },
+    {
+      "id": "fc-3",
+      "front": "How does the DFA-based text search differ from the NFA-based approach?",
+      "back": "The DFA has explicit transitions for every symbol in \u03a3, ensuring O(n) time with constant state transitions per input symbol. The NFA may have \u03b5-transitions and multiple active states, requiring subset construction to build the equivalent DFA. Both recognize the same language."
+    },
+    {
+      "id": "fc-4",
+      "front": "Define the transition function for a pattern-matching automaton.",
+      "back": "For pattern P of length m over alphabet \u03a3, the transition function \u03b4(q, a) for state q (0 \u2264 q \u2264 m) and symbol a \u2208 \u03a3 is defined as: \u03b4(q, a) = min{m, q+1} if a = P[q+1], else follow longest prefix of P that is suffix of (P[1..q] + a). This gives the longest match after consuming a."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the time complexity of automaton-based text search and why?",
+      "back": "DFA-based search: O(n) time where n is text length, since each character of text causes exactly one state transition. NFA-based search: O(mn) in worst case, where m is pattern length, due to multiple active states. The DFA achieves optimal linear time."
+    },
+    {
+      "id": "fc-6",
+      "front": "Explain the concept of 'state' in the context of finite automaton pattern matching.",
+      "back": "State q (0 \u2264 q \u2264 m) represents the length of the longest prefix of pattern P that is a suffix of the input processed so far. When in state q after reading text T[1..i], we have matched P[1..q] as suffix of T[1..i]. State m (accepting) indicates complete pattern match found."
+    },
+    {
+      "id": "fc-7",
+      "front": "How do regular expressions relate to text search in automata theory?",
+      "back": "A pattern P can be expressed as regular expression .*P.* over alphabet \u03a3, meaning 'any characters, then P, then any characters'. This regex recognizes exactly the strings containing P as substring. The finite automaton for this regex performs text search."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the purpose of the 'fallback' or 'failure' function in pattern-matching automata?",
+      "back": "When a mismatch occurs, the failure function determines the next state by finding the longest proper prefix of pattern that is also a suffix of what has been matched so far. This enables continuing the search without backing up in the text, crucial for achieving O(n) time."
+    },
+    {
+      "id": "fc-9",
+      "front": "How many states does the minimal DFA for pattern matching have?",
+      "back": "For pattern of length m over alphabet \u03a3, the minimal DFA has exactly m+1 states. This follows from the Myhill-Nerode theorem: each state represents distinct right-invariant equivalence class of strings that distinguish pattern continuation."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is the relationship between the KMP algorithm and finite automata?",
+      "back": "The KMP algorithm effectively simulates a deterministic finite automaton for pattern matching. The failure function in KMP computes the automaton's transition function. KMP's preprocessing phase builds the transition table, and the scanning phase simulates DFA transitions in O(n) time."
+    },
+    {
+      "id": "fc-11",
+      "front": "Define the language recognized by a pattern-matching finite automaton.",
+      "back": "For pattern P, the language L = {x | x = uPv for some u,v \u2208 \u03a3*} \u2286 \u03a3*. This is the set of all strings over \u03a3 that contain P as a substring. This is a regular language since it can be expressed as \u03a3*P\u03a3*."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is the space complexity of building a DFA for pattern matching?",
+      "back": "The DFA requires (m+1) \u00d7 |\u03a3| entries in the transition table, where m is pattern length and |\u03a3| is alphabet size. Thus space complexity is O(m|\u03a3|). For large alphabets, this can be optimized using lazy transition computation."
+    }
+  ]
+}

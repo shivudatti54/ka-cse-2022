@@ -1,0 +1,35 @@
+{
+  "topicId": "the-turing-machine",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Turing Machine for L = {0^n 1^n}",
+      "description": "Algorithm to accept strings of n zeros followed by n ones",
+      "code": "// TM for L = {0^n 1^n | n >= 1}\n// States: q0 (start), q1 (matching 0s), q2 (return), q3 (accept), q4 (reject)\n// Tape alphabet: {0, 1, X, Y, B}\n\nBEGIN\n// q0: Find first unmarked 0\nIF δ(q0, 0) THEN\n WRITE X\n MOVE RIGHT\n GO TO q1\nELSE IF δ(q0, Y) THEN\n MOVE RIGHT\n GO TO q2\nELSE IF δ(q0, B) THEN\n GO TO q3 (accept)\nELSE\n GO TO q4 (reject)\n\n// q1: Find matching 1 for marked 0\nIF δ(q1, 0) or δ(q1, X) THEN\n MOVE RIGHT\n STAY IN q1\nELSE IF δ(q1, 1) THEN\n WRITE Y\n MOVE LEFT\n GO TO q2\nELSE\n GO TO q4 (reject)\n\n// q2: Return to find next 0\nIF δ(q2, Y) or δ(q2, 0) or δ(q2, X) THEN\n MOVE LEFT\n STAY IN q2\nELSE IF δ(q2, X) THEN\n MOVE RIGHT\n GO TO q0\nELSE\n GO TO q4\n\nEND",
+      "explanation": "Uses marking technique: Replace 0 with X and find matching 1 to replace with Y. Continue until all matched. Accept if reach blank after all 1s matched, reject on mismatch.",
+      "timeComplexity": "O(n²)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Universal Turing Machine Simulation",
+      "description": "Shows how UTM simulates any other TM",
+      "code": "// UTM Simulation Algorithm\n// Input: <M, w> where M = (Q, Σ, Γ, δ, q0, B, F) and w = input\n\nBEGIN\n// Step 1: Parse description of M and input w\nREAD input tape\nDECODE transition function δ of M\nLOCATE w on simulation area of tape\n\n// Step 2: Main simulation loop\nREPEAT\n // Read current state and symbol\n current_state ← READ_STATE()\n current_symbol ← READ_TAPE()\n \n // Look up transition in δ\n IF δ(current_state, current_symbol) = (new_state, write_symbol, direction) THEN\n // Write new symbol\n WRITE_TAPE(write_symbol)\n \n // Update state\n WRITE_STATE(new_state)\n \n // Move head\n IF direction = 'L' THEN MOVE_LEFT()\n IF direction = 'R' THEN MOVE_RIGHT()\n \n // Check for halting\n IF new_state IN F THEN\n ACCEPT and HALT\n END IF\n ELSE\n // No transition defined - reject\n REJECT and HALT\n END IF\nUNTIL FALSE\n\nEND",
+      "explanation": "UTM interprets the encoding of any TM M and simulates its behavior on input w. This is the theoretical foundation of stored-program computers.",
+      "timeComplexity": "O(t × k) where t = steps of M, k = simulation overhead",
+      "spaceComplexity": "O(|M| + |w|)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Halting Problem Decider (Impossible - for proof)",
+      "description": "Illustrates the paradox used in undecidability proof",
+      "code": "// This is a CONCEPTUAL illustration - such machine CANNOT exist\n// Purpose: To understand the undecidability proof\n\nBEGIN\n// Proposed Halting Decider H(p, w)\nFUNCTION H(p, w):\n // Input: Program p and input w\n // Output: 'YES' if p halts on w, 'NO' if p loops on w\n \n // THEORETICAL: Simulate p on w\n SIMULATE(p, w)\n \n IF simulation_halts THEN\n RETURN 'YES'\n ELSE\n RETURN 'NO'\n\n// Now construct D that creates paradox\nFUNCTION D(M):\n // Input: Description of machine M\n \n result ← H(M, M) // Ask if M halts on its own description\n \n IF result = 'YES' THEN\n // If H says M halts, D enters infinite loop\n WHILE TRUE DO\n // Loop forever\n END WHILE\n ELSE\n // If H says M loops, D halts\n RETURN\n\n// Now run D on itself\nD(D)\n\n// Analysis:\n// - If H says D halts → D loops forever (contradiction)\n// - If H says D loops → D halts (contradiction)\n// Therefore H cannot exist!\n\nEND",
+      "explanation": "This code demonstrates the diagonalization argument. The paradox shows no algorithm can decide halting problem for all programs.",
+      "timeComplexity": "N/A - theoretical only",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

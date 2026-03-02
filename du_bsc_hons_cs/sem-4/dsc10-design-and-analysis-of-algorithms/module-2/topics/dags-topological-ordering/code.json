@@ -1,0 +1,45 @@
+{
+  "topicId": "dags-topological-ordering",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Kahn's Algorithm - Pseudocode",
+      "description": "BFS-based topological sorting algorithm using queue and in-degree calculation",
+      "code": "ALGORITHM TopologicalSortKahn(G)\n// G is a directed acyclic graph\nBEGIN\n  result = empty list\n  inDegree = array of size |V| initialized to 0\n  \n  // Step 1: Calculate in-degree of each vertex\n  FOR each vertex u in G.V:\n    FOR each vertex v in G.Adj[u]:\n      inDegree[v] = inDegree[v] + 1\n  \n  // Step 2: Initialize queue with source vertices\n  Queue = empty queue\n  FOR each vertex u in G.V:\n    IF inDegree[u] == 0:\n      Enqueue(Queue, u)\n  \n  // Step 3: Process vertices\n  WHILE Queue is not empty:\n    u = Dequeue(Queue)\n    Append u to result\n    \n    FOR each vertex v in G.Adj[u]:\n      inDegree[v] = inDegree[v] - 1\n      IF inDegree[v] == 0:\n        Enqueue(Queue, v)\n  \n  // Step 4: Check for cycle\n  IF length(result) != |V|:\n    RETURN \"Graph contains a cycle!\"\n  \n  RETURN result\nEND",
+      "explanation": "Kahn's Algorithm works by repeatedly removing vertices with zero in-degree (sources) and updating neighbor in-degrees. The algorithm uses BFS with a queue. If all vertices are processed, we have a valid topological order; otherwise, a cycle exists.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "DFS Topological Sort - Python",
+      "description": "Python implementation using DFS and stack",
+      "code": "from collections import defaultdict\n\ndef topological_sort_dfs(vertices, edges):\n    # Build adjacency list\n    graph = defaultdict(list)\n    in_degree = {v: 0 for v in vertices}\n    \n    for u, v in edges:\n        graph[u].append(v)\n        in_degree[v] += 1\n    \n    # DFS with recursion stack and visited set\n    visited = set()\n    rec_stack = set()\n    stack = []\n    \n    def dfs(node):\n        if node in rec_stack:\n            return False  # Cycle detected\n        if node in visited:\n            return True\n            \n        visited.add(node)\n        rec_stack.add(node)\n        \n        for neighbor in graph[node]:\n            if not dfs(neighbor):\n                return False\n        \n        rec_stack.remove(node)\n        stack.append(node)  # Push to stack after exploring\n        return True\n    \n    # Run DFS from each vertex\n    for vertex in vertices:\n        if vertex not in visited:\n            if not dfs(vertex):\n                return \"Graph contains a cycle!\"\n    \n    # Reverse stack for topological order\n    return stack[::-1]\n\n# Example usage\nvertices = ['A', 'B', 'C', 'D', 'E']\nedges = [('A', 'B'), ('A', 'C'), ('B', 'D'), ('C', 'D'), ('D', 'E')]\nprint(topological_sort_dfs(vertices, edges))",
+      "explanation": "This Python implementation uses DFS to find topological order. Vertices are pushed onto a stack after all their dependencies are explored. The final topological order is obtained by reversing the stack. Cycle detection is built-in using the recursion stack.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Kahn's Algorithm - C",
+      "description": "C implementation of Kahn's topological sort algorithm",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX_V 100\n\ntypedef struct {\n    int vertices;\n    int adj[MAX_V][MAX_V];\n    int inDegree[MAX_V];\n} Graph;\n\nvoid initGraph(Graph* g, int v) {\n    g->vertices = v;\n    for (int i = 0; i < v; i++) {\n        g->inDegree[i] = 0;\n        for (int j = 0; j < v; j++)\n            g->adj[i][j] = 0;\n    }\n}\n\nvoid addEdge(Graph* g, int u, int v) {\n    g->adj[u][v] = 1;\n    g->inDegree[v]++;\n}\n\nint* topologicalSort(Graph* g) {\n    int* result = malloc(g->vertices * sizeof(int));\n    int count = 0;\n    \n    // Queue implementation\n    int queue[MAX_V];\n    int front = 0, rear = 0;\n    \n    // Add all vertices with in-degree 0 to queue\n    for (int i = 0; i < g->vertices; i++) {\n        if (g->inDegree[i] == 0)\n            queue[rear++] = i;\n    }\n    \n    while (front < rear) {\n        int u = queue[front++];\n        result[count++] = u;\n        \n        for (int v = 0; v < g->vertices; v++) {\n            if (g->adj[u][v]) {\n                g->inDegree[v]--;\n                if (g->inDegree[v] == 0)\n                    queue[rear++] = v;\n            }\n        }\n    }\n    \n    if (count != g->vertices) {\n        printf(\"Graph contains a cycle!\\n\");\n        free(result);\n        return NULL;\n    }\n    \n    return result;\n}\n\nint main() {\n    Graph g;\n    initGraph(&g, 6);\n    addEdge(&g, 0, 1);  // A -> B\n    addEdge(&g, 0, 2);  // A -> C\n    addEdge(&g, 1, 3);  // B -> D\n    addEdge(&g, 2, 3);  // C -> D\n    addEdge(&g, 3, 4);  // D -> E\n    addEdge(&g, 2, 5);  // C -> F\n    \n    int* result = topologicalSort(&g);\n    if (result) {\n        printf(\"Topological Order: \");\n        for (int i = 0; i < g.vertices; i++)\n            printf(\"%c \", 'A' + result[i]);\n    }\n    \n    return 0;\n}",
+      "explanation": "This C implementation demonstrates Kahn's algorithm with a simple array-based queue. It calculates in-degrees, processes zero in-degree vertices, and reduces neighbor in-degrees. The result array contains vertices in topological order. If not all vertices are processed, a cycle exists.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-4",
+      "title": "Cycle Detection in Graph",
+      "description": "Java implementation for detecting cycles using Kahn's algorithm approach",
+      "code": "import java.util.*;\n\npublic class CycleDetection {\n    \n    public static boolean hasCycle(int vertices, List<int[]> edges) {\n        // Build adjacency list and in-degree array\n        List<List<Integer>> adj = new ArrayList<>();\n        int[] inDegree = new int[vertices];\n        \n        for (int i = 0; i < vertices; i++)\n            adj.add(new ArrayList<>());\n        \n        for (int[] edge : edges) {\n            int u = edge[0];\n            int v = edge[1];\n            adj.get(u).add(v);\n            inDegree[v]++;\n        }\n        \n        // Kahn's algorithm for cycle detection\n        Queue<Integer> queue = new LinkedList<>();\n        \n        // Add all vertices with in-degree 0\n        for (int i = 0; i < vertices; i++) {\n            if (inDegree[i] == 0)\n                queue.offer(i);\n        }\n        \n        int processed = 0;\n        \n        while (!queue.isEmpty()) {\n            int current = queue.poll();\n            processed++;\n            \n            for (int neighbor : adj.get(current)) {\n                inDegree[neighbor]--;\n                if (inDegree[neighbor] == 0)\n                    queue.offer(neighbor);\n            }\n        }\n        \n        // If not all vertices processed, cycle exists\n        return processed != vertices;\n    }\n    \n    public static void main(String[] args) {\n        // Example 1: DAG\n        List<int[]> dagEdges = Arrays.asList(\n            new int[]{0, 1}, new int[]{0, 2},\n            new int[]{1, 3}, new int[]{2, 3}\n        );\n        \n        // Example 2: Cyclic graph\n        List<int[]> cyclicEdges = Arrays.asList(\n            new int[]{0, 1}, new int[]{1, 2},\n            new int[]{2, 0}\n        );\n        \n        System.out.println(\"DAG has cycle: \" + hasCycle(4, dagEdges));\n        System.out.println(\"Cyclic graph has cycle: \" + hasCycle(3, cyclicEdges));\n    }\n}",
+      "explanation": "This Java implementation demonstrates cycle detection using Kahn's algorithm approach. The key insight is that if the queue becomes empty before processing all vertices, there must be a cycle. The processed count comparison at the end confirms whether a cycle exists in the directed graph.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)",
+      "language": "pseudocode"
+    }
+  ]
+}

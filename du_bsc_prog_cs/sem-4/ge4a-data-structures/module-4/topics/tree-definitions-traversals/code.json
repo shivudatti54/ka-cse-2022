@@ -1,0 +1,45 @@
+{
+  "topicId": "tree-definitions-traversals",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Tree Traversals (Recursive)",
+      "description": "All three recursive traversal algorithms for binary trees",
+      "code": "// PREORDER TRAVERSAL\nPREORDER(node)\nBEGIN\n    IF node = NULL THEN\n        RETURN\n    ENDIF\n    VISIT(node)              // Process root first\n    PREORDER(node.left)      // Then left subtree\n    PREORDER(node.right)     // Then right subtree\nEND\n\n// INORDER TRAVERSAL\nINORDER(node)\nBEGIN\n    IF node = NULL THEN\n        RETURN\n    ENDIF\n    INORDER(node.left)       // Left subtree first\n    VISIT(node)              // Then root\n    INORDER(node.right)      // Then right subtree\nEND\n\n// POSTORDER TRAVERSAL\nPOSTORDER(node)\nBEGIN\n    IF node = NULL THEN\n        RETURN\n    ENDIF\n    POSTORDER(node.left)     // Left subtree\n    POSTORDER(node.right)    // Right subtree\n    VISIT(node)              // Root last\nEND",
+      "explanation": "Preorder visits root first (useful for copying trees), Inorder gives sorted output for BST, Postorder visits root last (useful for deletion)",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h) where h is height of tree"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Level Order Traversal",
+      "description": "Breadth-first traversal using queue data structure",
+      "code": "LEVEL-ORDER(root)\nBEGIN\n    IF root = NULL THEN\n        RETURN\n    ENDIF\n    \n    CREATE queue Q\n    ENQUEUE(Q, root)\n    \n    WHILE Q is not empty DO\n        node = DEQUEUE(Q)\n        VISIT(node)\n        \n        IF node.left != NULL THEN\n            ENQUEUE(Q, node.left)\n        ENDIF\n        \n        IF node.right != NULL THEN\n            ENQUEUE(Q, node.right)\n        ENDIF\n    ENDWHILE\nEND",
+      "explanation": "Uses queue to process nodes level by level from left to right. Essential for breadth-first operations.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(w) where w is maximum width of tree, worst case O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "BST Search Operation",
+      "description": "Implementation of search in Binary Search Tree",
+      "code": "class TreeNode:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef search_bst(root, key):\n    \"\"\"Search for key in BST, return node if found\"\"\"\n    # Base case: root is null or key is at root\n    if root is None or root.key == key:\n        return root\n    \n    # Key is greater than root's key\n    if key < root.key:\n        return search_bst(root.left, key)\n    \n    # Key is smaller than root's key\n    return search_bst(root.right, key)\n\n# Iterative version\ndef search_bst_iterative(root, key):\n    while root is not None and key != root.key:\n        if key < root.key:\n            root = root.left\n        else:\n            root = root.right\n    return root",
+      "explanation": "Recursively compares target with nodes, going left for smaller values and right for larger. Returns node when found.",
+      "timeComplexity": "O(h) - O(log n) best/average, O(n) worst case",
+      "spaceComplexity": "O(h) for recursive, O(1) for iterative"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Binary Tree Creation and Traversal",
+      "description": "Complete C program demonstrating tree creation and all traversals",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    int data;\n    struct Node* left;\n    struct Node* right;\n};\n\nstruct Node* newNode(int data) {\n    struct Node* node = (struct Node*)malloc(sizeof(struct Node));\n    node->data = data;\n    node->left = NULL;\n    node->right = NULL;\n    return node;\n}\n\n// Preorder\nvoid preorder(struct Node* node) {\n    if (node == NULL) return;\n    printf(\"%d \", node->data);\n    preorder(node->left);\n    preorder(node->right);\n}\n\n// Inorder\nvoid inorder(struct Node* node) {\n    if (node == NULL) return;\n    inorder(node->left);\n    printf(\"%d \", node->data);\n    inorder(node->right);\n}\n\n// Postorder\nvoid postorder(struct Node* node) {\n    if (node == NULL) return;\n    postorder(node->left);\n    postorder(node->right);\n    printf(\"%d \", node->data);\n}\n\nint main() {\n    struct Node* root = newNode(1);\n    root->left = newNode(2);\n    root->right = newNode(3);\n    root->left->left = newNode(4);\n    root->left->right = newNode(5);\n    \n    printf(\"Preorder: \"); preorder(root);   // 1 2 4 5 3\n    printf(\"\\nInorder: \"); inorder(root);    // 4 2 5 1 3\n    printf(\"\\nPostorder: \"); postorder(root); // 4 5 2 3 1\n    return 0;\n}",
+      "explanation": "Complete working example showing tree node structure and all three recursive traversals in C.",
+      "timeComplexity": "O(n) for all traversals",
+      "spaceComplexity": "O(h) where h is height (recursion stack)"
+    }
+  ]
+}

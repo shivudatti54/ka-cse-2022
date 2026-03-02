@@ -1,0 +1,46 @@
+[
+  {
+    "id": "code-1",
+    "title": "Multiple Granularity Lock Acquisition Algorithm",
+    "description": "Algorithm showing how locks are acquired at different granularity levels following MGL protocol",
+    "code": "PROCEDURE AcquireLock(transaction, node, lockType)\nBEGIN\n // Check if parent lock exists for fine-grained locking\n IF node.parent != NULL THEN\n parentLock = GetLock(transaction, node.parent)\n IF lockType == S OR lockType == X THEN\n IF parentLock == NULL THEN\n RETURN DENY // Must have intent lock on parent\n END IF\n IF lockType == X AND parentLock != IX AND parentLock != SIX THEN\n RETURN DENY // Must have IX or SIX for X lock\n END IF\n END IF\n END IF\n \n // Check compatibility with existing locks\n existingLock = GetLock(otherTransactions, node)\n IF NOT Compatible(existingLock, lockType) THEN\n RETURN WAIT // Add to wait queue\n END IF\n \n // Grant lock and update lock table\n GrantLock(transaction, node, lockType)\n RETURN GRANT\nEND",
+    "explanation": "This pseudocode demonstrates the lock acquisition procedure in MGL. It shows that before acquiring S or X locks at a fine granularity level, the transaction must hold appropriate intent locks on parent nodes. It also checks lock compatibility before granting.",
+    "complexity": {
+      "time": "O(h) where h is height of lock hierarchy",
+      "space": "O(n) for lock table entries"
+    }
+  },
+  {
+    "id": "code-2",
+    "title": "Lock Compatibility Check Function",
+    "description": "Function to check if two lock modes are compatible",
+    "code": "FUNCTION Compatible(existingLock, requestedLock)\nBEGIN\n // Define compatibility matrix\n COMPATIBLE = {\n IS: {IS, S, IX},\n IX: {IS, IX},\n S: {IS, S, IX},\n SIX: {IS},\n X: {NL},\n NL: {IS, IX, S, SIX, X, NL}\n }\n \n IF requestedLock IN COMPATIBLE[existingLock] THEN\n RETURN TRUE\n ELSE\n RETURN FALSE\n END IF\nEND",
+    "explanation": "This function implements the lock compatibility matrix. It takes the existing lock and requested lock type, and returns whether they are compatible based on the MGL compatibility rules.",
+    "complexity": {
+      "time": "O(1) lookup using hash map",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "title": "Two-Phase Locking with Multiple Granularity",
+    "description": "Algorithm demonstrating the two-phase locking approach in MGL with growing and shrinking phases",
+    "code": "PROCEDURE TwoPhaseMultipleGranularityLock(transaction, operation)\nBEGIN\n // Phase 1: Growing Phase - Acquire all needed locks\n FOR EACH node IN DetermineLockHierarchy(operation) DO\n lockType = DetermineLockType(operation, node)\n result = AcquireLock(transaction, node, lockType)\n IF result == WAIT THEN\n // Wait for lock - may cause deadlock\n WaitForLock(transaction, node)\n END IF\n END FOR\n \n // Execute the operation (all locks acquired)\n ExecuteOperation(operation)\n \n // Phase 2: Shrinking Phase - Release all locks\n // Must release in reverse order (leaf to root)\n locksAcquired = GetAllLocks(transaction)\n ReverseSort(locksAcquired) // Leaf nodes first\n \n FOR EACH lock IN locksAcquired DO\n ReleaseLock(transaction, lock.node, lock.type)\n END FOR\nEND",
+    "explanation": "This algorithm demonstrates two-phase locking in MGL. The growing phase acquires locks from root to leaf, then operations are executed, and the shrinking phase releases locks from leaf to root. This ensures serializability.",
+    "complexity": {
+      "time": "O(n log n) due to sorting for release",
+      "space": "O(n) for storing acquired locks"
+    }
+  },
+  {
+    "id": "code-4",
+    "title": "Lock Escalation Procedure",
+    "description": "Algorithm showing how lock escalation works when threshold is reached",
+    "code": "PROCEDURE CheckAndEscalate(transaction)\nBEGIN\n currentLockCount = CountLocks(transaction)\n threshold = GetEscalationThreshold()\n \n IF currentLockCount > threshold THEN\n // Determine current granularity level\n currentLevel = GetLockGranularity(transaction)\n \n // Cannot escalate beyond file/table level\n IF currentLevel > MIN_GRANULARITY THEN\n // Convert all locks at current level to parent level\n parentLevel = GetParentLevel(currentLevel)\n \n locksAtCurrentLevel = GetLocks(transaction, currentLevel)\n \n // Check if we can acquire parent lock\n FOR EACH lock IN locksAtCurrentLevel DO\n parentNode = GetParent(lock.node)\n requiredLock = DetermineEscalationLock(lock.type)\n \n IF CanAcquire(transaction, parentNode, requiredLock) THEN\n // Release child locks and acquire parent lock\n ReleaseAllChildLocks(transaction, currentLevel)\n AcquireLock(transaction, parentNode, requiredLock)\n RETURN SUCCESS\n ELSE\n // Cannot escalate - wait or continue\n RETURN FAIL\n END IF\n END FOR\n END IF\n END IF\n \n RETURN NO_ESCALATION_NEEDED\nEND",
+    "explanation": "This pseudocode shows the lock escalation procedure. When the number of locks exceeds a threshold, the system converts fine-grained locks to coarse-grained locks to reduce overhead.",
+    "complexity": {
+      "time": "O(n) where n is number of locks to escalate",
+      "space": "O(n) for temporary lock storage"
+    }
+  }
+]

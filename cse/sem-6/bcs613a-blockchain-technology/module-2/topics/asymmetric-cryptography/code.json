@@ -1,0 +1,33 @@
+{
+  "topicId": "asymmetric-cryptography",
+  "examples": [
+    {
+      "id": "pseudocode-elliptic-curve-addition",
+      "title": "Algorithm: Elliptic Curve Point Addition",
+      "description": "Demonstrates the geometric operation of point addition on an elliptic curve",
+      "language": "pseudocode",
+      "code": "FUNCTION addPoints(P, Q)\n IF P = O THEN RETURN Q\n IF Q = O THEN RETURN P\n IF P.x = Q.x AND P.y = -Q.y THEN RETURN O\n m = (Q.y - P.y) / (Q.x - P.x)\n R.x = m^2 - P.x - Q.x\n R.y = m * (P.x - R.x) - P.y\n RETURN R",
+      "explanation": "This pseudocode demonstrates the geometric operation of point addition on an elliptic curve. It takes two points P and Q as input and returns their sum R."
+    },
+    {
+      "id": "python-ecdsa-signature-generation",
+      "title": "Python: ECDSA Signature Generation",
+      "description": "Demonstrates the process of generating a digital signature using ECDSA",
+      "language": "python",
+      "code": "import hashlib\nimport random\n\ndef generate_signature(private_key, message):\n # Select a random integer k\n k = random.randint(1, private_key.curve.order - 1)\n # Compute (x1, y1) = k * G\n x1, y1 = k * private_key.curve.generator\n # Compute r = x1 mod n\n r = x1 % private_key.curve.order\n # Compute s = k^-1 * (H(m) + d * r) mod n\n s = pow(k, -1, private_key.curve.order) * (hashlib.sha256(message.encode()).hexdigest() + private_key.d * r) % private_key.curve.order\n return r, s",
+      "explanation": "This Python code demonstrates the process of generating a digital signature using ECDSA. It takes a private key and a message as input and returns the signature (r, s).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "c-ecdh-key-exchange",
+      "title": "C: ECDH Key Exchange",
+      "description": "Demonstrates the process of establishing a shared secret using ECDH",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n// Define the elliptic curve parameters\n#define P 23\n#define A 1\n#define B 1\n#define G_X 5\n#define G_Y 1\n\n// Function to compute the shared secret\nvoid compute_shared_secret(int private_key, int public_key_x, int public_key_y) {\n int shared_secret_x, shared_secret_y;\n // Compute the shared secret using the private key and public key\n shared_secret_x = (private_key * public_key_x) % P;\n shared_secret_y = (private_key * public_key_y) % P;\n printf(\"Shared secret: (%d, %d)\\n\", shared_secret_x, shared_secret_y);\n}\n\nint main() {\n // Define the private keys\n int alice_private_key = 6;\n int bob_private_key = 15;\n\n // Compute the public keys\n int alice_public_key_x = (alice_private_key * G_X) % P;\n int alice_public_key_y = (alice_private_key * G_Y) % P;\n int bob_public_key_x = (bob_private_key * G_X) % P;\n int bob_public_key_y = (bob_private_key * G_Y) % P;\n\n // Compute the shared secret\n compute_shared_secret(alice_private_key, bob_public_key_x, bob_public_key_y);\n compute_shared_secret(bob_private_key, alice_public_key_x, alice_public_key_y);\n\n return 0;\n}",
+      "explanation": "This C code demonstrates the process of establishing a shared secret using ECDH. It defines the elliptic curve parameters and computes the shared secret using the private key and public key.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

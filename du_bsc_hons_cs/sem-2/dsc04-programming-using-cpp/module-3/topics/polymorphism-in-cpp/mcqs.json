@@ -1,0 +1,205 @@
+{
+  "topicId": "polymorphism-in-cpp",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the output of the following code?\n\nclass Base {\npublic:\n    virtual void show() { std::cout << \"Base\"; }\n};\n\nclass Derived : public Base {\npublic:\n    void show() override { std::cout << \"Derived\"; }\n};\n\nint main() {\n    Base* ptr = new Derived();\n    ptr->show();\n    delete ptr;\n    return 0;\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "Base"
+        },
+        {
+          "key": "B",
+          "text": "Derived"
+        },
+        {
+          "key": "C",
+          "text": "Compilation Error"
+        },
+        {
+          "key": "D",
+          "text": "Undefined Behavior"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Since show() is declared virtual in Base and overridden in Derived, runtime polymorphism ensures the Derived class's version is called through the base pointer.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which of the following statements about abstract classes in C++ is INCORRECT?",
+      "options": [
+        {
+          "key": "A",
+          "text": "An abstract class cannot be instantiated directly"
+        },
+        {
+          "key": "B",
+          "text": "A class with at least one pure virtual function is abstract"
+        },
+        {
+          "key": "C",
+          "text": "Abstract classes must have all member functions as pure virtual"
+        },
+        {
+          "key": "D",
+          "text": "Abstract classes can have constructors"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Abstract classes can have both pure virtual functions and regular (concrete) member functions; they are not required to have all functions as pure virtual.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Consider the following code:\n\nclass Animal {\npublic:\n    virtual void speak() = 0;\n    virtual ~Animal() {}\n};\n\nclass Dog : public Animal {\npublic:\n    void speak() override { std::cout << \"Bark\"; }\n};\n\nclass Cat : public Animal {\npublic:\n    void speak() override { std::cout << \"Meow\"; }\n};\n\nvoid makeSpeak(Animal& a) { a.speak(); }\n\nint main() {\n    Dog d; Cat c;\n    makeSpeak(d);\n    makeSpeak(c);\n    return 0;\n}\n\nWhat is the mechanism that allows the correct speak() function to be called for each animal type?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Function overloading at compile time"
+        },
+        {
+          "key": "B",
+          "text": "The vtable (virtual function table) accessed via vptr"
+        },
+        {
+          "key": "C",
+          "text": "Template instantiation at compile time"
+        },
+        {
+          "key": "D",
+          "text": "Static binding based on the reference type"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "At runtime, the vptr points to the class-specific vtable, and the correct function is dispatched based on the actual object type (Dog or Cat).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What will be the output of the following code and why?\n\nclass Base {\npublic:\n    virtual ~Base() { std::cout << \"Base \"; }\n};\n\nclass Derived : public Base {\npublic:\n    ~Derived() { std::cout << \"Derived \"; }\n};\n\nint main() {\n    Base* ptr = new Derived();\n    delete ptr;\n    return 0;\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "Base only"
+        },
+        {
+          "key": "B",
+          "text": "Derived only"
+        },
+        {
+          "key": "C",
+          "text": "Derived Base (in that order)"
+        },
+        {
+          "key": "D",
+          "text": "Base Derived (in that order)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Since the destructor is virtual, proper cleanup occurs: first Derived's destructor runs, then Base's destructor (reverse order of construction).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the 'slicing problem' in C++ polymorphism?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When a derived class object is assigned to a base class object, the derived portion is 'sliced off'"
+        },
+        {
+          "key": "B",
+          "text": "When virtual function calls are optimized away by the compiler"
+        },
+        {
+          "key": "C",
+          "text": "When dynamic_cast fails and returns nullptr"
+        },
+        {
+          "key": "D",
+          "text": "When a pure virtual function has no implementation"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Slicing occurs when a derived class object is assigned to a base class object by value, losing all derived-class-specific data and behavior.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Given the class hierarchy, what is the result of the following dynamic_cast?\n\nclass Base { virtual void foo() {} };\nclass Derived : public Base { void foo() {} };\nclass Unrelated { };\n\nint main() {\n    Base* b = new Derived();\n    Derived* d = dynamic_cast<Derived*>(b);\n    Unrelated* u = dynamic_cast<Unrelated*>(b);\n    // What are d and u respectively?\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "d points to valid Derived object, u is nullptr"
+        },
+        {
+          "key": "B",
+          "text": "d is nullptr, u points to valid Unrelated object"
+        },
+        {
+          "key": "C",
+          "text": "Both d and u point to valid objects"
+        },
+        {
+          "key": "D",
+          "text": "Both d and u are nullptr"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "dynamic_cast succeeds for valid downcasts (Derived* from Base* pointing to Derived), but returns nullptr for invalid cross-casts between unrelated types.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Consider this code with potential errors:\n\nclass Shape {\npublic:\n    virtual void draw() { std::cout << \"Shape\"; }\n};\n\nclass Circle : public Shape {\npublic:\n    void Draw() { std::cout << \"Circle\"; }  // Note: Capital D\n};\n\nint main() {\n    Shape* s = new Circle();\n    s->draw();\n    delete s;\n    return 0;\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "Prints 'Shape' due to function hiding"
+        },
+        {
+          "key": "B",
+          "text": "Prints 'Circle' as expected"
+        },
+        {
+          "key": "C",
+          "text": "Compilation error due to function signature mismatch"
+        },
+        {
+          "key": "D",
+          "text": "Runtime error due to vtable corruption"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Circle::Draw() with capital D is a completely different function (not overriding), so it hides Shape::draw(). The base version is called, printing 'Shape'.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "You are designing a plugin architecture where a main application loads shared libraries at runtime. Each plugin derives from a common Plugin base class. Which combination of C++ features is MOST appropriate to ensure proper polymorphic behavior and memory safety?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Virtual functions + delete via base pointer + static_cast"
+        },
+        {
+          "key": "B",
+          "text": "Pure virtual functions + virtual destructor + dynamic_cast for type checking"
+        },
+        {
+          "key": "C",
+          "text": "Override keyword + default constructors + reinterpret_cast"
+        },
+        {
+          "key": "D",
+          "text": "Abstract class + protected destructors + compile-time type checking"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pure virtual functions define the interface, virtual destructor ensures proper cleanup through base pointers, and dynamic_cast safely identifies plugin types at runtime.",
+      "difficulty": "hard"
+    }
+  ]
+}

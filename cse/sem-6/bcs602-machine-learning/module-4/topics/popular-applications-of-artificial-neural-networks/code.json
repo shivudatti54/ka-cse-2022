@@ -1,0 +1,33 @@
+{
+  "topicId": "popular-applications-of-artificial-neural-networks",
+  "examples": [
+    {
+      "id": "pseudocode-image-classification",
+      "title": "Pseudocode: Image Classification",
+      "description": "Simple image classification algorithm",
+      "language": "pseudocode",
+      "code": "ALGORITHM ImageClassification\nINPUT: image\nOUTPUT: class label\n\nBEGIN\n Convolve image with filters\n Apply activation function\n Pool feature maps\n Flatten and classify\nEND",
+      "explanation": "Basic steps involved in image classification using convolutional neural networks"
+    },
+    {
+      "id": "python-text-generation",
+      "title": "Python: Text Generation with GPT",
+      "description": "Text generation using GPT model",
+      "language": "python",
+      "code": "import torch\nfrom transformers import GPT2Tokenizer, GPT2Model\n\n# Load pre-trained GPT model and tokenizer\nmodel = GPT2Model.from_pretrained('gpt2')\ntokenizer = GPT2Tokenizer.from_pretrained('gpt2')\n\n# Define a function to generate text\ndef generate_text(prompt, length):\n inputs = tokenizer.encode(prompt, return_tensors='pt')\n outputs = model.generate(inputs, max_length=length)\n return tokenizer.decode(outputs[0], skip_special_tokens=True)\n\n# Test the function\nprint(generate_text('Hello, how are you?', 50))",
+      "explanation": "This code demonstrates how to use the GPT model to generate text",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "python-object-detection",
+      "title": "Python: Object Detection with YOLO",
+      "description": "Object detection using YOLO model",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Load pre-trained YOLO model\nnet = cv2.dnn.readNet('yolov3.weights', 'yolov3.cfg')\n\n# Define a function to detect objects\ndef detect_objects(image):\n # Get image dimensions\n (H, W) = image.shape[:2]\n\n # Get layer names\n ln = net.getLayerNames()\n ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]\n\n # Create a blob from the image\n blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)\n\n # Set the input blob for the network\n net.setInput(blob)\n\n # Run the object detection\n outputs = net.forward(ln)\n\n # Initialize the lists of detected bounding boxes, confidences, and class IDs\n boxes = []\n confidences = []\n classIDs = []\n\n # Loop over each of the layer outputs\n for output in outputs:\n # Loop over each of the detections\n for detection in output:\n # Extract the class ID and confidence (i.e., probability) of the current object detection\n scores = detection[5:]\n classID = np.argmax(scores)\n confidence = scores[classID]\n\n # Filter out weak predictions by ensuring the detected probability is greater than the minimum probability\n if confidence > 0.5:\n # Scale the bounding box coordinates back relative to the size of the image, keeping in mind that YOLO actually\n # returns the center (x, y)-coordinates of the bounding box followed by the boxes' width and height\n box = detection[0:4] * np.array([W, H, W, H])\n (centerX, centerY, width, height) = box.astype('int')\n\n # Use the center (x, y)-coordinates to derive the top and and left corner of the bounding box\n x = int(centerX - (width / 2))\n y = int(centerY - (height / 2))\n\n # Update our list of bounding box coordinates, confidences, and class IDs\n boxes.append([x, y, int(width), int(height)])\n confidences.append(float(confidence))\n classIDs.append(classID)\n\n # Apply non-maxima suppression to suppress weak, overlapping bounding boxes\n idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)\n\n # Return the detected objects\n return idxs, boxes, confidences, classIDs\n\n# Test the function\nimage = cv2.imread('image.jpg')\nidxs, boxes, confidences, classIDs = detect_objects(image)\nfor i in idxs.flatten():\n (x, y) = (boxes[i][0], boxes[i][1])\n (w, h) = (boxes[i][2], boxes[i][3])\n cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)\ncv2.imshow('Image', image)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "explanation": "This code demonstrates how to use the YOLO model to detect objects in an image",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "pointer-and-reference-variables",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C++",
+      "title": "Basic Pointer and Reference Declaration",
+      "description": "Demonstrates how to declare and use pointers and reference variables in C++",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int num = 42;\n    \n    // Pointer declaration and initialization\n    int* ptr = &num;\n    \n    // Reference declaration\n    int& ref = num;\n    \n    cout << \"Value of num: \" << num << endl;\n    cout << \"Address of num (&num): \" << &num << endl;\n    cout << \"Value through pointer (*ptr): \" << *ptr << endl;\n    cout << \"Value through reference (ref): \" << ref << endl;\n    \n    // Modify through reference\n    ref = 100;\n    cout << \"After modifying ref, num = \" << num << endl;\n    \n    // Modify through pointer\n    *ptr = 200;\n    cout << \"After modifying *ptr, num = \" << num << endl;\n    \n    return 0;\n}",
+      "explanation": "1. int* ptr declares a pointer to an integer\n2. &num gets the memory address of num\n3. int& ref creates a reference (alias) to num\n4. *ptr dereferences the pointer to access the value\n5. References are aliases - modifying ref changes num directly",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "C++",
+      "title": "Pointers and Arrays with Function Parameters",
+      "description": "Shows how pointers work with arrays and passing by reference to functions",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Pass by pointer\nvoid doubleValue(int* ptr) {\n    if (ptr != nullptr) {\n        *ptr = *ptr * 2;\n    }\n}\n\n// Pass by reference\nvoid tripleValue(int& ref) {\n    ref = ref * 3;\n}\n\n// Array traversal using pointer arithmetic\nint sumArray(int* arr, int size) {\n    int sum = 0;\n    int* ptr = arr;\n    for (int i = 0; i < size; i++) {\n        sum += *(ptr + i);  // or sum += ptr[i]\n    }\n    return sum;\n}\n\nint main() {\n    int x = 10;\n    \n    // Using pointer parameter\n    doubleValue(&x);\n    cout << \"After doubleValue: \" << x << endl;\n    \n    // Using reference parameter\n    tripleValue(x);\n    cout << \"After tripleValue: \" << x << endl;\n    \n    // Array with pointers\n    int numbers[] = {5, 10, 15, 20, 25};\n    int size = sizeof(numbers) / sizeof(numbers[0]);\n    \n    cout << \"Sum of array: \" << sumArray(numbers, size) << endl;\n    \n    // Pointer to array\n    int* ptr = numbers;\n    cout << \"First element: \" << *ptr << endl;\n    cout << \"Second element: \" << *(ptr + 1) << endl;\n    \n    return 0;\n}",
+      "explanation": "1. doubleValue takes a pointer parameter - must pass address with &\n2. tripleValue takes a reference parameter - no & needed in call\n3. Arrays decay to pointers when passed to functions\n4. Pointer arithmetic: *(ptr + i) accesses element at index i\n5. Both pointers and references enable call-by-reference in functions",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "C++",
+      "title": "Dynamic Memory Allocation and Smart Pointers",
+      "description": "Advanced example covering heap memory, pointers to pointers, and smart pointers",
+      "code": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nclass Student {\npublic:\n    string name;\n    int rollNo;\n    \n    Student(string n, int r) : name(n), rollNo(r) {\n        cout << \"Constructor: \" << name << endl;\n    }\n    \n    ~Student() {\n        cout << \"Destructor: \" << name << endl;\n    }\n    \n    void display() {\n        cout << \"Name: \" << name << \", Roll No: \" << rollNo << endl;\n    }\n};\n\nint main() {\n    // Dynamic memory allocation using new\n    int* dynamicNum = new int(50);\n    cout << \"Dynamic integer: \" << *dynamicNum << endl;\n    delete dynamicNum;\n    \n    // Dynamic array\n    int* arr = new int[5]{10, 20, 30, 40, 50};\n    for (int i = 0; i < 5; i++) {\n        cout << \"arr[\" << i << \"] = \" << arr[i] << endl;\n    }\n    delete[] arr;\n    \n    // Pointer to pointer\n    int** ptr2ptr;\n    int* ptr1;\n    int value = 100;\n    ptr1 = &value;\n    ptr2ptr = &ptr1;\n    cout << \"Value via pointer to pointer: \" << **ptr2ptr << endl;\n    \n    // Smart Pointers (C++11)\n    cout << \"\\n--- Smart Pointers ---\" << endl;\n    \n    // unique_ptr - exclusive ownership\n    unique_ptr<Student> student1 = make_unique<Student>(\"Alice\", 101);\n    student1->display();\n    \n    // shared_ptr - shared ownership with reference counting\n    shared_ptr<Student> student2 = make_shared<Student>(\"Bob\", 102);\n    shared_ptr<Student> student3 = student2;\n    cout << \"Use count: \" << student2.use_count() << endl;\n    \n    // weak_ptr - non-owning reference to shared_ptr\n    weak_ptr<Student> weakStudent = student2;\n    if (auto locked = weakStudent.lock()) {\n        cout << \"Weak pointer accessed: \";\n        locked->display();\n    }\n    \n    cout << \"\\nEnd of main - smart pointers auto-delete\" << endl;\n    return 0;\n}",
+      "explanation": "1. new allocates heap memory, delete frees it\n2. new[] allocates array on heap, delete[] frees it\n3. Pointer to pointer (int**) stores address of another pointer\n4. unique_ptr: exclusive ownership, automatically deleted when out of scope\n5. shared_ptr: reference counting, deleted when count reaches 0\n6. weak_ptr: non-owning reference, can be expired or locked to access",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

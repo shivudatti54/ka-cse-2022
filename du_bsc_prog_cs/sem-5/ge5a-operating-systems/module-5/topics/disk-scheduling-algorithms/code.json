@@ -1,0 +1,45 @@
+{
+  "topicId": "disk-scheduling-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FCFS Disk Scheduling",
+      "description": "Implementation of First Come First Served disk scheduling algorithm",
+      "code": "def fcfs_disk_scheduling(requests, head):\n    \"\"\"\n    FCFS Disk Scheduling\n    Args: requests - list of track numbers to service\n          head - initial position of disk head\n    Returns: total head movement\n    \"\"\"\n    total_seek = 0\n    current_head = head\n    \n    print(f\"Initial head position: {head}\")\n    print(\"\\nFCFS Service Order:\")\n    \n    for i, request in enumerate(requests):\n        seek_distance = abs(current_head - request)\n        total_seek += seek_distance\n        print(f\"Step {i+1}: Head moves from {current_head} to {request}, seek distance: {seek_distance}\")\n        current_head = request\n    \n    print(f\"\\nTotal seek time: {total_seek}\")\n    return total_seek\n\n# Example usage\nrequests = [95, 180, 34, 119, 12, 190]\nhead_start = 50\nfcfs_disk_scheduling(requests, head_start)",
+      "explanation": "This FCFS implementation services requests in exact order of arrival, calculating seek distance for each movement and summing them for total seek time.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "SSTF Disk Scheduling",
+      "description": "Implementation of Shortest Seek Time First algorithm",
+      "code": "def sstf_disk_scheduling(requests, head):\n    \"\"\"\n    SSTF Disk Scheduling\n    Services the request closest to current head position\n    \"\"\"\n    total_seek = 0\n    current_head = head\n    remaining = requests.copy()  # List of pending requests\n    service_order = []\n    \n    print(f\"Initial head position: {head}\")\n    print(\"\\nSSTF Service Order:\")\n    \n    while remaining:\n        # Find request with minimum seek time\n        min_distance = float('inf')\n        nearest_idx = 0\n        \n        for i, request in enumerate(remaining):\n            distance = abs(current_head - request)\n            if distance < min_distance:\n                min_distance = distance\n                nearest_idx = i\n        \n        # Service the nearest request\n        request = remaining.pop(nearest_idx)\n        total_seek += min_distance\n        service_order.append(request)\n        print(f\"Head moves from {current_head} to {request}, seek distance: {min_distance}\")\n        current_head = request\n    \n    print(f\"\\nService order: {service_order}\")\n    print(f\"Total seek time: {total_seek}\")\n    return total_seek\n\n# Example usage\nrequests = [95, 180, 34, 119, 12, 190]\nhead_start = 50\nsstf_disk_scheduling(requests, head_start)",
+      "explanation": "SSTF always selects the request closest to the current head position, minimizing each individual seek. Uses linear search to find nearest request each iteration.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "SCAN Disk Scheduling (Elevator Algorithm)",
+      "description": "Implementation of SCAN algorithm that moves to one end then reverses",
+      "code": "def scan_disk_scheduling(requests, head, disk_size=200):\n    \"\"\"\n    SCAN Disk Scheduling (Elevator Algorithm)\n    Moves head to one end, servicing requests, then reverses\n    \"\"\"\n    # Sort requests\n    sorted_requests = sorted(requests)\n    total_seek = 0\n    current_head = head\n    service_order = []\n    \n    print(f\"Initial head position: {head}\")\n    print(f\"Disk size: {disk_size}\")\n    print(\"\\nSCAN Service Order:\")\n    \n    # Find split point (first request > head)\n    split_idx = 0\n    for i, req in enumerate(sorted_requests):\n        if req >= head:\n            split_idx = i\n            break\n    \n    # Service requests greater than head (moving right)\n    for request in sorted_requests[split_idx:]:\n        seek_distance = abs(current_head - request)\n        total_seek += seek_distance\n        service_order.append(request)\n        print(f\"Move {current_head} \u2192 {request}, distance: {seek_distance}\")\n        current_head = request\n    \n    # Go to end of disk\n    if current_head < disk_size - 1:\n        seek_distance = abs(current_head - (disk_size - 1))\n        total_seek += seek_distance\n        print(f\"Move to end: {current_head} \u2192 {disk_size-1}, distance: {seek_distance}\")\n        current_head = disk_size - 1\n    \n    # Reverse and service remaining requests (moving left)\n    for request in reversed(sorted_requests[:split_idx]):\n        seek_distance = abs(current_head - request)\n        total_seek += seek_distance\n        service_order.append(request)\n        print(f\"Move {current_head} \u2192 {request}, distance: {seek_distance}\")\n        current_head = request\n    \n    print(f\"\\nService order: {service_order}\")\n    print(f\"Total seek time: {total_seek}\")\n    return total_seek\n\n# Example usage\nrequests = [95, 180, 34, 119, 12, 190]\nhead_start = 50\nscan_disk_scheduling(requests, head_start)",
+      "explanation": "SCAN sorts requests and services all requests in one direction, then goes to the end and reverses to service remaining requests. This ensures no starvation.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "C-SCAN Disk Scheduling in C",
+      "description": "Implementation of C-SCAN algorithm providing uniform wait times",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// C-SCAN Disk Scheduling Algorithm\nint compare(const void *a, const void *b) {\n    return (*(int*)a - *(int*)b);\n}\n\nint cscan_scheduling(int requests[], int n, int head, int disk_size) {\n    int total_seek = 0;\n    int current_head = head;\n    \n    // Sort requests\n    int sorted[100];\n    for(int i = 0; i < n; i++) sorted[i] = requests[i];\n    qsort(sorted, n, sizeof(int), compare);\n    \n    printf(\"C-SCAN Service Order:\\n\");\n    \n    // Find requests greater than head\n    int count = 0;\n    for(int i = 0; i < n; i++) {\n        if(sorted[i] >= head) {\n            count = i;\n            break;\n        }\n    }\n    \n    // Service requests > head (circular)\n    for(int i = count; i < n; i++) {\n        int seek = abs(current_head - sorted[i]);\n        total_seek += seek;\n        printf(\"Move %d -> %d, seek: %d\\n\", current_head, sorted[i], seek);\n        current_head = sorted[i];\n    }\n    \n    // Jump to beginning (if not already at 0)\n    if(current_head != 0) {\n        int seek = abs(current_head - 0);\n        total_seek += seek;\n        printf(\"Jump to start: %d -> 0, seek: %d\\n\", current_head, seek);\n        current_head = 0;\n    }\n    \n    // Service remaining requests from beginning\n    for(int i = 0; i < count; i++) {\n        int seek = abs(current_head - sorted[i]);\n        total_seek += seek;\n        printf(\"Move %d -> %d, seek: %d\\n\", current_head, sorted[i], seek);\n        current_head = sorted[i];\n    }\n    \n    printf(\"Total seek time: %d\\n\", total_seek);\n    return total_seek;\n}\n\nint main() {\n    int requests[] = {95, 180, 34, 119, 12, 190};\n    int n = sizeof(requests) / sizeof(requests[0]);\n    int head = 50;\n    int disk_size = 200;\n    \n    cscan_scheduling(requests, n, head, disk_size);\n    return 0;\n}",
+      "explanation": "C-SCAN treats the disk as circular, servicing requests in one direction then jumping back to the beginning without servicing requests on the return path, providing uniform wait times.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

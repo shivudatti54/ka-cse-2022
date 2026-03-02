@@ -1,0 +1,32 @@
+{
+  "topicId": "the-rsa-algorithm",
+  "examples": [
+    {
+      "explanation": "This pseudocode demonstrates RSA key generation, computing both the public key (n, e) and private key (d). It uses extended Euclidean algorithm to compute the modular inverse.",
+      "id": "code-1",
+      "language": "pseudocode",
+      "spaceComplexity": "O(1)",
+      "timeComplexity": "O(log\u00b3(n))",
+      "title": "RSA Key Generation Algorithm",
+      "code": "BEGIN EXTENDED_GCD(a, b)\n  // Recursive extended Euclidean algorithm\n  IF b = 0 THEN\n    RETURN (a, 1, 0)  // gcd(a,b) = a, coefficients: 1, 0\n  END IF\n  \n  (g, x1, y1) \u2190 EXTENDED_GCD(b, a mod b)\n  \n  // Update coefficients\n  x \u2190 y1\n  y \u2190 x1 - (a div b) \u00d7 y1\n  \n  RETURN (g, x, y)\nEND"
+    },
+    {
+      "explanation": "This code implements RSA encryption and decryption using modular exponentiation with the square-and-multiply algorithm for efficiency. Encryption: C = M^e mod n; Decryption: M = C^d mod n.",
+      "id": "code-2",
+      "language": "pseudocode",
+      "spaceComplexity": "O(1)",
+      "timeComplexity": "O(log e) = O(k) for k-bit exponent",
+      "title": "RSA Encryption and Decryption",
+      "code": "BEGIN RSA_ENCRYPT(message M, public_key (e, n))\n  // Input: M must be less than n\n  // Output: ciphertext C = M^e mod n\n  \n  IF M \u2265 n THEN\n    RETURN ERROR: Message too large for modulus\n  END IF\n  \n  C \u2190 MODULAR_EXPONENTIATION(M, e, n)\n  RETURN C\nEND\n\nBEGIN RSA_DECRYPT(ciphertext C, private_key (d, n))\n  // Output: message M = C^d mod n\n  \n  M \u2190 MODULAR_EXPONENTIATION(C, d, n)\n  RETURN M\nEND\n\nBEGIN MODULAR_EXPONENTIATION(base, exp, mod)\n  // Square-and-multiply (binary exponentiation)\n  // Efficient: O(log exp) modular multiplications\n  \n  result \u2190 1\n  base \u2190 base mod mod\n  \n  WHILE exp > 0 DO\n    // If current bit of exponent is 1, multiply result by base\n    IF (exp mod 2) = 1 THEN\n      result \u2190 (result \u00d7 base) mod mod\n    END IF\n    \n    // Square the base\n    base \u2190 (base \u00d7 base) mod mod\n    \n    // Right shift exponent (divide by 2)\n    exp \u2190 exp div 2\n  END WHILE\n  \n  RETURN result\nEND"
+    },
+    {
+      "explanation": "This implementation shows CRT-based RSA decryption optimization, which provides approximately 4\u00d7 speedup by computing modular exponentiation modulo p and q separately (smaller moduli), then combining the results.",
+      "id": "code-3",
+      "language": "pseudocode",
+      "spaceComplexity": "O(1)",
+      "timeComplexity": "O(k\u00b3/8) - approximately 4\u00d7 faster than standard",
+      "title": "RSA Decryption using CRT Optimization",
+      "code": "BEGIN RSA_CRT_DECRYPT(C, d, p, q)\n  // Chinese Remainder Theorem optimization\n  // Split computation into two smaller moduli\n  \n  // Step 1: Compute exponentiations modulo p and q\n  dp \u2190 d mod (p - 1)  // For efficiency: reduce exponent\n  dq \u2190 d mod (q - 1)\n  \n  // Step 2: Compute partial decryptions\n  M1 \u2190 MODULAR_EXPONENTIATION(C, dp, p)  // C^d mod p\n  M2 \u2190 MODULAR_EXPONENTIATION(C, dq, q)  // C^d mod q\n  \n  // Step 3: Precompute CRT combining values\n  q_inv \u2190 MODULAR_INVERSE(q, p)  // q\u207b\u00b9 mod p\n  \n  // Step 4: Combine using CRT formula\n  // M = M2 + q \u00d7 ((M1 - M2) \u00d7 q\u207b\u00b9 mod p)\n  h \u2190 ((M1 - M2) \u00d7 q_inv) mod p\n  M \u2190 M2 + q \u00d7 h\n  \n  RETURN M\nEND\n\n// Additional optimization: Garner algorithm variant\nBEGIN RSA_CRT_COMBINE(M1, M2, p, q)\n  // Alternative combining method\n  t \u2190 (M1 - M2) mod p\n  IF t < 0 THEN\n    t \u2190 t + p\n  END IF\n  \n  t \u2190 (t \u00d7 q_inv) mod p\n  M \u2190 M2 + q \u00d7 t\n  \n  RETURN M\nEND"
+    }
+  ]
+}

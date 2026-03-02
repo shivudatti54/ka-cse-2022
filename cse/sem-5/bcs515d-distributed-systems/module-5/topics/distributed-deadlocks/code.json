@@ -1,0 +1,45 @@
+{
+  "topicId": "distributed-deadlocks",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Chandy-Misra-Haas Deadlock Detection",
+      "description": "Algorithm for detecting deadlock using probe messages in distributed systems",
+      "code": "// Process initiates probe when blocked and has no dependents\nPROCEDURE initiate_probe(process_id)\n probe = (initiator=process_id, sender=process_id, blocker=NULL)\n FOR each process that process_id is waiting for\n SEND probe TO that process\n END FOR\nEND PROCEDURE\n\n// Process receives a probe\nPROCEDURE receive_probe(probe)\n IF probe.initiator == MY_PROCESS_ID THEN\n // Probe returned to initiator - DEADLOCK DETECTED\n REPORT deadlock\n initiate_resolution(probe.initiator)\n ELSE IF I am already in probe.path THEN\n // Already processing this probe - ignore\n IGNORE probe\n ELSE\n // Forward probe to my blocker\n FOR each process I am waiting for\n new_probe = (probe.initiator, MY_PROCESS_ID, blocker)\n SEND new_probe TO blocker\n END FOR\n END IF\nEND PROCEDURE\n\n// Deadlock resolution\nPROCEDURE initiate_resolution(victim)\n SEND abort_message TO victim\n victim.releases_all_resources()\n UPDATE wait_for_graph\nEND PROCEDURE",
+      "explanation": "The CMH algorithm uses probe messages that travel along wait-for graph edges. When a process receives its own probe, a cycle is detected indicating deadlock. The initiator then triggers resolution by aborting a process to break the cycle.",
+      "timeComplexity": "O(n*m) where n=processes, m=resources",
+      "spaceComplexity": "O(1) per process"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Centralized Deadlock Detection",
+      "description": "Coordinator-based deadlock detection in distributed systems",
+      "code": "// Coordinator Site Algorithm\nCOORDINATOR:\n wait_for_graphs = {} // Map of site_id -> local WFG\n \n PROCEDURE receive_local_wfg(site_id, local_graph)\n wait_for_graphs[site_id] = local_graph\n \n IF all_sites_reported THEN\n global_wfg = MERGE_ALL(wait_for_graphs)\n IF detect_cycle(global_wfg) THEN\n cycles = FIND_ALL_CYCLES(global_wfg)\n FOR each cycle IN cycles\n victim = SELECT_VICTIM(cycle)\n SEND abort TO victim.site\n END FOR\n END IF\n CLEAR wait_for_graphs\n END IF\n END PROCEDURE\n \n FUNCTION detect_cycle(graph)\n visited = {}\n FOR each node IN graph.nodes\n IF dfs_has_cycle(node, visited, {}) THEN\n RETURN TRUE\n END IF\n RETURN FALSE\n END FUNCTION\n\n// Local Site Algorithm\nSITE:\n PROCEDURE send_local_wfg()\n local_wfg = BUILD_WFG(local_processes)\n SEND (site_id, local_wfg) TO coordinator\n END PROCEDURE\n \n TIMEOUT every T seconds:\n send_local_wfg()",
+      "explanation": "Centralized approach has one coordinator that collects wait-for graphs from all sites, merges them, and detects cycles. Simple but has single point of failure and can become bottleneck.",
+      "timeComplexity": "O(n²) for cycle detection on global graph",
+      "spaceComplexity": "O(n) for storing global WFG"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Wait-For Graph Construction",
+      "description": "Building and maintaining wait-for graph at each site",
+      "code": "// Data structures\nPROCESS:\n id\n state: RUNNING | BLOCKED | TERMINATED\n held_resources: SET\n requested_resources: SET\n waiting_for: PROCESS // NULL if not waiting\n\nRESOURCE:\n id\n type\n owner: PROCESS // NULL if free\n wait_queue: LIST[PROCESS]\n\n// Build local wait-for graph\nFUNCTION build_local_wfg()\n wfg = new Graph()\n \n FOR each process p IN system.processes\n IF p.state == BLOCKED THEN\n // Process is waiting for resource\n FOR each resource r IN p.requested_resources\n IF r.owner != NULL THEN\n // Add edge: p waits for r's owner\n wfg.add_edge(p.id, r.owner.id)\n END IF\n END IF\n END IF\n END FOR\n \n RETURN wfg\nEND FUNCTION\n\n// Update WFG on state change\nPROCEDURE on_resource_request(process, resource)\n resource.wait_queue.add(process)\n process.requested_resources.add(resource)\n process.state = BLOCKED\n UPDATE_WFG()\nEND PROCEDURE\n\nPROCEDURE on_resource_allocation(process, resource)\n resource.owner = process\n resource.wait_queue.remove(process)\n process.held_resources.add(resource)\n process.requested_resources.remove(resource)\n \n IF process.requested_resources.is_empty() THEN\n process.state = RUNNING\n END IF\n UPDATE_WFG()\nEND PROCEDURE",
+      "explanation": "This code shows how to construct and maintain a wait-for graph in a distributed system. The graph captures which processes are waiting for resources held by others. Cycles in this graph indicate potential deadlocks.",
+      "timeComplexity": "O(n*r) where n=processes, r=resources per process",
+      "spaceComplexity": "O(n + e) where e=wait-for edges"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Banker's Algorithm for Deadlock Avoidance",
+      "description": "Resource allocation with safety check to avoid deadlocks",
+      "code": "// Banker's Algorithm for Distributed Systems\n// Each site runs banker for local resources\n\nCONSTANTS:\n n = number of processes\n m = number of resource types\n\nVARIABLES:\n Available[m] // Available resources\n Max[n][m] // Maximum demand of each process\n Allocation[n][m] // Currently allocated resources\n Need[n][m] // Remaining need (Max - Allocation)\n\nFUNCTION safety_check(available, allocation, need)\n work = available // Work vector\n finish[n] = FALSE\n \n // Try to find safe sequence\n REPEAT\n found = FALSE\n FOR i = 0 TO n-1\n IF finish[i] == FALSE AND need[i] <= work THEN\n // Process can complete\n work = work + allocation[i]\n finish[i] = TRUE\n found = TRUE\n END IF\n END FOR\n UNTIL found == FALSE\n \n // Check if all processes can finish\n RETURN (finish contains only TRUE)\nEND FUNCTION\n\nFUNCTION request_resources(process_id, request[])\n // Step 1: Request <= Need\n IF request > need[process_id] THEN\n RETURN ERROR \"Exceeds maximum claim\"\n END IF\n \n // Step 2: Request <= Available\n IF request > available THEN\n RETURN WAIT \"Process must wait\"\n END IF\n \n // Step 3: Pretend to allocate\n available = available - request\n allocation[process_id] = allocation[process_id] + request\n need[process_id] = need[process_id] - request\n \n // Step 4: Check if safe state\n IF safety_check(available, allocation, need) THEN\n RETURN GRANTED\n ELSE\n // Rollback\n available = available + request\n allocation[process_id] = allocation[process_id] - request\n need[process_id] = need[process_id] + request\n RETURN WAIT\n END IF\nEND FUNCTION",
+      "explanation": "Banker's algorithm avoids deadlocks by ensuring the system always remains in a 'safe state' where all processes can complete. Before granting any request, it simulates the allocation and checks if a safe sequence exists.",
+      "timeComplexity": "O(n²*m) for safety check",
+      "spaceComplexity": "O(n*m)"
+    }
+  ]
+}

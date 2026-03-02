@@ -1,0 +1,138 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the Write Allocation policy on a cache miss and state when it is beneficial.",
+    "expectedPoints": [
+      "Write Allocation fetches the block from main memory into cache before performing the write operation",
+      "Also called Fetch-on-Write",
+      "Beneficial when there is spatial locality - subsequent reads/writes to nearby addresses will hit in cache",
+      "Reduces memory traffic for programs with write locality"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What is No-Write Allocate policy? How does it differ from Write Allocation?",
+    "expectedPoints": [
+      "No-Write Allocate writes directly to main memory without loading the block into cache",
+      "Does not change cache state on a write miss",
+      "Differs from Write Allocation which loads the block into cache first",
+      "Simpler to implement but may miss opportunities for caching written data"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain the relationship between write-through caches and no-write allocate policy.",
+    "expectedPoints": [
+      "Write-through caches write to both cache and main memory simultaneously",
+      "When combined with no-write allocate, write misses bypass the cache entirely",
+      "This combination avoids the overhead of loading blocks on write misses",
+      "Common choice for write-through caches as data is immediately propagated to memory"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "What is a cache line fill operation? When does it occur?",
+    "expectedPoints": [
+      "Cache line fill transfers a block from main memory to an empty cache line",
+      "Occurs on a cache miss when the requested block is not in cache",
+      "Updates the tag, valid bit, and if applicable, the dirty bit",
+      "Necessary before the CPU can access the requested data"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Explain write-back caching and its interaction with write allocation policy.",
+    "expectedPoints": [
+      "Write-back delays writing to main memory until the cache line is evicted",
+      "Combined with write-allocate, the block is loaded into cache on write miss",
+      "The dirty bit tracks whether the line has been modified",
+      "Reduces memory traffic significantly compared to write-through"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "What factors determine the choice between write allocate and no-write allocate policies?",
+    "expectedPoints": [
+      "Memory access patterns and presence of temporal/spatial locality",
+      "Write-to-read ratio of the application",
+      "Cache size and complexity constraints",
+      "Performance requirements and latency tolerance"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "Describe the role of eviction policy when allocating on a cache miss.",
+    "expectedPoints": [
+      "Eviction policy is needed when cache is full on a miss",
+      "Determines which existing cache line to replace",
+      "Common policies include LRU, FIFO, and Random",
+      "The victim line must be written back to memory if dirty before loading new block"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Compare and contrast Write-Through with No-Write Allocate versus Write-Back with Write-Allocate. Discuss the advantages, disadvantages, and typical use cases for each combination.",
+    "expectedPoints": [
+      "WT+NWA: Simpler, no coherency issues, writes go directly to memory, higher memory traffic, good for simple systems",
+      "WB+WA: Complex, reduces memory traffic significantly, needs dirty bit management, better for applications with locality",
+      "WT+NWA advantages: Simplicity, data consistency, easier to implement",
+      "WB+WA advantages: Performance, reduced bus traffic, better for workloads with locality",
+      "Typical use cases: WT+NWA for embedded systems, simple processors; WB+WA for general-purpose processors and applications with good locality"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Explain the process that occurs when a write miss happens in a write-back cache using write allocation policy. Include the state changes of relevant bits and memory operations.",
+    "expectedPoints": [
+      "CPU generates write request for address not in cache",
+      "Cache controller detects miss and initiates fetch from main memory",
+      "Block is loaded into an available cache line (or evicts existing line)",
+      "Write operation modifies the cache line data",
+      "Dirty bit is set to indicate the line is modified",
+      "Modified data will be written to main memory only on eviction",
+      "This delay reduces memory traffic significantly"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Design a decision algorithm for choosing between Write Allocation and No-Write Allocation policies. What characteristics of the workload would influence this choice?",
+    "expectedPoints": [
+      "Consider spatial locality: if writes cluster in memory regions, WA is beneficial",
+      "Consider temporal locality: if written data is read soon after, WA helps",
+      "Consider working set size: if larger than cache, NWA may reduce cache pollution",
+      "Consider write intensity: high write volume with poor locality favors NWA",
+      "Consider data reuse patterns: streaming writes favor NWA, random writes favor WA",
+      "Hardware complexity: NWA is simpler to implement"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

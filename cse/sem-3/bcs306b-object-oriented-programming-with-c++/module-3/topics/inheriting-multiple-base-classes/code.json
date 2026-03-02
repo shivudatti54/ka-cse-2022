@@ -1,0 +1,45 @@
+{
+  "topicId": "inheriting-multiple-base-classes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Multiple Inheritance Example",
+      "description": "Simple program demonstrating multiple inheritance syntax with Person and Student classes",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Person {\nprotected:\n string name;\n int age;\npublic:\n Person(string n, int a) : name(n), age(a) {\n cout << \"Person constructor called\" << endl;\n }\n void displayPerson() {\n cout << \"Name: \" << name << \", Age: \" << age << endl;\n }\n ~Person() {\n cout << \"Person destructor called\" << endl;\n }\n};\n\nclass Student {\nprotected:\n int rollNo;\n float marks;\npublic:\n Student(int r, float m) : rollNo(r), marks(m) {\n cout << \"Student constructor called\" << endl;\n }\n void displayStudent() {\n cout << \"Roll No: \" << rollNo << \", Marks: \" << marks << endl;\n }\n ~Student() {\n cout << \"Student destructor called\" << endl;\n }\n};\n\nclass CollegeStudent : public Person, public Student {\nprivate:\n string college;\npublic:\n CollegeStudent(string n, int a, int r, float m, string c)\n : Person(n, a), Student(r, m), college(c) {\n cout << \"CollegeStudent constructor called\" << endl;\n }\n void display() {\n displayPerson();\n displayStudent();\n cout << \"College: \" << college << endl;\n }\n ~CollegeStudent() {\n cout << \"CollegeStudent destructor called\" << endl;\n }\n};\n\nint main() {\n CollegeStudent cs(\"John\", 20, 101, 85.5, \"university College\");\n cs.display();\n return 0;\n}",
+      "explanation": "Demonstrates multiple inheritance where CollegeStudent inherits from both Person and Student. Constructor order: Person first (first in list), then Student (second), then CollegeStudent. Destructor order is reverse.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Diamond Problem Without Virtual Inheritance",
+      "description": "Program showing diamond problem - ambiguity when accessing inherited members from common base",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass A {\npublic:\n int data = 10;\n void show() {\n cout << \"A's show() called, data = \" << data << endl;\n }\n};\n\nclass B : public A {\npublic:\n void display() {\n cout << \"B's display()\" << endl;\n }\n};\n\nclass C : public A {\npublic:\n void display() {\n cout << \"C's display()\" << endl;\n }\n};\n\nclass D : public B, public C {\npublic:\n void showD() {\n // Ambiguous - which A's data?\n // B::show(); // Uncomment to resolve\n // C::show(); // Uncomment to resolve\n cout << \"D's showD()\" << endl;\n }\n};\n\nint main() {\n D obj;\n // obj.show(); // ERROR: ambiguous - B::A::show() or C::A::show()?\n obj.B::show(); // Explicitly call A's show through B\n obj.C::show(); // Explicitly call A's show through C\n cout << \"B::data: \" << obj.B::data << endl;\n cout << \"C::data: \" << obj.C::data << endl;\n return 0;\n}",
+      "explanation": "Shows diamond problem where class D has two copies of A (one through B, one through C). Accessing A's members requires scope resolution to specify which path. Both B::data and C::data are separate copies.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Diamond Problem Solution with Virtual Inheritance",
+      "description": "Program demonstrating virtual inheritance to solve diamond problem - single copy of base class",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass A {\npublic:\n int data = 10;\n A() {\n cout << \"A constructor called\" << endl;\n }\n A(int d) : data(d) {\n cout << \"A constructor with arg called\" << endl;\n }\n void show() {\n cout << \"A's show() called, data = \" << data << endl;\n }\n};\n\n// Virtual inheritance - A is now a virtual base class\nclass B : virtual public A {\npublic:\n B() {\n cout << \"B constructor called\" << endl;\n }\n};\n\nclass C : virtual public A {\npublic:\n C() {\n cout << \"C constructor called\" << endl;\n }\n};\n\nclass D : public B, public C {\npublic:\n // Most derived class - initializes virtual base A\n D() {\n cout << \"D constructor called\" << endl;\n }\n D(int d) : A(d) { // A initialized by D (most derived)\n cout << \"D constructor with arg called\" << endl;\n }\n void showD() {\n show(); // No ambiguity - only one A exists\n cout << \"data = \" << data << endl; // Direct access now works\n }\n};\n\nint main() {\n cout << \"--- Creating D obj1 --- \" << endl;\n D obj1;\n obj1.showD();\n \n cout << \"\\n--- Creating D obj2 with data=99 --- \" << endl;\n D obj2(99);\n obj2.showD();\n return 0;\n}",
+      "explanation": "Virtual inheritance makes A a virtual base class, ensuring only one copy exists in D. Constructor order: Virtual base A first, then B and C (in declaration order), then D. Most derived class D is responsible for initializing A.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Ambiguity Resolution using Scope Resolution Operator",
+      "description": "Program showing how to resolve ambiguity when base classes have same-named methods",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base1 {\npublic:\n int x = 5;\n void display() {\n cout << \"Base1's display: x = \" << x << endl;\n }\n};\n\nclass Base2 {\npublic:\n int x = 15; // Same member name\n void display() {\n cout << \"Base2's display: x = \" << x << endl;\n }\n};\n\nclass Derived : public Base1, public Base2 {\npublic:\n void show() {\n // Ambiguous - which x?\n // cout << x; // ERROR: request for member 'x' is ambiguous\n \n // Resolution using scope resolution operator\n cout << \"Base1.x = \" << Base1::x << endl;\n cout << \"Base2.x = \" << Base2::x << endl;\n \n // Calling specific display methods\n Base1::display();\n Base2::display();\n }\n};\n\nint main() {\n Derived d;\n d.show();\n return 0;\n}",
+      "explanation": "When multiple base classes have members with same name, direct access causes ambiguity. Use BaseClass::memberName syntax to resolve. Scope resolution operator (::) specifies exactly which base class's member to access.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

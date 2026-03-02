@@ -1,0 +1,35 @@
+{
+  "topicId": "depth-first-search",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Recursive DFS with Edge Classification",
+      "description": "Complete recursive DFS implementation with timestamps and edge type detection for directed graphs",
+      "code": "// Global variables: time = 0\n// Colors: 0=WHITE (unvisited), 1=GRAY (in progress), 2=BLACK (finished)\n\nDFS-VISIT(u, graph G):\n    time = time + 1\n    d[u] = time\n    color[u] = GRAY\n    \n    FOR each v in G.adj[u]:\n        IF color[v] == WHITE:\n            parent[v] = u\n            edgeType[(u,v)] = \"TREE_EDGE\"\n            DFS-VISIT(v, G)\n        ELSE IF color[v] == GRAY:\n            edgeType[(u,v)] = \"BACK_EDGE\"\n        ELSE:  // color[v] == BLACK\n            IF d[u] < d[v]:\n                edgeType[(u,v)] = \"FORWARD_EDGE\"\n            ELSE:\n                edgeType[(u,v)] = \"CROSS_EDGE\"\n    \n    time = time + 1\n    f[u] = time\n    color[u] = BLACK\n\nDFS(graph G):\n    FOR each vertex u in G.V:\n        color[u] = WHITE\n        parent[u] = NIL\n    time = 0\n    FOR each vertex u in G.V:\n        IF color[u] == WHITE:\n            DFS-VISIT(u, G)",
+      "explanation": "Uses three colors to track vertex state. Tree edge when neighbor is WHITE (unvisited). Back edge when neighbor is GRAY (currently on recursion stack). Forward/cross when neighbor is BLACK (finished). Timestamps d[] and f[] enable interval-based analysis.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Iterative DFS with Explicit Stack",
+      "description": "Stack-based DFS avoiding recursion, useful for large graphs",
+      "code": "DFS-ITERATIVE(s, graph G):\n    stack = empty\n    color[s] = GRAY\n    d[s] = ++time\n    stack.PUSH(s)\n    \n    WHILE stack is not empty:\n        u = stack.PEEK()\n        \n        // Find unvisited neighbor\n        found = FALSE\n        FOR each v in G.adj[u]:\n            IF color[v] == WHITE:\n                color[v] = GRAY\n                d[v] = ++time\n                parent[v] = u\n                stack.PUSH(v)\n                found = TRUE\n                BREAK\n        \n        IF NOT found:\n            // All neighbors processed\n            f[u] = ++time\n            color[u] = BLACK\n            stack.POP()\n    \n    RETURN (d[], f[], parent[])",
+      "explanation": "Uses explicit stack instead of call stack. Push vertex when discovered, pop when all neighbors processed. Same O(V+E) time but avoids recursion stack overflow. Slight difference: edge classification requires additional tracking since we don't have recursion stack state readily available.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Topological Sort using DFS",
+      "description": "Algorithm to compute topological ordering of a DAG using reverse finish times",
+      "code": "TOPOLOGICAL-SORT(graph G):\n    // Initialize\n    FOR each vertex u in G.V:\n        color[u] = WHITE\n    \n    result = empty list\n    time = 0\n    \n    // DFS to compute finish times\n    FOR each vertex u in G.V:\n        IF color[u] == WHITE:\n            DFS-TS-VISIT(u, G, result)\n    \n    // result now has vertices in reverse finish order\n    RETURN result\n\nDFS-TS-VISIT(u, G, result):\n    color[u] = GRAY\n    d[u] = ++time\n    \n    FOR each v in G.adj[u]:\n        IF color[v] == WHITE:\n            DFS-TS-VISIT(v, G, result)\n        // No cycle check here; for cycle detection, detect back edges\n    \n    color[u] = BLACK\n    f[u] = ++time\n    // Prepend to result OR append and reverse at end\n    result.APPEND(u)  // Add to list (will reverse later)\n\n// To get proper order: reverse(result) before returning\n// Or: result.PREPEND(u) to get topological order directly",
+      "explanation": "Run DFS, record finish times. For DAG, f[u] > f[v] for all edges (u,v). Thus vertices in decreasing f[] order give valid topological sort. Prepend or reverse at end. In graphs with cycles, output is not a valid topological order.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

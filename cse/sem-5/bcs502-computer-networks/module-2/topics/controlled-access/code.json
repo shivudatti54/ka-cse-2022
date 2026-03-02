@@ -1,0 +1,35 @@
+{
+  "topicId": "controlled-access",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Token Ring Node Operation",
+      "description": "Simplified pseudocode showing how a node handles token and transmits data",
+      "code": "// Token Ring Node Algorithm\nBEGIN\n state ← IDLE\n WHILE true DO\n IF state = IDLE THEN\n IF token_received THEN\n IF has_data AND priority_match THEN\n state ← TRANSMIT\n ELSE\n forward_token()\n END IF\n END IF\n ELSE IF state = TRANSMIT THEN\n prepare_frame()\n send_data_frame()\n wait_for_acknowledgment()\n release_token()\n state ← IDLE\n END IF\n END WHILE\nEND",
+      "explanation": "Shows the basic state machine of a Token Ring node: waiting for token, checking if it has data to send with appropriate priority, transmitting data, and releasing token.",
+      "timeComplexity": "O(n) for token circulation",
+      "spaceComplexity": "O(1) per node"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Polling Algorithm (Primary Node)",
+      "description": "Pseudocode showing how primary controller polls secondary nodes sequentially",
+      "code": "// Polling Algorithm - Primary Controller\nBEGIN\n polling_list ← [Node1, Node2, Node3, ..., NodeN]\n FOR EACH node IN polling_list DO\n send_poll_frame(node)\n WAIT_FOR_RESPONSE(timeout)\n IF response_received THEN\n IF response = DATA THEN\n receive_data_frame()\n send_acknowledgment()\n ELSE\n // Negative response - no data\n continue\n END IF\n ELSE\n // No response - node may be down\n log_error(node)\n END IF\n END FOR\n // Repeat polling cycle\n GOTO BEGIN\nEND",
+      "explanation": "Primary controller iterates through all secondary nodes, sending poll frames and handling responses. This ensures orderly access without collisions.",
+      "timeComplexity": "O(n) per polling cycle",
+      "spaceComplexity": "O(n) for polling list"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Token Loss Detection and Recovery",
+      "description": "Algorithm for detecting token loss and initiating recovery process",
+      "code": "// Token Loss Detection - Active Monitor\nBEGIN\n TRT ← Token_Rotation_Timer\n WHILE network_active DO\n START_TIMER(TRT)\n IF token_received THEN\n RESET_TIMER(TRT)\n forward_token()\n END IF\n \n IF TIMEOUT(TRT) THEN\n // Token loss detected\n initiate_claim_token()\n END IF\n END WHILE\nEND\n\n// Claim Token Process\nPROCEDURE initiate_claim_token()\n broadcast_claim_token()\n WAIT_FOR_PROPOSALS(timeout)\n IF received_proposal THEN\n IF my_address > highest_proposer THEN\n become_active_monitor()\n generate_new_token()\n END IF\n END IF\nEND",
+      "explanation": "Shows how Active Monitor detects token loss via timer and how nodes participate in election to generate a new token.",
+      "timeComplexity": "O(n) for recovery",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "topicId": "taking-timings-of-mimd-programs",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Why is MPI_Barrier used before starting the timer in MPI timing code?",
+      "options": [
+        { "key": "A", "text": "To ensure all processes are synchronized before timing begins" },
+        { "key": "B", "text": "To initialize the MPI communication environment" },
+        { "key": "C", "text": "To measure the communication time between processes" },
+        { "key": "D", "text": "To allocate memory for parallel execution" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "MPI_Barrier ensures all processes reach the same point in execution before the master process starts timing, providing accurate measurement of parallel execution time.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which MPI function is used to get the current time with high precision?",
+      "options": [
+        { "key": "A", "text": "MPI_Wtime()" },
+        { "key": "B", "text": "MPI_Time()" },
+        { "key": "C", "text": "MPI_Clock()" },
+        { "key": "D", "text": "MPI_Timestamp()" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "MPI_Wtime() returns an elapsed time on the calling processor with high precision, making it ideal for performance measurements.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Why is timing typically done only on the master process (rank 0)?",
+      "options": [
+        { "key": "A", "text": "To avoid timing synchronization issues between processes" },
+        { "key": "B", "text": "Only rank 0 has access to the system clock" },
+        { "key": "C", "text": "MPI requires timing to be done on a single process" },
+        { "key": "D", "text": "It reduces communication overhead during measurement" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Using only one process for timing avoids the complexity of synchronizing clocks across multiple processes and provides a consistent measurement reference.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What is the purpose of the second MPI_Barrier call after the parallel work?",
+      "options": [
+        { "key": "A", "text": "To ensure all processes complete before ending the timer" },
+        { "key": "B", "text": "To prepare for program termination" },
+        { "key": "C", "text": "To measure barrier synchronization time" },
+        { "key": "D", "text": "To flush MPI communication buffers" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The second barrier ensures all processes have completed their work before the master process stops timing, capturing the complete parallel execution time.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What does the difference between end_time and start_time represent?",
+      "options": [
+        { "key": "A", "text": "The wall-clock time for parallel execution" },
+        { "key": "B", "text": "The CPU time used by all processes combined" },
+        { "key": "C", "text": "The communication time only" },
+        { "key": "D", "text": "The computation time only" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The difference represents wall-clock time (elapsed real time) for the parallel execution, including both computation and communication overhead.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Why is wall-clock time preferred over CPU time for measuring MIMD program performance?",
+      "options": [
+        { "key": "A", "text": "CPU time misses idle and waiting time spent during communication" },
+        { "key": "B", "text": "Wall-clock time is always more accurate than CPU time" },
+        { "key": "C", "text": "CPU time cannot be measured on multi-processor systems" },
+        { "key": "D", "text": "Wall-clock time automatically includes overhead correction" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "CPU time only measures active computation and misses time spent waiting for messages, synchronizing at barriers, or sitting idle due to load imbalance. Wall-clock time captures the full parallel execution experience.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the best practice for obtaining reliable timing results from MPI programs?",
+      "options": [
+        { "key": "A", "text": "Run multiple trials and report the average or minimum" },
+        { "key": "B", "text": "Run the program once with maximum processors" },
+        { "key": "C", "text": "Use the system clock instead of MPI_Wtime" },
+        { "key": "D", "text": "Time only the initialization phase" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Multiple trials help account for system variations such as network congestion, OS scheduling, and cache effects. Reporting the average or minimum provides more statistically reliable results.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which MPI function can be used to aggregate timing data from all processes to find the maximum execution time?",
+      "options": [
+        { "key": "A", "text": "MPI_Reduce with MPI_MAX" },
+        { "key": "B", "text": "MPI_Gather with sorting" },
+        { "key": "C", "text": "MPI_Bcast with timing flag" },
+        { "key": "D", "text": "MPI_Barrier with time parameter" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "MPI_Reduce with MPI_MAX operation collects the maximum time across all processes, giving the true parallel execution time since the slowest process determines overall completion.",
+      "difficulty": "hard"
+    }
+  ]
+}

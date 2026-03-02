@@ -1,0 +1,35 @@
+{
+  "topicId": "human-centered-artificial-intelligence",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Human-in-the-Loop Decision System",
+      "description": "Demonstrates a basic HITL framework where AI proposes decisions and humans approve or override",
+      "code": "ALGORITHM HITL_Decision\nINPUT: user_request, ai_model, human_reviewer\nBEGIN\n  ai_proposal \u2190 ai_model.generate_proposal(user_request)\n  IF ai_proposal.confidence > HIGH_THRESHOLD THEN\n    RETURN ai_proposal\n  ELSE\n    display(ai_proposal) to human_reviewer\n    human_decision \u2190 human_reviewer.evaluate(ai_proposal)\n    IF human_decision.approved THEN\n      RETURN ai_proposal\n    ELSE\n      RETURN human_decision.modified_output\n    ENDIF\n  ENDIF\nEND\n\nALGORITHM Human_Override\nINPUT: decision, override_request, authority_level\nBEGIN\n  IF authority_level >= REQUIRED_LEVEL THEN\n    log_override(decision, override_request)\n    RETURN override_request.new_output\n  ELSE\n    RETURN decision  // Override rejected\n  ENDIF\nEND",
+      "explanation": "This pseudocode shows a HITL system where high-confidence AI decisions can proceed automatically, while lower-confidence decisions require human review. It also demonstrates an override mechanism with authority levels for accountability.",
+      "timeComplexity": "O(1) per decision (excluding AI model complexity)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Bias Detection System",
+      "description": "Demonstrates a basic bias detection algorithm that analyzes AI model outputs for demographic parity",
+      "code": "class BiasDetector:\n    def __init__(self, protected_attributes):\n        self.protected_attributes = protected_attributes\n        self.bias_threshold = 0.1\n    \n    def calculate_demographic_parity(self, predictions, sensitive_features):\n        \"\"\"Calculate demographic parity across protected attributes\"\"\"\n        groups = {}\n        for attr in self.protected_attributes:\n            positive_rate = {}\n            unique_values = set(sensitive_features[attr])\n            \n            for val in unique_values:\n                mask = sensitive_features[attr] == val\n                positive_count = sum(predictions[mask])\n                total_count = sum(mask)\n                positive_rate[val] = positive_count / total_count if total_count > 0 else 0\n            \n            groups[attr] = positive_rate\n        return groups\n    \n    def detect_bias(self, predictions, sensitive_features):\n        \"\"\"Check if predictions show significant bias\"\"\"\n        parity_scores = self.calculate_demographic_parity(predictions, sensitive_features)\n        bias_report = {}\n        \n        for attr, rates in parity_scores.items():\n            values = list(rates.values())\n            if len(values) > 1:\n                max_rate = max(values)\n                min_rate = min(values)\n                disparity = max_rate - min_rate\n                \n                bias_report[attr] = {\n                    'disparity': disparity,\n                    'is_biased': disparity > self.bias_threshold,\n                    'rates': rates\n                }\n        return bias_report\n\n# Example usage\nsensitive_data = {'gender': ['M', 'F', 'M', 'F', 'M', 'F'],\n                 'age_group': ['young', 'old', 'young', 'old', 'young', 'old']}\npredictions = [1, 0, 1, 0, 1, 0]\n\ndetector = BiasDetector(['gender', 'age_group'])\nreport = detector.detect_bias(predictions, sensitive_data)\nprint(\"Bias Report:\", report)",
+      "explanation": "This Python code implements a basic bias detection system that calculates demographic parity across protected attributes. It identifies potential bias when the difference in positive outcomes exceeds a threshold.",
+      "timeComplexity": "O(n * m) where n is predictions and m is protected attributes",
+      "spaceComplexity": "O(m) for storing group statistics"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Trust Scoring Algorithm",
+      "description": "Shows how to calculate and maintain trust scores for AI system recommendations",
+      "code": "ALGORITHM Calculate_Trust_Score\nINPUT: ai_output, user_feedback_history, system_performance_metrics\nBEGIN\n  // Component 1: Historical accuracy of similar predictions\n  accuracy_score \u2190 calculate_historical_accuracy(ai_output.category)\n  \n  // Component 2: Confidence of the model\n  confidence_score \u2190 ai_output.confidence_level\n  \n  // Component 3: User feedback on similar outputs\n  feedback_score \u2190 calculate_feedback_score(user_feedback_history, ai_output.category)\n  \n  // Component 4: Recent system performance\n  performance_score \u2190 system_performance_metrics.recent_accuracy\n  \n  // Weighted combination\n  trust_score \u2190 (accuracy_score * 0.3) + (confidence_score * 0.3) +\n                (feedback_score * 0.2) + (performance_score * 0.2)\n  \n  RETURN {\n    overall_score: trust_score,\n    recommendation: IF trust_score > HIGH_THRESHOLD THEN \"USE\"\n                    ELSE IF trust_score > MEDIUM_THRESHOLD THEN \"REVIEW\"\n                    ELSE \"MANUAL\"\n  }\nEND\n\nALGORITHM Update_Trust_After_Decision\nINPUT: ai_output, actual_outcome\nBEGIN\n  error \u2190 abs(ai_output.predicted_value - actual_outcome)\n  trust_adjustment \u2190 IF error < TOLERANCE THEN +0.05 ELSE -0.15\n  ai_output.trust_score \u2190 clamp(ai_output.trust_score + trust_adjustment, 0, 1)\n  RETURN ai_output.trust_score\nEND",
+      "explanation": "This algorithm demonstrates trust scoring by combining multiple factors: historical accuracy, model confidence, user feedback, and system performance. It provides recommendations based on trust levels and updates scores based on actual outcomes.",
+      "timeComplexity": "O(1) for each scoring calculation",
+      "spaceComplexity": "O(n) for maintaining history of trust scores"
+    }
+  ]
+}

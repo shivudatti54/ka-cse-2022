@@ -1,0 +1,45 @@
+{
+  "topicId": "protection-and-security",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Access Control Check",
+      "description": "Demonstrates basic access control mechanism checking user permissions before allowing file operations",
+      "code": "PROCEDURE checkAccess(user, resource, operation)\nBEGIN\n    userRole \u2190 getUserRole(user)\n    resourceACL \u2190 getACL(resource)\n    \n    FOR EACH entry IN resourceACL DO\n        IF entry.subject = userRole AND entry.operation = operation THEN\n            RETURN ALLOW\n        END IF\n    END FOR\n    \n    RETURN DENY\nEND PROCEDURE\n\nPROCEDURE readFile(user, filename)\nBEGIN\n    IF checkAccess(user, filename, READ) = ALLOW THEN\n        RETURN performRead(filename)\n    ELSE\n        RETURN ACCESS_DENIED_ERROR\n    END IF\nEND PROCEDURE",
+      "explanation": "This pseudocode demonstrates how ACL-based access control works. The checkAccess procedure looks up the user's role in the resource's ACL and verifies if the requested operation is permitted. If access is denied, an error is returned.",
+      "timeComplexity": "O(n) where n is the number of ACL entries",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Role-Based Access Control Implementation",
+      "description": "Python implementation showing RBAC with roles and permissions",
+      "code": "class User:\n    def __init__(self, username, role):\n        self.username = username\n        self.role = role\n\nclass Resource:\n    def __init__(self, name, required_permission):\n        self.name = name\n        self.required_permission = required_permission\n\n# Define role-permission mappings\nROLE_PERMISSIONS = {\n    'admin': ['read', 'write', 'delete', 'execute'],\n    'manager': ['read', 'write', 'execute'],\n    'employee': ['read', 'execute'],\n    'guest': ['read']\n}\n\ndef check_permission(user, resource, operation):\n    \"\"\"Check if user has required permission for resource operation\"\"\"\n    if user.role not in ROLE_PERMISSIONS:\n        return False\n    \n    allowed_ops = ROLE_PERMISSIONS[user.role]\n    return operation in allowed_ops and operation == resource.required_permission\n\n# Example usage\nuser1 = User(\"john\", \"manager\")\nfile_resource = Resource(\"report.txt\", \"read\")\n\nif check_permission(user1, file_resource, \"read\"):\n    print(f\"Access granted: {user1.username} can read {file_resource.name}\")\nelse:\n    print(\"Access denied\")",
+      "explanation": "This Python code implements RBAC where permissions are assigned to roles rather than individual users. The ROLE_PERMISSIONS dictionary maps each role to its allowed operations. When checking access, the system verifies the user's role has the required permission.",
+      "timeComplexity": "O(1) for permission lookup",
+      "spaceComplexity": "O(r) where r is number of roles"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Kernel Mode vs User Mode Demonstration",
+      "description": "C code showing system call interface and mode switching between user and kernel modes",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n\n// User mode function - runs with limited privileges\nvoid userModeFunction() {\n    printf(\"Running in USER mode\\n\");\n    // Can only access own memory space\n    // Cannot directly access hardware\n}\n\n// System call wrapper - triggers kernel mode transition\nint protectedOperation(char *filename) {\n    // This triggers a system call\n    // CPU switches from user to kernel mode\n    // Kernel performs the privileged operation\n    return open(filename, O_RDONLY);\n}\n\nint main() {\n    userModeFunction();\n    \n    // System call transitions to kernel mode\n    int fd = protectedOperation(\"test.txt\");\n    \n    if (fd >= 0) {\n        printf(\"File opened via system call\\n\");\n        close(fd);\n    }\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates the user-kernel mode separation. User applications run in user mode with limited privileges. When they need to access protected resources (like opening files), they use system calls which trigger a mode switch to kernel mode, where the OS performs the privileged operation on behalf of the user.",
+      "timeComplexity": "O(1) for mode switch, O(n) for file operation",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Capability-Based Access Control",
+      "description": "Demonstrates capability-based protection where processes hold tokens specifying their rights",
+      "code": "CAPABILITY RECORD\nBEGIN\n    objectID: Integer\n    rights: SET OF {READ, WRITE, EXECUTE, DELETE}\n    expiration: DateTime\n    owner: ProcessID\nEND RECORD\n\nPROCEDURE checkCapability(process, requiredRight)\nBEGIN\n    FOR EACH cap IN process.capabilityList DO\n        IF cap.objectID = targetObject AND \n           requiredRight IN cap.rights AND\n           currentTime < cap.expiration THEN\n            RETURN VALID\n        END IF\n    END FOR\n    RETURN INVALID\nEND PROCEDURE\n\nPROCEDURE requestAccess(process, object, operation)\nBEGIN\n    IF checkCapability(process, operation) = VALID THEN\n        performOperation(object, operation)\n        RETURN SUCCESS\n    ELSE\n        RETURN ACCESS_DENIED\n    END IF\nEND PROCEDURE\n\n// Example: Creating a capability\nPROCEDURE grantCapability(process, object, rights)\nBEGIN\n    newCap \u2190 CREATE CAPABILITY\n    newCap.objectID \u2190 object.id\n    newCap.rights \u2190 rights\n    newCap.expiration \u2190 NOW + 1_HOUR\n    newCap.owner \u2190 process.id\n    \n    ADD newCap TO process.capabilityList\n    RETURN newCap\nEND PROCEDURE",
+      "explanation": "This pseudocode shows capability-based access control. Each capability is a token containing the object ID, permitted rights, expiration time, and owner. Processes present their capabilities when requesting access. This differs from ACLs as capabilities are held by subjects (processes) rather than attached to objects.",
+      "timeComplexity": "O(n) where n is number of capabilities per process",
+      "spaceComplexity": "O(c) where c is total capabilities in system"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "fchdir-and-getcwd-functions-device-special-files",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Using fchdir() System Call",
+      "description": "Example demonstrating fchdir() to change to a directory using file descriptor",
+      "code": "#include <unistd.h>\n#include <fcntl.h>\n#include <stdio.h>\n\nint main() {\n int fd;\n \n // Open a directory\n fd = open(\"/tmp\", O_RDONLY | O_DIRECTORY);\n if (fd < 0) {\n perror(\"open\");\n return 1;\n }\n \n // Change to that directory using file descriptor\n if (fchdir(fd) < 0) {\n perror(\"fchdir\");\n close(fd);\n return 1;\n }\n \n printf(\"Changed to /tmp using fchdir\\n\");\n close(fd);\n return 0;\n}",
+      "explanation": "Opens /tmp directory, then uses fchdir() to change working directory to it. The file descriptor must refer to a directory.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Using getcwd() System Call",
+      "description": "Example demonstrating getcwd() to retrieve current working directory",
+      "code": "#include <unistd.h>\n#include <stdio.h>\n#include <limits.h>\n\nint main() {\n char cwd[PATH_MAX];\n \n if (getcwd(cwd, sizeof(cwd)) != NULL) {\n printf(\"Current working directory: %s\\n\", cwd);\n } else {\n perror(\"getcwd\");\n return 1;\n }\n \n return 0;\n}",
+      "explanation": "getcwd() stores the absolute path of current working directory in the provided buffer. PATH_MAX ensures sufficient buffer size.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Creating Device File with mknod()",
+      "description": "Example demonstrating mknod() to create a device special file",
+      "code": "#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <stdio.h>\n\nint main() {\n dev_t dev;\n \n // Create device number: major=8, minor=0\n dev = makedev(8, 0);\n \n // Create block device file /tmp/mydevice\n if (mknod(\"/tmp/mydevice\", S_IFBLK | 0660, dev) < 0) {\n perror(\"mknod\");\n return 1;\n }\n \n printf(\"Block device created\\n\");\n return 0;\n}",
+      "explanation": "mknod() creates a special file. S_IFBLK indicates block device, 0660 is permissions, makedev() combines major and minor numbers.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Checking Device Type using stat()",
+      "description": "Example demonstrating how to check if a file is a device and identify its type",
+      "code": "#include <sys/types.h>\n#include <sys/stat.h>\n#include <stdio.h>\n\nint main(const char *filepath) {\n struct stat st;\n \n if (stat(filepath, &st) < 0) {\n perror(\"stat\");\n return 1;\n }\n \n // Check if it's a device\n if (S_ISBLK(st.st_mode)) {\n printf(\"Block device: major=%d, minor=%d\\n\",\n major(st.st_rdev), minor(st.st_rdev));\n } else if (S_ISCHR(st.st_mode)) {\n printf(\"Character device: major=%d, minor=%d\\n\",\n major(st.st_rdev), minor(st.st_rdev));\n } else {\n printf(\"Not a device file\\n\");\n }\n \n return 0;\n}",
+      "explanation": "stat() fills the stat structure. S_ISBLK and S_ISCHR macros test file type. major() and minor() extract device numbers from st_rdev.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

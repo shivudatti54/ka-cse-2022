@@ -1,0 +1,30 @@
+{
+  "topicId": "semaphores-shared-memory",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Why is it necessary to use semaphores in conjunction with shared memory? (2-3 marks)",
+      "type": "short",
+      "expectedPoints": [
+        "Shared memory allows direct, concurrent access by multiple processes.",
+        "This concurrent access can lead to race conditions where the outcome depends on the order of execution.",
+        "Semaphores provide the necessary synchronization (e.g., mutual exclusion) to prevent these race conditions and ensure data consistency."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Explain the producer-consumer problem and how it can be solved using shared memory and a set of three semaphores. Describe the role of each semaphore. (5-10 marks)",
+      "type": "long",
+      "expectedPoints": [
+        "Definition: One or more producer processes generate data and place it in a buffer, while one or more consumer processes remove and use that data.",
+        "Problem: Need to synchronize so producers don't overfill the buffer and consumers don't try to consume from an empty buffer, all while preventing race condition during buffer access.",
+        "Shared Memory: Used to create the shared buffer that both producers and consumers access.",
+        "Semaphore 1 (mutex): A binary semaphore used for mutual exclusion to ensure only one process accesses the buffer at a time.",
+        "Semaphore 2 (empty): A counting semaphore that tracks the number of empty slots in the buffer. Initialized to the buffer size (N).",
+        "Semaphore 3 (full): A counting semaphore that tracks the number of full slots in the buffer. Initialized to 0.",
+        "Producer Algorithm: Wait(empty) -> Wait(mutex) -> Produce -> Signal(mutex) -> Signal(full).",
+        "Consumer Algorithm: Wait(full) -> Wait(mutex) -> Consume -> Signal(mutex) -> Signal(empty)."
+      ]
+    }
+  ]
+}

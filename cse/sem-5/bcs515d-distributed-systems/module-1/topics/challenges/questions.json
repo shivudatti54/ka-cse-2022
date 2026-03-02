@@ -1,0 +1,154 @@
+{
+  "topicId": "challenges",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of partial failure in distributed systems. Why is it more challenging to handle than complete failure?",
+      "keyPoints": [
+        "Partial failure occurs when some components fail while others continue operating",
+        "Difficult to detect which components have failed",
+        "Can lead to inconsistent system state",
+        "Requires sophisticated recovery and reconciliation mechanisms",
+        "Harder to diagnose than complete failure which is obvious",
+        "System may appear to work partially but produce incorrect results"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Discuss three security challenges specific to distributed systems that do not exist in centralized systems.",
+      "keyPoints": [
+        "Network vulnerability: data exposed during transmission",
+        "Lack of perimeter: no clear boundary to secure",
+        "Authentication complexity across multiple trust domains",
+        "Authorization in heterogeneous environments",
+        "Key management complexity across many nodes",
+        "Potential for man-in-the-middle attacks at various points"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the CAP theorem? A banking system chooses Consistency over Availability. Explain the implications during a network partition.",
+      "keyPoints": [
+        "CAP theorem: can provide only 2 of 3 - Consistency, Availability, Partition tolerance",
+        "During partition, must choose between C and A",
+        "Choosing Consistency: system blocks/unavailable during partition",
+        "Transactions fail or queue until partition resolves",
+        "No inconsistent data possible during partition",
+        "Trade-off: unavailability for correctness"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the 'blocking' problem in Two-Phase Commit protocol. Under what conditions does it occur?",
+      "keyPoints": [
+        "2PC has two phases: Prepare and Commit",
+        "After voting 'Yes', participants hold locks and wait for decision",
+        "If coordinator crashes after Prepare phase, participants block indefinitely",
+        "No way to unilaterally commit or rollback",
+        "Requires manual intervention to resolve",
+        "3PC attempts to solve this but makes other assumptions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Describe the different types of transparency in distributed systems with an example for each.",
+      "keyPoints": [
+        "Access transparency: hide differences in data access methods",
+        "Location transparency: access resources without knowing their location",
+        "Migration transparency: resources can move without user knowledge",
+        "Relocation transparency: resource moves while in use",
+        "Replication transparency: multiple copies exist but hidden",
+        "Concurrency transparency: multiple users share resources without conflict",
+        "Failure transparency: system continues despite component failures"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Why is clock synchronization problematic in distributed systems? Explain with reference to clock skew and drift.",
+      "keyPoints": [
+        "No global clock exists in distributed systems",
+        "Physical clocks run at slightly different rates (clock drift)",
+        "Network latency affects synchronization messages (clock skew)",
+        "True synchronization is impossible due to message delays",
+        "Logical clocks (Lamport, Vector) used as alternative",
+        "Algorithms depend on synchronized time for event ordering"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the 'Fallacies of Distributed Computing' and their practical implications.",
+      "keyPoints": [
+        "Network is reliable - but networks fail frequently",
+        "Latency is zero - significant delays over wide areas",
+        "Bandwidth is infinite - limited and expensive",
+        "Network is secure - many attack vectors",
+        "Topology doesn't change - dynamic environments",
+        "There is one administrator - multiple organizations",
+        "Transport cost is zero - significant overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A distributed system designer must choose between strong consistency (CP) and high availability (AP) during network partitions. Discuss the trade-offs involved with specific application examples. When would you recommend each approach?",
+      "keyPoints": [
+        "Strong consistency (CP): Banking, inventory systems - correctness critical; transactions blocked during partition; data never inconsistent; example: Google Spanner, ZooKeeper",
+        "High availability (AP): Social media, caching, CDNs; always serve requests; eventual consistency; examples: Cassandra, Dynamo, Amazon shopping cart",
+        "Trade-offs: performance, latency, fault tolerance vs correctness",
+        "Hybrid approaches: Read your own writes, causal consistency",
+        "Application requirements determine choice",
+        "Modern systems often provide tunable consistency",
+        "CAP theorem: partition is not optional, choose CA or AP during design"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a distributed deadlock detection algorithm for a system with multiple sites. Explain how you would handle the challenges of false cycles and communication overhead.",
+      "keyPoints": [
+        "Centralized: one site collects all wait-for information; simple but single point of failure",
+        "Hierarchical: organize sites in tree; reduces communication; compromise between centralized and fully distributed",
+        "Fully distributed: sites exchange information; complex but robust",
+        "False cycles: due to propagation delays, detected cycles may no longer exist; use timestamps, periodic verification",
+        "Optimization: only send changes, compress information, use probes",
+        "Resolution: choose victim, rollback, compensate",
+        "Challenge: concurrency makes detection non-trivial",
+        "Trade-off: detection accuracy vs communication cost"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare and contrast the Three-Phase Commit protocol with Two-Phase Commit. Why doesn't Three-Phase Commit completely solve the commit problem in all failure scenarios?",
+      "keyPoints": [
+        "2PC: Prepare, Commit/Rollback phases; blocking if coordinator fails after prepare",
+        "3PC adds 'Pre-commit' phase between Prepare and Commit",
+        "3PC ensures no blocking if coordinator fails (can timeout and commit)",
+        "Assumes synchronous communication: messages eventually delivered",
+        "Network partition during Pre-commit can still cause issues",
+        "Cannot handle Byzantine failures",
+        "Still has single point of failure in coordinator",
+        "More complex, more messages, more latency",
+        "In practice, Paxos/Raft preferred for consensus",
+        "3PC assumes failures are fail-stop, not arbitrary"
+      ],
+      "marks": 10
+    }
+  ]
+}

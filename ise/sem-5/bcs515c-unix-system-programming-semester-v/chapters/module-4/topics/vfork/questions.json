@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary purpose of the `vfork()` system call and describe one key scenario where its use is appropriate.",
+    "expectedPoints": [
+      "`vfork()` is designed to be a more efficient version of `fork()` when the child process's only action is to immediately call an `exec` function.",
+      "It avoids copying the parent's page tables and entire address space, which is a costly operation, by suspending the parent and allowing the child to run in the parent's memory space until `exec` or `exit` is called.",
+      "A key appropriate scenario is in a simple shell implementation, where a child process is created solely to execute a new program command (e.g., `ls`, `grep`)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast the `fork()`, `vfork()`, and `clone()` system calls. Discuss their key differences in behavior, performance, and typical use cases.",
+    "expectedPoints": [
+      "`fork()` creates a nearly identical copy of the parent process with its own virtual memory space, leading to higher overhead due to Copy-On-Write page duplication.",
+      "`vfork()` is a special case; it suspends the parent and the child shares the parent's memory address space until it calls `execve` or `_exit`, making it highly efficient but dangerous if the child modifies any data.",
+      "`clone()` offers fine-grained control over what is shared (e.g., memory, file descriptors, signal handlers) and is primarily used for implementing threads, offering a middle ground between `fork` and `vfork` in terms of sharing and isolation."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A programmer replaces a call to `fork()` with `vfork()` to improve performance but encounters strange and unpredictable program crashes. Analyze the potential causes of these errors. Furthermore, outline the critical programming practices that must be strictly followed when using `vfork()` to avoid these pitfalls.",
+    "expectedPoints": [
+      "The crashes are likely because the child process created by `vfork()` modified variables in the shared address space before calling `exec()` or `_exit()`, corrupting the parent's state upon resumption.",
+      "Another cause could be the child calling a function other than `exec()` or `_exit()`, which might alter the program's stack or environment in ways the unsuspecting parent cannot handle.",
+      "Critical practices: 1) The child must not return from the function containing the `vfork()` call. 2) The child must not modify any data, not even local variables, as it runs in the parent's stack frame. 3) The child should only call `_exit()` or one of the `exec()` family functions. Any other action leads to undefined behavior."
+    ],
+    "marks": 10
+  }
+]

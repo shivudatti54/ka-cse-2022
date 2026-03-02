@@ -1,0 +1,45 @@
+{
+  "topicId": "wait",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic wait() Example",
+      "description": "Parent waits for child and displays exit status",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n \n if (pid == 0) {\n // Child process\n printf(\"Child executing, PID = %d\\n\", getpid());\n // Simulate some work\n sleep(2);\n printf(\"Child exiting with status 42\\n\");\n exit(42);\n } else {\n // Parent process\n int status;\n printf(\"Parent waiting for child (PID = %d)\\n\", pid);\n pid_t child_pid = wait(&status);\n \n if (WIFEXITED(status)) {\n printf(\"Child %d terminated normally\\n\", child_pid);\n printf(\"Exit status: %d\\n\", WEXITSTATUS(status));\n }\n }\n return 0;\n}",
+      "explanation": "Fork creates child; parent calls wait() which blocks until child exits; WIFEXITED checks normal termination; WEXITSTATUS extracts exit code 42",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "waitpid() with WNOHANG Example",
+      "description": "Non-blocking wait for specific child process",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid == 0) {\n // Child does quick work\n printf(\"Child working...\\n\");\n sleep(1);\n exit(0);\n }\n \n // Parent checks child without blocking\n int status;\n while (1) {\n pid_t result = waitpid(pid, &status, WNOHANG);\n \n if (result == 0) {\n printf(\"Child not yet finished, doing other work...\\n\");\n sleep(0.5);\n } else if (result == pid) {\n printf(\"Child finished!\\n\");\n break;\n } else {\n perror(\"waitpid error\");\n break;\n }\n }\n return 0;\n}",
+      "explanation": "WNOHANG makes waitpid non-blocking; returns 0 if child running, returns PID if child terminated; allows parent to do other work while polling",
+      "timeComplexity": "O(n) where n = polling iterations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Handling Multiple Children",
+      "description": "Parent waits for all children using wait() in loop",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n int n = 3;\n \n for (int i = 0; i < n; i++) {\n pid_t pid = fork();\n \n if (pid == 0) {\n // Each child does different work\n printf(\"Child %d (PID %d) working\\n\", i, getpid());\n sleep(i + 1); // Different sleep times\n exit(i * 10); // Different exit codes\n }\n }\n \n // Parent waits for all children\n int children = n;\n while (children > 0) {\n int status;\n pid_t child_pid = wait(&status);\n \n if (child_pid > 0) {\n if (WIFEXITED(status)) {\n printf(\"Child %d exited with code %d\\n\", \n child_pid, WEXITSTATUS(status));\n }\n children--;\n }\n }\n printf(\"All children reaped\\n\");\n return 0;\n}",
+      "explanation": "Parent forks 3 children with different exit codes; calls wait() repeatedly in loop to reap each child as they terminate; loop ends when all children are reaped",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Wait Status Macro Usage",
+      "description": "Demonstrates different WIF macros for various termination scenarios",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n#include <signal.h>\n\nvoid check_status(int status) {\n if (WIFEXITED(status)) {\n printf(\"Normal exit, status = %d\\n\", WEXITSTATUS(status));\n } else if (WIFSIGNALED(status)) {\n printf(\"Killed by signal %d\\n\", WTERMSIG(status));\n } else if (WIFSTOPPED(status)) {\n printf(\"Stopped by signal %d\\n\", WSTOPSIG(status));\n } else if (WIFCONTINUED(status)) {\n printf(\"Continued\\n\");\n }\n}\n\nint main() {\n pid_t pid = fork();\n \n if (pid == 0) {\n // Child - demonstrate different termination\n printf(\"Child running, will exit normally\\n\");\n exit(25); // Normal exit with code 25\n }\n \n int status;\n wait(&status);\n check_status(status); // Will show: Normal exit, status = 25\n \n return 0;\n}",
+      "explanation": "Demonstrates WIFEXITED (normal exit), WIFSIGNALED (signal death), WIFSTOPPED (job control), WIFCONTINUED (resumed); extracts appropriate information using WEXITSTATUS, WTERMSIG, WSTOPSIG",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

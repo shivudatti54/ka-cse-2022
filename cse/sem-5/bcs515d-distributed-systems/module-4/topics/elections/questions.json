@@ -1,0 +1,157 @@
+{
+  "topicId": "elections",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the Bully Algorithm for leader election with an example where process 1 initiates election after coordinator failure.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Process 1 sends election messages to all processes with higher IDs",
+        "Processes 2,3,4,5 respond with OK messages",
+        "Process 1 waits for OK from processes 2-5",
+        "If no OK received, process with highest ID becomes coordinator",
+        "The new coordinator broadcasts coordinator message to all"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the Ring Algorithm for leader election. How does it handle process failures?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Processes are arranged in a logical ring",
+        "Election message circulates clockwise collecting IDs",
+        "When message returns to initiator, highest ID becomes leader",
+        "On failure detection, process bypasses failed neighbor",
+        "Ring is reconfigured to exclude failed node"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Compare the Bully Algorithm and Ring Algorithm in terms of message complexity and fault tolerance.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Bully: O(n²) messages worst case, Ring: O(n) messages",
+        "Bully requires synchronous communication, Ring more tolerant",
+        "Bully uses broadcast, Ring uses token passing",
+        "Ring handles failures by reconfiguring ring",
+        "Bully can have cascading elections on failures"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are the assumptions made by the Bully Algorithm for correct operation?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "All processes know each other's process IDs",
+        "Processes can send messages directly to any other process",
+        "Message delivery is guaranteed (no loss)",
+        "System is synchronous or timeout mechanism exists for failure detection",
+        "Exactly one leader exists at any time (invariant)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the role of the coordinator in distributed systems and why leader election is critical.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Coordinator manages distributed operations and transactions",
+        "Ensures consistency in distributed databases",
+        "Handles concurrency control and lock management",
+        "Acts as single point of coordination",
+        "Leader election ensures system continuity after failures"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the message types used in the Bully Algorithm and their purposes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ELECTION message: Initiates leader election process",
+        "OK message: Response indicating sender is alive",
+        "COORDINATOR message: Announces newly elected leader",
+        "KILL message: Informs old leader it has been replaced",
+        "All messages carry sender process ID"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the Bully Algorithm in detail with a diagram showing processes P1-P5. If coordinator P5 fails, trace the election process when P1 detects the failure.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Diagram showing 5 processes with IDs 1-5",
+        "P1 detects failure via timeout, initiates election",
+        "P1 sends election messages to P2,P3,P4,P5",
+        "P2,P3,P4 respond with OK messages",
+        "P1 waits, then P4 (highest) initiates election",
+        "P4 becomes coordinator, broadcasts COORDINATOR message",
+        "Explain each step with message flow",
+        "Message complexity discussion"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the Ring Algorithm for leader election. With an example of 6 processes in a ring, trace the election when process P3 fails.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Logical ring arrangement of processes",
+        "Election message starts from one point",
+        "Message collects IDs as it circulates",
+        "Highest ID becomes leader when message returns",
+        "P3 failure detection by P2 (neighbor)",
+        "Ring reconfiguration: P2 connects to P4",
+        "New election initiated if needed",
+        "Advantages over Bully Algorithm"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare and contrast the Bully Algorithm and Ring Algorithm for leader election in distributed systems.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Message complexity: O(n²) vs O(n)",
+        "Communication pattern: broadcast vs token passing",
+        "Synchronous requirements",
+        "Failure handling mechanisms",
+        "Scalability considerations",
+        "When to use each algorithm",
+        "Practical applications",
+        "Limitations of each approach"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a leader election solution for a distributed database system with 8 server nodes. Explain how your solution handles concurrent elections and network partitions.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use priority-based election with server ID as priority",
+        "Election initiated on coordinator failure detection",
+        "Quorum-based validation to prevent split-brain",
+        "Handling concurrent elections with unique election IDs",
+        "Recovery from network partitions",
+        "Heartbeat mechanism for failure detection",
+        "Coordinator message propagation",
+        "State synchronization after election"
+      ]
+    }
+  ]
+}

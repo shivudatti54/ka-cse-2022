@@ -1,0 +1,35 @@
+{
+  "topicId": "sequential-logic",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "verilog",
+      "title": "D Flip-Flop Implementation",
+      "description": "Verilog code for edge-triggered D flip-flop with asynchronous reset.",
+      "code": "module d_ff (\n input clk, // Clock input\n input rst_n, // Asynchronous active-low reset\n input d, // Data input\n output reg q // Output\n);\n\n// Sequential logic block\nalways @(posedge clk or negedge rst_n) begin\n if (!rst_n) // Reset condition\n q <= 1'b0;\n else // Normal operation\n q <= d; // Sample input at clock edge\nend\n\nendmodule",
+      "explanation": "This D flip-flop samples input D on positive clock edge and holds value until next edge. Asynchronous reset (rst_n) overrides clock for immediate reset. The non-blocking assignment (<=) ensures proper simulation of sequential behavior.",
+      "timeComplexity": "N/A (sequential element)",
+      "spaceComplexity": "1 bit storage (q register)"
+    },
+    {
+      "id": "code-2",
+      "language": "verilog",
+      "title": "JK Flip-Flop Implementation",
+      "description": "Verilog code for JK flip-flop with synchronous clear.",
+      "code": "module jk_ff (\n input clk, // Clock\n input clr, // Synchronous clear\n input j, // J input\n input k, // K input\n output reg q, // Output\n output q_bar // Complement output\n);\n\nassign q_bar = ~q; // Continuous assignment for complement\n\n// Characteristic equation: Q+ = J*Q' + K'*Q\nalways @(posedge clk) begin\n if (clr) // Synchronous clear\n q <= 1'b0;\n else begin\n case ({j, k})\n 2'b00: q <= q; // Hold\n 2'b01: q <= 1'b0; // Reset\n 2'b10: q <= 1'b1; // Set\n 2'b11: q <= ~q; // Toggle\n endcase\n end\nend\n\nendmodule",
+      "explanation": "Implements JK flip-flop characteristic equation Q+ = JQ\u0305 + K\u0305Q. Case statement handles all four input combinations. Toggle occurs when J=K=1. Synchronous clear has priority over normal operation.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "1 bit (q)"
+    },
+    {
+      "id": "code-3",
+      "language": "vhdl",
+      "title": "4-bit Shift Register (VHDL)",
+      "description": "VHDL behavioral model of 4-bit parallel-in serial-out shift register using D flip-flops.",
+      "code": "library IEEE;\nuse IEEE.std_logic_1164.all;\n\nentity shift_register is\n port (\n clk : in std_logic;\n rst_n : in std_logic;\n load : in std_logic;\n parallel_in : in std_logic_vector(3 downto 0);\n serial_out : out std_logic\n );\nend shift_register;\n\narchitecture behavioral of shift_register is\n signal shift_reg : std_logic_vector(3 downto 0);\nbegin\n process(clk, rst_n) begin\n if (rst_n = '0') then\n shift_reg <= (others => '0');\n elsif (rising_edge(clk)) then\n if (load = '1') then\n shift_reg <= parallel_in;\n else\n -- Shift left: MSB becomes serial output\n shift_reg <= shift_reg(2 downto 0) & shift_reg(3);\n end if;\n end if;\n end process;\n \n serial_out <= shift_reg(3);\nend behavioral;",
+      "explanation": "4-bit PISO shift register. On load=1, parallel data loaded. On load=0, shifts left each clock. MSB output as serial. Demonstrates sequential logic with state (shift_reg signal) updated on clock edges.",
+      "timeComplexity": "O(1) per clock cycle (one shift operation)",
+      "spaceComplexity": "4 bits (shift_reg signal)"
+    }
+  ]
+}

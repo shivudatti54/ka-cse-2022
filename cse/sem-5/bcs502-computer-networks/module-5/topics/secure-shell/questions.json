@@ -1,0 +1,153 @@
+{
+  "topicId": "secure-shell",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain Secure Shell (SSH) and its primary functions.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "SSH is a cryptographic network protocol for secure communication over unsecured networks",
+        "Provides secure remote login replacing Telnet/rsh",
+        "Enables secure file transfer (SCP/SFTP) and port forwarding",
+        "Uses client-server architecture with encryption"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain three SSH authentication methods.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Password authentication: Traditional method with encrypted password transfer",
+        "Public key authentication: Uses key pairs (private/public) for passwordless login",
+        "Keyboard-interactive: Multi-step authentication similar to password"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is SSH port forwarding? Explain local port forwarding with syntax.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Port forwarding tunnels insecure traffic through encrypted SSH connection",
+        "Local port forwarding (-L): forwards local port through SSH to remote destination",
+        "Syntax: ssh -L local_port:remote_host:remote_port user@server",
+        "Example: ssh -L 8080:webserver:80 user@gateway accesses webserver:80 via gateway"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between SCP and SFTP protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SCP is simpler, uses single connection for file transfer",
+        "SFTP is a subsystem of SSH with FTP-like interface",
+        "SFTP supports more operations: ls, cd, mkdir, rm, rename",
+        "SFTP provides better error handling and file attribute support"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the SSH-1 vs SSH-2 protocol versions and why SSH-2 is preferred.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "SSH-1 has vulnerabilities (CRC32 exploit) and uses single stream",
+        "SSH-2 has improved security with stronger encryption algorithms",
+        "SSH-2 supports key exchange algorithms and better modular architecture",
+        "SSH-2 provides forward secrecy and resistance to attacks"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the purpose and usage of SSH agent and SSH keys.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ssh-agent stores decrypted private keys in memory",
+        "Eliminates repeated passphrase entry for authentication",
+        "Keys: RSA, DSA (deprecated), ECDSA, Ed25519 (recommended)",
+        "ssh-keygen generates key pairs, ssh-add adds keys to agent"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "List and explain SSH configuration files and their purposes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "System-wide: /etc/ssh/sshd_config (server), /etc/ssh/ssh_config (client)",
+        "User-specific: ~/.ssh/config for client options",
+        "~/.ssh/authorized_keys for public key authentication",
+        "~/.ssh/known_hosts stores server keys for verification"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the SSH architecture and working principle. Include discussion on encryption, key exchange, and session establishment.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "SSH uses client-server model with sshd daemon on server",
+        "Connection involves: TCP handshake, protocol version exchange, key exchange (Diffie-Hellman)",
+        "Session encryption established using generated session keys",
+        "Uses both asymmetric (for auth/key exchange) and symmetric encryption (for data)",
+        "Authentication methods verify user identity",
+        "Final step: session channel opened for secure communication"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain in detail the three types of SSH port forwarding with examples and use cases.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Local (-L): Forwards local port through SSH to remote destination. Example: ssh -L 8080:internal:80 gateway - accesses internal:80 via gateway",
+        "Remote (-R): Forwards remote port to local machine. Example: ssh -R 8080:localhost:80 remote - remote can access local web server",
+        "Dynamic (-D): Creates SOCKS proxy. Example: ssh -D 9090 user@server - use localhost:9090 as proxy for any destination",
+        "Use cases: Accessing firewalled services, secure browsing, tunneling applications"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the process of passwordless SSH login using public key authentication with necessary commands.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Generate key pair: ssh-keygen -t ed25519 (or rsa)",
+        "Key pair: private key (~/.ssh/id_ed25519) stays local, public key (.pub) goes to server",
+        "Copy public key: ssh-copy-id user@server or manually append to ~/.ssh/authorized_keys",
+        "Server stores public key in authorized_keys file",
+        "On connection: client signs with private key, server verifies with stored public key",
+        "Optional: Add passphrase and use ssh-agent to avoid repeated passphrase entry"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss SSH security best practices and common SSH commands used in system administration.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Best practices: Use SSH-2 only, disable root login, use key-based auth, change default port, use strong key types (Ed25519)",
+        "Limit user access, use AllowUsers/DenyUsers, implement fail2ban, keep SSH updated",
+        "Common commands: ssh (login), scp/sftp (transfer), ssh-keygen (keys)",
+        "ssh-copy-id (deploy keys), ssh-agent (key management)",
+        "ssh-add (add keys), sshuttle (VPN-like tunnel)",
+        "Configuration: /etc/ssh/sshd_config modifications for hardening"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose and typical use cases of the kill() function in UNIX system programming.",
+    "expectedPoints": [
+      "The kill() function is used to send a signal to a process or a group of processes.",
+      "Its primary purpose is to request the termination of a process, but it can send any signal defined in the system.",
+      "Common use cases include terminating a process (SIGTERM, SIGKILL), stopping/resuming a process (SIGSTOP, SIGCONT), or notifying a process of an event (SIGHUP, SIGUSR1).",
+      "The function takes a process ID (PID) and a signal number as arguments. A PID of 0 sends the signal to all processes in the sender's process group."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe how the raise() function differs from the kill() function. Provide a simple code example to illustrate the use of raise().",
+    "expectedPoints": [
+      "The raise() function sends a signal to the calling process itself, whereas kill() can send a signal to any process (subject to permissions).",
+      "raise(sig) is essentially equivalent to kill(getpid(), sig).",
+      "It is used when a process needs to signal itself, often to trigger a signal handler for error handling or self-management.",
+      "Example code: `if (error_condition) { raise(SIGUSR1); }` to signal an error condition to itself."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "Discuss the security implications and permission checks involved when using the kill() function to send a signal to another process.",
+    "expectedPoints": [
+      "A process must have the appropriate permissions to send a signal to another process. The effective user ID of the sender must match the real or effective user ID of the target process, unless the sender has root privileges.",
+      "Root privileges (superuser) can send any signal to any process.",
+      "The kill() function will fail with EPERM if the sender lacks permissions, or with ESRCH if the target process does not exist.",
+      "This permission system prevents users from arbitrarily interrupting or terminating each other's processes, ensuring a level of process isolation and system security."
+    ],
+    "marks": 10
+  }
+]

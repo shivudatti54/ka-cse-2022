@@ -1,0 +1,380 @@
+{
+  "topicId": "introduction",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which of the following is NOT a characteristic of Unix System Programming?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Direct interaction with kernel via system calls"
+        },
+        {
+          "key": "B",
+          "text": "Requires understanding of process management and IPC"
+        },
+        {
+          "key": "C",
+          "text": "Always requires kernel module development"
+        },
+        {
+          "key": "D",
+          "text": "Uses C library wrappers for portability"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Unix System Programming typically involves writing user-space programs that use system calls. Kernel module development is a separate specialized area. System programming can be done entirely in user space without kernel modules.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "When a program calls the read() function fromstdio.h, which of the following sequences occurs?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Program directly accesses disk sectors"
+        },
+        {
+          "key": "B",
+          "text": "C library wrapper \u2192 system call \u2192 kernel \u2192 device driver \u2192 hardware"
+        },
+        {
+          "key": "C",
+          "text": "Kernel intercepts the call before C library processes it"
+        },
+        {
+          "key": "D",
+          "text": "System call is bypassed; direct memory mapping occurs"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The read() function from standard C library acts as a wrapper. It sets up parameters and triggers a software interrupt (trap) to transition from user mode to kernel mode, where the kernel's read system call handler executes and interfaces with the appropriate device driver.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Consider a Unix system with two different processes - one running with effective UID 0 (root) and another with UID 1000. Which statement is TRUE about system calls?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only root process can invoke system calls"
+        },
+        {
+          "key": "B",
+          "text": "All processes can invoke system calls, but some are restricted based on privileges"
+        },
+        {
+          "key": "C",
+          "text": "System calls execute in user space for non-privileged processes"
+        },
+        {
+          "key": "D",
+          "text": "Non-root processes use a different set of system calls"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "All processes can invoke system calls, but certain privileged operations (like binding to ports below 1024, changing UID, accessing arbitrary files) are restricted based on process privileges. The kernel enforces these access controls after the system call trap.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "A programmer writes a function that opens a file and returns a file descriptor. This is an example of:",
+      "options": [
+        {
+          "key": "A",
+          "text": "A library function that is not a system call"
+        },
+        {
+          "key": "B",
+          "text": "A system call that returns a kernel-managed resource handle"
+        },
+        {
+          "key": "C",
+          "text": "An API that only works in kernel space"
+        },
+        {
+          "key": "D",
+          "text": "A deprecated Unix programming method"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "open() is a system call that requests the kernel to open a file. The kernel creates a file descriptor (an integer index to the per-process file table) and returns it to user space. This file descriptor is a kernel-managed resource used in subsequent I/O operations.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "In the context of Unix, what does the term 'POSIX compliant' primarily guarantee?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The code will run faster on all Unix systems"
+        },
+        {
+          "key": "B",
+          "text": "The source code can be compiled without modifications on different POSIX systems"
+        },
+        {
+          "key": "C",
+          "text": "The program will have root privileges automatically"
+        },
+        {
+          "key": "D",
+          "text": "The kernel source code is identical across systems"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "POSIX (Portable Operating System Interface) compliance ensures that a program's source code, written using POSIX-standard APIs, can be compiled and run on any POSIX-compliant Unix-like system without modification. It guarantees API compatibility, not identical kernel implementation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Which of these is the CORRECT order of privilege levels from highest to lowest?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Kernel Space \u2192 System Calls \u2192 User Space \u2192 Applications"
+        },
+        {
+          "key": "B",
+          "text": "Kernel Space \u2192 User Space \u2192 System Calls \u2192 Applications"
+        },
+        {
+          "key": "C",
+          "text": "Applications \u2192 User Space \u2192 System Calls \u2192 Kernel Space"
+        },
+        {
+          "key": "D",
+          "text": "System Calls \u2192 Kernel Space \u2192 User Space \u2192 Applications"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Applications run in User Space with least privilege. When they need kernel services, they make System Calls that transition to Kernel Space (privileged mode). The Kernel has highest privilege and direct hardware access.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "A Unix program calls fork() and gets two return values - 0 in child and child's PID in parent. This is an example of:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Error handling in system calls"
+        },
+        {
+          "key": "B",
+          "text": "Kernel modifying process memory during system call return"
+        },
+        {
+          "key": "C",
+          "text": "A library bug requiring kernel patches"
+        },
+        {
+          "key": "D",
+          "text": "Both processes calling the same system call simultaneously"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The fork() system call creates a new process. Before returning to user space, the kernel sets up the return value differently in each process's memory space - 0 in child's context and child's PID in parent's context. This demonstrates how system calls can have different effects in parent and child processes.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Why is errno set after a failed system call in Unix?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To indicate the system call was successful with warnings"
+        },
+        {
+          "key": "B",
+          "text": "To provide error diagnostic information to the programmer"
+        },
+        {
+          "key": "C",
+          "text": "To tell the kernel which error handling routine to use"
+        },
+        {
+          "key": "D",
+          "text": "To track system call performance metrics"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a system call fails, the kernel sets errno (a global variable in C library) to a positive value indicating the specific error (e.g., EACCES for permission denied, ENOENT for file not found). This provides standardized error codes for robust error handling in programs.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Which of these statements about Unix file descriptors is FALSE?",
+      "options": [
+        {
+          "key": "A",
+          "text": "File descriptors are process-specific resources"
+        },
+        {
+          "key": "B",
+          "text": "File descriptor 0 represents standard input by convention"
+        },
+        {
+          "key": "C",
+          "text": "File descriptors can be shared between unrelated processes"
+        },
+        {
+          "key": "D",
+          "text": "File descriptors are always integers starting from 0"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "File descriptors are normally process-specific, but they CAN be shared between related processes (like parent and child via fork()) through inheritance, or explicitly via Unix domain sockets or shared memory. However, unrelated processes don't share file descriptors by default - this statement is false in the default case.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "The 'write' system call returns -1. What should the programmer check to diagnose the error?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only check if return value is negative"
+        },
+        {
+          "key": "B",
+          "text": "Check errno value for specific error code"
+        },
+        {
+          "key": "C",
+          "text": "Check the file content immediately"
+        },
+        {
+          "key": "D",
+          "text": "Rerun the program with root privileges immediately"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a system call returns -1, it indicates failure. The programmer should check the errno variable to determine the specific error (e.g., EBADF for bad file descriptor, ENOSPC for no space, EPERM for permission denied). This is essential for proper error handling.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is the primary advantage of using standard C library functions over raw system calls?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They execute faster than system calls"
+        },
+        {
+          "key": "B",
+          "text": "They provide portability and error handling wrappers"
+        },
+        {
+          "key": "C",
+          "text": "They can bypass kernel security checks"
+        },
+        {
+          "key": "D",
+          "text": "They work in kernel space directly"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "C library wrappers provide portability across different Unix variants (and even non-Unix systems) by abstracting system call differences. They also provide consistent error handling through errno, buffered I/O for performance, and standard function interfaces.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "In Unix, when a process executes a setuid program owned by root, what determines its effective privileges?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The user ID of the process that spawned it"
+        },
+        {
+          "key": "B",
+          "text": "The setuid bit causes effective UID to become the file owner's UID during execution"
+        },
+        {
+          "key": "C",
+          "text": "The kernel ignores setuid for security reasons"
+        },
+        {
+          "key": "D",
+          "text": "The real UID always determines privileges"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a program with the setuid bit set is executed, the kernel sets the effective UID to the file owner's UID (root in this case), while the real UID remains the user's. This allows temporary privilege elevation. The saved set-user-ID also gets set, allowing later privilege dropping.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mc-13",
+      "question": "Which header file is typically included for system call wrappers in Unix programs?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only <windows.h> for cross-platform support"
+        },
+        {
+          "key": "B",
+          "text": "Standard headers like <unistd.h>, <sys/types.h>, <fcntl.h>"
+        },
+        {
+          "key": "C",
+          "text": "<kernel.h> which provides direct kernel access"
+        },
+        {
+          "key": "D",
+          "text": "No headers needed; system calls are built into the compiler"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Unix system programming uses standard headers: <unistd.h> for POSIX system calls (read, write, fork), <sys/types.h> for data types, <fcntl.h> for file control operations, <sys/wait.h> for wait functions, etc. <kernel.h> doesn't exist in user space.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What happens when a user process attempts to access memory outside its allocated address space?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The kernel grants additional memory automatically"
+        },
+        {
+          "key": "B",
+          "text": "The process receives a SIGSEGV (segmentation fault) signal"
+        },
+        {
+          "key": "C",
+          "text": "The system call fails but program continues"
+        },
+        {
+          "key": "D",
+          "text": "The kernel performs garbage collection for that process"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The memory management unit (MMU) hardware detects the invalid memory access and triggers an exception. The kernel delivers SIGSEGV signal to the process, which by default terminates the program. This protection prevents processes from corrupting other processes' memory.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "The Unix philosophy emphasizes programs that 'do one thing well'. Which IPC mechanism best exemplifies this principle?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Complex shared memory structures requiring careful synchronization"
+        },
+        {
+          "key": "B",
+          "text": "Simple pipes connecting small, focused programs"
+        },
+        {
+          "key": "C",
+          "text": "Message queues with elaborate message types"
+        },
+        {
+          "key": "D",
+          "text": "Semaphores used within single monolithic programs"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pipes exemplify the Unix philosophy: a simple, unidirectional byte stream that connects two processes. Small programs can be composed together - one's output becomes another's input (e.g., grep | sort | uniq). This composability is fundamental to Unix design.",
+      "difficulty": "medium"
+    }
+  ]
+}

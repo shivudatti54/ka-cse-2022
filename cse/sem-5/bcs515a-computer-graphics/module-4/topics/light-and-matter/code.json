@@ -1,0 +1,35 @@
+{
+  "topicId": "light-and-matter",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Phong Reflection Model Calculation",
+      "description": "Demonstrates the calculation of ambient, diffuse, and specular lighting components for the Phong reflection model",
+      "code": "FUNCTION PhongReflection(point, normal, lightPos, viewPos, material, lightColor)\n // Initialize result color\n ambientColor = material.ambient * lightColor\n \n // Calculate light direction (pointing from surface to light)\n lightDir = Normalize(lightPos - point)\n \n // DIFFUSE COMPONENT\n // Calculate angle between normal and light direction (dot product)\n diff = DotProduct(normal, lightDir)\n IF diff < 0 THEN diff = 0 // Light behind surface\n diffuseColor = material.diffuse * lightColor * diff\n \n // SPECULAR COMPONENT\n // Calculate view direction (pointing from surface to camera)\n viewDir = Normalize(viewPos - point)\n \n // Calculate reflection direction (reflect light off surface)\n reflectDir = Reflect(-lightDir, normal)\n \n // Calculate specular intensity using view angle\n spec = DotProduct(viewDir, reflectDir)\n IF spec < 0 THEN spec = 0\n \n // Apply shininess factor (higher = smaller highlight)\n spec = spec ^ material.shininess\n specularColor = material.specular * lightColor * spec\n \n // Combine all components\n finalColor = ambientColor + diffuseColor + specularColor\n \n RETURN finalColor\nEND FUNCTION",
+      "explanation": "1. Ambient component: Constant light applied to all surfaces regardless of orientation\n2. Diffuse component: Lambertian reflection - depends on angle between surface normal and light direction\n3. Specular component: Creates shiny highlights - depends on view angle and reflection direction\n4. The shininess exponent controls the size of specular highlights",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Point Light Attenuation",
+      "description": "Demonstrates how light intensity decreases with distance from a point light source",
+      "code": "FUNCTION CalculateAttenuation(lightPos, surfacePos, constant, linear, quadratic)\n // Calculate distance from light to surface\n distance = Distance(lightPos, surfacePos)\n \n // ATTENUATION FORMULA: 1 / (c + l*d + q*d²)\n // where:\n // c = constant attenuation (maintains minimum intensity)\n // l = linear attenuation (gradual falloff)\n // q = quadratic attenuation (realistic physics-based)\n \n attenuationFactor = 1.0 / (constant + (linear * distance) + (quadratic * distance * distance))\n \n // Clamp to prevent division by zero or extreme values\n IF attenuationFactor > 1.0 THEN attenuationFactor = 1.0\n IF attenuationFactor < 0.0 THEN attenuationFactor = 0.0\n \n RETURN attenuationFactor\nEND FUNCTION\n\nFUNCTION ApplyLightWithAttenuation(surfacePoint, normal, light, material)\n // Get base light contribution using Phong model\n baseColor = PhongReflection(surfacePoint, normal, light.position, \n material.ambient, material.diffuse, \n material.specular, material.shininess)\n \n // Calculate distance-based attenuation\n attenuation = CalculateAttenuation(\n light.position,\n surfacePoint,\n light.constant, // Typical value: 1.0\n light.linear, // Typical value: 0.09\n light.quadratic // Typical value: 0.032\n )\n \n // Apply attenuation to final color\n finalColor = baseColor * attenuation\n \n RETURN finalColor\nEND FUNCTION",
+      "explanation": "1. Point lights radiate in all directions from a single position\n2. Attenuation models the falloff of light intensity over distance\n3. Quadratic term (q*d²) simulates real-world inverse-square law behavior\n4. Typical coefficients create realistic lighting falloff curves",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Gouraud Shading Interpolation",
+      "description": "Demonstrates vertex-based color interpolation (Gouraud shading) across triangle faces",
+      "code": "STRUCT Vertex\n position: Vector3\n normal: Vector3\n color: Color\nEND STRUCT\n\n// Gouraud shading: Compute lighting at vertices, interpolate across triangle\nFUNCTION GouraudShading(vertexA, vertexB, vertexC, light, material, viewPos)\n // Calculate lighting at each vertex using Phong model\n vertexA.color = PhongReflection(\n vertexA.position, vertexA.normal,\n light.position, viewPos,\n material, light.color\n )\n \n vertexB.color = PhongReflection(\n vertexB.position, vertexB.normal,\n light.position, viewPos,\n material, light.color\n )\n \n vertexC.color = PhongReflection(\n vertexC.position, vertexC.normal,\n light.position, viewPos,\n material, light.color\n )\n \n RETURN [vertexA, vertexB, vertexC]\nEND FUNCTION\n\n// Rasterize triangle with interpolated colors\nFUNCTION RasterizeGouraudTriangle(v0, v1, v2, framebuffer)\n // For each pixel in triangle:\n FOR each pixel position P IN triangle\n // Calculate barycentric coordinates (weights for each vertex)\n w0 = BarycentricWeight(P, v1, v2)\n w1 = BarycentricWeight(P, v2, v0)\n w2 = BarycentricWeight(P, v0, v1)\n \n // Interpolate color using vertex colors and weights\n finalColor = (w0 * v0.color) + (w1 * v1.color) + (w2 * v2.color)\n \n // Write interpolated color to framebuffer\n framebuffer[P] = finalColor\n END FOR\nEND FUNCTION\n\n// Alternative: Phong Shading (per-pixel lighting)\nFUNCTION PhongShadingPerPixel(vertexA, vertexB, vertexC, light, material, viewPos, framebuffer)\n FOR each pixel position P IN triangle\n // Interpolate normal at pixel (not color)\n normal = InterpolateNormal(P, vertexA.normal, vertexB.normal, vertexC.normal)\n normal = Normalize(normal)\n \n // Interpolate position at pixel\n position = InterpolatePosition(P, vertexA.position, vertexB.position, vertexC.position)\n \n // Compute lighting PER PIXEL using interpolated normal\n pixelColor = PhongReflection(position, normal, light.position, viewPos, material, light.color)\n \n framebuffer[P] = pixelColor\n END FOR\nEND FUNCTION",
+      "explanation": "Gouraud Shading:\n1. Compute lighting intensity at each vertex first\n2. Interpolate colors across the triangle using barycentric coordinates\n3. Faster but misses specular highlights on curved surfaces\n\nPhong Shading:\n1. Interpolate normals across the triangle instead of colors\n2. Compute lighting at each pixel using interpolated normal\n3. Slower but produces smoother, more accurate specular highlights",
+      "timeComplexity": "O(n) where n = number of pixels in triangle",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

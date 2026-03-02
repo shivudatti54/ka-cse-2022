@@ -1,0 +1,154 @@
+{
+  "topicId": "er-to-relational-mapping",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the steps involved in mapping an ER diagram to relational schema.",
+      "keyPoints": [
+        "Map regular (strong) entity sets to relations",
+        "Map weak entity sets with owner primary key",
+        "Map binary 1:1, 1:N, and M:N relationships",
+        "Map multi-valued attributes to separate relations",
+        "Map composite attributes to simple components",
+        "Handle specialization/generalization",
+        "Define primary keys and foreign keys with constraints"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between total participation and partial participation with examples in ER-to-Relational mapping.",
+      "keyPoints": [
+        "Total participation: every entity must participate (NOT NULL foreign key)",
+        "Partial participation: entity may or may not participate (NULL allowed)",
+        "Example: Every Employee MUST have a Department (total)",
+        "Example: Employee MAY have a dependent (partial)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "How is a ternary relationship mapped to relational schema? Explain with an example.",
+      "keyPoints": [
+        "Ternary relationship requires a separate relation",
+        "Include foreign keys referencing all three participating entities",
+        "Primary key is combination of all three foreign keys",
+        "Example: Project assigned to Employee using Skill - needs all three keys"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are derived attributes? How are they handled in ER-to-Relational mapping?",
+      "keyPoints": [
+        "Derived attributes are computed from other stored attributes",
+        "They are NOT stored in the database to avoid redundancy",
+        "Computed on-the-fly when needed using base attributes",
+        "Example: Age can be derived from DateOfBirth"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the three approaches for mapping 1:1 relationships with an example of when each is suitable.",
+      "keyPoints": [
+        "Foreign key approach: Add PK of one entity as FK in other",
+        "Merged relation: Combine both entities into single table",
+        "Cross-reference: Create separate junction table",
+        "Choose based on participation constraints and query patterns"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How do you map specialization and generalization to relational schema? Discuss different strategies.",
+      "keyPoints": [
+        "Strategy 1: Single relation with type attribute for each subclass",
+        "Strategy 2: Separate relations for superclass and each subclass",
+        "Strategy 3: Only subclass relations with all attributes",
+        "Choice depends on overlapping/total/disjoint constraints"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the mapping of binary recursive relationships with an example.",
+      "keyPoints": [
+        "Binary recursive: entity relates to itself (e.g., Employee manages Employee)",
+        "Map as single relation with self-referencing foreign key",
+        "Foreign key references PK of same relation",
+        "Example: Employee(EmpID, Name, ManagerID) - ManagerID references EmpID"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Consider an ER diagram for a Library Management System with entities: Book, Member, Author, Publisher. Relationships: Member borrows Book (1:M), Book has Author (M:N), Book published by Publisher (1:N), Author writes Book (M:N). Also, Book has multi-valued attribute 'Subject' and Author has weak entity 'Award'. Map this ER diagram to relational schema with all appropriate keys and constraints.",
+      "keyPoints": [
+        "Book(BookID, Title, ISBN, PubID) - FK to Publisher",
+        "Publisher(PublisherID, Name, Address)",
+        "Member(MemberID, Name, JoinDate)",
+        "Borrow(BorrowID, MemberID, BookID, BorrowDate, ReturnDate) - composite FK",
+        "Author(AuthorID, Name, Bio)",
+        "BookAuthor(BookID, AuthorID) - composite PK",
+        "Subject(BookID, Subject) - separate for multi-valued",
+        "Award(AwardID, AwardName, AuthorID) - FK to Author as part of PK"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the complete algorithm for ER-to-Relational mapping. Include handling of: (a) Regular entities, (b) Weak entities, (c) All relationship types (1:1, 1:N, M:N), (d) Multi-valued and composite attributes, (e) Specialization/Generalization.",
+      "keyPoints": [
+        "Step 1: Map regular entities - create relation with all simple attributes, choose PK",
+        "Step 2: Map weak entities - add owner PK as FK, composite PK",
+        "Step 3: Map attributes - composite to simple, multi-valued to separate relation",
+        "Step 4: Map 1:1 - FK in one relation or merge or junction",
+        "Step 5: Map 1:N - FK in N-side relation",
+        "Step 6: Map M:N - create new junction relation",
+        "Step 7: Map specialization - choose strategy based on constraints",
+        "Step 8: Define integrity constraints (NOT NULL, UNIQUE)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design an ER diagram for a Hospital Management System and map it to relational schema. Entities: Patient, Doctor, Ward, Treatment. Relationships: Doctor treats Patient (M:N), Patient admitted to Ward (1:N), Doctor assigned to Ward (1:N), Ward has WardBoy (1:N), WardBoy is weak entity of Ward. Also include specialization: Nurse (works in Ward, assigned to Patients). Show all relational tables with primary keys, foreign keys, and constraints.",
+      "keyPoints": [
+        "Patient(PatientID, Name, DOB, Gender, Address)",
+        "Doctor(DoctorID, Name, Specialization, Salary)",
+        "Ward(WardID, WardName, Capacity, Type)",
+        "Treat(DoctorID, PatientID, TreatmentDate, Diagnosis) - M:N mapping",
+        "PatientAdmission(PatientID, WardID, AdmitDate)",
+        "DoctorAssignment(DoctorID, WardID)",
+        "WardBoy(WardBoyID, WardID, Name) - weak entity mapping",
+        "Nurse(NurseID, Name, WardID) - specialization entity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the mapping of union types (categories) in ER-to-Relational mapping. When would you use different strategies? Explain with examples.",
+      "keyPoints": [
+        "Union type: entity is subset of union of multiple entity types",
+        "Strategy 1: Create relation for union with type attribute and foreign keys to all constituent entities",
+        "Strategy 2: Create separate relation for each entity that is member of union",
+        "Strategy 3: Single table with all possible attributes (vertical splitting)",
+        "Example: VehicleOwner can be Person OR Company - use type attribute to distinguish",
+        "Choose based on: number of common vs specific attributes, query patterns, update frequency"
+      ],
+      "marks": 10
+    }
+  ]
+}

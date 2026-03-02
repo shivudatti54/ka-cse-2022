@@ -1,0 +1,41 @@
+{
+  "topicId": "first-and-follow",
+  "examples": [
+    {
+      "id": "pseudocode-first-set",
+      "title": "Algorithm: Computing FIRST Sets",
+      "description": "Iterative fixed-point algorithm for computing FIRST sets",
+      "language": "pseudocode",
+      "code": "ALGORITHM ComputeFirstSets\nINPUT: Grammar G\nOUTPUT: FIRST sets for each non-terminal\n\nBEGIN\n for each non-terminal X:\n FIRST(X) = ∅\n while sets are still changing:\n for each production X → Y₁Y₂...Yₖ:\n add all non-ε elements of FIRST(Y₁) to FIRST(X)\n if Y₁ can derive ε:\n add all non-ε elements of FIRST(Y₂) to FIRST(X)\n ...\n if all Y₁ through Yₖ can derive ε:\n add ε to FIRST(X)\nEND",
+      "explanation": "This algorithm iteratively computes the FIRST sets for each non-terminal in the grammar."
+    },
+    {
+      "id": "python-first-set",
+      "title": "Python: Computing FIRST Sets",
+      "description": "Implementation of the FIRST set computation algorithm in Python",
+      "language": "python",
+      "code": "def compute_first_sets(grammar):\n first_sets = {}\n for non_terminal in grammar:\n first_sets[non_terminal] = set()\n while True:\n changed = False\n for production in grammar:\n for symbol in production:\n if symbol in first_sets:\n first_sets[production[0]].update(first_sets[symbol] - {''})\n if '' in first_sets[symbol]:\n first_sets[production[0]].add('')\n changed = True\n if not changed:\n break\n return first_sets",
+      "explanation": "This Python function implements the FIRST set computation algorithm.",
+      "timeComplexity": "O(n^2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "pseudocode-follow-set",
+      "title": "Algorithm: Computing FOLLOW Sets",
+      "description": "Iterative fixed-point algorithm for computing FOLLOW sets",
+      "language": "pseudocode",
+      "code": "ALGORITHM ComputeFollowSets\nINPUT: Grammar G\nOUTPUT: FOLLOW sets for each non-terminal\n\nBEGIN\n FOLLOW(S) = {$}\n for each non-terminal X ≠ S:\n FOLLOW(X) = ∅\n while sets are still changing:\n for each production A → αBβ:\n add FIRST(β) - {ε} to FOLLOW(B)\n if β can derive ε:\n add FOLLOW(A) to FOLLOW(B)\n for each production A → αB:\n add FOLLOW(A) to FOLLOW(B)\nEND",
+      "explanation": "This algorithm iteratively computes the FOLLOW sets for each non-terminal in the grammar."
+    },
+    {
+      "id": "python-follow-set",
+      "title": "Python: Computing FOLLOW Sets",
+      "description": "Implementation of the FOLLOW set computation algorithm in Python",
+      "language": "python",
+      "code": "def compute_follow_sets(grammar):\n follow_sets = {}\n for non_terminal in grammar:\n follow_sets[non_terminal] = set()\n follow_sets['S'].add('$')\n while True:\n changed = False\n for production in grammar:\n for i, symbol in enumerate(production):\n if symbol in follow_sets:\n if i < len(production) - 1:\n follow_sets[symbol].update(follow_sets[production[i+1]] - {''})\n if i == len(production) - 1:\n follow_sets[symbol].update(follow_sets[production[0]])\n changed = True\n if not changed:\n break\n return follow_sets",
+      "explanation": "This Python function implements the FOLLOW set computation algorithm.",
+      "timeComplexity": "O(n^2)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

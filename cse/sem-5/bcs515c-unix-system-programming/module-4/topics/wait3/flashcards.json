@@ -1,0 +1,130 @@
+{
+  "topicId": "wait3",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is the primary purpose of wait3() system call?",
+      "back": "To allow a parent process to wait for child termination, collect exit status, and retrieve resource usage information via struct rusage."
+    },
+    {
+      "id": "fc-2",
+      "front": "What three main actions does wait3() perform?",
+      "back": "1. Suspends parent until child exits 2. Reaps zombie processes 3. Returns resource usage statistics."
+    },
+    {
+      "id": "fc-3",
+      "front": "Syntax of wait3()",
+      "back": "pid_t wait3(int *status, int options, struct rusage *rusage);"
+    },
+    {
+      "id": "fc-4",
+      "front": "What does WNOHANG option do in wait3()?",
+      "back": "Makes wait3() non-blocking: returns immediately if no child has exited (returns 0 in this case)."
+    },
+    {
+      "id": "fc-5",
+      "front": "How to check if child exited normally using status?",
+      "back": "Use WIFEXITED(status) macro. Returns true if child exited via exit() or return."
+    },
+    {
+      "id": "fc-6",
+      "front": "What does WEXITSTATUS(status) return?",
+      "back": "Returns exit code (0-255) of normally terminated child. Only valid if WIFEXITED is true."
+    },
+    {
+      "id": "fc-7",
+      "front": "Key difference between wait() and wait3()?",
+      "back": "wait3() adds options argument and rusage parameter for resource statistics, while wait() has neither."
+    },
+    {
+      "id": "fc-8",
+      "front": "What information does struct rusage contain?",
+      "back": "CPU time (user/system), page faults, context switches, and other resource usage metrics."
+    },
+    {
+      "id": "fc-9",
+      "front": "How to prevent zombie processes using wait3()?",
+      "back": "Call wait3() in parent after fork(). Use WNOHANG in loop for non-blocking cleanup of multiple children."
+    },
+    {
+      "id": "fc-10",
+      "front": "What error occurs if wait3() is called with no children?",
+      "back": "ECHILD error (errno set) when process has no unwaited-for children."
+    },
+    {
+      "id": "fc-11",
+      "front": "How to handle child terminated by signal?",
+      "back": "Check WIFSIGNALED(status). Use WTERMSIG(status) to get signal number."
+    },
+    {
+      "id": "fc-12",
+      "front": "What does WUNTRACED option do?",
+      "back": "Causes wait3() to return if child is stopped (via SIGSTOP, etc.), not just terminated."
+    },
+    {
+      "id": "fc-13",
+      "front": "Example code snippet using wait3()",
+      "back": "int status;\nstruct rusage usage;\npid_t pid = wait3(&status, WNOHANG, &usage);"
+    },
+    {
+      "id": "fc-14",
+      "front": "Difference between wait3() and wait4()?",
+      "back": "wait4() allows specifying PID for targeted waiting, while wait3() waits for any child."
+    },
+    {
+      "id": "fc-15",
+      "front": "What happens if rusage pointer is NULL?",
+      "back": "Resource usage information is not returned, but other functionality remains same."
+    },
+    {
+      "id": "fc-16",
+      "front": "How to get CPU time used by child?",
+      "back": "Access ru_utime (user time) and ru_stime (system time) in returned rusage structure."
+    },
+    {
+      "id": "fc-17",
+      "front": "When does wait3() return -1?",
+      "back": "On error: no children (ECHILD), invalid options, or interrupted by signal (EINTR)."
+    },
+    {
+      "id": "fc-18",
+      "front": "What is the default behavior (blocking) of wait3()?",
+      "back": "Blocks parent process until any child terminates if options=0 and no WNOHANG."
+    },
+    {
+      "id": "fc-19",
+      "front": "Purpose of WCONTINUED option?",
+      "back": "Report status of children that have been resumed after being stopped (via SIGCONT)."
+    },
+    {
+      "id": "fc-20",
+      "front": "When to prefer wait3() over waitpid()?",
+      "back": "When needing resource usage stats or using legacy systems without waitpid's PID filtering."
+    },
+    {
+      "id": "fc-21",
+      "front": "How to avoid blocking with wait3()?",
+      "back": "Use WNOHANG option and call in loop. Check return value: >0 (child reaped), 0 (no change), -1 (error)."
+    },
+    {
+      "id": "fc-22",
+      "front": "What fields in rusage track memory usage?",
+      "back": "ru_maxrss (max resident set size) and ru_ixrss (integral shared memory size)."
+    },
+    {
+      "id": "fc-23",
+      "front": "How to detect stopped children with wait3()?",
+      "back": "Use WUNTRACED option and check WIFSTOPPED(status) macro."
+    },
+    {
+      "id": "fc-24",
+      "front": "What is race condition prevention with wait3()?",
+      "back": "Using WNOHANG in periodic checks prevents deadlocks when managing multiple children."
+    },
+    {
+      "id": "fc-25",
+      "front": "Why is wait3() considered obsolete?",
+      "back": "wait4() and waitpid() are preferred in modern systems for better control, though wait3() remains in legacy code."
+    }
+  ]
+}

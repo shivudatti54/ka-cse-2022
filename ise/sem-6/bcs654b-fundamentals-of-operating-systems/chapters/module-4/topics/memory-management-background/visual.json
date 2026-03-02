@@ -1,0 +1,133 @@
+{
+  "topicId": "memory-management-background",
+  "diagrams": [
+    {
+      "id": "km-diag-1",
+      "title": "Cryptographic Key Lifecycle",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Generation\n(High Entropy)"
+          },
+          {
+            "id": "n2",
+            "label": "Distribution\n(Secure Transport)"
+          },
+          {
+            "id": "n3",
+            "label": "Storage\n(HSM/KMS/Encrypted)"
+          },
+          {
+            "id": "n4",
+            "label": "Usage\n(Encrypt/Decrypt/Sign)"
+          },
+          {
+            "id": "n5",
+            "label": "Rotation\n(Periodic Change)"
+          },
+          {
+            "id": "n6",
+            "label": "Revocation\n(If Compromised)"
+          },
+          {
+            "id": "n7",
+            "label": "Destruction\n(Secure Deletion)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n4",
+            "label": "New Key"
+          },
+          {
+            "from": "n4",
+            "to": "n6"
+          },
+          {
+            "from": "n6",
+            "to": "n7"
+          }
+        ]
+      }
+    },
+    {
+      "id": "km-diag-2",
+      "title": "Symmetric Key Distribution via Asymmetric Encryption",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "bob",
+            "label": "Bob\n(K_symmetric + Pub_Alice)"
+          },
+          {
+            "id": "channel",
+            "label": "Insecure Channel\n(Ciphertext C)"
+          },
+          {
+            "id": "alice",
+            "label": "Alice\n(Priv_Alice -> K_symmetric)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "bob",
+            "to": "channel",
+            "label": "Encrypt(Pub_Alice, K_sym)"
+          },
+          {
+            "from": "channel",
+            "to": "alice",
+            "label": "Decrypt(Priv_Alice, C)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "km-diag-3",
+      "title": "Symmetric vs Asymmetric Scalability",
+      "type": "comparison",
+      "content": {
+        "left": {
+          "label": "Symmetric",
+          "formula": "n(n-1)/2 keys",
+          "example": "10 users = 45 keys"
+        },
+        "right": {
+          "label": "Asymmetric",
+          "formula": "2n keys",
+          "example": "10 users = 20 keys"
+        }
+      }
+    }
+  ],
+  "visuals": [
+    {
+      "id": "memory-management-background-svg",
+      "title": "Key Management Lifecycle",
+      "description": "Animated visual showing the cryptographic key lifecycle phases, symmetric key distribution, storage methods, scalability comparison, and best practices.",
+      "type": "animated-svg",
+      "file": "assets/memory-management-background.svg",
+      "animated": true
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "Message Call Components",
+      "content": "SENDER sends VALUE with PAYLOAD and GAS to RECIPIENT - SVPGR mnemonic: Sender Value Payload Gas Recipient"
+    },
+    {
+      "id": "m-2",
+      "title": "Call Types Memory Aid",
+      "content": "CALL: Context Changes - DELEGATECALL: Storage Preserved - STATICCALL: No Changes Allowed. Remember: 'Static means stationary (no state change)'"
+    },
+    {
+      "id": "m-3",
+      "title": "Reentrancy Prevention",
+      "content": "CEI - Checks-Effects-Interactions: Check conditions, Update Effects, then Interaction (external call). Prevents recursive attacks!"
+    },
+    {
+      "id": "m-4",
+      "title": "Fallback Order",
+      "content": "When receiving Ether with data: 1) Matching function? Execute it. 2) No match? Fallback. When receiving Ether without data: 1) receive()? Execute it. 2) No receive()? Fallback (if payable)."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "CEI",
+      "expansion": "Checks-Effects-Interactions",
+      "usage": "Security pattern to prevent reentrancy: validate, update state, then call external contracts"
+    },
+    {
+      "term": "EOA",
+      "expansion": "Externally Owned Account",
+      "usage": "User-controlled account with private key, can send message calls and create transactions"
+    },
+    {
+      "term": "CALLDATA",
+      "expansion": "Function Selector + Arguments",
+      "usage": "The payload sent in a message call: first 4 bytes = function selector, remaining = encoded arguments"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Message Call Flow",
+      "visualization": "Draw a flow: Sender \u2192 [msg.sender=A, msg.value=10, calldata=func+args] \u2192 Recipient Contract \u2192 Execute \u2192 Return Data \u2192 Back to Sender. Show how msg values propagate inward but return data flows back."
+    },
+    {
+      "concept": "Delegatecall Storage",
+      "visualization": "Two boxes: Proxy Contract Storage (Slot 0: admin, Slot 1: data) | Implementation Code. When delegatecall runs, Implementation code writes to Proxy's storage slots - show arrows from Impl code to Proxy storage."
+    },
+    {
+      "concept": "Call Stack Depth",
+      "visualization": "Stack diagram: Level 1 (external tx) \u2192 Level 2 (A calls B) \u2192 Level 3 (B calls C) \u2192 ... up to Level 1024. Show overflow error when exceeding 1024 levels."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Message Call vs Contract Creation",
+      "analogy": "Message Call is like sending a letter to an existing office (existing contract). Contract Creation is like building a NEW office building (new contract) - one-time setup."
+    },
+    {
+      "concept": "Delegatecall",
+      "analogy": "Think of delegatecall like a power of attorney: the lawyer (delegatecall) uses YOUR resources (storage) to execute THEIR knowledge (code). The lawyer acts in your name with your assets."
+    },
+    {
+      "concept": "Staticcall",
+      "analogy": "Staticcall is like reading a book in a library - you can see and use the information but cannot annotate, dog-ear pages, or take the book (no state modifications allowed)."
+    },
+    {
+      "concept": "Reentrancy Attack",
+      "analogy": "Imagine a vending machine that dispenses soda BEFORE checking if you paid enough. You could keep taking sodas until empty. The Checks-Effects-Interactions pattern is like the machine checking payment FIRST, then deducting from your account, THEN dispensing."
+    }
+  ],
+  "topicId": "message-call-transaction"
+}

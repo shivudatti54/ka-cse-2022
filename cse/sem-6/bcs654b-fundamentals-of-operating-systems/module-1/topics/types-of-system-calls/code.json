@@ -1,0 +1,35 @@
+{
+  "topicId": "types-of-system-calls",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Process Creation: Fork-Exec-Wait Pattern",
+      "description": "Complete example demonstrating fork(), execl(), and waitpid() to create and manage a child process",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n else if (pid == 0) {\n // Child process\n printf(\"Child: My PID = %d, Parent PID = %d\\n\", \n getpid(), getppid());\n \n // Replace child program with ls command\n execl(\"/bin/ls\", \"ls\", \"-l\", \".\", NULL);\n \n // Only reached if execl fails\n perror(\"execl failed\");\n exit(1);\n }\n else {\n // Parent process\n int status;\n printf(\"Parent: Created child with PID = %d\\n\", pid);\n \n // Wait for child to complete\n waitpid(pid, &status, 0);\n \n if (WIFEXITED(status)) {\n printf(\"Child exited with status: %d\\n\", \n WEXITSTATUS(status));\n }\n }\n return 0;\n}",
+      "explanation": "This code demonstrates the classic Unix pattern for process management. fork() creates a child process that runs in parallel with parent. The child uses execl() to replace its program with 'ls -l .'. The parent uses waitpid() to block until child completes, then retrieves exit status.",
+      "timeComplexity": "O(n) where n is the time to execute child process",
+      "spaceComplexity": "O(k) where k is the size of the child process image (copy-on-write)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Inter-Process Communication via Pipe",
+      "description": "Demonstrates creating a pipe and using it for one-way communication between parent and child processes",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <string.h>\n#include <sys/wait.h>\n\nint main() {\n int pipefd[2];\n char buffer[100];\n \n // Create pipe: pipefd[0] = read end, pipefd[1] = write end\n if (pipe(pipefd) == -1) {\n perror(\"pipe failed\");\n return 1;\n }\n \n pid_t pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n \n if (pid == 0) {\n // Child process - will write to pipe\n close(pipefd[0]); // Close read end\n \n const char *msg = \"Hello from child process!\\n\";\n write(pipefd[1], msg, strlen(msg));\n close(pipefd[1]); // Close write end to send EOF\n \n exit(0);\n }\n else {\n // Parent process - will read from pipe\n close(pipefd[1]); // Close write end\n \n ssize_t bytes_read = read(pipefd[0], buffer, sizeof(buffer));\n if (bytes_read > 0) {\n buffer[bytes_read] = '\\0';\n printf(\"Parent received: %s\", buffer);\n }\n close(pipefd[0]); // Close read end\n \n wait(NULL); // Wait for child\n }\n \n return 0;\n}",
+      "explanation": "This code creates a unidirectional pipe for IPC. The parent creates the pipe before fork, so both processes inherit file descriptors. Child closes read end and writes message; parent closes write end and reads message. Closing unused ends is crucial - it signals EOF when writer closes.",
+      "timeComplexity": "O(m) where m is the number of bytes transferred",
+      "spaceComplexity": "O(P) where P is the pipe buffer size (typically 64KB)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "I/O Multiplexing with select()",
+      "description": "Demonstrates using select() to monitor multiple file descriptors simultaneously for reading",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <sys/select.h>\n#include <unistd.h>\n\nint main() {\n fd_set readfds;\n struct timeval timeout;\n int maxfd = STDIN_FILENO; // stdin is fd 0\n \n while (1) {\n // Clear and set up the file descriptor set\n FD_ZERO(&readfds);\n FD_SET(STDIN_FILENO, &readfds); // Monitor stdin\n FD_SET(pipefd[0], &readfds); // Monitor pipe (if exists)\n \n // Set timeout to 5 seconds\n timeout.tv_sec = 5;\n timeout.tv_usec = 0;\n \n int ready = select(maxfd + 1, &readfds, NULL, NULL, &timeout);\n \n if (ready == -1) {\n perror(\"select error\");\n break;\n }\n else if (ready == 0) {\n printf(\"Timeout - no data after 5 seconds\\n\");\n }\n else {\n // Check which fd is ready\n if (FD_ISSET(STDIN_FILENO, &readfds)) {\n char buffer[256];\n if (fgets(buffer, sizeof(buffer), stdin) != NULL) {\n printf(\"Read from stdin: %s\", buffer);\n }\n }\n }\n }\n return 0;\n}",
+      "explanation": "select() allows a process to monitor multiple file descriptors for I/O readiness. It blocks until at least one descriptor is ready or timeout expires. FD_ZERO clears the set, FD_SET adds descriptors, FD_ISSET checks which are ready. This is fundamental for servers handling multiple clients.",
+      "timeComplexity": "O(n) where n is number of file descriptors being monitored",
+      "spaceComplexity": "O(1) besides the fd_set structure"
+    }
+  ]
+}

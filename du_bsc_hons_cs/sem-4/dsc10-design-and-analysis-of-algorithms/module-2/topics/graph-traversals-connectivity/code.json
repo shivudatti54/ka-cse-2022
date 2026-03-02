@@ -1,0 +1,45 @@
+{
+  "topicId": "graph-traversals-connectivity",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Breadth-First Search (BFS)",
+      "description": "BFS algorithm using queue to explore graph level by level",
+      "code": "ALGORITHM BFS(G, start)\nBEGIN\n  Create empty Queue Q\n  Create visited array of size |V|, mark all as false\n  \n  Q.enqueue(start)\n  visited[start] = true\n  \n  WHILE Q is not empty DO\n    vertex = Q.dequeue()\n    PRINT vertex\n    \n    FOR each neighbor v of vertex DO\n      IF visited[v] = false THEN\n        visited[v] = true\n        Q.enqueue(v)\n      END IF\n    END FOR\n  END WHILE\nEND",
+      "explanation": "BFS starts from source vertex, marks it visited, enqueues it. Then iteratively dequeues a vertex, prints it, and enqueues all unvisited neighbors. This ensures vertices are visited in order of their distance from source.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Depth-First Search (DFS) - Recursive",
+      "description": "Recursive DFS using system call stack",
+      "code": "ALGORITHM DFS_Recursive(G, vertex, visited)\nBEGIN\n  visited[vertex] = true\n  PRINT vertex\n  \n  FOR each neighbor v of vertex DO\n    IF visited[v] = false THEN\n      DFS_Recursive(G, v, visited)\n    END IF\n  END FOR\nEND\n\nALGORITHM DFS(G)\nBEGIN\n  Create visited array of size |V|, mark all as false\n  \n  FOR each vertex v in G DO\n    IF visited[v] = false THEN\n      DFS_Recursive(G, v, visited)\n    END IF\n  END FOR\nEND",
+      "explanation": "DFS marks current vertex as visited, prints it, then recursively explores each unvisited neighbor. This goes deep along each branch before backtracking. The outer loop ensures all components are visited.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Cycle Detection in Undirected Graph using DFS",
+      "description": "Detects cycle by checking for back edges during DFS",
+      "code": "ALGORITHM hasCycle(G)\nBEGIN\n  Create visited array of size |V|, mark all as false\n  \n  FOR each vertex v in G DO\n    IF visited[v] = false THEN\n      IF DFS_Cycle(G, v, -1, visited) = true THEN\n        RETURN true\n      END IF\n    END IF\n  END FOR\n  RETURN false\nEND\n\nALGORITHM DFS_Cycle(G, vertex, parent, visited)\nBEGIN\n  visited[vertex] = true\n  \n  FOR each neighbor v of vertex DO\n    IF visited[v] = false THEN\n      IF DFS_Cycle(G, v, vertex, visited) = true THEN\n        RETURN true\n      END IF\n    ELSE IF v \u2260 parent THEN\n      // Found visited vertex that is not parent - cycle!\n      RETURN true\n    END IF\n  END FOR\n  RETURN false\nEND",
+      "explanation": "During DFS, when we visit a neighbor that is already visited and is NOT the parent of current vertex, we've found a back edge which forms a cycle. The parent check prevents false positives from the edge we just came from.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Topological Sort using DFS",
+      "description": "Generates topological ordering of vertices in a DAG",
+      "code": "ALGORITHM TopologicalSort(G)\nBEGIN\n  Create visited array of size |V|, mark all as false\n  Create empty Stack S\n  \n  FOR each vertex v in G DO\n    IF visited[v] = false THEN\n      DFS_Topo(G, v, visited, S)\n    END IF\n  END FOR\n  \n  // Pop from stack to get topological order\n  WHILE S is not empty DO\n    PRINT S.pop()\n  END WHILE\nEND\n\nALGORITHM DFS_Topo(G, vertex, visited, S)\nBEGIN\n  visited[vertex] = true\n  \n  FOR each neighbor v of vertex DO\n    IF visited[v] = false THEN\n      DFS_Topo(G, v, visited, S)\n    END IF\n  END FOR\n  \n  // Push to stack after all neighbors are processed\n  S.push(vertex)\nEND",
+      "explanation": "In DFS, a vertex is pushed onto the stack only after all its descendants have been processed. When we pop all vertices from the stack, we get vertices in reverse topological order. This works only on DAGs - cycles would prevent completion.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

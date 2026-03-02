@@ -1,0 +1,126 @@
+{
+  "topicId": "fchdir-and-getcwd-functions",
+  "visuals": [
+    {
+      "id": "fchdir-and-getcwd-functions-svg",
+      "title": "fchdir and getcwd Functions Overview",
+      "description": "Animated visual showing how fchdir and getcwd system calls work for changing and querying the current working directory in Unix processes",
+      "type": "animated-svg",
+      "file": "assets/fchdir-and-getcwd-functions.svg"
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "CWD Change and Restore Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Process starts\nCWD: /home/user"
+          },
+          {
+            "id": "n2",
+            "label": "getcwd(saved, PATH_MAX)\nSave current directory"
+          },
+          {
+            "id": "n3",
+            "label": "chdir(\"/tmp/work\")\nChange to target directory"
+          },
+          {
+            "id": "n4",
+            "label": "Perform work\nin target directory"
+          },
+          {
+            "id": "n5",
+            "label": "chdir(saved)\nRestore original CWD"
+          },
+          {
+            "id": "n6",
+            "label": "Process continues\nCWD: /home/user"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" },
+          { "from": "n5", "to": "n6" }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "fchdir Alternative Pattern Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "fd = open(\".\", O_RDONLY)\nSave CWD as file descriptor"
+          },
+          {
+            "id": "n2",
+            "label": "chdir(\"/tmp/target\")\nChange to target directory"
+          },
+          {
+            "id": "n3",
+            "label": "Perform work\nin target directory"
+          },
+          {
+            "id": "n4",
+            "label": "fchdir(fd)\nRestore CWD using descriptor"
+          },
+          {
+            "id": "n5",
+            "label": "close(fd)\nClean up descriptor"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n2", "to": "n3" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n4", "to": "n5" }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "chdir vs fchdir Comparison",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Need to change CWD?"
+          },
+          {
+            "id": "n2",
+            "label": "Have pathname string?\nUse chdir(pathname)"
+          },
+          {
+            "id": "n3",
+            "label": "Have open fd to directory?\nUse fchdir(fd)"
+          },
+          {
+            "id": "n4",
+            "label": "Success: returns 0\nCWD updated"
+          },
+          {
+            "id": "n5",
+            "label": "Failure: returns -1\nerrno set"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2" },
+          { "from": "n1", "to": "n3" },
+          { "from": "n2", "to": "n4" },
+          { "from": "n2", "to": "n5" },
+          { "from": "n3", "to": "n4" },
+          { "from": "n3", "to": "n5" }
+        ]
+      }
+    }
+  ]
+}

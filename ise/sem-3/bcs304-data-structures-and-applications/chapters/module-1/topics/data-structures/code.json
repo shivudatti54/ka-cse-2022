@@ -1,0 +1,45 @@
+{
+  "topicId": "data-structures",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Dynamic Array Allocation and Deallocation",
+      "description": "Program demonstrating dynamic memory allocation for arrays using malloc() and free()",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int n;\n    printf(\"Enter size of array: \");\n    scanf(\"%d\", &n);\n    \n    // Dynamic allocation using malloc\n    int *arr = (int*)malloc(n * sizeof(int));\n    \n    if (arr == NULL) {\n        printf(\"Memory allocation failed!\\n\");\n        return 1;\n    }\n    \n    // Accept elements\n    printf(\"Enter %d elements: \", n);\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &arr[i]);\n    }\n    \n    // Display elements\n    printf(\"Array elements: \");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    \n    // Free allocated memory\n    free(arr);\n    \n    return 0;\n}",
+      "explanation": "malloc() allocates contiguous memory blocks at runtime. sizeof(int) ensures proper sizing. The returned void pointer is cast to int*. Always check for NULL to handle allocation failures. free() releases memory back to system to prevent leaks.",
+      "timeComplexity": "O(n) for both input and display operations",
+      "spaceComplexity": "O(n) for the dynamically allocated array"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Polynomial Representation using Array",
+      "description": "Represent and evaluate a polynomial using array where index = exponent and value = coefficient",
+      "code": "#include <stdio.h>\n#include <math.h>\n\n#define MAX_DEGREE 100\n\nvoid createPolynomial(int poly[], int degree) {\n    printf(\"Enter coefficients from constant to highest degree:\\n\");\n    for (int i = 0; i <= degree; i++) {\n        printf(\"Coefficient of x^%d: \", i);\n        scanf(\"%d\", &poly[i]);\n    }\n}\n\nint evaluatePolynomial(int poly[], int degree, int x) {\n    int result = 0;\n    for (int i = 0; i <= degree; i++) {\n        result += poly[i] * pow(x, i);\n    }\n    return result;\n}\n\nvoid displayPolynomial(int poly[], int degree) {\n    printf(\"Polynomial: \");\n    for (int i = degree; i >= 0; i--) {\n        if (poly[i] != 0) {\n            printf(\"%dx^%d \", poly[i], i);\n            if (i > 0) printf(\"+ \");\n        }\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    int poly[MAX_DEGREE];\n    int degree, x;\n    \n    printf(\"Enter degree of polynomial: \");\n    scanf(\"%d\", &degree);\n    \n    createPolynomial(poly, degree);\n    displayPolynomial(poly, degree);\n    \n    printf(\"Enter value of x: \");\n    scanf(\"%d\", &x);\n    \n    printf(\"Result at x=%d: %d\\n\", x, evaluatePolynomial(poly, degree, x));\n    \n    return 0;\n}",
+      "explanation": "The array index represents the exponent, and the value at that index represents the coefficient. For polynomial 3x\u00b2 + 2x + 1, array is [1, 2, 3]. This representation allows efficient access and evaluation using Horner's method or direct computation.",
+      "timeComplexity": "O(n) for evaluation using Horner's method",
+      "spaceComplexity": "O(n) where n is degree + 1"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Structure for Sparse Polynomial",
+      "description": "Using structures to represent sparse polynomials efficiently with only non-zero terms",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Term {\n    int coefficient;\n    int exponent;\n};\n\nstruct Polynomial {\n    int numTerms;\n    struct Term *terms;\n};\n\nvoid createPolynomial(struct Polynomial *p) {\n    printf(\"Enter number of non-zero terms: \");\n    scanf(\"%d\", &p->numTerms);\n    \n    p->terms = (struct Term*)malloc(p->numTerms * sizeof(struct Term));\n    \n    printf(\"Enter coefficient and exponent for each term:\\n\");\n    for (int i = 0; i < p->numTerms; i++) {\n        scanf(\"%d %d\", &p->terms[i].coefficient, &p->terms[i].exponent);\n    }\n}\n\nvoid displayPolynomial(struct Polynomial *p) {\n    printf(\"Polynomial: \");\n    for (int i = 0; i < p->numTerms; i++) {\n        printf(\"%dx^%d \", p->terms[i].coefficient, p->terms[i].exponent);\n        if (i < p->numTerms - 1) printf(\"+ \");\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    struct Polynomial p;\n    createPolynomial(&p);\n    displayPolynomial(&p);\n    free(p.terms);\n    return 0;\n}",
+      "explanation": "Instead of storing all coefficients (including zeros), we store only non-zero terms using a structure with coefficient and exponent fields. This is memory-efficient for sparse polynomials like 5x\u00b9\u2070\u2070 + 3x\u00b2 + 2 where array would waste space.",
+      "timeComplexity": "O(n) for creation and display",
+      "spaceComplexity": "O(k) where k is number of non-zero terms"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Dynamic Array Implementation (Python List)",
+      "description": "Demonstrating dynamic array behavior in Python with resize capability",
+      "code": "class DynamicArray:\n    def __init__(self, capacity=1):\n        self.capacity = capacity\n        self.size = 0\n        self.array = [None] * self.capacity\n    \n    def append(self, element):\n        # Resize if array is full\n        if self.size == self.capacity:\n            self.resize(2 * self.capacity)\n        self.array[self.size] = element\n        self.size += 1\n    \n    def resize(self, new_capacity):\n        # Create new array and copy elements\n        new_array = [None] * new_capacity\n        for i in range(self.size):\n            new_array[i] = self.array[i]\n        self.array = new_array\n        self.capacity = new_capacity\n    \n    def get(self, index):\n        if 0 <= index < self.size:\n            return self.array[index]\n        return None\n    \n    def length(self):\n        return self.size\n    \n    def display(self):\n        print(\"Array:\", self.array[:self.size])\n\n# Usage\narr = DynamicArray()\nfor i in range(20):\n    arr.append(i * 10)\n    print(f\"Size: {arr.size}, Capacity: {arr.capacity}\")\n\narr.display()\nprint(f\"Element at index 5: {arr.get(5)}\")",
+      "explanation": "When the array fills up, a new larger array (typically 2x) is allocated, existing elements are copied over, and the old array is discarded. This achieves amortized O(1) for append operations despite occasional O(n) resize costs.",
+      "timeComplexity": "Amortized O(1) for append, O(n) for worst case resize",
+      "spaceComplexity": "O(n) where n is number of elements stored"
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "topicId": "clipping",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of clipping in computer graphics. Why is it essential in the graphics pipeline?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Definition: process of eliminating portions outside viewing region",
+        "Viewports and windows are the clipping regions",
+        "Prevents processing of invisible primitives",
+        "Saves computational resources",
+        "Prevents memory access violations for out-of-bounds coordinates",
+        "Occurs after transformation, before rasterization"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the Cohen-Sutherland line clipping algorithm with special mention of outcodes and three possible cases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Outcodes are 4-bit codes representing endpoint positions",
+        "Bit order: top, bottom, right, left",
+        "Case 1: Both outcodes 0000 - completely inside, ACCEPT",
+        "Case 2: AND of outcodes ≠ 0 - completely outside, REJECT",
+        "Case 3: Otherwise - partially inside, calculate intersection and repeat",
+        "Efficient for trivial rejection/acceptance cases"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the Liang-Barsky parametric line clipping algorithm. How is it more efficient than Cohen-Sutherland?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Uses parametric form: x=x1+u(x2-x1), y=y1+u(y2-y1)",
+        "Four parametric inequalities for boundaries",
+        "Calculates entering (u1) and exiting (u2) parameters",
+        "Compares u1 and u2 to determine visibility",
+        "More efficient because: direct computation without iterative subdivision",
+        "Works well for lines nearly parallel to boundaries"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the Sutherland-Hodgman polygon clipping algorithm. How does it handle vertices at clipping boundaries?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Clips polygon against one boundary at a time sequentially",
+        "For each edge of polygon: test both endpoints",
+        "If both inside: add second vertex to output",
+        "If first inside, second outside: add intersection point only",
+        "If first outside, second inside: add intersection and second vertex",
+        "If both outside: add nothing",
+        "Creates new vertices at intersection points with boundary"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between point clipping, line clipping, and polygon clipping with reference to their applications.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Point clipping: test if xwmin≤x≤xwmax and ywmin≤y≤ywmax - for small primitives",
+        "Line clipping: determine visible portions of lines - for wireframe rendering",
+        "Polygon clipping: clip complex shapes - for filled regions",
+        "Point is basic - just coordinate comparison",
+        "Line uses algorithms like Cohen-Sutherland, Liang-Barsky",
+        "Polygon uses Sutherland-Hodgman, Weiler-Atherton",
+        "Each handles increasing complexity of primitives"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the different methods of text clipping? Explain each briefly.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "All-or-none string clipping: either show entire string or none",
+        "Individual character clipping: each character clipped separately",
+        "Stroke clipping: clip each stroke/segment of character",
+        "Pixel-level clipping: most precise, clips at individual pixel level",
+        "Selection depends on application requirements",
+        "Higher precision requires more computational cost"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare Cohen-Sutherland and Liang-Barsky line clipping algorithms.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Cohen-Sutherland: uses outcodes, iterative subdivision",
+        "Liang-Barsky: uses parametric equations, direct computation",
+        "Cohen-Sutherland: good for trivial cases, may need multiple iterations",
+        "Liang-Barsky: more efficient for complex cases, single computation",
+        "Cohen-Sutherland: easier to implement",
+        "Liang-Barsky: better for lines nearly parallel to boundaries",
+        "Both produce same results, different computational approach"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Cohen-Sutherland line clipping algorithm in detail with a suitable example. Include the concept of outcodes and trace the algorithm for a line from (10,10) to (90,90) with clipping window (20,20) to (80,80).",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define clipping window boundaries",
+        "Explain 4-bit outcode assignment",
+        "Bit representation: top=8, bottom=4, right=2, left=1",
+        "Three cases: trivial accept, trivial reject, clip",
+        "Step-by-step trace: (10,10) outcode=5 (left+bottom=1+4), (90,90) outcode=10 (right+top=2+8)",
+        "AND=0, so not trivial reject; neither is 0000, so not trivial accept",
+        "Calculate intersection with boundary",
+        "Continue until line is clipped",
+        "Final visible segment from (20,20) to (80,80)",
+        "Time complexity analysis"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive the parametric equations used in Liang-Barsky algorithm and explain how it clips a line against a rectangular window.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Parametric form: P(u) = P1 + u(P2-P1), u∈[0,1]",
+        "Four inequalities from boundaries: xwmin≤x≤xwmax, ywmin≤y≤ywmax",
+        "Rewrite as: p_i u ≤ q_i where p_i are direction components",
+        "p1=-Δx, p2=Δx, p3=-Δy, p4=Δy",
+        "q1=x1-xwmin, q2=xwmax-x1, q3=y1-ywmin, q4=ywmax-y1",
+        "For parallel edges (p_i=0), check if q_i<0 for rejection",
+        "For non-parallel: calculate r_i = q_i/p_i",
+        "u1 = max(0, all r_i where p_i<0)",
+        "u2 = min(1, all r_i where p_i>0)",
+        "If u1>u2, line is outside; else clip from u1 to u2"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the Sutherland-Hodgman polygon clipping algorithm. Illustrate with a diagram showing how a concave polygon is clipped against one boundary.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Algorithm clips polygon against each boundary sequentially",
+        "Process each edge of polygon: test start and end vertices",
+        "Four cases for processing vertices:",
+        "Case 1: Both inside - add end vertex to output",
+        "Case 2: First inside, second outside - add intersection only",
+        "Case 3: First outside, second inside - add intersection and end vertex",
+        "Case 4: Both outside - add nothing",
+        "After processing all edges against one boundary, output becomes input for next boundary",
+        "Continue for all four boundaries",
+        "Handles convex polygons efficiently",
+        "May produce extra vertices at intersections",
+        "Limitations with concave polygons"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write the algorithm for Cohen-Sutherland line clipping. Also write pseudocode for Liang-Barsky algorithm and compare their time complexities.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Cohen-Sutherland: Assign outcodes to endpoints, test trivial cases, compute intersections if needed, iterate until fully processed",
+        "Pseudocode: Calculate Δx, Δy; initialize u1=0, u2=1; for each boundary compute p and q values; update u1, u2; if u1>u2 reject else compute clipped endpoints",
+        "Time complexity: Cohen-Sutherland O(1) trivial, O(k) where k is number of subdivisions; Liang-Barsky O(1) with at most 4 computations",
+        "Liang-Barsky generally more efficient for non-trivial cases",
+        "Both are output-sensitive to number of clipped edges",
+        "Space: both O(1)"
+      ]
+    }
+  ]
+}

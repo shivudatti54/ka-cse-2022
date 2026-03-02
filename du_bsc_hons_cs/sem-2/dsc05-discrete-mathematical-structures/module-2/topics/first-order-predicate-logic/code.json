@@ -1,0 +1,45 @@
+{
+  "topicId": "first-order-predicate-logic",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Checking Universal Statement",
+      "description": "Algorithm to check if \u2200x P(x) is true for a finite domain",
+      "code": "FUNCTION CheckUniversal(domain, predicate P):\n  FOR EACH element x IN domain:\n    IF NOT P(x) THEN\n      RETURN FALSE\n    END IF\n  END FOR\n  RETURN TRUE\n\n// Example: domain = {2,3,5,7}, P(x) = isPrime(x)\n// Returns TRUE as all elements are prime",
+      "explanation": "This algorithm iterates through every element in the domain and checks if the predicate P holds for each. If any element fails, the universal statement is false. This implements the definition: \u2200x P(x) is true iff P(x) is true for all x in the domain.",
+      "timeComplexity": "O(n) where n is the size of the domain",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Checking Existential Statement",
+      "description": "Algorithm to check if \u2203x P(x) is true for a finite domain",
+      "code": "FUNCTION CheckExistential(domain, predicate P):\n  FOR EACH element x IN domain:\n    IF P(x) THEN\n      RETURN TRUE\n    END IF\n  END FOR\n  RETURN FALSE\n\n// Example: domain = {1,2,3,4,5}, P(x) = (x > 4)\n// Returns TRUE as x=5 satisfies the predicate",
+      "explanation": "This algorithm searches for at least one element in the domain that satisfies the predicate. As soon as one is found, it returns true. This implements the definition: \u2203x P(x) is true iff there exists at least one x in the domain such that P(x) is true.",
+      "timeComplexity": "O(n) in worst case, O(1) in best case",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Negating Quantified Statements",
+      "description": "Python functions to compute negation of universal and existential statements",
+      "code": "def negate_universal(domain, predicate):\n    \"\"\"\n    Returns True if \u00ac\u2200x P(x) is true, i.e., \u2203x \u00acP(x)\n    Equivalent to: there exists an element where predicate is False\n    \"\"\"\n    return any(not predicate(x) for x in domain)\n\ndef negate_existential(domain, predicate):\n    \"\"\"\n    Returns True if \u00ac\u2203x P(x) is true, i.e., \u2200x \u00acP(x)\n    Equivalent to: predicate is False for all elements\n    \"\"\"\n    return all(not predicate(x) for x in domain)\n\n# Example usage:\nnumbers = [1, 2, 3, 4, 5]\nis_positive = lambda x: x > 0\nprint(negate_universal(numbers, is_positive))  # False (all are positive)\nprint(negate_existential(numbers, is_positive)) # False (some are positive)",
+      "explanation": "The functions implement the quantifier negation rules. negate_universal finds if there's any counterexample (\u2203x \u00acP(x)), and negate_existential checks if no element satisfies the predicate (\u2200x \u00acP(x)).",
+      "timeComplexity": "O(n) for both functions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Universal Modus Ponens Proof",
+      "description": "Demonstrates formal proof using universal modus ponens",
+      "code": "// Goal: From \u2200x (P(x)\u2192Q(x)) and \u2200x P(x), derive \u2200x Q(x)\n\nPROCEDURE UniversalModusPonens(premise1, premise2):\n  // premise1: \u2200x (P(x) \u2192 Q(x))\n  // premise2: \u2200x P(x)\n  \n  // Step 1: Universal Instantiation on premise2\n  // For arbitrary constant a: P(a)\n  instanceP <- Instantiate(premise2, 'a')\n  \n  // Step 2: Universal Instantiation on premise1\n  // For same constant a: P(a) \u2192 Q(a)\n  instanceImplication <- Instantiate(premise1, 'a')\n  \n  // Step 3: Apply Modus Ponens\n  // From P(a) and P(a)\u2192Q(a), deduce Q(a)\n  conclusionA <- ModusPonens(instanceP, instanceImplication)\n  \n  // Step 4: Universal Generalization\n  // From Q(a) for arbitrary a, deduce \u2200x Q(x)\n  finalConclusion <- Generalize(conclusionA, 'x')\n  \n  RETURN finalConclusion\n\n// Result: \u2200x Q(x)",
+      "explanation": "This algorithm demonstrates the formal proof of universal modus ponens. It uses Universal Instantiation to get specific instances, applies Modus Ponens to derive Q(a), then uses Universal Generalization to conclude \u2200x Q(x).",
+      "timeComplexity": "O(1) - fixed number of steps",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

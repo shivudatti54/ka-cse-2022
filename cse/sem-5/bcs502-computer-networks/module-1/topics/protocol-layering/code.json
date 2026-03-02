@@ -1,0 +1,35 @@
+{
+  "topicId": "protocol-layering",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Encapsulation Process Simulation",
+      "description": "Demonstrates how data is encapsulated at each layer during transmission",
+      "code": "PROCEDURE Encapsulate(data, destIP, destPort)\nBEGIN\n // Application Layer\n appData = data\n \n // Transport Layer - Add segment header\n segment = CREATE_SEGMENT(appData, destPort)\n \n // Network Layer - Add packet header\n packet = CREATE_PACKET(segment, destIP)\n \n // Data Link Layer - Add frame header and trailer\n frame = CREATE_FRAME(packet, destMAC)\n \n // Physical Layer - Convert to bits\n bits = CONVERT_TO_BITS(frame)\n \n TRANSMIT(bits)\n RETURN bits\nEND",
+      "explanation": "This pseudocode shows the encapsulation process where each layer adds its header to the data as it moves down from Application to Physical layer",
+      "timeComplexity": "O(1) per layer",
+      "spaceComplexity": "O(n) where n is data size"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Decapsulation Process Simulation",
+      "description": "Demonstrates how headers are removed at each layer during reception",
+      "code": "PROCEDURE Decapsulate(receivedBits)\nBEGIN\n // Physical Layer - Convert bits to frame\n frame = CONVERT_FROM_BITS(receivedBits)\n \n // Data Link Layer - Remove frame header/trailer\n packet = REMOVE_FRAME_HEADER(frame)\n VERIFY_MAC(packet)\n \n // Network Layer - Remove packet header\n segment = REMOVE_PACKET_HEADER(packet)\n VERIFY_IP(segment)\n \n // Transport Layer - Remove segment header\n appData = REMOVE_SEGMENT_HEADER(segment)\n VERIFY_PORT(appData)\n \n // Application Layer - Process data\n PROCESS(appData)\n RETURN appData\nEND",
+      "explanation": "This pseudocode shows decapsulation where each layer removes its corresponding header as data moves up from Physical to Application layer",
+      "timeComplexity": "O(1) per layer",
+      "spaceComplexity": "O(n) where n is data size"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Layer Communication Flow",
+      "description": "Demonstrates how adjacent layers communicate in the stack",
+      "code": "// Layer N+1 sends SDU (Service Data Unit) to Layer N\nPROCEDURE Service_Request(layerN, serviceData)\nBEGIN\n // Layer N+1 passes data to Layer N\n pdu = ADD_HEADER(layerN, serviceData)\n LAYER_N.process(pdu)\nEND\n\n// Layer N provides service to Layer N+1\nPROCEDURE Service_Indication(layerN, pdu)\nBEGIN\n // Layer N passes data to Layer N+1\n serviceData = REMOVE_HEADER(layerN, pdu)\n LAYER_N+1.process(serviceData)\nEND\n\n// Communication between peer layers (same level)\nPROCEDURE Peer_Communication(senderLayer, receiverLayer, pdu)\nBEGIN\n // Both layers use same protocol\n IF senderLayer.protocol == receiverLayer.protocol THEN\n TRANSMIT(pdu)\n ENDIF\nEND",
+      "explanation": "This demonstrates the Service Access Point (SAP) concept where each layer provides services to the layer above through well-defined interfaces",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

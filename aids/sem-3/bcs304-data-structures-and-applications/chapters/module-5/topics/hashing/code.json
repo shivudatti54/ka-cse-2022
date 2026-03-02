@@ -1,0 +1,45 @@
+{
+  "topicId": "hashing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Hash Table Insertion using Linear Probing",
+      "description": "Implements insertion in a hash table with linear probing for collision resolution",
+      "code": "PROCEDURE Insert(hashTable, tableSize, key)\nBEGIN\n  hashIndex := key MOD tableSize\n  originalIndex := hashIndex\n  \n  WHILE hashTable[hashIndex] is not EMPTY and hashTable[hashIndex] != key DO\n    hashIndex := (hashIndex + 1) MOD tableSize\n    \n    IF hashIndex == originalIndex THEN\n      PRINT \"Hash table is full\"\n      RETURN\n    END IF\n  END WHILE\n  \n  hashTable[hashIndex] := key\n  PRINT \"Key inserted at index \", hashIndex\nEND",
+      "explanation": "The algorithm computes initial hash index using division method. When collision occurs, it checks consecutive positions (linear probing) until an empty slot or the key itself is found. Uses modulo to wrap around table end.",
+      "timeComplexity": "O(1) average, O(n) worst case",
+      "spaceComplexity": "O(m) for table of m buckets"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Hash Table with Chaining Implementation",
+      "description": "Python implementation of hash table using chaining for collision resolution",
+      "code": "class HashTable:\n    def __init__(self, size=10):\n        self.size = size\n        self.table = [[] for _ in range(size)]\n    \n    def hash_function(self, key):\n        return key % self.size\n    \n    def insert(self, key):\n        index = self.hash_function(key)\n        if key not in self.table[index]:\n            self.table[index].append(key)\n            print(f\"Inserted {key} at index {index}\")\n        else:\n            print(f\"Key {key} already exists\")\n    \n    def search(self, key):\n        index = self.hash_function(key)\n        for item in self.table[index]:\n            if item == key:\n                return f\"Found {key} at index {index}\"\n        return f\"Key {key} not found\"\n    \n    def delete(self, key):\n        index = self.hash_function(key)\n        if key in self.table[index]:\n            self.table[index].remove(key)\n            print(f\"Deleted {key}\")\n        else:\n            print(f\"Key {key} not found\")\n\n# Usage\nht = HashTable(7)\nfor key in [15, 22, 30, 8, 25]:\n    ht.insert(key)",
+      "explanation": "Each bucket in the table is a Python list (acting as a chain). When collision occurs, new elements are appended to the list at that bucket. Search requires traversing the list at computed index.",
+      "timeComplexity": "O(1) average, O(n) worst case",
+      "spaceComplexity": "O(n + m) where n is keys and m is buckets"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Double Hashing Implementation in C",
+      "description": "C program implementing hash table with double hashing for collision resolution",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define TABLE_SIZE 11\n\ntypedef struct {\n    int key;\n    bool occupied;\n    bool deleted;  // For lazy deletion\n} HashEntry;\n\nHashEntry hashTable[TABLE_SIZE];\n\nint hash1(int key) {\n    return key % TABLE_SIZE;\n}\n\nint hash2(int key) {\n    return 7 - (key % 7);  // Prime smaller than TABLE_SIZE\n}\n\nint doubleHash(int key, int i) {\n    return (hash1(key) + i * hash2(key)) % TABLE_SIZE;\n}\n\nvoid insert(int key) {\n    int i = 0;\n    int index;\n    \n    while (i < TABLE_SIZE) {\n        index = doubleHash(key, i);\n        if (!hashTable[index].occupied) {\n            hashTable[index].key = key;\n            hashTable[index].occupied = true;\n            hashTable[index].deleted = false;\n            printf(\"Inserted %d at index %d\\n\", key, index);\n            return;\n        }\n        i++;\n    }\n    printf(\"Table full, cannot insert %d\\n\", key);\n}\n\nint search(int key) {\n    int i = 0;\n    int index;\n    \n    while (i < TABLE_SIZE) {\n        index = doubleHash(key, i);\n        if (!hashTable[index].occupied) {\n            return -1;  // Not found\n        }\n        if (hashTable[index].key == key && !hashTable[index].deleted) {\n            return index;\n        }\n        i++;\n    }\n    return -1;\n}\n\nint main() {\n    int keys[] = {15, 22, 31, 4, 17};\n    int n = sizeof(keys) / sizeof(keys[0]);\n    \n    for (int i = 0; i < n; i++) {\n        insert(keys[i]);\n    }\n    \n    int result = search(22);\n    if (result != -1)\n        printf(\"Found at index %d\\n\", result);\n    \n    return 0;\n}",
+      "explanation": "Two hash functions are used: h1(k) = k mod 11 and h2(k) = 7 - (k mod 7). The probe sequence is (h1 + i*h2) mod m, which distributes keys more uniformly and avoids clustering problems of linear probing.",
+      "timeComplexity": "O(1) average, O(n) worst case",
+      "spaceComplexity": "O(m) for table storage"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Rehashing Implementation in Java",
+      "description": "Java implementation demonstrating automatic rehashing when load factor exceeds threshold",
+      "code": "import java.util.*;\n\npublic class RehashHashMap {\n    private static final double LOAD_FACTOR_THRESHOLD = 0.75;\n    private Map<Integer, String> hashMap;\n    private int capacity;\n    private int size;\n    \n    public RehashHashMap(int initialCapacity) {\n        this.capacity = initialCapacity;\n        this.hashMap = new HashMap<>(capacity);\n    }\n    \n    private void rehash() {\n        System.out.println(\"Rehashing triggered...\");\n        Map<Integer, String> oldMap = hashMap;\n        \n        // Double the capacity\n        capacity = capacity * 2;\n        hashMap = new HashMap<>(capacity);\n        size = 0;\n        \n        // Re-insert all elements\n        for (Integer key : oldMap.keySet()) {\n            hashMap.put(key, oldMap.get(key));\n        }\n        System.out.println(\"Rehashing complete. New capacity: \" + capacity);\n    }\n    \n    public void put(Integer key, String value) {\n        double loadFactor = (double) size / capacity;\n        System.out.println(\"Load factor: \" + String.format(\"%.2f\", loadFactor));\n        \n        if (loadFactor >= LOAD_FACTOR_THRESHOLD) {\n            rehash();\n        }\n        hashMap.put(key, value);\n        size++;\n    }\n    \n    public static void main(String[] args) {\n        RehashHashMap map = new RehashHashMap(4);\n        \n        map.put(1, \"One\");\n        map.put(2, \"Two\");\n        map.put(3, \"Three\");\n        map.put(4, \"Four\");  // Triggers rehash\n        map.put(5, \"Five\");\n    }\n}",
+      "explanation": "When the ratio of elements to table size (load factor) exceeds 0.75, a new larger table is created (typically double size), and all existing elements are re-inserted with recomputed hash addresses. This maintains O(1) performance.",
+      "timeComplexity": "O(1) amortized for insert with occasional O(n) rehash",
+      "spaceComplexity": "O(m) for hash table storage, temporary O(n) during rehash"
+    }
+  ]
+}

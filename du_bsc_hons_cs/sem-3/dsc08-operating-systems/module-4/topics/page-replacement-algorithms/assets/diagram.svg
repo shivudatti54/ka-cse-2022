@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="page-replacement-algorithms">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d4e8f0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5dade2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3498db;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="victimGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5b7b1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e74c3c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="newGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#abebc6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#27ae60;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes moveQueue {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(25px); }
+    }
+    .title { font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+    .label { font-family: Arial, sans-serif; font-size: 14px; fill: #2c3e50; }
+    .small-label { font-family: Arial, sans-serif; font-size: 12px; fill: #555; }
+    .frame { fill: url(#frameGradient); stroke: #2980b9; stroke-width: 2; rx: 5; }
+    .frame-text { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: white; }
+    .queue-box { fill: #fdebd0; stroke: #f39c12; stroke-width: 2; rx: 5; }
+    .arrow { stroke: #e74c3c; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .section { opacity: 0; animation: fadeIn 0.8s ease forwards; }
+    .section:nth-child(1) { animation-delay: 0.1s; }
+    .section:nth-child(2) { animation-delay: 0.3s; }
+    .section:nth-child(3) { animation-delay: 0.5s; }
+    .section:nth-child(4) { animation-delay: 0.7s; }
+    .section:nth-child(5) { animation-delay: 0.9s; }
+    .pulse-anim { animation: pulse 2s ease-in-out infinite; transform-origin: center; }
+    .slide-anim { animation: slideIn 0.6s ease forwards; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title">FIFO Page Replacement Algorithm</text>
+  
+  <!-- Section 1: Physical Memory Frames -->
+  <g class="section" data-narration="Physical memory contains frames that hold pages. Here we show 4 frames.">
+    <text x="30" y="60" class="label" font-weight="bold">Physical Memory (RAM)</text>
+    <rect x="25" y="70" width="150" height="100" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+    <text x="35" y="85" class="small-label">Frame 0</text>
+    <text x="35" y="105" class="small-label">Frame 1</text>
+    <text x="35" y="125" class="small-label">Frame 2</text>
+    <text x="35" y="145" class="small-label">Frame 3</text>
+    
+    <!-- Frame contents -->
+    <g class="pulse-anim">
+      <rect x="90" y="78" width="75" height="22" class="frame" fill="url(#victimGradient)"/>
+      <text x="127" y="94" text-anchor="middle" class="frame-text">7</text>
+    </g>
+    <rect x="90" y="103" width="75" height="22" class="frame"/>
+    <text x="127" y="119" text-anchor="middle" class="frame-text">0</text>
+    <rect x="90" y="128" width="75" height="22" class="frame"/>
+    <text x="127" y="144" text-anchor="middle" class="frame-text">1</text>
+    <rect x="90" y="153" width="75" height="22" class="frame"/>
+    <text x="127" y="169" text-anchor="middle" class="frame-text">2</text>
+  </g>
+  
+  <!-- Section 2: FIFO Queue -->
+  <g class="section" data-narration="FIFO uses a queue data structure. Pages arrive and are added to the rear.">
+    <text x="250" y="60" class="label" font-weight="bold">FIFO Queue (Arrival Order)</text>
+    <g class="slide-anim">
+      <rect x="230" y="75" width="170" height="90" class="queue-box"/>
+      <text x="260" y="95" class="small-label">REAR</text>
+      <text x="360" y="95" class="small-label">FRONT</text>
+      
+      <!-- Queue elements -->
+      <rect x="245" y="105" width="30" height="25" fill="#e74c3c" rx="3"/>
+      <text x="260" y="122" text-anchor="middle" fill="white" font-weight="bold">7</text>
+      <rect x="280" y="105" width="30" height="25" fill="#3498db" rx="3"/>
+      <text x="295" y="122" text-anchor="middle" fill="white" font-weight="bold">0</text>
+      <rect x="315" y="105" width="30" height="25" fill="#3498db" rx="3"/>
+      <text x="330" y="122" text-anchor="middle" fill="white" font-weight="bold">1</text>
+      <rect x="350" y="105" width="30" height="25" fill="#3498db" rx="3"/>
+      <text x="365" y="122" text-anchor="middle" fill="white" font-weight="bold">2</text>
+      
+      <!-- Arrow showing direction -->
+      <path d="M 260 140 L 365 140" stroke="#7f8c8d" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
+      <text x="310" y="155" text-anchor="middle" class="small-label" fill="#7f8c8d">Direction →</text>
+    </g>
+  </g>
+  
+  <!-- Arrow from Queue to Frames -->
+  <g class="section">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+      </marker>
+    </defs>
+    <path d="M 180 115 Q 200 115 210 115" stroke="#e74c3c" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Section 3: New Page Arrival -->
+  <g class="section" data-narration="When page 3 is accessed, it causes a page fault since it's not in memory.">
+    <text x="30" y="195" class="label" font-weight="bold">Page Fault Occurs!</text>
+    <rect x="25" y="205" width="180" height="50" fill="#fdedec" stroke="#e74c3c" stroke-width="2" rx="5"/>
+    <text x="115" y="230" text-anchor="middle" class="label">New Page: <tspan font-weight="bold" fill="#e74c3c">3</tspan></text>
+  </g>
+  
+  <!-- Section 4: Replacement Process -->
+  <g class="section" data-narration="FIFO removes the oldest page (7) and adds the new page (3) to the queue.">
+    <text x="250" y="195" class="label" font-weight="bold">Replacement Process</text>
+    <g class="slide-anim">
+      <rect x="230" y="205" width="175" height="50" fill="#fadbd8" stroke="#c0392b" stroke-width="1" rx="3"/>
+      <text x="317" y="225" text-anchor="middle" class="small-label">Remove: <tspan fill="#e74c3c" font-weight="bold">7</tspan> (oldest)</text>
+      <text x="317" y="240" text-anchor="middle" class="small-label">Add: <tspan fill="#27ae60" font-weight="bold">3</tspan> (newest)</text>
+    </g>
+  </g>
+  
+  <!-- Section 5: Result -->
+  <g class="section" data-narration="After replacement, the queue shows pages in arrival order: 0,1,2,3.">
+    <text x="210" y="290" class="label" font-weight="bold" text-anchor="middle">After Replacement</text>
+    
+    <!-- Updated Memory -->
+    <rect x="80" y="300" width="120" height="60" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+    <text x="90" y="315" class="small-label">Frames:</text>
+    <rect x="90" y="322" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="101" y="335" text-anchor="middle" fill="white" font-size="12" font-weight="bold">0</text>
+    <rect x="115" y="322" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="126" y="335" text-anchor="middle" fill="white" font-size="12" font-weight="bold">1</text>
+    <rect x="140" y="322" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="151" y="335" text-anchor="middle" fill="white" font-size="12" font-weight="bold">2</text>
+    <rect x="165" y="322" width="22" height="18" fill="url(#newGradient)" rx="2"/>
+    <text x="176" y="335" text-anchor="middle" fill="white" font-size="12" font-weight="bold">3</text>
+    
+    <!-- Updated Queue -->
+    <rect x="230" y="305" width="150" height="50" class="queue-box"/>
+    <text x="240" y="322" class="small-label">Queue:</text>
+    <rect x="260" y="325" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="271" y="338" text-anchor="middle" fill="white" font-size="12" font-weight="bold">0</text>
+    <rect x="285" y="325" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="296" y="338" text-anchor="middle" fill="white" font-size="12" font-weight="bold">1</text>
+    <rect x="310" y="325" width="22" height="18" fill="#3498db" rx="2"/>
+    <text x="321" y="338" text-anchor="middle" fill="white" font-size="12" font-weight="bold">2</text>
+    <rect x="335" y="325" width="22" height="18" fill="url(#newGradient)" rx="2"/>
+    <text x="346" y="338" text-anchor="middle" fill="white" font-size="12" font-weight="bold">3</text>
+  </g>
+  
+  <!-- Section 6: Key Concept Box -->
+  <g class="section" data-narration="Key concept: FIFO is simple but doesn't always give optimal results. It uses first-in-first-out ordering.">
+    <rect x="30" y="370" width="360" height="25" fill="#eaf2f8" stroke="#3498db" stroke-width="1" rx="3"/>
+    <text x="40" y="386" class="small-label" fill="#2c3e50">Key: FIFO removes the <tspan font-weight="bold">oldest</tspan> page first | Simple &amp; low overhead</text>
+  </g>
+</svg>

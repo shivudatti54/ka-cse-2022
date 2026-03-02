@@ -1,0 +1,45 @@
+{
+  "topicId": "turing-machine-model",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Turing Machine for 0^n1^n Language",
+      "description": "TM that accepts strings with equal number of 0s followed by equal number of 1s",
+      "code": "// TM for language L = {0^n 1^n | n \u2265 1}\n// States: q0 (start/scan 0), q1 (scan to find 1), q2 (return), q_accept, q_reject\n// Tape symbols: {0, 1, X, Y, \u2610}\n\nBEGIN\n// Phase 1: Replace leftmost 0 with X\nTRANSITION(q0, 0): \n    WRITE('X')\n    MOVE(RIGHT)\n    GOTO q1\n\n// Phase 2: Skip 0s to find first 1\nTRANSITION(q1, 0):\n    MOVE(RIGHT)\n    GOTO q1\n\nTRANSITION(q1, 1):\n    WRITE('Y')\n    MOVE(LEFT)\n    GOTO q2\n\n// Phase 3: Move back to find next X\nTRANSITION(q2, 0):\n    MOVE(LEFT)\n    GOTO q2\n\nTRANSITION(q2, X):\n    MOVE(RIGHT)\n    GOTO q0\n\n// Check for completion: All 0s replaced (X) and all 1s replaced (Y)\nTRANSITION(q0, Y):\n    MOVE(RIGHT)\n    GOTO q0\n\nTRANSITION(q0, \u2610):\n    GOTO q_accept\n\n// Reject states for invalid patterns\nTRANSITION(q1, \u2610): GOTO q_reject\nEND",
+      "explanation": "The TM repeatedly replaces a 0 with X, then finds and replaces a 1 with Y. After matching all pairs, it accepts when only Xs and Ys remain followed by blank. If it encounters unexpected patterns, it rejects.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Universal Turing Machine Simulation",
+      "description": "Skeleton of how a UTM simulates any other TM",
+      "code": "// Universal Turing Machine (UTM)\n// Input: <M>#w where M is encoding of TM, w is input string\n// Output: Same as M would produce on input w\n\nBEGIN\n// Initialize: Copy M's description to work area\n// Encode input w on simulation tape\n\n// Main simulation loop\nREPEAT\n    // Find current state of M from encoded configuration\n    current_state = READ_STATE(encoding_tape)\n    current_symbol = READ_TAPE(simulated_tape)\n    \n    // Look up transition \u03b4(current_state, current_symbol)\n    transition = LOOKUP_TRANSITION(M_encoding, current_state, current_symbol)\n    \n    IF transition EXISTS THEN\n        // Execute the transition\n        WRITE(transition.new_symbol)\n        MOVE(transition.direction)\n        UPDATE_STATE(transition.new_state)\n    ELSE\n        // No transition defined - simulation ends\n        BREAK\n    END IF\nUNTIL state = q_accept OR state = q_reject\n\n// Output: If q_accept reached, UTM accepts; else rejects\nEND",
+      "explanation": "UTM interprets the encoding of any TM M and simulates it step-by-step on input w. This demonstrates that one machine can compute anything computable - foundation of stored-program computers.",
+      "timeComplexity": "Depends on simulated TM",
+      "spaceComplexity": "O(t(n) + |M|) where t(n) is time of simulated TM"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Deterministic Turing Machine Implementation",
+      "description": "Python implementation of a basic DTM class with transition function",
+      "code": "class TuringMachine:\n    def __init__(self, states, alphabet, tape_alphabet, \n                 transitions, start_state, accept_state, reject_state):\n        self.states = states\n        self.alphabet = alphabet\n        self.tape_alphabet = tape_alphabet\n        self.transitions = transitions  # dict: (state, symbol) -> (new_state, new_symbol, direction)\n        self.start_state = start_state\n        self.accept_state = accept_state\n        self.reject_state = reject_state\n        self.tape = []\n        self.head = 0\n        self.current_state = start_state\n        \n    def load_input(self, input_string):\n        self.tape = list(input_string)\n        self.head = 0\n        self.current_state = self.start_state\n        \n    def step(self):\n        if self.head >= len(self.tape):\n            self.tape.append('\u2610')  # Extend with blank\n        \n        key = (self.current_state, self.tape[self.head])\n        if key not in self.transitions:\n            return False  # No transition - halt\n            \n        new_state, new_symbol, direction = self.transitions[key]\n        self.tape[self.head] = new_symbol\n        \n        if direction == 'R':\n            self.head += 1\n        elif direction == 'L':\n            self.head = max(0, self.head - 1)\n            \n        self.current_state = new_state\n        return True\n    \n    def run(self, max_steps=10000):\n        for _ in range(max_steps):\n            if self.current_state == self.accept_state:\n                return True  # Accept\n            if self.current_state == self.reject_state:\n                return False  # Reject\n            if not self.step():\n                return False  # No transition\n        return False  # Timeout\n\n# Example: TM for 0^n1^n\ntm = TuringMachine(\n    states={'q0', 'q1', 'q2', 'q_accept', 'q_reject'},\n    alphabet={'0', '1'},\n    tape_alphabet={'0', '1', 'X', 'Y', '\u2610'},\n    transitions={\n        ('q0', '0'): ('q1', 'X', 'R'),\n        ('q1', '0'): ('q1', '0', 'R'),\n        ('q1', '1'): ('q2', 'Y', 'L'),\n        ('q2', '0'): ('q2', '0', 'L'),\n        ('q2', 'X'): ('q0', 'X', 'R'),\n        ('q0', 'Y'): ('q0', 'Y', 'R'),\n        ('q0', '\u2610'): ('q_accept', '\u2610', 'R'),\n        ('q1', '\u2610'): ('q_reject', '\u2610', 'R'),\n    },\n    start_state='q0',\n    accept_state='q_accept',\n    reject_state='q_reject'\n)\n\n# Test\ntm.load_input('0011')\nprint(tm.run())  # True - accepts 0011",
+      "explanation": "This Python class implements a deterministic Turing Machine. Transitions are stored as a dictionary mapping (state, symbol) to (new_state, new_symbol, direction). The run method executes steps until accept/reject state or timeout.",
+      "timeComplexity": "O(steps)",
+      "spaceComplexity": "O(n + steps for tape)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Multi-tape TM to Single-tape TM Simulation",
+      "description": "Algorithm showing how to simulate k-tape TM on single-tape TM",
+      "code": "// Simulate k-tape TM using single-tape TM\n// Input tape layout: #marker1#marker2#...#marker_k#\n// Each section contains symbols from corresponding tape\n\nBEGIN\n// Setup: Encode k-tape content on single tape\n// Format: \u2610t1[1]t1[2]...#1#t2[1]t2[2]...#2#...#k#tk[1]tk[2]...\n// Markers (#1, #2, etc.) show head positions\n\nREPEAT\n    // Phase 1: Scan entire tape to determine (state, symbols at all heads)\n    // Store current configuration\n    current_state = state_at_start\n    symbols_read = []\n    FOR i = 1 TO k:\n        symbols_read[i] = symbol_after_marker_i\n    END FOR\n    \n    // Phase 2: Look up transition \u03b4(current_state, symbols_read)\n    // Suppose \u03b4(q, a1...ak) = (p, b1...bk, D1...Dk)\n    \n    // Phase 3: Update tape - write new symbols\n    FOR i = 1 TO k:\n        replace symbol_after_marker_i with b_i\n    END FOR\n    \n    // Phase 4: Move markers based on directions\n    FOR i = 1 TO k:\n        IF D_i = 'R' THEN\n            move marker_i one position right\n        ELSE IF D_i = 'L' THEN\n            move marker_i one position left\n        // If 'S' (stay), marker stays\n    END FOR\n    \n    current_state = p\n    \nUNTIL current_state = q_accept OR current_state = q_reject\n// or loop forever if original TM would loop\nEND",
+      "explanation": "Multi-tape TM simulation on single-tape requires scanning the entire tape to read all head positions, then making another pass to update symbols and move markers. This shows computational equivalence and is used to prove time complexity relationships (O(n\u00b2) for the conversion).",
+      "timeComplexity": "O(n\u00b2) when simulating n steps of k-tape TM",
+      "spaceComplexity": "O(nk) for k tapes of length n"
+    }
+  ]
+}

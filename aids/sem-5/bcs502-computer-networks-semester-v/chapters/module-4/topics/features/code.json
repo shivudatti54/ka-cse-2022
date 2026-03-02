@@ -1,0 +1,35 @@
+{
+  "topicId": "features",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "TCP Three-Way Handshake Simulation",
+      "description": "Pseudocode demonstrating the TCP connection establishment process",
+      "code": "PROCEDURE TCP_Connect(serverIP, serverPort)\n  // Client side - initiate connection\n  clientSocket = CreateSocket()\n  clientPort = AssignRandomPort()\n  clientSeqNum = GenerateRandomSequence()\n  \n  // Step 1: Send SYN\n  SendSegment(clientSocket, serverIP, serverPort,\n              flags=SYN, seqNum=clientSeqNum)\n  state = SYN_SENT\n  \n  // Step 2: Receive SYN-ACK\n  segment = ReceiveSegment(clientSocket)\n  if segment.flags == SYN-ACK then\n    serverSeqNum = segment.seqNum\n    clientAckNum = serverSeqNum + 1\n    // Step 3: Send ACK\n    SendSegment(clientSocket, serverIP, serverPort,\n                flags=ACK, seqNum=clientSeqNum+1, ackNum=clientAckNum)\n    state = ESTABLISHED\n  end if\n  \n  RETURN clientSocket\nEND PROCEDURE",
+      "explanation": "This pseudocode shows how a TCP client establishes connection using three-way handshake: SYN initiates connection with sequence number, server responds with SYN-ACK acknowledging client's sequence, client confirms with ACK, completing synchronization.",
+      "timeComplexity": "O(1) for connection establishment",
+      "spaceComplexity": "O(1) per connection state"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "UDP Client-Server Implementation",
+      "description": "Python code demonstrating simple UDP socket programming for message transmission",
+      "code": "import socket\n\ndef udp_server(port=8888):\n    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)\n    server_socket.bind(('', port))\n    print(f\"UDP Server listening on port {port}\")\n    \n    while True:\n        message, client_address = server_socket.recvfrom(1024)\n        print(f\"Received from {client_address}: {message.decode()}\")\n        response = \"ACK: \" + message.decode()\n        server_socket.sendto(response.encode(), client_address)\n\ndef udp_client(message=\"Hello Server\", host='localhost', port=8888):\n    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)\n    client_socket.sendto(message.encode(), (host, port))\n    print(f\"Sent: {message}\")\n    response, server_address = client_socket.recvfrom(1024)\n    print(f\"Received: {response.decode()}\")\n    client_socket.close()\n\n# Run: udp_server() in one terminal\n#      udp_client(\"Test message\") in another",
+      "explanation": "This Python code demonstrates UDP's connectionless nature - no connection establishment before sending data. The server binds to a port and directly receives datagrams, responding without maintaining persistent state about the client.",
+      "timeComplexity": "O(n) where n is message length for send/receive operations",
+      "spaceComplexity": "O(n) for buffer storage of message"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "TCP Socket Programming - Echo Server",
+      "description": "C program demonstrating TCP server with connection handling and data echo",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <unistd.h>\n#include <sys/socket.h>\n#include <netinet/in.h>\n\n#define PORT 8080\n#define BUFFER_SIZE 1024\n\nint main() {\n    int server_fd, client_sock;\n    struct sockaddr_in address;\n    int opt = 1;\n    char buffer[BUFFER_SIZE] = {0};\n    \n    // Create socket\n    server_fd = socket(AF_INET, SOCK_STREAM, 0);\n    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));\n    \n    // Bind socket\n    address.sin_family = AF_INET;\n    address.sin_addr.s_addr = INADDR_ANY;\n    address.sin_port = htons(PORT);\n    bind(server_fd, (struct sockaddr *)&address, sizeof(address));\n    \n    // Listen for connections\n    listen(server_fd, 3);\n    printf(\"TCP Server listening on port %d\\n\", PORT);\n    \n    // Accept connection\n    client_sock = accept(server_fd, NULL, NULL);\n    \n    // Receive and echo data\n    read(client_sock, buffer, BUFFER_SIZE);\n    printf(\"Client message: %s\\n\", buffer);\n    send(client_sock, buffer, strlen(buffer), 0);\n    printf(\"Echo sent back\\n\");\n    \n    close(client_sock);\n    close(server_fd);\n    return 0;\n}",
+      "explanation": "This C code demonstrates TCP's connection-oriented nature. The server creates a listening socket, binds to a port, listens for connections, accepts a client connection, then reads and echoes data back. TCP handles reliability, ordering, and flow control internally.",
+      "timeComplexity": "O(n) for each client connection handling",
+      "spaceComplexity": "O(n) for socket buffers where n is buffer size"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "topicId": "fourier-transforms",
+  "examples": [
+    {
+      "id": "pseudocode-fourier-transform",
+      "title": "Algorithm: Fourier Transform",
+      "description": "Pseudocode for the Fourier Transform algorithm",
+      "language": "pseudocode",
+      "code": "ALGORITHM FourierTransform\nINPUT: Image matrix f(x,y)\nOUTPUT: Frequency domain representation F(u,v)\n\nBEGIN\n FOR each pixel (x,y) in the image\n FOR each frequency component (u,v)\n F(u,v) = (1/MN) * ΣΣ f(x,y)e^(-j2π(ux/M + vy/N))\n END FOR\n END FOR\nEND",
+      "explanation": "This pseudocode demonstrates the Fourier Transform algorithm, which converts an image from its spatial domain representation to its frequency domain representation."
+    },
+    {
+      "id": "python-fourier-transform",
+      "title": "Python: Fourier Transform",
+      "description": "Python implementation of the Fourier Transform algorithm using NumPy",
+      "language": "python",
+      "code": "import numpy as np\n\n# Read image\nimg = np.random.rand(256, 256)\n\n# Apply Fourier Transform\nf = np.fft.fft2(img)\nfshift = np.fft.fftshift(f)\n\n# Create low-pass filter mask\nrows, cols = img.shape\ncrow, ccol = rows//2, cols//2\nmask = np.zeros((rows, cols), np.uint8)\nmask[crow-30:crow+30, ccol-30:ccol+30] = 1\n\n# Apply mask and inverse DFT\nfshift = fshift * mask\nf_ishift = np.fft.ifftshift(fshift)\nimg_back = np.fft.ifft2(f_ishift)\nimg_back = np.abs(img_back)",
+      "explanation": "This Python code demonstrates the Fourier Transform algorithm using NumPy. It applies the Fourier Transform to an image, creates a low-pass filter mask, and applies the mask to the frequency domain representation.",
+      "timeComplexity": "O(N log N)",
+      "spaceComplexity": "O(N)"
+    },
+    {
+      "id": "c-fourier-transform",
+      "title": "C: Fourier Transform",
+      "description": "C implementation of the Fourier Transform algorithm",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <math.h>\n\nvoid fourierTransform(int **img, int rows, int cols) {\n int i, j, u, v;\n double real, imag;\n double pi = 3.14159265358979323846;\n\n for (i = 0; i < rows; i++) {\n for (j = 0; j < cols; j++) {\n real = 0.0;\n imag = 0.0;\n for (u = 0; u < rows; u++) {\n for (v = 0; v < cols; v++) {\n real += img[u][v] * cos(2 * pi * (u * i / rows + v * j / cols));\n imag += img[u][v] * sin(2 * pi * (u * i / rows + v * j / cols));\n }\n }\n printf(\"%f %f\\n\", real, imag);\n }\n }\n}\n\nint main() {\n int rows = 256;\n int cols = 256;\n int **img = (int **)malloc(rows * sizeof(int *));\n for (int i = 0; i < rows; i++) {\n img[i] = (int *)malloc(cols * sizeof(int));\n }\n\n // Initialize image\n for (int i = 0; i < rows; i++) {\n for (int j = 0; j < cols; j++) {\n img[i][j] = rand() % 256;\n }\n }\n\n fourierTransform(img, rows, cols);\n\n return 0;\n}",
+      "explanation": "This C code demonstrates the Fourier Transform algorithm. It applies the Fourier Transform to an image and prints the frequency domain representation.",
+      "timeComplexity": "O(N^2)",
+      "spaceComplexity": "O(N)"
+    }
+  ]
+}

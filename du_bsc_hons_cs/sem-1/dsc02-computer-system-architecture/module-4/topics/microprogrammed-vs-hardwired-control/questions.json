@@ -1,0 +1,53 @@
+{
+  "topicId": "microprogrammed-vs-hardwired-control",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concepts of horizontal and vertical microprogramming. Provide the control‑word format for each type and discuss the trade‑offs involved in choosing between them.",
+      "keyPoints": [
+        "Horizontal microprogramming: one bit per control line → wide control word, direct control",
+        "Vertical microprogramming: encoded fields → fewer bits, requires decoding logic",
+        "Control‑word format: horizontal = n‑bit vector (one per micro‑operation), vertical = fields that are decoded into micro‑operation signals",
+        "Trade‑offs: horizontal offers faster execution but larger micro‑memory; vertical saves space at the cost of extra decode delay"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Discuss how timing considerations differ between hardwired and microprogrammed control units, especially with respect to clock cycles, sequencing of micro‑operations, and pipeline impacts.",
+      "keyPoints": [
+        "Hardwired control: timing derived from combinational logic and flip‑flops, typically one clock per instruction phase",
+        "Microprogrammed control: micro‑instructions executed in sequence, each micro‑cycle may require one or more clock cycles, with explicit 'next‑address' logic",
+        "Timing diagrams for hardwired: minimal skew, fixed latency; for microprogrammed: variable latency due to fetch of micro‑instructions from control store",
+        "In pipelined CPUs, hardwired control can generate control signals directly each cycle, while microprogrammed control may need multi‑cycle micro‑sequences, affecting pipeline stalls"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Give a detailed comparison of microprogrammed and hardwired control units, covering flexibility, speed, cost, ease of modification, design complexity, and implications for RISC vs CISC architectures. Include a comparative table.",
+      "keyPoints": [
+        "Flexibility: microprogrammed – easy to modify (ROM/EPROM); hardwired – fixed, redesign required",
+        "Speed: hardwired offers lower latency (single‑cycle) vs microprogrammed incurs fetch‑decode overhead",
+        "Cost & complexity: hardwired uses more combinational logic (PLA, gates) → higher cost; microprogrammed uses control store → lower hardware cost but additional decode logic",
+        "RISC vs CISC: RISC often employs hardwired control for simple, fast instructions; CISC commonly uses microprogrammed control to implement complex semantics"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Design a microprogrammed control unit for a simple processor that implements the following instructions: LOAD (M←[addr]), STORE ([addr]←M), ADD (M←M+[addr]), JUMP (PC←addr). Show the microinstruction format (horizontal) and the microsequence for the ADD instruction. Explain how the control word is generated using a PLA and discuss timing constraints.",
+      "keyPoints": [
+        "Microinstruction format: horizontal – one bit per control line (e.g., PC_out, MAR_in, Mem_read, MDR_out, ALU_op, flags, PC_in, etc.) plus a next‑address field",
+        "Microsequence for ADD: (1) fetch – PC→MAR, Mem_read→MDR→IR; (2) decode – address field of IR→MAR; (3) read operand → Mem_read→MDR; (4) ALU addition – MDR+ACC→ACC; (5) write back if needed – ACC→MDR→Mem_write",
+        "Control word generation: PLA takes opcode and current micro‑step as inputs, produces a set of control signals defined in the micro‑instruction; PLA outputs drive the control lines directly",
+        "Timing: each micro‑step typically one clock cycle; horizontal format allows direct drive, minimizing decode delay, but PLA propagation adds a small combinational delay; total instruction time = sum of micro‑cycle clock periods"
+      ],
+      "marks": 10
+    }
+  ]
+}

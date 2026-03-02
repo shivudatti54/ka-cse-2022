@@ -1,0 +1,35 @@
+{
+  "topicId": "parallel-and-distributed-computing-paradigms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Amdahl's Law Speedup Calculator",
+      "description": "Program to calculate theoretical maximum speedup and actual speedup for given parallel fraction and processor count",
+      "code": "FUNCTION calculateAmdahlSpeedup(parallel_fraction P, processors N):\n // Theoretical maximum speedup (Amdahl's Law)\n max_speedup = 1 / (1 - P)\n \n // Actual speedup considering communication overhead\n // overhead = 0.05 * log2(N) for example\n overhead = 0.05 * LOG2(N)\n effective_parallel_time = (P / N) + (1 - P) + overhead\n actual_speedup = 1 / effective_parallel_time\n \n // Efficiency\n efficiency = actual_speedup / N\n \n RETURN max_speedup, actual_speedup, efficiency\n\n// Example: P = 0.90 (90% parallelizable), N = 16\n// max_speedup = 1/(1-0.9) = 10x\n// actual_speedup accounts for overhead\nPRINT \"Maximum: \" + max_speedup + \"x\"\nPRINT \"Actual with 16 processors: \" + actual_speedup + \"x\"",
+      "explanation": "Implements Amdahl's Law formula. The parallel fraction P determines theoretical maximum speedup regardless of processor count. Real implementations include communication overhead which increases with processor count due to network latency and synchronization.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "MapReduce Data Parallelism Example",
+      "description": "Word count implementation demonstrating data parallelism in MapReduce paradigm",
+      "code": "from multiprocessing import Pool\n\ndef mapper(document):\n \"\"\"Map phase: Extract words from each document\"\"\"\n words = document.lower().split()\n return [(word, 1) for word in words]\n\ndef reducer(word_counts):\n \"\"\"Reduce phase: Aggregate counts for each word\"\"\"\n word, counts = word_counts\n return (word, sum(counts))\n\ndef map_reduce_wordcount(documents):\n # MAP PHASE: Process each document in parallel\n with Pool(processes=4) as pool:\n map_results = pool.map(mapper, documents)\n \n # Flatten and group by key\n all_pairs = [pair for doc_pairs in map_results for pair in doc_pairs]\n word_groups = {}\n for word, count in all_pairs:\n if word not in word_groups:\n word_groups[word] = []\n word_groups[word].append(count)\n \n # REDUCE PHASE: Aggregate in parallel\n with Pool(processes=4) as pool:\n reduce_results = pool.map(reducer, word_groups.items())\n \n return dict(reduce_results)\n\n# Example usage\ndocs = [\n \"hello world hello\",\n \"world of parallel computing\",\n \"hello cloud computing\"\n]\nresult = map_reduce_wordcount(docs)\nprint(result) # {'hello': 3, 'world': 2, ...}",
+      "explanation": "Demonstrates data parallelism: identical map operation applied to different documents simultaneously across worker processes. The reduce phase then aggregates results. This pattern is fundamental to Hadoop MapReduce and scales horizontally across cloud clusters.",
+      "timeComplexity": "O(n/m + k) where n=documents, m=mappers, k=unique words",
+      "spaceComplexity": "O(k) for aggregation"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Actor Model Implementation",
+      "description": "Simple actor-based concurrent system demonstrating message-passing concurrency",
+      "code": "from queue import Queue\nfrom threading import Thread\n\nclass Actor:\n def __init__(self):\n self.mailbox = Queue()\n self.state = None\n self.running = True\n \n def receive(self, message):\n \"\"\"Process message - override in subclasses\"\"\"\n raise NotImplementedError\n \n def tell(self, message):\n \"\"\"Send asynchronous message to actor\"\"\"\n self.mailbox.put(message)\n \n def run(self):\n \"\"\"Actor's event loop - processes messages sequentially\"\"\"\n while self.running:\n try:\n message = self.mailbox.get(timeout=1)\n self.receive(message)\n except:\n continue\n \n def start(self):\n self.thread = Thread(target=self.run)\n self.thread.start()\n \n def stop(self):\n self.running = False\n\nclass CounterActor(Actor):\n def __init__(self):\n super().__init__()\n self.count = 0\n \n def receive(self, message):\n if message['type'] == 'increment':\n self.count += 1\n print(f\"Count: {self.count}\")\n elif message['type'] == 'get':\n message['reply_to'].tell({'value': self.count})\n\n# Usage\nactor = CounterActor()\nactor.start()\nactor.tell({'type': 'increment'})\nactor.tell({'type': 'increment'})\nactor.stop()",
+      "explanation": "Implements the Actor Model where each actor has private state and processes messages sequentially from its mailbox. No shared state or locks\u2014concurrency emerges from actors processing messages independently. Used in Erlang/OTP, Akka for building fault-tolerant distributed systems.",
+      "timeComplexity": "O(1) per message processing",
+      "spaceComplexity": "O(m) where m = mailbox queue size"
+    }
+  ]
+}

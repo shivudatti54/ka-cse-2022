@@ -1,0 +1,157 @@
+{
+  "topicId": "allocation-of-frames",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain equal frame allocation and state one advantage and one disadvantage of this method.",
+      "keyPoints": [
+        "Equal allocation divides total frames equally among all processes",
+        "Advantage: Simple to implement and fair - all processes get same memory",
+        "Disadvantage: Does not consider process size or priority - small processes waste frames while large ones suffer"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is thrashing? Explain two conditions that lead to thrashing in a paging system.",
+      "keyPoints": [
+        "Thrashing: excessive paging activity where CPU spends more time swapping pages than executing",
+        "Condition 1: Too few frames allocated to active processes",
+        "Condition 2: High degree of multiprogramming reducing frames per process",
+        "Result: High page fault rate, low CPU utilization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between local and global frame allocation. Which one provides more predictable performance and why?",
+      "keyPoints": [
+        "Local: each process limited to its allocated frames only",
+        "Global: processes can compete for any available frame in the system",
+        "Local provides predictable performance because a process's behavior is not affected by other processes",
+        "Global is more flexible but can cause one process to impact another's performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the working set model for frame allocation. How does it help in reducing page faults?",
+      "keyPoints": [
+        "Working set = set of pages process has referenced in a recent time window (\u0394)",
+        "OS monitors pages accessed and maintains enough frames to hold working set",
+        "If working set size increases, allocate more frames",
+        "If working set shrinks, reclaim excess frames",
+        "Goal: keep actively used pages in memory to reduce page faults"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the Page Fault Frequency (PFF) approach to frame allocation? Explain how it adjusts frame allocation.",
+      "keyPoints": [
+        "PFF monitors rate of page faults for each process",
+        "If PFF is too HIGH (above upper threshold): allocate MORE frames to reduce faults",
+        "If PFF is too LOW (below lower threshold): reclaim EXCESS frames from process",
+        "Between thresholds: frame allocation is considered optimal",
+        "This is a feedback-based dynamic allocation mechanism"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain proportional frame allocation with an example. Why is it considered better than equal allocation?",
+      "keyPoints": [
+        "Proportional allocation distributes frames based on process size",
+        "Formula: allocation = (process_size / total_memory) \u00d7 total_frames",
+        "Example: Process A = 100KB, Process B = 200KB, 90 frames \u2192 A gets 30, B gets 60",
+        "Better than equal allocation because it considers actual memory needs",
+        "Prevents waste in small processes and shortage in large processes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the relationship between degree of multiprogramming and thrashing? How does frame allocation play a role?",
+      "keyPoints": [
+        "Higher multiprogramming = more processes sharing same frames",
+        "Each process gets fewer frames on average",
+        "With too few frames, processes cannot hold their working sets",
+        "Page fault rate increases dramatically \u2192 thrashing",
+        "CPU utilization drops because processes spend time in I/O",
+        "Solution: Reduce degree of multiprogramming or improve allocation strategy"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the various frame allocation strategies in detail. Compare equal allocation, proportional allocation, and priority-based allocation with respect to fairness, efficiency, and complexity.",
+      "keyPoints": [
+        "Equal allocation: equal frames to all processes, simple but unfair to varied size processes",
+        "Proportional allocation: based on process size, more efficient use of memory, moderately complex",
+        "Priority allocation: gives more frames to high-priority processes, ensures critical tasks run well",
+        "Fairness: Equal is most fair but inefficient; proportional considers actual needs; priority may starve low-priority",
+        "Efficiency: Proportional best uses memory; priority best for critical systems",
+        "Complexity: Equal simplest; proportional requires size tracking; priority requires priority management",
+        "Choice depends on system goals: simplicity vs efficiency vs responsiveness"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the working set model and Page Fault Frequency (PFF) techniques for frame allocation. How do they help in preventing thrashing? Compare their approaches.",
+      "keyPoints": [
+        "Working Set Model: maintains pages referenced in recent window (\u0394), allocates frames to hold working set",
+        "PFF: monitors page fault rate and adjusts frames based on thresholds",
+        "WS looks backward at recent references; PFF looks at current fault rate",
+        "WS predicts future needs based on past behavior; PFF reacts to current performance",
+        "Both prevent thrashing by ensuring adequate frames for active processes",
+        "WS smoother but requires tracking reference history; PFF simpler but can be reactive",
+        "Both are dynamic allocation strategies as opposed to static allocation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "A computer system has 200 frames and 4 processes with sizes: P1=100KB, P2=200KB, P3=50KB, P4=150KB. Calculate frame allocation using: (a) Equal allocation (b) Proportional allocation based on process size.",
+      "keyPoints": [
+        "Total frames = 200, Total size = 500KB",
+        "(a) Equal allocation: 200/4 = 50 frames to each process",
+        "(b) Proportional allocation:",
+        "P1: (100/500) \u00d7 200 = 40 frames",
+        "P2: (200/500) \u00d7 200 = 80 frames",
+        "P3: (50/500) \u00d7 200 = 20 frames",
+        "P4: (150/500) \u00d7 200 = 60 frames",
+        "Verify total: 40+80+20+60 = 200 frames",
+        "Proportional gives more frames to larger processes"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Describe the concept of local vs global page replacement in the context of frame allocation. Discuss the advantages and disadvantages of each approach in terms of system performance and predictability.",
+      "keyPoints": [
+        "Local replacement: process can only replace pages from its own allocated frames",
+        "Global replacement: process can replace any page in the system",
+        "Local with local allocation: fixed frames per process, predictable performance but inflexible",
+        "Global with global allocation: flexible but performance can be unpredictable",
+        "Local advantages: each process guaranteed resources, easier debugging, no interference",
+        "Global advantages: better utilization of available frames, can borrow from rich to poor",
+        "Local disadvantages: may waste frames if process doesn't need them, cannot help overloaded processes",
+        "Global disadvantages: one thrashing process can degrade entire system performance",
+        "Choice depends on whether predictability or efficiency is more important"
+      ],
+      "marks": 10
+    }
+  ]
+}

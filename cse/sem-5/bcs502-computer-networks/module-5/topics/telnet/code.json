@@ -1,0 +1,25 @@
+{
+  "topicId": "telnet",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Telnet Connection Establishment",
+      "description": "Pseudocode showing how a Telnet client connects to a remote server",
+      "code": "TELNET_CLIENT_CONNECT(host, port)\nBEGIN\n IF port = 23 THEN\n socket ← CREATE_SOCKET()\n CONNECT(socket, host, port)\n IF connection_successful THEN\n PRINT \"Connected to \" + host\n SET escape_character TO Ctrl+]\n WHILE session_active DO\n input ← READ_USER_INPUT()\n IF input = escape_character THEN\n ENTER_COMMAND_MODE()\n ELSE\n nvt_data ← CONVERT_TO_NVT(input)\n SEND(socket, nvt_data)\n END IF\n END WHILE\n ELSE\n PRINT \"Connection refused\"\n END IF\n ELSE\n PRINT \"Invalid port for Telnet\"\n END IF\nEND",
+      "explanation": "This pseudocode demonstrates the basic Telnet client connection process: creating a socket, connecting to port 23, handling user input, converting to NVT format, and managing the escape character for command mode.",
+      "timeComplexity": "O(n) per session",
+      "spaceComplexity": "O(1) connection, O(n) buffer"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Telnet Option Negotiation",
+      "description": "Pseudocode demonstrating Telnet option negotiation using WILL/WONT/DO/DONT",
+      "code": "TELNET_OPTION_NEGOTIATION(socket, option)\nBEGIN\n // Option negotiation commands\n IAC ← 255 // Interpret As Command\n WILL ← 251\n WONT ← 252\n DO ← 253\n DONT ← 254\n \n // Example: Client requesting server to enable ECHO\n IF client_requesting_echo THEN\n SEND(socket, [IAC, DO, ECHO])\n response ← RECEIVE(socket)\n IF response = [IAC, WILL, ECHO] THEN\n enable_local_echo()\n ELSE\n use_remote_echo()\n END IF\n END IF\n \n // Server handling WILL request\n IF server_receives_will_echo THEN\n IF server_supports_echo THEN\n SEND(socket, [IAC, DO, ECHO])\n enable_remote_echo()\n ELSE\n SEND(socket, [IAC, DONT, ECHO])\n END IF\n END IF\nEND",
+      "explanation": "This shows how Telnet option negotiation works using the WILL/WONT/DO/DONT commands. The client requests an option (DO), and the server responds with willingness (WILL) or refusal (WONT).",
+      "timeComplexity": "O(1) per negotiation",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

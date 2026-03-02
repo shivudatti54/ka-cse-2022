@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Auto-Scaling Trigger Algorithm",
+    "description": "Algorithm for triggering auto-scaling based on CPU utilization thresholds",
+    "code": "ALGORITHM AutoScale\nBEGIN\n SET current_cpu = GetCPUUtilization()\n SET current_users = GetConcurrentUsers()\n \n // Scale out conditions\n IF current_cpu > 80% AND scale_out_cooldown_expired THEN\n SET new_instances = current_instances + 1\n LaunchInstance(new_instances)\n SET last_scale_out_time = NOW()\n LOG \"Scaled out to \" + new_instances + \" instances\"\n END IF\n \n // Scale in conditions\n IF current_cpu < 30% AND current_instances > min_instances THEN\n SET new_instances = current_instances - 1\n TerminateInstance(new_instances)\n SET last_scale_in_time = NOW()\n LOG \"Scaled in to \" + new_instances + \" instances\"\n END IF\n \n // Emergency scale for viral traffic\n IF current_users > threshold_viral THEN\n SET new_instances = current_instances + 3\n LaunchInstance(new_instances)\n ALERT operations_team\n END IF\nEND",
+    "explanation": "This algorithm monitors CPU utilization and user concurrency to automatically scale infrastructure. It includes scale-out for high load, scale-in for low load, and emergency scaling for viral traffic events.",
+    "complexity": {
+      "time": "O(1) - periodic check",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "API Rate Limiter",
+    "description": "Token bucket algorithm implementation for API rate limiting",
+    "code": "ALGORITHM RateLimit(client_id, endpoint)\nBEGIN\n SET bucket = GetBucket(client_id, endpoint)\n SET current_time = NOW()\n \n // Refill tokens based on time elapsed\n SET time_passed = current_time - bucket.last_refill\n SET tokens_to_add = time_passed * refill_rate\n SET bucket.tokens = MIN(max_tokens, bucket.tokens + tokens_to_add)\n SET bucket.last_refill = current_time\n \n // Check if request allowed\n IF bucket.tokens >= 1 THEN\n bucket.tokens = bucket.tokens - 1\n SaveBucket(client_id, endpoint, bucket)\n RETURN ALLOW(remaining_tokens = bucket.tokens)\n ELSE\n SET retry_after = (1 - bucket.tokens) / refill_rate\n RETURN DENY(retry_after_seconds = retry_after)\n END IF\nEND",
+    "explanation": "Token bucket algorithm allows burst traffic while maintaining average rate. Tokens refill over time and requests consume tokens. If insufficient tokens, request is denied with retry time.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1) per client"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Cache Invalidation Strategy",
+    "description": "TTL-based cache invalidation with event-driven updates for UGC",
+    "code": "ALGORITHM InvalidateCache(content_id, content_type)\nBEGIN\n // Time-based expiration\n SET ttl = GetTTL(content_type)\n // Profile: 5 min, Post: 2 min, Comment: 1 min\n \n // Immediate invalidation on update\n PROCEDURE OnContentUpdate(content_id)\n DELETE cache_key(\"content:\" + content_id)\n DELETE cache_key(\"user_feed:\" + GetOwner(content_id))\n // Broadcast to all cache nodes\n PUBLISH(\"cache_invalidate\", content_id)\n END PROCEDURE\n \n // Cascade invalidation for related content\n PROCEDURE OnUserUpdate(user_id)\n DELETE cache_key(\"user_profile:\" + user_id)\n DELETE cache_key(\"user_stats:\" + user_id)\n // Invalidate all affected user feeds\n followers = GetFollowers(user_id)\n FOR EACH follower IN followers\n DELETE cache_key(\"feed:\" + follower)\n END FOR\n END PROCEDURE\nEND",
+    "explanation": "This strategy combines TTL-based expiration with event-driven immediate invalidation. Different content types have different TTLs. Updates trigger cascade invalidation across related cached items.",
+    "complexity": {
+      "time": "O(n) where n = number of followers",
+      "space": "O(1)"
+    }
+  }
+]

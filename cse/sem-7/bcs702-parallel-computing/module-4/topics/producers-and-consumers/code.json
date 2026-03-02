@@ -1,0 +1,35 @@
+{
+  "topicId": "producers-and-consumers",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Producer-Consumer with Semaphores",
+      "description": "Classical solution using counting semaphores and mutex for bounded buffer",
+      "code": "// Global shared resources\nbuffer[N]; // Bounded buffer of size N\nsemaphore empty = N; // Count of empty slots\nsemaphore full = 0; // Count of filled slots\nmutex lock; // Mutual exclusion for buffer\n\n// Producer thread code\nfunction producer() {\n item = produce_item();\n wait(empty); // Decrement empty slot count\n \n lock.acquire(); // Enter critical section\n buffer[put_index] = item;\n put_index = (put_index + 1) % N;\n lock.release(); // Exit critical section\n \n signal(full); // Increment filled slot count\n}\n\n// Consumer thread code \nfunction consumer() {\n wait(full); // Decrement filled slot count\n \n lock.acquire(); // Enter critical section\n item = buffer[get_index];\n get_index = (get_index + 1) % N;\n lock.release(); // Exit critical section\n \n signal(empty); // Increment empty slot count\n consume_item(item);\n}",
+      "explanation": "This implementation uses two counting semaphores (empty and full) to coordinate buffer access and a mutex to ensure atomic buffer modifications. Producers wait for empty slots before producing; consumers wait for filled slots before consuming. The semaphores handle blocking automatically, while the mutex prevents race conditions on buffer indices.",
+      "timeComplexity": "O(1) per produce/consume operation",
+      "spaceComplexity": "O(N) for buffer storage, O(1) for synchronization primitives"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Producer-Consumer with Condition Variables (Pthreads)",
+      "description": "Implementation using mutex and condition variables for blocking wait/wakeup",
+      "code": "// Shared state\n#define BUFFER_SIZE 100\ntypedef struct {\n int buffer[BUFFER_SIZE];\n int count; // Number of items in buffer\n int put_idx; // Next slot to produce\n int get_idx; // Next slot to consume\n} SharedBuffer;\n\nSharedBuffer shared;\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\npthread_cond_t not_full = PTHREAD_COND_INITIALIZER;\npthread_cond_t not_empty = PTHREAD_COND_INITIALIZER;\n\n// Producer function\nvoid* producer(void* arg) {\n int item = produce_item();\n \n pthread_mutex_lock(&mutex);\n while (shared.count == BUFFER_SIZE) // While buffer full\n pthread_cond_wait(&not_full, &mutex); // Wait for space\n \n shared.buffer[shared.put_idx] = item;\n shared.put_idx = (shared.put_idx + 1) % BUFFER_SIZE;\n shared.count++;\n \n pthread_cond_signal(&not_empty); // Wake consumer if waiting\n pthread_mutex_unlock(&mutex);\n}\n\n// Consumer function\nvoid* consumer(void* arg) {\n pthread_mutex_lock(&mutex);\n while (shared.count == 0) // While buffer empty\n pthread_cond_wait(&not_empty, &mutex); // Wait for items\n \n int item = shared.buffer[shared.get_idx];\n shared.get_idx = (shared.get_idx + 1) % BUFFER_SIZE;\n shared.count--;\n \n pthread_cond_signal(&not_full); // Wake producer if waiting\n pthread_mutex_unlock(&mutex);\n \n consume_item(item);\n}",
+      "explanation": "Uses condition variables for blocking. Producers wait on not_full condition when buffer is full; consumers wait on not_empty when empty. The while loop (not if) handles spurious wakeups. Signal wakes one waiting thread; broadcast wakes all. This approach avoids busy-waiting and is efficient for blocking synchronization.",
+      "timeComplexity": "O(1) amortized for produce/consume; O(1) for wait/signal",
+      "spaceComplexity": "O(N) buffer, O(1) synchronization overhead"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Lock-Free SPSC Circular Buffer",
+      "description": "Single-producer single-consumer lock-free implementation using atomic CAS",
+      "code": "// Lock-free SPSC buffer\n#define CAPACITY 1024\ntypedef struct {\n _Atomic int write_idx; // Atomic: next write position\n _Atomic int read_idx; // Atomic: next read position\n int data[CAPACITY];\n} LockFreeBuffer;\n\nLockFreeBuffer buf;\n\n// Initialize\natomic_store(&buf.write_idx, 0);\natomic_store(&buf.read_idx, 0);\n\n// Producer: returns 1 on success, 0 if buffer full\nint produce(int item) {\n int w = atomic_load(&buf.write_idx);\n int r = atomic_load(&buf.read_idx);\n int next_w = (w + 1) % CAPACITY;\n \n if (next_w == r) // Buffer full\n return 0; // Cannot produce\n \n buf.data[w] = item; // Write data first (not strictly needed with CAS)\n \n // Try to advance write index\n // In real implementation: CAS loop for more robust solution\n atomic_store(&buf.write_idx, next_w);\n return 1;\n}\n\n// Consumer: returns 1 on success, 0 if buffer empty\nint consume(int* item) {\n int w = atomic_load(&buf.write_idx);\n int r = atomic_load(&buf.read_idx);\n \n if (w == r) // Buffer empty\n return 0;\n \n *item = buf.data[r];\n int next_r = (r + 1) % CAPACITY;\n atomic_store(&buf.read_idx, next_r);\n return 1;\n}",
+      "explanation": "Lock-free SPSC using atomic operations. No locks needed because only one producer writes and only one consumer reads - no race on data slots. Uses simple check-then-act with atomics. True lock-free uses CAS loop for ABA prevention. Advantages: no kernel calls, low latency. Disadvantages: busy-waiting, only SPSC, complex for general case.",
+      "timeComplexity": "O(1) average for produce/consume (amortized)",
+      "spaceComplexity": "O(N) for buffer data"
+    }
+  ]
+}

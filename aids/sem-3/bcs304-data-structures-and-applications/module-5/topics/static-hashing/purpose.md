@@ -1,0 +1,2 @@
+# Static Hashing
+This module on Static Hashing provides comprehensive coverage of hash function design, collision resolution techniques, and performance analysis for students/students/students. The content establishes theoretical foundations through mathematical proofs and enables practical implementation through C code examples. Students will develop proficiency in analyzing hash table behavior under various conditions and selecting appropriate techniques for specific applications.

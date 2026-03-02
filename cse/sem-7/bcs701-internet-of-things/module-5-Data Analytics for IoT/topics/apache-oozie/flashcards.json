@@ -1,0 +1,55 @@
+{
+  "topicId": "apache-oozie",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What are the three main components of Apache Oozie?",
+      "back": "1. Workflow - DAG of actions defining sequence of operations\n2. Coordinator - Schedules workflows based on time or data availability\n3. Bundle - Groups multiple coordinators as a single unit"
+    },
+    {
+      "id": "fc2",
+      "front": "What are the control nodes in an Oozie workflow?",
+      "back": "start - Entry point\nend - Successful completion\nkill - Failure termination\ndecision - Conditional branching\nfork - Start parallel execution\njoin - Merge parallel paths"
+    },
+    {
+      "id": "fc3",
+      "front": "What are the action nodes supported by Oozie?",
+      "back": "MapReduce, Pig, Hive, Sqoop, Shell, Java, Spark\n\nThese execute actual Hadoop jobs and data processing tasks. Each action has 'ok' and 'error' transitions to the next node."
+    },
+    {
+      "id": "fc4",
+      "front": "How do fork and join nodes work in Oozie?",
+      "back": "Fork: Splits workflow into multiple parallel execution paths for independent tasks\n\nJoin: Waits for all parallel paths to complete before continuing\n\nBenefit: Reduces total processing time by running independent tasks simultaneously"
+    },
+    {
+      "id": "fc5",
+      "front": "What is the difference between time-based and data-based coordination in Oozie?",
+      "back": "Time-based: Triggers workflows at specific times/intervals (cron-like)\n- Example: frequency='${coord:hours(1)}'\n\nData-based: Triggers workflows when input data becomes available\n- Uses dataset definitions and input-events\n- Waits for required data before execution"
+    },
+    {
+      "id": "fc6",
+      "front": "What is an Oozie Bundle and when is it used?",
+      "back": "An Oozie Bundle groups multiple coordinator jobs into a single manageable unit.\n\nUse cases:\n1. Multiple related data pipelines that should start/stop together\n2. Environment-wide job management (start all daily processing coordinators)\n3. Coordinated lifecycle management across dependent workflows\n\nBundles simplify operations for complex multi-pipeline IoT systems."
+    },
+    {
+      "id": "fc7",
+      "front": "How does Oozie handle workflow failures?",
+      "back": "1. Error transitions: Each action node has an 'error' transition path\n2. Kill nodes: Terminate workflow with error message\n3. Decision nodes: Route to error-handling sub-workflows\n4. Retry policy: Configure automatic retries for transient failures\n5. Notification: Email alerts on failure\n6. Manual intervention: Rerun from failed node after fixing issue"
+    },
+    {
+      "id": "fc8",
+      "front": "What is a decision node in Oozie and when is it used?",
+      "back": "A decision node provides conditional branching based on EL (Expression Language) expressions.\n\nStructure:\n- Evaluates conditions in order (like if-else)\n- Routes to different action paths\n- Has a 'default' path if no condition matches\n\nIoT example: If daily data size > 100GB, use 50 reducers; if < 10GB, use 5 reducers; default use 20 reducers."
+    },
+    {
+      "id": "fc9",
+      "front": "How does Oozie integrate with IoT data pipelines?",
+      "back": "1. Hourly ingestion: Coordinator triggers MapReduce to load sensor data from Kafka to HDFS\n2. Daily aggregation: Workflow runs Hive queries to compute daily statistics\n3. Weekly reports: Coordinator triggers Spark analytics and exports results via Sqoop\n4. Parallel cleaning: Fork/join to clean temperature, pressure, humidity data simultaneously\n5. Data-driven: Wait for all sensor files before starting batch processing"
+    },
+    {
+      "id": "fc10",
+      "front": "What is the structure of an Oozie workflow XML?",
+      "back": "Root element: <workflow-app>\nContains:\n- <start to='first-action'/>\n- <action name='...'> with <ok to='next'/> and <error to='fail'/>\n- <decision name='...'> with <switch> and <case> conditions\n- <fork name='...'> with <path start='...'/> entries\n- <join name='...' to='next-action'/>\n- <kill name='fail'> with <message>\n- <end name='end'/>"
+    }
+  ]
+}

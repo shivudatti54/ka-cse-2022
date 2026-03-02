@@ -1,0 +1,149 @@
+{
+  "topicId": "basic-concepts",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of a race condition in process synchronization. Under what circumstances does it occur?",
+      "keyPoints": [
+        "Race condition occurs when multiple processes access shared data concurrently",
+        "Outcome depends on relative timing/order of execution of processes",
+        "Occurs when result is unpredictable based on which process executes first",
+        "Example: two processes reading/writing same variable simultaneously"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define the critical section problem and state the three requirements that a solution must satisfy.",
+      "keyPoints": [
+        "Critical section is code accessing shared resources/variables",
+        "Three requirements: Mutual Exclusion (only one process in CS), Progress (processes outside can decide who enters), Bounded Waiting (limit on re-entries after request)",
+        "Solution must prevent simultaneous access to shared data"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between independent processes and cooperating processes in an operating system.",
+      "keyPoints": [
+        "Independent processes do not share any data or resources with other processes",
+        "Cooperating processes share data, resources, or communicate with each other",
+        "Cooperating processes require synchronization mechanisms",
+        "Independent processes can execute concurrently without any coordination"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is busy waiting (spinlock)? Discuss its advantages and disadvantages.",
+      "keyPoints": [
+        "Busy waiting is synchronization where process repeatedly checks a condition in a loop",
+        "Advantages: no context switch overhead, suitable for short waits, simple implementation",
+        "Disadvantages: wastes CPU cycles, may cause priority inversion, not suitable for long waits",
+        "Used in multiprocessor systems with atomic hardware instructions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the two models of interprocess communication (IPC) in operating systems.",
+      "keyPoints": [
+        "Shared Memory Model: processes share a common memory region, fast communication but requires explicit synchronization",
+        "Message Passing Model: processes communicate via send/receive operations through kernel, easier to implement but slower",
+        "Shared memory is faster but message passing is more portable and simpler to use",
+        "Both models require synchronization for correct operation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is an atomic operation? Why are atomic operations important in process synchronization?",
+      "keyPoints": [
+        "Atomic operation executes as a single indivisible unit that cannot be interrupted",
+        "Cannot be partially executed - either completes fully or not at all",
+        "Important in synchronization because they prevent race conditions during lock acquisition",
+        "Hardware provides atomic instructions like test-and-set, compare-and-swap",
+        "Without atomic operations, checking-and-setting a lock could be interrupted causing inconsistency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Describe the producer-consumer synchronization problem. What are the challenges involved?",
+      "keyPoints": [
+        "Producer creates items and adds to bounded buffer, Consumer removes items from buffer",
+        "Challenges: Buffer overflow when full, Buffer underflow when empty",
+        "Requires synchronization: producer waits if buffer full, consumer waits if empty",
+        "Classic example of cooperating processes sharing finite shared resource",
+        "Demonstrates need for condition synchronization beyond mutual exclusion"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the critical section problem in detail. Discuss the three fundamental requirements that any solution to the critical section problem must satisfy. Also explain why all three requirements are necessary for correct process synchronization.",
+      "keyPoints": [
+        "Critical section: code segment accessing shared resources",
+        "Problem: ensure only one process in critical section at a time",
+        "Mutual Exclusion: essential - prevents simultaneous access to shared data, without it race conditions occur",
+        "Progress: necessary - allows processes not in remainder section to participate in decision, without it system could deadlock",
+        "Bounded Waiting: prevents starvation, ensures fairness - without it a process could be indefinitely delayed",
+        "All three together ensure safety (no two in CS), liveness (progress), and fairness (bounded wait)",
+        "Trade-offs exist between these requirements in practical implementations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the classical synchronization problems: Producer-Consumer, Readers-Writers, and Dining Philosophers. Explain how each demonstrates the challenges of process synchronization.",
+      "keyPoints": [
+        "Producer-Consumer: bounded buffer problem - synchronization for both mutual exclusion and condition variables, demonstrates coordination for resource availability",
+        "Readers-Writers: multiple readers allowed simultaneously but writers need exclusive access, demonstrates read-write conflicts and priority issues",
+        "Dining Philosophers: N philosophers competing for N forks, demonstrates deadlock, starvation, and resource allocation problems",
+        "All illustrate different synchronization scenarios: buffer management, resource sharing, mutual exclusion",
+        "Solutions require careful design of synchronization primitives to avoid deadlocks and ensure fairness",
+        "These problems are foundational for understanding real-world concurrency issues"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the difference between hardware-based and software-based solutions for process synchronization. Discuss atomic operations and hardware synchronization primitives.",
+      "keyPoints": [
+        "Software solutions: purely algorithmic approaches using shared variables (Peterson's solution), more complex but work on any hardware",
+        "Hardware solutions: use special CPU instructions (test-and-set, compare-and-swap) that execute atomically, simpler but require hardware support",
+        "Atomic operations: execute without interruption as single indivisible unit, critical for implementing locks",
+        "Hardware primitives simplify software solutions but cannot eliminate all synchronization problems",
+        "Test-and-set atomically reads and sets a variable, enables efficient spinlocks",
+        "Compare-and-swap compares value with expected and swaps if matches, enables lock-free algorithms",
+        "Modern systems use combination: hardware primitives to build software synchronization primitives"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is synchronization in operating systems? Why is it necessary? Discuss various synchronization mechanisms and their applications.",
+      "keyPoints": [
+        "Synchronization coordinates execution of concurrent processes accessing shared resources",
+        "Necessary to prevent race conditions, maintain data consistency, ensure orderly execution",
+        "Synchronization mechanisms: Locks (binary, mutex), Semaphores (counting, binary), Monitors, Condition Variables",
+        "Locks provide mutual exclusion only, semaphores can handle counting",
+        "Monitors encapsulate shared data with operations and provide automatic mutual exclusion",
+        "Used in producer-consumer, readers-writers, dining philosophers, and many other concurrent programming scenarios",
+        "Without synchronization, multi-process/multi-threaded programs produce unpredictable results"
+      ],
+      "marks": 10
+    }
+  ]
+}

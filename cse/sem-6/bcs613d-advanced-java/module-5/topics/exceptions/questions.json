@@ -1,0 +1,240 @@
+{
+  "topicId": "exceptions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of exception handling in Java. Why is it preferred over traditional error handling techniques?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Focus on separation of concerns and graceful error recovery",
+      "keyPoints": [
+        "Exception is an event that disrupts normal program flow",
+        "Object-oriented way to handle runtime errors",
+        "Separates error-handling code from business logic",
+        "Maintains normal program flow with graceful termination",
+        "Provides meaningful error information through exception objects"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Draw and explain the Java Exception Hierarchy. Differentiate between checked and unchecked exceptions with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Remember that RuntimeException and its subclasses are unchecked, while others are checked",
+      "keyPoints": [
+        "Throwable is root class (Object -> Throwable)",
+        "Two main branches: Error and Exception",
+        "Exception subdivided into IOException, RuntimeException, etc.",
+        "Checked exceptions: IOException, SQLException, ClassNotFoundException (compiler-enforced)",
+        "Unchecked exceptions: RuntimeException, NullPointerException, ArrayIndexOutOfBoundsException (runtime)",
+        "Errors: VirtualMachineError, AssertionError (not meant to be caught)"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between 'throw' and 'throws' keywords in Java? Explain with code examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "throw = actual act of throwing, throws = declaration of potential exceptions",
+      "keyPoints": [
+        "'throw' is used to explicitly throw an exception manually",
+        "'throws' is used in method declaration to indicate exception propagation",
+        "throw: followed by instance of Exception (new Exception())",
+        "throws: followed by exception class names",
+        "throw is used within method body, throws in method signature"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Explain the try-catch-finally block structure in Java exception handling. What happens in each scenario: when exception occurs, when no exception occurs, and when exception is re-thrown?",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Remember that finally always executes - this is key for resource cleanup",
+      "keyPoints": [
+        "try block contains code that might throw exception",
+        "catch block handles specific exception type",
+        "finally block always executes regardless of exception (except System.exit())",
+        "When exception occurs: try code stops at exception point, catch handles if type matches",
+        "When no exception: skip catch blocks, execute finally after try completes",
+        "When re-thrown: catch executes, then throws again, finally still runs",
+        "Multiple catch blocks can handle different exception types"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "long",
+      "question": "Explain the try-with-resources feature in Java 7 and later. How does it simplify resource management? Write a code example demonstrating its use with a file operation.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Compare with traditional try-catch-finally to show the simplification",
+      "keyPoints": [
+        "AutoCloseable interface required for resources",
+        "Resources declared in try parenthesis auto-close after try block",
+        "No need for explicit finally block for resource cleanup",
+        "Multiple resources can be declared with semicolons",
+        "Resources closed in reverse order of declaration",
+        "Suppressed exceptions feature: original exception preserved if close() throws",
+        "Example: try(FileInputStream fis = new FileInputStream(\"file.txt\"))"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a custom exception in Java? How do you create and use user-defined exceptions? Explain with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Custom exceptions allow meaningful application-specific error handling",
+      "keyPoints": [
+        "Custom exception extends Exception (checked) or RuntimeException (unchecked)",
+        "Naming convention: end with 'Exception' suffix",
+        "Can override toString() for custom message",
+        "Provide constructors to pass custom messages",
+        "Used for application-specific error conditions",
+        "Example: class InsufficientBalanceException extends Exception"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of exception propagation in Java. How does an exception propagate through the call stack?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Think of exception bubbling up through method calls",
+      "keyPoints": [
+        "When exception not caught, it propagates to calling method",
+        "Continues up the call stack until caught or reaches JVM",
+        "Each method in stack gets opportunity to catch exception",
+        "If uncaught at top, JVM's uncaught exception handler terminates program",
+        "Use throws in method signature to declare exceptions to callers"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "What is multi-catch feature in Java? Explain its syntax and limitations. When should you use multi-catch versus separate catch blocks?",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Useful when multiple exception types require same handling logic",
+      "keyPoints": [
+        "Single catch block can catch multiple exception types (Java 7+)",
+        "Syntax: catch(IOException | SQLException | ParseException e)",
+        "Exception variable implicitly final in multi-catch",
+        "Cannot catch same exception type in multiple branches",
+        "Use when handling logic is same for different exception types",
+        "Separate catch when handling logic differs for each type"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "short",
+      "question": "Analyze the following code and state the output. Also identify any exceptions that might be thrown:\n\npublic class Test {\n public static void main(String[] args) {\n try {\n System.out.println(\"A\");\n int x = 10/0;\n System.out.println(\"B\");\n } catch(ArithmeticException e) {\n System.out.println(\"C\");\n } finally {\n System.out.println(\"D\");\n }\n }\n}",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Trace execution flow step by step, remember finally always runs",
+      "keyPoints": [
+        "ArithmeticException is thrown (division by zero)",
+        "Output sequence: A, C, D",
+        "A prints before exception",
+        "B is skipped due to exception",
+        "catch catches ArithmeticException, prints C",
+        "finally always executes, prints D"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "short",
+      "question": "What will be the output of the following code? Also explain the order of execution:\n\npublic class Test {\n static void method() throws Exception {\n try {\n throw new Exception(\"My Exception\");\n } catch(Exception e) {\n System.out.println(\"Caught in method\");\n throw e;\n } finally {\n System.out.println(\"Finally in method\");\n }\n }\n \n public static void main(String[] args) {\n try {\n method();\n } catch(Exception e) {\n System.out.println(\"Caught in main\");\n }\n }\n}",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Remember finally runs before exception propagates out",
+      "keyPoints": [
+        "Output: Caught in method, Finally in method, Caught in main",
+        "Exception thrown in try block",
+        "catch in method catches it, prints message, re-throws",
+        "finally executes before exception propagates",
+        "main's catch handles re-thrown exception",
+        "All three print statements execute in this order"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain nested try blocks in Java with a practical example. When would you use nested try-catch structures?",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Used when you need to handle exceptions at different granularities",
+      "keyPoints": [
+        "try block can contain another try-catch-finally structure",
+        "Inner catch handles exceptions specific to inner try",
+        "Outer catch handles remaining or propagated exceptions",
+        "Useful when different levels need different handling",
+        "Example: outer try for file operations, inner try for parsing",
+        "Each level can have its own finally for resource cleanup"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "What are the rules for overriding methods with exception handling? Can a overriding method throw unchecked exceptions even if the parent throws checked exceptions?",
+      "marks": 5,
+      "difficulty": "hard",
+      "hint": "Unchecked exceptions are flexible, checked exceptions are restricted",
+      "keyPoints": [
+        "Overriding method can throw unchecked exceptions regardless of parent",
+        "Overriding method can throw same, subclass, or no checked exception",
+        "Overriding method CANNOT throw new checked exceptions not in parent",
+        "Overriding method CANNOT throw parent checked exception as more general",
+        "Rule ensures polymorphism in exception handling"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "Consider the following Java code using try-with-resources:\n\ntry (FileReader fr = new FileReader(\"input.txt\"); BufferedReader br = new BufferedReader(fr)) {\n String line = br.readLine();\n System.out.println(line);\n}\n\nExplain: (a) What interface must FileReader implement? (b) In what order are resources closed? (c) What happens if BufferedReader's close() throws an exception?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Remember reverse order closing and suppressed exceptions feature",
+      "keyPoints": [
+        "(a) Must implement AutoCloseable interface",
+        "(b) Resources closed in reverse order: BufferedReader first, then FileReader",
+        "(c) If br.close() throws, fr.close() still attempted, original exception preserved as suppressed"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "long",
+      "question": "Design a custom exception class for a Banking application that handles insufficient balance scenarios. Write the complete exception class and demonstrate its usage in a withdraw method.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Design a meaningful exception with relevant data fields",
+      "keyPoints": [
+        "Class name: InsufficientBalanceException",
+        "Extends RuntimeException (unchecked) or Exception (checked)",
+        "Include balance and withdrawal amount fields",
+        "Constructor to initialize fields",
+        "Override getMessage() to display meaningful error",
+        "Method: void withdraw(double amount) throws InsufficientBalanceException",
+        "Check balance < amount, throw exception with details"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "short",
+      "question": "What is the difference between 'finally' and 'finalize'? Can 'finally' block be skipped? Explain with scenarios.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Two different concepts - one is exception handling, other is garbage collection",
+      "keyPoints": [
+        "finally: block that always executes after try-catch",
+        "finalize(): method called by GC before object reclamation",
+        "finally skipped only if System.exit() called or JVM crashes",
+        "finally is for resource cleanup, finalize is for cleanup before GC",
+        "finalize() is deprecated (Java 9+), finally is still essential"
+      ]
+    }
+  ]
+}

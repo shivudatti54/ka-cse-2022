@@ -1,0 +1,45 @@
+{
+  "topicId": "file-concepts-attributes-access",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "File Operations in C (POSIX)",
+      "description": "Demonstrates basic file operations: create, open, read, write, seek, close",
+      "code": "#include <fcntl.h>\n#include <unistd.h>\n\n// CREATE\nint fd = open(\"data.txt\", O_CREAT | O_WRONLY, 0644);\n\n// WRITE\nchar buffer[] = \"Hello, File System!\";\nwrite(fd, buffer, sizeof(buffer));\n\n// SEEK to beginning\nlseek(fd, 0, SEEK_SET);\n\n// READ\nchar read_buffer[100];\nread(fd, read_buffer, 50);\n\n// DIRECT ACCESS (record at offset 100)\nlseek(fd, 100, SEEK_SET);\nwrite(fd, record, record_size);\n\n// CLOSE\nclose(fd);",
+      "explanation": "This POSIX C code demonstrates essential file system calls. open() with O_CREAT creates a file and returns file descriptor. write() writes data and advances file pointer. lseek() repositions pointer for random access. read() retrieves data. close() releases descriptor and flushes buffers.",
+      "timeComplexity": "O(n) for sequential, O(1) for direct access via lseek",
+      "spaceComplexity": "O(1) excluding file buffer",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "File Operations in Python",
+      "description": "High-level file operations demonstrating sequential and random access",
+      "code": "# OPEN and WRITE\nwith open('data.txt', 'w') as f:\n    f.write('Line 1\\n')\n    f.write('Line 2\\n')\n    f.write('Line 3\\n')\n\n# SEQUENTIAL READ\nwith open('data.txt', 'r') as f:\n    for line in f:  # Sequential access\n        print(line.strip())\n\n# RANDOM ACCESS with seek\nwith open('data.txt', 'r') as f:\n    f.seek(6)  # Position at byte 6\n    print(f.read(5))  # Read 5 bytes from position\n\n# DIRECT ACCESS to specific line\nwith open('data.txt', 'r') as f:\n    for i, line in enumerate(f):\n        if i == 2:  # Third line (index 2)\n            print(line)",
+      "explanation": "Python's file objects provide higher-level abstraction. with statement ensures proper closing. seek() positions the file pointer. read() with parameter reads specified bytes. Iteration reads sequentially. For true random access by record, would need struct or fixed-width records.",
+      "timeComplexity": "O(n) sequential, O(1) with seek for positioning",
+      "spaceComplexity": "O(1) for basic operations, O(n) when reading entire file",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Direct Access File Implementation in C",
+      "description": "Fixed-length record file with direct (random) access using calculated offsets",
+      "code": "#define RECORD_SIZE 64\n#define NUM_RECORDS 100\n\ntypedef struct {\n    int id;\n    char name[60];\n} Record;\n\n// Write record at specific position\nvoid writeRecord(int fd, int recNum, Record *rec) {\n    off_t offset = recNum * RECORD_SIZE;\n    lseek(fd, offset, SEEK_SET);\n    write(fd, rec, sizeof(Record));\n}\n\n// Read record at specific position (direct access)\nvoid readRecord(int fd, int recNum, Record *rec) {\n    off_t offset = recNum * RECORD_SIZE;\n    lseek(fd, offset, SEEK_SET);\n    read(fd, rec, sizeof(Record));\n}\n\n// Example usage:\n// File address calculation: base + (record_number \u00d7 RECORD_SIZE)",
+      "explanation": "This demonstrates direct access method where each record has fixed size. The address is calculated mathematically: offset = record_number \u00d7 record_size. This allows O(1) access to any record without reading preceding records. Common in database systems.",
+      "timeComplexity": "O(1) - constant time for any record via calculated offset",
+      "spaceComplexity": "O(1) - only one record in memory at a time",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-4",
+      "title": "Indexed File Access Simulation",
+      "description": "Simulates indexed access with index file pointing to data blocks",
+      "code": "#define BLOCK_SIZE 512\n#define INDEX_ENTRIES 100\n\n// Index entry structure\ntypedef struct {\n    int key;        // Primary key (e.g., employee ID)\n    int block_addr; // Disk address of data block\n} IndexEntry;\n\n// Index file (in memory for this example)\nIndexEntry index[INDEX_ENTRIES];\nint index_count = 0;\n\n// Build index from data file\nvoid buildIndex(int data_fd) {\n    int block_num = 0;\n    Record rec;\n    \n    lseek(data_fd, 0, SEEK_SET);\n    while (read(data_fd, &rec, sizeof(Record)) > 0) {\n        index[index_count].key = rec.id;\n        index[index_count].block_addr = block_num * BLOCK_SIZE;\n        index_count++;\n        block_num++;\n    }\n}\n\n// Search using index\nint indexedSearch(int data_fd, int searchKey) {\n    // 1. Search index (could use binary search)\n    for (int i = 0; i < index_count; i++) {\n        if (index[i].key == searchKey) {\n            // 2. Direct access to data block\n            lseek(data_fd, index[i].block_addr, SEEK_SET);\n            read(data_fd, &rec, sizeof(Record));\n            return 1; // Found\n        }\n    }\n    return 0; // Not found\n}",
+      "explanation": "Simulates indexed file access. First builds an index mapping keys to block addresses. Search operates in two steps: first search the (smaller) index, then directly access the data block using stored address. Index can be searched more efficiently (binary search) than scanning entire file.",
+      "timeComplexity": "O(log n) for index search + O(1) for direct block access = O(log n) total",
+      "spaceComplexity": "O(n) for storing index in memory (can be reduced with multi-level index)",
+      "language": "pseudocode"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "topicId": "parsing-techniques",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Differentiate between LL(k) and LR(k) parsing techniques, highlighting their direction of parsing, ability to handle left recursion, and grammatical coverage.",
+      "keyPoints": [
+        "LL(k) is a top‑down, left‑most derivation parser that builds the parse tree from the start symbol.",
+        "LR(k) is a bottom‑up, shift‑reduce parser that reduces the input to the start symbol.",
+        "LL(k) cannot handle left‑recursive grammars without transformation; LR(k) can parse any context‑free grammar.",
+        "LR(k) uses LR items and a state‑based parsing table, offering greater expressive power than LL(k)."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the steps required to construct a recursive‑descent parser for a given grammar, focusing on handling left recursion, left factoring, and the generation of an Abstract Syntax Tree (AST).",
+      "keyPoints": [
+        "Eliminate left recursion and apply left factoring to obtain a grammar suitable for predictive parsing.",
+        "Write a separate function for each non‑terminal that uses the current lookahead token to choose a production.",
+        "Each function constructs a node (or list of nodes) representing the syntactic construct and returns it to build the AST.",
+        "Maintain a tree‑node data structure that links child nodes returned by called non‑terminal functions."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Consider the ambiguous grammar: S → a S b S | ε. (a) Show that the grammar is ambiguous by providing two distinct parse trees for the input string \"ab\". (b) Write a recursive‑descent parser (pseudo‑code) that constructs an Abstract Syntax Tree for this grammar, resolving the ambiguity by choosing a left‑associative derivation. (c) Explain how parser generators such as Yacc or ANTLR resolve ambiguities using precedence/associativity rules and generate an AST.",
+      "keyPoints": [
+        "Two parse trees for \"ab\": (i) S → a S b S → a ε b S → a ε b ε; (ii) S → a S b S → a S b ε → a ε b ε, demonstrating ambiguity.",
+        "Recursive‑descent code: function S() checks lookahead; on 'a' parse a S b S as ((a S) b S) to enforce left‑associativity, creating an AST node Seq with left child from the first a S and right child from the remaining b S.",
+        "Parser generators resolve shift/reduce or reduce/reduce conflicts by declaring precedence (e.g., %left) and associativity, selecting the desired reduction and invoking semantic actions that build AST nodes.",
+        "AST construction in generators is performed via semantic actions attached to productions, producing a tree that abstracts away the concrete syntax."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Explain the construction of an LR(1) parsing table for the grammar: E → E + T | T, T → T * F | F, F → ( E ) | id. (a) Compute the canonical collection of LR(1) items, closures, and goto functions. (b) Fill in the action and goto entries of the LR(1) parsing table. (c) Discuss the advantages of LR(1) parsing over LL(k) parsing for this grammar and mention the role of parser generators (e.g., Yacc, ANTLR) in automatically generating such tables.",
+      "keyPoints": [
+        "Generate LR(1) items with lookahead sets (e.g., E → .E + T with lookahead {+, $}), compute closure adding items for new non‑terminals, and compute goto for each set of items.",
+        "Action entries: shift on terminals '+', '*', '(', 'id', ')' and reduce on production completions when lookahead matches; Goto entries map states to next states for non‑terminals E, T, F.",
+        "LR(1) can handle the left‑recursive grammar directly without left‑factoring, parses all deterministic context‑free languages, and avoids backtracking, whereas LL(k) would require grammar transformation.",
+        "Parser generators (Yacc/Bison, ANTLR) automatically compute LR/LALR items, resolve conflicts, and emit optimized parser code with semantic actions for AST generation."
+      ],
+      "marks": 10
+    }
+  ]
+}

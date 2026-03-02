@@ -1,0 +1,35 @@
+{
+  "topicId": "ethernet",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CSMA/CD Algorithm",
+      "description": "Simplified pseudocode showing collision detection and backoff in Ethernet",
+      "code": "ALGORITHM CSMA_CD\nBEGIN\n  WHILE TRUE DO\n    WAIT for frame to transmit\n    \n    // Carrier Sense\n    WHILE medium is busy DO\n      WAIT until medium is idle\n    END WHILE\n    \n    // Start Transmission\n    START transmitting frame\n    \n    // Collision Detection\n    WHILE transmitting AND no collision DO\n      // Listen while talk\n      IF collision detected THEN\n        STOP transmitting\n        SEND jam signal\n        WAIT random backoff time\n        RETRY transmission\n      END IF\n    END WHILE\n    \n    IF no collision THEN\n      MARK frame as successfully transmitted\n    END IF\n  END WHILE\nEND",
+      "explanation": "CSMA/CD ensures orderly access to shared network medium. Stations listen before transmitting, detect collisions during transmission, send jam signal to notify all stations, and wait random backoff time before retrying.",
+      "timeComplexity": "O(n) where n is number of retransmission attempts",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Ethernet Frame Parser",
+      "description": "Python code to parse and display Ethernet frame fields",
+      "code": "import struct\n\ndef parse_ethernet_frame(raw_data):\n    \"\"\"Parse Ethernet frame and extract fields\"\"\"\n    \n    # Unpack first 14 bytes (Dest MAC + Src MAC + Type)\n    dest_mac, src_mac, ether_type = struct.unpack('!6s6sH', raw_data[:14])\n    \n    # Convert MAC addresses to readable format\n    dest_mac = ':'.join(f'{b:02x}' for b in dest_mac)\n    src_mac = ':'.join(f'{b:02x}' for b in src_mac)\n    \n    # EtherType mapping\n    ether_types = {\n        0x0800: 'IPv4',\n        0x0806: 'ARP',\n        0x86DD: 'IPv6',\n        0x8100: 'VLAN Tagged'\n    }\n    \n    # Get payload (everything after header)\n    payload = raw_data[14:]\n    \n    # Calculate FCS (CRC32)\n    received_fcs = struct.unpack('!I', raw_data[-4:])[0]\n    calculated_fcs = crc32(raw_data[:-4]) & 0xFFFFFFFF\n    \n    frame_info = {\n        'Destination MAC': dest_mac,\n        'Source MAC': src_mac,\n        'EtherType': ether_types.get(ether_type, hex(ether_type)),\n        'Payload Length': len(payload),\n        'FCS Valid': received_fcs == calculated_fcs\n    }\n    \n    return frame_info\n\n# Example usage\nraw_frame = b'\\x00\\x1a\\x2b\\x3c\\x4d\\x5e' + b'\\x11\\x22\\x33\\x44\\x55\\x66' + \n            b'\\x08\\x00' + b'\\x45\\x00\\x00\\x1c' + b'\\x00\\x00' +\n            b'\\x40\\x00\\x01\\x11' + b'\\x00\\x00' + b'\\x00\\x00' + \n            b'\\xc0\\xa8\\x01\\x01' + b'\\xc0\\xa8\\x01\\x02'\n            \nprint(parse_ethernet_frame(raw_frame))",
+      "explanation": "This Python code demonstrates how to parse Ethernet frames, extracting MAC addresses, EtherType, and validating the Frame Check Sequence (FCS) using CRC32.",
+      "timeComplexity": "O(n) where n is frame size",
+      "spaceComplexity": "O(n) for payload storage"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Switch MAC Address Learning",
+      "description": "C code demonstrating MAC address table learning in an Ethernet switch",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n#define MAX_ENTRIES 1024\n#define MAC_ADDR_LEN 6\n\ntypedef struct {\n    unsigned char mac[MAC_ADDR_LEN];\n    int port;\n    int timestamp;\n    int valid;\n} MacEntry;\n\nMacEntry mac_table[MAX_ENTRIES];\n\n// Initialize MAC table\nvoid init_mac_table() {\n    memset(mac_table, 0, sizeof(mac_table));\n}\n\n// Learn MAC address from incoming frame\nvoid learn_mac(unsigned char* src_mac, int port, int current_time) {\n    // Search for existing entry\n    for (int i = 0; i < MAX_ENTRIES; i++) {\n        if (mac_table[i].valid && \n            memcmp(mac_table[i].mac, src_mac, MAC_ADDR_LEN) == 0) {\n            mac_table[i].port = port;  // Update port\n            mac_table[i].timestamp = current_time;\n            return;\n        }\n    }\n    \n    // Add new entry\n    for (int i = 0; i < MAX_ENTRIES; i++) {\n        if (!mac_table[i].valid) {\n            memcpy(mac_table[i].mac, src_mac, MAC_ADDR_LEN);\n            mac_table[i].port = port;\n            mac_table[i].timestamp = current_time;\n            mac_table[i].valid = 1;\n            return;\n        }\n    }\n}\n\n// Lookup destination port for MAC\nint lookup_port(unsigned char* dest_mac) {\n    for (int i = 0; i < MAX_ENTRIES; i++) {\n        if (mac_table[i].valid &&\n            memcmp(mac_table[i].mac, dest_mac, MAC_ADDR_LEN) == 0) {\n            return mac_table[i].port;\n        }\n    }\n    return -1;  // Unknown - flood\n}\n\n// Switch forwarding decision\nvoid forward_frame(unsigned char* dest_mac, unsigned char* src_mac, \n                   int in_port, int current_time) {\n    // Learn source MAC\n    learn_mac(src_mac, in_port, current_time);\n    \n    // Find destination port\n    int out_port = lookup_port(dest_mac);\n    \n    if (out_port == -1) {\n        // Flood to all ports except source\n        flood_except(in_port);\n    } else {\n        // Forward to specific port\n        send_to_port(out_port, dest_mac);\n    }\n}",
+      "explanation": "This C code simulates an Ethernet switch's MAC address learning mechanism. When a frame arrives, the switch learns the source MAC address and associates it with the incoming port. For forwarding, it looks up the destination MAC; if found, it forwards to that specific port; if unknown, it floods the frame.",
+      "timeComplexity": "O(m) where m is MAC table size (linear search)",
+      "spaceComplexity": "O(m) for MAC table storage"
+    }
+  ]
+}

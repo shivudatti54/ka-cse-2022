@@ -1,0 +1,45 @@
+{
+  "topicId": "performing-alu-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Full Adder Behavior",
+      "description": "Behavioral representation of full adder operation",
+      "code": "FUNCTION FullAdder(A, B, Cin)\n  // Compute Sum using XOR of all three inputs\n  Sum = A XOR B XOR Cin\n  \n  // Compute Carry using majority function\n  Carry = (A AND B) OR (B AND Cin) OR (A AND Cin)\n  \n  RETURN (Sum, Carry)\nEND FUNCTION\n\n// Example: A=1, B=1, Cin=1\n// Sum = 1 XOR 1 XOR 1 = 1\n// Carry = (1 AND 1) OR (1 AND 1) OR (1 AND 1) = 1",
+      "explanation": "This pseudocode describes the behavior of a full adder which adds three binary bits and produces sum and carry outputs using XOR and AND/OR gates.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "4-bit Ripple Carry Adder Simulation",
+      "description": "Python implementation demonstrating ripple carry addition with carry propagation",
+      "code": "def half_adder(a, b):\n    '''Half adder: adds two bits'''\n    sum_bit = a ^ b\n    carry = a & b\n    return sum_bit, carry\n\ndef full_adder(a, b, cin):\n    '''Full adder: adds three bits'''\n    # First stage: add a and b\n    s1, c1 = half_adder(a, b)\n    # Second stage: add result to cin\n    sum_bit, c2 = half_adder(s1, cin)\n    # Carry is OR of both stage carries\n    carry_out = c1 | c2\n    return sum_bit, carry_out\n\ndef ripple_carry_adder(A, B):\n    '''Add two 4-bit numbers using ripple carry'''\n    result = 0\n    carry = 0\n    \n    for i in range(4):\n        a_bit = (A >> i) & 1\n        b_bit = (B >> i) & 1\n        s, carry = full_adder(a_bit, b_bit, carry)\n        result |= (s << i)\n    \n    return result, carry\n\n# Example: 5 + 8 = 13\n# result, carry = ripple_carry_adder(5, 8)\n# print(f\"Result: {result}, Carry: {carry}\")",
+      "explanation": "This code simulates a 4-bit ripple carry adder showing how carry propagates through each bit position sequentially. The full_adder function is called 4 times in sequence.",
+      "timeComplexity": "O(N)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Carry Look-Ahead Adder Implementation",
+      "description": "C program demonstrating parallel carry generation using generate and propagate",
+      "code": "#include <stdio.h>\n\nvoid carry_lookahead_4bit(int A, int B, int *result, int *carry_out) {\n    // Extract individual bits\n    int a[4], b[4];\n    for (int i = 0; i < 4; i++) {\n        a[i] = (A >> i) & 1;\n        b[i] = (B >> i) & 1;\n    }\n    \n    // Calculate Generate and Propagate for each stage\n    int G[4], P[4];\n    for (int i = 0; i < 4; i++) {\n        G[i] = a[i] & b[i];           // Generate: carry out if both 1\n        P[i] = a[i] ^ b[i];           // Propagate: carry in becomes carry out\n    }\n    \n    // Calculate carries in parallel (look-ahead)\n    int C[5];                        // C[0] is input carry\n    C[0] = 0;                        // Assume no initial carry\n    C[1] = G[0] | (P[0] & C[0]);\n    C[2] = G[1] | (P[1] & G[0]) | (P[1] & P[0] & C[0]);\n    C[3] = G[2] | (P[2] & G[1]) | (P[2] & P[1] & G[0]) | (P[2] & P[1] & P[0] & C[0]);\n    C[4] = G[3] | (P[3] & G[2]) | (P[3] & P[2] & G[1]) | (P[3] & P[2] & P[1] & G[0]);\n    \n    // Calculate sum bits\n    int sum = 0;\n    for (int i = 0; i < 4; i++) {\n        int s = P[i] ^ C[i];\n        sum |= (s << i);\n    }\n    \n    *result = sum;\n    *carry_out = C[4];\n}\n\nint main() {\n    int result, carry;\n    carry_lookahead_4bit(5, 8, &result, &carry);\n    printf(\"5 + 8 = %d, Carry = %d\\n\", result, carry);\n    return 0;\n}",
+      "explanation": "This C implementation shows carry look-ahead logic where all carries are computed in parallel using generate (G) and propagate (P) signals rather than waiting for ripple. The carry equations are expanded to compute all carries simultaneously.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "ALU Control and Operation Selection",
+      "description": "ALU operation selection mechanism based on function code",
+      "code": "CONSTANT ADD = 0b000\nCONSTANT SUB = 0b001\nCONSTANT AND_OP = 0b010\nCONSTANT OR_OP = 0b011\nCONSTANT XOR_OP = 0b100\nCONSTANT NOT_OP = 0b101\nCONSTANT INC = 0b110\nCONSTANT DEC = 0b111\n\nFUNCTION ALU(A, B, FunctionCode)\n  RESULT = 0\n  CARRY = 0\n  \n  SWITCH FunctionCode\n    CASE ADD:\n      RESULT = A + B          // Use adder circuit\n      CARRY = (RESULT < A)   // Detect unsigned overflow\n      \n    CASE SUB:\n      RESULT = A + (~B + 1)   // Two's complement subtraction\n      CARRY = (RESULT > A)   // Borrow detection\n      \n    CASE AND_OP:\n      RESULT = A AND B        // Bitwise AND\n      \n    CASE OR_OP:\n      RESULT = A OR B         // Bitwise OR\n      \n    CASE XOR_OP:\n      RESULT = A XOR B        // Bitwise XOR\n      \n    CASE NOT_OP:\n      RESULT = NOT A          // Bitwise NOT (unary)\n      \n    CASE INC:\n      RESULT = A + 1          // Increment\n      \n    CASE DEC:\n      RESULT = A - 1         // Decrement\n      \n  END SWITCH\n  \n  // Update status flags\n  ZERO = (RESULT == 0)\n  SIGN = (RESULT < 0)         // MSB indicates sign\n  OVERFLOW = (SUB and ((A > 0 and B < 0 and RESULT < 0) or \n                       (A < 0 and B > 0 and RESULT > 0)))\n  \n  RETURN (RESULT, CARRY, ZERO, SIGN, OVERFLOW)\nEND FUNCTION\n\n// Control unit generates FunctionCode from instruction\nFUNCTION ControlUnit(Instruction)\n  OpCode = ExtractOpCode(Instruction)\n  FunctionCode = Decode(OpCode)\n  RETURN FunctionCode\nEND FUNCTION",
+      "explanation": "This pseudocode shows how ALU selects different operations based on function code, updates status flags, and how control unit determines which operation to perform.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

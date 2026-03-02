@@ -1,0 +1,45 @@
+{
+  "topicId": "protection",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Access Check Algorithm using ACL",
+      "description": "Demonstrates how access is checked when a process requests file operation using Access Control Lists",
+      "code": "ALGORITHM CheckAccessWithACL\nINPUT: process_id, file_name, requested_operation\nBEGIN\n  user_id \u2190 GetUserID(process_id)\n  file_acl \u2190 GetACL(file_name)\n  \n  FOR EACH entry IN file_acl DO\n    IF entry.user_id = user_id OR entry.group_id \u2208 GetUserGroups(user_id) THEN\n      IF requested_operation IN entry.permissions THEN\n        RETURN ALLOW\n      ELSE\n        RETURN DENY\n      END IF\n    END IF\n  END FOR\n  \n  IF CheckOtherPermissions(file_acl, requested_operation) THEN\n    RETURN ALLOW\n  END IF\n  \n  RETURN DENY\nEND",
+      "explanation": "This algorithm shows how ACL-based access control works: the system retrieves the ACL for the file, checks if the user or their group has the requested permission, and allows or denies access accordingly.",
+      "timeComplexity": "O(n) where n is the number of ACL entries",
+      "spaceComplexity": "O(1) excluding ACL storage"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "UNIX Permission Calculator",
+      "description": "Program to calculate and set UNIX file permissions using numeric notation",
+      "code": "def calculate_permission(rwx_string):\n    \"\"\"Convert rwx string to numeric octal\"\"\"\n    perm_map = {'r': 4, 'w': 2, 'x': 1, '-': 0}\n    total = 0\n    for char in rwx_string:\n        total += perm_map.get(char, 0)\n    return total\n\ndef set_permission_numeric(permission_str):\n    \"\"\"Convert permission like 'rwxr-x---' to 750\"\"\"\n    # Split into owner, group, others\n    parts = [permission_str[i:i+3] for i in range(0, len(permission_str), 3)]\n    numeric_perm = 0\n    for i, part in enumerate(parts):\n        numeric_perm += calculate_permission(part) * (10**(2-i))\n    return numeric_perm\n\n# Example usage\nprint(set_permission_numeric('rwxr-x---'))  # Output: 750\nprint(set_permission_numeric('rw-r--r--'))   # Output: 644\nprint(set_permission_numeric('rwxrwxrwx'))   # Output: 777\n\n# Individual calculations\nprint(calculate_permission('rwx'))  # Owner: 7\nprint(calculate_permission('r-x'))  # Group: 5\nprint(calculate_permission('---'))  # Others: 0",
+      "explanation": "This Python code demonstrates how UNIX file permissions work: read=4, write=2, execute=1. The function converts permission strings like 'rwxr-x---' into numeric form (750) used in chmod commands.",
+      "timeComplexity": "O(1) for each conversion",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Capability-Based Access Check",
+      "description": "Demonstrates access verification in a capability-based protection system",
+      "code": "ALGORITHM CheckAccessWithCapability\nINPUT: process_id, object_id, requested_operation\nBEGIN\n  user_caps \u2190 GetCapabilities(process_id)\n  \n  FOR EACH cap IN user_caps DO\n    IF cap.object_id = object_id THEN\n      IF requested_operation IN cap.allowed_operations THEN\n        IF VerifyCapabilityNotRevoked(cap) THEN\n          RETURN ALLOW\n        ELSE\n          RETURN REVOKED\n        END IF\n      ELSE\n        RETURN DENY\n      END IF\n    END IF\n  END FOR\n  \n  RETURN DENY\nEND\n\nPROCEDURE CreateCapability\nINPUT: domain_id, object_id, operations\nBEGIN\n  new_cap \u2190 {\n    domain_id: domain_id,\n    object_id: object_id,\n    operations: operations,\n    nonce: GenerateRandom()\n  }\n  RETURN new_cap\nEND",
+      "explanation": "This shows how capability-based systems work: processes carry capability tokens that specify what objects they can access and what operations are allowed. The check is fast but revocation is complex.",
+      "timeComplexity": "O(n) where n is number of capabilities held by process",
+      "spaceComplexity": "O(n) for storing capabilities per process"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "UNIX File Permission Setting Example",
+      "description": "C program demonstrating how to set and check file permissions using system calls",
+      "code": "#include <stdio.h>\n#include <sys/stat.h>\n\nint main() {\n    const char *filename = \"myfile.txt\";\n    \n    // Method 1: Using symbolic notation\n    // chmod(filename, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);\n    // Equivalent to: chmod 644 (rw-r--r--)\n    \n    // Method 2: Using numeric (octal) notation\n    // Owner: rwx = 4+2+1 = 7\n    // Group: r-x = 4+0+1 = 5\n    // Others: r-- = 4+0+0 = 4\n    // mode = 0754\n    \n    mode_t mode = 0754;\n    \n    if (chmod(filename, mode) == 0) {\n        printf(\"Permissions set to 0754 (rwxr-xr--)\\n\");\n    }\n    \n    // Check current permissions\n    struct stat fileStat;\n    stat(filename, &fileStat);\n    \n    printf(\"File permissions: %o\\n\", fileStat.st_mode & 0777);\n    \n    // Check specific permissions\n    if (fileStat.st_mode & S_IRUSR) printf(\"Owner can read\\n\");\n    if (fileStat.st_mode & S_IWUSR) printf(\"Owner can write\\n\");\n    if (fileStat.st_mode & S_IXUSR) printf(\"Owner can execute\\n\");\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates how to programmatically set and check UNIX file permissions using the chmod() and stat() system calls. The mode 0754 means owner has full access, group has read/execute, others have read only.",
+      "timeComplexity": "O(1) for each operation",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary characteristic that distinguishes a nested transaction from a flat transaction?",
+    "options": [
+      "A flat transaction contains a single sequence of operations, while a nested transaction can contain subtransactions.",
+      "A flat transaction is always faster than a nested transaction.",
+      "Nested transactions are only used in database systems, while flat transactions are used everywhere else.",
+      "There is no practical difference between the two."
+    ],
+    "correctIndex": 0,
+    "explanation": "A flat transaction is a simple, single-level unit of work. A nested transaction is a hierarchy of transactions where a parent transaction can have child transactions (subtransactions), allowing for more modular structure and partial rollbacks."
+  },
+  {
+    "id": "q2",
+    "question": "In a nested distributed transaction, what happens to the entire transaction if a subtransaction is aborted?",
+    "options": [
+      "The entire parent transaction is always immediately aborted.",
+      "Only the aborted subtransaction is rolled back; the parent can choose to retry it or handle the failure.",
+      "The system automatically commits the work of all other subtransactions.",
+      "The abort is ignored, and the transaction continues."
+    ],
+    "correctIndex": 1,
+    "explanation": "A key advantage of nested transactions is the ability to confine failure. The abort of a subtransaction does not force the entire parent transaction to abort. The parent can catch the failure and execute an alternative subtransaction or compensate, enabling finer-grained recovery."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following is a major challenge introduced by moving from flat transactions to nested distributed transactions?",
+    "options": [
+      "Increased complexity in concurrency control and recovery",
+      "The need for more powerful client machines",
+      "The inability to use the two-phase commit protocol",
+      "Slower network speeds"
+    ],
+    "correctIndex": 0,
+    "explanation": "Nested transactions introduce a multi-level hierarchy, which significantly complicates concurrency control (managing locks between parents and children) and recovery protocols (ensuring atomic commit across the entire tree of transactions)."
+  },
+  {
+    "id": "q4",
+    "question": "According to the 'closed nested transaction' model, how are the effects of a committed subtransaction made visible?",
+    "options": [
+      "They are immediately visible to all other transactions outside of the hierarchy.",
+      "They are visible only to the immediate parent transaction and its other subtransactions.",
+      "They are not visible until the entire top-level transaction commits.",
+      "They are visible only to sibling subtransactions running on the same server."
+    ],
+    "correctIndex": 2,
+    "explanation": "In the closed nested model, the effects of a subtransaction are provisional. They are not permanent or visible outside the scope of the entire top-level transaction. All changes become visible and durable only when the root (top-level) transaction commits."
+  },
+  {
+    "id": "q5",
+    "question": "A travel booking application uses a top-level transaction to book a trip. It has subtransactions to reserve a flight, a hotel, and a car. The flight subtransaction commits, but the hotel subtransaction aborts due to no availability. What is a key benefit of using a nested transaction model in this scenario over a flat one?",
+    "options": [
+      "The entire booking can be rolled back, automatically releasing the flight reservation.",
+      "The application can proceed to commit the flight and car reservations independently.",
+      "The system can automatically find a new hotel without user interaction.",
+      "It allows the application to retry the hotel subtransaction without having to restart the entire flight booking process from scratch."
+    ],
+    "correctIndex": 3,
+    "explanation": "This highlights the benefit of modularity and partial rollback. In a flat transaction, the entire operation would be rolled back, forcing the user to restart and potentially lose the flight seat. With nesting, the parent transaction can handle the hotel abort, perhaps by executing an alternative 'find different hotel' subtransaction, without losing the progress of the already-committed flight subtransaction."
+  }
+]

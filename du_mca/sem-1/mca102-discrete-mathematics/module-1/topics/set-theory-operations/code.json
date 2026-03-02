@@ -1,0 +1,35 @@
+{
+  "topicId": "set-theory-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Basic Set Operations - Union, Intersection, Difference",
+      "description": "Demonstrates fundamental set operations using Python's built-in set data type",
+      "code": "# Define two sets\nA = {1, 2, 3, 4, 5}\nB = {4, 5, 6, 7, 8}\n\n# Union (A ∪ B) - All elements from both sets\nunion_set = A | B\nprint(f\"Union A ∪ B: {union_set}\")\n\n# Intersection (A ∩ B) - Common elements\nintersection_set = A & B\nprint(f\"Intersection A ∩ B: {intersection_set}\")\n\n# Difference (A - B) - Elements in A but not in B\ndifference_set = A - B\nprint(f\"Difference A - B: {difference_set}\")\n\n# Symmetric Difference - Elements in either set but not both\nsymmetric_diff = A ^ B\nprint(f\"Symmetric Difference: {symmetric_diff}\")\n\n# Set equality\nprint(f\"A == B: {A == B}\")",
+      "explanation": "Python's set data type directly supports mathematical set operations: | (union), & (intersection), - (difference), and ^ (symmetric difference). These operations correspond exactly to the set theory operations studied in discrete mathematics. The code demonstrates each operation with concrete examples using sets A and B.",
+      "timeComplexity": "O(min(len(A), len(B))) for intersection; O(len(A) + len(B)) for union, difference, symmetric difference",
+      "spaceComplexity": "O(len(A) + len(B))"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Subset, Superset, and Power Set Operations",
+      "description": "Demonstrates set relationships and the power set operation",
+      "code": "from itertools import combinations\n\n# Define sets for subset/superset demonstrations\nX = {1, 2, 3}\nY = {1, 2, 3, 4, 5}\nempty_set = set()\n\n# Check subset relationship (X ⊆ Y)\nprint(f\"X ⊆ Y: {X.issubset(Y)}\")  # True - X is subset of Y\nprint(f\"Y ⊆ X: {Y.issubset(X)}\")  # False\nprint(f\"X ⊂ X: {X < X}\")         # False - proper subset check\n\n# Check superset relationship (Y ⊇ X)\nprint(f\"Y ⊇ X: {Y.issuperset(X)}\")\nprint(f\"X ⊇ Y: {X.issuperset(Y)}\")\n\n# Empty set is subset of all sets\nprint(f\"∅ ⊆ X: {empty_set.issubset(X)}\")\n\n# Power Set - All subsets of a set\ndef power_set(s):\n    \"\"\"Generate power set using combination formula |P(A)| = 2^n\"\"\"\n    power = [set()]\n    for elem in s:\n        new_subsets = [subset | {elem} for subset in power]\n        power.extend(new_subsets)\n    return power\n\noriginal_set = {1, 2, 3}\nps = power_set(original_set)\nprint(f\"\\nPower Set of {{1,2,3}}:\")\nfor subset in ps:\n    print(f\"  {subset}\")\nprint(f\"|P(A)| = 2^{len(original_set)} = {len(ps)}\")",
+      "explanation": "This example covers important set relationship operations: issubset(), issuperset() for checking subset/superset relationships, and proper subset (<) checks. The power set function demonstrates the fundamental theorem that |P(A)| = 2^n where n is the cardinality of the set. The algorithm generates all 2^n subsets through iterative combination building.",
+      "timeComplexity": "O(2^n) for power set generation; O(1) for subset/superset checks",
+      "spaceComplexity": "O(2^n) for power set storage"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Cartesian Product and Set Builder Notation",
+      "description": "Demonstrates Cartesian products and set comprehension for complex set operations",
+      "code": "# Cartesian Product (A × B) - All ordered pairs\nA = {1, 2}\nB = {'x', 'y'}\n\n# Method 1: Using iteration\ncartesian = {(a, b) for a in A for b in B}\nprint(f\"A × B = {cartesian}\")\nprint(f\"|A × B| = |A| × |B| = {len(A)} × {len(B)} = {len(cartesian)}\")\n\n# Set Builder Notation Examples\n# Example 1: S = {x² | x ∈ ℕ, x < 5}\nnatural_numbers = {1, 2, 3, 4}\nS = {x**2 for x in natural_numbers}\nprint(f\"\\n{{x² | x ∈ ℕ, x < 5}} = {S}\")\n\n# Example 2: Even numbers from 1-20 using set builder\nE = {x for x in range(1, 21) if x % 2 == 0}\nprint(f\"{{x | 1 ≤ x ≤ 20, x is even}} = {E}\")\n\n# Example 3: Set of tuples satisfying condition\n# C = {(x,y) | x ∈ {1,2,3}, y ∈ {1,2,3}, x + y = 4}\nC = {(x, y) for x in range(1, 4) for y in range(1, 4) if x + y == 4}\nprint(f\"{{(x,y) | x+y=4, x,y∈{{1,2,3}}}} = {C}\")\n\n# De Morgan's Laws Verification\nU = {1, 2, 3, 4, 5}  # Universal set\nX = {1, 2}\nY = {2, 3, 4}\n\n# De Morgan's Law: (X ∪ Y)' = X' ∩ Y'\nleft_side = U - (X | Y)  # (X ∪ Y)'\nright_side = (U - X) & (U - Y)  # X' ∩ Y'\n\nprint(f\"\\nDe Morgan's Law Verification:\")\nprint(f\"(X ∪ Y)' = {left_side}\")\nprint(f\"X' ∩ Y' = {right_side}\")\nprint(f\"Law verified: {left_side == right_side}\")",
+      "explanation": "This advanced example demonstrates Cartesian products using set comprehensions (matching set-builder notation), the fundamental property |A × B| = |A| × |B|, and verification of De Morgan's Laws using set operations. The set comprehension syntax {expression for variable in set if condition} directly implements mathematical set-builder notation. The example shows how Python can verify theoretical set theory identities.",
+      "timeComplexity": "O(|A| × |B|) for Cartesian product; O(n) for set comprehensions with filtering",
+      "spaceComplexity": "O(|A| × |B|) for Cartesian product storage"
+    }
+  ]
+}

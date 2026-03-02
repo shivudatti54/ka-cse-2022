@@ -1,0 +1,585 @@
+{
+  "topicId": "sigsetjmp-and-siglongjmp-functions",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the key advantage of sigsetjmp over setjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Faster execution"
+        },
+        {
+          "key": "B",
+          "text": "Saves and restores signal mask"
+        },
+        {
+          "key": "C",
+          "text": "Uses less memory"
+        },
+        {
+          "key": "D",
+          "text": "Returns different values"
+        },
+        {
+          "key": "E",
+          "text": "Allows more jumps"
+        }
+      ],
+      "correctAnswer": "Saves and restores signal mask",
+      "explanation": "sigsetjmp has an additional parameter 'savemask' that allows saving the current signal mask, which can be restored by siglongjmp. This is the primary advantage over setjmp/longjmp.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What is the return value of sigsetjmp when called directly?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "0"
+        },
+        {
+          "key": "C",
+          "text": "-1"
+        },
+        {
+          "key": "D",
+          "text": "Depends on savemask"
+        },
+        {
+          "key": "E",
+          "text": "SIGSETJMP_SUCCESS"
+        }
+      ],
+      "correctAnswer": "0",
+      "explanation": "When sigsetjmp is called directly (not via siglongjmp), it returns 0. This distinguishes the initial call from a return via siglongjmp.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What does the savemask parameter in sigsetjmp control?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Whether to save local variables"
+        },
+        {
+          "key": "B",
+          "text": "Whether to save the signal mask"
+        },
+        {
+          "key": "C",
+          "text": "The timeout for the jump"
+        },
+        {
+          "key": "D",
+          "text": "The buffer size"
+        },
+        {
+          "key": "E",
+          "text": "None of the above"
+        }
+      ],
+      "correctAnswer": "Whether to save the signal mask",
+      "explanation": "The savemask parameter (an integer) determines whether the current signal mask should be saved. If non-zero, the mask is saved; if zero, it is not saved.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which header file declares sigsetjmp and siglongjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "<signal.h>"
+        },
+        {
+          "key": "B",
+          "text": "<stdio.h>"
+        },
+        {
+          "key": "C",
+          "text": "<setjmp.h>"
+        },
+        {
+          "key": "D",
+          "text": "<stdlib.h>"
+        },
+        {
+          "key": "E",
+          "text": "<unistd.h>"
+        }
+      ],
+      "correctAnswer": "<setjmp.h>",
+      "explanation": "The <setjmp.h> header file declares both sigsetjmp and siglongjmp functions along with the sigjmp_buf type.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the type of jump buffer used with sigsetjmp/siglongjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "jmp_buf"
+        },
+        {
+          "key": "B",
+          "text": "sigjmp_buf"
+        },
+        {
+          "key": "C",
+          "text": "jump_buffer"
+        },
+        {
+          "key": "D",
+          "text": "context_t"
+        },
+        {
+          "key": "E",
+          "text": "sigcontext"
+        }
+      ],
+      "correctAnswer": "sigjmp_buf",
+      "explanation": "sigjmp_buf is the specific buffer type used with sigsetjmp and siglongjmp. It stores execution context including the signal mask.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "If sigsetjmp is called with savemask=0, what happens when siglongjmp is called?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Signal mask is restored"
+        },
+        {
+          "key": "B",
+          "text": "Signal mask is not restored"
+        },
+        {
+          "key": "C",
+          "text": "Error occurs"
+        },
+        {
+          "key": "D",
+          "text": "Signal mask is cleared"
+        },
+        {
+          "key": "E",
+          "text": "Depends on system"
+        }
+      ],
+      "correctAnswer": "Signal mask is not restored",
+      "explanation": "When savemask=0, the signal mask is not saved by sigsetjmp. Therefore, siglongjmp cannot restore any signal mask.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the return value of sigsetjmp when returning via siglongjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "-1"
+        },
+        {
+          "key": "C",
+          "text": "The value passed to siglongjmp"
+        },
+        {
+          "key": "D",
+          "text": "Undefined"
+        },
+        {
+          "key": "E",
+          "text": "Positive non-zero"
+        }
+      ],
+      "correctAnswer": "The value passed to siglongjmp",
+      "explanation": "sigsetjmp returns the value passed as the second argument to siglongjmp when returning via siglongjmp. Typically this is a non-zero value to indicate an error condition.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which function is used to restore execution context with signal mask?",
+      "options": [
+        {
+          "key": "A",
+          "text": "setjmp"
+        },
+        {
+          "key": "B",
+          "text": "longjmp"
+        },
+        {
+          "key": "C",
+          "text": "siglongjmp"
+        },
+        {
+          "key": "D",
+          "text": "sigsetjmp"
+        },
+        {
+          "key": "E",
+          "text": "restorejmp"
+        }
+      ],
+      "correctAnswer": "siglongjmp",
+      "explanation": "siglongjmp is used to restore the execution context that was saved by sigsetjmp. It can optionally restore the saved signal mask depending on how sigsetjmp was called.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Why should variables that must retain values across siglongjmp be declared volatile?",
+      "options": [
+        {
+          "key": "A",
+          "text": "For faster access"
+        },
+        {
+          "key": "B",
+          "text": "To prevent compiler optimization that might assume variables are unchanged"
+        },
+        {
+          "key": "C",
+          "text": "For thread safety"
+        },
+        {
+          "key": "D",
+          "text": "For memory efficiency"
+        },
+        {
+          "key": "E",
+          "text": "Compiler requirement"
+        }
+      ],
+      "correctAnswer": "To prevent compiler optimization that might assume variables are unchanged",
+      "explanation": "Since siglongjmp bypasses normal function call/return flow, the compiler may optimize assuming variables haven't changed. volatile prevents these optimizations.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What happens if siglongjmp is used to jump to a context that has already been unwound?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Normal behavior"
+        },
+        {
+          "key": "B",
+          "text": "Returns 0"
+        },
+        {
+          "key": "C",
+          "text": "Undefined behavior"
+        },
+        {
+          "key": "D",
+          "text": "Signal is raised"
+        },
+        {
+          "key": "E",
+          "text": "Memory leak"
+        }
+      ],
+      "correctAnswer": "Undefined behavior",
+      "explanation": "Using siglongjmp to jump to a context that no longer exists (function has returned) results in undefined behavior.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "How many parameters does sigsetjmp take?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "4"
+        },
+        {
+          "key": "E",
+          "text": "Variable"
+        }
+      ],
+      "correctAnswer": "2",
+      "explanation": "sigsetjmp takes two parameters: sigjmp_buf env (the jump buffer) and int savemask (whether to save signal mask).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-12",
+      "question": "How many parameters does siglongjmp take?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "4"
+        },
+        {
+          "key": "E",
+          "text": "Variable"
+        }
+      ],
+      "correctAnswer": "2",
+      "explanation": "siglongjmp takes two parameters: sigjmp_buf env (the jump buffer) and int val (the value to return from sigsetjmp).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What is a common use case for sigsetjmp/siglongjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Looping"
+        },
+        {
+          "key": "B",
+          "text": "File I/O"
+        },
+        {
+          "key": "C",
+          "text": "Error recovery in signal handlers"
+        },
+        {
+          "key": "D",
+          "text": "Memory allocation"
+        },
+        {
+          "key": "E",
+          "text": "String manipulation"
+        }
+      ],
+      "correctAnswer": "Error recovery in signal handlers",
+      "explanation": "The primary use case is error recovery and cleanup, especially when a signal handler needs to transfer control to a higher-level error handler while properly managing signal masks.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What is the difference between sigsetjmp(sigjmp_buf, 0) and setjmp(jmp_buf)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "No difference"
+        },
+        {
+          "key": "B",
+          "text": "sigsetjmp is slower"
+        },
+        {
+          "key": "C",
+          "text": "sigsetjmp saves signal mask only when second arg is non-zero"
+        },
+        {
+          "key": "D",
+          "text": "setjmp is deprecated"
+        },
+        {
+          "key": "E",
+          "text": "Cannot be compared"
+        }
+      ],
+      "correctAnswer": "sigsetjmp saves signal mask only when second arg is non-zero",
+      "explanation": "When savemask=0, sigsetjmp behaves similarly to setjmp but doesn't save the signal mask. The choice depends on whether signal mask handling is needed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Which signal-related function is NOT typically used with sigsetjmp/siglongjmp?",
+      "options": [
+        {
+          "key": "A",
+          "text": "sigaction"
+        },
+        {
+          "key": "B",
+          "text": "signal"
+        },
+        {
+          "key": "C",
+          "text": "raise"
+        },
+        {
+          "key": "D",
+          "text": "printf"
+        },
+        {
+          "key": "E",
+          "text": "kill"
+        }
+      ],
+      "correctAnswer": "printf",
+      "explanation": "printf is not signal-related. sigaction, signal, raise, and kill are signal functions that might be used in conjunction with sigsetjmp/siglongjmp for signal handling scenarios.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-16",
+      "question": "What happens to blocked signals when siglongjmp restores a saved mask?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They remain blocked"
+        },
+        {
+          "key": "B",
+          "text": "They become unblocked"
+        },
+        {
+          "key": "C",
+          "text": "They are reset to default"
+        },
+        {
+          "key": "D",
+          "text": "Depends on the signal"
+        },
+        {
+          "key": "E",
+          "text": "Cannot be determined"
+        }
+      ],
+      "correctAnswer": "They become unblocked",
+      "explanation": "When siglongjmp restores a saved signal mask, it restores whatever blocked/unblocked state existed when sigsetjmp saved the mask.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-17",
+      "question": "Can sigsetjmp be called from a signal handler?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Yes, always"
+        },
+        {
+          "key": "B",
+          "text": "No, never"
+        },
+        {
+          "key": "C",
+          "text": "Only if handler was set with sigaction"
+        },
+        {
+          "key": "D",
+          "text": "Only with special flags"
+        },
+        {
+          "key": "E",
+          "text": "Depends on signal type"
+        }
+      ],
+      "correctAnswer": "No, never",
+      "explanation": "sigsetjmp cannot be safely called from a signal handler because signal handlers can be invoked asynchronously and the context may not be properly established.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "What is the maximum number of nested sigsetjmp calls that can be active?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "10"
+        },
+        {
+          "key": "D",
+          "text": "Limited by sigjmp_buf stack"
+        },
+        {
+          "key": "E",
+          "text": "Implementation defined"
+        }
+      ],
+      "correctAnswer": "Implementation defined",
+      "explanation": "The number of simultaneous sigjmp_buf buffers (and thus nested calls) is limited by available stack space and implementation constraints, but not by a fixed constant.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-19",
+      "question": "Why is it important to use siglongjmp instead of longjmp in signal-intensive programs?",
+      "options": [
+        {
+          "key": "A",
+          "text": "longjmp is slower"
+        },
+        {
+          "key": "B",
+          "text": "longjmp doesn't work with signals"
+        },
+        {
+          "key": "C",
+          "text": "longjmp may leave signals blocked"
+        },
+        {
+          "key": "D",
+          "text": "longjmp is deprecated"
+        },
+        {
+          "key": "E",
+          "text": "No difference"
+        }
+      ],
+      "correctAnswer": "longjmp may leave signals blocked",
+      "explanation": "longjmp does not restore the signal mask, which can leave signals blocked indefinitely if they were blocked in the signal handler. siglongjmp properly restores the mask.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-20",
+      "question": "What is the value returned by sigsetjmp when returning from siglongjmp with val=0?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "0 is converted to 1"
+        },
+        {
+          "key": "D",
+          "text": "Undefined"
+        },
+        {
+          "key": "E",
+          "text": "Error"
+        }
+      ],
+      "correctAnswer": "0 is converted to 1",
+      "explanation": "If val passed to siglongjmp is 0, sigsetjmp returns 1 instead. This ensures the return can always be distinguished from the initial call which returns 0.",
+      "difficulty": "hard"
+    }
+  ]
+}

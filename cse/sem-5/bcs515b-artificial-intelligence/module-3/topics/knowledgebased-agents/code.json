@@ -1,0 +1,45 @@
+{
+  "topicId": "knowledgebased-agents",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Knowledge-Based Agent",
+      "description": "Generic knowledge-based agent architecture",
+      "code": "FUNCTION KB-AGENT(percept):\n STATIC: KB, a knowledge base\n t, a counter (time step)\n \n TELL(KB, MAKE-PERCEPT-SENTENCE(percept, t))\n action ← ASK(KB, MAKE-ACTION-QUERY(t))\n TELL(KB, MAKE-ACTION-SENTENCE(action, t))\n t ← t + 1\n RETURN action\n\n# Basic inference using Modus Ponens\nFUNCTION INFER(KB, premise, implication):\n IF premise ∈ KB AND (premise → implication) ∈ KB THEN\n TELL(KB, implication)\n RETURN implication",
+      "explanation": "Shows TELL/ASK architecture for KB agents. TELL adds percepts and actions to KB, ASK queries for best action based on current knowledge.",
+      "timeComplexity": "Depends on inference method",
+      "spaceComplexity": "O(size of KB)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Forward Chaining Algorithm",
+      "description": "Data-driven inference for Horn clauses",
+      "code": "FUNCTION FORWARD-CHAIN(KB, goal):\n agenda ← [facts from KB]\n inferred ← empty set\n \n WHILE agenda is not empty:\n p ← POP(agenda)\n IF p NOT IN inferred THEN\n ADD p TO inferred\n # For each rule (p1 ∧ ... ∧ pn) → q where p matches premise\n FOR EACH rule WHERE p IS A premise:\n IF ALL OTHER premises in inferred THEN\n q ← CONCLUDE(rule)\n ADD q TO agenda\n TELL(KB, q)\n \n RETURN goal IN inferred",
+      "explanation": "Starts from known facts, applies rules to derive new facts until goal is proven. Efficient for Horn clause KBs.",
+      "timeComplexity": "O(number of rule firings)",
+      "spaceComplexity": "O(size of agenda + inferred)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Backward Chaining Algorithm",
+      "description": "Goal-driven inference for Horn clauses",
+      "code": "FUNCTION BACKWARD-CHAIN(KB, goal):\n IF goal IN KB THEN RETURN true\n IF goal IS A FACT THEN RETURN false\n \n # For each rule that concludes goal\n FOR EACH rule (p1 ∧ ... ∧ pn) → goal:\n FOR EACH premise pi IN rule:\n IF NOT BACKWARD-CHAIN(KB, pi) THEN\n RETURN false\n RETURN true\n \n RETURN false\n\n# With memoization\nFUNCTION ASK-BC(KB, goal):\n IF goal IN known_true THEN RETURN true\n IF goal IN known_false THEN RETURN false\n result ← BACKWARD-CHAIN(KB, goal)\n ADD result TO cache\n RETURN result",
+      "explanation": "Starts from goal, recursively proves sub-goals. Useful for query answering, avoids irrelevant work.",
+      "timeComplexity": "O(branching^depth)",
+      "spaceComplexity": "O(recursion depth)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Resolution Refutation Proof",
+      "description": "Proof by contradiction using resolution",
+      "code": "# Convert KB to CNF\nFUNCTION RESOLUTION-PROVE(KB, goal):\n # Negate the goal\n negated_goal ← NOT(goal)\n clauses ← CNF(KB ∪ {negated_goal})\n \n # Resolution loop\n WHILE new_clauses_generated:\n FOR EACH pair (Ci, Cj) IN clauses:\n resolvents ← RESOLVE(Ci, Cj)\n IF empty_clause IN resolvents THEN\n RETURN true # Contradiction found\n ADD resolvents TO clauses\n \n RETURN false # No contradiction - goal not proved\n\n# Unification helper\nFUNCTION UNIFY(x, y, theta):\n IF theta THEN return failure\n IF x = y THEN return theta\n IF VARIABLE(x) THEN return UNIFY-VAR(x, y, theta)\n IF VARIABLE(y) THEN return UNIFY-VAR(y, x, theta)\n IF COMPOUND(x) THEN return UNIFY(x.args, y.args, theta)\n RETURN failure",
+      "explanation": "Complete inference method for FOL. Proves goal by showing KB plus negated goal is inconsistent (empty clause = contradiction).",
+      "timeComplexity": "Exponential in worst case",
+      "spaceComplexity": "O(number of clauses)"
+    }
+  ]
+}

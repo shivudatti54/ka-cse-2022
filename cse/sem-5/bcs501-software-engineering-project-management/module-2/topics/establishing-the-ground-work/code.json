@@ -1,0 +1,35 @@
+{
+  "topicId": "establishing-the-ground-work",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Stakeholder Analysis Process",
+      "description": "Algorithm for conducting systematic stakeholder analysis during groundwork phase",
+      "code": "PROCEDURE ConductStakeholderAnalysis()\n stakeholderList \u2190 EMPTY_LIST\n \n // Step 1: Identify all potential stakeholders\n potentialStakeholders \u2190 IdentifyFromProjectCharter()\n potentialStakeholders \u2190 potentialStakeholders \u222a IdentifyFromDomainExperts()\n potentialStakeholders \u2190 potentialStakeholders \u222a IdentifyFromSimilarProjects()\n \n // Step 2: Gather information for each stakeholder\n FOR EACH stakeholder IN potentialStakeholders\n info \u2190 GatherStakeholderInfo(stakeholder)\n // Collect: name, role, organization, power, interest, attitude, needs\n stakeholderRegister.Add(info)\n END FOR\n \n // Step 3: Classify stakeholders using Power/Interest Grid\n FOR EACH stakeholder IN stakeholderRegister\n classification \u2190 ClassifyStakeholder(stakeholder.power, stakeholder.interest)\n // Returns: ManageClosely, KeepSatisfied, KeepInformed, Monitor\n stakeholder.classification \u2190 classification\n strategy \u2190 GetEngagementStrategy(classification)\n stakeholder.communicationPlan \u2190 strategy\n END FOR\n \n // Step 4: Document and communicate plan\n GenerateStakeholderManagementPlan(stakeholderRegister)\n RETURN stakeholderRegister\nEND PROCEDURE",
+      "explanation": "This pseudocode outlines the systematic process for stakeholder analysis: first identifying all potential stakeholders from multiple sources, then gathering detailed information to populate the stakeholder register, classifying each stakeholder using the power/interest grid to determine appropriate engagement strategies, and finally documenting the stakeholder management plan.",
+      "timeComplexity": "O(n) where n is the number of potential stakeholders",
+      "spaceComplexity": "O(n) for storing stakeholder information"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Requirements Change Control Process",
+      "description": "Formal process for handling changes to baselined requirements",
+      "code": "PROCEDURE HandleRequirementsChange(changeRequest)\n // Step 1: Validate change request submission\n IF NOT changeRequest.IsComplete() THEN\n RETURN Reject(\"Incomplete change request form\")\n END IF\n \n // Step 2: Perform impact analysis\n affectedRequirements \u2190 TraceToParentRequirements(changeRequest.requirementID)\n affectedDesign \u2190 TraceToDesignElements(affectedRequirements)\n affectedCode \u2190 TraceToCodeModules(affectedDesign)\n affectedTests \u2190 TraceToTestCases(affectedRequirements)\n \n impactReport \u2190 GenerateImpactReport(\n affectedRequirements.size,\n affectedDesign.size,\n affectedCode.size,\n affectedTests.size\n )\n \n // Step 3: Submit to Change Control Board\n changeRequest.impactAnalysis \u2190 impactReport\n decision \u2190 ChangeControlBoard.Evaluate(changeRequest)\n \n // Step 4: Process decision\n IF decision == APPROVED THEN\n UpdateRequirementsBaseline(changeRequest)\n UpdateTraceabilityMatrix()\n NotifyStakeholders(changeRequest)\n RETURN Approve(changeRequest)\n ELSE IF decision == REJECTED THEN\n RETURN Reject(decision.reason)\n ELSE\n // Requires revision\n RETURN RequestRevision(decision.feedback)\n END IF\nEND PROCEDURE",
+      "explanation": "This pseudocode demonstrates the formal change control process: validating the change request, performing comprehensive impact analysis using the traceability matrix to identify all affected artifacts, presenting to the Change Control Board for decision, and upon approval, updating the baseline and notifying stakeholders.",
+      "timeComplexity": "O(t) where t is the number of traced artifacts in the traceability matrix",
+      "spaceComplexity": "O(t) for storing impact analysis results"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Requirements Prioritization Using MoSCoW",
+      "description": "Algorithm for prioritizing requirements using the MoSCoW technique",
+      "code": "PROCEDURE PrioritizeRequirements(requirementsList, stakeholders)\n // Step 1: Gather priority input from stakeholders\n priorityMatrix \u2190 EMPTY_MAP\n \n FOR EACH requirement IN requirementsList\n votes \u2190 EMPTY_LIST\n FOR EACH stakeholder IN stakeholders\n IF stakeholder.CanVote(requirement) THEN\n votes.Add(stakeholder.Vote(requirement))\n END IF\n END FOR\n priorityMatrix[requirement] \u2190 AggregateVotes(votes)\n END FOR\n \n // Step 2: Apply MoSCoW categorization\n sortedRequirements \u2190 SortByPriority(priorityMatrix, DESCENDING)\n totalRequirements \u2190 sortedRequirements.length\n \n mustHave \u2190 sortedRequirements[0 : floor(totalRequirements * 0.60)]\n shouldHave \u2190 sortedRequirements[floor(totalRequirements * 0.60) : floor(totalRequirements * 0.80)]\n couldHave \u2190 sortedRequirements[floor(totalRequirements * 0.80) : floor(totalRequirements * 0.95)]\n wontHave \u2190 sortedRequirements[floor(totalRequirements * 0.95) : totalRequirements]\n \n // Step 3: Validate against constraints\n estimatedCost \u2190 EstimateCost(mustHave)\n IF estimatedCost > budget THEN\n AdjustCategories(mustHave, shouldHave)\n END IF\n \n // Step 4: Document and obtain agreement\n prioritizationReport \u2190 CreateReport(mustHave, shouldHave, couldHave, wontHave)\n StakeholderSignOff(prioritizationReport)\n \n RETURN prioritizationReport\nEND PROCEDURE",
+      "explanation": "This pseudocode illustrates requirements prioritization: gathering priority votes from stakeholders, sorting requirements, applying MoSCoW categorization based on priority, validating against budget constraints, and obtaining stakeholder sign-off. The 60/20/15/5 split is a common heuristic that should be adjusted based on project context.",
+      "timeComplexity": "O(r \u00d7 s) where r is requirements count and s is stakeholder count",
+      "spaceComplexity": "O(r) for storing prioritization results"
+    }
+  ]
+}

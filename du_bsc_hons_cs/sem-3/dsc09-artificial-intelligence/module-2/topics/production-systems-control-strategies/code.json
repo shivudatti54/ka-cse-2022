@@ -1,0 +1,35 @@
+{
+  "topicId": "production-systems-control-strategies",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Forward Chaining in Production System",
+      "description": "Implementation of forward chaining algorithm showing recognition-action cycle",
+      "code": "class ProductionSystem:\n    def __init__(self):\n        self.rules = []  # List of (conditions, action) tuples\n        self.working_memory = set()  # Current facts\n    \n    def add_rule(self, conditions, action):\n        self.rules.append((conditions, action))\n    \n    def forward_chain(self):\n        while True:\n            applicable_rules = []\n            # MATCH: Find rules whose conditions are satisfied\n            for i, (conditions, action) in enumerate(self.rules):\n                if all(cond in self.working_memory for cond in conditions):\n                    applicable_rules.append((i, action))\n            \n            # If no applicable rules, stop\n            if not applicable_rules:\n                break\n            \n            # RESOLVE: Select first applicable rule (simple conflict resolution)\n            selected_idx, action = applicable_rules[0]\n            \n            # ACT: Execute the rule\n            print(f\"Firing rule {selected_idx}: {action}\")\n            if action not in self.working_memory:\n                self.working_memory.add(action)\n            else:\n                break\n        \n        return self.working_memory\n\n# Example usage\nps = ProductionSystem()\nps.add_rule(('fever', 'cough'), 'influenza')\nps.add_rule(('influenza', 'fatigue'), 'serious_flu')\nps.working_memory = {'fever', 'cough'}\nresult = ps.forward_chain()\nprint(\"Final facts:\", result)",
+      "explanation": "This Python code implements forward chaining: it starts with facts in working memory, matches rules whose conditions are satisfied, resolves conflicts by selecting the first applicable rule, and executes it to add new facts. The cycle repeats until no more rules can fire.",
+      "timeComplexity": "O(R \u00d7 C \u00d7 F) where R=rules, C=conditions, F=facts",
+      "spaceComplexity": "O(F + R) for storing facts and rules"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Backward Chaining Algorithm",
+      "description": "Pseudocode for goal-driven backward chaining inference",
+      "code": "FUNCTION Backward_Chain(goal):\n    // Check if goal is already in working memory\n    IF goal IN Working_Memory THEN\n        RETURN True\n    \n    // Find rules that can conclude the goal\n    rules_concluding_goal = []\n    FOR each rule IN Production_Rules DO\n        IF goal IN rule.conclusions THEN\n            rules_concluding_goal.append(rule)\n    \n    // If no rule can conclude goal, return failure\n    IF rules_concluding_goal IS EMPTY THEN\n        RETURN False\n    \n    // Try each rule that can conclude the goal\n    FOR each rule IN rules_concluding_goal DO\n        // Try to prove all conditions of the rule\n        proof_successful = True\n        FOR each condition IN rule.conditions DO\n            IF NOT Backward_Chain(condition) THEN\n                proof_successful = False\n                BREAK\n        \n        // If all conditions proved, goal is established\n        IF proof_successful THEN\n            Add goal TO Working_Memory\n            RETURN True\n    \n    RETURN False\n\n// Main execution\nWorking_Memory = { /* initial facts */ }\nGoal = \"diagnosis_found\"\nIF Backward_Chain(Goal) THEN\n    Print \"Goal achieved\"\nELSE\n    Print \"Goal cannot be achieved\"",
+      "explanation": "Backward chaining starts from a goal and recursively tries to prove each condition by finding rules that can establish those conditions. It works backwards from conclusions to premises until it either proves the goal or finds it cannot be satisfied.",
+      "timeComplexity": "O(B^d) where B=branching factor, d=depth of proof tree",
+      "spaceComplexity": "O(d) for recursion stack"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Conflict Resolution with Multiple Strategies",
+      "description": "Demonstrates three control strategies for conflict resolution",
+      "code": "FUNCTION Resolve_Conflict(applicable_rules, strategy):\n    \n    SWITCH strategy OF\n        \n        CASE \"lexicographic\":\n            // Sort by priority number (lower = higher priority)\n            SORT applicable_rules BY rule.priority ASCENDING\n            RETURN applicable_rules[0]\n        \n        CASE \"specificity\":\n            // Rule with more conditions is more specific\n            SORT applicable_rules BY number_of_conditions DESCENDING\n            RETURN applicable_rules[0]\n        \n        CASE \"recency\":\n            // Rule using most recently added facts wins\n            FOR each rule IN applicable_rules DO\n                rule.recent_score = 0\n                FOR each condition IN rule.conditions DO\n                    IF condition.added_time > current_time - threshold THEN\n                        rule.recent_score = rule.recent_score + 1\n            SORT applicable_rules BY recent_score DESCENDING\n            RETURN applicable_rules[0]\n        \n        CASE \"refraction\":\n            // Exclude rules that just fired\n            FOR each rule IN applicable_rules DO\n                IF rule.last_fired_time IS NOT NULL AND\n                   Working_Memory NOT CHANGED SINCE rule.last_fired_time THEN\n                    REMOVE rule FROM applicable_rules\n            IF applicable_rules NOT EMPTY THEN\n                RETURN applicable_rules[0]\n            ELSE\n                RETURN NULL\n    \n// Example: Using specificity ordering\nrules = [\n    {id: 1, conditions: [A], priority: 1},\n    {id: 2, conditions: [A, B], priority: 2},\n    {id: 3, conditions: [A, B, C], priority: 3}\n]\nselected = Resolve_Conflict(rules, \"specificity\")\n// Selected: Rule 3 (most specific - 3 conditions)",
+      "explanation": "This pseudocode demonstrates three common conflict resolution strategies: Lexicographic (priority numbers), Specificity (more conditions = higher priority), and Recency (uses recent facts). The refraction strategy prevents the same rule from firing repeatedly on unchanged facts.",
+      "timeComplexity": "O(R log R) for sorting applicable rules",
+      "spaceComplexity": "O(R) for storing rule information"
+    }
+  ]
+}

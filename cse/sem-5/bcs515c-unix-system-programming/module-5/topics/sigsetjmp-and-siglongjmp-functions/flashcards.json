@@ -1,0 +1,80 @@
+{
+  "topicId": "sigsetjmp-and-siglongjmp-functions",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is the primary advantage of sigsetjmp/siglongjmp over setjmp/longjmp?",
+      "back": "sigsetjmp/siglongjmp can save and restore the signal mask, while setjmp/longjmp cannot. This makes them safe for use with signal handling."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the sigjmp_buf data type?",
+      "back": "sigjmp_buf is a structure type used to store the execution context (including signal mask) for non-local jumps. It holds register values and signal mask information."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the purpose of the savemask parameter in sigsetjmp?",
+      "back": "The savemask parameter (0 or 1) determines whether the current signal mask should be saved. If non-zero, the signal mask is saved; if zero, it's not saved."
+    },
+    {
+      "id": "fc-4",
+      "front": "How does siglongjmp restore the signal mask?",
+      "back": "If sigsetjmp saved the signal mask (savemask ≠ 0), siglongjmp restores that saved signal mask. Otherwise, the signal mask is left unchanged."
+    },
+    {
+      "id": "fc-5",
+      "front": "What happens if sigsetjmp is called with savemask = 0?",
+      "back": "The execution context is saved but the signal mask is not saved. Subsequent siglongjmp calls will not restore any signal mask."
+    },
+    {
+      "id": "fc-6",
+      "front": "Why are sigsetjmp/siglongjmp preferred in signal handlers?",
+      "back": "They allow jumping out of signal handlers back to a known good state while properly handling the signal mask, which is crucial for robust signal handling."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is the return value of sigsetjmp?",
+      "back": "sigsetjmp returns 0 when called directly (initial call), and returns a non-zero value when returning via siglongjmp."
+    },
+    {
+      "id": "fc-8",
+      "front": "Can siglongjmp be used to jump into a function that has already returned?",
+      "back": "No, undefined behavior occurs. The jump buffer must still be in the same function scope or a function still on the call stack."
+    },
+    {
+      "id": "fc-9",
+      "front": "What header file declares sigsetjmp and siglongjmp?",
+      "back": "The <setjmp.h> header file declares both sigsetjmp and siglongjmp functions."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is a potential issue with using setjmp/longjmp in signal handlers?",
+      "back": "setjmp/longjmp do not save/restore signal masks, which can lead to blocked signals remaining blocked or signals being delivered to wrong handlers."
+    },
+    {
+      "id": "fc-11",
+      "front": "How do you declare a jump buffer for sigsetjmp/siglongjmp?",
+      "back": "Declare it as: sigjmp_buf jump_buffer; This is a structure that holds the execution context and signal mask."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is the difference between sigsetjmp and setjmp return values?",
+      "back": "Both return 0 on initial call and non-zero when returning via their respective longjmp functions. The key difference is sigsetjmp has the additional savemask parameter."
+    },
+    {
+      "id": "fc-13",
+      "front": "When should you use sigsetjmp with savemask = 0?",
+      "back": "Use savemask = 0 when you only need to save the register/context and don't need signal mask handling, effectively making it similar to setjmp."
+    },
+    {
+      "id": "fc-14",
+      "front": "Can volatile variables help with siglongjmp?",
+      "back": "Yes, volatile variables ensure values are not optimized away since siglongjmp can bypass normal flow and compilers may optimize incorrectly."
+    },
+    {
+      "id": "fc-15",
+      "front": "What is the typical use case for sigsetjmp/siglongjmp?",
+      "back": "They are used for error recovery and cleanup in complex programs, particularly when dealing with signals that need to transfer control to a higher-level error handler."
+    }
+  ]
+}

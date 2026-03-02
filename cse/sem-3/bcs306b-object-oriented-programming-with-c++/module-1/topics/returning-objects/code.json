@@ -1,0 +1,55 @@
+{
+  "topicId": "returning-objects",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Return by Value with RVO",
+      "description": "Demonstrates how RVO eliminates copy operations when returning objects",
+      "code": "class Box {\nprivate:\n int width, height, depth;\npublic:\n Box(int w=0, int h=0, int d=0) \n : width(w), height(h), depth(d) {\n cout << \"Constructor called\" << endl;\n }\n \n Box(const Box& b) \n : width(b.width), height(b.height), depth(b.depth) {\n cout << \"Copy constructor called\" << endl;\n }\n \n // RVO applies here - object constructed directly\n Box createBox() {\n return Box(10, 20, 30); // Temporary object\n }\n \n // NRVO applies here - named local variable\n Box createBox2() {\n Box b(5, 10, 15); // Named local variable\n return b; // NRVO may apply\n }\n};\n\nint main() {\n cout << \"=== RVO Demo ===\" << endl;\n Box b1 = createBox(); // C++17: Only constructor called\n \n cout << \"\\n=== NRVO Demo ===\" << endl;\n Box b2 = createBox2(); // May use NRVO\n}",
+      "explanation": "In C++17, RVO is mandatory. The Box object is constructed directly in the caller's stack frame, eliminating the copy/move constructor call. Even without RVO, copy elision may occur.",
+      "timeComplexity": "O(1) - due to RVO",
+      "spaceComplexity": "O(1) - single object in caller stack"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Return by Reference - Proper Usage",
+      "description": "Shows correct scenarios for returning by reference",
+      "code": "class Vector {\nprivate:\n int x, y;\npublic:\n Vector(int a=0, int b=0) : x(a), y(b) {}\n \n // Return const reference to member - safe\n const int& getX() const { return x; }\n const int& getY() const { return y; }\n \n // Non-const reference for chaining (operator overloading)\n Vector& setX(int val) { x = val; return *this; }\n Vector& setY(int val) { y = val; return *this; }\n \n // Static variable - safe to return reference\n static Vector& getOrigin() {\n static Vector origin(0, 0);\n return origin;\n }\n};\n\n// Friend function for stream operator - returns reference\nostream& operator<<(ostream& os, const Vector& v) {\n os << \"(\" << v.getX() << \", \" << v.getY() << \")\";\n return os; // Return stream reference for chaining\n}\n\nint main() {\n Vector v(5, 10);\n \n // Member access via const reference\n const int& rx = v.getX(); // No copy, read-only\n \n // Chaining via non-const reference\n v.setX(1).setY(2); // Method chaining\n \n // Stream operator chaining\n cout << v << endl;\n \n // Static reference\n Vector& origin = Vector::getOrigin();\n}",
+      "explanation": "Returning references is efficient but must ensure the referenced object outlives the reference. Use const reference for read-only access and non-const for chaining. Static variables and member variables (via this) are safe to return by reference.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1) - no new object created"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Danger: Returning Reference to Local Variable",
+      "description": "Demonstrates the dangling reference problem",
+      "code": "// WRONG - Dangling reference!\nint& badFunction() {\n int x = 10;\n return x; // DANGER: x is destroyed when function returns\n}\n\n// CORRECT - Return by value\nint goodFunction() {\n int x = 10;\n return x; // Copy happens before x is destroyed\n}\n\n// WRONG - Dangling pointer\nint* badPointerFunction() {\n int x = 10;\n return &x; // DANGER: x is destroyed\n}\n\n// CORRECT - Return by value or heap pointer\nint* goodPointerFunction() {\n int* p = new int(10); // Heap allocation\n return p; // Caller must delete or use smart pointer\n}\n\n// Modern C++ - Use smart pointers\n#include <memory>\nstd::unique_ptr<int> modernFunction() {\n return std::make_unique<int>(10); // Safe ownership transfer\n}\n\nint main() {\n // This causes undefined behavior!\n // int& ref = badFunction();\n \n // Safe usage\n int val = goodFunction();\n \n // Smart pointer - automatic memory management\n auto ptr = modernFunction();\n}",
+      "explanation": "Never return references or pointers to local automatic variables. The local variable is destroyed when the function returns, leaving a dangling reference. Use return by value for locals or heap-allocated memory with smart pointers for automatic management.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "N/A - avoiding dangerous patterns"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Move Semantics and std::move",
+      "description": "Demonstrates efficient object return using move semantics",
+      "code": "class Buffer {\nprivate:\n char* data;\n size_t size;\npublic:\n // Constructor\n Buffer(size_t s) : size(s) {\n data = new char[size];\n cout << \"Constructor: Allocated \" << size << \" bytes\" << endl;\n }\n \n // Copy Constructor - Deep Copy\n Buffer(const Buffer& other) : size(other.size) {\n data = new char[size];\n memcpy(data, other.data, size);\n cout << \"Copy Constructor: Deep copy\" << endl;\n }\n \n // Move Constructor - Transfer Ownership\n Buffer(Buffer&& other) noexcept : data(other.data), size(other.size) {\n other.data = nullptr;\n other.size = 0;\n cout << \"Move Constructor: Ownership transferred\" << endl;\n }\n \n // Destructor\n ~Buffer() {\n delete[] data;\n }\n \n // Getter returning const reference\n const size_t& getSize() const { return size; }\n};\n\nBuffer createBuffer(size_t size) {\n Buffer buf(size);\n return buf; // Move (if NRVO doesn't apply)\n}\n\nBuffer createBufferExplicit(size_t size) {\n Buffer buf(size);\n return std::move(buf); // Explicit move - same effect\n}\n\nint main() {\n cout << \"=== Creating Buffer with RVO ===\" << endl;\n Buffer b1 = createBuffer(100);\n \n cout << \"\\n=== Explicit Move ===\" << endl;\n Buffer b2 = createBufferExplicit(200);\n \n cout << \"\\n=== Using Move ===\" << endl;\n Buffer b3(50);\n Buffer b4 = std::move(b3); // b3 now empty\n}",
+      "explanation": "Move semantics transfer ownership of resources (like heap-allocated memory) without copying. The move constructor transfers the pointer and sets the source to nullptr. std::move converts an lvalue to rvalue, forcing move construction. In modern C++, RVO often makes explicit std::move unnecessary.",
+      "timeComplexity": "O(1) - move vs O(n) copy",
+      "spaceComplexity": "O(1) - pointer transfer vs O(n) allocation"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Operator Chaining with References",
+      "description": "Shows how to implement chainable operators using references",
+      "code": "class Point {\nprivate:\n int x, y;\npublic:\n Point(int px = 0, int py = 0) : x(px), y(py) {}\n \n // Getters\n int getX() const { return x; }\n int getY() const { return y; }\n \n // Setters - return reference for chaining\n Point& setX(int px) { x = px; return *this; }\n Point& setY(int py) { y = py; return *this; }\n \n // Addition operator - returns new Point by value\n Point operator+(const Point& other) const {\n return Point(x + other.x, y + other.y);\n }\n \n // Compound assignment - returns reference\n Point& operator+=(const Point& other) {\n x += other.x;\n y += other.y;\n return *this;\n }\n};\n\n// Stream insertion - returns ostream reference\nostream& operator<<(ostream& os, const Point& p) {\n os << \"(\" << p.getX() << \", \" << p.getY() << \")\";\n return os; // Enables: cout << p1 << p2 << endl;\n}\n\n// Stream extraction - returns istream reference\nistream& operator>>(istream& is, Point& p) {\n int x, y;\n is >> x >> y;\n p.setX(x).setY(y);\n return is; // Enables: cin >> p1 >> p2;\n}\n\nint main() {\n Point p1(1, 2), p2(3, 4);\n \n // Method chaining\n p1.setX(10).setY(20);\n \n // Operator chaining\n Point p3 = p1 + p2; // Returns new Point\n p1 += p2; // p1 modified, returns reference\n \n // Stream chaining\n cout << \"p1 = \" << p1 << \"\\np2 = \" << p2 << endl;\n \n // Input chaining\n // cin >> p1 >> p2;\n}",
+      "explanation": "For operator chaining: compound operators (+=, -=) return reference to enable modification chaining. Binary operators (+, -) typically return new objects by value. Stream operators return stream references to allow (cout << a << b << c).",
+      "timeComplexity": "O(1) for most operators",
+      "spaceComplexity": "O(1) for in-place, O(1) for new objects"
+    }
+  ]
+}

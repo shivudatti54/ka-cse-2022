@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+
+  <!-- step0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to this lesson on the sigpending() function in Unix signal handling. We'll explore pending signals and their practical applications.">
+    <rect x="0" y="0" width="800" height="50" fill="#e3f2fd"/>
+    <text x="400" y="22" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#1565c0">sigpending() Function</text>
+    <text x="400" y="40" text-anchor="middle" font-family="Arial" font-size="12" fill="#1976d2">Signal Handling in Unix/Linux</text>
+  </g>
+
+  <!-- step1: What are Pending Signals -->
+  <g class="step" id="step1" data-narration="A pending signal is generated but blocked by the process, waiting to be delivered. It remains in the pending set until the signal is unblocked for delivery.">
+    <rect x="20" y="58" width="760" height="80" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="40" y="78" font-family="Arial" font-size="13" font-weight="bold" fill="#1565c0">What Are Pending Signals?</text>
+    <rect x="40" y="88" width="340" height="40" rx="3" fill="#ffffff" stroke="#bbdefb"/>
+    <text x="50" y="103" font-family="Arial" font-size="10" fill="#333">Signal Generated</text>
+    <path d="M220 108 L260 108" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="270" y="88" width="150" height="40" rx="3" fill="#e8f5e9" stroke="#a5d6a7"/>
+    <text x="345" y="103" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">Blocked?</text>
+    <path d="M395 108 L435 108" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="445" y="88" width="140" height="40" rx="3" fill="#fff3e0" stroke="#ffe0b2"/>
+    <text x="515" y="103" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">Pending Set</text>
+    <text x="650" y="105" font-family="Arial" font-size="9" fill="#666">(stored by OS)</text>
+  </g>
+
+  <!-- step2: sigpending() Function Prototype -->
+  <g class="step" id="step2" data-narration="The sigpending function retrieves all pending signals for the calling process. It stores them in a sigset_t pointer and returns zero on success or negative on error.">
+    <rect x="20" y="146" width="760" height="80" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+    <text x="40" y="166" font-family="Arial" font-size="13" font-weight="bold" fill="#2e7d32">sigpending() Function Prototype</text>
+    <rect x="40" y="180" width="400" height="36" rx="4" fill="#263238" stroke="#37474f"/>
+    <text x="50" y="198" font-family="Courier New" font-size="11" fill="#4fc3f7">int sigpending(sigset_t *set);</text>
+    <text x="50" y="216" font-family="Arial" font-size="9" fill="#66bb6a">Returns: 0 on success, -1 on error</text>
+    <rect x="460" y="180" width="300" height="36" rx="4" fill="#ffffff" stroke="#bdbdbd"/>
+    <text x="470" y="198" font-family="Arial" font-size="10" fill="#333">sigset_t: bit array representing</text>
+    <text x="470" y="212" font-family="Arial" font-size="10" fill="#333">signal set (abstract data type)</text>
+  </g>
+
+  <!-- step3: sigset_t Operations -->
+  <g class="step" id="step3" data-narration="There are five key functions that manipulate sigset_t objects: sigemptyset, sigfillset, sigaddset, sigdelset, and sigismember for testing membership in a signal set.">
+    <rect x="20" y="234" width="760" height="80" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="1"/>
+    <text x="40" y="254" font-family="Arial" font-size="13" font-weight="bold" fill="#e65100">sigset_t Operations</text>
+    <g>
+      <rect x="40" y="268" width="130" height="36" rx="3" fill="#ffffff" stroke="#ffcc80"/>
+      <text x="105" y="282" font-family="Courier New" font-size="9" fill="#333" text-anchor="middle">sigemptyset()</text>
+      <text x="105" y="296" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Initialize empty</text>
+    </g>
+    <g>
+      <rect x="180" y="268" width="130" height="36" rx="3" fill="#ffffff" stroke="#ffcc80"/>
+      <text x="245" y="282" font-family="Courier New" font-size="9" fill="#333" text-anchor="middle">sigfillset()</text>
+      <text x="245" y="296" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Full set (all)</text>
+    </g>
+    <g>
+      <rect x="320" y="268" width="130" height="36" rx="3" fill="#ffffff" stroke="#ffcc80"/>
+      <text x="385" y="282" font-family="Courier New" font-size="9" fill="#333" text-anchor="middle">sigaddset()</text>
+      <text x="385" y="296" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Add signal</text>
+    </g>
+    <g>
+      <rect x="460" y="268" width="130" height="36" rx="3" fill="#ffffff" stroke="#ffcc80"/>
+      <text x="525" y="282" font-family="Courier New" font-size="9" fill="#333" text-anchor="middle">sigdelset()</text>
+      <text x="525" y="296" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Remove signal</text>
+    </g>
+    <g>
+      <rect x="600" y="268" width="130" height="36" rx="3" fill="#ffffff" stroke="#ffcc80"/>
+      <text x="665" y="282" font-family="Courier New" font-size="9" fill="#333" text-anchor="middle">sigismember()</text>
+      <text x="665" y="296" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Test membership</text>
+    </g>
+  </g>
+
+  <!-- step4: Code Example -->
+  <g class="step" id="step4" data-narration="This example demonstrates blocking SIGINT, sending it to itself, checking the pending status, then unblocking to deliver the pending signal to the handler for execution.">
+    <rect x="20" y="322" width="760" height="80" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1"/>
+    <text x="40" y="342" font-family="Arial" font-size="13" font-weight="bold" fill="#7b1fa2">Example: Checking Pending Signals</text>
+    <rect x="40" y="356" width="720" height="36" rx="3" fill="#263238" stroke="#37474f"/>
+    <text x="50" y="372" font-family="Courier New" font-size="9" fill="#fff">sigprocmask(SIG_BLOCK,&amp;block,NULL);  // Block SIGINT</text>
+    <text x="50" y="384" font-family="Courier New" font-size="9" fill="#fff">kill(getpid(),SIGINT);                  // Send signal</text>
+    <text x="290" y="372" font-family="Courier New" font-size="9" fill="#81c784">// Now pending</text>
+    <text x="290" y="384" font-family="Courier New" font-size="9" fill="#fff">sigpending(&amp;pending);                  // Check pending</text>
+    <text x="520" y="372" font-family="Courier New" font-size="9" fill="#fff">sigismember(&amp;pending,SIGINT);         // Test if pending</text>
+    <text x="520" y="384" font-family="Courier New" font-size="9" fill="#81c784">// Returns 1 if true</text>
+  </g>
+
+  <!-- step5: Relationship with sigprocmask -->
+  <g class="step" id="step5" data-narration="The sigprocmask function modifies which signals are blocked in the process mask, while sigpending queries which currently blocked signals are waiting to be delivered to the handler.">
+    <rect x="20" y="410" width="760" height="80" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="40" y="430" font-family="Arial" font-size="13" font-weight="bold" fill="#1565c0">sigprocmask() vs sigpending()</text>
+    <rect x="40" y="448" width="230" height="32" rx="4" fill="#ffffff" stroke="#1976d2"/>
+    <text x="155" y="464" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">sigprocmask()</text>
+    <text x="155" y="476" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Changes signal mask</text>
+    <text x="310" y="460" font-family="Arial" font-size="14" fill="#1976d2">vs</text>
+    <rect x="340" y="448" width="230" height="32" rx="4" fill="#ffffff" stroke="#1976d2"/>
+    <text x="455" y="464" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">sigpending()</text>
+    <text x="455" y="476" font-family="Arial" font-size="8" fill="#666" text-anchor="middle">Queries pending signals</text>
+    <rect x="600" y="448" width="160" height="32" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="680" y="464" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Used Together</text>
+    <text x="680" y="476" font-family="Arial" font-size="8" fill="#388e3c" text-anchor="middle">for full control</text>
+  </g>
+
+  <!-- step6: Key Points -->
+  <g class="step" id="step6" data-narration="Remember the important concepts: pending signals are always a subset of blocked signals. Always initialize sigset_t using sigemptyset before using. Always check return values for error handling.">
+    <rect x="20" y="498" width="760" height="90" rx="5" fill="#ffebee" stroke="#f44336" stroke-width="1"/>
+    <text x="40" y="518" font-family="Arial" font-size="13" font-weight="bold" fill="#c62828">Key Points &amp; Exam Tips</text>
+    <rect x="40" y="528" width="220" height="50" rx="3" fill="#ffffff" stroke="#ef9a9a"/>
+    <text x="150" y="544" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">Pending ⊆ Blocked</text>
+    <text x="150" y="558" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">Pending always subset</text>
+    <text x="150" y="572" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">of blocked signals</text>
+    <rect x="270" y="528" width="220" height="50" rx="3" fill="#ffffff" stroke="#ef9a9a"/>
+    <text x="380" y="544" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">Initialize sigset_t</text>
+    <text x="380" y="558" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">Always use sigemptyset()</text>
+    <text x="380" y="572" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">before using</text>
+    <rect x="500" y="528" width="160" height="50" rx="3" fill="#ffffff" stroke="#ef9a9a"/>
+    <text x="580" y="544" font-family="Arial" font-size="10" fill="#333" text-anchor="middle">Return Value</text>
+    <text x="580" y="558" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">Check for -1</text>
+    <text x="580" y="572" font-family="Arial" font-size="9" fill="#666" text-anchor="middle">error condition</text>
+    <rect x="670" y="528" width="90" height="50" rx="3" fill="#e8f5e9" stroke="#a5d6a7"/>
+    <text x="715" y="550" font-family="Arial" font-size="9" fill="#2e7d32" text-anchor="middle">Exam</text>
+    <text x="715" y="562" font-family="Arial" font-size="9" fill="#2e7d32" text-anchor="middle">Focus</text>
+  </g>
+</svg>

@@ -1,0 +1,130 @@
+{
+  "topicId": "scheduling",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between static and dynamic scheduling in OpenMP with appropriate use cases for each.",
+      "keyPoints": [
+        "Static: compile-time assignment, low overhead, best for uniform workloads",
+        "Dynamic: runtime assignment, higher overhead, best for variable/unpredictable workloads",
+        "Use cases: static for regular matrix operations, dynamic for processing variable-sized tasks"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is guided scheduling in OpenMP? Explain how the chunk size is determined in guided scheduling with the formula.",
+      "keyPoints": [
+        "Guided scheduling is dynamic with decreasing chunk sizes",
+        "Chunk size = max(chunk, remaining_iterations/num_threads)",
+        "Starts large for efficiency, decreases for load balance",
+        "Minimum chunk size can be specified"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the purpose of the schedule(runtime) clause in OpenMP. How can the scheduling policy be specified at runtime?",
+      "keyPoints": [
+        "Defers scheduling decision to runtime",
+        "Policy determined by OMP_SCHEDULE environment variable",
+        "Format: export OMP_SCHEDULE=\"policy,chunk\"",
+        "Can also use omp_set_schedule() function"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Discuss the trade-off between chunk size and scheduling overhead in dynamic scheduling.",
+      "keyPoints": [
+        "Smaller chunks = better load balance but higher overhead",
+        "Larger chunks = lower overhead but potentially worse load balance",
+        "Optimal chunk size depends on iteration cost and workload variance",
+        "Chunk=1 maximizes balance but has maximum overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is auto scheduling in OpenMP and when would you use it?",
+      "keyPoints": [
+        "Compiler and runtime automatically select scheduling strategy",
+        "Based on analysis of loop characteristics and runtime behavior",
+        "Useful when optimal schedule is difficult to determine manually",
+        "Reduces programmer burden but may not always be optimal"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How does scheduling interact with false sharing in cache-intensive loops?",
+      "answer": "Larger static chunks reduce false sharing by keeping adjacent iterations on the same thread accessing contiguous memory, improving cache line utilization.",
+      "keyPoints": [
+        "Dynamic scheduling with chunk=1 increases false sharing probability",
+        "Static scheduling with aligned large chunks improves data locality",
+        "Proper chunk size selection can significantly improve cache performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Given a loop with 10,000 iterations on 8 threads, calculate the iteration assignment for (a) schedule(static), (b) schedule(dynamic,500), (c) schedule(guided,100).",
+      "keyPoints": [
+        "Static: 10000/8 = 1250 iterations per thread (0-1249, 1250-2499, etc.)",
+        "Dynamic,500: chunks of 500 assigned as threads become available",
+        "Guided: starts ~1250, decreases but never below 100"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A parallel image processing application processes images of varying sizes using OpenMP. The current implementation uses static scheduling and takes 45 seconds. Profiling reveals significant load imbalance with thread idle times ranging from 2-15 seconds. Suggest improvements to the scheduling strategy, explain your reasoning, and propose a complete solution with expected performance impact.",
+      "keyPoints": [
+        "Analyze load imbalance: variable image sizes cause uneven work distribution",
+        "Recommend dynamic or guided scheduling: assign one image at a time for maximum flexibility",
+        "Consider hybrid approach: group images by approximate size, use static within groups",
+        "Estimate improvement: dynamic may reduce to ~30-35 seconds if overhead is manageable",
+        "Alternative: use tasks for irregular workloads (#pragma omp task)",
+        "Consider chunk size tuning: start with dynamic,1 then adjust based on profiling"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design an optimal OpenMP parallelization strategy for a scientific simulation with the following characteristics: (a) 10,000 iterations, (b) iteration execution time varies from 0.1ms to 10ms based on data dependencies, (c) iterations access large arrays with irregular access patterns, (d) cache efficiency is critical for performance. Justify your choice of scheduling strategy with detailed analysis.",
+      "keyPoints": [
+        "Variable execution time (0.1ms-10ms = 100x variance) strongly suggests dynamic/guided scheduling",
+        "For cache efficiency with irregular access: larger chunks improve locality, but need balance",
+        "Recommended: schedule(guided, 50-100) - starts large for cache, decreases for balance",
+        "Alternative analysis: consider breaking into tasks for complex dependencies",
+        "Performance estimates: expect 70-80% efficiency vs 40-50% with static",
+        "Trade-off analysis: guided provides middle ground between overhead and load balance",
+        "If dependencies allow: consider tiling/blocking first to improve data locality before parallelizing"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write and analyze an OpenMP program that demonstrates the performance impact of different scheduling strategies. Include code for static, dynamic, and guided scheduling on a synthetic workload with variable iteration costs. Explain how you would measure and compare the performance.",
+      "keyPoints": [
+        "Create synthetic workload with iteration cost = f(iteration_index) for variability",
+        "Implement all three schedules with timing using omp_get_wtime()",
+        "Measurement methodology: run multiple iterations, collect statistics (mean, std dev)",
+        "Expected results: static fastest for uniform, dynamic/guided better for variable workloads",
+        "Analysis should include: execution time, thread idle time, load imbalance metric",
+        "Consider: cache effects, barrier synchronization time, scalability"
+      ],
+      "marks": 10
+    }
+  ]
+}

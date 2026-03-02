@@ -1,0 +1,45 @@
+{
+  "topicId": "virtual-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Virtual Function Example",
+      "description": "Demonstrates runtime polymorphism with virtual function area()",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Shape {\npublic:\n virtual void area() = 0; // Pure virtual function\n virtual ~Shape() {} // Virtual destructor\n};\n\nclass Circle : public Shape {\n float radius;\npublic:\n Circle(float r) : radius(r) {}\n void area() override {\n cout << \"Circle Area: \" << 3.14 * radius * radius << endl;\n }\n};\n\nclass Rectangle : public Shape {\n float length, breadth;\npublic:\n Rectangle(float l, float b) : length(l), breadth(b) {}\n void area() override {\n cout << \"Rectangle Area: \" << length * breadth << endl;\n }\n};\n\nint main() {\n Shape* ptr; // Base class pointer\n Circle c(5);\n Rectangle r(4, 6);\n \n ptr = &c;\n ptr->area(); // Calls Circle::area()\n \n ptr = &r;\n ptr->area(); // Calls Rectangle::area()\n \n return 0;\n}",
+      "explanation": "Base class Shape has pure virtual function area(). Derived classes Circle and Rectangle override it. Base pointer 'ptr' calls appropriate derived class function at runtime based on object type.",
+      "timeComplexity": "O(1) per call",
+      "spaceComplexity": "O(1) additional"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Virtual Destructor Demonstration",
+      "description": "Shows importance of virtual destructor for proper cleanup",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n Base() { cout << \"Base Constructor\\n\"; }\n virtual ~Base() { cout << \"Base Destructor\\n\"; }\n};\n\nclass Derived : public Base {\npublic:\n Derived() { cout << \"Derived Constructor\\n\"; }\n ~Derived() { cout << \"Derived Destructor\\n\"; }\n};\n\nint main() {\n Base* ptr = new Derived();\n delete ptr; // Calls both destructors due to virtual\n return 0;\n}\n\n// Output:\n// Base Constructor\n// Derived Constructor\n// Derived Destructor\n// Base Destructor",
+      "explanation": "Without virtual destructor, only Base destructor would be called, causing resource leak. Virtual destructor ensures proper cleanup in reverse order of construction.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Override and Final Keywords",
+      "description": "Demonstrates C++11 override and final keywords",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n virtual void show() const {\n cout << \"Base show()\\n\";\n }\n virtual void display() final {\n cout << \"Base display() - cannot override\\n\";\n }\n};\n\nclass Derived : public Base {\npublic:\n void show() override { // Explicit override\n cout << \"Derived show()\\n\";\n }\n // void display() override {} // Error! display() is final\n};\n\nint main() {\n Base* ptr = new Derived();\n ptr->show(); // Calls Derived::show()\n ptr->display(); // Calls Base::display()\n return 0;\n}",
+      "explanation": "override keyword ensures function overrides base virtual function (compile-time check). final keyword prevents further overriding of display() function.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Abstract Class Example",
+      "description": "Demonstrates abstract class with pure virtual function",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n string name;\npublic:\n Animal(string n) : name(n) {}\n virtual void speak() = 0; // Pure virtual function\n virtual ~Animal() {}\n};\n\nclass Dog : public Animal {\npublic:\n Dog(string n) : Animal(n) {}\n void speak() override {\n cout << name << \" says: Woof!\\n\";\n }\n};\n\nclass Cat : public Animal {\npublic:\n Cat(string n) : Animal(n) {}\n void speak() override {\n cout << name << \" says: Meow!\\n\";\n }\n};\n\nint main() {\n // Animal a; // Error! Cannot instantiate abstract class\n Animal* animals[2];\n animals[0] = new Dog(\"Buddy\");\n animals[1] = new Cat(\"Whiskers\");\n \n for(int i = 0; i < 2; i++)\n animals[i]->speak();\n \n return 0;\n}",
+      "explanation": "Animal is abstract class with pure virtual speak(). Dog and Cat implement speak(). Cannot instantiate Animal directly. Polymorphic calls work through base pointer.",
+      "timeComplexity": "O(n) for n animals",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "what-is-deep-learning",
+  "examples": [
+    {
+      "id": "simple-deep-network-python",
+      "title": "Simple Deep Network with NumPy",
+      "description": "A basic 3-layer neural network demonstrating the 'deep' concept.",
+      "language": "python",
+      "code": "import numpy as np\n\n# Simple deep network: 3 hidden layers\ndef relu(x):\n    return np.maximum(0, x)\n\ndef forward_pass(X, weights):\n    \"\"\"Forward pass through a deep network.\"\"\"\n    activations = [X]\n    \n    for i, W in enumerate(weights[:-1]):\n        z = activations[-1] @ W\n        a = relu(z)  # Hidden layers use ReLU\n        activations.append(a)\n    \n    # Output layer (no activation for regression)\n    output = activations[-1] @ weights[-1]\n    return output, activations\n\n# Example: 4 inputs -> 8 -> 6 -> 4 -> 1 output\nnp.random.seed(42)\nweights = [\n    np.random.randn(4, 8) * 0.1,   # Layer 1\n    np.random.randn(8, 6) * 0.1,   # Layer 2\n    np.random.randn(6, 4) * 0.1,   # Layer 3\n    np.random.randn(4, 1) * 0.1    # Output\n]\n\nX = np.random.randn(1, 4)  # Single sample\noutput, activations = forward_pass(X, weights)\nprint(f\"Input shape: {X.shape}\")\nprint(f\"Number of layers: {len(weights)}\")\nprint(f\"Output: {output[0, 0]:.4f}\")",
+      "explanation": "This demonstrates a deep network with 3 hidden layers. Each layer transforms the data, allowing hierarchical feature learning. The depth enables learning complex functions.",
+      "timeComplexity": "O(sum of layer_i * layer_i+1)",
+      "spaceComplexity": "O(sum of weights)"
+    },
+    {
+      "id": "keras-deep-network",
+      "title": "Deep Network with Keras",
+      "description": "Building a deep neural network using the Keras high-level API.",
+      "language": "python",
+      "code": "from tensorflow import keras\nfrom tensorflow.keras import layers\n\n# Define a deep neural network\nmodel = keras.Sequential([\n    layers.Input(shape=(784,)),           # Input: 28x28 flattened\n    layers.Dense(512, activation='relu'), # Hidden 1\n    layers.Dense(256, activation='relu'), # Hidden 2\n    layers.Dense(128, activation='relu'), # Hidden 3\n    layers.Dense(64, activation='relu'),  # Hidden 4\n    layers.Dense(10, activation='softmax') # Output: 10 classes\n])\n\nmodel.compile(\n    optimizer='adam',\n    loss='categorical_crossentropy',\n    metrics=['accuracy']\n)\n\nprint(\"Deep Network Architecture:\")\nmodel.summary()\nprint(f\"\\nTotal layers: {len(model.layers)}\")\nprint(f\"Total parameters: {model.count_params():,}\")",
+      "explanation": "Keras makes building deep networks intuitive. This 5-layer network has over 500K parameters, demonstrating how depth increases model capacity.",
+      "timeComplexity": "O(batch_size * sum of weights per epoch)",
+      "spaceComplexity": "O(number of parameters)"
+    },
+    {
+      "id": "pytorch-deep-network",
+      "title": "Deep Network with PyTorch",
+      "description": "Defining a deep neural network using PyTorch's nn.Module.",
+      "language": "python",
+      "code": "import torch\nimport torch.nn as nn\n\nclass DeepNetwork(nn.Module):\n    def __init__(self, input_size, hidden_sizes, output_size):\n        super().__init__()\n        \n        # Build layers dynamically\n        layers = []\n        prev_size = input_size\n        \n        for hidden_size in hidden_sizes:\n            layers.append(nn.Linear(prev_size, hidden_size))\n            layers.append(nn.ReLU())\n            prev_size = hidden_size\n        \n        layers.append(nn.Linear(prev_size, output_size))\n        self.network = nn.Sequential(*layers)\n    \n    def forward(self, x):\n        return self.network(x)\n\n# Create a deep network\nmodel = DeepNetwork(\n    input_size=784,\n    hidden_sizes=[512, 256, 128, 64],  # 4 hidden layers\n    output_size=10\n)\n\nprint(\"Network Structure:\")\nprint(model)\n\n# Count parameters\ntotal_params = sum(p.numel() for p in model.parameters())\nprint(f\"\\nTotal parameters: {total_params:,}\")",
+      "explanation": "PyTorch provides flexibility to build custom architectures. This example shows a configurable deep network where depth can be easily adjusted.",
+      "timeComplexity": "O(batch_size * parameters per forward pass)",
+      "spaceComplexity": "O(parameters + activations)"
+    }
+  ]
+}

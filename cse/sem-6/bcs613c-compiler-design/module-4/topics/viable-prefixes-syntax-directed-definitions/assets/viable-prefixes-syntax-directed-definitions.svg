@@ -1,0 +1,172 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" data-topic-id="viable-prefixes-syntax-directed-definitions">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388e3c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c" />
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2" />
+    </marker>
+  </defs>
+
+  <!-- Step 1: SDD Overview -->
+  <g id="step1" class="step" data-narration="Syntax Directed Definitions or SDDs associate semantic rules with grammar productions, enabling translation during parsing. They specify how to compute attributes that decorate the parse tree, guiding compilation phases.">
+    <rect x="150" y="90" width="500" height="140" rx="10" fill="url(#blueGrad)" stroke="#1976d2" stroke-width="3"/>
+    <text x="400" y="125" font-size="17" font-weight="bold" fill="#fff" text-anchor="middle">Syntax Directed Definitions (SDDs)</text>
+    <text x="180" y="160" font-size="13" fill="#e3f2fd">• Associate semantic rules with productions</text>
+    <text x="180" y="185" font-size="13" fill="#e3f2fd">• Compute attributes on parse tree nodes</text>
+    <text x="180" y="210" font-size="13" fill="#e3f2fd">• Guide translation during parsing</text>
+  </g>
+
+  <!-- Step 2: Attribute Types -->
+  <g id="step2" class="step" data-narration="Attributes are values associated with grammar symbols. Synthesized attributes flow bottom-up from children to parent nodes. Inherited attributes flow top-down from parent or siblings, propagating context information.">
+    <rect x="100" y="90" width="280" height="140" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="240" y="120" font-size="14" font-weight="bold" fill="#388e3c" text-anchor="middle">Synthesized Attributes</text>
+    <circle cx="240" cy="180" r="8" fill="#388e3c"/>
+    <text x="240" y="165" font-size="10" fill="#2e7d32" text-anchor="middle">Child</text>
+    <line x1="240" y1="172" x2="240" y2="188" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    <circle cx="240" cy="210" r="8" fill="#388e3c"/>
+    <text x="240" y="230" font-size="10" fill="#2e7d32" text-anchor="middle">Parent</text>
+    <text x="120" y="190" font-size="11" fill="#2e7d32">Bottom-Up →</text>
+
+    <rect x="420" y="90" width="280" height="140" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="560" y="120" font-size="14" font-weight="bold" fill="#ff9800" text-anchor="middle">Inherited Attributes</text>
+    <circle cx="560" cy="150" r="8" fill="#ff9800"/>
+    <text x="560" y="140" font-size="10" fill="#e65100" text-anchor="middle">Parent</text>
+    <line x1="560" y1="158" x2="560" y2="182" stroke="#ff9800" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <circle cx="560" cy="190" r="8" fill="#ff9800"/>
+    <text x="560" y="210" font-size="10" fill="#e65100" text-anchor="middle">Child</text>
+    <text x="450" y="190" font-size="11" fill="#e65100">Top-Down →</text>
+  </g>
+
+  <!-- Step 3: SDD Notation -->
+  <g id="step3" class="step" data-narration="SDD notation pairs productions with semantic rules. For production X arrow Y-one Y-two, semantic rules compute attribute X-dot-a as a function of attributes from Y-one and Y-two, defining attribute dependencies.">
+    <rect x="180" y="100" width="440" height="130" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="400" y="130" font-size="15" font-weight="bold" fill="#9c27b0" text-anchor="middle">SDD Notation Format</text>
+
+    <rect x="210" y="150" width="380" height="60" rx="6" fill="#fff" stroke="#9c27b0" stroke-width="1"/>
+    <text x="230" y="175" font-size="12" font-family="monospace" fill="#6a1b9a">Production: X → Y₁ Y₂ ... Yₙ</text>
+    <text x="230" y="200" font-size="12" font-family="monospace" fill="#6a1b9a">Semantic Rule: X.a = f(Y₁.b, Y₂.c, ...)</text>
+  </g>
+
+  <!-- Step 4: S-Attributed Definitions -->
+  <g id="step4" class="step" data-narration="S-attributed definitions use only synthesized attributes, perfect for bottom-up parsing. Example: expression evaluator computes E-dot-val from child values, building results during LR reductions.">
+    <rect x="150" y="80" width="500" height="180" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="110" font-size="15" font-weight="bold" fill="#1976d2" text-anchor="middle">S-Attributed: Synthesized Only</text>
+
+    <rect x="180" y="130" width="200" height="110" rx="6" fill="#fff" stroke="#1976d2" stroke-width="1"/>
+    <text x="200" y="155" font-size="11" font-family="monospace" fill="#0d47a1">Grammar:</text>
+    <text x="200" y="175" font-size="11" font-family="monospace" fill="#0d47a1">E → E + T</text>
+    <text x="200" y="195" font-size="11" font-family="monospace" fill="#0d47a1">E → T</text>
+    <text x="200" y="215" font-size="11" font-family="monospace" fill="#0d47a1">T → digit</text>
+
+    <rect x="410" y="130" width="220" height="110" rx="6" fill="#fff" stroke="#1976d2" stroke-width="1"/>
+    <text x="430" y="155" font-size="11" font-family="monospace" fill="#0d47a1">Semantic Rules:</text>
+    <text x="430" y="175" font-size="10" font-family="monospace" fill="#0d47a1">E.val = E₁.val + T.val</text>
+    <text x="430" y="195" font-size="10" font-family="monospace" fill="#0d47a1">E.val = T.val</text>
+    <text x="430" y="215" font-size="10" font-family="monospace" fill="#0d47a1">T.val = digit.lexval</text>
+  </g>
+
+  <!-- Step 5: L-Attributed Definitions -->
+  <g id="step5" class="step" data-narration="L-attributed definitions allow inherited attributes with left-to-right restrictions, suitable for top-down parsing. Example: type declaration propagates T-dot-type as L-dot-in, passing type information downward through the tree.">
+    <rect x="150" y="80" width="500" height="180" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="110" font-size="15" font-weight="bold" fill="#388e3c" text-anchor="middle">L-Attributed: Left-to-Right Flow</text>
+
+    <rect x="180" y="130" width="220" height="110" rx="6" fill="#fff" stroke="#388e3c" stroke-width="1"/>
+    <text x="200" y="155" font-size="11" font-family="monospace" fill="#2e7d32">Grammar:</text>
+    <text x="200" y="175" font-size="11" font-family="monospace" fill="#2e7d32">D → T L</text>
+    <text x="200" y="195" font-size="11" font-family="monospace" fill="#2e7d32">T → int | float</text>
+    <text x="200" y="215" font-size="11" font-family="monospace" fill="#2e7d32">L → L, id | id</text>
+
+    <rect x="430" y="130" width="200" height="110" rx="6" fill="#fff" stroke="#388e3c" stroke-width="1"/>
+    <text x="450" y="155" font-size="11" font-family="monospace" fill="#2e7d32">Semantic Rules:</text>
+    <text x="450" y="175" font-size="10" font-family="monospace" fill="#2e7d32">L.in = T.type</text>
+    <text x="450" y="195" font-size="10" font-family="monospace" fill="#2e7d32">T.type = integer</text>
+    <text x="450" y="215" font-size="10" font-family="monospace" fill="#2e7d32">addType(id, L.in)</text>
+  </g>
+
+  <!-- Step 6: Dependency Graph -->
+  <g id="step6" class="step" data-narration="Dependency graphs show attribute flow between parse tree nodes. Arrows indicate which attributes depend on others, determining evaluation order. Nodes represent attributes, edges show data dependencies.">
+    <text x="400" y="95" font-size="15" font-weight="bold" fill="#1976d2" text-anchor="middle">Dependency Graph for S → A B</text>
+
+    <rect x="200" y="110" width="400" height="150" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+
+    <circle cx="280" cy="160" r="25" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="280" y="167" font-size="11" fill="#388e3c" text-anchor="middle">A.val</text>
+
+    <circle cx="520" cy="160" r="25" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="520" y="167" font-size="11" fill="#388e3c" text-anchor="middle">B.val</text>
+
+    <circle cx="400" cy="220" r="28" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="227" font-size="12" fill="#1976d2" text-anchor="middle">S.val</text>
+
+    <line x1="295" y1="180" x2="380" y2="205" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    <line x1="505" y1="180" x2="420" y2="205" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+    <text x="300" y="105" font-size="10" fill="#e65100">S.val = A.val + B.val</text>
+  </g>
+
+  <!-- Step 7: Parse Tree with Attributes -->
+  <g id="step7" class="step" data-narration="Parse trees decorated with attributes show evaluation in action. For expression three plus five, synthesized attributes propagate upward: F-dot-val equals three, T-dot-val equals five, E-dot-val equals eight as sum.">
+    <text x="400" y="90" font-size="15" font-weight="bold" fill="#9c27b0" text-anchor="middle">Annotated Parse Tree: "3 + 5"</text>
+
+    <circle cx="400" cy="130" r="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="133" font-size="11" fill="#1976d2" text-anchor="middle">E</text>
+    <text x="400" y="148" font-size="9" fill="#0d47a1" text-anchor="middle">(val=8)</text>
+
+    <line x1="380" y1="155" x2="300" y2="185" stroke="#1976d2" stroke-width="2"/>
+    <line x1="400" y1="160" x2="400" y2="185" stroke="#1976d2" stroke-width="2"/>
+    <line x1="420" y1="155" x2="500" y2="185" stroke="#1976d2" stroke-width="2"/>
+
+    <circle cx="300" cy="200" r="25" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="300" y="203" font-size="10" fill="#388e3c" text-anchor="middle">T</text>
+    <text x="300" y="215" font-size="8" fill="#2e7d32" text-anchor="middle">(val=3)</text>
+
+    <circle cx="400" cy="200" r="20" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="206" font-size="10" fill="#ff9800" text-anchor="middle">+</text>
+
+    <circle cx="500" cy="200" r="25" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="500" y="203" font-size="10" fill="#388e3c" text-anchor="middle">T</text>
+    <text x="500" y="215" font-size="8" fill="#2e7d32" text-anchor="middle">(val=5)</text>
+
+    <line x1="300" y1="225" x2="280" y2="255" stroke="#388e3c" stroke-width="2"/>
+    <circle cx="280" cy="270" r="22" fill="#c8e6c9" stroke="#388e3c" stroke-width="2"/>
+    <text x="280" y="273" font-size="9" fill="#2e7d32" text-anchor="middle">digit</text>
+    <text x="280" y="284" font-size="8" fill="#1b5e20" text-anchor="middle">(3)</text>
+
+    <line x1="500" y1="225" x2="520" y2="255" stroke="#388e3c" stroke-width="2"/>
+    <circle cx="520" cy="270" r="22" fill="#c8e6c9" stroke="#388e3c" stroke-width="2"/>
+    <text x="520" y="273" font-size="9" fill="#2e7d32" text-anchor="middle">digit</text>
+    <text x="520" y="284" font-size="8" fill="#1b5e20" text-anchor="middle">(5)</text>
+  </g>
+
+  <!-- Step 8: SDD Type Comparison -->
+  <g id="step8" class="step" data-narration="S-attributed SDDs suit bottom-up LR parsing with simpler implementation, using only synthesized attributes. L-attributed SDDs work with top-down LL parsing, more expressive with both attribute types, enabling richer semantic processing.">
+    <rect x="100" y="80" width="280" height="160" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="240" y="110" font-size="13" font-weight="bold" fill="#1976d2" text-anchor="middle">S-Attributed SDDs</text>
+    <text x="120" y="140" font-size="11" fill="#0d47a1">✓ Synthesized only</text>
+    <text x="120" y="160" font-size="11" fill="#0d47a1">✓ Bottom-up (LR)</text>
+    <text x="120" y="180" font-size="11" fill="#0d47a1">✓ Simpler implementation</text>
+    <text x="120" y="200" font-size="11" fill="#0d47a1">✓ Evaluates during reduce</text>
+    <text x="120" y="220" font-size="11" fill="#0d47a1">✗ Limited expressiveness</text>
+
+    <rect x="420" y="80" width="280" height="160" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="560" y="110" font-size="13" font-weight="bold" fill="#388e3c" text-anchor="middle">L-Attributed SDDs</text>
+    <text x="440" y="140" font-size="11" fill="#2e7d32">✓ Both attribute types</text>
+    <text x="440" y="160" font-size="11" fill="#2e7d32">✓ Top-down (LL)</text>
+    <text x="440" y="180" font-size="11" fill="#2e7d32">✓ More expressive</text>
+    <text x="440" y="200" font-size="11" fill="#2e7d32">✓ Left-to-right flow</text>
+    <text x="440" y="220" font-size="11" fill="#2e7d32">✗ More complex</text>
+  </g>
+</svg>

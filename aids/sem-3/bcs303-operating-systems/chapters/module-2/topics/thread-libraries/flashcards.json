@@ -1,0 +1,77 @@
+{
+  "topicId": "thread-libraries",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is ethers.js?",
+      "back": "A lightweight JavaScript library for Ethereum interaction. Features:\n- ~120KB bundle size\n- Native TypeScript\n- Human-readable ABI\n- Provider/Signer separation\n- ENS integration",
+      "tags": [
+        "definition",
+        "basic"
+      ]
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the difference between Provider and Signer?",
+      "back": "Provider: Read-only blockchain connection\n- Query state, balances, blocks\n- Cannot sign transactions\n\nSigner: Can sign transactions\n- Wallet with private key\n- Required for write operations",
+      "tags": [
+        "concept",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-3",
+      "front": "How do you convert between ETH and Wei?",
+      "back": "ETH to Wei:\nethers.parseEther('1.5') // 1500000000000000000\n\nWei to ETH:\nethers.formatEther(wei) // '1.5'\n\nCustom decimals:\nparseUnits('100', 6) // 100000000\nformatUnits(amount, 6) // '100'",
+      "tags": [
+        "utility",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-4",
+      "front": "How do you listen for contract events?",
+      "back": "Real-time listening:\ncontract.on('Transfer', (from, to, value) => {...})\n\nFiltered listening:\nconst filter = contract.filters.Transfer(from, to);\ncontract.on(filter, callback);\n\nHistorical query:\ncontract.queryFilter(filter, fromBlock, toBlock)",
+      "tags": [
+        "events",
+        "important"
+      ]
+    },
+    {
+      "id": "fc-5",
+      "front": "What is a human-readable ABI?",
+      "back": "An ethers.js feature for simplified ABI definition:\n\nconst abi = [\n  'function balanceOf(address) view returns (uint256)',\n  'function transfer(address to, uint256 amount)',\n  'event Transfer(address indexed from, address indexed to, uint256 value)'\n];\n\nMore readable than JSON ABI format.",
+      "tags": [
+        "abi",
+        "ethers"
+      ]
+    },
+    {
+      "id": "fc-6",
+      "front": "How do you connect to MetaMask?",
+      "back": "// Check if available\nif (window.ethereum) {\n  // Create provider\n  const provider = new ethers.BrowserProvider(window.ethereum);\n  \n  // Request access\n  await window.ethereum.request({method: 'eth_requestAccounts'});\n  \n  // Get signer\n  const signer = await provider.getSigner();\n}",
+      "tags": [
+        "wallet",
+        "integration"
+      ]
+    },
+    {
+      "id": "fc-7",
+      "front": "What is the difference between call() and send()?",
+      "back": "call() - Read operation:\n- Free (no gas)\n- Returns data\n- Doesn't change state\n\nsend()/sendTransaction() - Write operation:\n- Costs gas\n- Returns transaction\n- Changes blockchain state\n- Requires signer",
+      "tags": [
+        "transactions",
+        "concept"
+      ]
+    },
+    {
+      "id": "fc-8",
+      "front": "How do you estimate gas for a transaction?",
+      "back": "// Provider estimate\nawait provider.estimateGas({\n  to: address,\n  data: calldata\n});\n\n// Contract method estimate\nawait contract.transfer.estimateGas(to, amount);\n\n// Get current fee data\nconst feeData = await provider.getFeeData();",
+      "tags": [
+        "gas",
+        "utility"
+      ]
+    }
+  ]
+}

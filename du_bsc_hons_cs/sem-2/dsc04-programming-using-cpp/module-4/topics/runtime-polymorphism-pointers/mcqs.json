@@ -1,0 +1,205 @@
+{
+  "topicId": "runtime-polymorphism-pointers",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is required to achieve runtime polymorphism in C++ when using base class pointers to refer to derived class objects?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The base class must have a constructor"
+        },
+        {
+          "key": "B",
+          "text": "Functions must be declared as virtual to enable dynamic binding"
+        },
+        {
+          "key": "C",
+          "text": "The derived class must use the 'override' keyword for all functions"
+        },
+        {
+          "key": "D",
+          "text": "Both classes must have exactly the same member variables"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Virtual functions enable dynamic binding, allowing the correct function to be called at runtime based on the actual object type.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Consider the following code:\n\nclass Base { public: virtual void show() { cout << \"Base\"; } };\nclass Derived : public Base { public: void show() { cout << \"Derived\"; } };\n\nBase* ptr = new Derived();\nptr->show();\n\nWhat will be the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Base"
+        },
+        {
+          "key": "B",
+          "text": "Derived"
+        },
+        {
+          "key": "C",
+          "text": "Compilation Error"
+        },
+        {
+          "key": "D",
+          "text": "Runtime Error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Since show() is virtual, runtime polymorphism resolves the call to Derived::show() through the vtable.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In C++, how does the compiler typically implement virtual functions internally?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Using inline expansion at compile time"
+        },
+        {
+          "key": "B",
+          "text": "Using a virtual table (vtable) and a virtual pointer (vptr) in each object"
+        },
+        {
+          "key": "C",
+          "text": "Using recursive function calls"
+        },
+        {
+          "key": "D",
+          "text": "Using static linking of function addresses"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The vtable is an array of function pointers, and each object with virtual functions contains a vptr pointing to its class vtable.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Why is it recommended to declare a virtual destructor in a base class when it has virtual functions?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To allow the base class to be instantiated directly"
+        },
+        {
+          "key": "B",
+          "text": "To ensure proper cleanup of derived class resources when deleting through a base pointer"
+        },
+        {
+          "key": "C",
+          "text": "To prevent slicing of derived class objects"
+        },
+        {
+          "key": "D",
+          "text": "To enable multiple inheritance without conflicts"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Without a virtual destructor, deleting a derived object through a base pointer causes undefined behavior, often leading to memory leaks.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the 'slicing' problem in C++?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When a derived class pointer is assigned to a base class pointer"
+        },
+        {
+          "key": "B",
+          "text": "When a derived object is assigned to a base object by value, losing derived class parts"
+        },
+        {
+          "key": "C",
+          "text": "When virtual function calls are resolved at compile time"
+        },
+        {
+          "key": "D",
+          "text": "When the vtable gets corrupted during runtime"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Slicing occurs when an object is passed by value, copying only the base portion and discarding the derived portion along with its overridden functions.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What happens when a class contains at least one pure virtual function?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The class becomes a concrete class that can be instantiated"
+        },
+        {
+          "key": "B",
+          "text": "The class becomes abstract and cannot be instantiated"
+        },
+        {
+          "key": "C",
+          "text": "The compiler automatically generates a default constructor"
+        },
+        {
+          "key": "D",
+          "text": "Virtual functions are disabled for that class"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A class with a pure virtual function is abstract, meaning it cannot be instantiated but can serve as an interface for derived classes.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Consider this code:\n\nclass A { public: virtual void f() { cout << 1; } };\nclass B : public A { public: void f() override { cout << 2; } };\nclass C : public B { public: void f() { cout << 3; } };\n\nA* arr[2] = { new B(), new C() };\nfor (int i = 0; i < 2; i++) arr[i]->f();\n\nWhat is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "12"
+        },
+        {
+          "key": "B",
+          "text": "23"
+        },
+        {
+          "key": "C",
+          "text": "11"
+        },
+        {
+          "key": "D",
+          "text": "22"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Both B and C override f(), so dynamic binding calls B::f() (prints 2) and C::f() (prints 3) respectively.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Given:\n\nclass Shape { public: virtual void draw() = 0; virtual ~Shape() {} };\nclass Circle : public Shape { public: void draw() { cout << \"Circle\"; } };\nclass Square : public Shape { public: void draw() { cout << \"Square\"; } };\n\nvoid display(Shape* s) { s->draw(); }\n\nCircle c; Square s;\nShape* shapes[2] = { &c, &s };\ndisplay(shapes[0]);\ndisplay(shapes[1]);\n\nWhat is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "ShapeShape"
+        },
+        {
+          "key": "B",
+          "text": "CircleSquare"
+        },
+        {
+          "key": "C",
+          "text": "Compilation Error"
+        },
+        {
+          "key": "D",
+          "text": "Runtime Error due to pure virtual function call"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The pointer type is Shape*, but the actual objects are Circle and Square; virtual dispatch calls the appropriate derived draw() methods.",
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "deep-cnns-lenet-alexnet",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "LeNet-5 Implementation in PyTorch",
+      "description": "Complete LeNet-5 architecture implementation",
+      "code": "import torch.nn as nn\n\nclass LeNet5(nn.Module):\n    def __init__(self, num_classes=10):\n        super(LeNet5, self).__init__()\n        # Conv layers preserve spatial structure\n        self.conv1 = nn.Conv2d(1, 6, kernel_size=5)   # 32\u219228\n        self.conv2 = nn.Conv2d(6, 16, kernel_size=5) # 10\u219210\n        # Average pooling (original LeNet)\n        self.pool = nn.AvgPool2d(kernel_size=2, stride=2)\n        # Fully connected layers\n        self.fc1 = nn.Linear(16 * 5 * 5, 120)\n        self.fc2 = nn.Linear(120, 84)\n        self.fc3 = nn.Linear(84, num_classes)\n        # Original LeNet used sigmoid\n        self.relu = nn.Sigmoid()\n    \n    def forward(self, x):\n        # Conv \u2192 ReLU \u2192 Pool\n        x = self.pool(self.relu(self.conv1(x)))\n        x = self.pool(self.relu(self.conv2(x)))\n        # Flatten for FC layers\n        x = x.view(-1, 16 * 5 * 5)\n        x = self.relu(self.fc1(x))\n        x = self.relu(self.fc2(x))\n        x = self.fc3(x)\n        return x",
+      "explanation": "LeNet-5 uses two conv layers with 5x5 kernels, average pooling for downsampling, and three fully connected layers for digit classification.",
+      "timeComplexity": "O(n) per forward pass",
+      "spaceComplexity": "O(60K parameters)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "AlexNet Implementation in PyTorch",
+      "description": "Complete AlexNet architecture with modern improvements",
+      "code": "import torch.nn as nn\n\nclass AlexNet(nn.Module):\n    def __init__(self, num_classes=1000):\n        super(AlexNet, self).__init__()\n        # Large 11x11 kernel for first conv (captures low-res features)\n        self.conv1 = nn.Conv2d(3, 96, kernel_size=11, stride=4)\n        self.conv2 = nn.Conv2d(96, 256, kernel_size=5, padding=2)\n        self.conv3 = nn.Conv2d(256, 384, kernel_size=3, padding=1)\n        self.conv4 = nn.Conv2d(384, 384, kernel_size=3, padding=1)\n        self.conv5 = nn.Conv2d(384, 256, kernel_size=3, padding=1)\n        \n        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2)\n        self.relu = nn.ReLU(inplace=True)  # ReLU - key innovation\n        self.dropout = nn.Dropout(p=0.5)   # Dropout regularization\n        \n        # Large fully connected layers\n        self.fc1 = nn.Linear(256 * 6 * 6, 4096)\n        self.fc2 = nn.Linear(4096, 4096)\n        self.fc3 = nn.Linear(4096, num_classes)\n        \n    def forward(self, x):\n        x = self.maxpool(self.relu(self.conv1(x)))   # 227\u219255\u219227\n        x = self.maxpool(self.relu(self.conv2(x)))  # 27\u219227\u219213\n        x = self.relu(self.conv3(x))\n        x = self.relu(self.conv4(x))\n        x = self.maxpool(self.relu(self.conv5(x)))  # 13\u219213\u21926\n        \n        x = x.view(x.size(0), 256 * 6 * 6)\n        x = self.dropout(self.relu(self.fc1(x)))\n        x = self.dropout(self.relu(self.fc2(x)))\n        x = self.fc3(x)\n        return x",
+      "explanation": "AlexNet uses ReLU activation, dropout (0.5), max pooling, and large kernels. It was trained on GPUs with data augmentation achieving 26% top-5 error on ImageNet.",
+      "timeComplexity": "O(1.2M images \u00d7 90 epochs)",
+      "spaceComplexity": "O(60M parameters)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Convolution Forward Pass",
+      "description": "Pseudocode for convolution operation",
+      "code": "FUNCTION ConvForward(input, kernel, bias, stride, padding)\nBEGIN\n  // input: H x W x C (height, width, channels)\n  // kernel: K x K x C (square kernel)\n  // Output dimensions: OH = (H - K + 2P)/stride + 1\n  \n  output_height = (input_height - kernel_size + 2*padding) / stride + 1\n  output_width = (input_width - kernel_size + 2*padding) / stride + 1\n  output_channels = num_kernels\n  \n  Initialize output[output_height][output_width][output_channels] = 0\n  \n  FOR each output_channel FROM 0 TO num_kernels-1 DO\n    FOR each output_row FROM 0 TO output_height-1 DO\n      FOR each output_col FROM 0 TO output_width-1 DO\n        sum = 0\n        FOR each kernel_row FROM 0 TO kernel_size-1 DO\n          FOR each kernel_col FROM 0 TO kernel_size-1 DO\n            FOR each input_channel FROM 0 TO input_channels-1 DO\n              // Calculate input position with padding\n              input_row = row * stride + kernel_row - padding\n              input_col = col * stride + kernel_col - padding\n              \n              IF input_row >= 0 AND input_row < input_height AND\n                 input_col >= 0 AND input_col < input_width THEN\n                sum = sum + input[input_row][input_col][input_channel] * \n                      kernel[kernel_row][kernel_col][input_channel]\n              END IF\n            END FOR\n          END FOR\n        END FOR\n        output[output_row][output_col][output_channel] = sum + bias[output_channel]\n      END FOR\n    END FOR\n  END FOR\n  \n  RETURN ApplyActivation(output)\nEND",
+      "explanation": "Convolution slides learnable kernels over input, computing dot products to extract features. Parameter sharing makes it efficient compared to fully connected layers.",
+      "timeComplexity": "O(H \u00d7 W \u00d7 C \u00d7 K\u00b2 \u00d7 num_kernels)",
+      "spaceComplexity": "O(C \u00d7 K\u00b2) weights per kernel"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Training Loop with Data Augmentation",
+      "description": "Training script demonstrating AlexNet training with augmentation",
+      "code": "import torch\nimport torch.nn as nn\nfrom torch.utils.data import DataLoader\nfrom torchvision import transforms\n\n# Data augmentation pipeline for ImageNet\ntrain_transform = transforms.Compose([\n    transforms.RandomResizedCrop(224),      # Random crop\n    transforms.RandomHorizontalFlip(p=0.5), # Horizontal flip\n    transforms.ColorJitter(brightness=0.2,    # Color jitter\n                         contrast=0.2,\n                         saturation=0.2),\n    transforms.ToTensor(),\n    transforms.Normalize(mean=[0.485, 0.456, 0.406],\n                        std=[0.229, 0.224, 0.225])\n])\n\n# Training function\ndef train_alexnet(model, train_loader, epochs=90):\n    criterion = nn.CrossEntropyLoss()\n    optimizer = torch.optim.SGD(model.parameters(), \n                                lr=0.01, \n                                momentum=0.9,\n                                weight_decay=0.0005)\n    \n    # Learning rate scheduler\n    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, \n                                                 step_size=30, \n                                                 gamma=0.1)\n    \n    model.train()\n    for epoch in range(epochs):\n        total_loss = 0\n        correct = 0\n        total = 0\n        \n        for batch_idx, (data, target) in enumerate(train_loader):\n            optimizer.zero_grad()\n            output = model(data)\n            loss = criterion(output, target)\n            loss.backward()\n            optimizer.step()\n            \n            total_loss += loss.item()\n            _, predicted = output.max(1)\n            total += target.size(0)\n            correct += predicted.eq(target).sum().item()\n        \n        scheduler.step()\n        print(f'Epoch {epoch+1}: Loss={total_loss/len(train_loader):.4f}, '\n              f'Acc={100.*correct/total:.2f}%')\n\n# Note: Original AlexNet used 2 GTX 580 GPUs\n# Modern training uses single GPU or distributed training",
+      "explanation": "Training uses SGD with momentum, weight decay for regularization, learning rate decay, and data augmentation (random crops, flips, color jitter) to prevent overfitting.",
+      "timeComplexity": "O(90 epochs \u00d7 1.2M images \u00d7 forward+backward)",
+      "spaceComplexity": "O(batch_size \u00d7 feature_maps) for activations"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "process-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "First Come First Serve (FCFS) Scheduling",
+      "description": "Non-preemptive scheduling algorithm that selects processes in order of their arrival time",
+      "code": "ALGORITHM FCFS_Scheduling(processes[])\nBEGIN\n  n = length(processes)\n  // Sort by arrival time\n  Sort processes by arrival_time\n  \n  current_time = 0\n  total_wt = 0\n  total_tat = 0\n  \n  FOR i = 0 to n-1 DO\n    // If process arrives later than current time\n    IF processes[i].arrival_time > current_time THEN\n      current_time = processes[i].arrival_time\n    ENDIF\n    \n    // Wait time = current time - arrival time\n    processes[i].waiting_time = current_time - processes[i].arrival_time\n    \n    // Execute process\n    current_time = current_time + processes[i].burst_time\n    \n    // Turnaround time = completion time - arrival time\n    processes[i].turnaround_time = current_time - processes[i].arrival_time\n    \n    total_wt = total_wt + processes[i].waiting_time\n    total_tat = total_tat + processes[i].turnaround_time\n  END FOR\n  \n  avg_wt = total_wt / n\n  avg_tat = total_tat / n\n  \n  RETURN avg_wt, avg_tat\nEND",
+      "explanation": "FCFS schedules processes based on their arrival time in the ready queue. When a process gets the CPU, it runs to completion. The algorithm is simple but can lead to poor performance due to convoy effect.",
+      "timeComplexity": "O(n log n) for sorting, O(n) for scheduling",
+      "spaceComplexity": "O(1) excluding input array"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Shortest Job First (SJF) Scheduling",
+      "description": "Non-preemptive scheduling that selects process with smallest burst time",
+      "code": "ALGORITHM SJF_Scheduling(processes[])\nBEGIN\n  n = length(processes)\n  completed = 0\n  current_time = 0\n  min_burst = INFINITY\n  shortest_index = -1\n  found = FALSE\n  \n  WHILE completed < n DO\n    // Find shortest burst time among arrived processes\n    FOR i = 0 to n-1 DO\n      IF processes[i].arrival_time <= current_time AND\n         processes[i].burst_time < min_burst AND\n         processes[i].completed == FALSE THEN\n        min_burst = processes[i].burst_time\n        shortest_index = i\n        found = TRUE\n      ENDIF\n    END FOR\n    \n    IF found == FALSE THEN\n      current_time = current_time + 1\n      CONTINUE\n    ENDIF\n    \n    // Execute the shortest process\n    processes[shortest_index].completion_time = current_time + processes[shortest_index].burst_time\n    processes[shortest_index].waiting_time = current_time - processes[shortest_index].arrival_time\n    processes[shortest_index].turnaround_time = processes[shortest_index].completion_time - processes[shortest_index].arrival_time\n    \n    processes[shortest_index].completed = TRUE\n    completed = completed + 1\n    current_time = processes[shortest_index].completion_time\n    min_burst = INFINITY\n    found = FALSE\n  END WHILE\nEND",
+      "explanation": "SJF selects the ready process with the smallest burst time. It provides optimal average waiting time but requires knowledge of burst times in advance. It can cause starvation of long processes.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Round Robin Scheduling",
+      "description": "Preemptive scheduling using time quantum for fair CPU allocation",
+      "code": "ALGORITHM RoundRobin(processes[], time_quantum)\nBEGIN\n  n = length(processes)\n  ready_queue = []\n  current_time = 0\n  \n  // Add all processes arriving at time 0\n  FOR i = 0 to n-1 DO\n    IF processes[i].arrival_time == 0 THEN\n      ready_queue.enqueue(processes[i])\n      processes[i].remaining_time = processes[i].burst_time\n    ENDIF\n  END FOR\n  \n  WHILE ready_queue is not empty DO\n    current_process = ready_queue.dequeue()\n    \n    // Execute for time quantum or remaining time\n    IF current_process.remaining_time <= time_quantum THEN\n      current_time = current_time + current_process.remaining_time\n      current_process.completion_time = current_time\n      current_process.remaining_time = 0\n    ELSE\n      current_time = current_time + time_quantum\n      current_process.remaining_time = current_process.remaining_time - time_quantum\n    ENDIF\n    \n    // Add newly arrived processes to queue\n    FOR i = 0 to n-1 DO\n      IF processes[i].arrival_time > (current_time - time_quantum) AND\n         processes[i].arrival_time <= current_time AND\n         NOT processes[i].in_queue THEN\n        ready_queue.enqueue(processes[i])\n      ENDIF\n    END FOR\n    \n    // If process not completed, add back to queue\n    IF current_process.remaining_time > 0 THEN\n      ready_queue.enqueue(current_process)\n    ELSE\n      current_process.turnaround_time = current_process.completion_time - current_process.arrival_time\n      current_process.waiting_time = current_process.turnaround_time - current_process.burst_time\n    ENDIF\n  END WHILE\nEND",
+      "explanation": "Round Robin gives each process equal time slices in a cyclic manner. It ensures fairness and good response time but has overhead from context switches if quantum is too small.",
+      "timeComplexity": "O(n \u00d7 burst_time / quantum)",
+      "spaceComplexity": "O(n) for queue storage"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Process Control Block Implementation",
+      "description": "Implementation of PCB data structure in Python",
+      "code": "class PCB:\n    def __init__(self, pid, name, priority=0):\n        self.pid = pid              # Process ID\n        self.name = name            # Process Name\n        self.state = \"NEW\"          # Current state\n        self.priority = priority    # Scheduling priority\n        \n        # CPU Registers context\n        self.program_counter = 0   # Next instruction to execute\n        self.registers = []        # CPU register values\n        \n        # Memory management\n        self.memory_limits = {}    # Memory boundaries\n        self.page_table = {}       # Virtual memory pages\n        \n        # Scheduling info\n        self.arrival_time = 0\n        self.burst_time = 0\n        self.remaining_time = 0\n        \n        # Execution metrics\n        self.waiting_time = 0\n        self.turnaround_time = 0\n        self.completion_time = 0\n        \n        # I/O Status\n        self.open_files = []\n        self.io_devices = []\n        self.io_operations = []\n        \n        # Parent-Child relationship\n        self.parent_pid = None\n        self.children = []\n    \n    def context_save(self, cpu_state):\n        \"\"\"Save current CPU state to PCB\"\"\"\n        self.registers = cpu_state.registers\n        self.program_counter = cpu_state.pc\n    \n    def context_restore(self, cpu_state):\n        \"\"\"Restore CPU state from PCB\"\"\"\n        cpu_state.registers = self.registers\n        cpu_state.pc = self.program_counter\n    \n    def __str__(self):\n        return f\"PCB(PID:{self.pid}, State:{self.state}, Priority:{self.priority})\"\n\n# Example usage\nif __name__ == \"__main__\":\n    pcb = PCB(1001, \"Chrome\", priority=5)\n    pcb.state = \"READY\"\n    pcb.burst_time = 50\n    pcb.remaining_time = 50\n    pcb.arrival_time = 0\n    print(pcb)",
+      "explanation": "This Python class demonstrates how a Process Control Block stores all necessary information about a process. It includes process state, CPU context, memory info, scheduling parameters, and I/O status.",
+      "timeComplexity": "O(1) for all operations",
+      "spaceComplexity": "O(1) per PCB instance"
+    }
+  ]
+}

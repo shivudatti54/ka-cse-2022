@@ -1,0 +1,118 @@
+{
+  "topicId": "error-control",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Error Control Mechanism in Data Link Layer",
+      "description": "Shows the complete error control process from sender to receiver including error detection, feedback, and retransmission",
+      "elements": [
+        "Sender Node - contains data to transmit",
+        "Framing Unit - adds frame headers and trailers with error detection codes",
+        "Noisy Channel - represented as a path with lightning symbols indicating potential noise interference",
+        "Received Frame - arrives at receiver with possible bit errors",
+        "Error Detection Unit - checks for errors using CRC/Parity/Chessum",
+        "Decision Diamond - YES/NO branch for error detection",
+        "If Error: NACK frame sent back to sender with negative acknowledgment",
+        "If No Error: ACK frame sent back to sender with positive acknowledgment",
+        "Retransmission Controller - initiates retransmission upon receiving NACK or timeout",
+        "Arrow showing retransmission path back to sender"
+      ],
+      "purpose": "Students learn the complete flow of error control including how errors are detected at receiver and how feedback (ACK/NACK) triggers retransmission at sender"
+    },
+    {
+      "id": "diagram-2",
+      "title": "Types of Data Errors - Single Bit vs Burst Error",
+      "description": "Visual comparison of single-bit errors and burst errors in transmitted data frames",
+      "elements": [
+        "Frame A with Single-Bit Error: Shows a row of 8 bits (0 1 1 0 1 0 0 1) with ONE bit flipped from 0 to 1 at position 4, highlighted in red",
+        "Annotation: 'Single-bit error - only 1 bit affected, easier to detect and correct'",
+        "Frame B with Burst Error: Shows consecutive bits (positions 3-7) flipped/changed, highlighted in red as a continuous block",
+        "Annotation: 'Burst error - multiple consecutive bits affected, more challenging to handle'",
+        "Burst length indicator showing the gap between first and last error bit",
+        "Channel noise sources represented: EMI, interference, attenuation symbols"
+      ],
+      "purpose": "Students understand the fundamental difference between single-bit and burst errors, recognize that burst errors are more common in data communication, and learn why error detection/correction methods must handle both types"
+    },
+    {
+      "id": "diagram-3",
+      "title": "Stop-and-Wait ARQ Protocol",
+      "description": "Shows the complete timing diagram of Stop-and-Wait ARQ with successful transmission and retransmission scenarios",
+      "elements": [
+        "Time axis (horizontal) showing sequential events",
+        "Sender: Sends Frame 0, waits",
+        "Arrow down to channel showing Frame 0 transmission",
+        "Receiver: Receives Frame 0, detects no error, sends ACK 0",
+        "Arrow up showing ACK 0 returning",
+        "Sender: Receives ACK 0, sends Frame 1 (next frame)",
+        "Timeout representation: If ACK not received within timeout period, show automatic retransmission of Frame 0",
+        "Lost Frame scenario: Show Frame 1 lost in transit, receiver times out waiting, sender retransmits after timeout",
+        "Duplicate Frame scenario: Show receiver receiving duplicate frame and discarding it",
+        "Sequence numbers clearly labeled (0, 1, 0, 1)"
+      ],
+      "purpose": "Students learn the operation of Stop-and-Wait ARQ, understand the use of sequence numbers, timeout mechanism, and how duplicate frames are handled"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Sliding Window Protocols - Go-Back-N and Selective Repeat",
+      "description": "Comparative diagram showing window size and retransmission behavior for Go-Back-N and Selective Repeat ARQ",
+      "elements": [
+        "Go-Back-N Window: Sender window showing N=4, frames 0-3 in window, frames 4-7 outside",
+        "Receiver window showing only expected frame (e.g., expecting 3)",
+        "Retransmission arrow showing ALL frames from error point being resent",
+        "Selective Repeat Window: Sender window showing N=4 with individual frame statuses (sent, acknowledged, pending)",
+        "Receiver window showing buffering of out-of-order frames",
+        "Selective retransmission showing ONLY the erroneous frame being resent",
+        "Sequence number circles for both protocols",
+        "ACK/NAK annotations for each"
+      ],
+      "purpose": "Students understand the key difference between Go-Back-N and Selective Repeat protocols, particularly how Go-Back-N retransmits all subsequent frames while Selective Repeat retransmits only the lost frame, and how each handles out-of-order delivery"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison-table",
+      "title": "Comparison of ARQ Protocols",
+      "content": "Columns: Protocol Name, Window Size, Retransmission Strategy, Acknowledgment Type, Efficiency, Use Cases. Rows: Stop-and-Wait (Window=1, retransmits single frame, ACK for each frame, simple but inefficient, LANs), Go-Back-N (Window=N, retransmits all frames from error, cumulative ACK, moderate efficiency, moderate speed networks), Selective Repeat (Window≤N/2, retransmits only error frame, selective ACK, highest efficiency, high-speed networks)"
+    },
+    {
+      "type": "flowchart",
+      "title": "Error Detection and Handling Process",
+      "content": "Start → Is data received? → No: Wait for timeout → Timeout: Retransmit frame. Yes → Perform error detection (Parity/CRC/Checksum) → Error detected? → No: Deliver data to upper layer, Send ACK. Yes: Discard frame, Send NACK → Return to wait state. Each decision point shows YES/NO branches clearly."
+    },
+    {
+      "type": "classification-chart",
+      "title": "Error Control Techniques Classification",
+      "content": "Main branch: Error Control. Level 2: Error Detection (Parity Check - Simple/VRC, Checksum, CRC) and Error Correction (Hamming Code - Single-bit correction, Burst error correction). Level 3 for ARQ: Stop-and-Wait ARQ, Go-Back-N ARQ, Selective Repeat ARQ. Each technique shows brief purpose description."
+    },
+    {
+      "type": "comparison-table",
+      "title": "Error Detection Methods Comparison",
+      "content": "Columns: Method, Mechanism, Detection Capability, Overhead, Complexity. Rows: Simple Parity (Even/Odd parity bit, single-bit errors, 1 bit, Low), Two-Dimensional Parity (Matrix parity, single and some burst errors, 2 bits, Low), Checksum (Complement addition, burst errors up to word length, Log(n) bits, Medium), CRC (Polynomial division, burst errors up to degree, r+1 bits, Medium-High)."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Error Control in Data Link Layer",
+      "branches": [
+        "Error Detection (Parity Check, Checksum, CRC) - Adds redundant bits to detect errors",
+        "Error Correction (Forward Error Correction using Hamming Code) - Corrects errors without retransmission",
+        "ARQ Protocols (Stop-and-Wait, Go-Back-N, Selective Repeat) - Automatic Repeat reQuest for reliability",
+        "Flow Control (Sliding Window) - Manages sender rate to prevent receiver overflow",
+        "Connection-Oriented vs Connectionless - Reliability levels in data link services",
+        "Framing - Organizes data into manageable units for error control"
+      ],
+      "purpose": "Provides comprehensive overview connecting all error control concepts, showing relationships between detection, correction, and retransmission mechanisms, and how they fit into the broader data link layer services for reliable communication"
+    }
+  ],
+  "visuals": [
+    {
+      "id": "error-control-svg",
+      "title": "Error Control",
+      "description": "Visual diagram for error control",
+      "type": "animated-svg",
+      "file": "assets/error-control.svg",
+      "svgContent": "<placeholder>",
+      "animated": true
+    }
+  ]
+}

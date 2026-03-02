@@ -1,0 +1,35 @@
+{
+  "topicId": "allocation-of-frames",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Frame Allocation Simulator - Equal and Proportional",
+      "description": "Demonstrates equal and proportional frame allocation algorithms",
+      "code": "ALGORITHM FrameAllocation\nINPUT: totalFrames, processList (each with size)\nOUTPUT: frame allocation for each process\n\n// EQUAL ALLOCATION\nFUNCTION EqualAllocation(totalFrames, numProcesses)\n  framesPerProcess = totalFrames / numProcesses\n  RETURN framesPerProcess\n\n// PROPORTIONAL ALLOCATION  \nFUNCTION ProportionalAllocation(totalFrames, processList)\n  totalSize = SUM(process.size) FOR ALL processes\n  FOR EACH p IN processList\n    allocation[p.id] = (p.size / totalSize) * totalFrames\n  RETURN allocation\n\n// Example usage:\n// totalFrames = 100, processes = [50KB, 150KB]\n// Equal: 50 frames each\n// Proportional: P1=(50/200)*100=25, P2=(150/200)*100=75",
+      "explanation": "This pseudocode shows two basic frame allocation strategies. Equal allocation gives each process the same number of frames. Proportional allocation considers process size for fairer distribution.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Page Fault Frequency Adjustment",
+      "description": "PFF-based dynamic frame allocation algorithm",
+      "code": "ALGORITHM PFF_FrameAdjustment\nINPUT: processList, upperThreshold, lowerThreshold\nOUTPUT: adjusted frame allocation\n\nINITIALIZE: each process gets minFrames\n\nREPEAT EVERY monitoringInterval:\n  FOR EACH p IN processList:\n    currentPFF = p.pageFaults / p.instructionsExecuted\n    \n    IF currentPFF > upperThreshold THEN\n      // Too many faults - allocate more frames\n      p.allocatedFrames = p.allocatedFrames + framesToAdd\n    \n    ELSE IF currentPFF < lowerThreshold THEN\n      // Too few faults - reclaim excess frames\n      p.allocatedFrames = p.allocatedFrames - framesToRemove\n      IF p.allocatedFrames < minFrames THEN\n        p.allocatedFrames = minFrames\n    \n    // Reset counters for next interval\n    p.pageFaults = 0\n    p.instructionsExecuted = 0\n\n  // If any frames freed, add to available pool\n  availableFrames = totalFrames - SUM(all allocatedFrames)\n  \nRETURN adjusted allocations",
+      "explanation": "This algorithm implements Page Fault Frequency control. It monitors page fault rates and dynamically adjusts frame allocation. High fault rates cause more frames to be allocated; low rates cause frames to be reclaimed for other processes.",
+      "timeComplexity": "O(n) per monitoring cycle",
+      "spaceComplexity": "O(n)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Working Set Frame Calculator",
+      "description": "Calculates working set and determines required frames",
+      "code": "ALGORITHM WorkingSetCalculator\nINPUT: referenceString, windowSize Delta\nOUTPUT: working set size and frame requirements\n\nFUNCTION CalculateWorkingSet(referenceString, delta)\n  // referenceString: sequence of page references\n  // delta: time window size (number of references)\n  \n  workingSets = EMPTY LIST\n  \n  FOR i FROM 0 TO referenceString.length - delta:\n    // Get pages in current window\n    currentWindow = referenceString[i TO i+delta-1]\n    \n    // Find unique pages in window (the working set)\n    ws = UNIQUE_PAGES(currentWindow)\n    workingSets.add(ws)\n    \n    // Track maximum working set seen\n    maxWSSize = MAX(maxWSSize, ws.size)\n  \n  RETURN maxWSSize  // Frames needed for this process\n\n// Example:\n// Reference: 1,2,3,1,2,3,4,2,1,4, delta=4\n// Window 1: {1,2,3} = 3 frames\n// Window 2: {1,2,3} = 3 frames  \n// Window 3: {3,4,2} = 3 frames\n// Maximum: 3 frames needed",
+      "explanation": "This algorithm simulates the working set model by analyzing page reference patterns. It identifies how many distinct pages are referenced within a time window, representing the minimum frames needed to avoid thrashing.",
+      "timeComplexity": "O(n \u00d7 delta)",
+      "spaceComplexity": "O(delta)",
+      "language": "pseudocode"
+    }
+  ]
+}

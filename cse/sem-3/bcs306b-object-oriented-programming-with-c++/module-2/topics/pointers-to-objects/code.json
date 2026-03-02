@@ -1,0 +1,55 @@
+{
+  "topicId": "pointers-to-objects",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Object Pointer Declaration and Access",
+      "description": "Shows how to declare object pointers and access members using arrow operator",
+      "code": "class Rectangle {\nprivate:\n int width, height;\npublic:\n Rectangle(int w, int h) : width(w), height(h) {}\n int area() { return width * height; }\n};\n\nint main() {\n Rectangle obj(10, 5);\n Rectangle *ptr = &obj; // Pointer to object\n \n // Access members using arrow operator\n cout << \"Area: \" << ptr->area() << endl;\n \n // Alternative: dereference then dot\n cout << \"Area: \" << (*ptr).area() << endl;\n \n return 0;\n}",
+      "explanation": "Object pointer 'ptr' holds address of 'obj'. Arrow operator (->) provides direct access to object's members without dereferencing.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Dynamic Object Creation with new and delete",
+      "description": "Demonstrates heap allocation and deallocation for objects",
+      "code": "class Student {\nprivate:\n char *name;\n int marks;\npublic:\n Student(const char *n, int m) {\n name = new char[strlen(n) + 1];\n strcpy(name, n);\n marks = m;\n }\n ~Student() {\n delete[] name; // Destructor frees dynamic memory\n cout << \"Destructor called\" << endl;\n }\n void display() {\n cout << \"Name: \" << name << \", Marks: \" << marks << endl;\n }\n};\n\nint main() {\n Student *ptr = new Student(\"John\", 85); // Dynamic allocation\n ptr->display(); // Access through pointer\n delete ptr; // Explicit deallocation, calls destructor\n ptr = nullptr; // Avoid dangling pointer\n return 0;\n}",
+      "explanation": "new allocates memory and calls constructor. delete calls destructor first then frees memory. Setting pointer to nullptr prevents dangling pointer.",
+      "timeComplexity": "O(1) for creation/deletion",
+      "spaceComplexity": "O(n) where n is name length"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "this Pointer Demonstration",
+      "description": "Shows usage of this pointer to distinguish member variables",
+      "code": "class Box {\nprivate:\n int width, height;\npublic:\n Box(int width, int height) {\n // 'this' distinguishes parameter from member\n this->width = width;\n this->height = height;\n }\n \n Box* compare(Box &other) {\n // Returns pointer to larger Box\n if (this->area() > other.area())\n return this; // Return current object address\n else\n return &other; // Return address of other object\n }\n \n int area() { return width * height; }\n};\n\nint main() {\n Box b1(10, 5), b2(6, 8);\n Box *larger = b1.compare(b2);\n cout << \"Larger box area: \" << larger->area() << endl;\n return 0;\n}",
+      "explanation": "this is automatically passed to member functions. Used to access current object's members and to return current object pointer.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Polymorphism with Base Class Pointer",
+      "description": "Demonstrates runtime polymorphism using base pointer to derived objects",
+      "code": "class Shape {\npublic:\n virtual void draw() {\n cout << \"Drawing Shape\" << endl;\n }\n virtual ~Shape() {} // Virtual destructor for proper cleanup\n};\n\nclass Circle : public Shape {\npublic:\n void draw() override {\n cout << \"Drawing Circle\" << endl;\n }\n};\n\nclass Rectangle : public Shape {\npublic:\n void draw() override {\n cout << \"Drawing Rectangle\" << endl;\n }\n};\n\nint main() {\n Shape *shapes[3];\n shapes[0] = new Circle();\n shapes[1] = new Rectangle();\n shapes[2] = new Circle();\n \n for (int i = 0; i < 3; i++) {\n shapes[i]->draw(); // Runtime polymorphism\n }\n \n for (int i = 0; i < 3; i++) {\n delete shapes[i]; // Virtual destructor ensures proper cleanup\n }\n \n return 0;\n}",
+      "explanation": "Base class pointer can hold addresses of derived objects. Virtual functions enable runtime binding - correct function called based on actual object type.",
+      "timeComplexity": "O(n) for n shapes",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Array of Object Pointers",
+      "description": "Shows how to create and use array of pointers to objects",
+      "code": "class Employee {\nprivate:\n int id;\n char name[20];\npublic:\n Employee(int i, const char *n) {\n id = i;\n strcpy(name, n);\n }\n void display() {\n cout << \"ID: \" << id << \", Name: \" << name << endl;\n }\n};\n\nint main() {\n // Array of pointers to objects\n Employee *emp[3];\n \n // Create objects dynamically and store addresses\n emp[0] = new Employee(101, \"Alice\");\n emp[1] = new Employee(102, \"Bob\");\n emp[2] = new Employee(103, \"Charlie\");\n \n // Access using arrow operator\n for (int i = 0; i < 3; i++) {\n emp[i]->display();\n }\n \n // Free memory\n for (int i = 0; i < 3; i++) {\n delete emp[i];\n }\n \n return 0;\n}",
+      "explanation": "Array of pointers stores addresses of separately allocated objects. Each element accessed via emp[i]->member().",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

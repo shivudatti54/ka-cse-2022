@@ -1,0 +1,158 @@
+{
+  "topicId": "pipeline-performance",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Derive the formula for speedup in a k-stage pipeline processing n instructions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Show base formula: Speedup = n×k / (k + n - 1)",
+        "Explain that without pipeline: n×k cycles needed",
+        "Explain that with pipeline: k + n - 1 cycles needed",
+        "As n→∞, speedup → k"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the three types of data hazards with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "RAW (Read After Write) - True dependency: instruction reads after previous writes",
+        "WAR (Write After Read) - Anti-dependency: instruction writes after previous reads",
+        "WAW (Write After Write) - Output dependency: instruction writes after previous writes",
+        "Explain how these occur in out-of-order execution"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Calculate the average CPI for a 5-stage pipeline processor with the following characteristics: 30% loads/stores, 20% branches, 50% ALU instructions. Load/store causes 1 stall, branch causes 2 stalls, ALU has no stalls. Ideal CPI = 1.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "CPI = Ideal CPI + stalls per instruction",
+        "Load/Store: 0.30 × 1 = 0.3 stalls",
+        "Branch: 0.20 × 2 = 0.4 stalls",
+        "ALU: 0.50 × 0 = 0 stalls",
+        "Average CPI = 1 + 0.3 + 0.4 = 1.7"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is data forwarding? How does it help in reducing pipeline stalls?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Data forwarding routes results directly from execution stages to dependent instructions",
+        "Eliminates RAW hazard stalls by providing data before it's written to register file",
+        "Requires additional hardware multiplexers and paths",
+        "Can reduce stalls from 2 cycles to 0 in many cases"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the difference between throughput and latency in pipeline performance.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Latency: time for one instruction to complete (in cycles) = k for k-stage pipeline",
+        "Throughput: instructions completed per unit time = 1 IPC when pipeline is full",
+        "Pipelining increases throughput but may increase latency",
+        "Throughput is the primary measure of system performance"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "A processor has a 5-stage pipeline. If 25% of instructions are branches and each branch causes a 3-cycle penalty, calculate the performance loss compared to ideal case.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Ideal CPI = 1, total cycles for N instructions = N",
+        "Actual CPI = 1 + (0.25 × 3) = 1.75",
+        "Performance loss = (1.75 - 1)/1 × 100% = 75% extra cycles",
+        "Or speedup loss: ideal throughput / actual = 1/1.75 = 0.57 (57% of ideal)"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are pipeline registers and why are they necessary?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Define pipeline registers",
+        "Explain their function in data storage",
+        "Mention clock synchronization",
+        "Explain consequences without registers"
+      ],
+      "modelAnswer": "Pipeline registers (latches) store intermediate results between pipeline stages, synchronized with clock signals. They ensure proper data transfer between stages and maintain instruction state across clock cycles. Without them, data would flow uncontrolled between stages, causing errors."
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a 5-stage instruction pipeline and explain how you would handle structural hazards, data hazards, and control hazards. Include specific solutions for each hazard type.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "5 stages: IF, ID, EX, MEM, WB",
+        "Structural: Duplicate hardware or schedule instructions",
+        "Data: Forwarding, stall insertion, register renaming",
+        "Control: Branch prediction, delay slots, flush mechanism",
+        "Show pipeline diagrams for each case",
+        "Calculate impact on CPI"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Consider a program with 1,000,000 instructions running on two processors: (a) Non-pipelined with 10 ns per instruction (b) 5-stage pipelined processor with 2.5 ns clock cycle and average of 0.5 stalls per instruction. Compare the total execution time and speedup achieved.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Non-pipelined: 1,000,000 × 10ns = 10 ms",
+        "Pipelined: Base cycles = 5 + 999,999 = 1,000,004",
+        "Stall cycles = 1,000,000 × 0.5 = 500,000",
+        "Total cycles = 1,500,004 cycles",
+        "Total time = 1,500,004 × 2.5ns = 3.75 ms",
+        "Speedup = 10/3.75 = 2.67x",
+        "CPI = 1 + 0.5 = 1.5"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain branch prediction techniques and their impact on pipeline performance. A program has 30% branch instructions with 60% branch accuracy using prediction. If the pipeline has 4 stages and branch penalty is equal to pipeline depth, calculate effective CPI.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Branch prediction techniques: static, dynamic (1-bit, 2-bit, correlating)",
+        "Impact: Reduces control hazards and improves performance",
+        "Branch frequency = 0.30",
+        "Branch accuracy = 0.60, misprediction = 0.40",
+        "Branch penalty = 4 cycles (equal to pipeline depth)",
+        "Effective CPI = 1 + 0.30 × 0.40 × 4 = 1 + 0.48 = 1.48",
+        "Compare with no prediction: 1 + 0.30 × 4 = 2.2"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "For a 4-stage pipeline with the following hazard characteristics: 20% ALU (0 stalls), 30% loads (1 stall each), 10% stores (1 stall each), 25% branches (2 stalls), 15% jumps (2 stalls). Calculate: (i) Average CPI (ii) If clock cycle is 2ns, what is the execution time for 10,000 instructions? (iii) What is the theoretical maximum speedup?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Weighted stall calculation: ALU: 0.20×0=0, Load: 0.30×1=0.30, Store: 0.10×1=0.10, Branch: 0.25×2=0.50, Jump: 0.15×2=0.30",
+        "Average CPI = 1 + (0.30+0.10+0.50+0.30) = 2.2",
+        "Execution time = Cycles × Clock = (4+9999) × 2.2 × 2ns ≈ 44μs",
+        "Maximum speedup = Number of stages = 4 (as n→∞)"
+      ]
+    }
+  ]
+}

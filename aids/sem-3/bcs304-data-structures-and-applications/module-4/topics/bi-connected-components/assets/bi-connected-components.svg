@@ -1,0 +1,434 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 2000">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8f9fa"/>
+      <stop offset="100%" stop-color="#e9ecef"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff9800"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes fillIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .step text.narration { animation: textReveal 0.5s ease-out 0.4s backwards; }
+    .graph-edge {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: drawLine 1s ease-out forwards;
+    }
+    .formula {
+      opacity: 0;
+      animation: fadeInSlide 0.5s ease-out forwards;
+    }
+    .highlight-box {
+      animation: pulse 2s ease-in-out infinite;
+      transform-origin: center;
+    }
+  </style>
+  
+  <rect width="800" height="2000" fill="#f8f9fa"/>
+  
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Biconnected components help identify critical points in graphs that could disconnect the network if removed.">
+    <rect x="20" y="10" width="760" height="45" rx="8" fill="#1976d2" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="white">Bi-connected Components</text>
+    <text x="400" y="62" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">Articulation Points, Bridges andamp DFS Algorithm</text>
+  </g>
+  
+  <!-- Step 1: Why Biconnected Matters -->
+  <g class="step" id="step1" data-narration="Networks must remain connected even when nodes fail. An articulation point is a single point of failure.">
+    <rect x="20" y="70" width="760" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="95" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1976d2">Why Do We Need Biconnected Components?</text>
+    <text x="40" y="115" font-family="Arial, sans-serif" font-size="10" fill="#333">Networks must remain connected even when nodes fail. An articulation point is a</text>
+    <text x="40" y="130" font-family="Arial, sans-serif" font-size="10" fill="#333">single point of failure - if it fails, the network breaks into disconnected parts.</text>
+    <text x="520" y="115" font-family="Arial, sans-serif" font-size="10" fill="#666" font-style="italic">Applications: Network routing,</text>
+    <text x="520" y="130" font-family="Arial, sans-serif" font-size="10" fill="#666" font-style="italic">social networks, circuit design</text>
+    <circle cx="740" cy="112" r="15" fill="#1976d2">
+      <animate attributeName="r" values="15;17;15" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="740" y="117" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">?</text>
+  </g>
+  
+  <!-- Step 2: Key Definitions Preview -->
+  <g class="step" id="step2" data-narration="Three key concepts: articulation points (cut vertices), bridges (cut edges), and biconnected components.">
+    <rect x="20" y="165" width="240" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="35" y="190" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#e65100">Articulation Point</text>
+    <text x="35" y="208" font-family="Arial, sans-serif" font-size="9" fill="#333">Vertex whose removal</text>
+    <text x="35" y="222" font-family="Arial, sans-serif" font-size="9" fill="#333">disconnects the graph</text>
+    
+    <rect x="280" y="165" width="240" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="295" y="190" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#c62828">Bridge (Cut Edge)</text>
+    <text x="295" y="208" font-family="Arial, sans-serif" font-size="9" fill="#333">Edge whose removal</text>
+    <text x="295" y="222" font-family="Arial, sans-serif" font-size="9" fill="#333">disconnects the graph</text>
+    
+    <rect x="540" y="165" width="240" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="555" y="190" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32">Biconnected Component</text>
+    <text x="555" y="208" font-family="Arial, sans-serif" font-size="9" fill="#333">Maximal biconnected</text>
+    <text x="555" y="222" font-family="Arial, sans-serif" font-size="9" fill="#333">subgraph (no cut vertices)</text>
+  </g>
+  
+  <!-- Step 3: Articulation Point - Visual -->
+  <g class="step" id="step3" data-narration="A vertex v is an articulation point if removing it disconnects the graph into multiple components.">
+    <rect x="20" y="260" width="760" height="90" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="35" y="285" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">Articulation Point (Cut Vertex)</text>
+    <text x="35" y="305" font-family="Arial, sans-serif" font-size="10" fill="#333">A vertex v is an articulation point if removing v (and its incident edges)</text>
+    <text x="35" y="320" font-family="Arial, sans-serif" font-size="10" fill="#333">increases the number of connected components in the graph.</text>
+    
+    <svg x="450" y="270" width="300" height="70">
+      <line x1="40" y1="35" x2="100" y2="35" stroke="#e65100" stroke-width="3" class="graph-edge"/>
+      <line x1="100" y1="35" x2="160" y2="15" stroke="#666" stroke-width="3" class="graph-edge"/>
+      <line x1="100" y1="35" x2="160" y2="55" stroke="#666" stroke-width="3" class="graph-edge"/>
+      <circle cx="40" cy="35" r="8" fill="#4caf50"/>
+      <circle cx="100" cy="35" r="10" fill="#e65100" stroke="#c62828" stroke-width="3"/>
+      <circle cx="160" cy="15" r="8" fill="#4caf50"/>
+      <circle cx="160" cy="55" r="8" fill="#4caf50"/>
+      <text x="96" y="60" font-family="Arial" font-size="8" fill="#c62828">v is articulation</text>
+      <text x="36" y="50" font-family="Arial" font-size="7" fill="#333">component 1</text>
+      <text x="156" y="50" font-family="Arial" font-size="7" fill="#333">component 2</text>
+    </svg>
+  </g>
+  
+  <!-- Step 4: Bridge Definition -->
+  <g class="step" id="step4" data-narration="A bridge is an edge whose removal disconnects the graph. Every bridge belongs to exactly one component.">
+    <rect x="20" y="360" width="760" height="90" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="35" y="385" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c62828">Bridge (Cut Edge)</text>
+    <text x="35" y="405" font-family="Arial, sans-serif" font-size="10" fill="#333">An edge e = (u, v) is a bridge if removing e increases the number of</text>
+    <text x="35" y="420" font-family="Arial, sans-serif" font-size="10" fill="#333">connected components. A bridge is always part of exactly one biconnected component.</text>
+    
+    <svg x="480" y="370" width="280" height="70">
+      <line x1="30" y1="35" x2="90" y2="35" stroke="#666" stroke-width="3" class="graph-edge"/>
+      <line x1="90" y1="35" x2="150" y2="35" stroke="#c62828" stroke-width="4" class="graph-edge"/>
+      <line x1="150" y1="35" x2="210" y2="35" stroke="#666" stroke-width="3" class="graph-edge"/>
+      <line x1="150" y1="35" x2="180" y2="10" stroke="#666" stroke-width="3" class="graph-edge"/>
+      <circle cx="30" cy="35" r="8" fill="#4caf50"/>
+      <circle cx="90" cy="35" r="8" fill="#4caf50"/>
+      <circle cx="150" cy="35" r="10" fill="#c62828"/>
+      <circle cx="210" cy="35" r="8" fill="#4caf50"/>
+      <circle cx="180" cy="10" r="6" fill="#4caf50"/>
+      <text x="130" y="58" font-family="Arial" font-size="8" fill="#c62828">bridge</text>
+    </svg>
+  </g>
+  
+  <!-- Step 5: Biconnected Graph -->
+  <g class="step" id="step5" data-narration="A biconnected graph has no articulation points - every pair of vertices has two disjoint paths.">
+    <rect x="20" y="460" width="760" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="35" y="485" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Biconnected Graph</text>
+    <text x="35" y="505" font-family="Arial, sans-serif" font-size="10" fill="#333">A connected graph with NO articulation points. Equivalently: for every pair</text>
+    <text x="35" y="520" font-family="Arial, sans-serif" font-size="10" fill="#333">of vertices, there exist at least two vertex-disjoint paths between them.</text>
+    
+    <svg x="500" y="470" width="250" height="70">
+      <polygon points="125,10 220,55 30,55" fill="none" stroke="#2e7d32" stroke-width="3"/>
+      <circle cx="125" cy="10" r="8" fill="#4caf50"/>
+      <circle cx="220" cy="55" r="8" fill="#4caf50"/>
+      <circle cx="30" cy="55" r="8" fill="#4caf50"/>
+      <text x="90" y="70" font-family="Arial" font-size="9" fill="#2e7d32">Biconnected - No cut vertex!</text>
+    </svg>
+  </g>
+  
+  <!-- Step 6: Biconnected Component -->
+  <g class="step" id="step6" data-narration="Biconnected components are maximal subgraphs with no cut vertices. Edges belong to exactly one component.">
+    <rect x="20" y="560" width="760" height="90" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="35" y="585" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#7b1fa2">Biconnected Component (Block)</text>
+    <text x="35" y="605" font-family="Arial, sans-serif" font-size="10" fill="#333">A maximal biconnected subgraph. Key properties:</text>
+    <text x="45" y="620" font-family="Arial, sans-serif" font-size="9" fill="#333">- Every edge belongs to exactly ONE component</text>
+    <text x="45" y="635" font-family="Arial, sans-serif" font-size="9" fill="#333">- Two components share at most ONE vertex (an articulation point)</text>
+  </g>
+  
+  <!-- Step 7: Example Graph Analysis -->
+  <g class="step" id="step7" data-narration="For this graph, vertices 1 and 3 are articulation points, creating three biconnected components.">
+    <rect x="20" y="660" width="760" height="95" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="35" y="685" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1976d2">Example: Finding Biconnected Components</text>
+    
+    <svg x="30" y="695" width="320" height="55">
+      <line x1="40" y1="25" x2="100" y2="25" stroke="#666" stroke-width="2"/>
+      <line x1="100" y1="25" x2="160" y2="25" stroke="#666" stroke-width="2"/>
+      <line x1="40" y1="25" x2="100" y2="45" stroke="#666" stroke-width="2"/>
+      <line x1="100" y1="25" x2="100" y2="45" stroke="#666" stroke-width="2"/>
+      <line x1="160" y1="25" x2="220" y2="25" stroke="#c62828" stroke-width="3"/>
+      <line x1="160" y1="25" x2="220" y2="45" stroke="#666" stroke-width="2"/>
+      <line x1="220" y1="25" x2="220" y2="45" stroke="#666" stroke-width="2"/>
+      
+      <circle cx="40" cy="25" r="8" fill="#4caf50"/>
+      <circle cx="100" cy="25" r="10" fill="#e65100"/>
+      <circle cx="100" cy="45" r="6" fill="#4caf50"/>
+      <circle cx="160" cy="25" r="10" fill="#e65100"/>
+      <circle cx="220" cy="25" r="8" fill="#4caf50"/>
+      <circle cx="220" cy="45" r="6" fill="#4caf50"/>
+      
+      <text x="36" y="15" font-family="Arial" font-size="8">0</text>
+      <text x="96" y="15" font-family="Arial" font-size="8">1</text>
+      <text x="156" y="15" font-family="Arial" font-size="8">3</text>
+      <text x="216" y="15" font-family="Arial" font-size="8">4</text>
+      <text x="96" y="60" font-family="Arial" font-size="8">2</text>
+      <text x="216" y="60" font-family="Arial" font-size="8">5</text>
+    </svg>
+    
+    <text x="360" y="710" font-family="Arial, sans-serif" font-size="10" fill="#333">Edges: (0,1), (0,2), (1,2), (1,3), (3,4), (3,5), (4,5)</text>
+    <text x="360" y="728" font-family="Arial, sans-serif" font-size="10" fill="#e65100">Articulation Points: 1, 3</text>
+    <text x="360" y="743" font-family="Arial, sans-serif" font-size="10" fill="#333">B1: {0,1,2} | B2: {1,3} | B3: {3,4,5}</text>
+  </g>
+  
+  <!-- Step 8: DFS - disc and low -->
+  <g class="step" id="step8" data-narration="DFS uses two arrays: disc records when vertices are first visited, low tracks reachable discovery times.">
+    <rect x="20" y="765" width="760" height="90" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="35" y="790" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">DFS Algorithm: disc[] and low[]</text>
+    <text x="35" y="810" font-family="Arial, sans-serif" font-size="10" fill="#333">Two arrays track vertex discovery during DFS:</text>
+    
+    <rect x="35" y="820" width="330" height="28" rx="5" fill="#fff" stroke="#1976d2" stroke-width="1"/>
+    <text x="45" y="837" font-family="Arial, sans-serif" font-size="10" fill="#333">disc[v] = Discovery time of v (when first visited)</text>
+    
+    <rect x="380" y="820" width="380" height="28" rx="5" fill="#fff" stroke="#388e3c" stroke-width="1"/>
+    <text x="390" y="837" font-family="Arial, sans-serif" font-size="10" fill="#333">low[v] = Lowest discovery time reachable from v's subtree</text>
+  </g>
+  
+  <!-- Step 9: Computing low[v] Formula -->
+  <g class="step" id="step9" data-narration="Low value is minimum of the vertex discovery time, back edge discovery times, and child low values.">
+    <rect x="20" y="865" width="760" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="35" y="890" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Computing low[v]</text>
+    <text x="35" y="910" font-family="Arial, sans-serif" font-size="10" fill="#333">For each vertex v, low[v] is the minimum of three values:</text>
+    
+    <svg x="30" y="918" width="730" height="32">
+      <rect x="0" y="0" width="230" height="26" rx="4" fill="#fff" stroke="#2e7d32"/>
+      <text x="115" y="17" text-anchor="middle" font-family="Courier New" font-size="10" fill="#333">disc[v] (itself)</text>
+      
+      <rect x="240" y="0" width="230" height="26" rx="4" fill="#fff" stroke="#e65100"/>
+      <text x="355" y="17" text-anchor="middle" font-family="Courier New" font-size="10" fill="#333">disc[w] (back edges)</text>
+      
+      <rect x="480" y="0" width="230" height="26" rx="4" fill="#fff" stroke="#1976d2"/>
+      <text x="595" y="17" text-anchor="middle" font-family="Courier New" font-size="10" fill="#333">low[child] (tree edges)</text>
+    </svg>
+    
+    <text x="35" y="950" font-family="Arial, sans-serif" font-size="9" fill="#666">low[v] = min(disc[v], disc[w] for back edges, low[child] for tree edges)</text>
+  </g>
+  
+  <!-- Step 10: Articulation Point Conditions -->
+  <g class="step" id="step10" data-narration="Root is articulation if it has multiple children. Non-root is articulation if child low is at least parent disc.">
+    <rect x="20" y="965" width="760" height="95" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="35" y="990" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">Articulation Point Conditions</text>
+    <text x="35" y="1010" font-family="Arial, sans-serif" font-size="10" fill="#333">A vertex u is an articulation point if ANY of these conditions hold:</text>
+    
+    <rect x="35" y="1020" width="350" height="32" rx="5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+    <text x="50" y="1036" font-family="Arial, sans-serif" font-size="9" fill="#333">Condition 1 (Root): u is DFS root AND has 2 or more children</text>
+    <text x="50" y="1050" font-family="Arial, sans-serif" font-size="9" font-family="Courier New" fill="#c62828">if (parent[u] == -1 andamp andamp children gt 1)</text>
+    
+    <rect x="400" y="1020" width="360" height="32" rx="5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+    <text x="415" y="1036" font-family="Arial, sans-serif" font-size="9" fill="#333">Condition 2 (Non-root): exists child v with low[v] >= disc[u]</text>
+    <text x="415" y="1050" font-family="Arial, sans-serif" font-size="9" font-family="Courier New" fill="#c62828">if (parent[u] != -1 andamp andamp low[v] gt= disc[u])</text>
+  </g>
+  
+  <!-- Step 11: Finding Bridges -->
+  <g class="step" id="step11" data-narration="Bridges use strict greater than: low[child] must be strictly greater than parent discovery time.">
+    <rect x="20" y="1070" width="760" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1095" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c62828">Finding Bridges</text>
+    <text x="35" y="1115" font-family="Arial, sans-serif" font-size="10" fill="#333">An edge (u, v) where v is a child of u in DFS tree is a BRIDGE if:</text>
+    
+    <rect x="35" y="1125" width="280" height="24" rx="5" fill="#fff" stroke="#c62828" stroke-width="2"/>
+    <text x="175" y="1142" text-anchor="middle" font-family="Courier New" font-size="12" fill="#c62828">low[v] gt disc[u]</text>
+    
+    <text x="330" y="1138" font-family="Arial, sans-serif" font-size="10" fill="#333">Note: Bridge uses "gt" (strict), while</text>
+    <text x="330" y="1153" font-family="Arial, sans-serif" font-size="10" fill="#333">articulation uses "gte" (greater or equal).</text>
+    
+    <rect x="560" y="1120" width="180" height="28" rx="5" fill="#fff8e1" stroke="#ff9800"/>
+    <text x="650" y="1138" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#333">For our example:</text>
+    <text x="650" y="1152" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#c62828">Bridge: (1,3)</text>
+  </g>
+  
+  <!-- Step 12: Finding Biconnected Components -->
+  <g class="step" id="step12" data-narration="Use an edge stack during DFS. When articulation point found, pop edges to form one component.">
+    <rect x="20" y="1165" width="760" height="90" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1190" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#7b1fa2">Finding Biconnected Components</text>
+    <text x="35" y="1210" font-family="Arial, sans-serif" font-size="10" fill="#333">Use a stack of edges during DFS. When articulation point detected,</text>
+    <text x="35" y="1225" font-family="Arial, sans-serif" font-size="10" fill="#333">pop edges from stack to form one biconnected component.</text>
+    
+    <rect x="35" y="1238" width="220" height="18" rx="4" fill="#e1bee7"/>
+    <text x="145" y="1251" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2">B1: {0,1,2} (triangle)</text>
+    
+    <rect x="265" y="1238" width="220" height="18" rx="4" fill="#e1bee7"/>
+    <text x="375" y="1251" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2">B2: {1,3} (bridge)</text>
+    
+    <rect x="495" y="1238" width="220" height="18" rx="4" fill="#e1bee7"/>
+    <text x="605" y="1251" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2">B3: {3,4,5} (triangle)</text>
+  </g>
+  
+  <!-- Step 13: Block-Cut Tree -->
+  <g class="step" id="step13" data-narration="Block-cut tree is a bipartite graph showing how biconnected components connect through articulation points.">
+    <rect x="20" y="1265" width="760" height="80" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1290" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Block-Cut Tree</text>
+    <text x="35" y="1310" font-family="Arial, sans-serif" font-size="10" fill="#333">Bipartite graph: components (B) connected via articulation points (1,3)</text>
+    
+    <svg x="350" y="1275" width="400" height="55">
+      <rect x="30" y="18" width="55" height="22" rx="4" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="57" y="33" text-anchor="middle" font-family="Arial" font-size="9" fill="#2e7d32">B1</text>
+      
+      <rect x="105" y="18" width="35" height="22" rx="4" fill="#fff9c4" stroke="#f9a825"/>
+      <text x="122" y="33" text-anchor="middle" font-family="Arial" font-size="9" fill="#f9a825">1</text>
+      
+      <rect x="160" y="18" width="55" height="22" rx="4" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="187" y="33" text-anchor="middle" font-family="Arial" font-size="9" fill="#2e7d32">B2</text>
+      
+      <rect x="235" y="18" width="35" height="22" rx="4" fill="#fff9c4" stroke="#f9a825"/>
+      <text x="252" y="33" text-anchor="middle" font-family="Arial" font-size="9" fill="#f9a825">3</text>
+      
+      <rect x="290" y="18" width="55" height="22" rx="4" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="317" y="33" text-anchor="middle" font-family="Arial" font-size="9" fill="#2e7d32">B3</text>
+      
+      <line x1="85" y1="29" x2="105" y2="29" stroke="#666" stroke-width="2" marker-end="url(#arrowGreen)"/>
+      <line x1="140" y1="29" x2="160" y2="29" stroke="#666" stroke-width="2" marker-end="url(#arrowGreen)"/>
+      <line x1="215" y1="29" x2="235" y2="29" stroke="#666" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    </svg>
+  </g>
+  
+  <!-- Step 14: Properties Summary -->
+  <g class="step" id="step14" data-narration="Key properties: edges belong to one component, components share at most one vertex, bridges are single-edge components.">
+    <rect x="20" y="1355" width="760" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1380" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1976d2">Properties of Biconnected Components</text>
+    
+    <rect x="35" y="1393" width="175" height="18" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="122" y="1406" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Edge belongs to ONE</text>
+    
+    <rect x="220" y="1393" width="175" height="18" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="307" y="1406" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Maximal biconnected</text>
+    
+    <rect x="405" y="1393" width="175" height="18" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="492" y="1406" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Components share 1 vertex</text>
+    
+    <rect x="590" y="1393" width="170" height="18" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="675" y="1406" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Shared vertex = articulation</text>
+    
+    <rect x="125" y="1418" width="200" height="18" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="225" y="1431" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Bridge = component with 1 edge</text>
+    
+    <rect x="335" y="1418" width="200" height="18" rx="4" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="435" y="1431" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Full graph if no articulation</text>
+  </g>
+  
+  <!-- Step 15: Time Complexity -->
+  <g class="step" id="step15" data-narration="All three computations (articulation points, bridges, components) run in linear time O(V plus E).">
+    <rect x="20" y="1450" width="760" height="65" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1475" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">Time Complexity</text>
+    
+    <rect x="35" y="1488" width="210" height="22" rx="4" fill="#fff"/>
+    <text x="140" y="1503" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">Articulation Points: O(V+E)</text>
+    
+    <rect x="260" y="1488" width="210" height="22" rx="4" fill="#fff"/>
+    <text x="365" y="1503" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">Bridges: O(V+E)</text>
+    
+    <rect x="485" y="1488" width="260" height="22" rx="4" fill="#fff"/>
+    <text x="615" y="1503" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">Biconnected Components: O(V+E)</text>
+  </g>
+  
+  <!-- Step 16: Applications -->
+  <g class="step" id="step16" data-narration="Applications include network reliability analysis, circuit design, transportation networks, and social network analysis.">
+    <rect x="20" y="1525" width="760" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1550" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Applications</text>
+    
+    <rect x="35" y="1563" width="135" height="38" rx="4" fill="#fff" stroke="#388e3c"/>
+    <text x="102" y="1577" text-anchor="middle" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Network Reliability</text>
+    <text x="102" y="1592" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Find single points of failure</text>
+    
+    <rect x="180" y="1563" width="135" height="38" rx="4" fill="#fff" stroke="#388e3c"/>
+    <text x="247" y="1577" text-anchor="middle" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Circuit Design</text>
+    <text x="247" y="1592" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Fault-tolerant systems</text>
+    
+    <rect x="325" y="1563" width="135" height="38" rx="4" fill="#fff" stroke="#388e3c"/>
+    <text x="392" y="1577" text-anchor="middle" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Transportation</text>
+    <text x="392" y="1592" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Critical roads/paths</text>
+    
+    <rect x="470" y="1563" width="135" height="38" rx="4" fill="#fff" stroke="#388e3c"/>
+    <text x="537" y="1577" text-anchor="middle" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Social Networks</text>
+    <text x="537" y="1592" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Key connectors</text>
+    
+    <rect x="615" y="1563" width="145" height="38" rx="4" fill="#fff" stroke="#388e3c"/>
+    <text x="687" y="1577" text-anchor="middle" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Communication</text>
+    <text x="687" y="1592" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Resilient networks</text>
+  </g>
+  
+  <!-- Step 17: Exam Tips -->
+  <g class="step" id="step17" data-narration="Remember: disc and low computation, articulation conditions, and bridge uses strict greater than comparison.">
+    <rect x="20" y="1620" width="760" height="90" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="35" y="1645" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#7b1fa2">Exam Tips</text>
+    
+    <rect x="35" y="1658" width="220" height="25" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="145" y="1672" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">disc[] and low[] computation</text>
+    <text x="145" y="1686" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">low[v] = min(disc[v], disc[back], low[child])</text>
+    
+    <rect x="265" y="1658" width="220" height="25" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="375" y="1672" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">Articulation Point conditions</text>
+    <text x="375" y="1686" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Root: 2+ children | Non-root: low[child] gt= disc</text>
+    
+    <rect x="495" y="1658" width="220" height="25" rx="4" fill="#f3e5f5" stroke="#9c27b0"/>
+    <text x="605" y="1672" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">Bridge vs Articulation</text>
+    <text x="605" y="1686" text-anchor="middle" font-family="Arial" font-size="8" fill="#666">Bridge: low[child] gt disc (strict)</text>
+    
+    <rect x="145" y="1692" width="220" height="18" rx="4" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="255" y="1705" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">Trace DFS by hand for small graphs!</text>
+  </g>
+  
+  <!-- Step 18: Summary -->
+  <g class="step" id="step18" data-narration="Articulation points are vertices whose removal disconnects graphs; bridges are edges with the same property.">
+    <rect x="20" y="1720" width="760" height="70" rx="8" fill="#1976d2" filter="url(#shadow)"/>
+    <text x="400" y="1745" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">What We Learned</text>
+    
+    <text x="50" y="1768" font-family="Arial, sans-serif" font-size="10" fill="#e3f2fd">- Articulation Point: removal increases components</text>
+    <text x="50" y="1785" font-family="Arial, sans-serif" font-size="10" fill="#e3f2fd">- Bridge: edge whose removal disconnects the graph</text>
+  </g>
+</svg>

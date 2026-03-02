@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary goal of processor affinity in a multiprocessor system?",
+    "options": [
+      "To keep a process running on the same processor it started on",
+      "To ensure all processors have an equal number of processes",
+      "To migrate processes between processors for optimal performance",
+      "To reduce the total number of processors in use"
+    ],
+    "correctIndex": 0,
+    "explanation": "Processor affinity aims to maximize cache utilization by keeping a process on the same CPU, reducing the performance penalty of reloading the cache after a migration."
+  },
+  {
+    "id": "q2",
+    "question": "In a symmetric multiprocessing (SMP) system, which scheduling approach is most common?",
+    "options": [
+      "A single, shared ready queue for all processors",
+      "Each processor having its own private ready queue",
+      "A master-slave hierarchy where one processor handles all scheduling",
+      "Processors are assigned specific types of processes to run"
+    ],
+    "correctIndex": 1,
+    "explanation": "Most modern SMP systems use per-processor ready queues. This approach reduces contention on the queue lock and naturally encourages processor affinity, leading to better cache performance."
+  },
+  {
+    "id": "q3",
+    "question": "What is a key challenge introduced by multicore processors that wasn't a primary concern with earlier multiprocessor systems?",
+    "options": [
+      "Handling I/O interrupts",
+      "Synchronization between cores",
+      "Memory management",
+      "The distinction between physical cores and logical processors (e.g., Hyper-Threading)"
+    ],
+    "correctIndex": 3,
+    "explanation": "Multicore technology introduced complex cache hierarchies (L1, L2, L3) and Simultaneous Multithreading (SMT), like Intel's Hyper-Threading. A scheduler must be aware that two logical processors on the same physical core share execution resources and cache, making load balancing between them different from balancing between separate physical cores."
+  },
+  {
+    "id": "q4",
+    "question": "The Linux Completely Fair Scheduler (CFS) uses a red-black tree for its runqueue. In an SMP system with load balancing, what is a likely consequence of a processor pulling a task from another processor's runqueue?",
+    "options": [
+      "The task's virtual runtime (vruntime) is reset to zero to give it a fresh start.",
+      "The task's vruntime is adjusted to be comparable to the vruntime of tasks on the new processor's runqueue.",
+      "The task retains its original vruntime value, which can cause it to either monopolize the CPU or be starved.",
+      "The task is placed in a special 'migrated' queue with a higher priority."
+    ],
+    "correctIndex": 2,
+    "explanation": "A task's vruntime is specific to the processor it was running on. If migrated without adjustment, its vruntime value is not directly comparable to the vruntimes of tasks on the new processor. A low vruntime would let it monopolize the new CPU, while a high vruntime would cause it to be severely starved. Correct load balancing requires careful vruntime adjustment."
+  },
+  {
+    "id": "q5",
+    "question": "In a heterogeneous multiprocessing system (like ARM big.LITTLE), why is a traditional symmetric scheduler inadequate?",
+    "options": [
+      "It cannot handle more than two different processor types.",
+      "It lacks the ability to perform load balancing between asymmetric cores.",
+      "It assumes all processors are equal, but cores have different performance and power characteristics.",
+      "It is designed solely for uniform memory access (UMA) architectures."
+    ],
+    "correctIndex": 2,
+    "explanation": "A symmetric scheduler's fundamental assumption is processor homogeneity. In a big.LITTLE system, 'big' cores are for performance and 'LITTLE' cores are for efficiency. A naive scheduler would treat them equally, leading to poor power management or performance. An asymmetric or informed scheduler (like the Linux EAS) is needed to assign tasks to the appropriate core type based on their performance needs and power constraints."
+  }
+]

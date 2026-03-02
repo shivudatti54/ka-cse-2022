@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "Which R package is the most commonly used for establishing a connection to a SQL database?",
+    "options": [
+      "DBI",
+      "dplyr",
+      "dbplot",
+      "RSQLite"
+    ],
+    "correctIndex": 0,
+    "explanation": "The DBI (Database Interface) package provides a client-side interface for connecting to and communicating with various database management systems. It defines a common set of methods that work across different database types (e.g., SQLite, PostgreSQL)."
+  },
+  {
+    "id": "q2",
+    "question": "After connecting to a database with `DBI::dbConnect()`, which function is used to retrieve results from a simple SQL query string?",
+    "options": [
+      "dbGetQuery()",
+      "dbSendQuery()",
+      "tbl()",
+      "collect()"
+    ],
+    "correctIndex": 0,
+    "explanation": "`dbGetQuery()` is a DBI function that performs all three key steps in one call: it sends the query, fetches all results, and then clears the result set. It is the standard choice for running a query and immediately retrieving the full output."
+  },
+  {
+    "id": "q3",
+    "question": "What is the primary advantage of using `dplyr` functions on a database table object (returned by `tbl()`) compared to writing raw SQL?",
+    "options": [
+      "It allows you to use R syntax instead of SQL",
+      "It automatically caches the entire table in memory",
+      "It executes queries faster than raw SQL",
+      "It does not require a live database connection"
+    ],
+    "correctIndex": 0,
+    "explanation": "The main advantage is that you can use dplyr's verbs (e.g., `filter()`, `select()`, `mutate()`, `summarise()`) which translate your R code into the appropriate SQL for the database. This lets you work with database data using a syntax you already know from working with local data frames."
+  },
+  {
+    "id": "q4",
+    "question": "Consider the code: `result <- dbSendQuery(con, \"SELECT * FROM orders\")` and `chunk <- dbFetch(result, n = 1000)`. Why is this approach useful?",
+    "options": [
+      "To process a large dataset in manageable chunks and avoid RAM limitations",
+      "To improve the security of the database connection",
+      "To automatically create a backup of the fetched data",
+      "To speed up the execution of aggregate functions like SUM()"
+    ],
+    "correctIndex": 0,
+    "explanation": "This two-step process (`dbSendQuery()` followed by multiple `dbFetch()` calls) is essential for handling datasets too large to fit into R's memory all at once. You can specify the number of records (`n`) to fetch in each chunk, process it, and then fetch the next chunk, thus working with massive tables efficiently."
+  },
+  {
+    "id": "q5",
+    "question": "When using `dplyr` to chain operations on a remote database table (e.g., `tbl(con, \"sales\") %>% group_by(region) %>% summarise(total = sum(amount))`), when is the SQL query actually executed on the database server?",
+    "options": [
+      "When the `collect()`, `compute()`, or `collapse()` function is called, or when the results are printed",
+      "Immediately after the `summarise()` function is called",
+      "As soon as the `tbl()` function establishes the connection",
+      "It is executed in pieces after each dplyr verb in the chain"
+    ],
+    "correctIndex": 0,
+    "explanation": "dplyr uses lazy evaluation. It builds the query in the background but doesn't execute it on the server until you explicitly request the results. This allows dplyr to optimize the entire sequence of operations before sending a single, efficient SQL query to the database. The main functions that trigger execution are `collect()` (to bring results into R as a data frame) and `compute()` (to materialize the result on the server). Printing the result also triggers execution to show a preview."
+  }
+]

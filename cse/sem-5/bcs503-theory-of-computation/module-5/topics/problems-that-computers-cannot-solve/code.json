@@ -1,0 +1,55 @@
+{
+  "topicId": "problems-that-computers-cannot-solve",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Halting Problem Decider (Impossible)",
+      "description": "Demonstrates the structure assumed by incorrect proofs - why it cannot exist",
+      "code": "FUNCTION H(P, I):\n // This function CANNOT exist\n // Returns 'halts' if program P halts on input I\n // Returns 'loops' if program P runs forever on input I\n // This is undecidable - no such algorithm exists\n \nFUNCTION D(P):\n // Uses H to do the opposite\n result = H(P, P)\n IF result == 'halts' THEN\n LOOP_FOREVER() // Do opposite\n ELSE\n RETURN // halt when H says loops\n \n// The paradox:\n// D(D) halts iff H(D,D) says loops\n// But H(D,D) says loops iff D(D) halts\n// Contradiction! Therefore H cannot exist.",
+      "explanation": "This pseudocode shows why the Halting Problem is undecidable. Any assumed decider H leads to a paradox when we construct a machine D that does the opposite of what H predicts for its own description.",
+      "timeComplexity": "N/A - cannot exist",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Deciding Recursive Language",
+      "description": "How to decide a recursive (decidable) language - TM that always halts",
+      "code": "// L is recursive iff there exists TM M that always halts\nFUNCTION Decide_M(w):\n // Input: string w\n // Output: ACCEPT or REJECT (must halt)\n \n // Example: L = {w | w has equal 0s and 1s}\n count0 = 0\n count1 = 0\n \n FOR each character c in w:\n IF c == '0' THEN count0 = count0 + 1\n IF c == '1' THEN count1 = count1 + 1\n \n IF count0 == count1 THEN\n RETURN ACCEPT\n ELSE\n RETURN REJECT\n \n// This TM always halts - gives definitive yes/no answer\n// Language is RECURSIVE (decidable)",
+      "explanation": "A recursive language has a TM that always halts. For any input, it either accepts or rejects - no looping. This is the definition of decidability.",
+      "timeComplexity": "O(n) - linear scan",
+      "spaceComplexity": "O(1) - only counters"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Semi-Deciding RE Language",
+      "description": "TM that accepts strings in RE language but may loop on rejection",
+      "code": "// L is RE (recursively enumerable) iff TM accepts strings in L\n// May loop forever on strings not in L\nFUNCTION Accept_M(w):\n // Example: L = {⟨M, w⟩ | TM M accepts input w}\n // This is the Acceptance Problem A_TM\n \n // Simulate M on w\n state = M.start_state\n tape = w\n steps = 0\n \n WHILE steps < INFINITE:\n // Run M's transition function\n IF M.accepts THEN\n RETURN ACCEPT // Yes - halts and accepts\n IF M.rejects THEN\n RETURN REJECT // Actually, this is never reached for A_TM\n // A_TM may LOOP instead\n steps = steps + 1\n \n // If we reach here, M loops forever\n // Our TM also loops forever (doesn't halt)\n // This is okay for RE - we just don't give an answer\n \n// This TM is semi-decidable but NOT decidable",
+      "explanation": "An RE language has a TM that accepts all strings in L but may not halt on strings outside L. It may loop forever. The Acceptance Problem A_TM is the classic example of RE but not recursive.",
+      "timeComplexity": "May not halt - unbounded",
+      "spaceComplexity": "O(n) for simulation"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Deciding DFA Emptiness (Decidable)",
+      "description": "Algorithm to check if language of DFA is empty - always halts",
+      "code": "// Problem: Given DFA D, is L(D) = ∅?\n// This is DECIDABLE\n\nFUNCTION DFA_Empty(D):\n // Use reachability analysis\n \n // Step 1: Find all reachable states\n reachable = {D.start_state}\n queue = [D.start_state]\n \n WHILE queue is not empty:\n state = queue.pop()\n FOR each transition state' from state:\n IF state' not in reachable THEN\n reachable.add(state')\n queue.push(state')\n \n // Step 2: Check if any accepting state is reachable\n FOR each state in reachable:\n IF state in D.accepting_states THEN\n RETURN FALSE // L(D) is NOT empty\n \n RETURN TRUE // L(D) is empty - no accepting state reachable\n\n// This algorithm ALWAYS halts - DFA emptiness is decidable",
+      "explanation": "Unlike TM emptiness which is undecidable, DFA emptiness is easily decidable. We just need to check if any accepting state is reachable from the start state. This is a fundamental result: emptiness for regular languages is decidable.",
+      "timeComplexity": "O(n + m) where n=states, m=transitions",
+      "spaceComplexity": "O(n) for reachable set"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Proof by Reduction - A_TM to E_TM",
+      "description": "Showing how to reduce acceptance problem to emptiness problem",
+      "code": "// Goal: Show E_TM (emptiness) is undecidable\n// Reduction: If E_TM were decidable, then A_TM would be decidable\n\n// Assume we have a decider for E_TM called E\n// Construct decider for A_TM:\n\nFUNCTION Decide_A_TM(M, w):\n // Input: TM M and string w\n // Question: Does M accept w?\n \n // Step 1: Construct new TM M'\n M'.transitions = M.transitions\n M'.start_state = M.start_state\n \n // Modify M so it ONLY accepts if it would accept w\n ADD new accepting state A\n ADD new non-accepting state R\n \n FOR each original accepting state of M:\n change to transition to A\n \n ADD transition from A to A (stay in accepting)\n \n // M' halts and accepts iff M accepts w\n // M' runs forever (or rejects) otherwise\n \n // Step 2: Use E (emptiness decider)\n result = E(M') // Is L(M') empty?\n \n // Step 3: Translate result\n IF result == TRUE THEN\n // L(M') is empty → M does NOT accept w\n RETURN REJECT\n ELSE\n // L(M') is NOT empty → M accepts w\n RETURN ACCEPT\n\n// Since A_TM is undecidable, E_TM must be undecidable\n// This is reduction proof technique",
+      "explanation": "This shows how to prove undecidability by reduction. If we could decide emptiness (E_TM), we could decide acceptance (A_TM). Since A_TM is known undecidable, E_TM must also be undecidable. This is the standard technique for proving problems undecidable.",
+      "timeComplexity": "Depends on assumed E TM",
+      "spaceComplexity": "Depends on assumed E TM"
+    }
+  ]
+}

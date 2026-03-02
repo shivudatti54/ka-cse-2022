@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between the `find()` and `aggregate()` methods in the MongoDB Query Language. Provide a simple example use case for each.",
+    "expectedPoints": [
+      "The `find()` method is used for simple queries to retrieve documents based on specific field criteria, similar to a SELECT statement in SQL.",
+      "The `aggregate()` method is used for complex data processing and transformation, operating on a pipeline of stages to group, sort, project, and perform calculations on data.",
+      "Example: `find({status: 'active'})` to get all active users. Example: `aggregate([{$group: {_id: '$department', averageSalary: {$avg: '$salary'}}}])` to calculate the average salary per department."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose and function of the `$match`, `$group`, and `$project` stages within a MongoDB aggregation pipeline.",
+    "expectedPoints": [
+      "The `$match` stage filters documents to pass only those that meet the specified condition(s) to the next pipeline stage, reducing the amount of data processed.",
+      "The `$group` stage groups input documents by a specified identifier expression and applies accumulator expressions to each group (e.g., `$sum`, `$avg`, `$first`).",
+      "The `$project` stage reshapes each document by including, excluding, or adding new fields, allowing for renaming and the creation of computed values."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A retail company stores its sales data in a MongoDB collection named `transactions`. Each document has `date`, `product_category`, `quantity`, and `price` fields. Design a detailed aggregation pipeline to calculate the total revenue (quantity * price) for each product category for the current year (2024), then sort the categories from highest to lowest revenue.",
+    "expectedPoints": [
+      "Use a `$match` stage to filter documents for the year 2024, e.g., `{date: {$gte: ISODate('2024-01-01'), $lt: ISODate('2025-01-01')}}`.",
+      "Use a `$project` stage to calculate the revenue for each individual transaction by creating a new field: `{revenue: {$multiply: ['$quantity', '$price']}}` and include the `product_category` field.",
+      "Use a `$group` stage to sum the revenue by category: `{_id: '$product_category', totalRevenue: {$sum: '$revenue'}}`.",
+      "Use a `$sort` stage to order the results: `{totalRevenue: -1}`."
+    ],
+    "marks": 10
+  }
+]

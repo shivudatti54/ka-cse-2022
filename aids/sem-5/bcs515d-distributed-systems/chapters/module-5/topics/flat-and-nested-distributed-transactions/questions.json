@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the fundamental difference between a flat transaction and a nested transaction in a distributed system?",
+    "expectedPoints": [
+      "A flat transaction consists of a single, indivisible unit of work with a single 'begin' and 'commit/abort'.",
+      "A nested transaction is a transaction whose execution is decomposed into a tree of subtransactions, creating a hierarchy.",
+      "In nested transactions, subtransactions can commit or abort independently, but their effects only become permanent upon the commit of the top-level transaction."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain how a Two-Phase Commit (2PC) protocol would need to be adapted to support nested distributed transactions.",
+    "expectedPoints": [
+      "The coordinator for a subtransaction acts as a participant in its parent's transaction, creating a hierarchical communication structure.",
+      "A subtransaction can unilaterally abort, forcing the abort of its parent and siblings, but it cannot unilaterally commit; it only votes 'yes' to its parent.",
+      "The global commit decision is ultimately made by the coordinator of the top-level transaction and propagated down the transaction tree.",
+      "This adaptation increases complexity, as the protocol must manage dependencies and failure recovery across multiple levels of the hierarchy."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the advantages and disadvantages of using nested transactions versus flat transactions for structuring a complex, long-running business process across multiple distributed databases.",
+    "expectedPoints": [
+      "Advantage - Modularity and Fault Containment: Nested transactions allow parts of a transaction (subtransactions) to fail and be compensated for or retried without aborting the entire operation, improving availability and modular design.",
+      "Advantage - Concurrency: Subtransactions from the same parent can execute concurrently, increasing parallelism and potentially reducing overall execution time.",
+      "Disadvantage - Complexity: The coordination protocol (e.g., nested 2PC) is significantly more complex to implement and manage than for flat transactions, leading to higher overhead.",
+      "Disadvantage - Overhead: The additional communication required to manage the hierarchy of commits and aborts creates more network traffic and latency.",
+      "Conclusion: The choice depends on the application's needs: flat transactions offer simplicity for atomic units, while nested transactions offer flexibility and robustness for complex, composable processes at the cost of increased system complexity."
+    ],
+    "marks": 10
+  }
+]

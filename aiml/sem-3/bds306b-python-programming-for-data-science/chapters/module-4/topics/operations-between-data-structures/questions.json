@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the key differences in how addition (+) and multiplication (*) operations behave when performed between two Pandas Series objects versus two NumPy arrays. Provide a simple example for each case to illustrate the difference.",
+    "expectedPoints": [
+      "In Pandas Series, operations are performed index-aligned; values are matched by their index labels, and any index without a match results in a NaN.",
+      "In NumPy arrays, operations are performed element-wise based on position/order, and the arrays must be of the same shape or broadcastable.",
+      "For example, adding two Series with different, overlapping indexes performs a union of indexes, while adding two identically shaped NumPy arrays adds the first element to the first, second to the second, etc."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe what happens when you perform a subtraction operation between a Pandas DataFrame and a Pandas Series. What rule governs this operation?",
+    "expectedPoints": [
+      "The operation follows NumPy's broadcasting rules, but aligned on both the DataFrame's index and columns.",
+      "The Series index is aligned with the DataFrame's columns (axis=1).",
+      "The operation subtracts the Series element for a given column from every row in that column of the DataFrame."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A data scientist needs to multiply the values in a 2D NumPy array `A` (shape: 4x3) by a 1D array `v` (shape: 3,) containing three different scalar multipliers, one for each column. They also need to perform the same column-wise multiplication on a Pandas DataFrame `df` (also 4 rows x 3 columns) with the same data. Compare and contrast the two most idiomatic and efficient methods for performing this operation in each library, explaining how the underlying data structure dictates the approach.",
+    "expectedPoints": [
+      "For the NumPy array, the operation is a straightforward broadcast: `result = A * v` (or `np.multiply(A, v)`). The 1D array `v` is broadcast across the rows of `A` to perform element-wise multiplication for each column.",
+      "For the Pandas DataFrame, the Series `v_series` (created from `v`) must have its index aligned with the DataFrame's columns. The operation is `result_df = df * v_series` (or `df.mul(v_series, axis=1)`).",
+      "The key difference is that NumPy broadcasting is positional, while Pandas alignment is label-based. The NumPy operation relies on the matching second dimension (3), while the Pandas operation requires the Series index to match the DataFrame's column names, or it will fail or produce NaNs if there is a misalignment."
+    ],
+    "marks": 10
+  }
+]

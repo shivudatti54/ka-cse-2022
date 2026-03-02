@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "ER Model to Relational Schema Conversion",
+    "description": "Converting Entity Types to Relations",
+    "code": "// Converting Entity Type to Relation\nCREATE RELATION STUDENT(\n roll_no PRIMARY KEY,\n name VARCHAR(50),\n age INTEGER,\n dob DATE\n);\n\n// For Composite Attribute - only store simple components\nCREATE RELATION ADDRESS(\n student_id PRIMARY KEY,\n street VARCHAR(100),\n city VARCHAR(50),\n state VARCHAR(50),\n zip_code VARCHAR(10)\n);\n\n// For Multi-valued Attribute - create separate relation\nCREATE RELATION PHONE_NUMBERS(\n student_id,\n phone_number,\n PRIMARY KEY (student_id, phone_number)\n);",
+    "explanation": "Shows how ER model entities and attributes are converted to database tables. Simple and composite attributes are stored directly; multi-valued attributes require separate relations.",
+    "complexity": {
+      "time": "N/A",
+      "space": "N/A"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Identifying Weak Entity Relationships",
+    "description": "Converting Weak Entity Types to Relations",
+    "code": "// Strong Entity first\nCREATE RELATION EMPLOYEE(\n emp_id PRIMARY KEY,\n emp_name VARCHAR(50),\n salary INTEGER\n);\n\n// Weak Entity - includes owner's primary key\nCREATE RELATION DEPENDENT(\n emp_id,\n dependent_name,\n relationship VARCHAR(20),\n PRIMARY KEY (emp_id, dependent_name),\n FOREIGN KEY (emp_id) REFERENCES EMPLOYEE\n);",
+    "explanation": "Weak entities include the primary key of their owner entity as a foreign key. The combination becomes the composite primary key for the weak entity relation.",
+    "complexity": {
+      "time": "N/A",
+      "space": "N/A"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Representing Cardinality in Tables",
+    "description": "Converting relationship types to tables",
+    "code": "// 1:1 Relationship - embed foreign key\nCREATE RELATION PROFESSOR(\n prof_id PRIMARY KEY,\n name VARCHAR(50),\n dept_id FOREIGN KEY REFERENCES DEPARTMENT\n);\n\n// 1:N Relationship - foreign key on 'many' side\nCREATE RELATION DEPARTMENT(\n dept_id PRIMARY KEY,\n name VARCHAR(50)\n);\nCREATE RELATION STUDENT(\n roll_no PRIMARY KEY,\n name VARCHAR(50),\n dept_id FOREIGN KEY REFERENCES DEPARTMENT\n);\n\n// M:N Relationship - separate junction table\nCREATE RELATION ENROLLMENT(\n student_id,\n course_id,\n grade VARCHAR(5),\n PRIMARY KEY (student_id, course_id)\n);",
+    "explanation": "1:1 can embed FK in either table, 1:N places FK on 'many' side, M:N requires a separate junction table with combined primary key.",
+    "complexity": {
+      "time": "N/A",
+      "space": "N/A"
+    }
+  }
+]

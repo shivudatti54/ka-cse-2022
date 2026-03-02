@@ -1,0 +1,35 @@
+{
+  "topicId": "linked-lists",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Node Creation and Basic Operations",
+      "description": "Pseudocode for creating a linked list node and performing basic insertion operations",
+      "code": "STRUCTURE Node\n  DATA\n  NEXT POINTER\nEND STRUCTURE\n\nFUNCTION createNode(value)\n  newNode \u2190 ALLOCATE MEMORY\n  newNode.DATA \u2190 value\n  newNode.NEXT \u2190 NULL\n  RETURN newNode\nEND FUNCTION\n\nFUNCTION insertAtBeginning(head, value)\n  newNode \u2190 createNode(value)\n  newNode.NEXT \u2190 head\n  RETURN newNode\nEND FUNCTION\n\nFUNCTION insertAtEnd(head, value)\n  newNode \u2190 createNode(value)\n  IF head = NULL THEN\n    RETURN newNode\n  END IF\n  current \u2190 head\n  WHILE current.NEXT \u2260 NULL DO\n    current \u2190 current.NEXT\n  END WHILE\n  current.NEXT \u2190 newNode\n  RETURN head\nEND FUNCTION\n\nFUNCTION deleteFirstNode(head)\n  IF head = NULL THEN\n    RETURN NULL\n  END IF\n  temp \u2190 head\n  head \u2190 head.NEXT\n  FREE temp\n  RETURN head\nEND FUNCTION",
+      "explanation": "This pseudocode demonstrates fundamental linked list operations including node creation, insertion at beginning (O(1)), insertion at end (O(n)), and deletion from beginning (O(1)). The createNode function allocates memory and initializes a new node.",
+      "timeComplexity": "Insert at beginning: O(1), Insert at end: O(n), Delete first: O(1)",
+      "spaceComplexity": "O(1) for all operations (excluding input storage)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Linked List Implementation in C",
+      "description": "Complete C program demonstrating singly linked list with insertion and display functions",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    int data;\n    struct Node* next;\n};\n\n// Create a new node\nstruct Node* createNode(int value) {\n    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));\n    newNode->data = value;\n    newNode->next = NULL;\n    return newNode;\n}\n\n// Insert at beginning\nstruct Node* insertAtBeginning(struct Node* head, int value) {\n    struct Node* newNode = createNode(value);\n    newNode->next = head;\n    return newNode;\n}\n\n// Insert at end\nstruct Node* insertAtEnd(struct Node* head, int value) {\n    struct Node* newNode = createNode(value);\n    if (head == NULL) return newNode;\n    \n    struct Node* current = head;\n    while (current->next != NULL) {\n        current = current->next;\n    }\n    current->next = newNode;\n    return head;\n}\n\n// Display list\nvoid display(struct Node* head) {\n    struct Node* current = head;\n    while (current != NULL) {\n        printf(\"%d -> \", current->data);\n        current = current->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main() {\n    struct Node* head = NULL;\n    head = insertAtEnd(head, 10);\n    head = insertAtEnd(head, 20);\n    head = insertAtEnd(head, 30);\n    head = insertAtBeginning(head, 5);\n    display(head);  // Output: 5 -> 10 -> 20 -> 30 -> NULL\n    return 0;\n}",
+      "explanation": "This C program shows practical implementation of singly linked list. It uses malloc() for dynamic memory allocation, struct for node definition with self-referential pointer, and demonstrates both insertion at beginning and end. The display function traverses the list until NULL is reached.",
+      "timeComplexity": "insertAtEnd: O(n), insertAtBeginning: O(1), display: O(n)",
+      "spaceComplexity": "O(n) where n is number of nodes (excluding function overhead)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Doubly Linked List in Python",
+      "description": "Python implementation of doubly linked list with bidirectional traversal",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.prev = None\n        self.next = None\n\nclass DoublyLinkedList:\n    def __init__(self):\n        self.head = None\n        self.tail = None\n    \n    def insert_at_beginning(self, value):\n        new_node = Node(value)\n        if self.head is None:\n            self.head = self.tail = new_node\n        else:\n            new_node.next = self.head\n            self.head.prev = new_node\n            self.head = new_node\n    \n    def insert_at_end(self, value):\n        new_node = Node(value)\n        if self.tail is None:\n            self.head = self.tail = new_node\n        else:\n            new_node.prev = self.tail\n            self.tail.next = new_node\n            self.tail = new_node\n    \n    def delete_from_beginning(self):\n        if self.head is None:\n            return\n        if self.head == self.tail:\n            self.head = self.tail = None\n        else:\n            self.head = self.head.next\n            self.head.prev = None\n    \n    def display_forward(self):\n        current = self.head\n        while current:\n            print(current.data, end=\" <-> \")\n            current = current.next\n        print(\"None\")\n    \n    def display_backward(self):\n        current = self.tail\n        while current:\n            print(current.data, end=\" <-> \")\n            current = current.prev\n        print(\"None\")\n\n# Usage\ndll = DoublyLinkedList()\ndll.insert_at_end(10)\ndll.insert_at_end(20)\ndll.insert_at_beginning(5)\ndll.display_forward()   # 5 <-> 10 <-> 20 <-> None\ndll.display_backward()  # 20 <-> 10 <-> 5 <-> None",
+      "explanation": "This Python implementation shows doubly linked list with both head and tail pointers for O(1) operations at both ends. Each node has prev and next pointers. The display_forward and display_backward methods demonstrate bidirectional traversal capability.",
+      "timeComplexity": "insert_at_beginning: O(1), insert_at_end: O(1), delete_from_beginning: O(1), display: O(n)",
+      "spaceComplexity": "O(n) for storage, O(1) for operations (excluding node creation)",
+      "language": "pseudocode"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "huffman-trees-and-codes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Huffman Coding Algorithm",
+      "description": "Greedy algorithm to build optimal prefix codes",
+      "code": "// Input: Array of characters with frequencies\n// Output: Huffman codes for each character\n\nBUILD-HUFFMAN-TREE(frequencies):\n n = number of distinct characters\n \n // Create min-priority queue Q\n Q = PRIORITY-QUEUE()\n \n for each character c in frequencies:\n node = NODE(character=c, frequency=freq[c])\n Q.INSERT(node)\n \n // Build tree with n-1 merges\n for i = 1 to n-1:\n // Extract two minimum frequency nodes\n z = NODE(internal node)\n z.left = x = Q.EXTRACT-MIN()\n z.right = y = Q.EXTRACT-MIN()\n \n // Set combined frequency\n z.frequency = x.frequency + y.frequency\n \n // Insert new node back to queue\n Q.INSERT(z)\n \n // Return the single node remaining (root)\n return Q.EXTRACT-MIN()\n\n// To generate codes\nASSIGN-CODES(node, code=\"\"):\n if node is leaf:\n print node.character + \": \" + code\n else:\n ASSIGN-CODES(node.left, code + \"0\")\n ASSIGN-CODES(node.right, code + \"1\")",
+      "explanation": "The algorithm uses a min-heap to repeatedly extract the two nodes with minimum frequency, creates an internal node with their sum, and inserts it back. This greedy approach ensures optimal weighted path length.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Huffman Decoding Algorithm",
+      "description": "Process of decoding Huffman-encoded message",
+      "code": "// Input: Encoded bit string and Huffman tree root\n// Output: Original message\n\nDECODE(encodedBits, root):\n currentNode = root\n output = \"\"\n \n for each bit in encodedBits:\n if bit == '0':\n currentNode = currentNode.left\n else: // bit == '1'\n currentNode = currentNode.right\n \n // Check if leaf node reached\n if currentNode is leaf:\n output += currentNode.character\n currentNode = root // Reset to root\n \n return output\n\n// Example usage:\n// Encoded: 01101010\n// Tree: A=0, B=10, C=110, D=111\n// Decoded: A B A C A B A",
+      "explanation": "Start at root, follow 0 for left and 1 for right. When a leaf is reached, output the character and return to root. Since codes are prefix-free, decoding is unambiguous.",
+      "timeComplexity": "O(m) where m = length of encoded bits",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Optimal Merge Pattern using Huffman",
+      "description": "Solving file merge problem optimally",
+      "code": "// Problem: Merge n files with sizes s1, s2, ..., sn\n// Goal: Minimize total merge cost\n\nOPTIMAL-MERGE(files):\n // Create min-heap of all file sizes\n Q = PRIORITY-QUEUE()\n \n for each file size in files:\n Q.INSERT(file size)\n \n totalCost = 0\n \n // While more than one file remains\n while Q.SIZE() > 1:\n // Extract two smallest files\n file1 = Q.EXTRACT-MIN()\n file2 = Q.EXTRACT-MIN()\n \n // Merge cost = sum of both file sizes\n mergedCost = file1 + file2\n totalCost += mergedCost\n \n // Insert merged file back\n Q.INSERT(mergedCost)\n \n return totalCost\n\n// Example:\n// Files: [20, 15, 10, 5, 25]\n// Step 1: Merge 5+10=15, cost=15, Q=[15,15,20,25]\n// Step 2: Merge 15+15=30, cost=30, Q=[20,25,30]\n// Step 3: Merge 20+25=45, cost=45, Q=[30,45]\n// Step 4: Merge 30+45=75, cost=75, Q=[75]\n// Total Cost = 165",
+      "explanation": "This is exactly the Huffman algorithm applied to the optimal merge pattern problem. The greedy choice of always merging the two smallest files first minimizes the total cost of all merges.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction-to-operating-systems",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Process Creation using System Call",
+      "description": "Demonstrates how system calls work in OS - creating a new process using fork()",
+      "code": "SYSTEM CALL CreateProcess\nBEGIN\n  // User program requests new process via system call\n  PRINT \"Parent Process: Requesting new process...\"\n  \n  // Kernel creates process control block (PCB)\n  pcb = ALLOCATE_PROCESS_CONTROL_BLOCK()\n  pcb.process_id = GENERATE_UNIQUE_ID()\n  pcb.state = READY\n  pcb.program_counter = ADDRESS_OF_MAIN\n  \n  // Allocate memory for new process\n  pcb.memory_address = ALLOCATE_MEMORY(process_size)\n  \n  // Copy parent process to child\n  COPY_MEMORY(parent_process, pcb.memory_address)\n  \n  // Add to ready queue\n  ADD_TO_READY_QUEUE(pcb)\n  \n  RETURN pcb.process_id\nEND",
+      "explanation": "This pseudocode demonstrates the system call mechanism where a user program requests the OS kernel to create a new process. The kernel allocates resources (PCB, memory), initializes the process control block, and adds it to the ready queue for CPU scheduling.",
+      "timeComplexity": "O(n) where n is process memory size",
+      "spaceComplexity": "O(n) where n is size of PCB + process memory"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Memory Allocation Simulation",
+      "description": "Simple simulation of how OS allocates memory to processes",
+      "code": "class MemoryManager:\n    def __init__(self, total_memory):\n        self.total_memory = total_memory\n        self.free_memory = total_memory\n        self.allocated_blocks = {}\n    \n    def allocate(self, process_id, size):\n        # Check if enough memory available\n        if self.free_memory >= size:\n            # Find first-fit memory block\n            address = self.total_memory - self.free_memory\n            self.allocated_blocks[process_id] = {\n                'address': address,\n                'size': size,\n                'status': 'allocated'\n            }\n            self.free_memory -= size\n            return f\"Memory allocated: {address} to {address + size}\"\n        else:\n            # Perform swapping or show error\n            return \"Insufficient memory\"\n    \n    def deallocate(self, process_id):\n        if process_id in self.allocated_blocks:\n            size = self.allocated_blocks[process_id]['size']\n            del self.allocated_blocks[process_id]\n            self.free_memory += size\n            return f\"Process {process_id} memory freed\"\n        return \"Process not found\"\n\n# Usage demonstration\nmm = MemoryManager(1000)\nprint(mm.allocate(\"P1\", 200))  # Allocate 200 bytes\nprint(mm.allocate(\"P2\", 300))  # Allocate 300 bytes\nprint(mm.deallocate(\"P1\"))     # Free P1 memory",
+      "explanation": "This Python code simulates basic memory management functions of an OS. It demonstrates allocation (finding space for processes), tracking allocated memory blocks, and deallocation (freeing memory when process completes). The 'first-fit' allocation strategy is shown here.",
+      "timeComplexity": "O(1) for allocation and deallocation",
+      "spaceComplexity": "O(k) where k is number of processes"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "CPU Scheduling Simulation (Round Robin)",
+      "description": "Demonstrates time-sharing concept where CPU time is divided into quantum slices",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_PROCESSES 5\n#define TIME_QUANTUM 4\n\nstruct Process {\n    int pid;\n    int burst_time;\n    int remaining_time;\n    int waiting_time;\n    int turnaround_time;\n};\n\nvoid roundRobinScheduling(struct Process processes[], int n) {\n    int time = 0;\n    int completed = 0;\n    \n    printf(\"\\n=== Round Robin Scheduling (Quantum = %d) ===\\n\", TIME_QUANTUM);\n    \n    while (completed < n) {\n        for (int i = 0; i < n; i++) {\n            if (processes[i].remaining_time > 0) {\n                // Execute process for time quantum or remaining time\n                int execute_time = (processes[i].remaining_time >= TIME_QUANTUM) \n                                   ? TIME_QUANTUM : processes[i].remaining_time;\n                \n                processes[i].remaining_time -= execute_time;\n                time += execute_time;\n                \n                printf(\"Time %d-%d: Process P%d (Remaining: %d)\\n\", \n                       time-execute_time, time, processes[i].pid, \n                       processes[i].remaining_time);\n                \n                // Check if process completed\n                if (processes[i].remaining_time == 0) {\n                    processes[i].turnaround_time = time;\n                    processes[i].waiting_time = time - processes[i].burst_time;\n                    completed++;\n                }\n            }\n        }\n    }\n}\n\nint main() {\n    struct Process processes[] = {\n        {1, 10, 10, 0, 0},\n        {2, 5, 5, 0, 0},\n        {3, 8, 8, 0, 0}\n    };\n    \n    int n = sizeof(processes) / sizeof(processes[0]);\n    \n    roundRobinScheduling(processes, n);\n    \n    // Calculate average waiting time\n    float total_waiting = 0;\n    for (int i = 0; i < n; i++) {\n        total_waiting += processes[i].waiting_time;\n    }\n    \n    printf(\"\\nAverage Waiting Time: %.2f\\n\", total_waiting / n);\n    \n    return 0;\n}",
+      "explanation": "This C program simulates Round Robin CPU scheduling, a key algorithm in time-sharing operating systems. Each process gets equal time slice (quantum) on the CPU. This ensures no process monopolizes the CPU and provides fair time-sharing among multiple processes.",
+      "timeComplexity": "O(n * q) where n is number of processes and q is time quantum",
+      "spaceComplexity": "O(n) for storing process information"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Device Driver Interface",
+      "description": "Shows how OS manages I/O devices through device drivers",
+      "code": "ALGORITHM DeviceDriverRead\nBEGIN\n  // User requests to read from device (e.g., read from keyboard)\n  \n  // Step 1: User program calls read system call\n  buffer = READ_FROM_DEVICE(device_id, size)\n  \n  // Step 2: OS kernel receives request\n  IF NOT user_has_permission(device_id) THEN\n    RETURN ERROR_ACCESS_DENIED\n  ENDIF\n  \n  // Step 3: Device driver prepares device control register\n  device_controller = GET_DEVICE_CONTROLLER(device_id)\n  device_controller.command_register = READ_COMMAND\n  device_controller.address_register = MEMORY_BUFFER_ADDRESS\n  device_controller.count_register = size\n  \n  // Step 4: Initiate I/O operation\n  device_controller.status_register = START_I/O\n  \n  // Step 5: CPU can switch to another process (non-blocking)\n  // OR wait for interrupt (blocking)\n  \n  // Step 6: When I/O complete, device raises interrupt\n  INTERRUPT_HANDLER(device_id)\n    // Copy data from device buffer to user memory\n    COPY_DATA_TO_USER(buffer, user_memory)\n    // Wake up waiting process\n    UNBLOCK_PROCESS(requesting_process)\n  END_INTERRUPT\n  \n  RETURN SUCCESS\nEND",
+      "explanation": "This pseudocode demonstrates how operating systems manage I/O devices through device drivers. The driver acts as an intermediary between user applications and hardware devices, handling commands, managing buffers, and processing interrupts to complete I/O operations efficiently.",
+      "timeComplexity": "O(1) for command preparation, variable for I/O completion",
+      "spaceComplexity": "O(n) for buffer allocation"
+    }
+  ]
+}

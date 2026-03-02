@@ -1,0 +1,45 @@
+{
+  "topicId": "process-scheduling-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FCFS Scheduling Algorithm",
+      "description": "Implementation of First Come First Serve non-preemptive scheduling",
+      "code": "def fcfs_scheduling(processes):\n    # processes: list of tuples (pid, arrival_time, burst_time)\n    processes.sort(key=lambda x: x[1])  # Sort by arrival time\n    current_time = 0\n    total_waiting_time = 0\n    total_turnaround_time = 0\n    \n    for pid, at, bt in processes:\n        if current_time < at:\n            current_time = at\n        waiting_time = current_time - at\n        turnaround_time = waiting_time + bt\n        current_time += bt\n        \n        total_waiting_time += waiting_time\n        total_turnaround_time += turnaround_time\n    \n    n = len(processes)\n    print(f\"Average Waiting Time: {total_waiting_time/n}\")\n    print(f\"Average Turnaround Time: {total_turnaround_time/n}\")\n\n# Example: [(pid, arrival_time, burst_time)]\nprocesses = [(1, 0, 10), (2, 1, 5), (3, 2, 8)]\nfcfs_scheduling(processes)",
+      "explanation": "This FCFS implementation sorts processes by arrival time and executes them in order. Each process waits from its arrival until CPU becomes free, then executes for its full burst time.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "SJF Non-Preemptive Scheduling",
+      "description": "Implementation of Shortest Job First scheduling",
+      "code": "def sjf_non_preemptive(processes):\n    # processes: list of tuples (pid, arrival_time, burst_time)\n    processes.sort(key=lambda x: x[1])  # Sort by arrival\n    result = []\n    current_time = 0\n    completed = 0\n    n = len(processes)\n    \n    while completed < n:\n        # Find shortest job among arrived processes\n        ready_processes = [p for p in processes \n                          if p[1] <= current_time and p not in result]\n        \n        if ready_processes:\n            # Select shortest burst time\n            shortest = min(ready_processes, key=lambda x: x[2])\n            result.append(shortest)\n            \n            waiting_time = current_time - shortest[1]\n            turnaround_time = waiting_time + shortest[2]\n            current_time += shortest[2]\n            completed += 1\n        else:\n            current_time += 1\n    \n    return result\n\nprocesses = [(1, 0, 7), (2, 1, 4), (3, 2, 1), (4, 3, 4)]\nexecution_order = sjf_non_preemptive(processes)",
+      "explanation": "SJF selects the process with minimum burst time from all arrived processes. It minimizes average waiting time but requires knowledge of burst times in advance.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Round Robin Scheduling",
+      "description": "Implementation of Round Robin with time quantum",
+      "code": "def round_robin(processes, quantum):\n    # processes: list of tuples (pid, arrival_time, burst_time)\n    from collections import deque\n    \n    # Sort by arrival and add to queue\n    processes.sort(key=lambda x: x[1])\n    ready_queue = deque()\n    \n    # Track remaining burst times\n    remaining = {p[0]: p[2] for p in processes}\n    \n    current_time = 0\n    completed = []\n    i = 0  # Index for new arrivals\n    n = len(processes)\n    \n    ready_queue.append(processes[0])\n    i = 1\n    \n    while ready_queue:\n        pid, at, bt = ready_queue.popleft()\n        \n        # Execute for quantum or remaining time\n        exec_time = min(quantum, remaining[pid])\n        remaining[pid] -= exec_time\n        current_time += exec_time\n        \n        # Add newly arrived processes to queue\n        while i < n and processes[i][1] <= current_time:\n            ready_queue.append(processes[i])\n            i += 1\n        \n        # If not completed, add back to queue\n        if remaining[pid] > 0:\n            ready_queue.append((pid, at, bt))\n        else:\n            turnaround = current_time - at\n            waiting = turnaround - bt\n            completed.append((pid, waiting, turnaround))\n    \n    # Print results\n    for pid, wt, tat in completed:\n        print(f\"P{pid}: WT={wt}, TAT={tat}\")\n\nprocesses = [(1, 0, 10), (2, 1, 5), (3, 2, 8)]\nround_robin(processes, quantum=4)",
+      "explanation": "Round Robin uses a ready queue and time quantum. Each process executes for at most quantum time, then moves to queue end. Ensures fairness and good response time.",
+      "timeComplexity": "O(n \u00d7 (burst_time/quantum))",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Priority Scheduling (Preemptive)",
+      "description": "C implementation of preemptive priority scheduling",
+      "code": "#include <stdio.h>\n#include <limits.h>\n\nstruct Process {\n    int pid, arrival, burst, priority;\n    int remaining, completion, waiting, turnaround;\n};\n\nvoid priority_scheduling(struct Process p[], int n) {\n    int current_time = 0, completed = 0;\n    \n    while (completed < n) {\n        // Find highest priority process in ready queue\n        int highest_priority = INT_MAX;\n        int idx = -1;\n        \n        for (int i = 0; i < n; i++) {\n            if (p[i].arrival <= current_time && \n                p[i].remaining > 0 &&\n                p[i].priority < highest_priority) {\n                highest_priority = p[i].priority;\n                idx = i;\n            }\n        }\n        \n        if (idx == -1) {\n            current_time++;\n            continue;\n        }\n        \n        // Execute for 1 time unit (preemptive)\n        p[idx].remaining--;\n        current_time++;\n        \n        if (p[idx].remaining == 0) {\n            p[idx].completion = current_time;\n            p[idx].turnaround = p[idx].completion - p[idx].arrival;\n            p[idx].waiting = p[idx].turnaround - p[idx].burst;\n            completed++;\n        }\n    }\n}\n\nint main() {\n    struct Process p[] = {\n        {1, 0, 10, 2},  // pid, arrival, burst, priority\n        {2, 1, 5, 1},\n        {3, 2, 8, 3}\n    };\n    int n = 3;\n    priority_scheduling(p, n);\n    return 0;\n}",
+      "explanation": "This preemptive priority scheduling selects the highest priority ready process at each time unit. If a higher priority process arrives, it preempts the currently running process.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

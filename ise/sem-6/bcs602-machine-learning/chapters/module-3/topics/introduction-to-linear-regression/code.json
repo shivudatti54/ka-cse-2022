@@ -1,0 +1,35 @@
+{
+  "topicId": "linear-regression",
+  "examples": [
+    {
+      "id": "linear-regression-from-scratch",
+      "title": "Linear Regression from Scratch",
+      "description": "Implementing gradient descent for linear regression in Python.",
+      "language": "python",
+      "code": "import numpy as np\n\nclass LinearRegression:\n    def __init__(self, learning_rate=0.01, n_iterations=1000):\n        self.lr = learning_rate\n        self.n_iterations = n_iterations\n        self.weights = None\n        self.bias = None\n    \n    def fit(self, X, y):\n        n_samples, n_features = X.shape\n        self.weights = np.zeros(n_features)\n        self.bias = 0\n        \n        for _ in range(self.n_iterations):\n            y_pred = np.dot(X, self.weights) + self.bias\n            \n            # Gradients\n            dw = (1/n_samples) * np.dot(X.T, (y_pred - y))\n            db = (1/n_samples) * np.sum(y_pred - y)\n            \n            # Update parameters\n            self.weights -= self.lr * dw\n            self.bias -= self.lr * db\n    \n    def predict(self, X):\n        return np.dot(X, self.weights) + self.bias\n\n# Example usage\nX = np.array([[1], [2], [3], [4], [5]])\ny = np.array([2, 4, 5, 4, 5])\n\nmodel = LinearRegression(learning_rate=0.1, n_iterations=1000)\nmodel.fit(X, y)\nprint(f\"Weight: {model.weights[0]:.2f}, Bias: {model.bias:.2f}\")\nprint(f\"Prediction for x=6: {model.predict(np.array([[6]]))[0]:.2f}\")",
+      "explanation": "Gradient descent iteratively adjusts weights and bias to minimize MSE. The gradient tells us the direction of steepest increase, so we move opposite to it.",
+      "timeComplexity": "O(n * d * iterations)",
+      "spaceComplexity": "O(d)"
+    },
+    {
+      "id": "sklearn-linear-regression",
+      "title": "Linear Regression with scikit-learn",
+      "description": "Using scikit-learn for practical linear regression with evaluation.",
+      "language": "python",
+      "code": "from sklearn.linear_model import LinearRegression, Ridge, Lasso\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport numpy as np\n\n# Generate sample data\nnp.random.seed(42)\nX = np.random.randn(100, 3)  # 100 samples, 3 features\ny = 3*X[:, 0] + 2*X[:, 1] - X[:, 2] + np.random.randn(100) * 0.5\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\n\n# Standard Linear Regression\nlr = LinearRegression()\nlr.fit(X_train, y_train)\ny_pred = lr.predict(X_test)\nprint(f\"Linear Regression R^2: {r2_score(y_test, y_pred):.4f}\")\nprint(f\"Coefficients: {lr.coef_}\")\n\n# Ridge Regression (L2 regularization)\nridge = Ridge(alpha=1.0)\nridge.fit(X_train, y_train)\nprint(f\"Ridge R^2: {r2_score(y_test, ridge.predict(X_test)):.4f}\")\n\n# Lasso Regression (L1 regularization)\nlasso = Lasso(alpha=0.1)\nlasso.fit(X_train, y_train)\nprint(f\"Lasso R^2: {r2_score(y_test, lasso.predict(X_test)):.4f}\")\nprint(f\"Lasso coefficients: {lasso.coef_}\")  # Some may be exactly 0",
+      "explanation": "scikit-learn provides optimized implementations. Ridge prevents overfitting with L2 penalty; Lasso does feature selection with L1 penalty.",
+      "timeComplexity": "O(n * d^2) using normal equation",
+      "spaceComplexity": "O(d^2)"
+    },
+    {
+      "id": "linear-regression-java",
+      "title": "Simple Linear Regression in Java",
+      "description": "Java implementation using the normal equation for single feature.",
+      "language": "java",
+      "code": "public class SimpleLinearRegression {\n    private double slope;\n    private double intercept;\n    \n    public void fit(double[] x, double[] y) {\n        int n = x.length;\n        double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;\n        \n        for (int i = 0; i < n; i++) {\n            sumX += x[i];\n            sumY += y[i];\n            sumXY += x[i] * y[i];\n            sumX2 += x[i] * x[i];\n        }\n        \n        // Normal equation solution\n        double denominator = n * sumX2 - sumX * sumX;\n        slope = (n * sumXY - sumX * sumY) / denominator;\n        intercept = (sumY - slope * sumX) / n;\n    }\n    \n    public double predict(double x) {\n        return slope * x + intercept;\n    }\n    \n    public double mse(double[] x, double[] y) {\n        double sum = 0;\n        for (int i = 0; i < x.length; i++) {\n            double error = y[i] - predict(x[i]);\n            sum += error * error;\n        }\n        return sum / x.length;\n    }\n    \n    public static void main(String[] args) {\n        double[] x = {1, 2, 3, 4, 5};\n        double[] y = {2.2, 4.1, 5.9, 8.0, 9.8};\n        \n        SimpleLinearRegression model = new SimpleLinearRegression();\n        model.fit(x, y);\n        \n        System.out.printf(\"y = %.2fx + %.2f%n\", model.slope, model.intercept);\n        System.out.printf(\"Prediction for x=6: %.2f%n\", model.predict(6));\n        System.out.printf(\"MSE: %.4f%n\", model.mse(x, y));\n    }\n}",
+      "explanation": "The normal equation provides a closed-form solution. For simple linear regression: slope = Cov(x,y)/Var(x), intercept = mean(y) - slope*mean(x).",
+      "timeComplexity": "O(n) for simple linear regression",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

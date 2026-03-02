@@ -1,0 +1,45 @@
+{
+  "topicId": "chdir",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic chdir and getcwd Usage",
+      "description": "Demonstrates changing directory and getting current directory with error handling",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <errno.h>\n#include <limits.h>\n\nint main() {\n char cwd[PATH_MAX];\n \n // Get and display initial working directory\n if (getcwd(cwd, sizeof(cwd)) != NULL) {\n printf(\"Initial CWD: %s\\n\", cwd);\n } else {\n perror(\"getcwd() error\");\n return 1;\n }\n \n // Try to change directory\n if (chdir(\"/tmp\") == 0) {\n printf(\"Successfully changed to /tmp\\n\");\n \n // Verify the change\n if (getcwd(cwd, sizeof(cwd)) != NULL) {\n printf(\"New CWD: %s\\n\", cwd);\n }\n } else {\n // Handle different error cases\n switch(errno) {\n case ENOENT:\n perror(\"Directory doesn't exist\");\n break;\n case EACCES:\n perror(\"Permission denied\");\n break;\n case ENOTDIR:\n perror(\"Path component is not a directory\");\n break;\n default:\n perror(\"chdir() error\");\n }\n return 1;\n }\n \n return 0;\n}",
+      "explanation": "This program first retrieves the current working directory using getcwd(), then attempts to change to /tmp using chdir(). It demonstrates proper error handling by checking return values and using errno to determine the specific cause of failure.",
+      "timeComplexity": "O(n) where n is path length",
+      "spaceComplexity": "O(PATH_MAX) for cwd buffer"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Using fchdir System Call",
+      "description": "Demonstrates fchdir which uses file descriptor instead of pathname",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <errno.h>\n\nint main() {\n int dir_fd;\n \n // Open a directory using open() system call\n dir_fd = open(\"/home\", O_RDONLY | O_DIRECTORY);\n if (dir_fd == -1) {\n perror(\"Failed to open directory\");\n return 1;\n }\n \n printf(\"Directory opened with fd: %d\\n\", dir_fd);\n \n // Change to that directory using file descriptor\n if (fchdir(dir_fd) == 0) {\n printf(\"Successfully changed to /home using fchdir\\n\");\n \n char cwd[256];\n if (getcwd(cwd, sizeof(cwd)) != NULL) {\n printf(\"Current directory: %s\\n\", cwd);\n }\n } else {\n perror(\"fchdir failed\");\n }\n \n // Close the directory file descriptor\n close(dir_fd);\n return 0;\n}",
+      "explanation": "fchdir() is similar to chdir() but takes an open file descriptor to a directory instead of a pathname. This can be more efficient in certain scenarios, especially when the directory is already open. The O_DIRECTORY flag ensures we only open directories, not regular files.",
+      "timeComplexity": "O(1) for fchdir (no path resolution needed)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Daemon Process with chdir",
+      "description": "Shows daemon calling chdir to root to allow filesystem unmount",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <sys/stat.h>\n#include <fcntl.h>\n#include <stdlib.h>\n\nvoid daemonize() {\n pid_t pid;\n \n // Fork to create background process\n pid = fork();\n if (pid < 0) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n // Parent exits\n exit(EXIT_SUCCESS);\n }\n \n // Child becomes session leader\n if (setsid() < 0) {\n perror(\"setsid failed\");\n exit(EXIT_FAILURE);\n }\n \n // Second fork to prevent acquiring a controlling terminal\n pid = fork();\n if (pid < 0) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n if (pid > 0) {\n exit(EXIT_SUCCESS);\n }\n \n // CRITICAL: Change to root directory\n // This prevents blocking filesystem unmount\n if (chdir(\"/\") == -1) {\n perror(\"chdir to / failed\");\n }\n \n // Close standard file descriptors\n close(STDIN_FILENO);\n close(STDOUT_FILENO);\n close(STDERR_FILENO);\n \n // Redirect to /dev/null\n open(\"/dev/null\", O_RDONLY); // stdin\n open(\"/dev/null\", O_WRONLY); // stdout\n open(\"/dev/null\", O_WRONLY); // stderr\n \n printf(\"Daemon running with PID: %d\\n\", getpid());\n}\n\nint main() {\n daemonize();\n // Daemon continues running in background\n while(1) {\n sleep(60);\n }\n return 0;\n}",
+      "explanation": "This daemon process demonstrates proper daemon initialization. The chdir(\"/\") call is critical because if the daemon started in a directory on a mounted filesystem, that filesystem cannot be unmounted until the daemon exits. By changing to root (/), the daemon doesn't prevent any filesystem from being unmounted.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "chdir Path Resolution Algorithm",
+      "description": "Pseudo-code showing how kernel resolves path for chdir",
+      "code": "FUNCTION chdir(pathname):\n // Step 1: Parse the pathname\n IF pathname starts with '/' THEN\n start_directory = root\n relative_path = pathname without leading '/'\n ELSE\n start_directory = current_process.CWD\n relative_path = pathname\n END IF\n \n // Step 2: Split into components\n components = split(relative_path, '/')\n \n // Step 3: Traverse each component\n current = start_directory\n FOR EACH component IN components:\n IF component == '.' OR component == '' THEN\n CONTINUE // Skip current directory or empty\n ELSE IF component == '..' THEN\n current = current.parent\n ELSE\n // Check if component exists and is directory\n IF NOT exists(current, component) THEN\n RETURN ERROR(ENOENT)\n END IF\n IF NOT is_directory(current, component) THEN\n RETURN ERROR(ENOTDIR)\n END IF\n IF NOT has_execute_permission(current_user, current, component) THEN\n RETURN ERROR(EACCES)\n END IF\n current = get_inode(current, component)\n END IF\n END FOR\n \n // Step 4: Update process CWD\n current_process.CWD = current\n RETURN SUCCESS(0)\nEND FUNCTION",
+      "explanation": "This pseudocode shows how the kernel processes a chdir call: it parses the pathname to determine if it's absolute or relative, then traverses each component checking existence, type (must be directory), and permissions. Finally, it updates the process's CWD to the new directory inode.",
+      "timeComplexity": "O(d) where d is number of path components",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

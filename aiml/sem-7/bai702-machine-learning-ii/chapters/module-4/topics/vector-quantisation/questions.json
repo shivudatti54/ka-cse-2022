@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary objective of the Vector Quantisation (VQ) process and describe one fundamental way it differs from a standard autoencoder.",
+    "expectedPoints": [
+      "The primary objective of Vector Quantisation is to map high-dimensional input vectors (data points) onto a finite set of representative vectors, known as codebook vectors or prototypes, that constitute a discrete latent space.",
+      "This process aims to capture the underlying data distribution and reduce dimensionality by representing the data with a limited set of codes, effectively compressing the data.",
+      "A fundamental difference from a standard autoencoder is that while a standard autoencoder's latent space is continuous, allowing for any value, VQ imposes a discrete latent space where inputs are mapped to one of a finite number of discrete codes."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the core mechanism of the 'Vector Quantisation' layer in a VQ-VAE. What are the inputs and outputs of this layer, and what is the primary challenge it introduces for gradient-based learning?",
+    "expectedPoints": [
+      "The VQ layer's core mechanism is a nearest-neighbor lookup using a shared codebook (or embedding space). It takes a continuous encoder output vector as input.",
+      "It calculates the Euclidean distance between the input vector and every codebook vector (embedding), selects the closest one (the quantised vector), and outputs this selected vector.",
+      "The primary challenge is that the argmin operation used for the selection is non-differentiable, breaking the gradient flow from the decoder back to the encoder during training."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A critic argues that the straight-through estimator used in the VQ-VAE is a 'hack' that undermines the mathematical rigor of gradient descent. Detail the purpose of the straight-through estimator in the VQ-VAE's backward pass and present a counter-argument for why it is a valid and effective approximation despite its simplicity.",
+    "expectedPoints": [
+      "Purpose: The straight-through estimator addresses the non-differentiability of the VQ layer's argmin/quantisation operation. In the backward pass, it simply copies the gradients from the decoder's input (the quantised vector) directly back to the encoder's output (the pre-quantised vector), bypassing the non-differentiable operation entirely.",
+      "Counter-argument - Validity: While an approximation, it is valid because it assumes the gradient of the loss with respect to the encoder output is similar to its gradient with respect to the selected codebook vector. This encourages the encoder to output vectors that move closer to the desired codebook vector, effectively performing a form of gradient descent on the distance between them.",
+      "Counter-argument - Effectiveness: It is highly effective in practice, as evidenced by the model's ability to learn meaningful discrete representations and generate high-quality reconstructions and samples. The commitment loss (or codebook loss) works in tandem with the straight-through estimator by directly pulling codebook vectors towards encoder outputs, ensuring the approximation remains stable and the embeddings learn useful representations."
+    ],
+    "marks": 10
+  }
+]

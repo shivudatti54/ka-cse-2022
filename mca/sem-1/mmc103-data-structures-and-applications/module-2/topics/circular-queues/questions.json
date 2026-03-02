@@ -1,0 +1,92 @@
+{
+  "topicId": "circular-queues",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Why is one slot left unused in a typical array-based implementation of a circular queue? Explain with an example.",
+      "type": "short",
+      "keyPoints": [
+        "To create an unambiguous distinction between the full and empty states",
+        "If front equals rear after an operation, it could mean the queue is empty (initial state) OR full (only one element)",
+        "By sacrificing one slot, when front equals rear we know the queue has exactly one element (full), while both equal -1 indicates empty",
+        "Example: In a queue of capacity 5, storing 4 elements with front=0 and rear=3 allows clear differentiation from the empty state"
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Explain the operations of enqueue and dequeue in a circular queue with a suitable example. Draw diagrams to show changes in front and rear pointers.",
+      "type": "long",
+      "keyPoints": [
+        "Enqueue: Check if full using (rear+1)%capacity == front; If empty, set both front and rear to 0; Otherwise, use circular increment: rear = (rear+1)%capacity",
+        "Dequeue: Check if empty using front==-1 && rear==-1; Store array[front]; If front==rear (single element), reset both to -1; Otherwise, use circular increment: front = (front+1)%capacity",
+        "Show step-by-step trace with at least one wrap-around operation",
+        "Include isEmpty and isFull conditions in explanation",
+        "Handle special cases: first insertion sets both pointers to 0; last dequeue resets both to -1"
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "Compare and contrast linear queue and circular queue implementations. What are the advantages of circular queues?",
+      "type": "short",
+      "keyPoints": [
+        "Linear queue wastes memory after dequeuing (wasted front indices); circular queue reuses vacated slots immediately",
+        "Linear queue full condition: rear == MAXSIZE-1; Circular uses (rear+1)%capacity == front",
+        "Circular queue uses modulo arithmetic for pointer wrapping; Linear queue only increments forward",
+        "Both have O(1) enqueue, but dequeue is O(n) in linear (shifting) vs O(1) in circular",
+        "Circular queue is more memory efficient and preferred in OS for scheduling and buffering"
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Write a C program to implement a circular queue using an array with enqueue, dequeue, and display operations.",
+      "type": "long",
+      "keyPoints": [
+        "Define array and front/rear variables initialized to -1",
+        "Enqueue: check full using (rear+1)%MAXSIZE == front; handle first insertion setting both pointers to 0; use modulo for rear increment",
+        "Dequeue: check empty using front==-1 && rear==-1; handle last element removal by resetting both to -1; use modulo for front increment",
+        "Display: traverse from front to rear using modulo to handle wrap-around",
+        "Include proper overflow (Queue Overflow) and underflow (Queue Underflow) error messages"
+      ]
+    },
+    {
+      "id": "q5",
+      "question": "List and explain any three real-world applications of circular queues.",
+      "type": "short",
+      "keyPoints": [
+        "CPU Scheduling (Round Robin): OS manages processes in cyclic order with time slices",
+        "Traffic Light Systems: cycle through signals in fixed circular order (Red→Green→Yellow→Red)",
+        "Printer Spooling: print jobs added to queue and processed in order with efficient buffer management",
+        "Producer-Consumer Problem: shared buffers in concurrent programming; streaming data buffers for audio/video"
+      ]
+    },
+    {
+      "id": "q6",
+      "question": "Trace the contents of a circular queue of capacity 5 after performing the following operations in sequence: Enqueue(10), Enqueue(20), Enqueue(30), Enqueue(40), Dequeue(), Dequeue(), Enqueue(50), Enqueue(60), Enqueue(70). Show the array contents, front, and rear after each operation.",
+      "type": "long",
+      "keyPoints": [
+        "Initial: front=-1, rear=-1, array:[----|----|----|----|----]",
+        "After Enqueue(10): front=0, rear=0, array:[10|----|----|----|----]",
+        "After Enqueue(20): front=0, rear=1, array:[10|20|----|----|----]",
+        "After Enqueue(30): front=0, rear=2, array:[10|20|30|----|----]",
+        "After Enqueue(40): front=0, rear=3, array:[10|20|30|40|----]",
+        "After Dequeue(): front=1, rear=3, array:[-|--|30|40|----] (10 removed)",
+        "After Dequeue(): front=2, rear=3, array:[-|--|--|40|----] (20 removed)",
+        "After Enqueue(50): front=2, rear=4, array:[-|--|--|40|50]",
+        "After Enqueue(60): front=2, rear=0 (wrap), array:[60|--|--|40|50]",
+        "After Enqueue(70): front=2, rear=1 (wrap), array:[60|70|--|40|50] - Queue now FULL"
+      ]
+    },
+    {
+      "id": "q7",
+      "question": "Explain the concept of circular increment using modular arithmetic. How does the formula (index + 1) % capacity achieve wrap-around behavior? Give examples for capacity = 5.",
+      "type": "short",
+      "keyPoints": [
+        "Modulo operator (%) returns remainder after division, creating periodic wrapping behavior",
+        "When index reaches capacity-1, adding 1 and applying %capacity returns 0",
+        "Examples: (4+1)%5=0 (wraps from index 4 to 0); (3+1)%5=4 (normal increment); (0+1)%5=1 (normal increment)",
+        "This formula is used for both front and rear pointer updates during enqueue and dequeue operations",
+        "Wrap-around allows reusing empty slots at the beginning after dequeuing elements"
+      ]
+    }
+  ]
+}

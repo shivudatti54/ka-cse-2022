@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="indexing-and-hashing">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#d4e8f0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c5dce8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#81c784;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#66bb6a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="hashGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7986cb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5c6bc0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a5d6a7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81c784;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2e5a88; }
+    .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #333; }
+    .detail-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; fill: #555; }
+    .section-box { rx: 8; ry: 8; stroke: #4a90a4; stroke-width: 1.5; }
+    .node { rx: 4; ry: 4; }
+    .arrow-line { stroke: #5c7a99; stroke-width: 1.5; marker-end: url(#arrowhead); }
+    .title-anim { animation: fadeIn 0.8s ease-out forwards; }
+    .tree-anim { animation: slideIn 0.6s ease-out 0.3s forwards; opacity: 0; }
+    .hash-anim { animation: slideIn 0.6s ease-out 0.5s forwards; opacity: 0; }
+    .box1-anim { animation: fadeIn 0.5s ease-out 0.4s forwards; opacity: 0; }
+    .box2-anim { animation: fadeIn 0.5s ease-out 0.6s forwards; opacity: 0; }
+    .box3-anim { animation: fadeIn 0.5s ease-out 0.8s forwards; opacity: 0; }
+    .pulse-anim { animation: pulse 2s infinite; transform-origin: center; }
+  </style>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)" rx="10" ry="10"/>
+  
+  <!-- Title Section -->
+  <text x="210" y="30" text-anchor="middle" class="title-text title-anim">Indexing And Hashing</text>
+  
+  <!-- B+ Tree Section -->
+  <g class="tree-anim">
+    <text x="110" y="55" text-anchor="middle" class="label-text" style="font-size:14px;font-weight:bold;">B+ Tree Structure</text>
+    
+    <!-- Root Node -->
+    <rect x="85" y="65" width="50" height="25" fill="url(#treeGradient)" class="node" stroke="#388e3c" stroke-width="1"/>
+    <text x="110" y="81" text-anchor="middle" class="label-text" fill="white">25</text>
+    
+    <!-- Arrows from root -->
+    <line x1="85" y1="77" x2="60" y2="100" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="135" y1="77" x2="160" y2="100" stroke="#5c7a99" stroke-width="1.5"/>
+    
+    <!-- Left Internal Node -->
+    <rect x="30" y="105" width="60" height="25" fill="url(#treeGradient)" class="node" stroke="#388e3c" stroke-width="1"/>
+    <text x="60" y="121" text-anchor="middle" class="label-text" fill="white">10,18</text>
+    
+    <!-- Right Internal Node -->
+    <rect x="130" y="105" width="60" height="25" fill="url(#treeGradient)" class="node" stroke="#388e3c" stroke-width="1"/>
+    <text x="160" y="121" text-anchor="middle" class="label-text" fill="white">35,42</text>
+    
+    <!-- Arrows to leaves -->
+    <line x1="40" y1="130" x2="25" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="60" y1="130" x2="60" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="80" y1="130" x2="95" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="140" y1="130" x2="115" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="160" y1="130" x2="160" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    <line x1="180" y1="130" x2="205" y2="155" stroke="#5c7a99" stroke-width="1.5"/>
+    
+    <!-- Leaf Nodes -->
+    <rect x="5" y="160" width="50" height="30" fill="url(#leafGradient)" class="node" stroke="#2e7d32" stroke-width="1"/>
+    <text x="30" y="172" text-anchor="middle" class="detail-text" fill="#1b5e20">5,8</text>
+    <text x="30" y="184" text-anchor="middle" class="detail-text" fill="#1b5e20">→Data</text>
+    
+    <rect x="60" y="160" width="50" height="30" fill="url(#leafGradient)" class="node" stroke="#2e7d32" stroke-width="1"/>
+    <text x="85" y="172" text-anchor="middle" class="detail-text" fill="#1b5e20">12,15</text>
+    <text x="85" y="184" text-anchor="middle" class="detail-text" fill="#1b5e20">→Data</text>
+    
+    <rect x="115" y="160" width="50" height="30" fill="url(#leafGradient)" class="node" stroke="#2e7d32" stroke-width="1"/>
+    <text x="140" y="172" text-anchor="middle" class="detail-text" fill="#1b5e20">20,22</text>
+    <text x="140" y="184" text-anchor="middle" class="detail-text" fill="#1b5e20">→Data</text>
+    
+    <rect x="170" y="160" width="50" height="30" fill="url(#leafGradient)" class="node" stroke="#2e7d32" stroke-width="1"/>
+    <text x="195" y="172" text-anchor="middle" class="detail-text" fill="#1b5e20">30,33</text>
+    <text x="195" y="184" text-anchor="middle" class="detail-text" fill="#1b5e20">→Data</text>
+    
+    <!-- Leaf Node Links -->
+    <path d="M55 175 Q70 175 60 175" stroke="#4a90a4" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+    <path d="M110 175 Q120 175 115 175" stroke="#4a90a4" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+    <path d="M165 175 Q175 175 170 175" stroke="#4a90a4" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+    
+    <text x="110" y="205" text-anchor="middle" class="detail-text" fill="#4a90a4">Linked Leaf Pointers</text>
+  </g>
+  
+  <!-- Hashing Section -->
+  <g class="hash-anim">
+    <text x="320" y="55" text-anchor="middle" class="label-text" style="font-size:14px;font-weight:bold;">Hash Table</text>
+    
+    <!-- Hash Function Box -->
+    <rect x="265" y="65" width="110" height="30" fill="#fff9c4" stroke="#f9a825" stroke-width="1" rx="4"/>
+    <text x="320" y="84" text-anchor="middle" class="detail-text" fill="#f57f17">h(k) = k mod 7</text>
+    
+    <!-- Arrow to buckets -->
+    <line x1="320" y1="95" x2="320" y2="110" stroke="#5c7a99" stroke-width="1.5"/>
+    
+    <!-- Bucket 0 -->
+    <rect x="270" y="115" width="40" height="45" fill="#e1bee7" stroke="#8e24aa" stroke-width="1" rx="3"/>
+    <text x="290" y="128" text-anchor="middle" class="detail-text" fill="#6a1b9a">Idx 0</text>
+    <text x="290" y="142" text-anchor="middle" class="detail-text" fill="#4a148c">14, 21</text>
+    <line x1="290" y1="150" x2="290" y2="155" stroke="#8e24aa" stroke-width="1" stroke-dasharray="2,2"/>
+    
+    <!-- Bucket 1 -->
+    <rect x="315" y="115" width="40" height="45" fill="#e1bee7" stroke="#8e24aa" stroke-width="1" rx="3"/>
+    <text x="335" y="128" text-anchor="middle" class="detail-text" fill="#6a1b9a">Idx 1</text>
+    <text x="335" y="142" text-anchor="middle" class="detail-text" fill="#4a148c">1, 8, 15</text>
+    <line x1="335" y1="150" x2="335" y2="155" stroke="#8e24aa" stroke-width="1" stroke-dasharray="2,2"/>
+    
+    <!-- Bucket 2 -->
+    <rect x="360" y="115" width="40" height="45" fill="#e1bee7" stroke="#8e24aa" stroke-width="1" rx="3"/>
+    <text x="380" y="128" text-anchor="middle" class="detail-text" fill="#6a1b9a">Idx 2</text>
+    <text x="380" y="142" text-anchor="middle" class="detail-text" fill="#4a148c">2, 9</text>
+    <line x1="380" y1="150" x2="380" y2="155" stroke="#8e24aa" stroke-width="1" stroke-dasharray="2,2"/>
+    
+    <!-- Collision Resolution Label -->
+    <rect x="260" y="170" width="120" height="25" fill="#ffecb3" stroke="#ffa000" stroke-width="1" rx="4"/>
+    <text x="320" y="186" text-anchor="middle" class="detail-text" fill="#e65100">Chaining (Collision)</text>
+    
+    <!-- Dynamic vs Static -->
+    <rect x="265" y="205" width="55" height="35" fill="#b3e5fc" stroke="#0288d1" stroke-width="1" rx="4"/>
+    <text x="292" y="218" text-anchor="middle" class="detail-text" fill="#01579b">Static</text>
+    <text x="292" y="232" text-anchor="middle" class="detail-text" fill="#01579b">Fixed Size</text>
+    
+    <rect x="325" y="205" width="55" height="35" fill="#c8e6c9" stroke="#388e3c" stroke-width="1" rx="4"/>
+    <text x="352" y="218" text-anchor="middle" class="detail-text" fill="#1b5e20">Dynamic</text>
+    <text x="352" y="232" text-anchor="middle" class="detail-text" fill="#1b5e20">Grows</text>
+  </g>
+  
+  <!-- Key Concept Boxes -->
+  <g class="box1-anim">
+    <rect x="10" y="220" width="125" height="55" fill="white" stroke="#81c784" stroke-width="2" rx="6"/>
+    <text x="72" y="238" text-anchor="middle" class="label-text" style="font-size:12px;font-weight:bold;" fill="#2e7d32">Range Queries</text>
+    <text x="72" y="252" text-anchor="middle" class="detail-text" fill="#4caf50">B+ Trees excel at</text>
+    <text x="72" y="264" text-anchor="middle" class="detail-text" fill="#4caf50">range searches</text>
+  </g>
+  
+  <g class="box2-anim">
+    <rect x="145" y="220" width="125" height="55" fill="white" stroke="#7986cb" stroke-width="2" rx="6"/>
+    <text x="207" y="238" text-anchor="middle" class="label-text" style="font-size:12px;font-weight:bold;" fill="#3949ab">Exact Match</text>
+    <text x="207" y="252" text-anchor="middle" class="detail-text" fill="#5c6bc0">Hashing provides</text>
+    <text x="207" y="264" text-anchor="middle" class="detail-text" fill="#5c6bc0">O(1) lookups</text>
+  </g>
+  
+  <g class="box3-anim">
+    <rect x="280" y="250" width="125" height="55" fill="white" stroke="#ffb74d" stroke-width="2" rx="6"/>
+    <text x="342" y="268" text-anchor="middle" class="label-text" style="font-size:12px;font-weight:bold;" fill="#e65100">Load Factor</text>
+    <text x="342" y="282" text-anchor="middle" class="detail-text" fill="#ff9800">α = n/(k×b)</text>
+    <text x="342" y="296" text-anchor="middle" class="detail-text" fill="#ff9800">Optimal &lt; 0.7</text>
+  </g>
+  
+  <!-- Bottom comparison arrows -->
+  <g class="box3-anim">
+    <path d="M135 247 L155 247" stroke="#5c7a99" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <polygon points="155,247 150,244 150,250" fill="#5c7a99"/>
+    
+    <path d="M270 277 L305 277" stroke="#5c7a99" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <polygon points="305,277 300,274 300,280" fill="#5c7a99"/>
+  </g>
+  
+  <!-- Visual narration labels -->
+  <g data-narration="B+ Tree: Balanced tree with all data in leaf nodes, supports ordered traversal via linked leaves">
+    <rect x="10" y="285" width="180" height="22" fill="#e8f5e9" stroke="#a5d6a7" rx="4" opacity="0"/>
+  </g>
+  <g data-narration="Hashing: Direct mapping using hash function, collisions resolved via chaining or open addressing">
+    <rect x="200" y="285" width="200" height="22" fill="#e8f5e9" stroke="#a5d6a7" rx="4" opacity="0"/>
+  </g>
+  <g data-narration="Static vs Dynamic: Static uses fixed buckets; Dynamic (extendible/linear) grows as needed">
+    <rect x="10" y="315" width="380" height="22" fill="#fff3e0" stroke="#ffcc80" rx="4" opacity="0"/>
+  </g>
+  <g data-narration="Performance: B+ Trees for range queries, Hashing for point queries, Choose based on access patterns">
+    <rect x="10" y="345" width="380" height="22" fill="#e3f2fd" stroke="#90caf9" rx="4" opacity="0"/>
+  </g>
+  
+  <!-- Legend/Key -->
+  <g class="box3-anim">
+    <circle cx="25" cy="370" r="5" fill="#81c784"/>
+    <text x="35" cy="373" class="detail-text" fill="#333">B+ Tree</text>
+    <circle cx="90" cy="370" r="5" fill="#7986cb"/>
+    <text x="100" cy="373" class="detail-text" fill="#333">Hashing</text>
+    <circle cx="165" cy="370" r="5" fill="#ffb74d"/>
+    <text x="175" cy="373" class="detail-text" fill="#333">Trade-offs</text>
+  </g>
+</svg>

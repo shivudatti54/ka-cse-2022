@@ -1,0 +1,35 @@
+{
+  "topicId": "finite-automata-with-epsilon-transitions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Epsilon Closure Algorithm",
+      "description": "Algorithm to compute epsilon closure of a state in ε-NFA",
+      "code": "function epsilonClosure(state, epsilonTransitions):\n closure = SET()\n stack = STACK()\n \n closure.add(state)\n stack.push(state)\n \n while stack is not empty:\n current = stack.pop()\n for each nextState in epsilonTransitions[current]:\n if nextState not in closure:\n closure.add(nextState)\n stack.push(nextState)\n \n return closure",
+      "explanation": "Uses DFS/BFS to find all states reachable via zero or more ε-transitions. Starts with the given state and explores all ε-transitions recursively.",
+      "timeComplexity": "O(N+E)",
+      "spaceComplexity": "O(N)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "ε-NFA to NFA Conversion",
+      "description": "Convert ε-NFA to equivalent NFA by eliminating ε-transitions",
+      "code": "function convertENFAtoNFA(enfa):\n nfa = new NFA()\n nfa.alphabet = enfa.alphabet\n nfa.states = enfa.states\n nfa.startState = epsilonClosure(enfa.startState)\n nfa.finalStates = []\n \n for each state q in enfa.states:\n for each symbol a in enfa.alphabet:\n # Compute new transition\n reachable = SET()\n for each s in epsilonClosure(q):\n reachable.addAll(enfa.transition(s, a))\n nfa.transition(q, a) = epsilonClosureOfSet(reachable)\n \n # Final states: any state whose epsilon closure contains final state\n for each state q in enfa.states:\n if epsilonClosure(q) intersects enfa.finalStates:\n nfa.finalStates.add(q)\n \n return nfa",
+      "explanation": "For each state and input symbol, computes ε-closure of states reachable via that input, eliminating epsilon transitions while preserving language.",
+      "timeComplexity": "O(N² × |Σ|)",
+      "spaceComplexity": "O(N²)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "ε-NFA to DFA Subset Construction",
+      "description": "Convert ε-NFA to DFA using subset construction algorithm",
+      "code": "function epsilonNFAtoDFA(enfa):\n dfa = new DFA()\n \n # Compute epsilon closures for all states\n allClosures = {}\n for each state q in enfa.states:\n allClosures[q] = epsilonClosure(q)\n \n # Start state is epsilon closure of enfa start state\n startSet = allClosures[enfa.startState]\n dfa.states = [startSet]\n dfa.startState = startSet\n \n queue = [startSet]\n \n while queue is not empty:\n currentSet = queue.pop()\n \n for each symbol a in enfa.alphabet:\n # Find all states reachable via symbol a\n reachable = SET()\n for each state s in currentSet:\n reachable.addAll(enfa.transition(s, a))\n \n # Apply epsilon closure to result\n newSet = SET()\n for each r in reachable:\n newSet.addAll(allClosures[r])\n \n # Add to DFA if new\n if newSet not in dfa.states:\n dfa.states.add(newSet)\n queue.push(newSet)\n \n dfa.transition[currentSet, a] = newSet\n \n # Mark final states (sets containing any enfa final state)\n dfa.finalStates = [s for s in dfa.states \n if s intersects enfa.finalStates]\n \n return dfa",
+      "explanation": "Each DFA state represents a set of ε-NFA states. Uses epsilon closures to compute transitions, ensuring all ε-moves are properly handled.",
+      "timeComplexity": "O(2^N × |Σ|)",
+      "spaceComplexity": "O(2^N)"
+    }
+  ]
+}

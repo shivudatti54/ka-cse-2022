@@ -1,0 +1,45 @@
+{
+  "topicId": "multiplexer",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "2-to-1 Multiplexer",
+      "description": "Basic pseudocode for 2:1 MUX operation",
+      "code": "FUNCTION MUX_2to1(I0, I1, S)\nBEGIN\n    IF S = 0 THEN\n        RETURN I0\n    ELSE\n        RETURN I1\n    END IF\nEND FUNCTION",
+      "explanation": "The function takes two data inputs I0, I1 and select line S. Returns I0 when S=0 and I1 when S=1.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "4-to-1 Multiplexer in Python",
+      "description": "Python implementation of 4:1 MUX using list indexing",
+      "code": "def mux_4to1(inputs, select):\n    \"\"\"\n    inputs: list of 4 values [I0, I1, I2, I3]\n    select: 2-bit binary as integer 0-3\n    Returns selected input\n    \"\"\"\n    if select < 0 or select > 3:\n        raise ValueError(\"Select must be 0-3\")\n    return inputs[select]\n\n# Example usage\ndata_inputs = [0, 1, 1, 0]  # I0=0, I1=1, I2=1, I3=0\nselect_line = 2  # Binary 10 selects I2\noutput = mux_4to1(data_inputs, select_line)\nprint(f\"Output: {output}\")  # Output: 1",
+      "explanation": "The select value acts as index to directly select from inputs array. Very efficient for hardware description.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "General N-to-1 MUX in C",
+      "description": "Generalized MUX implementation for any power of 2 inputs",
+      "code": "#include <stdio.h>\n#include <math.h>\n\nint mux_nto1(int inputs[], int n_inputs, int select[]) {\n    int select_value = 0;\n    int n_select = log2(n_inputs);\n    \n    // Convert binary select array to integer\n    for (int i = 0; i < n_select; i++) {\n        select_value = (select_value << 1) | select[i];\n    }\n    \n    return inputs[select_value];\n}\n\nint main() {\n    int inputs[] = {0, 1, 0, 1, 1, 0, 0, 1};  // 8 inputs\n    int select[] = {1, 0, 1};  // Select = 5 (binary 101)\n    \n    int output = mux_nto1(inputs, 8, select);\n    printf(\"Output: %d\\n\", output);  // Output: 0\n    \n    return 0;\n}",
+      "explanation": "General implementation that can handle any 2^n inputs. Converts binary select lines to integer index.",
+      "timeComplexity": "O(n) where n = number of select lines",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "vhdl",
+      "title": "4-to-1 MUX in VHDL",
+      "description": "VHDL structural description of 4:1 multiplexer for FPGA implementation",
+      "code": "library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\nentity mux_4to1 is\n    Port ( I : in STD_LOGIC_VECTOR(3 downto 0);  -- I3,I2,I1,I0\n           S : in STD_LOGIC_VECTOR(1 downto 0);  -- S1,S0\n           Y : out STD_LOGIC);\nend mux_4to1;\n\narchitecture Behavioral of mux_4to1 is\nbegin\n    process(I, S)\n    begin\n        case S is\n            when \"00\" => Y <= I(0);\n            when \"01\" => Y <= I(1);\n            when \"10\" => Y <= I(2);\n            when \"11\" => Y <= I(3);\n            when others => Y <= '0';\n        end case;\n    end process;\nend Behavioral;",
+      "explanation": "VHDL hardware description for synthesis. Uses case statement which maps directly to multiplexer selection logic in FPGA/CPLD.",
+      "timeComplexity": "O(1) - combinational logic",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

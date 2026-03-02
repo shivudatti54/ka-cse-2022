@@ -1,0 +1,125 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the purpose and structure of the vector table in ARM Cortex-M microcontrollers.",
+    "expectedPoints": [
+      "Vector table is a data structure containing starting addresses of exception and interrupt handlers",
+      "Located at fixed memory address (0x00000000 or 0x08000000)",
+      "First entry (index 0) contains initial MSP value, second entry (index 1) contains Reset_Handler address",
+      "Each exception and IRQ has a dedicated entry in the table"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Describe the reset sequence in ARM Cortex-M with reference to the vector table.",
+    "expectedPoints": [
+      "On reset, processor loads MSP value from vector table[0] into the Main Stack Pointer",
+      "PC is loaded with the Reset_Handler address from vector table[1]",
+      "Execution begins from Reset_Handler which initializes .data and .bss sections",
+      "Reset_Handler then calls main() function"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "What is the Vector Table Offset Register (VTOR)? Explain its significance.",
+    "expectedPoints": [
+      "VTOR is a register in the System Control Block (SCB)",
+      "Allows relocation of vector table to different memory location",
+      "Programmable after reset for dynamic vector table positioning",
+      "Enables bootloader implementations and runtime handler updates"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Differentiate between exceptions and interrupts in Cortex-M processors.",
+    "expectedPoints": [
+      "Exceptions are generated internally by the processor (system exceptions like HardFault, NMI, SysTick)",
+      "Interrupts are external signals from peripherals connected to NVIC",
+      "System exceptions have fixed priority levels (Reset, NMI, HardFault)",
+      "Both use vector table for handler address lookup"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Explain how interrupt priority works in Cortex-M and mention the role of NVIC.",
+    "expectedPoints": [
+      "Each interrupt has a configurable priority (lower number = higher priority)",
+      "NVIC manages interrupt enable/disable states and priority levels",
+      "Priority is set via NVIC_IPR registers",
+      "NVIC supports nested interrupts based on priority levels"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "What is lazy stacking in Cortex-M4 with FPU?",
+    "expectedPoints": [
+      "Lazy stacking defers saving FPU registers until actually needed in handler",
+      "Improves interrupt latency by not saving all registers immediately",
+      "Configured via FPU CCR register (ASPEN and LSPEN bits)",
+      "FPU registers are saved on-first-use basis in exception handler"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-7",
+    "type": "long",
+    "question": "Explain the complete exception handling mechanism in ARM Cortex-M, including vector table lookup, stack frame, and return sequence.",
+    "expectedPoints": [
+      "Exception triggers: hardware reads vector address from vector table using exception number as index",
+      "Processor pushes eight registers (R0-R3, R12, PC, xPSR, LR) onto the current stack (exception stack frame)",
+      "LR is loaded with EXC_RETURN value for return identification",
+      "Handler executes with processor in Handler mode",
+      "On completion, EXC_RETURN value triggers exception return sequence",
+      "Hardware pops the stack frame and restores previous state",
+      "Processor transitions back to Thread mode"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Design a vector table for a Cortex-M4 microcontroller with at least 5 external interrupts. Show the organization and explain key entries.",
+    "expectedPoints": [
+      "Vector table should show: index 0=Initial MSP, index 1=Reset_Handler, index 2=NMI_Handler, index 3=HardFault_Handler, index 14=SysTick_Handler",
+      "External interrupts start from index 16 (_IRQ0) onwards",
+      "Example: 16=TIM2_IRQHandler, 17=UART1_IRQHandler, 18=EXTI0_IRQHandler, 19=SPI1_IRQHandler, 20=I2C1_IRQHandler",
+      "Each entry is 4 bytes (word) containing handler address",
+      "Alignment requirements: table must be aligned to 128 or 256 word boundary"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Explain how to relocate the vector table to RAM in ARM Cortex-M and discuss a practical use case.",
+    "expectedPoints": [
+      "To relocate: set VTOR register with new base address of vector table in RAM",
+      "RAM location must have vector table image with correct MSP and handler addresses",
+      "Use case: bootloader scenario where bootloader and application have separate vector tables",
+      "Dynamic updates: allows hot-swapping interrupt handlers at runtime",
+      "Implementation: copy default vector table to RAM, modify VTOR, ensure RAM is initialized before enabling interrupts",
+      "Code example: SCB->VTOR = (uint32_t)vector_table_ram;"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

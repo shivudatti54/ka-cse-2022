@@ -1,0 +1,35 @@
+{
+  "topicId": "functions-and-type-casting",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C++",
+      "title": "Basic Function Definition and Implicit Type Casting",
+      "description": "Demonstrates basic function definition, parameter passing, and implicit type casting when passing arguments to functions.",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Function that accepts double but receives int (implicit casting)\ndouble calculateArea(int radius) {\n    return 3.14159 * radius * radius;\n}\n\n// Function with explicit return type\nint getIntegerPart(double value) {\n    return value;  // Implicit casting from double to int\n}\n\nint main() {\n    int r = 5;\n    double area = calculateArea(r);  // int implicitly cast to double\n    cout << \"Radius: \" << r << endl;\n    cout << \"Area: \" << area << endl;\n    \n    double num = 9.87;\n    int part = getIntegerPart(num);  // double implicitly cast to int\n    cout << \"Number: \" << num << endl;\n    cout << \"Integer Part: \" << part << endl;\n    \n    return 0;\n}",
+      "explanation": "1. The function calculateArea() expects a double parameter but receives an int (5), which is implicitly cast to double.\n2. The function getIntegerPart() returns an int but the calculation involves double, which is implicitly cast to int (truncates decimal).\n3. In C++, implicit type casting (promotion/demotion) happens automatically when there's no data loss or when converting to a 'wider' type.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "C++",
+      "title": "Explicit Type Casting with static_cast and Function Overloading",
+      "description": "Demonstrates explicit type casting using static_cast and function overloading for different data types.",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Function overloading for different types\nint add(int a, int b) {\n    cout << \"Integer addition called\" << endl;\n    return a + b;\n}\n\ndouble add(double a, double b) {\n    cout << \"Double addition called\" << endl;\n    return a + b;\n}\n\n// Function demonstrating explicit casting\nvoid demonstrateCasting() {\n    double pi = 3.14159;\n    int intPi = static_cast<int>(pi);  // Explicit cast: double to int\n    cout << \"Original double: \" << pi << endl;\n    cout << \"After static_cast<int>: \" << intPi << endl;\n    \n    int num = 100;\n    char ch = static_cast<char>(num);  // Explicit cast: int to char\n    cout << \"Integer: \" << num << \" -> Character: \" << ch << endl;\n    \n    // C-style cast (not recommended but important to know)\n    double result = (double)num / 3;  // C-style cast\n    cout << \"C-style cast result: \" << result << endl;\n    \n    // const_cast (removing const)\n    const int constVal = 50;\n    int* ptr = const_cast<int*>(&constVal);\n    cout << \"Using const_cast: \" << *ptr << endl;\n}\n\nint main() {\n    // Function overloading in action\n    cout << add(5, 10) << endl;\n    cout << add(2.5, 3.7) << endl;\n    \n    // Explicit type casting demonstration\n    demonstrateCasting();\n    \n    return 0;\n}",
+      "explanation": "1. Function overloading allows multiple functions with the same name but different parameter types.\n2. static_cast<> is the C++ way for explicit type conversions - it's checked at compile time.\n3. C-style casts (type)value are less safe and harder to find in code.\n4. const_cast is used to add or remove const qualifier.\n5. The function selects the appropriate overload based on argument types at compile time.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "C++",
+      "title": "Template Functions with Type Casting and Dynamic Polymorphism",
+      "description": "Advanced example showing function templates with type casting, inline functions, and reference parameters.",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Template function with type requirements\ntemplate<typename T>\nT multiply(T a, T b) {\n    return a * b;\n}\n\n// Template with explicit type conversion\ntemplate<typename T, typename U>\nauto addTyped(T a, U b) -> decltype(a + b) {\n    return a + b;  // Return type deduced from expression\n}\n\n// Inline function for performance\ninline int compare(int a, int b) {\n    return (a > b) ? a : b;\n}\n\n// Reference parameters with const\nvoid modifyValue(int& ref) {\n    ref *= 2;\n}\n\nvoid displayValue(const int& ref) {\n    cout << \"Read-only value: \" << ref << endl;\n}\n\n// Demonstrating type conversion in class context\nclass Number {\nprivate:\n    double value;\npublic:\n    Number(double v) : value(v) {}\n    \n    // Conversion operator: Number to int\n    operator int() const {\n        return static_cast<int>(value);\n    }\n    \n    // Conversion operator: Number to double\n    operator double() const {\n        return value;\n    }\n    \n    void display() const {\n        cout << \"Number value: \" << value << endl;\n    }\n};\n\nint main() {\n    // Template function usage\n    cout << \"Template multiply(int): \" << multiply(5, 4) << endl;\n    cout << \"Template multiply(double): \" << multiply(2.5, 3.0) << endl;\n    \n    // Mixed type template with auto return\n    auto result = addTyped(10, 5.5);\n    cout << \"Mixed type add: \" << result << \" (type deduced)\" << endl;\n    \n    // Inline function\n    cout << \"Inline compare: \" << compare(10, 20) << endl;\n    \n    // Reference parameters\n    int x = 25;\n    modifyValue(x);\n    cout << \"After modifyValue: \" << x << endl;\n    displayValue(x);\n    \n    // Class with conversion operators\n    Number num(7.89);\n    num.display();\n    \n    int convertedInt = num;  // Implicit conversion using operator int()\n    double convertedDouble = num;  // Implicit conversion using operator double()\n    cout << \"Converted to int: \" << convertedInt << endl;\n    cout << \"Converted to double: \" << convertedDouble << endl;\n    \n    // Explicit cast using conversion operator\n    int explicitInt = static_cast<int>(num);\n    cout << \"Explicit static_cast<int>: \" << explicitInt << endl;\n    \n    return 0;\n}",
+      "explanation": "1. Template functions allow generic programming - the same function works with different data types.\n2. The -> decltype(auto) syntax allows return type deduction based on the expression.\n3. Inline functions suggest the compiler to replace function calls with the function body for performance.\n4. Reference parameters (int&) allow direct modification of the original variable.\n5. const int& allows reading without copying while preventing modification.\n6. Conversion operators (operator int(), operator double()) enable implicit and explicit conversions from user-defined types to primitive types.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "topicId": "applications-of-regular-expressions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Regular Expression and explain its significance in Theory of Computation. Give two examples.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Remember RE is one of the three equivalent ways to represent regular languages",
+      "keyPoints": [
+        "Regular Expression is a formal notation for describing patterns in strings",
+        "It describes regular languages (Type-3 languages)",
+        "Equivalent to Finite Automata and Regular Grammars",
+        "Significance: One of three equivalent formalisms for regular languages",
+        "Example 1: (0|1)* - all binary strings",
+        "Example 2: a*b* - strings of a's followed by b's"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the three basic operations in Regular Expressions: Union, Concatenation, and Kleene Star with suitable examples.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Union uses '|', Concatenation is implicit (no operator), Kleene Star uses '*'",
+      "keyPoints": [
+        "Union (| or +): Matches either expression - a|b matches 'a' or 'b'",
+        "Concatenation: Matches first expression followed by second - ab matches 'ab'",
+        "Kleene Star (*): Matches zero or more occurrences - a* matches '', 'a', 'aa',...",
+        "Example for Union: (0|1) matches '0' or '1'",
+        "Example for Concatenation: ab matches the string 'ab'",
+        "Example for Kleene Star: 1* matches '', '1', '11', '111',..."
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write Regular Expressions for the following languages over alphabet {a,b}: (i) All strings ending with 'aba' (ii) All strings containing exactly two a's (iii) Empty string",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "For exactly two a's, ensure only two a's appear in the string",
+      "keyPoints": [
+        "(i) (a|b)*aba - any string followed by 'aba'",
+        "(ii) ba*b - one 'b', then one 'a', then one more 'b' OR b*ab*ab*",
+        "(iii) ε or λ - represents empty string",
+        "For exactly two a's: b*ab*ab* ensures exactly two a's with any number of b's"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain how Regular Expressions are used in Lexical Analysis of Compilers.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Focus on token recognition and pattern matching in compilers",
+      "keyPoints": [
+        "Lexical Analyzer uses RE to identify lexemes (tokens)",
+        "RE defines pattern for each token type (identifiers, keywords, numbers)",
+        "Examples: Identifier pattern: [a-zA-Z][a-zA-Z0-9]*",
+        "Integer pattern: [0-9]+",
+        "RE is converted to NFA/DFA for efficient scanning",
+        "Lex tool (lex/flex) generates lexical analyzer from RE specifications"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between Kleene Star and Kleene Plus operations in Regular Expressions with examples.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Kleene Star accepts empty string, Kleene Plus does not",
+      "keyPoints": [
+        "Kleene Star (*): Matches zero or more occurrences of the preceding expression",
+        "Kleene Plus (+): Matches one or more occurrences of the preceding expression",
+        "Example a*: matches '', 'a', 'aa', 'aaa',... (accepts empty string",
+        "Example a+: matches 'a', 'aa', 'aaa',... (does NOT accept empty string",
+        "Mathematically: a* = a+ | ε, but a+ ≠ a*",
+        "Kleene Plus is equivalent to aa*"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write a Regular Expression for the language: L = {w ∈ {0,1}* | w contains at least two 0's}.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Need at least two 0's, so place 0 twice with any string (0|1)* between them",
+      "keyPoints": [
+        "Pattern: (0|1)*0(0|1)*0(0|1)*",
+        "This ensures at least two 0's appear anywhere in the string",
+        "Alternative: 1*01*01* - any 1's, then 0, then any 1's, then 0, then any 1's",
+        "Both expressions accept strings like: '00', '001', '100', '10101', '010'",
+        "Does NOT accept strings with 0 or 1 zero: '', '1', '11', '10', '01'"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Design a Regular Expression for valid identifiers in a programming language that starts with a letter followed by any number of letters or digits.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "First character is restricted, remaining can use Kleene Star",
+      "keyPoints": [
+        "Basic pattern: letter(letter|digit)*",
+        "Where letter = [a-zA-Z]",
+        "digit = [0-9]",
+        "Complete RE: [a-zA-Z][a-zA-Z0-9]*",
+        "This ensures: first character must be letter, subsequent can be letter or digit",
+        "Examples: 'x', 'var1', 'count123', 'A2B3' are valid; '1var', '_test' are invalid"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write Regular Expressions for: (a) All binary strings with no consecutive 1's (b) All strings over {a,b} with even number of a's (c) Binary strings divisible by 2 (ending with 0).",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "For no consecutive 1's, after 1 must come 0 or end; for even a's, group a's in pairs",
+      "keyPoints": [
+        "(a) (0|1)* with no consecutive 1's = (0*10*)*0* OR (0|ε)(1(0|ε))*",
+        "Simplified: (0*10*)*0* - strings of pattern (zero or more 0's, one 1, zero or more 0's) repeated, ending with zero or more 0's",
+        "(b) Even number of a's: (b|ab|aab|...)* - need to group a's in pairs",
+        "Or more simply: (a*a*)* - even a's means pairs, but better: (b*ab*ab*)*b*",
+        "(c) Binary strings divisible by 2: (0|1)*0 - any string ending with 0"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the equivalence between Regular Expressions and Finite Automata. Describe how a Regular Expression can be converted to an NFA.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Thompson's construction builds NFA from simple to complex using the three operations",
+      "keyPoints": [
+        "Equivalence: Both describe exactly the same class of languages - Regular Languages",
+        "Kleene's Theorem states: For every RE, there exists an NFA accepting the same language and vice versa",
+        "Conversion using Thompson's Construction:",
+        "1. For symbol 'a': Create NFA with start state, one transition on 'a' to final state",
+        "2. For ε: Create NFA with start state directly connected to final state via ε",
+        "3. For Union (r1|r2): Create new start and final, connect via ε to NFAs of r1 and r2",
+        "4. For Concatenation (r1r2): Connect final state of NFA(r1) to start state of NFA(r2) via ε",
+        "5. For Kleene Star (r*): Create new start/final with self-loops and connections to NFA(r)"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a Regular Expression to recognize valid email addresses and explain its components in detail.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Break email into username, @, domain, dot, extension and write RE for each part",
+      "keyPoints": [
+        "Basic email pattern: [a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+        "Components breakdown:",
+        "Username: [a-zA-Z0-9]+ - one or more alphanumeric characters",
+        "@ symbol: Literal character '@' required",
+        "Domain: [a-zA-Z0-9]+ - one or more alphanumeric characters",
+        "Dot (\\.): Literal dot character required",
+        "Extension: [a-zA-Z]+ - letters only (com, org, edu, etc.)",
+        "More complex version handles dots in username, hyphens, multiple extensions",
+        "Practical RE: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Convert the Regular Expression (0|1)*00 to an NFA using Thompson's Construction method.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Build step by step: (0|1) → (0|1)* → (0|1)*0 → (0|1)*00 using Union, Star, Concatenation",
+      "keyPoints": [
+        "Step 1: Build NFA for '0' - start state q0, transition on '0' to q1 (final)",
+        "Step 2: Build NFA for '1' - similar structure for symbol '1'",
+        "Step 3: Build NFA for (0|1) - Union of NFA(0) and NFA(1) with new start and final",
+        "Step 4: Build NFA for (0|1)* - Apply Kleene Star to NFA(0|1): add ε-loops from new start to old start and old final to new final",
+        "Step 5: Build NFA for (0|1)*00 - Concatenate NFA((0|1)*) with two copies of NFA(0)",
+        "Final NFA has: start state, accepts any binary string, requires exactly two trailing 0's",
+        "Total states: Approximately 10-12 states using Thompson's construction"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "long",
+      "question": "Write Regular Expressions for: (a) Binary strings where every pair of 0's is followed by exactly one 1 (b) Strings over {a,b} that do not contain 'aba' as substring.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "For (a): whenever 0 appears, it must be followed by 1; for (b), analyze positions where 'a' can appear without creating 'aba'",
+      "keyPoints": [
+        "(a) Pattern: (1|(01+))* - each 0 must be followed by at least one 1; alternate: (1*01*01*)*1* ensures after two 0's comes 1",
+        "Actually: (1*01*01*)*1* OR more simply: (1|01+)* - 1 alone or 0 followed by one or more 1's",
+        "Explanation: When 0 appears, it must be followed immediately by 1; 00 must be followed by 1",
+        "(b) Do not contain 'aba': This is complement of (a|b)*aba(a|b)*",
+        "Positive construction: Strings that avoid 'aba'",
+        "Can be expressed as: b*(a|ab)*b* OR (b|ab)*a*b* (wherever 'a' appears, not followed by 'ba')",
+        "Simpler: (b|aa|bb|ab|ba)* - avoid pattern that creates 'aba'"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "Convert the Regular Expression a(b|c)*d to an equivalent NFA using Thompson's Construction. Show all intermediate steps.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Build base NFAs first, then apply Union, Star, and Concatenation constructions",
+      "keyPoints": [
+        "Step 1: NFA for 'a': Start state s0, transition on 'a' to state s1 (final)",
+        "Step 2: NFA for 'b': Start s2, transition on 'b' to s3",
+        "Step 3: NFA for 'c': Start s4, transition on 'c' to s5",
+        "Step 4: Union for (b|c): New start connects via ε to starts of NFA(b) and NFA(c); finals connect via ε to new final",
+        "Step 5: Kleene Star for (b|c)*: Add ε-loops from start to start and final to final; add ε from start to final",
+        "Step 6: Concatenation: Connect NFA(a) final to NFA((b|c)*) start via ε; add 'd' transition to final state",
+        "Final NFA accepts strings: a followed by zero or more b/c, then d"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "Design a Regular Expression and its corresponding NFA for the language: L = {w ∈ {0,1}* | w ends with '101'}.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "(0|1)* accepts any prefix; 101 is the required suffix pattern",
+      "keyPoints": [
+        "Regular Expression: (0|1)*101",
+        "NFA Design:",
+        "State q0: Start state",
+        "Transitions: From q0 on 0,1 to q0 (for (0|1)* loop)",
+        "From q0 on '1' to q1",
+        "From q1 on '0' to q2",
+        "From q2 on '1' to q3 (final state)",
+        "This NFA reads any prefix, then requires pattern 101",
+        "Accepts: '101', '0101', '1101', '00101', etc.",
+        "Rejects: '100', '010', '11', etc."
+      ]
+    }
+  ]
+}

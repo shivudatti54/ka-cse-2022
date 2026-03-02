@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic Signal Handler Setup",
+      "description": "Demonstrates how to set up a basic signal handler for SIGINT using signal() function",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n\nvoid sigint_handler(int signum) {\n printf(\"\\nReceived SIGINT (Ctrl+C)! Cleaning up...\\n\");\n /* Perform cleanup operations */\n /* Exit gracefully */\n _exit(0);\n}\n\nint main() {\n /* Set up signal handler for SIGINT */\n signal(SIGINT, sigint_handler);\n \n printf(\"Process running. Press Ctrl+C to terminate.\\n\");\n \n /* Infinite loop */\n while(1) {\n sleep(1);\n printf(\"Still running...\\n\");\n }\n \n return 0;\n}",
+      "explanation": "This code demonstrates basic signal handling. When user presses Ctrl+C (SIGINT), instead of terminating immediately, the custom handler executes, allowing graceful cleanup. The signal() function sets the disposition - associating a handler function with a specific signal.",
+      "timeComplexity": "O(1) - constant time for handler invocation",
+      "spaceComplexity": "O(1) - minimal stack usage for handler"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Signal Handling with sigaction",
+      "description": "More robust signal handling using POSIX sigaction() with SA_RESTART flag",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n\n/* Signal handler function */\nvoid handle_signal(int signum) {\n printf(\"\\nCaught signal %d\\n\", signum);\n}\n\nint main() {\n struct sigaction sa;\n \n /* Initialize the structure */\n sa.sa_handler = handle_signal;\n sigemptyset(&sa.sa_mask);\n \n /* Add signals to block during handler execution */\n sigaddset(&sa.sa_mask, SIGTERM);\n \n /* Set flags: restart system calls interrupted by this signal */\n sa.sa_flags = SA_RESTART;\n \n /* Set up signal handler for SIGINT */\n if (sigaction(SIGINT, &sa, NULL) == -1) {\n perror(\"sigaction\");\n return 1;\n }\n \n printf(\"Process running. Press Ctrl+C.\\n\");\n \n /* Example of system call that would be restarted */\n while(1) {\n sleep(5); /* This will be restarted if interrupted */\n }\n \n return 0;\n}",
+      "explanation": "This code uses sigaction() which is more reliable than signal(). Key features: (1) sa_mask specifies signals blocked during handler execution, (2) SA_RESTART flag automatically restarts interrupted system calls, (3) Allows finer control over signal handling behavior.",
+      "timeComplexity": "O(1) - constant time for handler",
+      "spaceComplexity": "O(1) - constant space for sigaction structure"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Handling Multiple Signals with Signal Mask",
+      "description": "Demonstrates blocking signals and checking pending signals using sigprocmask and sigpending",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n\nvoid handler(int signum) {\n printf(\"Handler caught signal %d\\n\", signum);\n}\n\nint main() {\n sigset_t block_mask, old_mask, pending_mask;\n struct sigaction sa;\n \n /* Set up handler */\n sa.sa_handler = handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0;\n sigaction(SIGUSR1, &sa, NULL);\n \n /* Initialize signal sets */\n sigemptyset(&block_mask);\n sigaddset(&block_mask, SIGUSR1);\n \n /* Block SIGUSR1 */\n if (sigprocmask(SIG_BLOCK, &block_mask, &old_mask) == -1) {\n perror(\"sigprocmask\");\n return 1;\n }\n \n printf(\"SIGUSR1 is now blocked.\\n\");\n printf(\"Sending SIGUSR1 to self...\\n\");\n raise(SIGUSR1); /* Generate signal - will be pending */\n \n /* Check for pending signals */\n sigpending(&pending_mask);\n if (sigismember(&pending_mask, SIGUSR1)) {\n printf(\"SIGUSR1 is pending (blocked).\\n\");\n }\n \n /* Unblock SIGUSR1 - handler will be called */\n printf(\"Unblocking SIGUSR1...\\n\");\n if (sigprocmask(SIG_SETMASK, &old_mask, NULL) == -1) {\n perror(\"sigprocmask\");\n return 1;\n }\n \n printf(\"Main function completed.\\n\");\n return 0;\n}",
+      "explanation": "This demonstrates: (1) sigprocmask() to block/unblock signals, (2) sigpending() to check which signals are pending, (3) raise() to send signal to current process. When SIGUSR1 is blocked, the signal becomes pending. When unblocked, the handler is invoked.",
+      "timeComplexity": "O(1) for each signal operation",
+      "spaceComplexity": "O(1) - constant space for signal sets"
+    }
+  ]
+}

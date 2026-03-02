@@ -1,0 +1,35 @@
+{
+  "topicId": "circle-generating-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Midpoint Circle Algorithm",
+      "description": "Standard midpoint circle algorithm for raster display",
+      "code": "ALGORITHM MidpointCircle(r)\nBEGIN\n x ← 0\n y ← r\n P ← 1 - r\n \n WHILE x < y DO\n Plot points in 8 octants:\n (x, y), (y, x), (y, -x), (x, -y)\n (-x, -y), (-y, -x), (-y, x), (-x, y)\n \n IF P < 0 THEN\n // Midpoint is inside circle\n x ← x + 1\n P ← P + 2*x + 1\n ELSE\n // Midpoint is outside/on circle\n x ← x + 1\n y ← y - 1\n P ← P + 2*x - 2*y + 1\n END IF\n END WHILE\nEND",
+      "explanation": "The algorithm starts at (0,r) and uses decision parameter P to choose between East and Southeast pixels. When P<0, the midpoint is inside so we choose East; otherwise choose Southeast. Each computed point is plotted in all 8 octants due to symmetry.",
+      "timeComplexity": "O(r)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Polar Circle Algorithm",
+      "description": "Circle drawing using polar coordinates",
+      "code": "ALGORITHM PolarCircle(r)\nBEGIN\n angle ← 0\n angleStep ← 1/r\n \n WHILE angle ≤ π/4 DO\n x ← round(r * cos(angle))\n y ← round(r * sin(angle))\n \n // Plot in all 8 octants\n Plot points:\n (x, y), (y, x), (y, -x), (x, -y)\n (-x, -y), (-y, -x), (-y, x), (-x, y)\n \n angle ← angle + angleStep\n END WHILE\nEND",
+      "explanation": "This method samples angles from 0 to 45° (π/4 radians) and computes x and y using trigonometric functions. The angle step is chosen to ensure consecutive points are approximately one pixel apart. Due to 8-way symmetry, points are reflected to all octants.",
+      "timeComplexity": "O(r)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Bresenham's Circle Algorithm (Simplified)",
+      "description": "Bresenham's incremental circle drawing algorithm",
+      "code": "ALGORITHM BresenhamCircle(r)\nBEGIN\n x ← 0\n y ← r\n d ← 2 * (1 - r)\n \n WHILE x < y DO\n Plot pixel (x, y) and symmetric points\n \n IF d < 0 THEN\n // Choose E\n d ← d + 2*x + 3\n x ← x + 1\n ELSE\n // Choose SE\n d ← d + 2*(x - y) + 5\n x ← x + 1\n y ← y - 1\n END IF\n END WHILE\nEND",
+      "explanation": "Uses variable 'd' as decision parameter. When d<0, the error is small so choose East pixel; when d≥0, choose Southeast pixel. The decision parameter is updated incrementally without recalculating squares.",
+      "timeComplexity": "O(r)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the difference between IRQ and FIQ in ARM architecture.",
+    "expectedPoints": [
+      "IRQ is standard priority interrupt, FIQ is high-priority fast interrupt",
+      "FIQ has dedicated banked registers (r8-r14) unlike IRQ",
+      "FIQ has lower latency (4 cycles) compared to IRQ (20+ cycles)",
+      "FIQ can preempt IRQ handling but IRQ cannot preempt FIQ",
+      "FIQ has private vector address at 0x0000001C"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Describe the ARM exception vector table and list all exception vectors in order.",
+    "expectedPoints": [
+      "Vector table contains branch instructions to exception handlers",
+      "Located at 0x00000000 or 0xFFFF0000 (configurable)",
+      "Order: Reset(0x00), Undefined(0x04), SWI(0x08), Prefetch Abort(0x0C), Data Abort(0x10), IRQ(0x18), FIQ(0x1C)",
+      "Each vector typically contains branch instruction to handler",
+      "FIQ last to allow direct handler placement"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain the sequence of operations when an exception occurs in ARM processor.",
+    "expectedPoints": [
+      "1. CPSR is copied to SPSR of the appropriate mode",
+      "2. Return address is saved in LR (R14) of the exception mode",
+      "3. CPSR is updated: set to exception mode, disable interrupts if needed",
+      "4. PC is set to exception vector address",
+      "5. Handler executes at vector location",
+      "6. Return using SUBS PC,LR,#4 or MOVS PC,SPSR"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "What are banked registers in ARM? Explain their significance in exception handling.",
+    "expectedPoints": [
+      "Banked registers are private copies available in different processor modes",
+      "Each exception mode (IRQ, FIQ, SVC, etc.) has its own banked registers",
+      "FIQ has 7 banked registers (r8-r14_fiq) allowing fast context switch",
+      "IRQ has banked registers r13-r14 for stack and return address",
+      "Eliminates need to save/restore general registers to memory, reducing latency"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "How do you return from an IRQ exception in ARM? Explain with example instructions.",
+    "expectedPoints": [
+      "Use SUBS PC, LR, #4 to return from IRQ handler",
+      "This instruction restores CPSR from SPSR (S suffix) and adjusts return address",
+      "The #4 adjustment accounts for ARM's 3-stage pipeline",
+      "Alternative: POP {PC} after restoring SPSR to CPSR manually",
+      "For FIQ also use SUBS PC, LR, #4 after restoring banked registers"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain the role of CPSR and SPSR in exception handling.",
+    "expectedPoints": [
+      "CPSR (Current Program Status Register) holds current processor state",
+      "SPSR (Saved Program Status Register) is banked for each privileged mode",
+      "On exception entry, CPSR is copied to SPSR of the respective mode",
+      "CPSR is updated with new mode bits and interrupt disable flags",
+      "On exception return, SPSR is restored to CPSR to restore original state"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "What is interrupt latency? Compare IRQ and FIQ latency in ARM7TDMI.",
+    "expectedPoints": [
+      "Interrupt latency = time from interrupt request to first instruction execution",
+      "ARM7TDMI IRQ latency: typically 10-20 clock cycles (pipeline flush + vector fetch)",
+      "FIQ latency: typically 4 cycles due to banked registers and dedicated vector",
+      "FIQ can be placed directly at vector address avoiding branch delay",
+      "Factors affecting latency: current instruction, pipeline state, memory wait states"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Describe in detail the exception handling mechanism in ARM architecture with special emphasis on IRQ and FIQ. Include vector addresses, registers used, and return mechanism.",
+    "expectedPoints": [
+      "Exception vector table locations and entries",
+      "Exception modes: 7 modes with banked registers",
+      "IRQ handling: banked r13_irq, r14_irq, SPSR_irq, sequence",
+      "FIQ handling: banked r8-r14_fiq, lower latency, private vector",
+      "CPSR changes: I/F bits for interrupt disable",
+      "SPSR save/restore for state preservation",
+      "Return mechanism: SUBS PC,LR,#4 for IRQ, MOVS PC,SPSR",
+      "Priority: FIQ > IRQ > other exceptions",
+      "Nesting considerations and enable/disable methods"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Design an FIQ handler in ARM assembly language. Explain how FIQ achieves better performance than IRQ with reference to banked registers and vector placement.",
+    "expectedPoints": [
+      "FIQ handler structure: save only required registers if any",
+      "Banked registers r8-r14 available without save/restore",
+      "Direct placement at 0x1C avoiding branch instruction",
+      "FIQ disable using CPSID F or setting F bit in CPSR",
+      "Example code structure with context save only if needed",
+      "CPSR restoration and return using SUBS PC,LR,#4",
+      "Performance comparison: 4 cycles FIQ vs 20+ cycles IRQ",
+      "Design considerations: keep FIQ handler short, avoid blocking"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Compare and contrast IRQ and FIQ interrupts in ARM microcontrollers under the following headings: (a) Priority (b) Number of interrupts (c) Latency (d) Banked registers (e) Vector address.",
+    "expectedPoints": [
+      "(a) Priority: FIQ has higher priority, can preempt IRQ",
+      "(b) Number: FIQ typically 1 line, IRQ can have multiple with controller",
+      "(c) Latency: FIQ ~4 cycles, IRQ ~20+ cycles in ARM7",
+      "(d) Banked registers: FIQ has 7 (r8-r14), IRQ has 2 (r13-r14)",
+      "(e) Vector: FIQ at 0x1C (last), IRQ at 0x18",
+      "Additional: FIQ can disable IRQ during execution, IRQ cannot",
+      "Use cases: FIQ for time-critical (DMA, timers), IRQ for general devices"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Explain the complete process of interrupt nesting in ARM. Discuss when nesting is used and what precautions are necessary when nesting IRQ handlers.",
+    "expectedPoints": [
+      "Nesting allows higher priority interrupt to interrupt lower priority",
+      "IRQ nesting: re-enable IRQ within handler by clearing I bit in CPSR",
+      "Stack management: must save LR, SPSR, and required registers before re-enabling",
+      "Careful with data corruption between nested handlers",
+      "FIQ can always preempt IRQ; IRQ can preempt FIQ only if FIQ re-enabled",
+      "Return sequence must properly restore nested context",
+      "Performance trade-off: nesting adds overhead but improves responsiveness",
+      "Alternative: use priorities in interrupt controller to avoid nesting"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

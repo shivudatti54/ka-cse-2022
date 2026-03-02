@@ -1,0 +1,45 @@
+{
+  "topicId": "operator-overloading-using-a-friend-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Complex Number Addition using Friend Function",
+      "description": "Demonstrates overloading + operator using friend function for Complex class",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Complex {\nprivate:\n int real, imag;\npublic:\n Complex(int r = 0, int i = 0) : real(r), imag(i) {}\n \n // Friend function declaration\n friend Complex operator+(const Complex& c1, const Complex& c2);\n \n void display() {\n cout << real << \" + \" << imag << \"i\" << endl;\n }\n};\n\n// Friend function definition (outside class)\nComplex operator+(const Complex& c1, const Complex& c2) {\n Complex result;\n result.real = c1.real + c2.real;\n result.imag = c1.imag + c2.imag;\n return result; // Note: return by value for temporary\n}\n\nint main() {\n Complex c1(3, 4), c2(1, 2), c3;\n c3 = c1 + c2; // Equivalent to operator+(c1, c2)\n c3.display(); // Output: 4 + 6i\n return 0;\n}",
+      "explanation": "The friend function operator+ takes two Complex objects as parameters and returns a new Complex object. Both c1 + c2 and c2 + c1 work due to symmetry.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Stream Operators Overloading",
+      "description": "Shows how to overload << and >> operators using friend functions",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Person {\nprivate:\n string name;\n int age;\npublic:\n Person() : name(\"\"), age(0) {}\n Person(string n, int a) : name(n), age(a) {}\n \n // Friend declarations for stream operators\n friend ostream& operator<<(ostream&, const Person&);\n friend istream& operator>>(istream&, Person&);\n};\n\n// Overload << operator\nostream& operator<<(ostream& out, const Person& p) {\n out << \"Name: \" << p.name << \", Age: \" << p.age;\n return out; // Return stream for chaining\n}\n\n// Overload >> operator\nistream& operator>>(istream& in, Person& p) {\n cout << \"Enter name: \";\n in >> p.name;\n cout << \"Enter age: \";\n in >> p.age;\n return in;\n}\n\nint main() {\n Person p1, p2;\n cin >> p1 >> p2; // Chained input\n cout << p1 << endl << p2; // Chained output\n return 0;\n}",
+      "explanation": "ostream& and istream& are returned to enable chaining. The >> overload uses non-const reference as it modifies the object.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Unary Operator using Friend Function",
+      "description": "Demonstrates overloading unary operator (negation) using friend function",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Vector {\nprivate:\n int x, y;\npublic:\n Vector(int a = 0, int b = 0) : x(a), y(b) {}\n \n // Friend declaration for unary operator\n friend Vector operator-(const Vector& v);\n \n void display() {\n cout << \"(\" << x << \", \" << y << \")\" << endl;\n }\n};\n\n// Unary operator overloading (only 1 parameter)\nVector operator-(const Vector& v) {\n Vector result;\n result.x = -v.x;\n result.y = -v.y;\n return result;\n}\n\nint main() {\n Vector v1(5, 3), v2;\n v2 = -v1; // Equivalent to operator-(v1)\n v1.display(); // (5, 3)\n v2.display(); // (-5, -3)\n return 0;\n}",
+      "explanation": "Unary operators take only one parameter since they operate on a single operand. The friend function negates both components.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Return by Reference for Chaining",
+      "description": "Shows the importance of returning by reference in operator overloading",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Number {\nprivate:\n int val;\npublic:\n Number(int v = 0) : val(v) {}\n \n // Friend declaration\n friend Number& operator+(Number& n1, Number& n2);\n \n int getVal() const { return val; }\n void setVal(int v) { val = v; }\n};\n\n// Returns reference to enable chaining\nNumber& operator+(Number& n1, Number& n2) {\n n1.val = n1.val + n2.val;\n return n1; // Return same object by reference\n}\n\nint main() {\n Number a(10), b(20), c(30);\n \n // Without return by reference, this won't work\n a + b + c; // Chaining: (a+b) then result+c\n cout << a.getVal(); // Output: 60\n return 0;\n}",
+      "explanation": "Returning by reference allows chained operations like a + b + c. The result of (a+b) can be used for the next + operation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

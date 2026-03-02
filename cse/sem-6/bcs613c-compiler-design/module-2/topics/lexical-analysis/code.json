@@ -1,0 +1,33 @@
+{
+  "topicId": "lexical-analysis",
+  "examples": [
+    {
+      "id": "pseudocode-lexical-analysis",
+      "title": "Algorithm: Lexical Analysis",
+      "description": "Pseudocode demonstrating the basic steps of lexical analysis",
+      "language": "pseudocode",
+      "code": "ALGORITHM LexicalAnalysis\nINPUT: SourceCode\nOUTPUT: TokenStream\n\nBEGIN\n Initialize InputBuffer\n WHILE NOT EndOfFile DO\n ReadNextCharacter\n IF CharacterIsWhitespace THEN\n SkipWhitespace\n ELSE IF CharacterIsComment THEN\n SkipComment\n ELSE\n IdentifyToken\n AddTokenToStream\n END WHILE\nEND",
+      "explanation": "This pseudocode illustrates the primary steps of lexical analysis: reading input, skipping whitespace and comments, identifying tokens, and adding them to the output stream."
+    },
+    {
+      "id": "python-lexical-analysis",
+      "title": "Python: Lexical Analysis",
+      "description": "Python implementation of a basic lexical analyzer",
+      "language": "python",
+      "code": "import re\n\ndef lexical_analysis(source_code):\n # Define token patterns using regular expressions\n token_patterns = [\n (r'\\d+', 'NUMBER'),\n (r'[a-zA-Z_][a-zA-Z_0-9]*', 'IDENTIFIER'),\n (r'\\+', 'PLUS'),\n (r'\\-', 'MINUS'),\n (r'\\*', 'MULTIPLY'),\n (r'\\/', 'DIVIDE'),\n (r'\\(', 'LPAREN'),\n (r'\\)', 'RPAREN'),\n ]\n\n # Initialize the token stream\n token_stream = []\n\n # Iterate over the source code\n for line in source_code.split('\\n'):\n # Remove whitespace and comments\n line = re.sub(r'\\s+', '', line)\n line = re.sub(r'#.*', '', line)\n\n # Identify tokens\n for pattern, token_type in token_patterns:\n for match in re.finditer(pattern, line):\n token_stream.append((token_type, match.group()))\n\n return token_stream\n",
+      "explanation": "This Python implementation demonstrates a basic lexical analyzer using regular expressions to define token patterns. It iterates over the source code, removes whitespace and comments, identifies tokens, and adds them to the output stream.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-lexical-analysis",
+      "title": "C: Lexical Analysis",
+      "description": "C implementation of a basic lexical analyzer",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <ctype.h>\n#include <string.h>\n\n#define MAX_TOKEN_LENGTH 256\n\n// Define token types\nenum TokenType {\n NUMBER,\n IDENTIFIER,\n PLUS,\n MINUS,\n MULTIPLY,\n DIVIDE,\n LPAREN,\n RPAREN\n};\n\n// Define a token structure\ntypedef struct Token {\n enum TokenType type;\n char value[MAX_TOKEN_LENGTH];\n} Token;\n\n// Function to perform lexical analysis\nvoid lexical_analysis(const char* source_code) {\n // Initialize the token stream\n Token token_stream[1024];\n int token_count = 0;\n\n // Iterate over the source code\n for (const char* ptr = source_code; *ptr != '\\0'; ptr++) {\n // Remove whitespace and comments\n if (isspace(*ptr)) continue;\n if (*ptr == '#') {\n while (*ptr != '\\n' && *ptr != '\\0') ptr++;\n continue;\n }\n\n // Identify tokens\n if (isdigit(*ptr)) {\n // Handle numbers\n Token token;\n token.type = NUMBER;\n int i = 0;\n while (isdigit(*ptr)) {\n token.value[i++] = *ptr;\n ptr++;\n }\n token.value[i] = '\\0';\n token_stream[token_count++] = token;\n } else if (isalpha(*ptr) || *ptr == '_') {\n // Handle identifiers\n Token token;\n token.type = IDENTIFIER;\n int i = 0;\n while (isalnum(*ptr) || *ptr == '_') {\n token.value[i++] = *ptr;\n ptr++;\n }\n token.value[i] = '\\0';\n token_stream[token_count++] = token;\n } else {\n // Handle operators and parentheses\n Token token;\n switch (*ptr) {\n case '+':\n token.type = PLUS;\n break;\n case '-':\n token.type = MINUS;\n break;\n case '*':\n token.type = MULTIPLY;\n break;\n case '/':\n token.type = DIVIDE;\n break;\n case '(': \n token.type = LPAREN;\n break;\n case ')':\n token.type = RPAREN;\n break;\n default:\n printf(\"Error: Unknown character '%c'\\n\", *ptr);\n return;\n }\n token_stream[token_count++] = token;\n }\n }\n\n // Print the token stream\n for (int i = 0; i < token_count; i++) {\n printf(\"Token %d: %s\\n\", i, token_stream[i].value);\n }\n}\n",
+      "explanation": "This C implementation demonstrates a basic lexical analyzer. It iterates over the source code, removes whitespace and comments, identifies tokens, and adds them to the output stream.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

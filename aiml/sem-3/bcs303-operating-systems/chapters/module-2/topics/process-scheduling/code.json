@@ -1,0 +1,45 @@
+{
+  "topicId": "process-scheduling",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FCFS Scheduling Simulation",
+      "description": "Implementation of First-Come-First-Served CPU scheduling algorithm",
+      "code": "def fcfs_scheduling(processes):\n    # processes: list of (arrival_time, burst_time)\n    n = len(processes)\n    waiting_time = [0] * n\n    turnaround_time = [0] * n\n    \n    # Sort by arrival time\n    processes = sorted(processes, key=lambda x: x[0])\n    \n    completion_time = processes[0][0]\n    for i in range(n):\n        if i > 0 and processes[i][0] > completion_time:\n            completion_time = processes[i][0]\n        completion_time += processes[i][1]\n        turnaround_time[i] = completion_time - processes[i][0]\n        waiting_time[i] = turnaround_time[i] - processes[i][1]\n    \n    avg_waiting = sum(waiting_time) / n\n    avg_turnaround = sum(turnaround_time) / n\n    \n    return avg_waiting, avg_turnaround\n\n# Example: (arrival_time, burst_time)\nprocesses = [(0, 10), (1, 5), (2, 8)]\navg_wt, avg_tat = fcfs_scheduling(processes)\nprint(f\"Average Waiting Time: {avg_wt}\")\nprint(f\"Average Turnaround Time: {avg_tat}\")",
+      "explanation": "This FCFS implementation sorts processes by arrival time and executes them in order. The waiting time for each process is calculated as turnaround time minus burst time.",
+      "timeComplexity": "O(n log n) due to sorting",
+      "spaceComplexity": "O(n) for storing time arrays"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Round Robin Scheduling Simulation",
+      "description": "Implementation of Round Robin CPU scheduling with time quantum",
+      "code": "def round_robin(processes, quantum):\n    # processes: dict with pid as key, (arrival, burst) as value\n    n = len(processes)\n    remaining_bt = {p: processes[p][1] for p in processes}\n    waiting_time = {p: 0 for p in processes}\n    current_time = 0\n    completed = 0\n    ready_queue = []\n    arrived = sorted(processes.keys())\n    \n    while completed < n:\n        # Add newly arrived processes to queue\n        for p in arrived:\n            if processes[p][0] <= current_time and p not in ready_queue and remaining_bt[p] > 0:\n                ready_queue.append(p)\n        \n        if not ready_queue:\n            current_time += 1\n            continue\n        \n        process = ready_queue.pop(0)\n        \n        if remaining_bt[process] <= quantum:\n            current_time += remaining_bt[process]\n            remaining_bt[process] = 0\n            completed += 1\n            turnaround = current_time - processes[process][0]\n            waiting_time[process] = turnaround - processes[process][1]\n        else:\n            current_time += quantum\n            remaining_bt[process] -= quantum\n            # Add newly arrived and re-queue current\n            for p in arrived:\n                if processes[p][0] <= current_time and p not in ready_queue and remaining_bt[p] > 0:\n                    ready_queue.append(p)\n            ready_queue.append(process)\n    \n    return waiting_time\n\n# Example usage\nprocesses = {'P1': (0, 10), 'P2': (1, 5), 'P3': (2, 8)}\nwt = round_robin(processes, 4)\nprint(\"Waiting times:\", wt)",
+      "explanation": "This Round Robin implementation uses a ready queue. Each process gets quantum time; if not complete, it's re-added to queue. Handles process arrivals dynamically.",
+      "timeComplexity": "O(n * burst_time / quantum)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "SJF Non-Preemptive Scheduling",
+      "description": "Implementation of Shortest Job First scheduling without preemption",
+      "code": "def sjf_non_preemptive(processes):\n    # processes: list of (arrival_time, burst_time, process_id)\n    n = len(processes)\n    processes = [(p[2], p[0], p[1]) for p in processes]  # (pid, at, bt)\n    \n    completed = []\n    current_time = 0\n    ready_queue = []\n    \n    while len(completed) < n:\n        # Add all arrived processes to ready queue\n        for p in processes:\n            if p[1] <= current_time and p not in ready_queue and p not in completed:\n                ready_queue.append(p)\n        \n        if not ready_queue:\n            current_time += 1\n            continue\n        \n        # Select shortest burst time\n        ready_queue.sort(key=lambda x: x[2])\n        current_process = ready_queue.pop(0)\n        \n        current_time += current_process[2]\n        completion_time = current_time\n        turnaround = completion_time - current_process[1]\n        waiting = turnaround - current_process[2]\n        \n        completed.append((current_process[0], completion_time, turnaround, waiting))\n    \n    completed.sort(key=lambda x: x[0])\n    return completed\n\n# Example: (arrival, burst, pid)\nprocesses = [(0, 7, 1), (2, 4, 2), (4, 1, 3), (5, 6, 4)]\nresults = sjf_non_preemptive(processes)\nfor r in results:\n    print(f\"P{r[0]}: Completion={r[1]}, Turnaround={r[2]}, Waiting={r[3]}\")",
+      "explanation": "SJF selects the process with smallest burst time from available processes. It provides optimal average waiting time but cannot predict burst times in practice.",
+      "timeComplexity": "O(n\u00b2) due to repeated sorting",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Priority Scheduling with Aging",
+      "description": "Implementation of priority scheduling that incorporates aging to prevent starvation",
+      "code": "def priority_scheduling_with_aging(processes, aging_rate=1):\n    # processes: dict {pid: (arrival, burst, priority)}\n    n = len(processes)\n    remaining_bt = {p: processes[p][1] for p in processes}\n    base_priority = {p: processes[p][2] for p in processes}\n    waiting_time = {p: 0 for p in processes}\n    current_time = 0\n    completed = 0\n    completed_processes = []\n    \n    while completed < n:\n        # Calculate effective priority with aging\n        effective_priority = {}\n        for p in processes:\n            if remaining_bt[p] > 0:\n                # Aging: reduce waiting time and increase priority\n                aging_bonus = min(waiting_time[p] // 5 * aging_rate, 10)\n                effective_priority[p] = base_priority[p] - aging_bonus\n            else:\n                effective_priority[p] = float('inf')\n        \n        # Select highest priority (lowest number)\n        current_process = min(effective_priority, key=effective_priority.get)\n        \n        # Execute for 1 time unit\n        current_time += 1\n        remaining_bt[current_process] -= 1\n        \n        # Update waiting times\n        for p in processes:\n            if remaining_bt[p] > 0 and p != current_process:\n                waiting_time[p] += 1\n        \n        if remaining_bt[current_process] == 0:\n            completed += 1\n            turnaround = current_time - processes[current_process][0]\n            wt = turnaround - processes[current_process][1]\n            completed_processes.append((current_process, wt, turnaround))\n    \n    return completed_processes\n\n# Example: (arrival, burst, priority - lower is higher priority)\nprocesses = {'P1': (0, 10, 3), 'P2': (0, 5, 5), 'P3': (0, 8, 2)}\nresults = priority_scheduling_with_aging(processes)\nfor r in results:\n    print(f\"{r[0]}: Waiting={r[1]}, Turnaround={r[2]}\")",
+      "explanation": "This implementation shows priority scheduling where waiting processes gain priority over time. For every 5 units of waiting, priority improves by 1 (up to max 10), preventing indefinite starvation.",
+      "timeComplexity": "O(n * total_burst_time)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "memory-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FIFO Page Replacement Algorithm",
+      "description": "Implementation of FIFO page replacement algorithm to simulate page faults",
+      "code": "def fifo_page_replacement(pages, frames):\n    page_table = []\n    page_faults = 0\n    queue = []\n    \n    for page in pages:\n        if page not in page_table:\n            page_faults += 1\n            if len(page_table) < frames:\n                page_table.append(page)\n                queue.append(page)\n            else:\n                # Remove oldest page (FIFO)\n                oldest = queue.pop(0)\n                page_table.remove(oldest)\n                page_table.append(page)\n                queue.append(page)\n        print(f\"Page {page}: Fault={page_faults}, Frames={page_table}\")\n    \n    return page_faults\n\n# Example usage\npages = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]\nframes = 3\nfaults = fifo_page_replacement(pages, frames)\nprint(f\"Total Page Faults: {faults}\")",
+      "explanation": "This Python code simulates FIFO page replacement. It maintains a queue of pages in memory order. When a page fault occurs and all frames are full, the oldest page (first in queue) is evicted.",
+      "timeComplexity": "O(n \u00d7 f) where n = number of page references, f = number of frames",
+      "spaceComplexity": "O(f) for storing frames and queue"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "LRU Page Replacement Algorithm",
+      "description": "Implementation of LRU page replacement using counters for tracking page usage",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int page;\n    int counter; // Timestamp of last use\n} Frame;\n\nint find_lru(Frame frames[], int num_frames, int current_time) {\n    int lru = 0;\n    int min_time = frames[0].counter;\n    for (int i = 1; i < num_frames; i++) {\n        if (frames[i].counter < min_time) {\n            min_time = frames[i].counter;\n            lru = i;\n        }\n    }\n    return lru;\n}\n\nint lru_page_replacement(int pages[], int n, int num_frames) {\n    Frame frames[10];\n    int page_faults = 0, time = 0;\n    \n    for (int i = 0; i < num_frames; i++) {\n        frames[i].page = -1;\n        frames[i].counter = 0;\n    }\n    \n    for (int i = 0; i < n; i++) {\n        int page = pages[i];\n        int hit = 0;\n        \n        // Check if page already in frame\n        for (int j = 0; j < num_frames; j++) {\n            if (frames[j].page == page) {\n                hit = 1;\n                frames[j].counter = time++;\n                break;\n            }\n        }\n        \n        if (!hit) {\n            page_faults++;\n            int replace_index = -1;\n            \n            // Find empty frame\n            for (int j = 0; j < num_frames; j++) {\n                if (frames[j].page == -1) {\n                    replace_index = j;\n                    break;\n                }\n            }\n            \n            // Find LRU frame to replace\n            if (replace_index == -1) {\n                replace_index = find_lru(frames, num_frames, time);\n            }\n            \n            frames[replace_index].page = page;\n            frames[replace_index].counter = time++;\n        }\n    }\n    return page_faults;\n}",
+      "explanation": "This C code implements LRU page replacement using a counter/timestamp approach. Each frame stores when it was last used. On a page fault, the frame with the smallest counter (least recently used) is replaced.",
+      "timeComplexity": "O(n \u00d7 f) where n = page references, f = number of frames",
+      "spaceComplexity": "O(f)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Address Translation in Paging",
+      "description": "Pseudocode demonstrating virtual address to physical address translation",
+      "code": "// VIRTUAL ADDRESS STRUCTURE\n// +------------------+------------------+\n// |   Page Number    |    Offset        |\n// |    (p bits)      |    (d bits)      |\n// +------------------+------------------+\n\nFUNCTION Translate(virtual_address, page_table)\nBEGIN\n    // Extract page number and offset\n    page_number = virtual_address DIV 2^d\n    offset = virtual_address MOD 2^d\n    \n    // Look up page in page table\n    IF page_table[page_number].valid_bit == FALSE\n        THEN\n            TRAP to Operating System (Page Fault)\n            // Handle page fault\n            Find free frame\n            Read page from disk into frame\n            Update page_table[page_number]\n            Set valid_bit = TRUE\n    END IF\n    \n    // Get physical frame number\n    frame_number = page_table[page_number].frame_number\n    \n    // Construct physical address\n    physical_address = frame_number * 2^d + offset\n    \n    RETURN physical_address\nEND",
+      "explanation": "This pseudocode shows how virtual addresses are translated to physical addresses in a paging system. The virtual address is split into page number (for page table lookup) and offset (combined with frame number for physical address).",
+      "timeComplexity": "O(1) for TLB hit, O(n) for page table walk without TLB",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Page Replacement Simulation with Multiple Algorithms",
+      "description": "Simulation comparing FIFO, LRU, and Optimal page replacement algorithms",
+      "code": "import collections\n\ndef simulate_page_replacement(algorithm, pages, frames):\n    page_faults = 0\n    in_memory = set()\n    \n    if algorithm == 'FIFO':\n        queue = collections.deque()\n        for page in pages:\n            if page not in in_memory:\n                page_faults += 1\n                if len(queue) >= frames:\n                    old = queue.popleft()\n                    in_memory.remove(old)\n                queue.append(page)\n                in_memory.add(page)\n                \n    elif algorithm == 'LRU':\n        access_order = []\n        for page in pages:\n            if page not in in_memory:\n                page_faults += 1\n                if len(access_order) >= frames:\n                    lru_page = access_order.pop(0)\n                    in_memory.remove(lru_page)\n                in_memory.add(page)\n            # Update access order (most recent at end)\n            if page in access_order:\n                access_order.remove(page)\n            access_order.append(page)\n            \n    elif algorithm == 'OPTIMAL':\n        # Look ahead to find page not used longest\n        future = {i: [] for i in range(frames)}\n        \n        for i, page in enumerate(pages):\n            if page not in in_memory:\n                page_faults += 1\n                if len(in_memory) >= frames:\n                    # Find page used furthest in future\n                    furthest = -1\n                    to_remove = None\n                    for p in in_memory:\n                        # Find next use of page p\n                        next_use = float('inf')\n                        for j in range(i + 1, len(pages)):\n                            if pages[j] == p:\n                                next_use = j\n                                break\n                        if next_use > furthest:\n                            furthest = next_use\n                            to_remove = p\n                    in_memory.remove(to_remove)\n                in_memory.add(page)\n                \n    return page_faults\n\n# Compare algorithms\npages = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 1, 2]\nframes = 4\n\nfor algo in ['FIFO', 'LRU', 'OPTIMAL']:\n    faults = simulate_page_replacement(algo, pages, frames)\n    print(f\"{algo}: {faults} page faults\")",
+      "explanation": "This Python code simulates three page replacement algorithms. FIFO replaces the oldest page, LRU replaces the least recently used page, and Optimal replaces the page that won't be used for the longest time in the future.",
+      "timeComplexity": "O(n \u00d7 f) for FIFO/LRU, O(n \u00d7 f\u00b2) for Optimal",
+      "spaceComplexity": "O(f + n)"
+    }
+  ]
+}

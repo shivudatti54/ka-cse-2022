@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic System Call Example - Reading from File",
+      "description": "Demonstrates use of open(), read(), and close() system calls to read a file",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n\nint main() {\n int fd; // file descriptor\n char buffer[100];\n ssize_t bytes_read;\n \n // Open file (system call)\n fd = open(\"example.txt\", O_RDONLY);\n if (fd < 0) {\n perror(\"open\");\n return 1;\n }\n \n // Read from file (system call)\n bytes_read = read(fd, buffer, sizeof(buffer) - 1);\n if (bytes_read < 0) {\n perror(\"read\");\n close(fd);\n return 1;\n }\n \n buffer[bytes_read] = '\\0'; // Null terminate\n printf(\"Read %zd bytes: %s\\n\", bytes_read, buffer);\n \n // Close file (system call)\n close(fd);\n return 0;\n}",
+      "explanation": "This program demonstrates three fundamental Unix system calls: open() returns a file descriptor, read() reads data into a buffer, and close() releases the file descriptor. These are direct kernel interfaces unlike library functions like fopen().",
+      "timeComplexity": "O(n) where n is the number of bytes read",
+      "spaceComplexity": "O(n) for the buffer where n is the buffer size"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Process Creation using fork()",
+      "description": "Shows how fork() creates a new process with duplicate address space",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n pid_t pid;\n int x = 10;\n \n printf(\"Before fork: x = %d\\n\", x);\n \n pid = fork(); // Creates new process\n \n if (pid < 0) {\n // Error occurred\n perror(\"fork failed\");\n return 1;\n }\n else if (pid == 0) {\n // Child process\n x = 20;\n printf(\"Child: PID = %d, Parent PID = %d, x = %d\\n\", \n getpid(), getppid(), x);\n }\n else {\n // Parent process\n printf(\"Parent: PID = %d, Child PID = %d, x = %d\\n\", \n getpid(), pid, x);\n }\n \n printf(\"After fork: x = %d\\n\", x);\n return 0;\n}",
+      "explanation": "fork() is the primary mechanism for process creation in Unix. It duplicates the calling process, creating a child with its own copy of memory. The return value differs: 0 in child, child's PID in parent. Both processes continue execution after fork().",
+      "timeComplexity": "O(1) for fork operation, but copying parent memory adds overhead",
+      "spaceComplexity": "O(n) where n is the size of parent's address space (copy-on-write)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "Unix Pipeline - Combining Commands",
+      "description": "Demonstrates Unix philosophy of combining small tools using pipes",
+      "code": "# Count lines containing 'error' in all .log files, sorted by frequency\n# This single command combines 5 different programs\n\n# Step by step:\nls *.log # List all log files\nls *.log | grep '\\.log$' | head -5 # Filter .log files, show first 5\n\n# Full pipeline:\ngrep -h 'error' *.log | # Find lines with 'error' in all log files\n sort | # Sort the matching lines\n uniq -c | # Count occurrences of each unique line\n sort -rn | # Sort by count (descending)\n head -10 # Show top 10 results\n\n# Equivalent explanation:\n# 1. grep finds matching lines from each .log file\n# 2. sort arranges all lines alphabetically\n# 3. uniq -c counts duplicate consecutive lines\n# 4. sort -rn sorts numerically in reverse order\n# 5. head displays only first 10 lines",
+      "explanation": "This exemplifies the Unix philosophy: small, focused programs (ls, grep, sort, uniq, head) that each do one task well, combined via pipes to accomplish complex data processing. Each program reads from stdin and writes to stdout, with the shell orchestrating the data flow.",
+      "timeComplexity": "Depends on input size and command; typically O(n log n) due to sorting",
+      "spaceComplexity": "O(n) for intermediate data passed through pipes"
+    }
+  ]
+}

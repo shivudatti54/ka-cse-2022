@@ -1,0 +1,115 @@
+{
+  "topicId": "description-of-the-algorithm",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "RSA Key Generation Process Flow",
+      "description": "A horizontal flowchart showing the step-by-step process of generating RSA key pairs from selecting prime numbers to computing public and private keys",
+      "elements": [
+        "Start oval: Begin key generation",
+        "Rectangle 1: Select two large distinct prime numbers p and q",
+        "Rectangle 2: Calculate n = p × q (modulus)",
+        "Rectangle 3: Calculate φ(n) = (p-1) × (q-1)",
+        "Rectangle 4: Choose public exponent e such that 1 < e < φ(n) and GCD(e, φ(n)) = 1",
+        "Rectangle 5: Calculate private exponent d such that d × e ≡ 1 (mod φ(n))",
+        "Arrow from rectangle 5 splits into two paths: Public Key (n, e) and Private Key (n, d)",
+        "End oval: Key pair generated"
+      ],
+      "purpose": "Students learn the sequential steps required to generate RSA key pairs and understand how public and private keys are mathematically related through Euler's totient function"
+    },
+    {
+      "id": "diagram-2",
+      "title": "RSA Encryption Process Block Diagram",
+      "description": "A left-to-right block diagram showing how plaintext is converted to ciphertext using the recipient's public key",
+      "elements": [
+        "Input box: Plaintext message M (converted to integer where 0 ≤ M < n)",
+        "Block 1: Public Key (n, e) - shown as two connected circles labeled 'n' and 'e'",
+        "Processing block: C = M^e mod n (modular exponentiation operation)",
+        "Output box: Ciphertext C",
+        "Arrows connecting: Input → Public Key → Processing → Output",
+        "Annotation: Encryption is O(k^3) time complexity where k is key size in bits"
+      ],
+      "purpose": "Students visualize the encryption transformation and understand that only the public key (n, e) is needed to encrypt, making it safe for open distribution"
+    },
+    {
+      "id": "diagram-3",
+      "title": "RSA Decryption Process Block Diagram",
+      "description": "A left-to-right block diagram showing how ciphertext is converted back to plaintext using the private key",
+      "elements": [
+        "Input box: Ciphertext C",
+        "Block 1: Private Key (n, d) - shown as two connected circles labeled 'n' and 'd'",
+        "Processing block: M = C^d mod n (modular exponentiation operation)",
+        "Output box: Plaintext message M",
+        "Arrows connecting: Input → Private Key → Processing → Output",
+        "Annotation: Decryption uses private exponent d for modular exponentiation"
+      ],
+      "purpose": "Students understand that decryption reverses encryption using the private key, and observe the symmetry between encryption and decryption operations"
+    },
+    {
+      "id": "diagram-4",
+      "title": "RSA Complete System Overview",
+      "description": "A comprehensive diagram showing both encryption and decryption phases with sender and receiver roles, illustrating the complete RSA cryptosystem",
+      "elements": [
+        "Two columns: Sender (Alice) on left, Receiver (Bob) on right",
+        "Bob's section: Key Generation (p, q) → Private Key (n, d) and Public Key (n, e)",
+        "Arrow from Bob to Alice labeled 'Public Key Transmission (safe to send)'",
+        "Alice's section: Plaintext M → Encryption with (n, e) → Ciphertext C",
+        "Arrow from Alice to Bob labeled 'Ciphertext C (secure channel not required)'",
+        "Bob's decryption: Ciphertext C → Decryption with (n, d) → Plaintext M",
+        "Dashed box around Alice's encryption operation",
+        "Dashed box around Bob's decryption operation"
+      ],
+      "purpose": "Students understand the complete RSA workflow including secure key exchange scenario and recognize that only the private key must remain secret"
+    },
+    {
+      "id": "diagram-5",
+      "title": "Euler's Theorem Application in RSA",
+      "description": "A mathematical diagram showing the relationship between Euler's theorem and RSA decryption formula, explaining why the algorithm works",
+      "elements": [
+        "Box 1: Euler's Theorem statement: For coprime a and n, a^φ(n) ≡ 1 (mod n)",
+        "Box 2: RSA parameters: n = p×q, φ(n) = (p-1)(q-1), d×e ≡ 1 (mod φ(n))",
+        "Arrow from Box 2: d×e = 1 + k×φ(n) for some integer k",
+        "Box 3: Decryption derivation: C^d ≡ (M^e)^d ≡ M^(1+k×φ(n)) ≡ M × (M^φ(n))^k ≡ M × 1^k ≡ M (mod n)",
+        "Highlighted text: M^φ(n) ≡ 1 (mod n) by Euler's theorem",
+        "Conclusion box: Therefore, decryption correctly recovers M from C"
+      ],
+      "purpose": "Students gain mathematical justification for why RSA decryption works and understand the critical role of Euler's theorem in guaranteeing correct plaintext recovery"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "RSA Key Generation Parameters Comparison",
+      "content": "Table comparing public and private key components: Public Key contains (n, e) - modulus and public exponent, can be shared openly; Private Key contains (n, d) - modulus and private exponent, must be kept secret; φ(n) = (p-1)(q-1) is calculated during key generation but not part of either key; p and q are prime factors discarded after key generation for security"
+    },
+    {
+      "type": "flowchart",
+      "title": "Step-by-Step RSA Key Generation Algorithm",
+      "content": "Flowchart: 1. Generate random primes p and q of similar bit-length; 2. Compute n = p × q (typically 2048 or 4096 bits); 3. Compute φ(n) = (p-1)(q-1); 4. Select e from {3, 5, 17, 257, 65537} (commonly used values); 5. Verify GCD(e, φ(n)) = 1; 6. Compute d = e^(-1) mod φ(n) using extended Euclidean algorithm; 7. Output public key (n, e) and private key (n, d)"
+    },
+    {
+      "type": "comparison",
+      "title": "Encryption vs Decryption Operations in RSA",
+      "content": "Side-by-side comparison: Encryption uses ciphertext C = M^e mod n where e is public exponent, typically small (65537) for efficiency; Decryption uses plaintext M = C^d mod n where d is private exponent, large (approximately same size as n); Both operations are modular exponentiation; Encryption is faster due to small e; Decryption requires modular exponentiation with large exponent d"
+    },
+    {
+      "type": "table",
+      "title": "RSA Security Parameters and Recommended Sizes",
+      "content": "Table listing minimum security requirements: 1024-bit keys (deprecated - equivalent to 80-bit security), 2048-bit keys (current standard - equivalent to 112-bit security), 3072-bit keys (high security - equivalent to 128-bit security), 4096-bit keys (very high security - equivalent to 140-bit security); Notes on processing time increases with key size; Recommendation to use 2048-bit minimum for current applications"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "RSA Algorithm",
+      "branches": [
+        "Key Generation: Select primes p, q → Compute n = p×q → Calculate φ(n) → Choose e (coprime to φ(n)) → Compute d = e^(-1) mod φ(n)",
+        "Public Key: (n, e) - used for encryption, can be shared openly",
+        "Private Key: (n, d) - used for decryption, must remain secret",
+        "Encryption: C = M^e mod n (sender uses recipient's public key)",
+        "Decryption: M = C^d mod n (recipient uses private key)",
+        "Mathematical Foundation: Based on difficulty of factoring large composite numbers into prime factors; Relies on Euler's theorem for correctness proof"
+      ],
+      "purpose": "Provides comprehensive overview connecting all components of RSA algorithm - from mathematical foundations to practical implementation steps - enabling students to see how key generation, encryption, and decryption phases interrelate"
+    }
+  ]
+}

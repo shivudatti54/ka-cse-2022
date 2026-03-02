@@ -1,0 +1,45 @@
+{
+  "topicId": "queues",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Queue Array Implementation",
+      "description": "Basic queue implementation using fixed-size array with enqueue and dequeue operations",
+      "code": "STRUCTURE Queue\n  ARRAY data[MAXSIZE]\n  INTEGER front = -1\n  INTEGER rear = -1\nEND STRUCTURE\n\nFUNCTION isEmpty(queue)\n  IF queue.front == -1 THEN\n    RETURN TRUE\n  ELSE\n    RETURN FALSE\n  END IF\nEND FUNCTION\n\nFUNCTION isFull(queue)\n  IF queue.rear == MAXSIZE - 1 THEN\n    RETURN TRUE\n  ELSE\n    RETURN FALSE\n  END IF\nEND FUNCTION\n\nFUNCTION enqueue(queue, item)\n  IF isFull(queue) THEN\n    PRINT \"Queue Overflow\"\n    RETURN\n  END IF\n  IF queue.front == -1 THEN\n    queue.front = 0\n  END IF\n  queue.rear = queue.rear + 1\n  queue.data[queue.rear] = item\nEND FUNCTION\n\nFUNCTION dequeue(queue)\n  IF isEmpty(queue) THEN\n    PRINT \"Queue Underflow\"\n    RETURN NULL\n  END IF\n  item = queue.data[queue.front]\n  IF queue.front == queue.rear THEN\n    queue.front = -1\n    queue.rear = -1\n  ELSE\n    queue.front = queue.front + 1\n  END IF\n  RETURN item\nEND FUNCTION",
+      "explanation": "This pseudocode shows array-based queue implementation with front and rear pointers. The enqueue operation adds at rear, dequeue removes from front. It includes overflow and underflow checks.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Circular Queue in C",
+      "description": "Circular queue implementation using modulo operator to wrap around",
+      "code": "#include <stdio.h>\n#define MAXSIZE 5\n\ntypedef struct {\n    int data[MAXSIZE];\n    int front;\n    int rear;\n} CircularQueue;\n\nvoid initQueue(CircularQueue *q) {\n    q->front = -1;\n    q->rear = -1;\n}\n\nint isFull(CircularQueue *q) {\n    return (q->rear + 1) % MAXSIZE == q->front;\n}\n\nint isEmpty(CircularQueue *q) {\n    return q->front == -1;\n}\n\nvoid enqueue(CircularQueue *q, int value) {\n    if (isFull(q)) {\n        printf(\"Queue Overflow\\n\");\n        return;\n    }\n    if (q->front == -1) {\n        q->front = 0;\n    }\n    q->rear = (q->rear + 1) % MAXSIZE;\n    q->data[q->rear] = value;\n}\n\nint dequeue(CircularQueue *q) {\n    if (isEmpty(q)) {\n        printf(\"Queue Underflow\\n\");\n        return -1;\n    }\n    int value = q->data[q->front];\n    if (q->front == q->rear) {\n        q->front = -1;\n        q->rear = -1;\n    } else {\n        q->front = (q->front + 1) % MAXSIZE;\n    }\n    return value;\n}\n\nvoid display(CircularQueue *q) {\n    if (isEmpty(q)) {\n        printf(\"Queue is empty\\n\");\n        return;\n    }\n    printf(\"Queue elements: \");\n    int i = q->front;\n    while (1) {\n        printf(\"%d \", q->data[i]);\n        if (i == q->rear) break;\n        i = (i + 1) % MAXSIZE;\n    }\n    printf(\"\\n\");\n}",
+      "explanation": "This C program implements circular queue using modulo operator (%). The key advantage is that when rear reaches MAXSIZE-1, it wraps to 0, allowing reuse of dequeued space. One slot is kept empty to distinguish full from empty state.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Queue Using List in Python",
+      "description": "Simple queue implementation using Python list with built-in operations",
+      "code": "class Queue:\n    def __init__(self, maxsize=10):\n        self.queue = []\n        self.maxsize = maxsize\n        self.front = -1\n        self.rear = -1\n    \n    def is_empty(self):\n        return self.front == -1\n    \n    def is_full(self):\n        return len(self.queue) == self.maxsize\n    \n    def enqueue(self, item):\n        if self.is_full():\n            print(\"Queue Overflow - Cannot insert\")\n            return\n        if self.front == -1:\n            self.front = 0\n        self.queue.append(item)\n        self.rear = len(self.queue) - 1\n        print(f\"Enqueued: {item}\")\n    \n    def dequeue(self):\n        if self.is_empty():\n            print(\"Queue Underflow - Cannot remove\")\n            return None\n        item = self.queue[self.front]\n        if self.front == self.rear:\n            self.front = -1\n            self.rear = -1\n            self.queue = []\n        else:\n            self.front += 1\n        return item\n    \n    def peek(self):\n        if self.is_empty():\n            return None\n        return self.queue[self.front]\n    \n    def display(self):\n        if self.is_empty():\n            print(\"Queue is empty\")\n        else:\n            print(\"Queue:\", self.queue[self.front:self.rear+1])\n\n# Example usage\nq = Queue(5)\nenqueue 10, 20, 30: q.enqueue(10); q.enqueue(20); q.enqueue(30)\nDisplay: q.display()\nPeek: print(q.peek())\nDequeue: print(q.dequeue())",
+      "explanation": "This Python implementation uses list as underlying storage. The enqueue uses append() and dequeue adjusts front pointer. Python's list handles dynamic memory but in practice, collections.deque is more efficient for queue operations.",
+      "timeComplexity": "O(1) amortized",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Queue Using Linked List in Java",
+      "description": "Queue implementation using linked list for dynamic size",
+      "code": "class Node {\n    int data;\n    Node next;\n    \n    Node(int data) {\n        this.data = data;\n        this.next = null;\n    }\n}\n\nclass LinkedQueue {\n    private Node front;\n    private Node rear;\n    \n    public LinkedQueue() {\n        front = null;\n        rear = null;\n    }\n    \n    public boolean isEmpty() {\n        return front == null;\n    }\n    \n    public void enqueue(int value) {\n        Node newNode = new Node(value);\n        if (rear == null) {\n            front = rear = newNode;\n        } else {\n            rear.next = newNode;\n            rear = newNode;\n        }\n        System.out.println(value + \" enqueued to queue\");\n    }\n    \n    public int dequeue() {\n        if (isEmpty()) {\n            System.out.println(\"Queue Underflow\");\n            return Integer.MIN_VALUE;\n        }\n        int value = front.data;\n        front = front.next;\n        \n        if (front == null) {\n            rear = null;\n        }\n        return value;\n    }\n    \n    public int peek() {\n        if (isEmpty()) {\n            System.out.println(\"Queue is empty\");\n            return Integer.MIN_VALUE;\n        }\n        return front.data;\n    }\n    \n    public void display() {\n        if (isEmpty()) {\n            System.out.println(\"Queue is empty\");\n            return;\n        }\n        System.out.print(\"Queue: \");\n        Node current = front;\n        while (current != null) {\n            System.out.print(current.data + \" \");\n            current = current.next;\n        }\n        System.out.println();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        LinkedQueue q = new LinkedQueue();\n        q.enqueue(10);\n        q.enqueue(20);\n        q.enqueue(30);\n        q.display();\n        System.out.println(\"Dequeued: \" + q.dequeue());\n        System.out.println(\"Front element: \" + q.peek());\n    }\n}",
+      "explanation": "This Java implementation uses linked list for queue, allowing dynamic size without capacity limitations. New nodes are added at rear and removed from front. No overflow except when system runs out of memory.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

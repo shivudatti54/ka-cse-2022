@@ -1,0 +1,162 @@
+{
+  "topicId": "secondary-storage-structure",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the components of average disk access time and state which component typically contributes the most.",
+      "keyPoints": [
+        "Average access time = Average seek time + Average rotational delay + Transfer time",
+        "Seek time is typically the largest component (1-10ms)",
+        "Rotational delay is typically half a rotation (2-5ms)",
+        "Transfer time depends on amount of data and transfer rate"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Compare FCFS and SSTF disk scheduling algorithms with respect to performance and drawbacks.",
+      "keyPoints": [
+        "FCFS processes requests in arrival order - simple but often inefficient due to excessive seek time",
+        "SSTF selects nearest request to minimize seek time between consecutive requests",
+        "SSTF provides better performance than FCFS",
+        "SSTF drawback: starvation for requests far from current position",
+        "SSTF is similar to SJF CPU scheduling in concept"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is disk caching? How does it improve performance? Explain write-through and write-back caching.",
+      "keyPoints": [
+        "Disk caching uses RAM to store frequently accessed disk data",
+        "Reduces access time since RAM is millions of times faster than disk",
+        "Write-through: data written to both cache and disk immediately - reliable but slower",
+        "Write-back: data written to cache first, written to disk later - faster but risk of data loss",
+        "Cache uses replacement algorithms like LRU to manage contents"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the SCAN disk scheduling algorithm. Why is it called the elevator algorithm?",
+      "keyPoints": [
+        "SCAN moves the disk arm from one end of the disk to the other",
+        "Services all requests along the path in order of track number",
+        "Then reverses direction and services remaining requests",
+        "Called elevator algorithm because it behaves like an elevator - goes one direction servicing all 'floors', then reverses",
+        "Provides good throughput and relatively uniform wait times"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the difference between low-level (physical) formatting and logical formatting of a disk.",
+      "keyPoints": [
+        "Low-level formatting divides disk into sectors with headers, ECC, and gaps - done at factory or for repartitioning",
+        "Creates fundamental sector structure on raw disk",
+        "Logical formatting creates a file system - FAT, inode table, directory entries",
+        "Creates data structures needed for file management",
+        "Initializes superblock, free space management, and root directory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is disk partitioning? Explain the purpose of the Master Boot Record (MBR).",
+      "keyPoints": [
+        "Partitioning divides a physical disk into independent logical sections",
+        "Each partition appears as separate logical disk to OS",
+        "Allows multiple operating systems and different file systems",
+        "MBR is stored in first sector of disk",
+        "Contains bootstrap loader program to start OS",
+        "Contains partition table defining disk divisions",
+        "Maximum 4 primary partitions in traditional MBR"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Define the following disk geometry terms: track, sector, cylinder, and platter.",
+      "keyPoints": [
+        "Track: circular path on disk surface where data is recorded",
+        "Sector: wedge-shaped portion of track storing fixed data (typically 512/4096 bytes)",
+        "Platter: circular magnetic disk surface that data is recorded on (multiple in a disk assembly)",
+        "Cylinder: set of all tracks with same radius across all surfaces - allows access without arm movement"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the C-SCAN disk scheduling algorithm. How does it differ from SCAN and what advantage does it provide?",
+      "keyPoints": [
+        "C-SCAN (Circular SCAN) moves head from one end to other servicing requests",
+        "When reaching the end, jumps back to beginning without servicing on return",
+        "Services requests in circular order - like a carousel",
+        "Difference from SCAN: SCAN reverses direction at end and services on return, C-SCAN does not",
+        "Advantage: more uniform wait times because all tracks are treated equally",
+        "Requests at outer edges don't get better service like in SCAN",
+        "Better for systems requiring predictable response times",
+        "Drawback: may have slightly higher average seek time than SCAN"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the various disk scheduling algorithms. Compare their advantages and disadvantages.",
+      "keyPoints": [
+        "FCFS: Simple, fair, but poor performance with high seek times",
+        "SSTF: Better than FCFS, minimizes seek time, but can cause starvation",
+        "SCAN (Elevator): Good throughput, uniform wait times, but may not be optimal for emerging requests",
+        "C-SCAN: Uniform wait times, treats all tracks equally, good for heavy load",
+        "LOOK: Like SCAN but reverses at last request, more efficient than full SCAN",
+        "C-LOOK: Like C-SCAN but checks only to last request",
+        "Selection depends on workload: FCFS for low load, SCAN/C-SCAN for high load",
+        "SSTF common in modern OS as default"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the process of disk formatting and boot process from MBR to loading the operating system.",
+      "keyPoints": [
+        "Low-level formatting: Factory process creating sectors with headers, ECC, inter-sector gaps",
+        "Partitioning: Creating logical divisions using fdisk or similar tools",
+        "Logical formatting: Creating file system structures - superblock, FAT/inodes, directory entries",
+        "MBR contains bootstrap loader in first 446 bytes and partition table (64 bytes)",
+        "Boot process: BIOS/UEFI loads MBR, executes bootstrap loader",
+        "Bootstrap loader examines partition table to find active/bootable partition",
+        "Loads boot sector of active partition into memory",
+        "Boot sector contains OS loader which loads kernel files",
+        "Kernel initializes and transfers control to operating system"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "A disk has an average seek time of 5 ms, rotates at 7200 RPM, and has a transfer rate of 80 MB/s. Calculate the average time to read a 4 KB (4096 bytes) sector.",
+      "keyPoints": [
+        "Average seek time = 5 ms (given)",
+        "Rotational speed = 7200 RPM = 120 RPS",
+        "Time per rotation = 1/120 = 8.33 ms",
+        "Average rotational delay = half rotation = 8.33/2 = 4.17 ms",
+        "Transfer rate = 80 MB/s = 80 \u00d7 10^6 bytes/s",
+        "Transfer time = 4096 / (80 \u00d7 10^6) = 0.0000512 s = 0.0512 ms",
+        "Total = 5 + 4.17 + 0.05 = 9.22 ms approximately",
+        "Seek time dominates this calculation",
+        "Note: Controller overhead and queuing time would add to this"
+      ],
+      "marks": 10
+    }
+  ]
+}

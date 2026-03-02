@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Simple DVFS Algorithm",
+    "description": "Basic algorithm for dynamic voltage and frequency scaling based on CPU utilization",
+    "code": "ALGORITHM DVFS_Algorithm\nBEGIN\n REPEAT EVERY sampling_interval:\n utilization = get_cpu_utilization()\n \n IF utilization > 80% THEN\n SET voltage = HIGH_VOLTAGE\n SET frequency = HIGH_FREQUENCY\n target_state = P0\n ELSE IF utilization > 50% THEN\n SET voltage = MEDIUM_VOLTAGE\n SET frequency = MEDIUM_FREQUENCY\n target_state = P2\n ELSE IF utilization > 20% THEN\n SET voltage = LOW_VOLTAGE\n SET frequency = LOW_FREQUENCY\n target_state = P4\n ELSE\n target_state = C6_DEEP_SLEEP\n END IF\n \n APPLY power_state(target_state)\n END REPEAT\nEND",
+    "explanation": "This simple DVFS algorithm monitors CPU utilization and adjusts power states accordingly. Higher utilization triggers higher voltage/frequency for performance, while lower utilization enables power savings through lower states or idle sleep.",
+    "complexity": {
+      "time": "O(1) per sampling interval",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Workload Prediction Algorithm",
+    "description": "Predictive algorithm using moving average for proactive power management",
+    "code": "ALGORITHM Workload_Predictor\nBEGIN\n history = EMPTY_QUEUE(size = N)\n \n FUNCTION predict_next_load(current_load):\n history.enqueue(current_load)\n IF history.size > N THEN\n history.dequeue()\n END IF\n \n // Simple moving average prediction\n predicted_load = sum(history) / history.size\n \n // Adjust for trend\n IF last_three_trending_up() THEN\n predicted_load = predicted_load * 1.1\n ELSE IF last_three_trending_down() THEN\n predicted_load = predicted_load * 0.9\n END IF\n \n RETURN predicted_load\n END FUNCTION\n \n // Power state decision based on prediction\n FUNCTION decide_power_state(predicted):\n IF predicted < threshold_idle THEN\n RETURN C6_SLEEP\n ELSE IF predicted < threshold_low THEN\n RETURN P4_STATE\n ELSE IF predicted < threshold_medium THEN\n RETURN P2_STATE\n ELSE\n RETURN P0_STATE\n END IF\n END FUNCTION\nEND",
+    "explanation": "This algorithm uses historical workload data to predict future demand, enabling proactive power state transitions. This reduces the latency impact of state changes by anticipating workload shifts.",
+    "complexity": {
+      "time": "O(N) for prediction",
+      "space": "O(N)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Thermal-Aware Task Scheduling",
+    "description": "Distribute tasks across cores considering thermal constraints",
+    "code": "ALGORITHM Thermal_Aware_Scheduler\nBEGIN\n WHILE new_task_arrives:\n candidates = ALL_CORES\n \n // Filter out cores above thermal threshold\n FOR each core IN candidates:\n IF core.temperature > THERMAL_LIMIT THEN\n candidates.remove(core)\n END IF\n END FOR\n \n // Select coolest available core\n selected_core = candidates[0]\n FOR each core IN candidates:\n IF core.temperature < selected_core.temperature THEN\n selected_core = core\n END IF\n END FOR\n \n // Optionally migrate running tasks if hotspot detected\n FOR each core IN ALL_CORES:\n IF core.temperature > HOTSPOT_THRESHOLD THEN\n migratable = find_low_priority_task(core)\n IF migratable AND cool_core_available() THEN\n migrate_task(migratable, cool_core)\n END IF\n END IF\n END FOR\n \n ASSIGN new_task TO selected_core\n END WHILE\nEND",
+    "explanation": "This scheduler prevents thermal throttling by distributing tasks to cooler cores and potentially migrating existing tasks away from hotspots. This optimizes both performance and cooling energy.",
+    "complexity": {
+      "time": "O(C) where C = number of cores",
+      "space": "O(1)"
+    }
+  }
+]

@@ -1,0 +1,155 @@
+{
+  "topicId": "definition-of-the-pushdown-automaton",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Pushdown Automaton and list its seven components.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "PDA is a computational model extending finite automaton with unbounded stack memory",
+        "Components: Q (finite set of states), Σ (input alphabet), Γ (stack alphabet), δ (transition function), q₀ (start state), Z₀ (initial stack symbol), F (accepting states)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the two methods of acceptance in a Pushdown Automaton.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Acceptance by Final State: PDA accepts if after consuming entire input, it reaches a state in F",
+        "Acceptance by Empty Stack: PDA accepts if after consuming entire input, the stack becomes empty (contains only Z₀ which is popped)"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is an Instantaneous Description (ID) in a PDA? Explain with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ID is a triple (q, w, α) representing complete PDA configuration",
+        "q = current state, w = remaining input string, α = current stack contents (top on right)",
+        "Example: (q₀, ab, XY) means at state q₀, input 'ab' remaining, stack has X on bottom, Y on top"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between Deterministic and Non-deterministic PDA.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DPDA: For any configuration, at most one possible move (δ has at most one element)",
+        "NPDA: Multiple possible moves from same configuration allowed (δ returns a set)",
+        "DPDA ⊂ NPDA in terms of language recognition power",
+        "DPDA languages are deterministic CFLs, NPDA recognizes all CFLs"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are ε-moves in a PDA? When and why are they used?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "ε-moves are transitions that consume no input symbol",
+        "Allow PDA to change state and modify stack without reading input",
+        "Used for: moving between states without consuming input, performing stack operations when convenient, implementing non-deterministic choices",
+        "Syntax: δ(q, ε, X) contains moves"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the transition function δ of a PDA with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "δ: Q × (Σ ∪ {ε}) × Γ → P(Q × Γ*) defines possible moves",
+        "Given current state, input symbol (or ε), and top stack symbol, returns new state and replacement string",
+        "Example: δ(q₀, a, Z₀) = {(q₁, XZ₀)} means: at q₀, read 'a', replace Z₀ with XZ₀ (push X)"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Why is a PDA more powerful than a Finite Automaton? Give a language example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "FA has finite memory (only states), PDA has unbounded stack memory",
+        "PDA can count arbitrarily large amounts using stack (LIFO)",
+        "Example: {aⁿbⁿ | n≥1} - FA cannot count, but PDA can push n 'a's then pop matching 'b's",
+        "This language is context-free but not regular"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Provide a formal definition of Pushdown Automaton. Explain each component with its purpose.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Formal definition: M = (Q, Σ, Γ, δ, q₀, Z₀, F)",
+        "Q: Finite non-empty set of control states",
+        "Σ: Input alphabet (finite set of input symbols)",
+        "Γ: Stack alphabet (finite set of symbols that can be on stack)",
+        "δ: Transition function defining moves",
+        "q₀: Start state (initial control state)",
+        "Z₀: Initial stack symbol (bottom marker, always in Γ)",
+        "F: Set of accepting/final states (F ⊆ Q)",
+        "Explanation of each component's role in computation"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a PDA (give formal specification) that accepts the language L = {0ⁿ1ⁿ | n ≥ 1} by empty stack. Explain its working.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define PDA M = (Q, Σ, Γ, δ, q₀, Z₀, F)",
+        "Q = {q₀, q₁}, Σ = {0, 1}, Γ = {0, Z₀}",
+        "δ(q₀, 0, Z₀) = {(q₀, 0Z₀)} - push 0 for each 0 in input",
+        "δ(q₀, 0, 0) = {(q₀, 00)} - keep pushing 0s",
+        "δ(q₀, 1, 0) = {(q₁, ε)} - start popping when 1s appear",
+        "δ(q₁, 1, 0) = {(q₁, ε)} - keep popping for each 1",
+        "δ(q₁, ε, Z₀) = {(q₁, ε)} - accept when stack empty",
+        "Working: Push all 0s, then pop one 0 for each 1, accept if both exhausted simultaneously"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the relationship between Pushdown Automata and Context-Free Languages. What are the limitations of DPDA?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Theorem: Language L is context-free iff some NPDA recognizes L",
+        "NPDA = equivalent to CFL in recognition power",
+        "Every regular language is also context-free (regular ⊂ CFL)",
+        "DPDA limitation: Recognizes only deterministic CFLs (a proper subset)",
+        "Not all CFLs are deterministic - e.g., WWᵀ (palindromes) cannot be recognized by DPDA",
+        "DPDA has less expressive power than NPDA in terms of languages accepted"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is meant by a configuration of a PDA? Explain the notation for PDA moves. How do we represent computation as a sequence of configurations?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Configuration = Instantaneous Description = (q, w, α)",
+        "q = current state, w = remaining input, α = stack contents (leftmost = bottom)",
+        "Move notation: (p, a, X) ⊢ (q, ε, γ) means from state p, read a, pop X, go to q, push γ",
+        "⊢* denotes zero or more moves (reflexive transitive closure)",
+        "Computation sequence: (q₀, w, Z₀) ⊢* (q, ε, ε) for empty stack acceptance",
+        "Computation sequence: (q₀, w, Z₀) ⊢* (q_f, ε, α) for final state acceptance where q_f ∈ F"
+      ]
+    }
+  ]
+}

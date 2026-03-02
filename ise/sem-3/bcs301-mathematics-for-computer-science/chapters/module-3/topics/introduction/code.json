@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simulate Sampling Distribution",
+      "description": "Demonstrate sampling distribution by simulating many samples from a population",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# Population: 10000 numbers from exponential distribution\nnp.random.seed(42)\npopulation = np.random.exponential(scale=2.0, size=10000)\npopulation_mean = population.mean()\npopulation_std = population.std()\n\n# Take many samples and compute sample means\nsample_means = []\nn_samples = 1000\nsample_size = 30\n\nfor _ in range(n_samples):\n    sample = np.random.choice(population, size=sample_size, replace=False)\n    sample_means.append(sample.mean())\n\n# Plot sampling distribution\nplt.hist(sample_means, bins=30, edgecolor='black', alpha=0.7)\nplt.axvline(population_mean, color='r', linestyle='--', label=f'True Mean = {population_mean:.2f}')\nplt.xlabel('Sample Mean')\nplt.ylabel('Frequency')\nplt.title(f'Sampling Distribution (n={sample_size}, {n_samples} samples)')\nplt.legend()\nplt.show()\n\n# Calculate standard error (theoretical vs empirical)\ntheoretical_se = population_std / np.sqrt(sample_size)\nempirical_se = np.std(sample_means)\nprint(f'Theoretical SE: {theoretical_se:.4f}')\nprint(f'Empirical SE: {empirical_se:.4f}')",
+      "explanation": "This code simulates taking 1000 samples of size 30 from an exponential population and plots the distribution of sample means, demonstrating CLT and sampling distribution.",
+      "timeComplexity": "O(n_samples \u00d7 sample_size)",
+      "spaceComplexity": "O(n_samples)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Confidence Interval Calculation",
+      "description": "Calculate confidence intervals for population mean using sample data",
+      "code": "import numpy as np\nfrom scipy import stats\n\ndef confidence_interval(data, confidence=0.95):\n    \"\"\"\n    Calculate confidence interval for population mean.\n    \"\"\"\n    n = len(data)\n    x_bar = np.mean(data)\n    s = np.std(data, ddof=1)  # Sample standard deviation\n    se = s / np.sqrt(n)  # Standard error\n    \n    # t-distribution for small samples, z for large\n    if n < 30:\n        t_critical = stats.t.ppf((1 + confidence) / 2, df=n-1)\n        margin = t_critical * se\n    else:\n        z_critical = stats.norm.ppf((1 + confidence) / 2)\n        margin = z_critical * se\n    \n    return x_bar - margin, x_bar + margin\n\n# Sample data\nexample_data = np.array([45, 52, 48, 55, 47, 53, 49, 51, 46, 50, \n                          54, 44, 56, 50, 49, 52, 48, 55, 47, 51])\n\nci_95 = confidence_interval(example_data, 0.95)\nci_99 = confidence_interval(example_data, 0.99)\n\nprint(f'Sample mean: {np.mean(example_data):.2f}')\nprint(f'95% CI: ({ci_95[0]:.2f}, {ci_95[1]:.2f})')\nprint(f'99% CI: ({ci_99[0]:.2f}, {ci_99[1]:.2f})')\nprint(f'Interval width (95%): {ci_95[1] - ci_95[0]:.2f}')\nprint(f'Interval width (99%): {ci_99[1] - ci_99[0]:.2f}')",
+      "explanation": "Demonstrates calculation of confidence intervals using t-distribution for small samples and z-distribution for large samples. Shows how higher confidence levels produce wider intervals.",
+      "timeComplexity": "O(n) for single CI calculation",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Hypothesis Testing Implementation",
+      "description": "Implement one-sample z-test for testing population mean",
+      "code": "import numpy as np\nfrom scipy import stats\n\ndef one_sample_z_test(sample, pop_mean_h0, pop_std, alpha=0.05):\n    \"\"\"\n    Perform one-sample z-test.\n    \n    H0: \u03bc = pop_mean_h0\n    H1: \u03bc \u2260 pop_mean_h0 (two-tailed)\n    \"\"\"\n    n = len(sample)\n    x_bar = np.mean(sample)\n    sigma = pop_std\n    \n    # Test statistic\n    z_stat = (x_bar - pop_mean_h0) / (sigma / np.sqrt(n))\n    \n    # P-value (two-tailed)\n    p_value = 2 * (1 - stats.norm.cdf(abs(z_stat)))\n    \n    # Critical values\n    z_critical = stats.norm.ppf(1 - alpha/2)\n    \n    # Decision\n    reject_h0 = p_value < alpha\n    \n    return {\n        'sample_mean': x_bar,\n        'z_statistic': z_stat,\n        'p_value': p_value,\n        'critical_value': z_critical,\n        'reject_null': reject_h0\n    }\n\n# Example: Testing if mean is 50\nsample_data = np.array([52, 48, 55, 47, 53, 49, 51, 54, 46, 50])\nhypothesized_mean = 50\nknown_std = 5  # Population standard deviation\n\nresult = one_sample_z_test(sample_data, hypothesized_mean, known_std)\n\nprint('One-Sample Z-Test Results:')\nprint(f'Sample Mean: {result[\"sample_mean\"]:.2f}')\nprint(f'Hypothesized Mean: {hypothesized_mean}')\nprint(f'Z-Statistic: {result[\"z_statistic\"]:.4f}')\nprint(f'P-Value: {result[\"p_value\"]:.4f}')\nprint(f'Critical Z: \u00b1{result[\"critical_value\"]:.4f}')\nprint(f'Reject H0: {result[\"reject_null\"]}')\n\nif result['reject_null']:\n    print('Conclusion: Evidence suggests population mean differs from 50')\nelse:\n    print('Conclusion: No significant evidence to reject null hypothesis')",
+      "explanation": "Implements one-sample z-test for hypothesis testing. Shows calculation of test statistic, p-value, and decision rule based on significance level \u03b1.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "unguided-media",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FHSS Algorithm (Bluetooth)",
+      "description": "Demonstrates frequency hopping spread spectrum used in Bluetooth communication",
+      "code": "// Frequency Hopping Spread Spectrum Algorithm\n// Bluetooth uses 79 channels in 2.4 GHz band\nBEGIN\n // Initialize\n channelMap = [0, 1, 2, ..., 78] // 79 channels\n currentChannel = 0\n hopPattern = [0, 34, 67, 13, ...] // Pseudo-random sequence\n \n FUNCTION TransmitData(data, numHops)\n FOR i = 0 TO numHops - 1 DO\n // Calculate next frequency channel\n currentChannel = hopPattern[i % length(hopPattern)]\n frequency = 2402 + (currentChannel * 1) // 2.402 GHz + channel\n \n // Transmit data on current frequency\n TransmitOnFrequency(frequency, data)\n \n // Wait for hop time (625 microseconds)\n Wait(625 microseconds)\n END FOR\n END FUNCTION\n \n // Receiver synchronization\n FUNCTION ReceiveData(expectedPattern)\n WHILE dataAvailable DO\n // Synchronize with transmitter's hop pattern\n currentChannel = SyncWithTransmitter(expectedPattern)\n frequency = 2402 + currentChannel\n data = ReceiveOnFrequency(frequency)\n END WHILE\n END FUNCTION\nEND",
+      "explanation": "Bluetooth uses FHSS to rapidly switch between 79 channels in the 2.4 GHz ISM band. Each channel is 1 MHz wide, and the hop sequence changes every 625 microseconds. This provides resistance to interference and security.",
+      "timeComplexity": "O(n) per packet",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Simple Wireless Signal Propagation Model",
+      "description": "Calculates line-of-sight distance based on antenna heights",
+      "code": "// Calculate Maximum Line-of-Sight Distance\n// Based on Earth's curvature and antenna heights\n\nCONSTANTS\n EarthRadius = 6371 // km\n \nFUNCTION CalculateLOSDistance(height1, height2)\n // heights in meters, returns distance in km\n \n // Convert heights to km\n h1 = height1 / 1000\n h2 = height2 / 1000\n \n // Calculate distance using geometry\n // d = sqrt(2 * R * h1) + sqrt(2 * R * h2)\n d1 = SQRT(2 * EarthRadius * h1)\n d2 = SQRT(2 * EarthRadius * h2)\n \n totalDistance = d1 + d2\n RETURN totalDistance\nEND FUNCTION\n\n// Example: Antenna heights 100m and 50m\nPRINT CalculateLOSDistance(100, 50)\n// Result: approximately 39.5 km\n\n// Note: Real-world also considers:\n// - Fresnel zone clearance\n// - Atmospheric refraction (k-factor ~4/3)\n// - Terrain and obstacles",
+      "explanation": "This algorithm calculates the maximum line-of-sight distance between two antennas based on Earth's radius and antenna heights. For practical communication, antennas must be high enough to clear obstacles and the Fresnel zone.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Wi-Fi Channel Selection Algorithm",
+      "description": "Demonstrates how Wi-Fi access points select channels to minimize interference",
+      "code": "// Simple Wi-Fi Channel Selection Algorithm\n// For 2.4 GHz band (channels 1-14, 5 MHz spacing)\n\nCONSTANTS\n NUM_CHANNELS = 14\n CHANNEL_WIDTH = 20 // MHz\n \nFUNCTION ScanChannels()\n // Scan all channels and measure interference\n channelScanResults = []\n \n FOR channel = 1 TO NUM_CHANNELS DO\n noiseLevel = MeasureNoise(channel)\n interference = MeasureInterference(channel)\n channelScanResults[channel] = noiseLevel + interference\n END FOR\n \n RETURN channelScanResults\nEND FUNCTION\n\nFUNCTION SelectBestChannel(scanResults)\n // For 2.4 GHz, use non-overlapping channels: 1, 6, 11\n nonOverlappingChannels = [1, 6, 11]\n \n bestChannel = -1\n minInterference = INFINITY\n \n FOR each ch IN nonOverlappingChannels DO\n IF scanResults[ch] < minInterference THEN\n minInterference = scanResults[ch]\n bestChannel = ch\n END IF\n END FOR\n \n RETURN bestChannel\nEND FUNCTION\n\n// Main execution\nscanResults = ScanChannels()\nselectedChannel = SelectBestChannel(scanResults)\nPRINT \"Best channel: \" + selectedChannel",
+      "explanation": "This algorithm demonstrates how Wi-Fi access points automatically select the least congested channel. In the 2.4 GHz band, channels 1, 6, and 11 are non-overlapping (20 MHz spacing). The algorithm scans all channels, measures interference, and selects the optimal channel.",
+      "timeComplexity": "O(n) where n = number of channels",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

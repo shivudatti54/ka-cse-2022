@@ -1,0 +1,25 @@
+{
+  "topicId": "strongly-connected-components",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Kosaraju's Algorithm",
+      "description": "An algorithm used to find strongly connected components in a graph.",
+      "code": "ALGORITHM Kosaraju's Algorithm\nBEGIN\n  Initialize an empty stack\n  Perform a depth-first search on the graph and push each vertex onto the stack\n  Initialize an empty list to store the strongly connected components\n  While the stack is not empty\n    Pop a vertex from the stack and add it to the list of strongly connected components\n    Perform a depth-first search on the graph starting from the popped vertex\n  END WHILE\nEND",
+      "explanation": "Kosaraju's algorithm is used to find strongly connected components in a graph. It works by performing a depth-first search on the graph and pushing each vertex onto a stack. Then, it pops each vertex from the stack and adds it to a list of strongly connected components. Finally, it performs a depth-first search on the graph starting from each vertex in the list of strongly connected components.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Tarjan's Algorithm",
+      "description": "An algorithm used to find strongly connected components in a graph.",
+      "code": "def tarjan(graph):\n  index = 0\n  stack = []\n  lowlinks = {}\n  index_map = {}\n  result = []\n  for v in graph:\n    if v not in index_map:\n      strongconnect(v, index, stack, lowlinks, index_map, result)\n  return result\n\ndef strongconnect(v, index, stack, lowlinks, index_map, result):\n  index_map[v] = index\n  lowlinks[v] = index\n  index += 1\n  stack.append(v)\n  for w in graph[v]:\n    if w not in index_map:\n      strongconnect(w, index, stack, lowlinks, index_map, result)\n      lowlinks[v] = min(lowlinks[v], lowlinks[w])\n    elif w in stack:\n      lowlinks[v] = min(lowlinks[v], index_map[w])\n  if lowlinks[v] == index_map[v]:\n    connected_component = []\n    while True:\n      w = stack.pop()\n      connected_component.append(w)\n      if w == v:\n        break\n    result.append(connected_component)",
+      "explanation": "Tarjan's algorithm is used to find strongly connected components in a graph. It works by performing a depth-first search on the graph and keeping track of the lowlinks and index of each vertex. When a vertex is found to be the root of a strongly connected component, the algorithm pops all the vertices in the component from the stack and adds them to the result list.",
+      "timeComplexity": "O(V + E)",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "topicId": "the-critical-section-problem",
+  "visuals": [
+    {
+      "id": "critical-section-problem-svg",
+      "title": "The Critical Section Problem",
+      "description": "Animated diagram covering race conditions, CS structure (Entry/CS/Exit/Remainder), the three requirements (Mutual Exclusion, Progress, Bounded Waiting), Peterson's Solution, and hardware solutions (Test-and-Set, CAS)",
+      "type": "animated-svg",
+      "file": "assets/the-critical-section-problem.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "race-condition",
+      "type": "sequence",
+      "title": "Race Condition Example",
+      "description": "counter = 5, P1: counter++, P2: counter--. Expected result is 5, but actual could be 4, 5, or 6 due to interleaved execution (lost update problem).",
+      "data": {
+        "steps": [
+          {
+            "time": 1,
+            "P1": "Read counter (5)",
+            "P2": "-",
+            "counter": 5
+          },
+          {
+            "time": 2,
+            "P1": "-",
+            "P2": "Read counter (5)",
+            "counter": 5
+          },
+          {
+            "time": 3,
+            "P1": "Increment (6)",
+            "P2": "-",
+            "counter": 5
+          },
+          {
+            "time": 4,
+            "P1": "-",
+            "P2": "Decrement (4)",
+            "counter": 5
+          },
+          {
+            "time": 5,
+            "P1": "Write (6)",
+            "P2": "-",
+            "counter": 6
+          },
+          {
+            "time": 6,
+            "P1": "-",
+            "P2": "Write (4)",
+            "counter": 4
+          }
+        ],
+        "expected": 5,
+        "actual": 4,
+        "problem": "Lost update due to interleaving"
+      }
+    },
+    {
+      "id": "cs-structure",
+      "type": "flowchart",
+      "title": "Critical Section Structure",
+      "description": "Entry Section -> Critical Section -> Exit Section -> Remainder Section (loop)",
+      "data": {
+        "sections": [
+          {
+            "name": "Entry Section",
+            "purpose": "Request permission to enter CS"
+          },
+          {
+            "name": "Critical Section",
+            "purpose": "Access shared resources"
+          },
+          {
+            "name": "Exit Section",
+            "purpose": "Release permission"
+          },
+          {
+            "name": "Remainder Section",
+            "purpose": "Non-critical operations"
+          }
+        ]
+      }
+    },
+    {
+      "id": "three-requirements",
+      "type": "concept-map",
+      "title": "Three Requirements for a Valid Solution",
+      "description": "Mutual Exclusion, Progress, and Bounded Waiting",
+      "data": {
+        "requirements": [
+          {
+            "name": "Mutual Exclusion",
+            "rule": "Only one process in CS at a time"
+          },
+          {
+            "name": "Progress",
+            "rule": "No indefinite postponement; only non-remainder processes participate in decision"
+          },
+          {
+            "name": "Bounded Waiting",
+            "rule": "A bound exists on entries by others after a process requests CS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "peterson-solution",
+      "type": "state-diagram",
+      "title": "Peterson's Solution (2 processes)",
+      "description": "Software-based mutual exclusion for two processes using flag[] and turn",
+      "data": {
+        "variables": ["flag[0]", "flag[1]", "turn"],
+        "invariant": "At most one process in CS",
+        "entry": "flag[i]=true, turn=j, wait while flag[j] && turn==j",
+        "exit": "flag[i]=false"
+      }
+    },
+    {
+      "id": "hardware-solutions",
+      "type": "comparison",
+      "title": "Hardware Solutions",
+      "description": "Atomic instructions: Test-and-Set and Compare-and-Swap (CAS)",
+      "data": {
+        "solutions": [
+          {
+            "name": "Test-and-Set",
+            "mechanism": "Atomically read old value, set to true",
+            "pros": "Fast, simple",
+            "cons": "Busy waiting"
+          },
+          {
+            "name": "Compare-and-Swap",
+            "mechanism": "Atomically swap if current == expected",
+            "pros": "Foundation of lock-free structures",
+            "cons": "Complex to use correctly"
+          }
+        ]
+      }
+    }
+  ]
+}

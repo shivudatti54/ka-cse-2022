@@ -1,0 +1,35 @@
+{
+  "topicId": "parallel-line-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "DDA Line Algorithm",
+      "description": "Digital Differential Analyzer algorithm for line drawing using floating-point arithmetic",
+      "code": "ALGORITHM DDA_Line(x1, y1, x2, y2)\nBEGIN\n dx ← x2 - x1\n dy ← y2 - y1\n \n steps ← MAX(ABS(dx), ABS(dy))\n \n x_increment ← dx / steps\n y_increment ← dy / steps\n \n x ← x1\n y ← y1\n \n FOR i ← 0 TO steps DO\n plot_pixel(ROUND(x), ROUND(y))\n x ← x + x_increment\n y ← y + y_increment\n END FOR\nEND",
+      "explanation": "DDA calculates the number of steps based on the larger of |dx| or |dy|. It then increments x and y by small fractional amounts at each step, rounding to nearest integer for pixel plotting.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "title": "Bresenham's Line Algorithm",
+      "description": "Integer-only efficient line drawing algorithm",
+      "code": "ALGORITHM Bresenham_Line(x1, y1, x2, y2)\nBEGIN\n dx ← ABS(x2 - x1)\n dy ← ABS(y2 - y1)\n \n x ← x1\n y ← y1\n \n sx ← SIGN(x2 - x1)\n sy ← SIGN(y2 - y1)\n \n IF dx > dy THEN\n p ← 2*dy - dx\n FOR i ← 0 TO dx DO\n plot_pixel(x, y)\n IF p >= 0 THEN\n y ← y + sy\n p ← p + 2*dy - 2*dx\n ELSE\n p ← p + 2*dy\n END IF\n x ← x + sx\n END FOR\n ELSE\n p ← 2*dx - dy\n FOR i ← 0 TO dy DO\n plot_pixel(x, y)\n IF p >= 0 THEN\n x ← x + sx\n p ← p + 2*dx - 2*dy\n ELSE\n p ← p + 2*dx\n END IF\n y ← y + sy\n END FOR\n END IF\nEND",
+      "explanation": "Bresenham uses a decision parameter p that determines whether the next pixel should be at the same Y (or X for steep lines) or at Y+1. It uses only integer arithmetic - additions and multiplications by 2, which can be done with bit shifts.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "title": "Wu's Anti-aliased Line Algorithm",
+      "description": "Line drawing with intensity based on proximity to ideal line",
+      "code": "ALGORITHM Wu_Line(x1, y1, x2, y2)\nBEGIN\n dx ← ABS(x2 - x1)\n dy ← ABS(y2 - y1)\n \n steps ← MAX(dx, dy)\n \n x_increment ← dx / steps\n y_increment ← dy / steps\n \n x ← x1\n y ← y1\n \n FOR i ← 0 TO steps DO\n intensity ← 1 - FRACTIONAL_PART(y)\n IF intensity > 0.5 THEN\n intensity ← 1 - intensity\n END IF\n \n plot_pixel(TRUNCATE(x), TRUNCATE(y), intensity)\n plot_pixel(TRUNCATE(x), TRUNCATE(y)+1, 1-intensity)\n \n x ← x + x_increment\n y ← y + y_increment\n END FOR\nEND",
+      "explanation": "Wu's algorithm assigns varying intensity to pixels based on their distance from the ideal line. Pixels closer to the line get higher intensity (brighter), creating a smooth anti-aliased appearance.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

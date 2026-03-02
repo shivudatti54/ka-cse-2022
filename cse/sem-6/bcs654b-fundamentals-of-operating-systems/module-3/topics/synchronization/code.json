@@ -1,0 +1,33 @@
+{
+  "topicId": "synchronization",
+  "examples": [
+    {
+      "id": "pseudocode-mutual-exclusion",
+      "title": "Pseudocode: Mutual Exclusion",
+      "description": "Demonstrates how a binary semaphore ensures mutual exclusion between multiple processes.",
+      "language": "pseudocode",
+      "code": "// Shared: semaphore mutex = 1;\n// Process Pi\nDO\n wait(mutex);\n // Critical Section\n signal(mutex);\n // Remainder Section\nWHILE TRUE;",
+      "explanation": "The binary semaphore mutex (initialized to 1) ensures that only one process can be in its critical section at a time."
+    },
+    {
+      "id": "python-producer-consumer",
+      "title": "Python: Producer-Consumer Problem",
+      "description": "Solves the Producer-Consumer problem using counting semaphores.",
+      "language": "python",
+      "code": "import threading\nimport time\n\n# Shared variables\nbuffer = [None] * 5\nmutex = threading.Semaphore(1)\nempty = threading.Semaphore(5)\nfull = threading.Semaphore(0)\n\n# Producer function\ndef producer():\n for i in range(10):\n time.sleep(1)\n empty.acquire()\n mutex.acquire()\n buffer[i % 5] = i\n mutex.release()\n full.release()\n\n# Consumer function\ndef consumer():\n for i in range(10):\n time.sleep(2)\n full.acquire()\n mutex.acquire()\n print(buffer[i % 5])\n mutex.release()\n empty.release()\n\n# Create threads\nproducer_thread = threading.Thread(target=producer)\nconsumer_thread = threading.Thread(target=consumer)\n\n# Start threads\nproducer_thread.start()\nconsumer_thread.start()\n\n# Wait for threads to finish\nproducer_thread.join()\nconsumer_thread.join()",
+      "explanation": "The producer-consumer problem is solved using counting semaphores empty and full to manage the buffer, and a binary semaphore mutex for mutual exclusion.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-binary-semaphore",
+      "title": "C: Binary Semaphore",
+      "description": "Demonstrates how a binary semaphore can be used for mutual exclusion in C.",
+      "language": "c",
+      "code": "#include <pthread.h>\n#include <semaphore.h>\n\nsem_t mutex;\n\nvoid* thread_func(void* arg) {\n sem_wait(&mutex);\n // Critical Section\n sem_post(&mutex);\n return NULL;\n}\n\nint main() {\n sem_init(&mutex, 0, 1);\n pthread_t thread;\n pthread_create(&thread, NULL, thread_func, NULL);\n pthread_join(thread, NULL);\n sem_destroy(&mutex);\n return 0;\n}",
+      "explanation": "The binary semaphore mutex is used to ensure mutual exclusion between the main thread and the created thread.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

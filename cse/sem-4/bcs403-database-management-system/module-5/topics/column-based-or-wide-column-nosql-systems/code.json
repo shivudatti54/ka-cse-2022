@@ -1,0 +1,29 @@
+[
+  {
+    "id": "code-1",
+    "language": "cql",
+    "title": "Creating Keyspace and Tables in Cassandra",
+    "description": "Example CQL commands for setting up a Cassandra keyspace with tables for a sample application",
+    "code": "CREATE KEYSPACE IF NOT EXISTS ecommerce\nWITH REPLICATION = {\n 'class': 'NetworkTopologyStrategy',\n 'datacenter1': 3\n};\n\nCREATE TABLE IF NOT EXISTS ecommerce.products (\n product_id UUID PRIMARY KEY,\n name TEXT,\n category TEXT,\n price DECIMAL,\n stock INT,\n created_at TIMESTAMP\n);\n\n-- Table for querying products by category\nCREATE TABLE IF NOT EXISTS ecommerce.products_by_category (\n category TEXT,\n product_id UUID,\n name TEXT,\n price DECIMAL,\n PRIMARY KEY (category, product_id)\n) WITH CLUSTERING ORDER BY (product_id DESC);\n\n-- Table with compound partition key\nCREATE TABLE IF NOT EXISTS ecommerce.order_items (\n order_id UUID,\n product_id UUID,\n quantity INT,\n price DECIMAL,\n PRIMARY KEY ((order_id), product_id)\n);",
+    "explanation": "Demonstrates keyspace creation with replication strategy, table creation with primary keys, and how to design for different query patterns using different partition keys",
+    "complexity": "DDL operations - schema definition only"
+  },
+  {
+    "id": "code-2",
+    "language": "cql",
+    "title": "CRUD Operations in Cassandra",
+    "description": "Example of Insert, Select, Update, and Delete operations in CQL",
+    "code": "-- INSERT (upsert - inserts or updates)\nINSERT INTO ecommerce.products (product_id, name, category, price, stock, created_at)\nVALUES (uuid(), 'Laptop', 'Electronics', 999.99, 50, now());\n\n-- SELECT with consistency level\nSELECT * FROM ecommerce.products\nWHERE category = 'Electronics'\nLIMIT 100;\n\n-- UPDATE (similar to insert)\nUPDATE ecommerce.products\nSET stock = stock - 1\nWHERE product_id = a0b1c2d3-e4f5-6789-abcd-ef0123456789;\n\n-- DELETE specific column\nDELETE stock FROM ecommerce.products\nWHERE product_id = a0b1c2d3-e4f5-6789-abcd-ef0123456789;\n\n-- DELETE entire row\nDELETE FROM ecommerce.products\nWHERE product_id = a0b1c2d3-e4f5-6789-abcd-ef0123456789;\n\n-- Using TTL for auto-expiration\nINSERT INTO ecommerce.verification_codes (code, user_id)\nVALUES ('123456', 'user123') USING TTL 300; -- expires in 5 minutes",
+    "explanation": "Shows Cassandra's upsert behavior (INSERT and UPDATE are similar), TTL usage for temporary data, and different delete operations",
+    "complexity": "O(n) for reads where n is number of partitions scanned, O(1) for point writes"
+  },
+  {
+    "id": "code-3",
+    "language": "java",
+    "title": "Cassandra Java Driver Connection Example",
+    "description": "Basic Java code for connecting to Cassandra cluster and executing queries",
+    "code": "import com.datastax.driver.core.*;\nimport com.datastax.driver.core.querybuilder.QueryBuilder;\nimport java.util.*;\n\npublic class CassandraExample {\n private Cluster cluster;\n private Session session;\n\n public void connect(String node, int port) {\n cluster = Cluster.builder()\n .addContactPoint(node)\n .withPort(port)\n .build();\n session = cluster.connect(\"ecommerce\");\n }\n\n public void insertProduct(String name, String category, double price) {\n String cql = \"INSERT INTO products (product_id, name, category, price, stock, created_at) \" +\n \"VALUES (uuid(), '\" + name + \"', '\" + category + \"', \" + price + \", 100, now())\";\n session.execute(cql);\n }\n\n public List<Row> getProductsByCategory(String category) {\n return session.execute(\"SELECT * FROM products_by_category WHERE category = '\" + category + \"'\")\n .all();\n }\n\n public void close() {\n session.close();\n cluster.close();\n }\n}",
+    "explanation": "Demonstrates connecting to Cassandra using DataStax Java Driver, executing queries, and handling results",
+    "complexity": "Connection setup O(1), Query complexity depends on partition strategy"
+  }
+]

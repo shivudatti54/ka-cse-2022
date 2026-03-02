@@ -1,0 +1,45 @@
+{
+  "topicId": "file-sharing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "File Locking Implementation using Semaphore",
+      "description": "Demonstrates how to implement shared and exclusive file locks using semaphores for concurrent access control",
+      "code": "CLASS FileLock\n  DECLARE sharedCount AS INTEGER = 0\n  DECLARE mutex AS SEMAPHORE = 1\n  DECLARE writeLock AS SEMAPHORE = 1\n  \n  FUNCTION acquireSharedLock()\n    WAIT(mutex)\n    sharedCount = sharedCount + 1\n    IF sharedCount == 1 THEN\n      WAIT(writeLock)\n    END IF\n    SIGNAL(mutex)\n  END FUNCTION\n  \n  FUNCTION releaseSharedLock()\n    WAIT(mutex)\n    sharedCount = sharedCount - 1\n    IF sharedCount == 0 THEN\n      SIGNAL(writeLock)\n    END IF\n    SIGNAL(mutex)\n  END FUNCTION\n  \n  FUNCTION acquireExclusiveLock()\n    WAIT(writeLock)\n  END FUNCTION\n  \n  FUNCTION releaseExclusiveLock()\n    SIGNAL(writeLock)\n  END FUNCTION\nEND CLASS",
+      "explanation": "This implementation uses two semaphores: mutex protects the sharedCount variable, and writeLock controls exclusive access. Multiple readers can acquire shared locks concurrently (first reader acquires writeLock, last reader releases it), while writers get exclusive access through writeLock.",
+      "timeComplexity": "O(1) for lock acquisition and release",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python File Locking Example",
+      "description": "Demonstrates file locking in Python using fcntl module for advisory locking",
+      "code": "import fcntl\nimport os\n\nclass SharedFile:\n    def __init__(self, filename, mode='r'):\n        self.filename = filename\n        self.mode = mode\n        self.file = None\n    \n    def open_file(self):\n        self.file = open(self.filename, self.mode)\n    \n    def acquire_shared_lock(self):\n        fcntl.flock(self.file.fileno(), fcntl.LOCK_SH)\n    \n    def acquire_exclusive_lock(self):\n        fcntl.flock(self.file.fileno(), fcntl.LOCK_EX)\n    \n    def release_lock(self):\n        fcntl.flock(self.file.fileno(), fcntl.LOCK_UN)\n    \n    def close_file(self):\n        if self.file:\n            self.file.close()\n\n# Usage example\ndef read_with_lock(filename):\n    with SharedFile(filename, 'r') as f:\n        f.open_file()\n        f.acquire_shared_lock()\n        data = f.file.read()\n        f.release_lock()\n        return data\n\ndef write_with_lock(filename, content):\n    with SharedFile(filename, 'w') as f:\n        f.open_file()\n        f.acquire_exclusive_lock()\n        f.file.write(content)\n        f.release_lock()",
+      "explanation": "This Python code demonstrates advisory file locking using fcntl module. LOCK_SH provides shared (read) locks allowing multiple readers, while LOCK_EX provides exclusive (write) locks. The locks are automatically released when the file is closed or the process terminates.",
+      "timeComplexity": "O(1) for lock operations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "UNIX File Locking with fcntl",
+      "description": "C program demonstrating file locking using fcntl() system call for implementing readers-writers synchronization",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n\nstruct flock create_lock(short type, short whence, off_t start, off_t len) {\n    struct flock lock;\n    lock.l_type = type;      // F_RDLCK or F_WRLCK\n    lock.l_whence = whence;  // SEEK_SET, SEEK_CUR, SEEK_END\n    lock.l_start = start;     // starting offset\n    lock.l_len = len;        // 0 means entire file\n    lock.l_pid = getpid();\n    return lock;\n}\n\nint acquire_lock(int fd, struct flock *lock) {\n    return fcntl(fd, F_SETLK, lock);\n}\n\nint acquire_blocking_lock(int fd, struct flock *lock) {\n    return fcntl(fd, F_SETLKW, lock);\n}\n\nvoid release_lock(int fd, struct flock *lock) {\n    lock->l_type = F_UNLCK;\n    fcntl(fd, F_SETLK, lock);\n}\n\n// Example: Reader function\nvoid read_file_shared(int fd) {\n    struct flock lock = create_lock(F_RDLCK, SEEK_SET, 0, 0);\n    acquire_blocking_lock(fd, &lock);\n    \n    // Read file contents here\n    \n    release_lock(fd, &lock);\n}\n\n// Example: Writer function\nvoid write_file_exclusive(int fd) {\n    struct flock lock = create_lock(F_WRLCK, SEEK_SET, 0, 0);\n    acquire_blocking_lock(fd, &lock);\n    \n    // Write to file here\n    \n    release_lock(fd, &lock);\n}",
+      "explanation": "This C code demonstrates using fcntl() for file locking in UNIX. F_SETLK attempts non-blocking lock acquisition, while F_SETLKW blocks until lock is available. F_RDLCK creates shared (read) locks, F_WRLCK creates exclusive (write) locks, and F_UNLCK releases locks.",
+      "timeComplexity": "O(1) for lock operations (blocking version depends on contention)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Deadlock-Free Lock Acquisition for Multiple Files",
+      "description": "Algorithm demonstrating how to acquire locks on multiple files without causing deadlock using ordered lock acquisition",
+      "code": "FUNCTION acquireMultipleLocks(files, lockType)\n  // files is a list of file handles sorted by some unique identifier\n  SORT files BY fileId  // Always acquire locks in consistent order\n  acquiredLocks = EMPTY LIST\n  \n  FOR EACH file IN files\n    lock = createLock(file, lockType)\n    success = acquireBlockingLock(file, lock)\n    \n    IF NOT success THEN\n      // Release all previously acquired locks in reverse order\n      FOR EACH acquired IN REVERSE(acquiredLocks)\n        releaseLock(acquired.file, acquired.lock)\n      END FOR\n      RETURN FAILURE\n    END IF\n    \n    APPEND (file, lock) TO acquiredLocks\n  END FOR\n  \n  RETURN SUCCESS\nEND FUNCTION\n\n// Example usage: Writing to two files atomically\nPROCEDURE atomicTransfer(sourceFile, destFile, amount)\n  files = [sourceFile, destFile]\n  \n  // Sort by file ID to prevent deadlock\n  SORT files BY fileId\n  \n  result = acquireMultipleLocks(files, EXCLUSIVE_LOCK)\n  \n  IF result == SUCCESS THEN\n    readBalance(sourceFile)\n    readBalance(destFile)\n    updateBalances(sourceFile, destFile, amount)\n    releaseAllLocks(files)\n  ELSE\n    RETRY_AFTER_DELAY()\n  END IF\nEND PROCEDURE",
+      "explanation": "This algorithm prevents deadlocks when acquiring locks on multiple files by always acquiring locks in a consistent order (sorted by file ID). If any lock acquisition fails, all previously acquired locks are released in reverse order to prevent deadlock and allow retry.",
+      "timeComplexity": "O(n log n) due to sorting, where n is number of files",
+      "spaceComplexity": "O(n) for storing acquired locks"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "mnemonics": [
+    "SBLA: Socket \u2192 Bind \u2192 Listen \u2192 Accept (Server flow)",
+    "C-BC-LS: Client: socket \u2192 Connect | Server: Bind \u2192 Listen \u2192 Accept (Connection flow)",
+    "ZAP: Zombie prevention - ignore SIGCHLD, use waitpid with WNOHANG, or fork but reap properly",
+    "EAGAIN: Error Again - retry when non-blocking operation would block"
+  ],
+  "acronyms": [
+    {
+      "term": "TCP",
+      "expansion": "Transmission Control Protocol",
+      "usage": "Connection-oriented, reliable, ordered byte stream protocol for client-server communication"
+    },
+    {
+      "term": "UDP",
+      "expansion": "User Datagram Protocol",
+      "usage": "Connectionless, unreliable protocol for fast, low-overhead client-server communication"
+    },
+    {
+      "term": "IPC",
+      "expansion": "Inter-Process Communication",
+      "usage": "Mechanisms (pipes, FIFOs, message queues, semaphores, shared memory) for client-server on same system"
+    },
+    {
+      "term": "SYN",
+      "expansion": "Synchronize",
+      "usage": "First step in TCP 3-way handshake to initiate connection"
+    },
+    {
+      "term": "ACK",
+      "expansion": "Acknowledgment",
+      "usage": "Confirms receipt of data or completion of handshake step"
+    },
+    {
+      "term": "SIGCHLD",
+      "expansion": "Signal Child",
+      "usage": "Signal sent to parent when child terminates, used for zombie prevention"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "TCP 3-way handshake",
+      "visualization": "Draw a timeline: Client\u2500\u2500SYN(seq=x)\u2500\u2500\u2192Server, Server\u2500\u2500SYN-ACK(seq=y,ack=x+1)\u2500\u2500\u2192Client, Client\u2500\u2500ACK(ack=y+1)\u2500\u2500\u2192Server. Only after this, bidirectional data flow begins."
+    },
+    {
+      "concept": "Concurrent server with fork",
+      "visualization": "Draw server process box with listenfd, branching into parent path (close connfd, loop back to accept) and child path (handle client using connfd, exit). Show zombie arrows being 'reaped'."
+    },
+    {
+      "concept": "Socket address structure alignment",
+      "visualization": "Draw sockaddr_in with sin_family (2 bytes), sin_port (2 bytes, network order), sin_addr (4 bytes), sin_zero (8 bytes). Show how it casts to generic sockaddr."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "TCP connection",
+      "analogy": "Like a telephone call - you dial (connect), wait for answer (accept), talk (data exchange), then hang up (close). Connection persists for the duration."
+    },
+    {
+      "concept": "UDP datagrams",
+      "analogy": "Like sending postcards - you write the address and mail it. No connection setup, no guarantee it arrives, no order guarantee, but faster and lower overhead."
+    },
+    {
+      "concept": "Zombie processes",
+      "analogy": "Children leaving 'death certificates' on the parent's desk. Parent must file them (call wait) or they pile up and clog the office (process table)."
+    }
+  ],
+  "topicId": "client-server-properties"
+}

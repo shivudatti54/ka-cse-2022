@@ -1,0 +1,35 @@
+{
+  "topicId": "fundamental-concepts",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Fetch-Execute Cycle Microoperations",
+      "description": "Pseudocode representing the microoperations performed during the fetch and execute phases of instruction processing.",
+      "code": "// FETCH PHASE (same for all instructions)\nMAR \u2190 PC // Load address from PC\nReadMem(MAR) // Memory read operation\nIR \u2190 MDR // Instruction into IR\nPC \u2190 PC + 4 // Increment PC (word-aligned)\n\n// EXECUTE PHASE (depends on instruction type)\n\n// R-type: ADD Rdest, Rsrc1, Rsrc2\nALUInput1 \u2190 R[src1] // Read source registers\nALUInput2 \u2190 R[src2]\nALUResult \u2190 ALUInput1 + ALUInput2 // Perform addition\nR[dest] \u2190 ALUResult // Write result\n\n// Load: LW Rdest, offset(Rsrc)\nALUResult \u2190 R[src] + offset // Compute effective address\nMAR \u2190 ALUResult\nReadMem(MAR) // Memory read\nR[dest] \u2190 MDR // Load data into register\n\n// Store: SW Rsrc, offset(Rdest)\nALUResult \u2190 R[dest] + offset // Compute address\nMAR \u2190 ALUResult\nMDR \u2190 R[src] // Data to store\nWriteMem(MAR) // Memory write",
+      "explanation": "This pseudocode shows the register transfer microoperations. Each line represents an atomic operation that can complete in one clock cycle. The fetch phase is universal; execute phase varies by instruction type as determined by the opcode field in IR.",
+      "timeComplexity": "O(1) per microoperation",
+      "spaceComplexity": "O(1) - uses fixed set of internal registers"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Pipeline Hazard Detection and Forwarding Logic",
+      "description": "Pseudocode showing how the pipeline detects data hazards and implements forwarding to resolve RAW dependencies.",
+      "code": "// Forwarding Unit Logic (in EX stage)\nif (EX/MEM.RegWrite AND // Previous instruction writes register\n EX/MEM.RegisterRd != 0 AND // Not $zero\n EX/MEM.RegisterRd == ID/EX.RegisterRs) then\n ForwardA = 10 // Forward from EX/MEM pipeline register\n\nif (EX/MEM.RegWrite AND \n EX/MEM.RegisterRd != 0 AND\n EX/MEM.RegisterRd == ID/EX.RegisterRt) then\n ForwardB = 10 // Forward from EX/MEM\n\n// Also check MEM/WB for forwarding\nif (MEM/WB.RegWrite AND \n MEM/WB.RegisterRd != 0 AND\n MEM/WB.RegisterRd == ID/EX.RegisterRs AND\n NOT (EX/MEM.RegWrite AND EX/MEM.RegisterRd == ID/EX.RegisterRs)) then\n ForwardA = 01 // Forward from MEM/WB\n\n// Apply forwarding to ALU inputs\nALUInput1 = (ForwardA == 00) ? ID/EX.RegisterRs :\n (ForwardA == 10) ? EX/MEM.ALUResult :\n MEM/WB.WriteData\n\nALUInput2 = (ForwardB == 00) ? ID/EX.RegisterRt :\n (ForwardB == 10) ? EX/MEM.ALUResult :\n MEM/WB.WriteData",
+      "explanation": "This forwarding logic detects when the source registers of the current instruction match the destination registers of previously in-flight instructions. The 2-bit ForwardA/ForwardB signals select whether to use the original register value or forwarded data from either the EX/MEM or MEM/WB pipeline registers.",
+      "timeComplexity": "O(1) - combinational logic per cycle",
+      "spaceComplexity": "O(1) - uses pipeline register fields and comparators"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Pipeline Performance Calculator",
+      "description": "Program to calculate pipeline performance metrics including CPI, speedup, and execution time.",
+      "code": "// Pipeline Performance Calculator\nINPUT: n (instructions), k (pipeline stages), \n ideal_CPI = 1, stall_cycles_per_instruction\n \n// Calculate total cycles\ntotal_cycles = k + (n - 1) + (stall_cycles_per_instruction * n)\n\n// Calculate effective CPI\neffective_CPI = total_cycles / n\n = ideal_CPI + stall_cycles_per_instruction\n\n// Calculate ideal speedup (no hazards)\nideal_speedup = (n * k) / (k + n - 1)\n\n// Calculate actual speedup vs non-pipelined\nnon_pipelined_cycles = n * k\nactual_speedup = non_pipelined_cycles / total_cycles\n\n// Example: 5-stage pipeline, 1000 instructions, 0.2 stalls/instruction\neffective_CPI = 1 + 0.2 = 1.2\ntotal_cycles = 5 + 999 + 200 = 1204\nactual_speedup = (1000*5) / 1204 \u2248 4.15\u00d7\n\n// Branch penalty calculation\nbranch_frequency = 0.20\nmisprediction_rate = 0.40 \nflush_penalty = 3 // cycles lost\nbranch_penalty = branch_frequency * misprediction_rate * flush_penalty\nbranch_penalty = 0.20 * 0.40 * 3 = 0.24 cycles/instruction",
+      "explanation": "This calculator demonstrates pipeline performance analysis. Key insight: speedup is limited by pipeline depth and hazard penalties. For large n, speedup approaches k (pipeline depth) but never exceeds it, demonstrating fundamental Amdahl's law limitations on parallel processing.",
+      "timeComplexity": "O(1) for each calculation",
+      "spaceComplexity": "O(1) - fixed inputs and calculations"
+    }
+  ]
+}

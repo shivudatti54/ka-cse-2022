@@ -1,0 +1,39 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of a system call in an operating system?",
+    "expectedPoints": [
+      "Provides an interface for user applications to request services from the operating system kernel.",
+      "Acts as a gateway for processes to access privileged hardware and system resources safely.",
+      "Helps in separating user mode (unprivileged) from kernel mode (privileged) to ensure system security and stability."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast the monolithic and microkernel structures for operating systems. What are the advantages and disadvantages of each approach?",
+    "expectedPoints": [
+      "Monolithic Kernel: All OS services (scheduling, file system, device drivers, etc.) run in a single, large kernel space. Advantage is high performance due to no inter-process communication (IPC) overhead. Disadvantage is poor reliability and maintainability; a bug in any service can crash the entire system.",
+      "Microkernel: Minimizes what runs in kernel space (only essential services like IPC, scheduling). Most services run as separate user-level processes (servers). Advantage is greater modularity, reliability, and security; a failing service doesn't crash the kernel. Disadvantage is potential performance overhead due to frequent message passing (IPC) between components.",
+      "Modern systems often use a hybrid approach (e.g., Linux is monolithic but modular, Windows uses a hybrid kernel) to try and balance these trade-offs."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Describe the steps involved, from start to finish, when a user program executes a read() system call to fetch data from a disk file. Your answer should cover the transition between user mode and kernel mode, the role of the system call interface, and the major kernel subsystems involved in fulfilling the request.",
+    "expectedPoints": [
+      "The user program calls the read() library function, which is a wrapper that prepares the arguments (file descriptor, buffer, count) for the system call.",
+      "The wrapper function executes a special instruction (e.g., syscall or int 0x80) that triggers a software interrupt or trap, causing a switch from user mode to kernel mode and saving the current CPU state.",
+      "The CPU transfers control to a predefined interrupt service routine, the system call handler, which is part of the operating system kernel.",
+      "The handler examines the system call number (stored in a register) to identify the requested service (e.g., SYS_read). It then retrieves the arguments from the user space and performs necessary sanity and security checks (e.g., is the file descriptor valid?).",
+      "The handler invokes the appropriate kernel function (e.g., sys_read()). This function interacts with the Virtual File System (VFS) layer to resolve the file descriptor to an inode.",
+      "The VFS layer calls the specific function for the file's underlying file system (e.g., ext4, NTFS). This function checks if the requested data is already in the kernel's page cache (buffer cache). If it is (cache hit), it copies the data to the user buffer.",
+      "If the data is not in the cache (cache miss), the file system layer must request the data from the disk. It translates the file offset into a logical block number and submits a read request to the block device layer.",
+      "The block device layer places the request on the disk I/O queue and schedules the I/O operation. The process may be put to sleep until the data is available.",
+      "Once the disk interrupt signals the data has been read into the kernel cache, the process is awakened. The data is then copied from the kernel cache space into the user-provided buffer address space.",
+      "Finally, control returns from the kernel function to the system call handler, which sets the return value (number of bytes read) and executes a special instruction (e.g., iret) to return from the exception, switching the CPU back to user mode. The library wrapper then returns this value to the user application."
+    ],
+    "marks": 10
+  }
+]

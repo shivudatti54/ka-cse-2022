@@ -1,0 +1,65 @@
+{
+  "topicId": "dynamic-programming-approach",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Fibonacci - Memoization (Top-Down)",
+      "description": "Top-down dynamic programming approach using recursion with memoization",
+      "code": "def fib_memo(n, memo={}):\n    if n in memo:\n        return memo[n]\n    if n <= 1:\n        return n\n    memo[n] = fib_memo(n-1, memo) + fib_memo(n-2, memo)\n    return memo[n]\n\n# Time: O(n) - each F(k) computed once\n# Space: O(n) for memo table + O(n) recursion stack",
+      "explanation": "Uses dictionary to cache computed Fibonacci values. Each subproblem is solved only once, reducing time from exponential to linear.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Fibonacci - Tabulation (Bottom-Up)",
+      "description": "Bottom-up dynamic programming approach using iteration",
+      "code": "def fib_tab(n):\n    if n <= 1:\n        return n\n    dp = [0] * (n + 1)\n    dp[1] = 1\n    for i in range(2, n + 1):\n        dp[i] = dp[i-1] + dp[i-2]\n    return dp[n]\n\n# Space optimized version:\ndef fib_optimized(n):\n    if n <= 1:\n        return n\n    prev2, prev1 = 0, 1\n    for i in range(2, n + 1):\n        curr = prev1 + prev2\n        prev2, prev1 = prev1, curr\n    return prev1\n\n# Time: O(n), Space: O(n) or O(1)",
+      "explanation": "Builds solution from base cases iteratively. The optimized version uses only two variables to reduce space complexity to O(1).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n) / O(1) optimized"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "0/1 Knapsack Problem",
+      "description": "Dynamic programming solution for 0/1 Knapsack",
+      "code": "def knapsack(weights, values, capacity):\n    n = len(weights)\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    \n    for i in range(1, n + 1):\n        for w in range(capacity + 1):\n            # Don't include item i-1\n            dp[i][w] = dp[i-1][w]\n            # Include item i-1 if weight allows\n            if weights[i-1] <= w:\n                dp[i][w] = max(dp[i][w], \n                               values[i-1] + dp[i-1][w - weights[i-1]])\n    \n    return dp[n][capacity]\n\n# Time: O(n * W)\n# Space: O(n * W)\n\n# To find selected items:\nw = capacity\nfor i in range(n, 0, -1):\n    if dp[i][w] != dp[i-1][w]:\n        print(f\"Item {i} selected\")\n        w -= weights[i-1]",
+      "explanation": "Creates a 2D table where dp[i][w] represents maximum value using first i items with capacity w. Backtracking finds which items were selected.",
+      "timeComplexity": "O(n*W)",
+      "spaceComplexity": "O(n*W)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Longest Common Subsequence",
+      "description": "DP solution to find LCS length and reconstruct the sequence",
+      "code": "def lcs(s1, s2):\n    m, n = len(s1), len(s2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    \n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if s1[i-1] == s2[j-1]:\n                dp[i][j] = dp[i-1][j-1] + 1\n            else:\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n    \n    # Backtrack to find LCS\n    lcs_str = []\n    i, j = m, n\n    while i > 0 and j > 0:\n        if s1[i-1] == s2[j-1]:\n            lcs_str.append(s1[i-1])\n            i -= 1\n            j -= 1\n        elif dp[i-1][j] > dp[i][j-1]:\n            i -= 1\n        else:\n            j -= 1\n    \n    return dp[m][n], ''.join(reversed(lcs_str))\n\n# Time: O(m*n), Space: O(m*n)",
+      "explanation": "Builds DP table where each cell contains LCS length. If characters match, extends diagonally; otherwise takes maximum from left or top cell. Backtracking reconstructs the actual LCS.",
+      "timeComplexity": "O(m*n)",
+      "spaceComplexity": "O(m*n)"
+    },
+    {
+      "id": "code-5",
+      "language": "python",
+      "title": "Longest Increasing Subsequence",
+      "description": "Two approaches: O(n\u00b2) DP and O(n log n) binary search",
+      "code": "# Approach 1: O(n\u00b2) Dynamic Programming\ndef lis_dp(arr):\n    n = len(arr)\n    dp = [1] * n\n    for i in range(1, n):\n        for j in range(i):\n            if arr[i] > arr[j]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)\n\n# Approach 2: O(n log n) using Binary Search\nimport bisect\ndef lis_binary(arr):\n    if not arr:\n        return 0\n    tail = [arr[0]]\n    for num in arr[1:]:\n        pos = bisect.bisect_left(tail, num)\n        if pos == len(tail):\n            tail.append(num)\n        else:\n            tail[pos] = num\n    return len(tail)\n\n# DP: O(n\u00b2), O(n) space\n# Binary Search: O(n log n), O(n) space",
+      "explanation": "DP approach compares each element with all previous elements. Binary search approach maintains a 'tail' array representing smallest ending element for each length, achieving O(n log n).",
+      "timeComplexity": "O(n\u00b2) / O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-6",
+      "language": "python",
+      "title": "Matrix Chain Multiplication",
+      "description": "DP solution to find minimum scalar multiplications",
+      "code": "def matrix_chain_order(dims):\n    n = len(dims) - 1  # Number of matrices\n    dp = [[0] * n for _ in range(n)]\n    \n    for length in range(2, n + 1):  # chain length\n        for i in range(n - length + 1):\n            j = i + length - 1\n            dp[i][j] = float('inf')\n            \n            for k in range(i, j):\n                cost = (dp[i][k] + dp[k+1][j] + \n                        dims[i] * dims[k+1] * dims[j+1])\n                dp[i][j] = min(dp[i][j], cost)\n    \n    return dp[0][n-1]\n\n# dims = [d0, d1, d2, ..., dn] where matrix i is di-1 x di\n# For A:10x30, B:30x5, C:5x60 \u2192 dims=[10,30,5,60]\n# Result: minimum scalar multiplications\n\n# Time: O(n\u00b3), Space: O(n\u00b2)",
+      "explanation": "Tries all possible split points to find minimum multiplication cost. The cost formula accounts for multiplying two result matrices after optimal parenthesization of subchains.",
+      "timeComplexity": "O(n\u00b3)",
+      "spaceComplexity": "O(n\u00b2)"
+    }
+  ]
+}

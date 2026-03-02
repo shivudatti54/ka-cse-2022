@@ -1,0 +1,124 @@
+{
+  "topicId": "pvr",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Path Vector Routing and state how it differs from Distance Vector and Link State routing protocols.",
+      "keyPoints": [
+        "Path Vector Routing maintains entire path information (sequence of AS numbers)",
+        "Distance Vector only maintains distance metric to each destination",
+        "Link State maintains complete topology map of the domain",
+        "Path Vector prevents routing loops by detecting own AS in path",
+        "Path Vector is suitable for inter-domain routing, DV for small networks, LS for intra-domain"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain the four BGP message types with their purposes.",
+      "keyPoints": [
+        "OPEN: Initializes BGP connection and exchanges capabilities",
+        "UPDATE: Advertises new routes or withdraws unavailable routes",
+        "KEEPALIVE: Maintains neighbor relationship periodically",
+        "NOTIFICATION: Reports errors and closes BGP connection"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain how AS-PATH attribute prevents routing loops in BGP.",
+      "keyPoints": [
+        "AS-PATH contains ordered list of all AS numbers the route has traversed",
+        "When BGP receives an update, it checks if its own AS number is in AS-PATH",
+        "If own AS is found, it indicates a loop - route is discarded",
+        "Before re-advertising route, BGP prepends its own AS number to AS-PATH",
+        "This ensures no AS receives updates about destinations within its own domain"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between eBGP and iBGP.",
+      "keyPoints": [
+        "eBGP: External BGP - runs between routers in different Autonomous Systems",
+        "iBGP: Internal BGP - runs between routers within the same AS",
+        "eBGP typically uses direct physical connection; iBGP uses TCP (port 179)",
+        "iBGP requires full mesh or route reflectors; eBGP doesn't",
+        "NEXT-HOP attribute changed by eBGP but preserved by iBGP",
+        "Both use same message types and selection algorithm"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the BGP Path Attributes: AS-PATH, NEXT-HOP, LOCAL-PREF, and MED.",
+      "keyPoints": [
+        "AS-PATH: Sequence of AS numbers traversed; used for loop detection and route selection",
+        "NEXT-HOP: IP address of next-hop router to reach destination",
+        "LOCAL-PREF: Local preference for outbound traffic (higher preferred); default 100",
+        "MED: Multi-Exit Discriminator to influence inbound traffic (lower preferred)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the BGP route selection process criteria in order of preference.",
+      "keyPoints": [
+        "1. Check if route is valid (synchronized and reachable)",
+        "2. Highest LOCAL-PREF (default 100)",
+        "3. Shortest AS-PATH length",
+        "4. Lowest MED value",
+        "5. Prefer eBGP over iBGP routes",
+        "6. Lowest IGP cost to NEXT-HOP",
+        "7. Lowest BGP Router ID"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the advantages and limitations of Path Vector Routing in inter-domain routing.",
+      "keyPoints": [
+        "ADVANTAGES: Loop prevention via AS-PATH, support for policy-based routing, scalability for large networks, multiple path attributes for flexible routing decisions, hierarchical AS numbering enables aggregation",
+        "LIMITATIONS: Slow convergence due to path vector propagation, requires significant processing/memory for large AS-PATHs, complexity in configuration and policy implementation, AS-PATH length can grow very long, potential for routing policy conflicts between ASes"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain how policy-based routing is implemented in BGP and its importance in inter-domain routing.",
+      "keyPoints": [
+        "BGP allows administrators to implement policies based on AS-PATH, community, or other attributes",
+        "Route filtering: Accept/reject routes based on AS-PATH prefix using prefix-lists or AS-path access-lists",
+        "Attribute manipulation: Modify LOCAL-PREF (outbound traffic), MED (inbound traffic)",
+        "Route summarization (aggregation) to reduce table size",
+        "Valley-free routing: Prevents traffic from one AS to another via a third AS without consent",
+        "Enables traffic engineering: Control which neighbor carries traffic for specific prefixes",
+        "Supports business relationships: Customer-provider, peer-peer routing policies"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the BGP finite state machine states and transitions during neighbor establishment.",
+      "keyPoints": [
+        "IDLE: Initial state; initiates TCP connection, resets ConnectRetry timer",
+        "CONNECT: Waiting for TCP connection completion; if fails, transitions to Active",
+        "ACTIVE: Continues trying to establish TCP connection",
+        "OPEN SENT: Waiting for OPEN message from neighbor",
+        "OPEN CONFIRM: Waiting for KEEPALIVE message; neighbor is established",
+        "ESTABLISHED: BGP connection active; exchanges UPDATE messages",
+        "State transitions triggered by: TCP connection success/failure, OPEN message receipt, KEEPALIVE/NOTIFICATION receipt, timer expiry, manual stop"
+      ],
+      "marks": 10
+    }
+  ]
+}

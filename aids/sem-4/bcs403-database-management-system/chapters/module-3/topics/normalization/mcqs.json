@@ -1,0 +1,130 @@
+{
+  "topicId": "normalization",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "What is the primary goal of log normalization?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To reduce the storage space required for logs"
+        },
+        {
+          "key": "B",
+          "text": "To convert log data from diverse sources into a common, consistent format"
+        },
+        {
+          "key": "C",
+          "text": "To encrypt sensitive information within log files"
+        },
+        {
+          "key": "D",
+          "text": "To transmit logs securely from the source to the SIEM"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Normalization is the process of mapping parsed fields from various log sources (e.g., firewall, Windows, Apache) to a standard set of field names and formats (e.g., `src_ip`, UTC timestamp) within the SIEM. This enables effective correlation and analysis.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "Which of the following is a common technique used for the parsing phase of log processing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Field mapping to a common schema"
+        },
+        {
+          "key": "B",
+          "text": "Converting timestamps to UTC"
+        },
+        {
+          "key": "C",
+          "text": "Using Regular Expressions (Regex)"
+        },
+        {
+          "key": "D",
+          "text": "Lookup tables for value translation"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Parsing is the act of breaking down a raw log string into its components. Regular Expressions (Regex) are a fundamental and widely used technique to define patterns that match and extract specific fields from unstructured text.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "A SIEM receives a log from a Cisco ASA firewall with the field 'src' and a log from a Windows server with the field 'c-ip'. After normalization, what common field name would BOTH these values most likely be mapped to?",
+      "options": [
+        {
+          "key": "A",
+          "text": "user"
+        },
+        {
+          "key": "B",
+          "text": "dest_ip"
+        },
+        {
+          "key": "C",
+          "text": "src_ip"
+        },
+        {
+          "key": "D",
+          "text": "protocol"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A core function of normalization is field mapping. Both 'src' (from the firewall) and 'c-ip' (a common field in web server logs like IIS) represent the source IP address of an event. The SIEM would map both to a standardized field, typically named `src_ip`.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "Why is time standardization to UTC a critical step in log normalization?",
+      "options": [
+        {
+          "key": "A",
+          "text": "UTC is the required format for all international compliance standards"
+        },
+        {
+          "key": "B",
+          "text": "It reduces the size of timestamp data by 50%"
+        },
+        {
+          "key": "C",
+          "text": "It allows for accurate sequencing and correlation of events generated across different time zones"
+        },
+        {
+          "key": "D",
+          "text": "SIEM correlation rules can only process timestamps in the UTC format"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Devices in a global network operate in various local time zones. Without converting all timestamps to a universal standard like UTC, it would be impossible to correctly determine the order of events during an investigation, potentially leading to incorrect conclusions.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq5",
+      "question": "An application generates logs in JSON format. How does this impact the parsing phase compared to parsing a plain text Apache log?",
+      "options": [
+        {
+          "key": "A",
+          "text": "JSON logs cannot be parsed by SIEM systems and must be converted to text first."
+        },
+        {
+          "key": "B",
+          "text": "Parsing JSON logs is generally simpler and more efficient as the structure and field names are explicitly defined."
+        },
+        {
+          "key": "C",
+          "text": "Parsing JSON logs requires more complex Regular Expressions than parsing plain text logs."
+        },
+        {
+          "key": "D",
+          "text": "JSON logs eliminate the need for normalization because the format is already standard."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "JSON is a structured data format. The fields and their values are clearly delineated (e.g., `{\"user\": \"alice\", \"ip\": \"10.0.0.1\"}`). A SIEM can parse this by simply reading the JSON keys, which is more straightforward and less error-prone than writing regex patterns for unstructured text. Normalization is still required to map the application-specific field names (e.g., 'ip') to the SIEM's common schema (e.g., `src_ip`).",
+      "difficulty": "hard"
+    }
+  ]
+}

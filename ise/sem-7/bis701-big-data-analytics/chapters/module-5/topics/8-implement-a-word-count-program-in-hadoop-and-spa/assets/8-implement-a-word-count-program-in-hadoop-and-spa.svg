@@ -1,0 +1,146 @@
+<svg width="420" height="400" data-topic-id="8-implement-a-word-count-program-in-hadoop-and-spark" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-clip: padding-box;
+      background-color: #f7f7f7;
+      color: #333;
+      font-family: Arial, sans-serif;
+    }
+    rect {
+      fill: #f7f7f7;
+      stroke: #ddd;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section h2 {
+      margin-top: 0;
+    }
+    .section p {
+      margin-bottom: 10px;
+    }
+    .gradient {
+      background-image: linear-gradient(to bottom, #87ceeb, #4682b4);
+      background-size: 100% 100%;
+      height: 100%;
+    }
+    .animated {
+      animation: fade-in 1s;
+      animation-fill-mode: forwards;
+    }
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#87ceeb" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#4682b4" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="100%" height="100%" class="gradient"/>
+  <div class="section">
+    <h2>Introduction</h2>
+    <p>In the world of big data analytics, word count programs are a fundamental tool for analyzing text data.</p>
+  </div>
+  <div class="section">
+    <h2>What is a Word Count Program?</h2>
+    <p>A word count program is a program that takes a text file as input and outputs the frequency of each word in the file.</p>
+  </div>
+  <div class="section">
+    <h2>Hadoop Word Count Program</h2>
+    <p>Hadoop is a distributed computing framework that allows you to process large datasets across a cluster of nodes.</p>
+  </div>
+  <div class="section">
+    <h2>MapReduce</h2>
+    <p>A programming model used in Hadoop for processing large datasets.</p>
+    <p>A mapper reads input data, breaks it down into smaller chunks, and outputs key-value pairs.</p>
+    <p>A reducer takes input key-value pairs, aggregates them, and outputs the final result.</p>
+  </div>
+  <div class="section">
+    <h2>Example Hadoop Word Count Program</h2>
+    <pre><code>
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    public static class Mapper extends Mapper<Object, Text, Text, IntWritable> {
+        @Override
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            String[] words = value.toString().split("\\s+");
+            for (String word : words) {
+                context.write(new Text(word), new IntWritable(1));
+            }
+        }
+    }
+    public static class Reducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+        @Override
+        public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable value : values) {
+                sum += value.get();
+            }
+            context.write(key, new IntWritable(sum));
+        }
+    }
+}
+</code></pre>
+  </div>
+  <div class="section">
+    <h2>Spark Word Count Program</h2>
+    <p>Spark is a unified analytics engine for large-scale data processing.</p>
+    <p>A Spark word count program is similar to the Hadoop one, but it uses the Spark API.</p>
+  </div>
+  <div class="section">
+    <h2>Word Count Program in Java</h2>
+    <p>A simple Java program that counts the frequency of each word in a text file.</p>
+    <pre><code>
+import java.util.*;
+
+public class WordCount {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the text:");
+        String text = scanner.nextLine();
+        String[] words = text.split("\\s+");
+        Map<String, Integer> map = new HashMap<>();
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0) + 1);
+        }
+        System.out.println("Word frequency:");
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
+</code></pre>
+  </div>
+  <div class="section">
+    <h2>Conclusion</h2>
+    <p>In conclusion, word count programs are a fundamental tool for analyzing text data in big data analytics.</p>
+  </div>
+  <div class="section">
+    <h2>References</h2>
+    <ul>
+      <li>Apache Hadoop documentation</li>
+      <li>Apache Spark documentation</li>
+      <li>Java API documentation</li>
+    </ul>
+  </div>
+  <footer>
+    <h2>Footer</h2>
+    <p>&copy; 2023</p>
+  </footer>
+</svg>

@@ -1,0 +1,45 @@
+{
+  "topicId": "system-model",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "BOOTSTRAP PROCESS SIMULATION",
+      "description": "Demonstrates the simplified bootstrap process of an operating system",
+      "code": "BEGIN BOOTSTRAP\n    // Step 1: Power-On Self Test\n    RUN POST\n    IF POST FAILS THEN\n        DISPLAY ERROR MESSAGE\n        HALT\n    END IF\n    \n    // Step 2: Initialize Basic Hardware\n    INITIALIZE CPU_REGISTERS\n    INITIALIZE INTERRUPT_CONTROLLER\n    INITIALIZE MEMORY_CONTROLLER\n    \n    // Step 3: Load Boot Loader\n    READ_BOOT_SECTOR(BOOT_DISK)\n    LOAD_INTO_MEMORY(BOOT_LOADER, ADDRESS 0x7C00)\n    TRANSFER_CONTROL(BOOT_LOADER)\n    \n    // Step 4: Load Kernel\n    READ KERNEL_FROM_DISK\n    PLACE_IN_MEMORY(KERNEL_ADDRESS)\n    \n    // Step 5: Initialize Kernel Data Structures\n    INITIALIZE_PROCESS_TABLE\n    INITIALIZE_MEMORY_MANAGER\n    INITIALIZE_DEVICE_DRIVERS\n    \n    // Step 6: Start System Processes\n    CREATE_INIT_PROCESS\n    CREATE_SWAPPER_PROCESS\n    START_SYSTEM_DAEMONS\n    \n    // Step 7: Display Login\n    CLEAR_SCREEN\n    DISPLAY \"SYSTEM READY\"\n    SHOW_LOGIN_PROMPT\nEND BOOTSTRAP",
+      "explanation": "This pseudocode shows the bootstrap sequence from power-on through kernel loading to system initialization",
+      "timeComplexity": "O(n) based on hardware initialization",
+      "spaceComplexity": "O(1) for fixed number of variables"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "SYSTEM CALL HANDLING MECHANISM",
+      "description": "Demonstrates how system calls transition from user mode to kernel mode",
+      "code": "BEGIN SYSTEM_CALL_HANDLER\n    PARAMETERS: syscall_number, arg1, arg2, arg3\n    \n    // User Space Execution\n    FUNCTION user_program()\n        result = syscall(WRITE, fd, buffer, count)\n        // System call triggers interrupt\n    END FUNCTION\n    \n    // Kernel Space Execution\n    INTERRUPT_SERVICE_ROUTINE(trap_interrupt)\n        // Save current process state\n        SAVE_CPU_REGISTERS_TO_PCB\n        SET_CPU_MODE(KERNEL_MODE)\n        \n        // Lookup system call in table\n        syscall_entry = SYSCALL_TABLE[syscall_number]\n        \n        // Execute appropriate handler\n        SWITCH syscall_number OF\n            CASE READ: CALL handle_read(fd, buffer, count)\n            CASE WRITE: CALL handle_write(fd, buffer, count)\n            CASE FORK: CALL handle_fork()\n            CASE EXIT: CALL handle_exit(status)\n            DEFAULT: RETURN ERROR\n        END SWITCH\n        \n        // Restore process state\n        RESTORE_CPU_REGISTERS\n        SET_CPU_MODE(USER_MODE)\n        RETURN result\n    END INTERRUPT\nEND SYSTEM_CALL_HANDLER",
+      "explanation": "This shows how a system call causes a mode switch from user to kernel mode, protecting the system from unauthorized access",
+      "timeComplexity": "O(1) for lookup + O(k) for handler",
+      "spaceComplexity": "O(1) for state saving"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "SIMPLE SHELL COMMAND PROCESSOR",
+      "description": "Demonstrates basic command interpreter functionality in operating systems",
+      "code": "import os\nimport sys\n\nclass SimpleShell:\n    def __init__(self):\n        self.commands = {\n            'ls': self.cmd_ls,\n            'pwd': self.cmd_pwd,\n            'cd': self.cmd_cd,\n            'echo': self.cmd_echo,\n            'exit': self.cmd_exit\n        }\n    \n    def run(self):\n        \"\"\"Main shell loop\"\"\"\n        while True:\n            try:\n                # Display prompt\n                cwd = os.getcwd()\n                user = os.environ.get('USER', 'user')\n                prompt = f\"{user}@{os.uname().nodename}:{cwd}$ \"\n                \n                # Read command input\n                command_line = input(prompt).strip()\n                \n                # Parse command\n                if not command_line:\n                    continue\n                    \n                parts = command_line.split()\n                cmd = parts[0]\n                args = parts[1:]\n                \n                # Execute command\n                if cmd in self.commands:\n                    self.commands[cmd](args)\n                else:\n                    print(f\"Command not found: {cmd}\")\n                    \n            except EOFError:\n                break\n            except KeyboardInterrupt:\n                print(\"\\nUse 'exit' to quit\")\n    \n    def cmd_ls(self, args):\n        \"\"\"List directory contents - wraps system call\"\"\"\n        path = args[0] if args else '.'\n        try:\n            files = os.listdir(path)\n            for f in files:\n                print(f)\n        except FileNotFoundError:\n            print(f\"ls: cannot access '{path}'\")\n    \n    def cmd_pwd(self, args):\n        \"\"\"Print working directory\"\"\"\n        print(os.getcwd())\n    \n    def cmd_cd(self, args):\n        \"\"\"Change directory - wraps system call\"\"\"\n        if not args:\n            os.chdir(os.environ.get('HOME', '/'))\n        else:\n            try:\n                os.chdir(args[0])\n            except FileNotFoundError:\n                print(f\"cd: {args[0]}: No such file or directory\")\n    \n    def cmd_echo(self, args):\n        \"\"\"Display text\"\"\"\n        print(' '.join(args))\n    \n    def cmd_exit(self, args):\n        \"\"\"Exit shell\"\"\"\n        sys.exit(0)\n\n# Main entry point\nif __name__ == '__main__':\n    shell = SimpleShell()\n    shell.run()",
+      "explanation": "This Python implementation demonstrates how a command interpreter (shell) parses user commands and makes appropriate system calls to execute them",
+      "timeComplexity": "O(n) where n is number of files for ls",
+      "spaceComplexity": "O(1) for fixed variables"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "PROCESS CREATION USING FORK SYSTEM CALL",
+      "description": "Demonstrates how operating system creates new processes using fork() system call",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n    pid_t pid;\n    int x = 10;\n    \n    printf(\"Before fork: x = %d\\n\", x);\n    \n    // FORK SYSTEM CALL - creates new process\n    pid = fork();\n    \n    if (pid < 0) {\n        // Fork failed\n        fprintf(stderr, \"Fork failed!\\n\");\n        return 1;\n    }\n    else if (pid == 0) {\n        // Child process execution\n        printf(\"CHILD: My PID is %d\\n\", getpid());\n        printf(\"CHILD: Parent PID is %d\\n\", getppid());\n        x = 20;\n        printf(\"CHILD: Modified x = %d\\n\", x);\n        \n        // Execute another program\n        // execlp(\"ls\", \"ls\", \"-l\", NULL);\n    }\n    else {\n        // Parent process execution\n        printf(\"PARENT: My PID is %d\\n\", getpid());\n        printf(\"PARENT: Child PID is %d\\n\", pid);\n        \n        // Wait for child to complete\n        wait(NULL);\n        printf(\"PARENT: Child completed\\n\");\n        printf(\"PARENT: Original x = %d\\n\", x);\n    }\n    \n    return 0;\n}\n\n/*\n * EXPLANATION OF FORK() SYSTEM CALL:\n * \n * 1. fork() creates an exact copy of the calling process\n * 2. Returns twice: once in parent (with child's PID)\n *                   once in child (with value 0)\n * 3. Child gets copy of parent's address space\n * 4. Both processes continue execution after fork()\n * 5. This demonstrates OS process management\n */",
+      "explanation": "This C program demonstrates the fork() system call which creates a new process by duplicating the existing process. The OS creates a Process Control Block for each process and manages them through the kernel",
+      "timeComplexity": "O(n) where n is memory copied during fork",
+      "spaceComplexity": "O(n) for duplicate process memory"
+    }
+  ]
+}

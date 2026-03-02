@@ -1,0 +1,166 @@
+{
+  "topicId": "error-control",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between error detection and error correction. Which methods are used for each?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Error detection identifies if errors occurred; error correction not only detects but also identifies exact bit positions and corrects them",
+        "Error detection methods: Parity check, Checksum, CRC",
+        "Error correction methods: Hamming code, Forward Error Correction (FEC)",
+        "Error detection is simpler and requires fewer redundant bits than error correction"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the Stop-and-Wait ARQ protocol with a neat diagram showing the sequence of frame and acknowledgment exchange.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Sender transmits one frame and waits for ACK",
+        "Receiver sends ACK only after receiving and processing the frame",
+        "If ACK not received within timeout, sender retransmits the same frame",
+        "If corrupted frame received, receiver discards it and doesn't send ACK",
+        "The protocol ensures reliability but has low efficiency"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Calculate the Hamming code for the data word 1101. Show the placement of data bits and parity bits.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Data bits: 1,1,0,1 at positions 3,5,6,7",
+        "Parity bits at positions 1,2,4 (powers of 2)",
+        "P1 (position 1) covers positions 1,3,5,7 = 1,1,1 → odd → P1=1",
+        "P2 (position 2) covers positions 2,3,6,7 = 1,0,1 → even → P2=0",
+        "P4 (position 4) covers positions 4,5,6,7 = 0,1,0,1 → even → P4=0",
+        "Final codeword: 1110101"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the Sliding Window protocol and mention its advantages over Stop-and-Wait.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Sliding Window allows multiple frames to be in transit before acknowledgment",
+        "Sender maintains a window of sequence numbers",
+        "Window slides forward as ACKs are received",
+        "Advantages: Higher channel utilization, better efficiency, supports full-duplex communication",
+        "Disadvantages: More complex implementation, requires buffer management"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is CRC? Explain how CRC is generated and checked at the receiver with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "CRC (Cyclic Redundancy Check) uses polynomial division",
+        "Sender: Divide data by generator polynomial, append remainder as CRC bits",
+        "Receiver: Divide received data by same polynomial, remainder should be zero for no error",
+        "Example: Data: 110101, Generator: 1101 (degree 3)",
+        "CRC detects burst errors up to length equal to degree of generator polynomial"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between Go-Back-N ARQ and Selective Repeat ARQ protocols.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Go-Back-N: Retransmits lost frame and ALL subsequent frames",
+        "Selective Repeat: Retransmits ONLY the lost frame",
+        "Go-Back-N uses cumulative ACKs; Selective Repeat uses individual ACKs",
+        "Selective Repeat requires more buffer space at receiver for out-of-order frames",
+        "Go-Back-N is simpler but less efficient than Selective Repeat"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of burst error and mention techniques to handle burst errors.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Burst error corrupts multiple consecutive bits (2 or more)",
+        "Burst length measured from first to last corrupted bit including both",
+        "Causes: impulse noise, fading in wireless channels, hardware faults",
+        "Handling techniques: Interleaving (spread bits across time), FEC codes designed for bursts, Reed-Solomon codes",
+        "Burst errors are more common than single-bit errors in real channels"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Hamming code error correction mechanism. How many redundant bits are required for a data word of 8 bits? Determine the positions of data and parity bits and verify error correction for a single-bit error.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "For 8 data bits: need r bits where 2^r >= 8+r+1 → 2^4=16 >= 13 → r=4",
+        "Total codeword length = 12 bits",
+        "Parity bits at positions 1,2,4,8 (powers of 2)",
+        "Data bits at positions 3,5,6,7,9,10,11,12",
+        "Explain parity check equation formation",
+        "For error detection: calculate syndrome bits",
+        "If syndrome is non-zero, error position is given by binary value of syndrome bits",
+        "Correct error by flipping the bit at error position"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive the efficiency of Stop-and-Wait ARQ and Sliding Window protocol. In a system with propagation delay of 10ms and transmission time of 1ms, calculate the efficiency for both protocols (assuming window size of 7 for sliding window).",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Stop-and-Wait efficiency = Tt / (Tt + 2Tp) = 1 / (1 + 20) = 1/21 ≈ 4.76%",
+        "Sliding Window efficiency = (N × Tt) / (Tt + 2Tp) where N is window size",
+        "For window size 7: efficiency = (7 × 1) / (1 + 20) = 7/21 = 33.33%",
+        "Explain how sliding window improves efficiency",
+        "If sliding window with infinite sequence numbers: efficiency approaches 1",
+        "Formula derivation shows propagation delay dominates when Tt << 2Tp"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the different types of errors in data communication. Explain any three error detection techniques with examples and compare their effectiveness.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Types: Single-bit errors, Burst errors",
+        "Parity checking: Add one bit to make count even/odd; detects odd errors only; simple but weak",
+        "Checksum: Use ones-complement addition of segments; better than parity; detects most random errors",
+        "CRC: Polynomial division; most powerful; detects all burst errors up to degree of generator polynomial",
+        "Comparison: CRC > Checksum > Parity in error detection capability",
+        "CRC has very low probability of undetected errors (1 in 10^9 or better)"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the working of Selective Repeat ARQ with a suitable sequence diagram. What are the advantages and limitations of this protocol compared to Go-Back-N ARQ?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Sender maintains N separate timers for each unacknowledged frame",
+        "Receiver individually acknowledges correctly received frames",
+        "Receiver buffers out-of-order frames until missing frames arrive",
+        "When sender's timer expires for a frame, only that frame is retransmitted",
+        "Advantages over Go-Back-N: Higher throughput, less retransmission overhead, better for high-error channels",
+        "Limitations: Complex receiver logic, larger buffer requirements, potential for duplicate frames if ACK lost",
+        "Window size must be <= 2^(k-1) to avoid ambiguity between old and new frames"
+      ]
+    }
+  ]
+}

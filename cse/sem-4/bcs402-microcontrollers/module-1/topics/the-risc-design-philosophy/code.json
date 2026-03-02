@@ -1,0 +1,35 @@
+{
+  "topicId": "the-risc-design-philosophy",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "RISC-style Assembly for Array Sum",
+      "description": "Example showing load-store architecture: load values from memory to registers, perform addition in registers, store result back",
+      "code": "// RISC-style: Sum array elements using registers\n// C requires: sum = a[0] + a[1] + ... + a[9]\n\n// Assume base address of array 'a' in $t0, sum in $t1\nLOAD $t1, $zero // sum = 0\nLOAD $t2, $zero // i = 0\n\nLOOP:\n // Check if i < 10\n SLT $t3, $t2, 10 // $t3 = (i < 10) ? 1 : 0\n BEQ $t3, $zero, EXIT // if i >= 10, exit\n \n // Load a[i] into register\n SLL $t4, $t2, 2 // $t4 = i * 4 (word offset)\n ADD $t5, $t0, $t4 // address = base + offset\n LOAD $t6, ($t5) // load a[i] into $t6\n \n // Add to sum (register-to-register operation)\n ADD $t1, $t1, $t6 // sum = sum + a[i]\n \n // Increment i\n ADDI $t2, $t2, 1 // i = i + 1\n J LOOP\n\nEXIT:\n STORE $t1, result // store sum to memory",
+      "explanation": "This demonstrates RISC load-store architecture: memory is accessed only through LOAD/STORE instructions. The ADD and SLT operations work only on registers, not memory. Each instruction performs exactly one operation.",
+      "timeComplexity": "O(n) where n = array size",
+      "spaceComplexity": "O(1) additional registers"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "RISC 5-Stage Pipeline Simulation",
+      "description": "Demonstrates how instructions flow through pipeline stages",
+      "code": "// Pipeline simulation showing 5 instructions\n// Each instruction goes through: IF, ID, EX, MEM, WB\n\n// Cycle 1: Only I1 is in IF\n// Cycle 2: I1 in ID, I2 in IF\n// Cycle 3: I1 in EX, I2 in ID, I3 in IF\n// Cycle 4: I1 in MEM, I2 in EX, I3 in ID, I4 in IF\n// Cycle 5: I1 in WB, I2 in MEM, I3 in EX, I4 in ID, I5 in IF\n// Cycle 6: I2 in WB, I3 in MEM, I4 in EX, I5 in ID, I6 in IF\n// Cycle 7: I3 in WB, I4 in MEM, I5 in EX, I6 in ID\n// ... and so on\n\n// After initial pipeline fill (5 cycles), \n// one instruction completes every cycle\n// Total for n instructions: 5 + (n-1) = n+4 cycles\n// Without pipeline: 5*n cycles",
+      "explanation": "This shows pipeline throughput: after filling the pipeline, one instruction completes per cycle instead of one per 5 cycles. This is the key performance advantage of RISC pipelining.",
+      "timeComplexity": "O(n) for n instructions with n+4 cycles vs 5n without pipeline",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Delayed Branch Example",
+      "description": "Shows how delayed branch works with delay slot",
+      "code": "// Original code:\n// if (a > b) goto TARGET;\n// x = x + 1;\n\n// Without delayed branch:\nBEQ $t1, $t2, TARGET // branch if a <= b\n// Pipeline stalls until branch resolved\nADD $t3, $t3, 1 // x = x + 1 (executed even if branch taken!)\n\n// With delayed branch (1 delay slot):\nBEQ $t1, $t2, TARGET // branch if a <= b\nADD $t3, $t3, 1 // delay slot: always executes before branch\n// This instruction executes regardless\n// Then PC jumps to TARGET\n\n// Compiler optimization:\n// If instruction before branch is useless after branch,\n// move a useful instruction into delay slot\n// Original:\n// y = a + b;\n// if (a > b) goto TARGET;\n// z = y + 1;\n\n// Optimized:\nADD $t3, $t1, $t2 // y = a + b\nBEQ $t1, $t2, TARGET // delayed branch\nADD $t4, $t3, 1 // delay slot: z = y + 1",
+      "explanation": "Delayed branch keeps the pipeline full by executing the instruction in the delay slot before the branch takes effect. The compiler can often fill this slot with a useful instruction.",
+      "timeComplexity": "Branch penalty reduced from 2-3 cycles to 0 cycles when delay slot filled",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

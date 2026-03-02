@@ -1,0 +1,205 @@
+{
+  "topicId": "pipelining-interrupts",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In a 5-stage MIPS pipeline (IF, ID, EX, MEM, WB), which hazard occurs when an instruction tries to read a register that a previous instruction is still writing to in the MEM stage?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Structural hazard"
+        },
+        {
+          "key": "B",
+          "text": "RAW data hazard"
+        },
+        {
+          "key": "C",
+          "text": "Control hazard"
+        },
+        {
+          "key": "D",
+          "text": "WAR hazard"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "This is a Read-After-Write (RAW) data hazard where the second instruction tries to read a register before the first instruction has written the result, requiring forwarding or stalling.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which pipeline hazard is resolved by duplicating hardware resources (e.g., separate instruction and data memories)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Data hazard"
+        },
+        {
+          "key": "B",
+          "text": "Control hazard"
+        },
+        {
+          "key": "C",
+          "text": "Structural hazard"
+        },
+        {
+          "key": "D",
+          "text": "Branch hazard"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Structural hazards occur when hardware cannot support all combinations of instructions in the pipeline simultaneously; adding separate instruction/data memories eliminates memory access conflicts.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "When a hardware interrupt occurs during the execution of a pipeline instruction, what is the primary challenge for the processor?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Increasing clock speed"
+        },
+        {
+          "key": "B",
+          "text": "Ensuring precise state restoration after handler completion"
+        },
+        {
+          "key": "C",
+          "text": "Eliminating all data hazards"
+        },
+        {
+          "key": "D",
+          "text": "Reducing instruction cache misses"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In pipelined processors, interrupts must preserve precise processor state—the ability to restart the interrupted instruction exactly as if it had completed, requiring careful handling of in-flight instructions.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "A NMI (Non-Maskable Interrupt) differs from a maskable interrupt in that NMI:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Can be delayed by the processor"
+        },
+        {
+          "key": "B",
+          "text": "Is ignored when the interrupt enable flag is cleared"
+        },
+        {
+          "key": "C",
+          "text": "Cannot be disabled by software and has higher priority"
+        },
+        {
+          "key": "D",
+          "text": "Uses vectored interrupt handling only"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Non-Maskable Interrupts cannot be disabled by software (unlike maskable interrupts), ensuring critical events like power failure or hardware errors are always serviced immediately.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "In a vectored interrupt system, how does the processor determine the starting address of the interrupt service routine?",
+      "options": [
+        {
+          "key": "A",
+          "text": "By reading a fixed memory location"
+        },
+        {
+          "key": "B",
+          "text": "By using the interrupt number as an index into an interrupt vector table"
+        },
+        {
+          "key": "C",
+          "text": "By polling all peripheral devices"
+        },
+        {
+          "key": "D",
+          "text": "By checking the program counter"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Vectored interrupts use an interrupt vector table where each interrupt source has a predefined entry containing the address of its ISR; the processor jumps directly to the correct handler.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "How does DMA (Direct Memory Access) reduce interrupt overhead in I/O operations?",
+      "options": [
+        {
+          "key": "A",
+          "text": "By using polling instead of interrupts"
+        },
+        {
+          "key": "B",
+          "text": "By transferring data without CPU intervention, generating only one interrupt per data block"
+        },
+        {
+          "key": "C",
+          "text": "By disabling all maskable interrupts during transfer"
+        },
+        {
+          "key": "D",
+          "text": "By using software-driven data transfer"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "DMA allows peripherals to transfer data directly to/from memory autonomously, requiring only a start interrupt and a completion interrupt per block rather than interrupts for each data word.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "In a deep pipeline with 15 stages, a branch misprediction causes a pipeline flush. If each stage takes 1 clock cycle, what is the penalty in cycles?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 cycle"
+        },
+        {
+          "key": "B",
+          "text": "5 cycles"
+        },
+        {
+          "key": "C",
+          "text": "15 cycles"
+        },
+        {
+          "key": "D",
+          "text": "30 cycles"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A branch misprediction requires flushing all instructions that entered the pipeline after the branch; in a 15-stage pipeline, this results in a 15-cycle penalty as all stages must be cleared.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which technique allows a pipelined processor to handle interrupts precisely while maintaining high performance?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Disabling interrupts at the beginning of every instruction"
+        },
+        {
+          "key": "B",
+          "text": "Implementing register renaming and in-order completion with reorder buffer (ROB)"
+        },
+        {
+          "key": "C",
+          "text": "Using a single-cycle pipeline"
+        },
+        {
+          "key": "D",
+          "text": "Avoiding all branch instructions"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Modern out-of-order processors use a Reorder Buffer (ROB) to commit results in program order, enabling precise interrupts where the processor state appears as if instructions executed sequentially up to the interrupt point.",
+      "difficulty": "hard"
+    }
+  ]
+}

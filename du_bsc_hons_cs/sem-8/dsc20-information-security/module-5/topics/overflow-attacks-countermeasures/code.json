@@ -1,0 +1,41 @@
+{
+  "topicId": "overflow-attacks-countermeasures",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Vulnerable Code - strcpy",
+      "description": "Example of unsafe code susceptible to buffer overflow",
+      "code": "// VULNERABLE CODE - DO NOT USE\nvoid process_user_input(char *user_input) {\n    char buffer[50];\n    // No bounds checking - VULNERABLE!\n    strcpy(buffer, user_input);\n    printf(\"Input: %s\\n\", buffer);\n}\n\n// Attack: passing string longer than 50 chars\n// overflows into return address",
+      "explanation": "The strcpy function copies user_input to buffer without checking size. If input exceeds 50 characters, it overwrites adjacent stack memory including the return address.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Secure Code - strcpy_s",
+      "description": "Bounds-checked version preventing overflow",
+      "code": "// SECURE CODE - Using safe functions\n#include <stdio.h>\n#include <string.h>\n\nvoid process_user_input(char *user_input) {\n    char buffer[50];\n    errno_t err;\n    \n    // Safe version with explicit size\n    err = strcpy_s(buffer, sizeof(buffer), user_input);\n    \n    if (err != 0) {\n        printf(\"Error: Input too long\\n\");\n        return;\n    }\n    printf(\"Input: %s\\n\", buffer);\n}",
+      "explanation": "strcpy_s validates that the source string fits in the destination buffer before copying. If not, it returns an error without causing undefined behavior.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Safe String Handling in Python",
+      "description": "Demonstrating automatic bounds checking in Python",
+      "code": "# Python handles bounds checking automatically\ndef process_user_input(user_input):\n    # Python lists/strings resize automatically\n    # No buffer overflow possible\n    buffer = []\n    for char in user_input:\n        buffer.append(char)\n    \n    # Alternative: slicing\n    result = user_input[:50]  # Automatically truncates\n    \n    print(f\"Input: {result}\")\n\n# Test with arbitrarily long input - still safe\nprocess_user_input(\"A\" * 10000)  # Works fine",
+      "explanation": "Python automatically handles memory management and includes bounds checking. Buffer overflows are virtually impossible in pure Python code.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Stack Canary Implementation",
+      "description": "How stack canaries are inserted by compiler",
+      "code": "// Compiled with: gcc -fstack-protector\n\nint vulnerable_function(char *input) {\n    // Compiler inserts canary between buffer and return address\n    char buffer[64];\n    int canary;  // Inserted by compiler\n    \n    // Canary check at function entry\n    // canary = __stack_chk_fail();\n    \n    strncpy(buffer, input, sizeof(buffer) - 1);\n    buffer[sizeof(buffer) - 1] = '\\0';\n    \n    // Before return, compiler inserts:\n    // if (canary != original_value) __stack_chk_fail();\n    \n    return 0;\n}",
+      "explanation": "The -fstack-protector flag causes compiler to insert a canary value (typically 0xFF00) between local variables and return address. Before function returns, it verifies the canary hasn't been modified.",
+      "difficulty": "medium"
+    }
+  ]
+}

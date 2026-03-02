@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the `exit()` function in a C program running on a UNIX system?",
+    "options": [
+      "To terminate the current process and return a status value to the parent",
+      "To immediately shut down the entire operating system",
+      "To pause the execution of the current process indefinitely",
+      "To switch the context to another running process"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `exit()` function performs a normal process termination. It flushes output buffers, closes open files, and returns an exit status to the parent process that can be retrieved via `wait()`."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following statements correctly describes the difference between `exit(3)` and `_exit(2)`?",
+    "options": [
+      "`exit()` flushes I/O buffers and calls exit handlers, while `_exit()` terminates immediately",
+      "`_exit()` is a synonym for `exit()` and they behave identically",
+      "`exit()` is a system call, while `_exit()` is a library function",
+      "`_exit()` flushes I/O buffers, while `exit()` does not"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `exit()` library function performs cleanup tasks like flushing stdio buffers and executing functions registered with `atexit()`. The `_exit()` system call terminates the process immediately without performing this cleanup."
+  },
+  {
+    "id": "q3",
+    "question": "In a UNIX shell, what is the effect of the command `exit 1`?",
+    "options": [
+      "It terminates the current shell process (or script) with an exit status of 1, indicating failure",
+      "It logs out the current user from the system",
+      "It creates a new child process with PID 1",
+      "It has no effect and is an invalid command"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `exit` command in a shell is used to exit the shell or shell script. The number provided as an argument (1) is the exit status returned to the parent process. By convention, a non-zero exit status indicates an error or failure."
+  },
+  {
+    "id": "q4",
+    "question": "A parent process uses `wait(&status)` to get the exit status of its child. If the child called `exit(5)`, which macro should the parent use to extract the actual exit code from the `status` variable?",
+    "options": [
+      "WEXITSTATUS(status)",
+      "WIFEXITED(status)",
+      "WTERMSIG(status)",
+      "WCOREDUMP(status)"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `wait()` system call stores status information in an integer. The `WEXITSTATUS(status)` macro is specifically used to extract the low-order 8 bits of the exit status value that the child passed to `exit()` or returned from `main()`."
+  },
+  {
+    "id": "q5",
+    "question": "Consider a program where the `main()` function executes `return 0;` and a separate function registered with `atexit()` calls `_exit(2);`. What will the parent process ultimately receive as the exit status?",
+    "options": [
+      "2",
+      "0",
+      "The status will be undefined and unpredictable",
+      "The parent will not receive an exit status because the process was killed by a signal"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `_exit()` function is a system call that terminates the process immediately. When the atexit handler calls `_exit(2)`, the process terminates at that point and returns the status 2 to the parent. The `return 0;` in main is never reached, so the exit status is 2, not 0."
+  }
+]

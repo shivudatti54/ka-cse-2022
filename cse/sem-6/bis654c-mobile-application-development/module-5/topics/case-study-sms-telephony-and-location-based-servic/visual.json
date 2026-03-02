@@ -1,0 +1,127 @@
+{
+  "topicId": "case-study-sms-telephony-and-location-based-servic",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "SMS Messaging Architecture in Android",
+      "description": "Architecture diagram showing how SMS messages flow from application to recipient through Android's telephony system",
+      "elements": [
+        "Application Layer (SMS App) - Top box showing user interface",
+        "SmsManager API - Rectangle below app with sendTextMessage() method",
+        "SMS Provider (Content Provider) - Cylinder shape representing SQLite database storage",
+        "Telephony Framework - Medium box with telephony services",
+        "RIL (Radio Interface Layer) - Bridge component connecting to hardware",
+        "Baseband Processor/Modem - Bottom hardware component with antenna icon",
+        "Mobile Network - Cloud outside device with SMSC (Short Message Service Center)",
+        "Arrows showing message flow downward and delivery confirmation upward"
+      ],
+      "purpose": "Helps students understand the complete SMS message pathway from user input to network transmission, including where SQLite database stores messages locally on the device"
+    },
+    {
+      "id": "diagram-2",
+      "title": "Location Based Services Architecture in Android",
+      "description": "Block diagram showing Android location system components and data flow from hardware to application",
+      "elements": [
+        "LBS Applications (Top layer) - Multiple app icons representing different LBS apps",
+        "LocationManager API - Central service block with requestLocationUpdates() method",
+        "Three Location Provider columns - GPS Provider (satellite icon), Network Provider (cell tower icon), Passive Provider (reuse icon)",
+        "Hardware Layer - GPS Chip (satellite dish), Cell Towers (multiple towers), WiFi Access Points",
+        "LocationListener interfaces - Arrow connections showing callback delivery to apps",
+        "Geocoding Service - Separate external service box with address translation",
+        "Location Permissions box - ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION"
+      ],
+      "purpose": "Shows students how Android abstracts different location sources through the LocationManager, enabling apps to request location data without worrying about underlying hardware specifics and provider differences"
+    },
+    {
+      "id": "diagram-3",
+      "title": "SMS Send/Receive Process Flow",
+      "description": "Detailed flowchart showing complete SMS transmission and reception process in Android",
+      "elements": [
+        "Start: User composes message and presses send",
+        "Process box: SmsManager.sendTextMessage() called",
+        "Decision diamond: Valid phone number? (Yes/No branches)",
+        "Process: Message stored in SMS Provider (SQLite) with PENDING status",
+        "Decision diamond: Network available? (Yes branch to network, No to queue)",
+        "Process: RIL forwards message to Baseband processor",
+        "Process: Message transmitted to SMSC (SMS Center) via mobile network",
+        "Process: SMSC routes to recipient's device",
+        "Process: Delivery report (ACK) sent back through network",
+        "End: Message status updated to DELIVERED in database",
+        "Receiver path: BroadcastReceiver listens for SMS_RECEIVED action",
+        "Process: PDU parsing extracts message content",
+        "Process: Message stored in inbox via ContentProvider",
+        "End: Notification displayed to user"
+      ],
+      "purpose": "Visualizes the complete SMS lifecycle from composition through network delivery and reception, helping students understand error handling, confirmation mechanisms, and database state changes"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Location Update Request and Delivery Flow",
+      "description": "Flowchart showing how Android delivers location updates from providers to applications",
+      "elements": [
+        "Start: App requests location updates via LocationManager",
+        "Decision diamond: Fine location permission granted? (Yes/No with error handling)",
+        "Process: Criteria object specifies accuracy requirements",
+        "Process: LocationManager.requestLocationUpdates() called with provider, interval, distance",
+        "Provider selection: GPS Provider (high accuracy), Network Provider (balanced), Passive Provider (reuse)",
+        "Process: Hardware acquires satellite fix or network triangulation",
+        "Process: LocationListener.onLocationChanged() callback triggered",
+        "Process: Location object created with latitude, longitude, altitude, accuracy",
+        "Arrow delivers location to application",
+        "End: App updates UI or processes location data",
+        "Continuous loop: Updates continue until app calls removeUpdates()"
+      ],
+      "purpose": "Helps students understand the asynchronous nature of location updates, how criteria affect provider selection, and the importance of properly managing location requests to conserve battery"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison_table",
+      "title": "SMS vs MMS Comparison",
+      "content": "SMS (Short Message Service) supports plain text only with 160 character limit per segment, uses SMSC for routing, has lower cost per message, wider device compatibility, and uses SmsManager API. MMS (Multimedia Messaging Service) supports text, images, audio, video with up to 300KB-1MB, uses MMS centers, has higher cost, limited carrier support, and uses MmsManager API."
+    },
+    {
+      "type": "comparison_table",
+      "title": "Location Providers Comparison",
+      "content": "GPS Provider uses satellite signals with 5-10 meter accuracy outdoors, high battery consumption (100mA+), slow Time to First Fix (30-120 seconds), requires clear sky view, and best for navigation. Network Provider uses cell towers and WiFi with 50-500 meter accuracy, low battery consumption (10-30mA), fast response (<5 seconds), works indoors, and best for city navigation. Passive Provider reuses other app location data with variable accuracy, minimal battery usage, instant response, depends on other apps, and best for background location."
+    },
+    {
+      "type": "flowchart",
+      "title": "Android SMS Permission Flow",
+      "content": "User initiates SMS action in app, app checks for required permissions (SEND_SMS, RECEIVE_SMS, READ_SMS, READ_PHONE_STATE), if not granted show rationale dialog, user grants via system permission dialog, if granted proceed with SmsManager operation, if denied show error message and disable SMS feature, successful operations update SMS Provider database, errors caught and user notified."
+    },
+    {
+      "type": "classification_chart",
+      "title": "Location Based Services Classification",
+      "content": "Tracking Services include fleet management, personal locator, asset tracking, fitness tracking with GPS routes. Navigation Services include turn-by-turn GPS navigation, indoor positioning, augmented reality navigation, parking finder. Information Services include nearest POI (Points of Interest), weather updates, geofencing alerts, location-based reminders. Social Services include location sharing, check-ins, friend proximity alerts, location-based gaming."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "SMS Telephony in Android",
+      "branches": [
+        "SMS Sending - SmsManager API, sendTextMessage(), sendMultipartTextMessage(), destination address, sc address",
+        "SMS Receiving - BroadcastReceiver, SMS_RECEIVED action, SMS_DELIVERED action, PDU format parsing",
+        "Permissions - SEND_SMS, RECEIVE_SMS, READ_SMS, READ_PHONE_STATE, runtime permission checks",
+        "Data Storage - SQLite via SMS Provider (content://sms/), inbox/sent/draft tables, ContentResolver operations",
+        "Telephony System - TelephonyManager for call info, PhoneStateListener, SIM card status, network type detection",
+        "Error Handling - SmsException, UnknownError, SMS failed status codes, delivery report processing"
+      ],
+      "purpose": "Provides comprehensive overview of SMS implementation in Android, covering essential APIs, manifest permissions, data persistence via SQLite ContentProvider, and integration with the broader telephony system for exam preparation"
+    },
+    {
+      "centralConcept": "Location Based Services in Android",
+      "branches": [
+        "Location Providers - GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER with different characteristics",
+        "LocationManager API - requestLocationUpdates(), getLastKnownLocation(), getProviders(), setCriteria()",
+        "LocationListener Interface - onLocationChanged(), onProviderEnabled(), onProviderDisabled() callback methods",
+        "Location Class - getLatitude(), getLongitude(), getAccuracy(), getAltitude(), getSpeed(), getBearing() methods",
+        "Permissions - ACCESS_FINE_LOCATION (GPS+Network), ACCESS_COARSE_LOCATION (Network only), ACCESS_BACKGROUND_LOCATION (Android 10+)",
+        "Geocoding - Geocoder class, getFromLocation() for latitude/longitude to address, getFromLocationName() for address to coordinates",
+        "Geofencing - Geofence API, GeofenceBroadcastReceiver, circular geofence regions with transition types ENTER, EXIT, DWELL",
+        "Use Cases - Real-time tracking, location sharing, proximity alerts, fitness apps, navigation apps"
+      ],
+      "purpose": "Organizes LBS components and APIs into structured learning aid covering all essential classes, interfaces, and practical implementation considerations for building location-aware Android applications"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "topicId": "partitional-clustering-algorithm",
+  "examples": [
+    {
+      "id": "pseudocode-k-means",
+      "title": "Pseudocode: K-Means Algorithm",
+      "description": "K-Means algorithm pseudocode",
+      "language": "pseudocode",
+      "code": "ALGORITHM K-Means\nINPUT: dataset, k (number of clusters)\nOUTPUT: cluster assignments, centroids\n\nBEGIN\n // Initialization\n centroids = initializeCentroids(dataset, k)\n\n // Repeat until convergence\n WHILE NOT converged DO\n // Assignment step\n FOR EACH data point IN dataset DO\n closestCentroid = findClosestCentroid(data point, centroids)\n assign data point to cluster of closestCentroid\n END FOR\n\n // Update step\n FOR EACH centroid IN centroids DO\n update centroid as mean of assigned data points\n END FOR\n END WHILE\nEND",
+      "explanation": "This pseudocode outlines the K-Means algorithm's main steps: initialization, assignment, and update. It iteratively refines cluster assignments until convergence."
+    },
+    {
+      "id": "python-k-means",
+      "title": "Python: K-Means Algorithm",
+      "description": "K-Means algorithm implemented in Python",
+      "language": "python",
+      "code": "import numpy as np\n\ndef initializeCentroids(dataset, k):\n # Initialize centroids randomly\n return np.random.choice(dataset, size=k, replace=False)\n\ndef findClosestCentroid(dataPoint, centroids):\n # Find closest centroid to data point\n distances = np.linalg.norm(dataPoint - centroids, axis=1)\n return np.argmin(distances)\n\ndef updateCentroids(dataset, clusterAssignments, k):\n # Update centroids as mean of assigned data points\n centroids = np.zeros((k, dataset.shape[1]))\n for i in range(k):\n clusterPoints = dataset[clusterAssignments == i]\n centroids[i] = np.mean(clusterPoints, axis=0)\n return centroids\n\ndef kMeans(dataset, k):\n centroids = initializeCentroids(dataset, k)\n clusterAssignments = np.zeros(dataset.shape[0], dtype=int)\n\n while True:\n # Assignment step\n for i, dataPoint in enumerate(dataset):\n closestCentroid = findClosestCentroid(dataPoint, centroids)\n clusterAssignments[i] = closestCentroid\n\n # Update step\n newCentroids = updateCentroids(dataset, clusterAssignments, k)\n\n # Check for convergence\n if np.all(centroids == newCentroids):\n break\n\n centroids = newCentroids\n\n return clusterAssignments, centroids",
+      "explanation": "This Python implementation of the K-Means algorithm includes functions for initialization, finding the closest centroid, updating centroids, and the main K-Means function.",
+      "timeComplexity": "O(n*k*i*d)",
+      "spaceComplexity": "O(n*k*d)"
+    },
+    {
+      "id": "java-k-means",
+      "title": "Java: K-Means Algorithm",
+      "description": "K-Means algorithm implemented in Java",
+      "language": "java",
+      "code": "import java.util.Random;\n\npublic class KMeans {\n public static void main(String[] args) {\n // Initialize dataset and k\n double[][] dataset = {{1, 2}, {3, 4}, {5, 6}};\n int k = 2;\n\n // Initialize centroids randomly\n double[][] centroids = initializeCentroids(dataset, k);\n\n // Repeat until convergence\n while (true) {\n // Assignment step\n int[] clusterAssignments = new int[dataset.length];\n for (int i = 0; i < dataset.length; i++) {\n int closestCentroid = findClosestCentroid(dataset[i], centroids);\n clusterAssignments[i] = closestCentroid;\n }\n\n // Update step\n double[][] newCentroids = updateCentroids(dataset, clusterAssignments, k);\n\n // Check for convergence\n if (areCentroidsEqual(centroids, newCentroids)) {\n break;\n }\n\n centroids = newCentroids;\n }\n }\n\n public static double[][] initializeCentroids(double[][] dataset, int k) {\n // Initialize centroids randomly\n Random random = new Random();\n double[][] centroids = new double[k][dataset[0].length];\n for (int i = 0; i < k; i++) {\n int randomIndex = random.nextInt(dataset.length);\n centroids[i] = dataset[randomIndex];\n }\n return centroids;\n }\n\n public static int findClosestCentroid(double[] dataPoint, double[][] centroids) {\n // Find closest centroid to data point\n double minDistance = Double.MAX_VALUE;\n int closestCentroid = -1;\n for (int i = 0; i < centroids.length; i++) {\n double distance = calculateDistance(dataPoint, centroids[i]);\n if (distance < minDistance) {\n minDistance = distance;\n closestCentroid = i;\n }\n }\n return closestCentroid;\n }\n\n public static double[][] updateCentroids(double[][] dataset, int[] clusterAssignments, int k) {\n // Update centroids as mean of assigned data points\n double[][] centroids = new double[k][dataset[0].length];\n for (int i = 0; i < k; i++) {\n double[] clusterPoints = getClusterPoints(dataset, clusterAssignments, i);\n centroids[i] = calculateMean(clusterPoints);\n }\n return centroids;\n }\n}",
+      "explanation": "This Java implementation of the K-Means algorithm includes methods for initialization, finding the closest centroid, updating centroids, and the main K-Means method.",
+      "timeComplexity": "O(n*k*i*d)",
+      "spaceComplexity": "O(n*k*d)"
+    }
+  ]
+}

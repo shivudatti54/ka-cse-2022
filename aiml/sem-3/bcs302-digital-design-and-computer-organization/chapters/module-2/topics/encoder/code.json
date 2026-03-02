@@ -1,0 +1,45 @@
+{
+  "topicId": "encoder",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "4-to-2 Encoder Logic",
+      "description": "Pseudocode implementation of a basic 4-to-2 encoder",
+      "code": "ALGORITHM Encoder_4to2\nINPUTS: I3, I2, I1, I0 (binary inputs)\nOUTPUTS: Y1, Y0 (binary outputs)\nBEGIN\n  // Output Y1 is HIGH when input I3 or I2 is active\n  Y1 = I3 OR I2\n  \n  // Output Y0 is HIGH when input I3 or I1 is active\n  Y0 = I3 OR I1\n  \n  RETURN Y1, Y0\nEND",
+      "explanation": "The encoder produces 2-bit binary code corresponding to the position of the active input. Y1 represents the MSB and Y0 represents the LSB of the output.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python Implementation of 4-to-2 Encoder",
+      "description": "Python function to simulate a 4-to-2 encoder",
+      "code": "def encoder_4to2(input_lines):\n    '''\n    input_lines: list of 4 bits [I3, I2, I1, I0]\n    Returns: 2-bit output [Y1, Y0]\n    '''\n    I3, I2, I1, I0 = input_lines\n    \n    # Y1 = I3 + I2 (OR operation)\n    Y1 = I3 or I2\n    \n    # Y0 = I3 + I1 (OR operation)\n    Y0 = I3 or I1\n    \n    return [int(Y1), int(Y0)]\n\n# Test cases\ntest_inputs = [\n    [0, 0, 0, 1],  # I0 active -> output 00\n    [0, 0, 1, 0],  # I1 active -> output 01\n    [0, 1, 0, 0],  # I2 active -> output 10\n    [1, 0, 0, 0],  # I3 active -> output 11\n]\n\nfor inp in test_inputs:\n    output = encoder_4to2(inp)\n    print(f\"Input: {inp} -> Output: {output}\")",
+      "explanation": "This Python implementation demonstrates the logical operations of a 4-to-2 encoder. Each test case shows the output binary code for different active input positions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "C Implementation of Priority Encoder",
+      "description": "C program implementing an 8-to-3 priority encoder with valid output",
+      "code": "#include <stdio.h>\n\n// 8-to-3 Priority Encoder Function\nvoid priority_encoder_8to3(int inputs[], int outputs[], int *valid) {\n    // Check if any input is active\n    *valid = 0;\n    for (int i = 0; i < 8; i++) {\n        if (inputs[i]) {\n            *valid = 1;\n            // Higher index = higher priority\n            outputs[2] = (i >= 4);  // Y2\n            outputs[1] = ((i >= 2) && (i < 4)) || ((i >= 6) && (i < 8));  // Y1\n            outputs[0] = (i % 2 == 1);  // Y0\n            break;  // Exit after finding highest priority\n        }\n    }\n    \n    if (!*valid) {\n        outputs[0] = outputs[1] = outputs[2] = 0;\n    }\n}\n\nint main() {\n    int inputs[8], outputs[3], valid;\n    \n    // Test: Input I5 is active (binary 101 = 5)\n    // Expected output: 101\n    for (int i = 0; i < 8; i++) inputs[i] = 0;\n    inputs[5] = 1;\n    \n    priority_encoder_8to3(inputs, outputs, &valid);\n    \n    printf(\"Priority Encoder 8-to-3\\n\");\n    printf(\"Input: I5 = 1\\n\");\n    printf(\"Valid: %d\\n\", valid);\n    printf(\"Output: %d%d%d\\n\", outputs[2], outputs[1], outputs[0]);\n    \n    return 0;\n}",
+      "explanation": "This C implementation shows how priority encoders work by checking inputs from highest index downward and breaking at the first active input found, ensuring proper handling of multiple simultaneous inputs.",
+      "timeComplexity": "O(n) where n=8",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Java Implementation of 4-to-2 Encoder",
+      "description": "Java class implementing a 4-to-2 encoder with enable input",
+      "code": "public class Encoder4to2 {\n    private boolean enable;\n    \n    public Encoder4to2() {\n        this.enable = true;  // Default enabled\n    }\n    \n    public void setEnable(boolean enable) {\n        this.enable = enable;\n    }\n    \n    public int[] encode(int[] inputs) {\n        // Output array: [Y1, Y0]\n        int[] outputs = {0, 0};\n        \n        // If encoder is disabled, return all zeros\n        if (!enable) {\n            return outputs;\n        }\n        \n        // Check for valid input (exactly one HIGH)\n        int count = 0;\n        for (int input : inputs) {\n            count += input;\n        }\n        \n        if (count != 1) {\n            System.out.println(\"Warning: Invalid input - multiple or no inputs active\");\n            return outputs;\n        }\n        \n        // Y1 = I3 + I2\n        outputs[0] = (inputs[0] == 1 || inputs[1] == 1) ? 1 : 0;\n        \n        // Y0 = I3 + I1\n        outputs[1] = (inputs[0] == 1 || inputs[2] == 1) ? 1 : 0;\n        \n        return outputs;\n    }\n    \n    public static void main(String[] args) {\n        Encoder4to2 encoder = new Encoder4to2();\n        \n        // Test input I2 = 1 (binary 0100, should give output 10)\n        int[] input = {0, 1, 0, 0};\n        int[] output = encoder.encode(input);\n        \n        System.out.println(\"4-to-2 Encoder Test\");\n        System.out.println(\"Input: I2 = 1\");\n        System.out.println(\"Output: Y1Y0 = \" + output[0] + output[1]);\n        System.out.println(\"Expected: 10\");\n    }\n}",
+      "explanation": "This Java class demonstrates encoder implementation with enable input control and input validation. The encode method returns the 2-bit binary output corresponding to the active input line.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

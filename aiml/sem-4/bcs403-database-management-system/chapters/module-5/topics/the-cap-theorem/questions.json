@@ -1,0 +1,105 @@
+{
+  "topicId": "cap-theorem",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain the CAP theorem with its three properties. Why can't a distributed system guarantee all three?",
+      "marks": 10,
+      "frequency": 5,
+      "years": ["2022", "2023", "2024"],
+      "type": "essay",
+      "keyPoints": [
+        "C - Consistency: all nodes see same data",
+        "A - Availability: every request gets response",
+        "P - Partition Tolerance: handles network splits",
+        "During partition must choose C or A",
+        "Network partitions are inevitable",
+        "CA only possible in single-node systems"
+      ],
+      "modelAnswer": "CAP Theorem states a distributed system can only guarantee two of three properties: Consistency (all nodes see same data simultaneously), Availability (every request gets a non-error response), and Partition Tolerance (system operates despite network partitions). During a partition, if we choose Consistency, some requests must fail (no Availability). If we choose Availability, different nodes may have different data (no Consistency). Since network partitions are inevitable in distributed systems, CA is impossible - systems must choose between CP or AP."
+    },
+    {
+      "id": "q2",
+      "question": "Differentiate between CP and AP systems with examples. When would you choose each?",
+      "marks": 10,
+      "frequency": 5,
+      "years": ["2022", "2023", "2024"],
+      "type": "comparative",
+      "keyPoints": [
+        "CP: consistency over availability",
+        "AP: availability over consistency",
+        "CP examples: MongoDB, HBase, Zookeeper",
+        "AP examples: Cassandra, DynamoDB, DNS",
+        "CP for financial, inventory",
+        "AP for social media, shopping carts"
+      ],
+      "modelAnswer": "CP Systems prioritize consistency - during partition, they return errors rather than stale data. Examples: MongoDB, HBase, Zookeeper. Use for financial transactions, inventory where correctness is critical. AP Systems prioritize availability - during partition, they return potentially stale data rather than failing. Examples: Cassandra, DynamoDB, DNS. Use for social media feeds, shopping carts where availability is more important than immediate consistency."
+    },
+    {
+      "id": "q3",
+      "question": "What is PACELC theorem? How does it extend CAP theorem?",
+      "marks": 8,
+      "frequency": 3,
+      "years": ["2023"],
+      "type": "essay",
+      "keyPoints": [
+        "PAC: Partition choose A or C",
+        "ELC: Else choose L or C",
+        "Considers latency trade-off",
+        "Even without partition, trade-off exists",
+        "Examples of PA/EL, PC/EC systems"
+      ],
+      "modelAnswer": "PACELC extends CAP by considering latency: During Partition, choose Availability or Consistency (PAC). Else (no partition), choose Latency or Consistency (ELC). This recognizes that even without partitions, there's a trade-off between response time and consistency. DynamoDB is PA/EL (prioritizes availability and latency), BigTable is PC/EC (always prioritizes consistency), MongoDB is PC/EL (consistent during partition, low latency normally)."
+    },
+    {
+      "id": "q4",
+      "question": "Explain why CA (Consistency + Availability without Partition Tolerance) is not achievable in distributed systems.",
+      "marks": 6,
+      "frequency": 4,
+      "years": ["2022", "2024"],
+      "type": "short",
+      "keyPoints": [
+        "Network partitions are inevitable",
+        "Hardware failures, network issues occur",
+        "Cannot prevent all partitions",
+        "CA only possible in single node",
+        "Not a distributed system then"
+      ],
+      "modelAnswer": "CA is impossible in distributed systems because network partitions are inevitable - network failures, hardware issues, and packet loss will occur. A system that doesn't tolerate partitions would fail completely when partition occurs. The only way to have CA is a single-node system, but that's not a distributed system by definition. Therefore, every distributed system must handle partitions and choose between C and A when they occur."
+    },
+    {
+      "id": "q5",
+      "question": "Design a distributed system for an e-commerce platform. Explain which parts would be CP and which would be AP, and why.",
+      "marks": 12,
+      "frequency": 4,
+      "years": ["2023", "2024"],
+      "type": "design",
+      "keyPoints": [
+        "Identify different data types",
+        "Shopping cart - AP for availability",
+        "Payment processing - CP for correctness",
+        "Product catalog - AP for availability",
+        "Inventory - CP for accuracy",
+        "Justify each choice"
+      ],
+      "modelAnswer": "E-commerce platform design: (1) Shopping Cart - AP: Use AP system like DynamoDB. Availability is critical for user experience. Occasional inconsistency acceptable - merge at checkout. (2) Payment Processing - CP: Use CP system like PostgreSQL. Must be correct - better to fail than charge wrong amount. Strong consistency required. (3) Product Catalog - AP: Use AP system like Cassandra. High read availability important. Slight delay in price updates acceptable. (4) Inventory - CP: Use CP system. Overselling is costly - accuracy over availability. (5) User Sessions - AP: Redis with eventual consistency. Session loss better than login failures."
+    },
+    {
+      "id": "q6",
+      "question": "Explain tunable consistency in distributed databases like Cassandra. How does it relate to CAP theorem?",
+      "marks": 8,
+      "frequency": 3,
+      "years": ["2023"],
+      "type": "essay",
+      "keyPoints": [
+        "Consistency levels: ONE, QUORUM, ALL",
+        "Per-operation tuning",
+        "ONE = highest availability",
+        "ALL = strongest consistency",
+        "QUORUM = balance",
+        "Trade-off at operation level"
+      ],
+      "modelAnswer": "Tunable consistency allows per-operation trade-offs. Consistency levels include: ONE (single node, highest availability, weakest consistency), QUORUM (majority nodes, balanced), ALL (all nodes, strongest consistency, lowest availability). This relates to CAP by allowing applications to choose the trade-off at operation level - strong consistency for critical operations (like payments) and eventual consistency for less critical ones (like comments). The formula W + R > N (writes + reads > replicas) guarantees reading latest write."
+    }
+  ]
+}

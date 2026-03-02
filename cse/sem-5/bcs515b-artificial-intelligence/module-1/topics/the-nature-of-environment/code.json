@@ -1,0 +1,35 @@
+{
+  "topicId": "the-nature-of-environment",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Environment Class Template",
+      "description": "A base class template for defining environments in AI systems, demonstrating how properties can be implemented environment.",
+      "code": "class Environment:\n def __init__(self):\n self.state = None\n \n def is_fully_observable(self):\n \"\"\"Returns True if environment is fully observable\"\"\"\n return False\n \n def is_deterministic(self):\n \"\"\"Returns True if environment is deterministic\"\"\"\n return True\n \n def is_static(self):\n \"\"\"Returns True if environment is static\"\"\"\n return True\n \n def is_discrete(self):\n \"\"\"Returns True if environment is discrete\"\"\"\n return True\n \n def get_state(self):\n \"\"\"Returns current environment state\"\"\"\n return self.state\n \n def step(self, action):\n \"\"\"Execute action and return new state, reward, done\"\"\"\n raise NotImplementedError\n \n def reset(self):\n \"\"\"Reset environment to initial state\"\"\"\n raise NotImplementedError",
+      "explanation": "This base class provides a template for implementing different types of environments. Subclasses can override the property methods to define specific environment characteristics, and implement step() and reset() for the agent-environment interaction loop.",
+      "timeComplexity": "O(1) per step",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Chess Environment Implementation",
+      "description": "Implementation of a chess environment demonstrating fully observable, deterministic, discrete, static, multi-agent, and adversarial properties.",
+      "code": "class ChessEnvironment:\n def __init__(self):\n self.board = self._init_board()\n self.current_player = 'white'\n \n def is_fully_observable(self):\n return True # Complete board state visible\n \n def is_deterministic(self):\n return True # Each move has exact outcome\n \n def is_static(self):\n return True # Board only changes with moves\n \n def is_discrete(self):\n return True # Finite board positions\n \n def is_multi_agent(self):\n return True # Two players\n \n def is_adversarial(self):\n return True # Players compete\n \n def get_state(self):\n \"\"\"Returns complete board state\"\"\"\n return self.board.copy()\n \n def step(self, move):\n \"\"\"Execute deterministic move\"\"\"\n start, end = move\n piece = self.board[start]\n self.board[end] = piece\n self.board[start] = None\n self.current_player = 'black' if self.current_player == 'white' else 'white'\n return self.get_state(), self._evaluate(), self._is_game_over()\n \n def _init_board(self):\n # Initialize standard chess board\n return {}\n \n def _evaluate(self):\n # Material and position evaluation\n return 0\n \n def _is_game_over(self):\n return False",
+      "explanation": "This class demonstrates how to implement an environment with specific properties. Chess is fully observable (complete state available), deterministic (each move has exact consequences), discrete (finite positions), static (only changes on moves), multi-agent (two players), and adversarial (opponents compete).",
+      "timeComplexity": "O(1) per move",
+      "spaceComplexity": "O(1) for board representation"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Partially Observable Environment Simulation",
+      "description": "Simulating a partially observable, stochastic, dynamic environment like a self-driving car scenario.",
+      "code": "class DrivingEnvironment:\n def __init__(self):\n self.state = {\n 'position': 0.0,\n 'velocity': 0.0,\n 'other_cars': [],\n 'traffic_lights': 'green'\n }\n self.sensor_range = 100 # meters\n \n def is_fully_observable(self):\n return False # Cannot see everything\n \n def is_deterministic(self):\n return False # Traffic is unpredictable\n \n def is_static(self):\n return False # Other cars move independently\n \n def is_discrete(self):\n return False # Continuous position/velocity values\n \n def get_pertceived_state(self):\n \"\"\"Returns only observable portion of state\"\"\"\n perceived = {}\n # Only perceive objects within sensor range\n for car in self.state['other_cars']:\n if abs(car['position'] - self.state['position']) < self.sensor_range:\n perceived['visible_cars'] = car\n perceived['velocity'] = self.state['velocity']\n perceived['traffic_lights'] = self.state['traffic_lights']\n return perceived\n \n def step(self, action):\n \"\"\"Execute action with stochastic outcomes\"\"\"\n # Agent's action\n if action == 'accelerate':\n self.state['velocity'] += 1.0\n elif action == 'brake':\n self.state['velocity'] -= 1.5\n \n # Environment changes stochastically\n self._update_traffic()\n self._update_other_cars()\n \n # Calculate reward (safety, progress)\n reward = self._calculate_reward()\n done = self._check_collision()\n \n return self.get_pertceived_state(), reward, done\n \n def _update_traffic(self):\n # Random traffic light changes\n import random\n lights = ['green', 'yellow', 'red']\n if random.random() < 0.1:\n self.state['traffic_lights'] = random.choice(lights)\n \n def _update_other_cars(self):\n # Other cars move unpredictably\n import random\n for car in self.state['other_cars']:\n car['position'] += car['velocity'] + random.uniform(-0.5, 0.5)\n \n def _calculate_reward(self):\n return self.state['velocity']\n \n def _check_collision(self):\n return False",
+      "explanation": "This code demonstrates a partially observable, stochastic, dynamic, continuous environment. The agent can only perceive objects within sensor range, other cars move randomly (stochastic), the environment changes continuously, and position/velocity are continuous values. This mirrors real-world challenges in autonomous driving.",
+      "timeComplexity": "O(n) where n is number of other cars",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

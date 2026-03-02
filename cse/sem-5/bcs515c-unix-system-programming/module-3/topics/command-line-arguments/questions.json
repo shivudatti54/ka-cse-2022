@@ -1,0 +1,164 @@
+{
+  "topicId": "command-line-arguments",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain argc and argv in command line arguments with an example.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "argc stands for argument count - number of arguments passed including program name",
+        "argv stands for argument vector - array of character pointers storing arguments as strings",
+        "Example: ./myprog file.txt 10 → argc=3, argv[0]=\"./myprog\", argv[1]=\"file.txt\", argv[2]=\"10\""
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write a C program to add two numbers passed as command line arguments.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Include necessary header files (stdio.h, stdlib.h)",
+        "Define main with int main(int argc, char* argv[])",
+        "Validate argc to ensure sufficient arguments provided",
+        "Convert string arguments to integers using atoi()",
+        "Perform addition and print result",
+        "Return appropriate exit status"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of validating command line arguments? Give an example of validation code.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Purpose: Prevent undefined behavior, crashes, or wrong results when insufficient/wrong arguments provided",
+        "Check if argc >= minimum required + 1 (for program name)",
+        "Print usage message to stderr if validation fails",
+        "Return non-zero exit status to indicate error",
+        "Example: if(argc < 3) { fprintf(stderr, \"Usage: %s num1 num2\\n\", argv[0]); return 1; }"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between atoi() and strtol() functions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "atoi() - simple ASCII to integer, no error checking, returns 0 on failure",
+        "strtol() - provides error handling via errno, can detect partial conversions",
+        "strtol() can handle different number bases (base 10, 16, etc.)",
+        "strtol() sets endptr to indicate where conversion stopped",
+        "Recommendation: Use strtol() for production code requiring robust error handling"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the significance of argv[0] in C programs.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "argv[0] always contains the program name (executable filename)",
+        "It is automatically set by the operating system",
+        "May include full path depending on how program was invoked",
+        "Even when no arguments are passed, argc is at least 1 due to argv[0]",
+        "Can be used to display program name in error messages or for self-documentation"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write a C program to multiply two floating-point numbers received as command line arguments.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Use atof() to convert string arguments to double",
+        "Validate argc to ensure at least 3 (program name + 2 numbers)",
+        "Perform multiplication operation",
+        "Display result with appropriate precision using %.2f format",
+        "Handle edge cases like zero or negative numbers",
+        "Return 0 on success, 1 on error"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a complete C program that accepts a filename and an integer N as command line arguments, reads the file, and prints the Nth line. Include proper error handling.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Include headers: stdio.h, stdlib.h",
+        "Validate argc must be exactly 3 (program, filename, N)",
+        "Extract filename from argv[1] and convert argv[2] to integer N using atoi() or strtol()",
+        "Open file using fopen() in read mode",
+        "Check if file opened successfully, handle errors",
+        "Implement line reading loop using fgets() or fgetc()",
+        "Count lines and stop at Nth line",
+        "Print the Nth line or error message if file has fewer than N lines",
+        "Close file and return appropriate status"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain getopt() function and write a program that accepts options -h (help), -v (version), -f (filename) using getopt().",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "getopt() is used for parsing Unix-style command line options",
+        "Defined in unistd.h header file",
+        "Works with getopt_long() for long options support",
+        "Returns option character when found, -1 when no more options",
+        "Option string defines expected options (e.g., \"hvf:\" where : means requires argument)",
+        "optarg global variable holds argument for options requiring values",
+        "optopt stores unknown option character",
+        "Program structure: while((c = getopt(argc, argv, \"hvf:\")) != -1) { switch(c) ... }",
+        "Show example handling each case with appropriate actions"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C program to implement a simple calculator that accepts operation and two operands from command line. Example: ./calc add 10 20 should output 30.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Accept 4 arguments: program name, operation, operand1, operand2",
+        "Validate argc == 4, else print usage and exit",
+        "Extract operation string from argv[1]",
+        "Convert operand strings to integers using appropriate conversion",
+        "Use strcmp() to compare operation string",
+        "Implement cases: add, subtract, multiply, divide",
+        "Handle division by zero error",
+        "Print result or appropriate error messages",
+        "Return 0 on success, 1 on error"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Develop a C program that accepts multiple filenames from command line and displays total count of characters, words, and lines in all files combined.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        " argc indicates number of files to process",
+        "Loop through each file from argv[1] to argv[argc-1]",
+        "For each file: open with fopen(), handle error if fails",
+        "Initialize counters for chars, words, lines to zero",
+        "Read file character by character or using fgets()",
+        "Increment char count for each character",
+        "Increment line count for each newline ('\\n')",
+        "Word detection: increment when whitespace follows non-whitespace",
+        "Accumulate totals across all files",
+        "Print individual file stats and grand totals",
+        "Close each file properly",
+        "Handle case of no files provided"
+      ]
+    }
+  ]
+}

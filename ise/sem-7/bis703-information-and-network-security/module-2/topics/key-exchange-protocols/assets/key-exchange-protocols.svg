@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/></marker>
+  </defs>
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="35" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">Key Exchange Protocols</text>
+
+  <g id="step0" class="step" data-narration="Key exchange protocols solve the fundamental problem of sharing a secret key over an insecure network.">
+    <rect x="100" y="55" width="600" height="40" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="400" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#f44336">Problem: How to share a secret key over an insecure channel?</text>
+    <text x="400" y="90" text-anchor="middle" font-size="12" fill="#333">Sending it directly = eavesdropper intercepts it</text>
+  </g>
+
+  <g id="step1" class="step" data-narration="Diffie-Hellman 1976 was the first practical solution. Both parties derive a shared secret from public exchanges.">
+    <text x="400" y="125" text-anchor="middle" font-size="16" font-weight="bold" fill="#1976d2">Diffie-Hellman Key Exchange (1976)</text>
+    <rect x="50" y="138" width="150" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="125" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">Alice</text>
+    <text x="125" y="178" text-anchor="middle" font-size="10" fill="#333">Secret: a</text>
+    <rect x="600" y="138" width="150" height="50" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="675" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">Bob</text>
+    <text x="675" y="178" text-anchor="middle" font-size="10" fill="#333">Secret: b</text>
+    <rect x="280" y="138" width="240" height="50" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="400" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">Public: p, g</text>
+    <text x="400" y="178" text-anchor="middle" font-size="10" fill="#666">Large prime + generator</text>
+  </g>
+
+  <g id="step2" class="step" data-narration="Each computes a public value and exchanges it. Alice sends g to the a mod p. Bob sends g to the b mod p.">
+    <line x1="200" y1="205" x2="600" y2="205" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="400" y="200" text-anchor="middle" font-size="12" fill="#1976d2">A = g^a mod p</text>
+    <line x1="600" y1="225" x2="200" y2="225" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="240" text-anchor="middle" font-size="12" fill="#388e3c">B = g^b mod p</text>
+  </g>
+
+  <g id="step3" class="step" data-narration="Both compute the same shared secret S equals g to the ab mod p. Neither transmits S over the channel.">
+    <rect x="200" y="255" width="400" height="45" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="275" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c">Shared Secret: S = g^(ab) mod p</text>
+    <text x="400" y="295" text-anchor="middle" font-size="11" fill="#333">Alice: B^a mod p = Bob: A^b mod p</text>
+  </g>
+
+  <g id="step4" class="step" data-narration="Vulnerability: Man-in-the-Middle attack. Mallory intercepts and establishes separate keys with each party.">
+    <text x="400" y="325" text-anchor="middle" font-size="15" font-weight="bold" fill="#f44336">MitM Attack on Basic DH</text>
+    <rect x="50" y="340" width="700" height="80" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <rect x="70" y="355" width="100" height="30" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="120" y="375" text-anchor="middle" font-size="11" fill="#1976d2">Alice</text>
+    <line x1="175" y1="370" x2="270" y2="370" stroke="#f44336" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="275" y="350" width="250" height="40" rx="4" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="400" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="#f44336">Mallory (MitM)</text>
+    <text x="400" y="385" text-anchor="middle" font-size="10" fill="#333">Intercepts + replaces keys</text>
+    <line x1="530" y1="370" x2="620" y2="370" stroke="#f44336" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="625" y="355" width="100" height="30" rx="4" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+    <text x="675" y="375" text-anchor="middle" font-size="11" fill="#388e3c">Bob</text>
+    <text x="400" y="415" text-anchor="middle" font-size="11" fill="#f44336">Two separate keys: Alice-Mallory and Mallory-Bob</text>
+  </g>
+
+  <g id="step5" class="step" data-narration="Station-to-Station protocol fixes MitM by adding digital signatures to authenticate the key exchange.">
+    <text x="400" y="450" text-anchor="middle" font-size="15" font-weight="bold" fill="#388e3c">Solution: Station-to-Station (STS) Protocol</text>
+    <rect x="100" y="462" width="600" height="55" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="482" text-anchor="middle" font-size="12" fill="#333">DH key exchange + digital signatures for mutual authentication</text>
+    <text x="400" y="502" text-anchor="middle" font-size="12" fill="#388e3c">Each party signs the exchange with their private key, preventing impersonation</text>
+  </g>
+
+  <g id="step6" class="step" data-narration="Ephemeral DH provides perfect forward secrecy. Past sessions stay safe even if long-term keys are later compromised.">
+    <rect x="50" y="530" width="340" height="50" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="220" y="550" text-anchor="middle" font-size="12" font-weight="bold" fill="#9c27b0">Perfect Forward Secrecy</text>
+    <text x="220" y="570" text-anchor="middle" font-size="11" fill="#333">Ephemeral DH: new key pair per session</text>
+    <rect x="410" y="530" width="340" height="50" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="580" y="550" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">Used in: TLS, SSH, IPsec</text>
+    <text x="580" y="570" text-anchor="middle" font-size="11" fill="#333">DHE and ECDHE cipher suites</text>
+  </g>
+</svg>

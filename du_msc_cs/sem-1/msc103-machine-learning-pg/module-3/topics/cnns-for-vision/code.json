@@ -1,0 +1,45 @@
+{
+  "topicId": "cnns-for-vision",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple CNN Implementation",
+      "description": "Basic CNN architecture for image classification using PyTorch",
+      "code": "import torch.nn as nn\n\nclass SimpleCNN(nn.Module):\n    def __init__(self, num_classes=10):\n        super(SimpleCNN, self).__init__()\n        # Conv Layer 1: 3 input channels, 32 filters, 3x3 kernel\n        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)\n        self.bn1 = nn.BatchNorm2d(32)\n        self.relu1 = nn.ReLU()\n        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)\n        \n        # Conv Layer 2: 32 input channels, 64 filters\n        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n        self.bn2 = nn.BatchNorm2d(64)\n        self.relu2 = nn.ReLU()\n        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)\n        \n        # Fully Connected Layers\n        self.fc1 = nn.Linear(64 * 8 * 8, 256)\n        self.dropout = nn.Dropout(0.5)\n        self.fc2 = nn.Linear(256, num_classes)\n    \n    def forward(self, x):\n        # Conv block 1: 32x32 -> 16x16\n        x = self.pool1(self.relu1(self.bn1(self.conv1(x))))\n        # Conv block 2: 16x16 -> 8x8\n        x = self.pool2(self.relu2(self.bn2(self.conv2(x))))\n        # Flatten and fully connected\n        x = x.view(x.size(0), -1)\n        x = self.dropout(self.fc1(x))\n        x = self.fc2(x)\n        return x",
+      "explanation": "This CNN has 2 convolutional blocks with batch normalization, ReLU activation, and max pooling, followed by fully connected layers with dropout for classification.",
+      "timeComplexity": "O(n \u00d7 m\u00b2 \u00d7 k\u00b2 \u00d7 c)",
+      "spaceComplexity": "O(c \u00d7 k\u00b2 + m\u00b2 \u00d7 c)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Convolution Forward Pass",
+      "description": "Pseudocode for the convolution operation in CNNs",
+      "code": "FUNCTION ConvolutionForward(input, kernel, bias, stride, padding):\n    // input: H x W x C input volume\n    // kernel: F x F x C x K (K filters)\n    // stride: step size\n    // padding: border pixels to add\n    \n    // Apply padding to input\n    padded_input = ZeroPad(input, padding)\n    \n    // Calculate output dimensions\n    H_out = floor((H + 2*padding - F) / stride) + 1\n    W_out = floor((W + 2*padding - F) / stride) + 1\n    \n    // Initialize output volume\n    output = Zeros(H_out, W_out, K)\n    \n    FOR k IN 0 TO K-1:  // For each filter\n        FOR i IN 0 TO H_out-1:  // Output height\n            FOR j IN 0 TO W_out-1:  // Output width\n                // Calculate correlation\n                sum = 0\n                FOR ci IN 0 TO C-1:  // Input channels\n                    FOR fi IN 0 TO F-1:  // Filter height\n                        FOR fj IN 0 TO F-1:  // Filter width\n                            h_idx = i*stride + fi\n                            w_idx = j*stride + fj\n                            sum += padded_input[h_idx][w_idx][ci] * kernel[fi][fj][ci][k]\n                output[i][j][k] = sum + bias[k]\n    \n    RETURN output",
+      "explanation": "This pseudocode shows the forward pass of convolution: sliding each kernel across the padded input, computing element-wise multiplication and summation to produce feature maps.",
+      "timeComplexity": "O(H_out \u00d7 W_out \u00d7 K \u00d7 C \u00d7 F\u00b2)",
+      "spaceComplexity": "O(H_out \u00d7 W_out \u00d7 K)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Residual Block Implementation",
+      "description": "Java implementation of a ResNet residual block",
+      "code": "public class ResidualBlock {\n    private ConvLayer conv1, conv2;\n    private BatchNorm bn1, bn2;\n    private int stride;\n    \n    public ResidualBlock(int inChannels, int outChannels, int stride) {\n        this.stride = stride;\n        \n        // First conv layer (may downsample)\n        conv1 = new ConvLayer(inChannels, outChannels, 3, stride, 1);\n        bn1 = new BatchNorm(outChannels);\n        \n        // Second conv layer (same dimensions)\n        conv2 = new ConvLayer(outChannels, outChannels, 3, 1, 1);\n        bn2 = new BatchNorm(outChannels);\n    }\n    \n    public Tensor forward(Tensor x) {\n        // Store input for skip connection\n        Tensor identity = x.clone();\n        \n        // Main path: F(x)\n        Tensor out = conv1.forward(x);\n        out = bn1.forward(out);\n        out = ReLU.forward(out);\n        \n        out = conv2.forward(out);\n        out = bn2.forward(out);\n        \n        // Skip connection: x (with projection if dimensions differ)\n        if (needsProjection(identity, out)) {\n            identity = projectionShortcut(identity);\n        }\n        \n        // F(x) + x (element-wise addition)\n        out = add(out, identity);\n        \n        // Final ReLU after addition\n        out = ReLU.forward(out);\n        \n        return out;\n    }\n    \n    private boolean needsProjection(Tensor a, Tensor b) {\n        return (a.height != b.height) || (a.width != b.width);\n    }\n}",
+      "explanation": "This Java class implements a ResNet residual block with skip connection. The forward pass computes F(x) through two conv layers, then adds the identity input x, enabling gradient flow for very deep networks.",
+      "timeComplexity": "O(2 \u00d7 H \u00d7 W \u00d7 C \u00d7 F\u00b2)",
+      "spaceComplexity": "O(H \u00d7 W \u00d7 C)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "VGG Block and VGG Network",
+      "description": "Python implementation of VGG-style network showing the 3x3 conv stack pattern",
+      "code": "def vgg_block(num_convs, in_channels, out_channels):\n    \"\"\"VGG block with n stacked 3x3 convolutions\"\"\"\n    layers = []\n    for _ in range(num_convs):\n        layers.append(nn.Conv2d(in_channels, out_channels, \n                                 kernel_size=3, padding=1))\n        layers.append(nn.BatchNorm2d(out_channels))\n        layers.append(nn.ReLU(inplace=True))\n        in_channels = out_channels\n    layers.append(nn.MaxPool2d(kernel_size=2, stride=2))\n    return nn.Sequential(*layers)\n\nclass VGGNet(nn.Module):\n    def __init__(self, num_classes=1000):\n        super(VGGNet, self).__init__()\n        # VGG-16 configuration\n        self.features = nn.Sequential(\n            # Block 1: 224x224 -> 112x112\n            vgg_block(2, 3, 64),\n            # Block 2: 112x112 -> 56x56\n            vgg_block(2, 64, 128),\n            # Block 3: 56x56 -> 28x28\n            vgg_block(3, 128, 256),\n            # Block 4: 28x28 -> 14x14\n            vgg_block(3, 256, 512),\n            # Block 5: 14x14 -> 7x7\n            vgg_block(3, 512, 512),\n        )\n        \n        # Global Average Pooling\n        self.avgpool = nn.AdaptiveAvgPool2d((7, 7))\n        \n        # Fully connected layers\n        self.classifier = nn.Sequential(\n            nn.Linear(512 * 7 * 7, 4096),\n            nn.ReLU(inplace=True),\n            nn.Dropout(0.5),\n            nn.Linear(4096, 4096),\n            nn.ReLU(inplace=True),\n            nn.Dropout(0.5),\n            nn.Linear(4096, num_classes),\n        )\n    \n    def forward(self, x):\n        x = self.features(x)\n        x = self.avgpool(x)\n        x = torch.flatten(x, 1)\n        x = self.classifier(x)\n        return x",
+      "explanation": "This VGG-16 implementation shows the key insight: using only 3x3 convolutions stacked (vs larger filters) achieves larger receptive fields with fewer parameters. Five blocks create 16 weight layers.",
+      "timeComplexity": "O(\u03a3 (H_i \u00d7 W_i \u00d7 C_i \u00d7 9 \u00d7 num_convs_i))",
+      "spaceComplexity": "O(\u03a3 (C_i \u00d7 C_{i+1} \u00d7 9))"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "sigsuspend-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic sigsuspend() Example - Waiting for Child",
+      "description": "Demonstrates using sigsuspend() to wait for child process termination with proper signal mask management",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n#include <sys/types.h>\n#include <sys/wait.h>\n#include <unistd.h>\n\nint main() {\n pid_t pid;\n sigset_t newmask, oldmask, waitmask;\n \n // Initialize signal sets\n sigemptyset(&newmask);\n sigaddset(&newmask, SIGCHLD);\n sigemptyset(&waitmask);\n \n // Block SIGCHLD and save current mask\n if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0) {\n perror(\"sigprocmask error\");\n exit(1);\n }\n \n // Fork child process\n pid = fork();\n \n if (pid < 0) {\n perror(\"fork error\");\n exit(1);\n }\n \n if (pid == 0) {\n // Child process - do some work\n printf(\"Child process running (PID: %d)\\n\", getpid());\n sleep(2);\n printf(\"Child exiting\\n\");\n exit(0);\n }\n \n // Parent process\n printf(\"Parent waiting for child (PID: %d)\\n\", pid);\n \n // Wait using sigsuspend - allow SIGCHLD only\n sigsuspend(&waitmask);\n \n // Collect child status\n int status;\n waitpid(pid, &status, 0);\n printf(\"Child terminated\\n\");\n \n // Restore original signal mask\n if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0) {\n perror(\"sigprocmask restore error\");\n exit(1);\n }\n \n return 0;\n}",
+      "explanation": "This program shows proper use of sigsuspend(). First, SIGCHLD is blocked using sigprocmask(). After forking, the parent uses sigsuspend() with an empty mask to wait for the child. When SIGCHLD arrives (unblocked in waitmask), sigsuspend() returns, allowing waitpid() to collect the status. Finally, the original mask is restored.",
+      "timeComplexity": "O(n) where n is time until child terminates",
+      "spaceComplexity": "O(1) additional space"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "sigsuspend() with Critical Section Protection",
+      "description": "Shows how to protect a critical section using sigsuspend() while allowing a specific signal",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n#include <unistd.h>\n\nvolatile sig_atomic_t flag = 0;\n\nvoid handler(int sig) {\n flag = 1;\n}\n\nint main() {\n struct sigaction sa;\n sigset_t blockmask, oldmask, waitmask;\n \n // Set up signal handler\n sa.sa_handler = handler;\n sa.sa_flags = 0;\n sigemptyset(&sa.sa_mask);\n \n if (sigaction(SIGUSR1, &sa, NULL) < 0) {\n perror(\"sigaction error\");\n exit(1);\n }\n \n // Block SIGUSR1\n sigemptyset(&blockmask);\n sigaddset(&blockmask, SIGUSR1);\n \n if (sigprocmask(SIG_BLOCK, &blockmask, &oldmask) < 0) {\n perror(\"sigprocmask error\");\n exit(1);\n }\n \n // Critical section starts\n printf(\"Critical section: starting work\\n\");\n \n // Check flag before waiting (avoid race condition)\n if (flag == 0) {\n // Set up mask for sigsuspend - allow SIGUSR1\n sigemptyset(&waitmask);\n sigaddset(&waitmask, SIGUSR1);\n \n // Atomically: change mask AND wait\n // This prevents race condition!\n sigsuspend(&waitmask);\n }\n \n // Process the signal event\n if (flag == 1) {\n printf(\"Signal was caught!\\n\");\n flag = 0;\n }\n \n printf(\"Critical section: finished\\n\");\n // Critical section ends\n \n // Restore original mask\n if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0) {\n perror(\"sigprocmask error\");\n exit(1);\n }\n \n return 0;\n}",
+      "explanation": "This demonstrates critical section protection. The key pattern is checking the flag BEFORE calling sigsuspend(), which prevents the lost wakeup problem. If flag is not set, sigsuspend() atomically changes the mask (allowing SIGUSR1) and waits. When SIGUSR1 arrives, the handler sets flag=1 and sigsuspend() returns.",
+      "timeComplexity": "O(1) for critical section",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "General Pattern: sigsuspend() Usage Template",
+      "description": "Generic pseudocode showing the standard pattern for using sigsuspend() safely",
+      "code": "// Standard Pattern for sigsuspend() Usage\n// ===========================================\n\n1. DEFINE signal sets:\n - blocked_signals: signals to block\n - allowed_signals: signals to allow during wait\n - original_mask: to save current mask\n\n2. SAVE and MODIFY signal mask:\n sigprocmask(SIG_BLOCK, blocked_signals, original_mask)\n // Now specified signals are blocked\n\n3. [OPTIONAL] Do critical work if needed\n\n4. WAIT for signal using sigsuspend():\n sigsuspend(allowed_signals)\n // Atomically: set allowed_signals mask AND wait\n // Returns when any unblocked signal is delivered\n\n5. [OPTIONAL] Check condition that signal indicated\n\n6. CRITICAL section after signal:\n // Handle the event that caused the signal\n\n7. RESTORE original signal mask:\n sigprocmask(SIG_SETMASK, original_mask, NULL)\n // Original blocking behavior restored\n\n// Key Points:\n// - Steps 2-7 ensure atomic operation\n// - No race condition possible between steps 3 and 4\n// - Signal mask automatically restored after sigsuspend()\n// - Works for any type of signal handling",
+      "explanation": "This pseudocode shows the universal pattern for using sigsuspend() correctly. The key is the atomic operation: sigsuspend() changes the mask and waits in one step, preventing any signal from being missed. Always save the original mask and restore it after use.",
+      "timeComplexity": "Depends on when signal arrives",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In a database context, what does the 'granularity' of a data item refer to?",
+    "options": [
+      "The physical size of the data item on disk.",
+      "The level of detail or the size of the data item chosen as the unit for locking.",
+      "The number of times a data item is accessed by transactions.",
+      "The encryption standard used to secure the data item."
+    ],
+    "correctIndex": 1,
+    "explanation": "Granularity refers to the size of the data item chosen as the unit for protection by the locking protocol, ranging from coarse (entire database) to fine (a single attribute or record)."
+  },
+  {
+    "id": "q2",
+    "question": "What is the primary purpose of using a Multiple Granularity Locking (MGL) protocol?",
+    "options": [
+      "To reduce the number of locks needed, thereby improving system performance.",
+      "To eliminate the need for any locking mechanism.",
+      "To allow transactions to lock the entire database exclusively at all times.",
+      "To increase the complexity of transaction schedules intentionally."
+    ],
+    "correctIndex": 0,
+    "explanation": "MGL allows transactions to lock data items at different levels of granularity. This increases concurrency and, more importantly, reduces the total number of locks that need be managed, which lowers overhead and improves performance."
+  },
+  {
+    "id": "q3",
+    "question": "According to the Multiple Granularity Locking protocol, what type of lock must a transaction acquire on a node before it can explicitly lock any of its children?",
+    "options": [
+      "An intention-share (IS) lock",
+      "An intention-exclusive (IX) lock",
+      "Either an intention-share (IS) or intention-exclusive (IX) lock",
+      "A share (S) or exclusive (X) lock"
+    ],
+    "correctIndex": 2,
+    "explanation": "To explicitly lock a node in S or X mode, a transaction must first hold an appropriate intention lock (IS for S, IX for X) on all of its ancestors. This intention lock signals the plan to access finer granularity levels lower in the hierarchy."
+  },
+  {
+    "id": "q4",
+    "question": "A transaction holds an IX lock on a table. Which of the following locks can it subsequently acquire on a specific row within that table?",
+    "options": [
+      "Only a Share (S) lock",
+      "Only an Exclusive (X) lock",
+      "Either a Share (S) or an Exclusive (X) lock",
+      "It cannot acquire any locks on the row without first getting an S lock on the table"
+    ],
+    "correctIndex": 1,
+    "explanation": "An Intention-Exclusive (IX) lock on a node (e.g., a table) is compatible with other IX locks but indicates the transaction's intention to update (exclusively lock) finer granularity items (e.g., rows) below it. Therefore, it can acquire an Exclusive (X) lock on a child row."
+  },
+  {
+    "id": "q5",
+    "question": "In a hierarchy with Database, Table, and Page levels, which combination of locks held by different transactions would lead to a conflict and force one to wait?",
+    "options": [
+      "T1: S on Database | T2: IX on Table",
+      "T1: IS on Database | T2: S on Table",
+      "T1: IX on Database | T2: IS on Table",
+      "T1: X on Database | T2: IS on Table"
+    ],
+    "correctIndex": 3,
+    "explanation": "An Exclusive (X) lock on the entire database is incompatible with any other lock requests on any of its descendants. Transaction T2's request for an Intention-Share (IS) lock on a Table (a child of the Database) would conflict with T1's coarse-grained X lock on the entire hierarchy, forcing T2 to wait."
+  }
+]

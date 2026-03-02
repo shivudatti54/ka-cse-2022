@@ -1,0 +1,125 @@
+{
+  "topicId": "random-access-file",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between sequential access and random access file handling in C. Give one advantage of each method.",
+      "keyPoints": [
+        "Sequential access reads/writes records in order, requiring traversal of all preceding data",
+        "Random access uses fseek() to directly position to any record",
+        "Sequential access advantage: simpler implementation and better for batch processing",
+        "Random access advantage: O(1) access time for any record"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write a C program to find the size of a file using ftell() and fseek() functions.",
+      "keyPoints": [
+        "Use fseek() to move to end of file: fseek(fp, 0, SEEK_END)",
+        "Use ftell() to get current position which equals file size",
+        "Reset pointer using rewind() or fseek() for further operations",
+        "Close file after use"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the purpose and syntax of fseek() function with all its parameters.",
+      "keyPoints": [
+        "Purpose: moves file pointer to specified location",
+        "Syntax: int fseek(FILE *stream, long offset, int origin)",
+        "offset: number of bytes from origin",
+        "origin: SEEK_SET (0), SEEK_CUR (1), or SEEK_END (2)",
+        "Returns 0 on success, non-zero on failure"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Why must files be opened in binary mode for random access operations? Explain with an example.",
+      "keyPoints": [
+        "Text mode translates newline characters (\\n to \\r\\n on Windows)",
+        "This translation causes inconsistency in byte positions",
+        "Binary mode reads/writes exact bytes without translation",
+        "Example: 10 newlines in text mode may occupy 20 bytes on Windows but only 10 in binary mode"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the three file positioning functions: fseek(), ftell(), and rewind() with their return types and purposes.",
+      "keyPoints": [
+        "fseek(int): moves pointer to specific location, returns 0 on success",
+        "ftell(long): returns current pointer position in bytes from start",
+        "rewind(void): moves pointer to beginning, no return value",
+        "All are used for random access file manipulation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "A file contains 50 records of type struct Student { int roll; char name[30]; float marks; }. Write the C code to read the 25th record directly.",
+      "keyPoints": [
+        "Define Student structure",
+        "Open file in binary read mode (rb)",
+        "Calculate offset: (25-1) * sizeof(Student) = 24 * sizeof(Student)",
+        "Use fseek() to position to the record",
+        "Use fread() to read the record",
+        "Close file"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a complete C program that demonstrates random access file handling by creating a file with employee records (containing emp_id, name, salary), allowing the user to search a record by emp_id and display it, and modify the salary of a specific employee.",
+      "keyPoints": [
+        "Define EMPLOYEE structure with appropriate fields",
+        "Create file and write initial records using fwrite()",
+        "Implement search: iterate or calculate position, use fseek() to reach record",
+        "Display record details after reading with fread()",
+        "Implement modify: fseek() to record position, overwrite with fwrite()",
+        "Handle file errors and validate operations",
+        "Use rewind() or fseek() to reset pointer as needed"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the concept of random access file handling in C with reference to fseek(), ftell(), and rewind() functions. Write a program to display all records of a file in reverse order without loading them into memory.",
+      "keyPoints": [
+        "fseek(): positions pointer using offset and origin (SEEK_SET/CUR/END)",
+        "ftell(): returns current position, use to find file size",
+        "rewind(): resets pointer to beginning",
+        "To display in reverse: find file size, calculate number of records",
+        "Seek to last record, read and display, move backward using fseek()",
+        "Each record accessed in O(1) time, total O(n) for n records",
+        "No array needed, reads one record at a time"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Create a banking application in C that uses random access file handling to manage customer accounts. The application should support creating new accounts, displaying account details by account number, depositing money, and withdrawing money.",
+      "keyPoints": [
+        "Define ACCOUNT structure with acc_no, name, balance",
+        "Create account: append at end using fseek(0, SEEK_END) and fwrite()",
+        "Display: calculate position using (acc_no-1)*sizeof(ACCOUNT), fseek(), fread()",
+        "Deposit: read record, add amount, fseek() back, fwrite()",
+        "Withdraw: similar to deposit with balance validation",
+        "Use fflush() after write operations to ensure data is written to disk",
+        "Menu-driven interface with error handling"
+      ],
+      "marks": 10
+    }
+  ]
+}

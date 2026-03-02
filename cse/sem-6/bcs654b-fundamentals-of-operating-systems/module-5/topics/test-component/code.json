@@ -1,0 +1,35 @@
+{
+  "topicId": "test-component",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Mutual Exclusion using TestAndSet",
+      "description": "Demonstrates hardware-level mutual exclusion using TestAndSet instruction for critical section access.",
+      "code": "ALGORITHM MutualExclusion\nBEGIN\n WHILE TestAndSet(&lock) == 1 DO\n // Busy wait\n END WHILE\n // Critical section\n lock = false\nEND",
+      "explanation": "1. TestAndSet atomically checks and sets the lock\n2. Busy waits until lock is free (returns 0)\n3. Exits loop to enter critical section\n4. Releases lock by setting to false",
+      "timeComplexity": "O(1) per acquisition (with contention)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Spinlock Implementation using TestAndSet",
+      "description": "C code implementing a spinlock for synchronization using TestAndSet hardware instruction.",
+      "code": "#include <stdbool.h>\n\nbool lock = false;\n\nvoid acquire_spinlock() {\n while (TestAndSet(&lock)) {\n // Busy wait until lock is acquired\n }\n}\n\nvoid release_spinlock() {\n lock = false;\n}",
+      "explanation": "1. TestAndSet checks and sets lock in atomic operation\n2. acquire_spinlock() loops until lock is acquired\n3. release_spinlock() releases the lock",
+      "timeComplexity": "O(1) per acquisition (busy-wait time varies)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: Atomic Counter Increment",
+      "description": "Using TestAndSet to safely increment a shared counter in concurrent environments.",
+      "code": "ALGORITHM AtomicIncrement\nBEGIN\n WHILE TestAndSet(&lock) == 1 DO\n // Busy wait\n END WHILE\n counter = counter + 1\n lock = false\nEND",
+      "explanation": "1. Acquire lock using TestAndSet\n2. Increment counter in critical section\n3. Release lock after update",
+      "timeComplexity": "O(1) per increment (plus contention)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

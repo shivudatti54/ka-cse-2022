@@ -1,0 +1,35 @@
+{
+  "topicId": "raspberry-pi-about-the-board",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Reading Temperature Sensor via GPIO",
+      "description": "Python code to read temperature from a DS18B20 sensor connected to Raspberry Pi GPIO",
+      "code": "import os\nimport time\nfrom w1thermsensor import W1ThermSensor\n\n# Initialize the sensor\nsensor = W1ThermSensor()\n\ndef read_temperature():\n # Read temperature in Celsius\n temperature = sensor.get_temperature()\n return temperature\n\n# Main loop - reads temperature every 5 seconds\ntry:\n while True:\n temp = read_temperature()\n print(f\"Temperature: {temp:.2f}\u00b0C\")\n time.sleep(5)\nexcept KeyboardInterrupt:\n print(\"\\nMonitoring stopped\")",
+      "explanation": "This code reads temperature data from a digital temperature sensor (DS18B20) connected via GPIO pins. The sensor uses the 1-Wire protocol to communicate with the Raspberry Pi.",
+      "timeComplexity": "O(1) per reading",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "GPIO LED Control with Button Input",
+      "description": "Python code to control an LED using a push button via Raspberry Pi GPIO",
+      "code": "import RPi.GPIO as GPIO\nimport time\n\n# Pin configuration\nLED_PIN = 18\nBUTTON_PIN = 17\n\n# Setup GPIO mode\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(LED_PIN, GPIO.OUT)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\n\ntry:\n while True:\n # Read button state (pressed = LOW due to pull-up)\n if GPIO.input(BUTTON_PIN) == GPIO.LOW:\n GPIO.output(LED_PIN, GPIO.HIGH)\n print(\"Button pressed - LED ON\")\n else:\n GPIO.output(LED_PIN, GPIO.LOW)\n print(\"Button released - LED OFF\")\n time.sleep(0.1)\nexcept KeyboardInterrupt:\n GPIO.cleanup()\n print(\"Program terminated\")",
+      "explanation": "This code demonstrates basic GPIO input/output. A push button is connected as input, and an LED as output. When the button is pressed, the LED turns on, demonstrating physical world interaction.",
+      "timeComplexity": "O(\u221e) - continuous loop",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "IoT Data Publishing to Cloud",
+      "description": "Python code to publish sensor data to MQTT cloud broker from Raspberry Pi",
+      "code": "import paho.mqtt.client as mqtt\nimport json\nimport time\nimport random\n\n# MQTT Broker configuration\nBROKER = \"test.mosquitto.org\"\nPORT = 1883\nTOPIC = \"iot/sensor/temperature\"\n\n# Callback when connection is established\ndef on_connect(client, userdata, flags, rc):\n if rc == 0:\n print(\"Connected to MQTT Broker!\")\n else:\n print(f\"Connection failed with code {rc}\")\n\n# Create client and set callback\nclient = mqtt.Client()\nclient.on_connect = on_connect\n\n# Connect to broker\nclient.connect(BROKER, PORT, 60)\n\n# Start the loop\nclient.loop_start()\n\n# Simulate and publish sensor data\ntry:\n while True:\n # Simulate temperature reading\n temperature = random.uniform(20.0, 30.0)\n humidity = random.uniform(40.0, 60.0)\n \n # Create JSON payload\n payload = json.dumps({\n \"device\": \"RaspberryPi_01\",\n \"temperature\": round(temperature, 2),\n \"humidity\": round(humidity, 2),\n \"timestamp\": time.time()\n })\n \n # Publish to topic\n client.publish(TOPIC, payload)\n print(f\"Published: {payload}\")\n \n time.sleep(10)\nexcept KeyboardInterrupt:\n client.loop_stop()\n client.disconnect()\n print(\"Disconnected from broker\")",
+      "explanation": "This code demonstrates IoT data transmission using MQTT protocol. It simulates reading temperature and humidity sensors, packages the data as JSON, and publishes it to a cloud MQTT broker for remote monitoring.",
+      "timeComplexity": "O(n) where n is number of publications",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "minimum-spanning-tree",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Kruskal's Algorithm",
+      "description": "Greedy algorithm using Union-Find to construct MST by processing edges in ascending order",
+      "code": "KruskalMST(G):\n  // G = (V, E) weighted connected graph\n  SORT E by weight in ascending order\n  \n  FOR each vertex v in V:\n    MAKE-SET(v)\n  \n  MST = empty set\n  \n  FOR each edge (u, v) in sorted E:\n    IF FIND-SET(u) \u2260 FIND-SET(v):\n      ADD edge (u, v) to MST\n      UNION(u, v)\n    \n    IF |MST| = |V| - 1:\n      BREAK\n  \n  RETURN MST",
+      "explanation": "Edges are sorted by weight. For each edge, we check if it connects two different components using Union-Find. If yes, we add it to MST and merge components. We stop when MST has n-1 edges.",
+      "timeComplexity": "O(E log V)",
+      "spaceComplexity": "O(V + E)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Prim's Algorithm in Python",
+      "description": "Implementation of Prim's algorithm using a priority queue to grow MST from a starting vertex",
+      "code": "import heapq\n\ndef prim_mst(graph, start=0):\n    \"\"\"\n    graph: adjacency list {vertex: [(neighbor, weight), ...]}\n    Returns: list of edges in MST\n    \"\"\"\n    n = len(graph)\n    visited = [False] * n\n    min_heap = [(0, start, -1)]  # (weight, current, parent)\n    mst_edges = []\n    total_weight = 0\n    \n    while min_heap and len(mst_edges) < n - 1:\n        weight, u, parent = heapq.heappop(min_heap)\n        \n        if visited[u]:\n            continue\n        \n        visited[u] = True\n        total_weight += weight\n        \n        if parent != -1:\n            mst_edges.append((parent, u, weight))\n        \n        for v, w in graph[u]:\n            if not visited[v]:\n                heapq.heappush(min_heap, (w, v, u))\n    \n    return mst_edges, total_weight\n\n# Example usage:\n# graph = {\n#     0: [(1, 4), (2, 3), (3, 1)],\n#     1: [(0, 4), (2, 2), (3, 5)],\n#     2: [(0, 3), (1, 2), (3, 4)],\n#     3: [(0, 1), (1, 5), (2, 4)]\n# }",
+      "explanation": "Starting from vertex 0, we maintain a min-heap of edges from the MST to unvisited vertices. We extract the minimum, add it to MST, and update heap with edges from the newly added vertex. Uses O(E log V) time.",
+      "timeComplexity": "O(E log V)",
+      "spaceComplexity": "O(V + E)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Union-Find Data Structure",
+      "description": "Implementation of Union-Find with path compression and union by rank, used in Kruskal's algorithm",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int parent;\n    int rank;\n} UnionFind;\n\nvoid makeSet(UnionFind *uf, int v) {\n    uf[v].parent = v;\n    uf[v].rank = 0;\n}\n\nint find(UnionFind *uf, int x) {\n    if (uf[x].parent != x) {\n        uf[x].parent = find(uf, uf[x].parent);  // Path compression\n    }\n    return uf[x].parent;\n}\n\nvoid unionSets(UnionFind *uf, int x, int y) {\n    int rootX = find(uf, x);\n    int rootY = find(uf, y);\n    \n    if (rootX != rootY) {\n        // Union by rank\n        if (uf[rootX].rank < uf[rootY].rank) {\n            uf[rootX].parent = rootY;\n        } else if (uf[rootX].rank > uf[rootY].rank) {\n            uf[rootY].parent = rootX;\n        } else {\n            uf[rootY].parent = rootX;\n            uf[rootX].rank++;\n        }\n    }\n}\n\nint sameComponent(UnionFind *uf, int x, int y) {\n    return find(uf, x) == find(uf, y);\n}",
+      "explanation": "Union-Find supports three operations: makeSet initializes each vertex as separate component, find locates the representative of a set (with path compression for efficiency), and union merges two sets (using union by rank for balanced trees). These operations run in O(\u03b1(n)) amortized time, where \u03b1 is the inverse Ackermann function.",
+      "timeComplexity": "O(\u03b1(V)) amortized per operation",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Kruskal's Algorithm in Java",
+      "description": "Complete implementation of Kruskal's algorithm using the Edge class and Union-Find",
+      "code": "import java.util.*;\n\nclass Edge implements Comparable<Edge> {\n    int src, dest, weight;\n    \n    Edge(int src, int dest, int weight) {\n        this.src = src;\n        this.dest = dest;\n        this.weight = weight;\n    }\n    \n    public int compareTo(Edge e) {\n        return this.weight - e.weight;\n    }\n}\n\nclass UnionFind {\n    int[] parent, rank;\n    \n    UnionFind(int n) {\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++) {\n            parent[i] = i;\n            rank[i] = 0;\n        }\n    }\n    \n    int find(int x) {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x]);\n        }\n        return parent[x];\n    }\n    \n    boolean union(int x, int y) {\n        int rootX = find(x);\n        int rootY = find(y);\n        \n        if (rootX == rootY) return false;\n        \n        if (rank[rootX] < rank[rootY]) {\n            parent[rootX] = rootY;\n        } else if (rank[rootX] > rank[rootY]) {\n            parent[rootY] = rootX;\n        } else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n        return true;\n    }\n}\n\npublic class KruskalMST {\n    public static List<Edge> kruskalMST(List<Edge> edges, int V) {\n        Collections.sort(edges);\n        \n        UnionFind uf = new UnionFind(V);\n        List<Edge> mst = new ArrayList<>();\n        \n        for (Edge e : edges) {\n            if (uf.union(e.src, e.dest)) {\n                mst.add(e);\n                if (mst.size() == V - 1) break;\n            }\n        }\n        return mst;\n    }\n}",
+      "explanation": "This Java implementation shows Edge class implementing Comparable for sorting, Union-Find with path compression and union by rank, and the main KruskalMST method that sorts edges and builds MST using Union-Find to detect cycles. Time: O(E log V), Space: O(V + E).",
+      "timeComplexity": "O(E log V)",
+      "spaceComplexity": "O(V + E)"
+    }
+  ]
+}

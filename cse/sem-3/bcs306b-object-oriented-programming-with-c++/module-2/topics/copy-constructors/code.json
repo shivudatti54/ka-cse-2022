@@ -1,0 +1,55 @@
+{
+  "topicId": "copy-constructors",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Copy Constructor Syntax",
+      "description": "Demonstrates declaration and implementation of copy constructor",
+      "code": "class MyClass {\nprivate:\n int data;\n int* ptr;\npublic:\n // Parameter: const reference to same class\n MyClass(const MyClass& obj) {\n data = obj.data;\n // Shallow copy for primitive\n // Deep copy for pointers\n ptr = new int(*obj.ptr); // allocate new memory\n *ptr = *(obj.ptr); // copy value\n }\n};",
+      "explanation": "Shows proper copy constructor signature with const reference parameter and deep copy implementation for pointer member.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Deep Copy with Initializer List",
+      "description": "Efficient copy constructor using initializer list",
+      "code": "class String {\nprivate:\n char* str;\n int length;\npublic:\n // Copy constructor with initializer list\n String(const String& obj) : str(nullptr) {\n length = obj.length;\n str = new char[length + 1];\n strcpy(str, obj.str);\n }\n \n ~String() {\n delete[] str;\n }\n};",
+      "explanation": "Initializer list provides efficient initialization. Deep copy allocates new memory and copies content.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Copy Constructor Call Scenarios",
+      "description": "Demonstrates all three scenarios where copy constructor is invoked",
+      "code": "class Sample {\n int value;\npublic:\n Sample(int v) : value(v) {}\n \n // Copy constructor\n Sample(const Sample& obj) : value(obj.value) {\n cout << \"Copy constructor called\" << endl;\n }\n};\n\n// Scenario 1: Pass by value\nvoid func(Sample s) { }\n\n// Scenario 2: Return by value\nSample create() {\n Sample s(10);\n return s; // copy constructor called\n}\n\nint main() {\n Sample s1(5);\n Sample s2 = s1; // Scenario 3: initialization\n func(s1); // Scenario 1: pass by value\n Sample s3 = create(); // Scenario 2: return by value\n}",
+      "explanation": "Demonstrates three main cases: initialization, pass-by-value to function, and return-by-value from function.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Preventing Copy with = delete",
+      "description": "C++11 way to disable copying",
+      "code": "class NonCopyable {\n int data;\npublic:\n NonCopyable(int d) : data(d) {}\n \n // Delete copy constructor\n NonCopyable(const NonCopyable&) = delete;\n \n // Delete copy assignment\n NonCopyable& operator=(const NonCopyable&) = delete;\n};\n\nint main() {\n NonCopyable a(10);\n NonCopyable b = a; // Error: use of deleted function\n a = b; // Error: use of deleted function\n}",
+      "explanation": "C++11 introduced = delete syntax to explicitly disallow copy operations, causing compilation error on attempted use.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Rule of Three Implementation",
+      "description": "Complete example showing all three functions of Rule of Three",
+      "code": "class Buffer {\nprivate:\n char* data;\n int size;\npublic:\n Buffer(int s) : size(s) {\n data = new char[size];\n }\n \n // Destructor\n ~Buffer() {\n delete[] data;\n }\n \n // Copy Constructor (Deep Copy)\n Buffer(const Buffer& obj) : size(obj.size) {\n data = new char[size];\n memcpy(data, obj.data, size);\n }\n \n // Copy Assignment Operator\n Buffer& operator=(const Buffer& obj) {\n if (this != &obj) { // self-assignment check\n delete[] data;\n size = obj.size;\n data = new char[size];\n memcpy(data, obj.data, size);\n }\n return *this;\n }\n};",
+      "explanation": "Complete implementation of Rule of Three showing destructor, copy constructor, and copy assignment operator for proper resource management.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

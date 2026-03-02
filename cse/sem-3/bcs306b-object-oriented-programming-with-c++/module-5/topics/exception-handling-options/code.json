@@ -1,0 +1,55 @@
+{
+  "topicId": "exception-handling-options",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Exception Handling",
+      "description": "Demonstrates basic try-catch-throw mechanism",
+      "code": "#include <iostream>\n#include <stdexcept>\n\nint main() {\n try {\n int age = -5;\n if (age < 0) {\n throw std::invalid_argument(\"Age cannot be negative\");\n }\n }\n catch (const std::invalid_argument& e) {\n std::cout << \"Invalid argument: \" << e.what() << std::endl;\n }\n catch (const std::exception& e) {\n std::cout << \"Exception: \" << e.what() << std::endl;\n }\n return 0;\n}",
+      "explanation": "Uses try block to wrap code, throw to raise std::invalid_argument, and catch to handle it. Multiple catch blocks allow handling different exception types.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Multiple Catch Blocks with Rethrow",
+      "description": "Shows multiple catch handlers and exception rethrowing",
+      "code": "#include <iostream>\n#include <stdexcept>\n\nvoid func() {\n try {\n throw 20; // throws int\n }\n catch (int e) {\n std::cout << \"Caught in func: \" << e << std::endl;\n throw; // rethrow the same exception\n }\n}\n\nint main() {\n try {\n func();\n }\n catch (int e) {\n std::cout << \"Caught in main: \" << e << std::endl;\n }\n catch (...) {\n std::cout << \"Caught unknown exception\" << std::endl;\n }\n return 0;\n}",
+      "explanation": "Demonstrates catch(int) in func, rethrow with throw;, and catch(...) in main to handle any uncaught exceptions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Custom Exception Class",
+      "description": "Creating user-defined exception inheriting from std::exception",
+      "code": "#include <iostream>\n#include <exception>\n#include <string>\n\nclass MyException : public std::exception {\nprivate:\n std::string msg;\npublic:\n MyException(const std::string& m) : msg(m) {}\n const char* what() const noexcept override {\n return msg.c_str();\n }\n};\n\nvoid divide(int a, int b) {\n if (b == 0) {\n throw MyException(\"Division by zero not allowed\");\n }\n std::cout << a << \" / \" << b << \" = \" << a/b << std::endl;\n}\n\nint main() {\n try {\n divide(10, 0);\n }\n catch (const std::exception& e) {\n std::cout << \"Exception: \" << e.what() << std::endl;\n }\n return 0;\n}",
+      "explanation": "Custom exception class inherits from std::exception, overrides what() method. Can be caught by catching base class exception reference.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Exception in Constructor",
+      "description": "Handling exceptions in constructor with function try block",
+      "code": "#include <iostream>\n#include <stdexcept>\n\nclass Resource {\npublic:\n Resource(int val) : value(val) {\n if (val < 0) throw std::runtime_error(\"Invalid resource value\");\n std::cout << \"Resource created: \" << value << std::endl;\n }\n ~Resource() { std::cout << \"Resource destroyed\" << std::endl; }\n int value;\n};\n\nclass MyClass {\n Resource* res;\npublic:\n MyClass(int v) try : res(new Resource(v)) {\n std::cout << \"MyClass constructed\" << std::endl;\n }\n catch (const std::exception& e) {\n std::cout << \"Constructor failed: \" << e.what() << std::endl;\n throw; // Re-throw to indicate construction failure\n }\n ~MyClass() { delete res; std::cout << \"MyClass destroyed\" << std::endl; }\n};\n\nint main() {\n try {\n MyClass obj(-5);\n }\n catch (...) {\n std::cout << \"Exception caught in main\" << std::endl;\n }\n return 0;\n}",
+      "explanation": "Demonstrates constructor throwing, function try block, and how member objects are properly cleaned up during stack unwinding.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "noexcept Function Specification",
+      "description": "Using noexcept to specify non-throwing functions",
+      "code": "#include <iostream>\n#include <exception>\n\nvoid safeFunction() noexcept {\n std::cout << \"This function won't throw\" << std::endl;\n}\n\nint division(int a, int b) noexcept(false) {\n if (b == 0) throw std::runtime_error(\"Division by zero\");\n return a / b;\n}\n\nint main() {\n try {\n safeFunction(); // Can throw but won't\n int result = division(10, 0);\n }\n catch (const std::exception& e) {\n std::cout << \"Exception: \" << e.what() << std::endl;\n }\n return 0;\n}",
+      "explanation": "noexcept guarantees function won't throw - if it does, std::terminate is called. noexcept(false) explicitly allows throwing.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

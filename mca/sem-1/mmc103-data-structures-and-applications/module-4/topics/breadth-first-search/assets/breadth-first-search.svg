@@ -1,0 +1,364 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes levelAppear {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes visitNode {
+      from { fill: #00d4ff; stroke-width: 2; }
+      to { fill: #4ecdc4; stroke-width: 3; }
+    }
+
+    @keyframes edgePulse {
+      from { stroke: #555; stroke-width: 2; }
+      to { stroke: #ffe66d; stroke-width: 4; }
+    }
+
+    @keyframes queueEnqueue {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes queueDequeue {
+      from { opacity: 1; }
+      to { opacity: 0.3; }
+    }
+
+    @keyframes treeGrow {
+      from { opacity: 0; stroke-dashoffset: 50; }
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+
+    .title {
+      font-family: sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      fill: #e0e0e0;
+    }
+
+    .section-title {
+      font-family: sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      fill: #00d4ff;
+    }
+
+    .label {
+      font-family: sans-serif;
+      font-size: 12px;
+      fill: #e0e0e0;
+    }
+
+    .code {
+      font-family: monospace;
+      font-size: 10px;
+      fill: #ffe66d;
+    }
+
+    .vertex {
+      fill: #00d4ff;
+      stroke: #e0e0e0;
+      stroke-width: 2;
+    }
+
+    .vertex-text {
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      fill: #1a1a2e;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .edge {
+      stroke: #555;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Level-by-level animations */
+    .step0 { animation: fadeIn 0.5s ease-out 0.5s backwards; }
+
+    /* Level 0: Start at A */
+    .visit-A { animation: visitNode 0.5s ease-out 1.5s forwards; }
+    .level-0 { animation: levelAppear 0.5s ease-out 1.5s backwards; }
+    .queue-A { animation: queueEnqueue 0.5s ease-out 1.5s backwards; }
+
+    /* Level 1: B and C */
+    .visit-B { animation: visitNode 0.5s ease-out 2.5s forwards; }
+    .visit-C { animation: visitNode 0.5s ease-out 2.5s forwards; }
+    .edge-AB { animation: edgePulse 0.3s ease-out 2.5s forwards; }
+    .edge-AC { animation: edgePulse 0.3s ease-out 2.5s forwards; }
+    .level-1 { animation: levelAppear 0.5s ease-out 2.5s backwards; }
+    .queue-B { animation: queueEnqueue 0.5s ease-out 2.5s backwards; }
+    .queue-C { animation: queueEnqueue 0.5s ease-out 2.7s backwards; }
+    .tree-AB { animation: treeGrow 0.5s ease-out 2.5s backwards; }
+    .tree-AC { animation: treeGrow 0.5s ease-out 2.7s backwards; }
+
+    /* Level 2: D, E, F, G */
+    .visit-D { animation: visitNode 0.5s ease-out 4s forwards; }
+    .visit-E { animation: visitNode 0.5s ease-out 4s forwards; }
+    .visit-F { animation: visitNode 0.5s ease-out 4s forwards; }
+    .visit-G { animation: visitNode 0.5s ease-out 4s forwards; }
+    .edge-BD { animation: edgePulse 0.3s ease-out 4s forwards; }
+    .edge-BE { animation: edgePulse 0.3s ease-out 4s forwards; }
+    .edge-CF { animation: edgePulse 0.3s ease-out 4s forwards; }
+    .edge-CG { animation: edgePulse 0.3s ease-out 4s forwards; }
+    .level-2 { animation: levelAppear 0.5s ease-out 4s backwards; }
+    .queue-D { animation: queueEnqueue 0.5s ease-out 4s backwards; }
+    .queue-E { animation: queueEnqueue 0.5s ease-out 4.2s backwards; }
+    .queue-F { animation: queueEnqueue 0.5s ease-out 4.4s backwards; }
+    .queue-G { animation: queueEnqueue 0.5s ease-out 4.6s backwards; }
+    .tree-BD { animation: treeGrow 0.5s ease-out 4s backwards; }
+    .tree-BE { animation: treeGrow 0.5s ease-out 4.2s backwards; }
+    .tree-CF { animation: treeGrow 0.5s ease-out 4.4s backwards; }
+    .tree-CG { animation: treeGrow 0.5s ease-out 4.6s backwards; }
+
+    .order-text {
+      font-family: monospace;
+      font-size: 11px;
+      fill: #4ecdc4;
+      font-weight: bold;
+    }
+
+    .level-label {
+      font-family: sans-serif;
+      font-size: 12px;
+      fill: #ff6b6b;
+      font-weight: bold;
+    }
+
+    .queue-box {
+      fill: #2a2a3e;
+      stroke: #ff6b6b;
+      stroke-width: 2;
+    }
+
+    .queue-item {
+      fill: #ff6b6b;
+      stroke: #e0e0e0;
+      stroke-width: 1.5;
+    }
+
+    .queue-text {
+      font-family: monospace;
+      font-size: 12px;
+      fill: #1a1a2e;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .tree-edge {
+      stroke: #4ecdc4;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-dasharray: 50;
+    }
+
+    .tree-vertex {
+      fill: #4ecdc4;
+      stroke: #e0e0e0;
+      stroke-width: 2;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#1a1a2e"/>
+
+  <!-- Main Title -->
+  <text x="400" y="30" class="title" text-anchor="middle">Breadth-First Search (BFS)</text>
+  <text x="400" y="55" class="label" text-anchor="middle">Explores level by level (layer by layer)</text>
+
+  <!-- Graph Structure -->
+  <g class="step0">
+    <text x="40" y="90" class="section-title">Graph Traversal</text>
+
+    <!-- Level 0 -->
+    <g class="level-0">
+      <text x="30" y="140" class="level-label">L0</text>
+      <circle cx="100" cy="140" r="18" class="vertex visit-A" id="node-A"/>
+      <text x="100" y="140" class="vertex-text">A</text>
+    </g>
+
+    <!-- Level 1 -->
+    <g class="level-1">
+      <text x="30" y="220" class="level-label">L1</text>
+      <circle cx="70" cy="220" r="18" class="vertex visit-B" id="node-B"/>
+      <text x="70" y="220" class="vertex-text">B</text>
+
+      <circle cx="130" cy="220" r="18" class="vertex visit-C" id="node-C"/>
+      <text x="130" y="220" class="vertex-text">C</text>
+    </g>
+
+    <!-- Level 2 -->
+    <g class="level-2">
+      <text x="30" y="300" class="level-label">L2</text>
+      <circle cx="50" cy="300" r="18" class="vertex visit-D" id="node-D"/>
+      <text x="50" y="300" class="vertex-text">D</text>
+
+      <circle cx="90" cy="300" r="18" class="vertex visit-E" id="node-E"/>
+      <text x="90" y="300" class="vertex-text">E</text>
+
+      <circle cx="130" cy="300" r="18" class="vertex visit-F" id="node-F"/>
+      <text x="130" y="300" class="vertex-text">F</text>
+
+      <circle cx="170" cy="300" r="18" class="vertex visit-G" id="node-G"/>
+      <text x="170" y="300" class="vertex-text">G</text>
+    </g>
+
+    <!-- Edges -->
+    <line x1="94" y1="153" x2="76" y2="205" class="edge edge-AB"/>
+    <line x1="106" y1="153" x2="124" y2="205" class="edge edge-AC"/>
+    <line x1="63" y1="235" x2="56" y2="283" class="edge edge-BD"/>
+    <line x1="77" y1="235" x2="84" y2="283" class="edge edge-BE"/>
+    <line x1="123" y1="235" x2="130" y2="283" class="edge edge-CF"/>
+    <line x1="137" y1="235" x2="164" y2="283" class="edge edge-CG"/>
+    <line x1="50" y1="318" x2="90" y2="318" class="edge"/>
+    <line x1="108" y1="300" x2="112" y2="300" class="edge"/>
+    <line x1="148" y1="300" x2="152" y2="300" class="edge"/>
+
+    <!-- Order labels -->
+    <text x="100" y="165" class="order-text">Visit 1</text>
+    <text x="70" y="195" class="order-text">2</text>
+    <text x="130" y="195" class="order-text">3</text>
+    <text x="50" y="330" class="order-text">4</text>
+    <text x="90" y="330" class="order-text">5</text>
+    <text x="130" y="330" class="order-text">6</text>
+    <text x="170" y="330" class="order-text">7</text>
+  </g>
+
+  <!-- BFS Queue Visualization -->
+  <g>
+    <rect x="240" y="100" width="220" height="230" class="queue-box" rx="5"/>
+    <text x="350" y="125" class="section-title" text-anchor="middle">Queue (FIFO)</text>
+    <text x="350" y="145" class="label" text-anchor="middle">Front → Rear</text>
+
+    <!-- Queue snapshots -->
+    <text x="255" y="170" class="code">Step 1:</text>
+    <g class="queue-A">
+      <rect x="310" y="157" width="35" height="22" class="queue-item"/>
+      <text x="327.5" y="168" class="queue-text">A</text>
+    </g>
+
+    <text x="255" y="195" class="code">Step 2:</text>
+    <g class="queue-B">
+      <rect x="310" y="182" width="35" height="22" class="queue-item"/>
+      <text x="327.5" y="193" class="queue-text">B</text>
+    </g>
+    <g class="queue-C">
+      <rect x="350" y="182" width="35" height="22" class="queue-item"/>
+      <text x="367.5" y="193" class="queue-text">C</text>
+    </g>
+
+    <text x="255" y="220" class="code">Step 3:</text>
+    <g class="queue-D">
+      <rect x="310" y="207" width="35" height="22" class="queue-item"/>
+      <text x="327.5" y="218" class="queue-text">D</text>
+    </g>
+    <g class="queue-E">
+      <rect x="350" y="207" width="35" height="22" class="queue-item"/>
+      <text x="367.5" y="218" class="queue-text">E</text>
+    </g>
+    <g class="queue-F">
+      <rect x="390" y="207" width="35" height="22" class="queue-item"/>
+      <text x="407.5" y="218" class="queue-text">F</text>
+    </g>
+    <g class="queue-G">
+      <rect x="430" y="207" width="35" height="22" class="queue-item"/>
+      <text x="447.5" y="218" class="queue-text">G</text>
+    </g>
+
+    <text x="255" y="250" class="label">Process:</text>
+    <text x="255" y="265" class="code">• Dequeue front</text>
+    <text x="255" y="280" class="code">• Visit vertex</text>
+    <text x="255" y="295" class="code">• Enqueue all</text>
+    <text x="255" y="310" class="code">  unvisited neighbors</text>
+  </g>
+
+  <!-- BFS Tree -->
+  <g>
+    <rect x="480" y="100" width="300" height="230" class="queue-box" rx="5"/>
+    <text x="630" y="125" class="section-title" text-anchor="middle">BFS Tree</text>
+
+    <!-- Tree structure -->
+    <circle cx="630" cy="160" r="15" class="tree-vertex"/>
+    <text x="630" y="160" class="vertex-text">A</text>
+
+    <circle cx="590" cy="210" r="15" class="tree-vertex"/>
+    <text x="590" y="210" class="vertex-text">B</text>
+
+    <circle cx="670" cy="210" r="15" class="tree-vertex"/>
+    <text x="670" y="210" class="vertex-text">C</text>
+
+    <circle cx="555" cy="260" r="15" class="tree-vertex"/>
+    <text x="555" y="260" class="vertex-text">D</text>
+
+    <circle cx="605" cy="260" r="15" class="tree-vertex"/>
+    <text x="605" y="260" class="vertex-text">E</text>
+
+    <circle cx="655" cy="260" r="15" class="tree-vertex"/>
+    <text x="655" y="260" class="vertex-text">F</text>
+
+    <circle cx="705" cy="260" r="15" class="tree-vertex"/>
+    <text x="705" y="260" class="vertex-text">G</text>
+
+    <!-- Tree edges -->
+    <line x1="622" y1="173" x2="597" y2="197" class="tree-edge tree-AB"/>
+    <line x1="638" y1="173" x2="663" y2="197" class="tree-edge tree-AC"/>
+    <line x1="583" y1="223" x2="562" y2="247" class="tree-edge tree-BD"/>
+    <line x1="597" y1="223" x2="598" y2="247" class="tree-edge tree-BE"/>
+    <line x1="663" y1="223" x2="662" y2="247" class="tree-edge tree-CF"/>
+    <line x1="677" y1="223" x2="698" y2="247" class="tree-edge tree-CG"/>
+
+    <text x="630" y="295" class="label" text-anchor="middle">Shortest path from root</text>
+    <text x="630" y="310" class="code" text-anchor="middle">to each vertex (unweighted)</text>
+  </g>
+
+  <!-- Algorithm Steps -->
+  <rect x="40" y="350" width="400" height="110" class="queue-box" rx="5"/>
+  <text x="240" y="375" class="section-title" text-anchor="middle">BFS Algorithm</text>
+
+  <text x="55" y="395" class="code">1. Enqueue start vertex, mark as visited</text>
+  <text x="55" y="410" class="code">2. Dequeue vertex from front of queue</text>
+  <text x="55" y="425" class="code">3. Enqueue all unvisited neighbors</text>
+  <text x="55" y="440" class="code">4. Repeat until queue is empty</text>
+  <text x="55" y="455" class="label">Traversal Order: A → B → C → D → E → F → G</text>
+
+  <!-- Properties Box -->
+  <rect x="460" y="350" width="320" height="110" class="queue-box" rx="5"/>
+  <text x="620" y="375" class="section-title" text-anchor="middle">Properties</text>
+
+  <text x="480" y="395" class="label">Time Complexity:</text>
+  <text x="620" y="395" class="code">O(V + E)</text>
+
+  <text x="480" y="415" class="label">Space Complexity:</text>
+  <text x="620" y="415" class="code">O(V) for queue</text>
+
+  <text x="480" y="435" class="label">Applications:</text>
+  <text x="480" y="450" class="code">Shortest path (unweighted), level-order,</text>
+  <text x="480" y="465" class="code">connected components, web crawling</text>
+
+  <!-- Distance Info -->
+  <rect x="40" y="475" width="740" height="110" fill="#2a2a3e" stroke="#4ecdc4" stroke-width="2" rx="5"/>
+  <text x="410" y="500" class="section-title" text-anchor="middle">Level/Distance from A</text>
+
+  <text x="60" y="525" class="label">Level 0 (Distance 0):</text>
+  <text x="200" y="525" class="code">A</text>
+
+  <text x="60" y="545" class="label">Level 1 (Distance 1):</text>
+  <text x="200" y="545" class="code">B, C</text>
+
+  <text x="60" y="565" class="label">Level 2 (Distance 2):</text>
+  <text x="200" y="565" class="code">D, E, F, G</text>
+
+  <text x="420" y="525" class="label">Key Property:</text>
+  <text x="420" y="545" class="code">BFS finds shortest path in</text>
+  <text x="420" y="565" class="code">unweighted graphs (minimum edges)</text>
+</svg>

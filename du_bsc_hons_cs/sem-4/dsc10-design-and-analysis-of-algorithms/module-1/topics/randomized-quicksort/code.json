@@ -1,0 +1,45 @@
+{
+  "topicId": "randomized-quicksort",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Randomized Quicksort Pseudocode",
+      "description": "Standard pseudocode showing random pivot selection and partition",
+      "code": "RANDOMIZED-QUICKSORT(A, p, r)\n  if p < r\n    q = RANDOMIZED-PARTITION(A, p, r)\n    RANDOMIZED-QUICKSORT(A, p, q-1)\n    RANDOMIZED-QUICKSORT(A, q+1, r)\n\nRANDOMIZED-PARTITION(A, p, r)\n  i = RANDOM(p, r)          // Generate random index\n  swap A[r] with A[i]       // Move random pivot to end\n  return PARTITION(A, p, r) // Use standard partition\n\nPARTITION(A, p, r)\n  x = A[r]                   // Pivot is last element\n  i = p - 1\n  for j = p to r-1\n    if A[j] <= x\n      i = i + 1\n      swap A[i] with A[j]\n  swap A[i+1] with A[r]\n  return i + 1",
+      "explanation": "Randomized-Partition first selects a random element and swaps it to the end, then calls standard Partition. This ensures random pivot selection while using simple partition logic.",
+      "timeComplexity": "Average O(n log n), Worst O(n\u00b2)",
+      "spaceComplexity": "O(log n) average, O(n) worst for recursion stack",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Randomized Quicksort in Python",
+      "description": "Complete Python implementation with random pivot selection",
+      "code": "import random\n\ndef randomized_quicksort(arr, low, high):\n    if low < high:\n        pi = randomized_partition(arr, low, high)\n        randomized_quicksort(arr, low, pi - 1)\n        randomized_quicksort(arr, pi + 1, high)\n\ndef randomized_partition(arr, low, high):\n    # Random pivot selection\n    rand_idx = random.randint(low, high)\n    arr[high], arr[rand_idx] = arr[rand_idx], arr[high]\n    \n    # Partition using Lomuto scheme\n    pivot = arr[high]\n    i = low - 1\n    \n    for j in range(low, high):\n        if arr[j] <= pivot:\n            i += 1\n            arr[i], arr[j] = arr[j], arr[i]\n    \n    arr[i + 1], arr[high] = arr[high], arr[i + 1]\n    return i + 1\n\n# Example usage:\narr = [10, 7, 8, 9, 1, 5]\nn = len(arr)\nrandomized_quicksort(arr, 0, n - 1)\nprint(\"Sorted array:\", arr)",
+      "explanation": "Python implementation uses random.randint() to select pivot index, swaps it to end, then performs Lomuto partition. In-place sorting with average O(n log n) performance.",
+      "timeComplexity": "Average O(n log n), Worst O(n\u00b2)",
+      "spaceComplexity": "O(log n) average, O(n) worst for recursion",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "3-Way Partition Quicksort (Dutch National Flag)",
+      "description": "Implementation handling duplicate elements efficiently",
+      "code": "def quicksort_3way(arr, low, high):\n    if low >= high:\n        return\n    \n    # 3-way partition: < pivot, = pivot, > pivot\n    pivot = arr[low]\n    lt = low      // arr[low..lt-1] < pivot\n    gt = high     // arr[gt+1..high] > pivot\n    i = low       // arr[lt..i-1] = pivot\n    \n    while i <= gt:\n        if arr[i] < pivot:\n            arr[lt], arr[i] = arr[i], arr[lt]\n            lt += 1\n            i += 1\n        elif arr[i] > pivot:\n            arr[gt], arr[i] = arr[i], arr[gt]\n            gt -= 1\n        else:\n            i += 1\n    \n    # Recursively sort left and right parts\n    quicksort_3way(arr, low, lt - 1)\n    quicksort_3way(arr, gt + 1, high)\n\n# Example:\narr = [4, 2, 4, 6, 4, 1, 4, 8]\nquicksort_3way(arr, 0, len(arr) - 1)\nprint(arr)  # Output: [1, 2, 4, 4, 4, 4, 6, 8]",
+      "explanation": "3-way partition solves the duplicate element problem by dividing array into three parts. Best case O(n) when all elements are equal. Maintains invariants with three pointers.",
+      "timeComplexity": "Average O(n log n), Best O(n) with all duplicates, Worst O(n\u00b2)",
+      "spaceComplexity": "O(log n) average, O(n) worst for recursion stack",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-4",
+      "title": "Iterative Randomized Quicksort with Stack",
+      "description": "Non-recursive implementation using explicit stack",
+      "code": "def iterative_quicksort(arr):\n    stack = []\n    stack.append((0, len(arr) - 1))\n    \n    while stack:\n        low, high = stack.pop()\n        \n        if low >= high:\n            continue\n        \n        # Random pivot selection\n        rand_idx = random.randint(low, high)\n        arr[high], arr[rand_idx] = arr[rand_idx], arr[high]\n        \n        # Partition\n        pivot = arr[high]\n        i = low - 1\n        \n        for j in range(low, high):\n            if arr[j] <= pivot:\n                i += 1\n                arr[i], arr[j] = arr[j], arr[i]\n        \n        arr[i + 1], arr[high] = arr[high], arr[i + 1]\n        pi = i + 1\n        \n        # Push larger subarray first (for O(log n) stack)\n        left_size = pi - 1 - low\n        right_size = high - (pi + 1)\n        \n        if left_size > right_size:\n            stack.append((low, pi - 1))\n            stack.append((pi + 1, high))\n        else:\n            stack.append((pi + 1, high))\n            stack.append((low, pi - 1))\n\narr = [3, 6, 8, 10, 1, 2, 1]\niterative_quicksort(arr)\nprint(arr)",
+      "explanation": "Iterative version uses explicit stack instead of recursion. Pushing larger subarray first ensures O(log n) stack depth. Eliminates risk of stack overflow for large arrays.",
+      "timeComplexity": "Average O(n log n), Worst O(n\u00b2)",
+      "spaceComplexity": "O(log n) worst-case (explicit stack)",
+      "language": "pseudocode"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of the popen() function in Unix system programming, and what are its two basic modes of operation?",
+    "expectedPoints": [
+      "The primary purpose of popen() is to create a pipe and fork a process to execute a shell command.",
+      "It operates in two modes: 'r' for reading from the command's standard output.",
+      "'w' for writing to the command's standard input."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the relationship between popen(), the shell, and the executed command. Describe two key advantages and one significant limitation of using popen() compared to using fork(), exec(), and pipe() directly.",
+    "expectedPoints": [
+      "popen() internally uses fork() to create a child process, which invokes the system's shell (e.g., /bin/sh) to parse and execute the given command string.",
+      "Advantages: 1) It simplifies the code by handling process creation, pipe setup, and shell invocation automatically. 2) It provides a simple FILE stream interface (like fopen) for easy reading/writing.",
+      "Limitation: It offers less control and flexibility than using the low-level system calls directly, as the interaction is limited to a single pipe and the full shell is involved, which can be a security risk (e.g., shell injection) if not handled carefully."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the popen() function with the combination of pipe(), fork(), dup2(), and exec(). Detail the complete sequence of steps a programmer must manually perform to achieve what popen('r') does, and discuss a scenario where using the low-level calls would be necessary or preferable.",
+    "expectedPoints": [
+      "popen() is a high-level, convenient library function that encapsulates the complex steps of creating a pipe, forking, duplicating file descriptors, closing unused ends, invoking the shell, and executing a command. The low-level approach requires the programmer to manually code all these steps.",
+      "Manual steps for a 'read' mode popen(): 1) Create a pipe with pipe(). 2) Fork a child process. 3) In the child: close the read end of the pipe; dup2() the write end to STDOUT_FILENO; close the original write end; use execl() or a similar function with arguments to execute the command directly, bypassing the shell for security. 4) In the parent: close the write end of the pipe.",
+      "A low-level approach is preferable when: 1) Security is paramount to avoid shell injection vulnerabilities. 2) More complex inter-process communication (e.g., multiple pipes or sockets) is required. 3) There is a need for finer control over the executed process (e.g., setting its user ID, process group, or environment)."
+    ],
+    "marks": 10
+  }
+]

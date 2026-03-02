@@ -1,0 +1,45 @@
+{
+  "topicId": "elliptic-curve-cryptography",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Elliptic Curve Point Addition",
+      "description": "Adds two points on an elliptic curve over finite field",
+      "code": "FUNCTION ec_point_add(P, Q, a, p)\nBEGIN\n    IF P == O:\n        RETURN Q\n    IF Q == O:\n        RETURN P\n    IF P.x == Q.x AND P.y != Q.y:\n        RETURN O\n    IF P != Q:\n        m = (Q.y - P.y) * mod_inverse(Q.x - P.x, p) MOD p\n    ELSE:\n        m = (3*P.x^2 + a) * mod_inverse(2*P.y, p) MOD p\n    x_r = (m^2 - P.x - Q.x) MOD p\n    y_r = (m*(P.x - x_r) - P.y) MOD p\n    RETURN (x_r, y_r)\nEND",
+      "explanation": "Handles special cases (identity element, vertical line), computes slope differently for addition/doubling, calculates resulting point coordinates using curve equation",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Algorithm: ECC Key Pair Generation",
+      "description": "Generates public/private key pair using elliptic curve cryptography",
+      "code": "FUNCTION generate_ecc_keypair(curve)\nBEGIN\n    n = curve.order\n    d = random(1, n-1)\n    Q = scalar_multiply(d, curve.G)\n    RETURN (d, Q)\nEND",
+      "explanation": "Selects private key 'd' randomly from [1, n-1], computes public key Q by multiplying base point G with d using scalar multiplication",
+      "timeComplexity": "O(log d)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: ECDSA Signature Generation",
+      "description": "Generates digital signature using ECC",
+      "code": "FUNCTION ecdsa_sign(message, d, n, G)\nBEGIN\n    k = random(1, n-1)\n    (x1, _) = scalar_multiply(k, G)\n    r = x1 MOD n\n    IF r == 0: restart\n    e = hash(message)\n    s = (mod_inverse(k, n) * (e + d*r)) MOD n\n    IF s == 0: restart\n    RETURN (r, s)\nEND",
+      "explanation": "Generates random nonce k, computes signature components r and s using modular arithmetic and elliptic curve operations",
+      "timeComplexity": "O(log k)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Algorithm: ECC Encryption (ElGamal variant)",
+      "description": "Encrypts message point using recipient's public key",
+      "code": "FUNCTION ecc_encrypt(M, Q, G, n)\nBEGIN\n    k = random(1, n-1)\n    C1 = scalar_multiply(k, G)\n    S = scalar_multiply(k, Q)\n    C2 = point_add(M, S)\n    RETURN (C1, C2)\nEND",
+      "explanation": "Uses ephemeral key k to create ciphertext components. Security relies on elliptic curve discrete logarithm problem",
+      "timeComplexity": "O(log k)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

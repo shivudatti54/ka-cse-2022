@@ -1,0 +1,45 @@
+{
+  "topicId": "inheritance-polymorphism",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is a virtual function in C++ and how does it enable runtime polymorphism?",
+      "back": "A virtual function is a member function declared with the 'virtual' keyword in a base class, allowing derived classes to override it. The compiler implements this through a vtable (virtual table), where each object contains a vptr pointing to the function addresses. At runtime, the correct function is called based on the actual object type (dynamic binding), not the pointer/reference type."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is a pure virtual function? How does it differ from a regular virtual function?",
+      "back": "A pure virtual function is declared by assigning =0 (e.g., virtual void draw() = 0;) in the base class, making it abstract with no implementation. Unlike regular virtual functions that have a default implementation, pure virtual functions must be overridden by derived classes; otherwise, the derived class also becomes abstract. Abstract classes cannot be instantiated but can serve as interface specifications."
+    },
+    {
+      "id": "fc-3",
+      "front": "Explain the diamond problem in multiple inheritance and how C++ resolves it.",
+      "back": "The diamond problem occurs when a class inherits from two classes that both inherit from a common base class, causing ambiguity (two copies of base class members). C++ resolves this through virtual inheritance by declaring the intermediate classes to inherit virtually (class B : virtual public A), ensuring only one copy of A is inherited. The most derived class must explicitly initialize the virtually inherited base class."
+    },
+    {
+      "id": "fc-4",
+      "front": "How does the vtable (virtual table) work internally in C++?",
+      "back": "The vtable is a static lookup table created by the compiler for each class containing virtual functions. Each object with virtual functions has a hidden vptr (virtual pointer) pointing to its class's vtable. When a virtual function is called, the compiler generates code to: 1) follow vptr to vtable, 2) index into function pointer array, 3) call the function. This mechanism enables runtime polymorphism."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the order of constructor and destructor calls in single and multiple inheritance hierarchies?",
+      "back": "Constructors are called in order of derivation: base class(es) first (left-to-right in inheritance list), then member objects, then the most derived class. Destructors are called in reverse order: most derived class first, then member objects, then base classes (right-to-left). This ensures proper initialization and cleanup, with base class destructors executing after derived class cleanup in reverse of construction order."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is object slicing in C++ and how can it be prevented?",
+      "back": "Object slicing occurs when a derived class object is assigned to a base class object by value, copying only the base portion and losing derived-class-specific data/behaviour. It can be prevented by: 1) using pointers or references (Base& or Base*), 2) storing objects in heap with smart pointers, 3) using std::vector<Base*> or std::unique_ptr<Base>. Slicing prevents runtime polymorphism and truncates object data."
+    },
+    {
+      "id": "fc-7",
+      "front": "Why are virtual destructors essential in polymorphic base classes?",
+      "back": "Virtual destructors ensure proper cleanup when a derived class object is deleted through a base class pointer. Without a virtual destructor, only the base class destructor executes (slicing the derived portion), causing resource leaks and undefined behaviour. Always declare base class destructors virtual when the class contains any virtual functions and is intended for polymorphic use."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the difference between function overriding and function hiding in C++?",
+      "back": "Function overriding occurs when a derived class redefines a virtual function from the base class with identical signature, enabling runtime polymorphism. Function hiding occurs when a derived class defines a non-virtual function with the same name (but different parameters) as a base class function—the base function becomes hidden, not overloaded. Using 'using' declarations or explicitly calling Base::func() can resolve hiding."
+    }
+  ]
+}

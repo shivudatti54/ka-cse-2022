@@ -1,0 +1,117 @@
+{
+  "topicId": "extensions-to-the-basic-turing-machine",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Prove that any Multi-tape Turing Machine can be simulated by a single-tape Turing Machine. Include the tape encoding scheme and analyze the time complexity.",
+      "keyPoints": [
+        "Describe tape encoding using separator symbols # to separate k virtual tapes",
+        "Explain how to encode head positions using special markers like X, Y",
+        "Outline two-pass simulation: right pass to find positions, left pass to update",
+        "Show time complexity: each simulated step requires O(n) scans, giving O(n\u00b2) total",
+        "Conclude computational equivalence despite quadratic overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define a Non-deterministic Turing Machine formally. Explain how a Deterministic Turing Machine can simulate an NDTM using breadth-first search, and analyze the time complexity overhead.",
+      "keyPoints": [
+        "Give formal definition: M = (Q, \u03a3, \u0393, \u03b4, q\u2080, q_accept, q_reject) with \u03b4: Q\u00d7\u0393 \u2192 P(Q\u00d7\u0393\u00d7{L,R})",
+        "Explain BFS approach: explore configuration tree level by level",
+        "Describe encoding of configurations on tape with delimiters",
+        "Show worst-case time: if NDTM runs in T(n), DTM takes O(d^T(n)) where d is branching factor",
+        "Discuss exponential overhead and P vs NP implications"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is a Universal Turing Machine? Explain how it achieves universality and why this is significant for the theory of computation.",
+      "keyPoints": [
+        "Define UTM: takes encoding of any TM M and input w as combined input",
+        "Explain standard encoding scheme for TM (states, transitions, symbols)",
+        "Describe simulation process: UTM interprets M's rules and applies to w",
+        "Discuss stored-program concept: program (M) and data (w) on same medium",
+        "Significance: one machine can compute any computable function"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Define a Linear Bounded Automaton and explain its relationship with context-sensitive languages in the Chomsky hierarchy.",
+      "keyPoints": [
+        "Define LBA: TM with tape head restricted to input region (initially marked)",
+        "Formal definition with bounded tape: M = (Q, \u03a3, \u0393, \u03b4, q\u2080, q_accept, q_reject) with input boundaries",
+        "State equivalence: LBAs accept exactly context-sensitive languages (Type-1)",
+        "Mention the LBA problem (deterministic vs non-deterministic equivalence) - was open for decades",
+        "Contrast with Type-0 (recursively enumerable) which requires unrestricted TM"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "State and explain the Church-Turing Thesis. How does it imply the computational equivalence of all Turing Machine extensions?",
+      "keyPoints": [
+        "State Church-Turing Thesis: any intuitively computable function is TM-computable",
+        "Explain that extensions (MTM, NDTM, UTM, LBA) all have simulation proofs to basic TM",
+        "Multi-tape: O(n\u00b2) simulation; NDTM: exponential simulation; UTM: direct simulation",
+        "Conclusion: all extensions are computationally equivalent - accept same language class (RE)",
+        "Discuss thesis vs theorem distinction and its role in computability theory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Consider a deterministic single-tape Turing Machine M that recognizes a language L in time O(n\u00b3). If we redesign M as a 3-tape TM (keeping the same algorithm structure), what would be the new time complexity? Explain with reasoning. Conversely, if we simulate this 3-tape version back on a single-tape TM, what would be the worst-case time complexity?",
+      "keyPoints": [
+        "Original single-tape: T\u2081(n) = O(n\u00b3)",
+        "Multi-tape advantage: for many algorithms, can reduce from O(n\u00b2) to O(n) or similar",
+        "With 3 tapes, can potentially achieve linear time O(n) for same algorithm that takes O(n\u00b3) on single-tape",
+        "Key insight: using multiple tapes to separate input, workspace, and output",
+        "For simulation back: O(T(n)\u00b2) = O(n\u00b2) on the O(n) version = O(n\u00b2) worst-case",
+        "Alternatively: if 3-tape still takes O(n\u00b3), simulating gives O((n\u00b3)\u00b2) = O(n\u2076)",
+        "Discuss practical implications of tape usage for algorithm design"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a high-level description of a Universal Turing Machine that can simulate any Turing Machine M on any input w. Your description should include: (a) The input encoding format, (b) The tape alphabet construction, (c) The state set and transition function design, and (d) How the simulation maintains the configuration of the simulated machine.",
+      "keyPoints": [
+        "Input encoding: LEFT = encoding of M (states, alphabet, transition function), RIGHT = encoding of w",
+        "Tape alphabet: include symbols for encoding M's symbols, state markers, separators",
+        "States: include states for 'interpret and execute transition', 'move head', 'check accept/reject', 'halt'",
+        "Simulation loop: (1) Find current state marker, (2) Read symbol under head, (3) Look up transition in encoded M, (4) Update symbol, move head left/right, update state marker",
+        "Maintain simulated configuration: encode (state, tape content, head position) using special markers",
+        "Handle accept/reject: if simulated M enters accept/reject state, UTM halts in corresponding state",
+        "Proof of universality: can compute any function any dedicated TM can compute"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Let L = {a\u207fb\u207fc\u207f | n \u2265 1}. This language is known to be context-sensitive but not context-free. Provide a high-level design of a Linear Bounded Automaton that accepts L. Explain how the LBA uses its bounded tape to verify the equality of counts.",
+      "keyPoints": [
+        "LBA structure: non-deterministic with counter mechanism using tape cells",
+        "Initialization: mark first a as counter, mark corresponding c as verification point",
+        "Algorithm: (1) Find unmarked a, increment counter, find unmarked c and mark; repeat",
+        "(2) After all marked, verify all a's and c's were used exactly once",
+        "(3) Ensure middle section is exactly b\u207f - count must match",
+        "Tape usage: uses markers in the input region only; never moves beyond input bounds",
+        "Non-determinism: guesses matching pairs a and c to mark",
+        "Acceptance: if a valid pairing exists reaching final state, accept",
+        "Proof: shows LBA accepts L, confirming context-sensitivity of L"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "topicId": "suspending-resuming-and-stopping-threads",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain why Thread.suspend(), resume(), and stop() methods are deprecated. What are the safer alternatives?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Deprecated due to potential deadlock and data inconsistency issues",
+        "suspend() holds lock indefinitely causing deadlock",
+        "stop() can leave objects in inconsistent state",
+        "Alternative: Use boolean flag to control thread execution",
+        "Use interrupt() for cooperative termination"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the difference between wait() and sleep() methods in Java threads.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "wait() releases the lock, sleep() retains the lock",
+        "wait() is called on object, sleep() is called on thread",
+        "wait() needs synchronized context, sleep() doesn't",
+        "wait() wakes up via notify(), sleep() wakes up after timeout",
+        "wait() defined in Object class, sleep() in Thread class"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is thread synchronization? Explain the use of synchronized keyword with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Thread synchronization prevents race conditions",
+        "synchronized keyword ensures mutual exclusion",
+        "Can be applied to methods or blocks",
+        "Only one thread can execute synchronized code on same object",
+        "Example: synchronized void deposit() { // critical section }"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the notify() and notifyAll() methods with their differences.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Both methods are defined in Object class",
+        "Both used to wake up waiting threads",
+        "notify() wakes one random waiting thread",
+        "notifyAll() wakes all waiting threads",
+        "notifyAll() is safer when multiple conditions exist"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the difference between Runnable and Thread in Java?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Runnable is an interface with run() method",
+        "Thread is a class that implements Runnable",
+        "Runnable allows inheritance of other class",
+        "Thread provides additional methods like start(), sleep()",
+        "Prefer Runnable for better OOP design"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of daemon threads with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Daemon threads are low-priority background threads",
+        "They provide services to user threads",
+        "JVM terminates when all user threads finish",
+        "Common examples: garbage collector, JIT compiler",
+        "Set using setDaemon(true) before start()"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is thread starvation? How can it be prevented?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Starvation occurs when thread cannot access shared resources",
+        "Caused by greedy threads holding resources long",
+        "Solutions: Use fair locks, increase thread priority, avoid long synchronized blocks",
+        "Use thread pools with appropriate configuration",
+        "Avoid nested synchronized blocks"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a Java program demonstrating how to safely suspend, resume, and stop a thread using a flag variable. Explain each part of the code.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Create a class implementing Runnable",
+        "Include boolean suspendFlag and stopFlag",
+        "In run() method, check flags using while loop",
+        "Use wait() for suspension to reduce CPU usage",
+        "Provide methods: mySuspend(), myResume(), myStop()",
+        "Explain thread lifecycle and proper cleanup",
+        "Show main method creating and managing thread"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the thread lifecycle in Java with a state diagram. Discuss all possible states and transitions between them.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Six states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED",
+        "NEW: Thread created but not started",
+        "RUNNABLE: Ready to run or running",
+        "BLOCKED: Waiting for monitor lock",
+        "WAITING: wait(), join(), LockSupport.park()",
+        "TIMED_WAITING: sleep(), wait(timeout), join(timeout)",
+        "TERMINATED: run() completed",
+        "Explain transitions with methods causing each"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the producer-consumer problem and how wait() and notify() solve it. Write synchronized code for the same.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Problem: Producer produces data, Consumer consumes; buffer has limited capacity",
+        "Issues: Overflow when buffer full, underflow when empty",
+        "Solution: Use wait() and notify() for thread communication",
+        "Producer waits when buffer full, notifies after adding",
+        "Consumer waits when empty, notifies after consuming",
+        "Show synchronized produce() and consume() methods",
+        "Explain how monitor lock prevents race conditions"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is deadlock? Explain the necessary conditions for deadlock and discuss strategies to avoid deadlock in Java.",
+      "explanation": "Full solution needed",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Deadlock: Two or more threads waiting forever for each other",
+        "Four necessary conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait",
+        "Prevention strategies: Avoid nested locks, Lock ordering, Try-lock with timeout",
+        "Use thread-safe collections instead of manual synchronization",
+        "Design to avoid circular wait - define lock acquisition order",
+        "Example code showing deadlock and fix"
+      ]
+    }
+  ]
+}

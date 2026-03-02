@@ -1,0 +1,33 @@
+{
+  "topicId": "geometric-transformations",
+  "examples": [
+    {
+      "id": "pseudocode-affine-transformation",
+      "title": "Pseudocode: Affine Transformation",
+      "description": "Apply affine transformation to an image",
+      "language": "pseudocode",
+      "code": "ALGORITHM AffineTransform\nINPUT: image, transformation_matrix\nOUTPUT: transformed_image\n\nBEGIN\n height, width = image.shape[:2]\n transformed_image = new_image(width, height)\n FOR each pixel (x, y) in transformed_image\n (u, v) = apply_transformation(transformation_matrix, (x, y))\n transformed_image(x, y) = interpolate(image, (u, v))\n END FOR\n RETURN transformed_image\nEND",
+      "explanation": "This pseudocode demonstrates how to apply an affine transformation to an image using inverse mapping."
+    },
+    {
+      "id": "python-affine-transformation",
+      "title": "Python: Affine Transformation",
+      "description": "Apply affine transformation to an image using OpenCV",
+      "language": "python",
+      "code": "import numpy as np\nimport cv2\n\ndef apply_affine_transform(image, transformation_matrix):\n height, width = image.shape[:2]\n transformed_image = cv2.warpAffine(image, transformation_matrix, (width, height), flags=cv2.INTER_LINEAR)\n return transformed_image\n\n# Example: Rotate 30 degrees clockwise around center\ncenter = (width//2, height//2)\nrotation_matrix = cv2.getRotationMatrix2D(center, -30, 1.0)\nrotated_image = apply_affine_transform(image, rotation_matrix)",
+      "explanation": "This Python code applies an affine transformation to an image using OpenCV's warpAffine function.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-bilinear-interpolation",
+      "title": "C: Bilinear Interpolation",
+      "description": "Bilinear interpolation function in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n\nfloat bilinear_interpolation(float q11, float q12, float q21, float q22, float x, float y) {\n float a = (q11 * (1 - x) + q21 * x) * (1 - y);\n float b = (q12 * (1 - x) + q22 * x) * y;\n return a + b;\n}\n\nint main() {\n float q11 = 1.0, q12 = 2.0, q21 = 3.0, q22 = 4.0;\n float x = 0.5, y = 0.5;\n float result = bilinear_interpolation(q11, q12, q21, q22, x, y);\n printf(\"Result: %f\\n\", result);\n return 0;\n}",
+      "explanation": "This C code implements bilinear interpolation, which is used to estimate pixel values in transformed images.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

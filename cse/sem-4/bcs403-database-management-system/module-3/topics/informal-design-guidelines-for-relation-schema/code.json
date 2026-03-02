@@ -1,0 +1,26 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Algorithm for Lossless Join Check",
+    "description": "Algorithm to verify if decomposition of R into R1 and R2 is lossless",
+    "code": "// Input: Relation R, decomposed relations R1, R2\n// Output: TRUE if lossless, FALSE otherwise\n\nFUNCTION CheckLosslessJoin(R, R1, R2):\n // Find common attributes\n common = R1.attributes \u2229 R2.attributes\n \n // Check if common attributes form key for R1 or R2\n IF IsKey(R1, common) OR IsKey(R2, common):\n RETURN TRUE\n ELSE:\n RETURN FALSE\n\nFUNCTION IsKey(Relation, Attributes):\n // Check if Attributes functionally determine all\n // attributes in Relation\n closure = ComputeClosure(Attributes, Relation.fd)\n IF closure \u2287 Relation.attributes:\n RETURN TRUE\n ELSE:\n RETURN FALSE",
+    "explanation": "The algorithm checks if the common attributes between decomposed relations form a key for at least one of them, which is the mathematical condition for lossless join.",
+    "complexity": {
+      "time": "O(n\u00b2) for closure computation",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Algorithm to Find Candidate Keys",
+    "description": "Procedure to find all candidate keys from set of functional dependencies",
+    "code": "// Input: Relation R with attributes and FDs\n// Output: Set of candidate keys\n\nFUNCTION FindCandidateKeys(R):\n attributes = R.attributes\n fds = R.functionalDependencies\n \n // Step 1: Find attributes that never appear on RHS\n leftOnly = GetLHSOnlyAttributes(fds)\n \n // Step 2: Find attributes that never appear on LHS\n rightOnly = GetRHSOnlyAttributes(fds)\n \n // Step 3: Start with leftOnly attributes as base\n // Compute closure, if full relation then candidate key\n // Else add attributes one by one from remaining\n \n result = empty set\n candidates = [leftOnly] // Start with minimal set\n \n FOR each candidate IN candidates:\n closure = ComputeClosure(candidate, fds)\n IF closure == attributes:\n result.add(candidate)\n ELSE:\n // Try adding attributes from rightOnly\n FOR attr IN rightOnly:\n IF candidate \u222a {attr} NOT IN result:\n newCand = candidate \u222a {attr}\n closure = ComputeClosure(newCand, fds)\n IF closure == attributes:\n result.add(newCand)\n \n RETURN MinimalKeys(result) // Remove supersets",
+    "explanation": "This algorithm finds candidate keys by starting with attributes that appear only on LHS and progressively adding attributes until all attributes are covered by the closure.",
+    "complexity": {
+      "time": "O(2^n) in worst case",
+      "space": "O(n)"
+    }
+  }
+]

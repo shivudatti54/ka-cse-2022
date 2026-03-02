@@ -1,0 +1,62 @@
+[
+  {
+    "id": "code-1",
+    "language": "arm-assembly",
+    "title": "Check if Bit is Set",
+    "description": "Tests if bit 4 of R0 is set using TST instruction",
+    "code": " ; R0 contains input value\n ; Check if bit 4 is set\n TST R0, #0x10 ; Test bit 4 (1<<4)\n BNE BitIsSet ; Branch if Z flag = 0 (bit is set)\n ; Code for bit not set\n B End\nBitIsSet:\n ; Code for bit is set\nEnd:",
+    "explanation": "TST performs bitwise AND (R0 AND 0x10) and sets flags. If bit 4 is set, result is non-zero so Z=0, and BNE (Branch if Not Equal to Zero) is taken.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "arm-assembly",
+    "title": "Find Maximum of Two Numbers",
+    "description": "Uses conditional execution to find maximum without branching",
+    "code": " ; R0 = first number, R1 = second number\n ; Result will be in R2\n CMP R0, R1 ; Compare R0 and R1, set flags\n MOVGT R2, R0 ; If R0 > R1 (GT), move R0 to R2\n MOVLE R2, R1 ; If R0 <= R1 (LE), move R1 to R2\n ; R2 now contains maximum",
+    "explanation": "CMP sets flags based on R0-R1. MOVGT executes only when Z=0 and N=V (signed greater). MOVLE executes otherwise. No branch instruction used!",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "arm-assembly",
+    "title": "Save and Restore CPSR",
+    "description": "Shows how to save CPSR to memory and restore it",
+    "code": " ; Save CPSR\n MRS R0, CPSR ; Move CPSR to R0\n STR R0, [SP]! ; Push to stack\n \n ; Change to Supervisor mode (if not already)\n MSR CPSR_c, #0xD3 ; 0xD3 = 10010011 (IRQ disabled, Supervisor mode)\n \n ; ... do supervisor tasks ...\n \n ; Restore CPSR\n LDR R0, [SP], #4 ; Pop from stack\n MSR CPSR_all, R0 ; Restore CPSR from R0",
+    "explanation": "MRS reads CPSR into general register. MSR with _c suffix writes only control bits. MSR_all writes all 32 bits including flags.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(2)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "arm-assembly",
+    "title": "Signed Number Classification",
+    "description": "Classifies a number as positive, negative, or zero",
+    "code": " ; R0 contains number to classify\n ; Returns: R0 = 0 (zero), 1 (positive), 2 (negative)\n \nClassify:\n CMP R0, #0 ; Compare with zero\n BEQ IsZero ; Branch if Z=1 (equal to zero)\n \n ; Not zero - check sign\n BMI IsNegative ; Branch if N=1 (negative)\n \nIsPositive:\n MOV R0, #1 ; Return 1 for positive\n B Done\n \nIsNegative:\n MOV R0, #2 ; Return 2 for negative\n B Done\n \nIsZero:\n MOV R0, #0 ; Return 0 for zero\n \nDone:",
+    "explanation": "CMP sets flags: Z if zero, N if negative (MSB=1), clears both if positive. BMI checks N flag. Uses conditional branches for classification.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "arm-assembly",
+    "title": "Range Check using Flags",
+    "description": "Checks if a value is within a specified range",
+    "code": " ; R0 = value to check\n ; R1 = lower bound, R2 = upper bound\n ; Returns: R3 = 1 if in range, 0 if out of range\n \n CMP R0, R1 ; Compare with lower bound\n BLT OutOfRange ; If value < lower, out of range\n \n CMP R0, R2 ; Compare with upper bound\n BGT OutOfRange ; If value > upper, out of range\n \n ; Value is in range\n MOV R3, #1\n B Done\n \nOutOfRange:\n MOV R3, #0\n \nDone:",
+    "explanation": "First CMP checks lower bound (BLT = signed less than, N!=V). Second CMP checks upper bound (BGT = signed greater than, Z=0 and N=V). Both must pass for valid range.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  }
+]

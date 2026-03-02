@@ -1,0 +1,45 @@
+{
+  "topicId": "process-scheduling-basic-concepts",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FCFS Scheduling Algorithm",
+      "description": "First Come First Serve scheduling implementation showing process selection from ready queue",
+      "code": "ALGORITHM FCFS_Schedule(processList)\nBEGIN\n  readyQueue = CreateQueue()\n  FOR each process IN processList DO\n    Enqueue(readyQueue, process)\n  END FOR\n\n  currentTime = 0\n  totalWaitingTime = 0\n\n  WHILE NOT IsEmpty(readyQueue) DO\n    currentProcess = Dequeue(readyQueue)\n\n    waitingTime = currentTime - currentProcess.arrivalTime\n    totalWaitingTime = totalWaitingTime + waitingTime\n\n    currentTime = currentTime + currentProcess.burstTime\n\n    currentProcess.completionTime = currentTime\n  END WHILE\n\n  avgWaitingTime = totalWaitingTime / NumberOfProcesses\n  RETURN avgWaitingTime\nEND",
+      "explanation": "This FCFS algorithm processes jobs in order of their arrival time. It maintains a ready queue, processes each job to completion, calculates waiting time as current time minus arrival time, and computes average waiting time.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Round Robin Scheduling Simulation",
+      "description": "Implements Round Robin CPU scheduling with time quantum and calculates waiting times",
+      "code": "def round_robin_scheduler(processes, time_quantum):\n    \"\"\"\n    Processes: list of (arrival, burst) tuples\n    Returns: average waiting time\n    \"\"\"\n    n = len(processes)\n    remaining_burst = [p[1] for p in processes]\n    arrival = [p[0] for p in processes]\n    waiting_time = [0] * n\n\n    current_time = 0\n    completed = 0\n    queue = []\n    index = 0\n\n    # Add processes arriving at time 0\n    for i in range(n):\n        if arrival[i] == 0:\n            queue.append(i)\n\n    while completed < n:\n        if not queue:\n            # Find next arriving process\n            current_time = min(arrival[i] for i in range(n) if remaining_burst[i] > 0)\n            for i in range(n):\n                if arrival[i] == current_time:\n                    queue.append(i)\n            continue\n\n        process_idx = queue.pop(0)\n\n        # Execute for time quantum or remaining burst\n        if remaining_burst[process_idx] <= time_quantum:\n            current_time += remaining_burst[process_idx]\n            remaining_burst[process_idx] = 0\n            completed += 1\n            waiting_time[process_idx] = current_time - arrival[process_idx] - (processes[process_idx][1] - remaining_burst[process_idx])\n        else:\n            current_time += time_quantum\n            remaining_burst[process_idx] -= time_quantum\n\n        # Add newly arrived processes to queue\n        for i in range(n):\n            if arrival[i] <= current_time and i not in queue and remaining_burst[i] > 0:\n                queue.append(i)\n\n        # Add current process back if not completed\n        if remaining_burst[process_idx] > 0:\n            queue.append(process_idx)\n\n    avg_waiting = sum(waiting_time) / n\n    return avg_waiting\n\n# Example usage\nprocesses = [(0, 10), (0, 5), (0, 8)]\ntime_quantum = 4\nprint(f\"Average waiting time: {round_robin_scheduler(processes, time_quantum)}\")",
+      "explanation": "This Python implementation simulates Round Robin scheduling. Each process gets a time quantum (4 units), and if not complete, goes back to the ready queue. It handles arrival times and calculates waiting times for each process.",
+      "timeComplexity": "O(n \u00d7 burst_time / quantum)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "SJF Non-Preemptive Scheduling",
+      "description": "Shortest Job First algorithm that selects process with minimum burst time",
+      "code": "ALGORITHM SJF_NonPreemptive(processList)\nBEGIN\n  readyQueue = CreateQueue()\n  completedList = CreateList()\n  currentTime = 0\n  totalWaitingTime = 0\n\n  WHILE completedCount < TotalProcesses DO\n    // Add all arrived processes to ready queue\n    FOR each process IN processList DO\n      IF process.arrivalTime <= currentTime AND NOT process.completed THEN\n        AddToReadyQueue(process)\n      END IF\n    END FOR\n\n    // Find process with minimum burst time\n    shortestJob = FindMinBurst(readyQueue)\n\n    // Calculate waiting time\n    waitingTime = currentTime - shortestJob.arrivalTime\n    totalWaitingTime = totalWaitingTime + waitingTime\n\n    // Execute the process\n    currentTime = currentTime + shortestJob.burstTime\n    shortestJob.completionTime = currentTime\n    MarkAsCompleted(shortestJob)\n\n    RemoveFromReadyQueue(shortestJob)\n  END WHILE\n\n  avgWaitingTime = totalWaitingTime / TotalProcesses\n  RETURN avgWaitingTime\nEND\n\nFUNCTION FindMinBurst(queue)\nBEGIN\n  minProcess = queue[0]\n  FOR each process IN queue DO\n    IF process.burstTime < minProcess.burstTime THEN\n      minProcess = process\n    END IF\n  END FOR\n  RETURN minProcess\nEND",
+      "explanation": "SJF (non-preemptive) selects the process with the shortest burst time from the ready queue at each scheduling decision point. It provides optimal average waiting time when all processes are available at time 0.",
+      "timeComplexity": "O(n\u00b2) for simple implementation, O(n log n) with priority queue",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Priority Scheduling with Aging",
+      "description": "C program implementing priority scheduling with aging to prevent starvation",
+      "code": "#include <stdio.h>\n#include <limits.h>\n\n#define MAX_PROCESSES 10\n\ntypedef struct {\n    int pid;\n    int arrivalTime;\n    int burstTime;\n    int priority;\n    int waitingTime;\n    int turnaroundTime;\n} Process;\n\nvoid prioritySchedulerWithAging(Process processes[], int n) {\n    int currentTime = 0;\n    int completed = 0;\n    int agingCounter[MAX_PROCESSES] = {0};\n\n    while (completed < n) {\n        int highestPriority = INT_MIN;\n        int selectedProcess = -1;\n\n        // Find process with highest effective priority (including aging)\n        for (int i = 0; i < n; i++) {\n            // Calculate effective priority with aging\n            int effectivePriority = processes[i].priority + agingCounter[i];\n\n            if (processes[i].arrivalTime <= currentTime &&\n                effectivePriority > highestPriority &&\n                processes[i].burstTime > 0) {\n                highestPriority = effectivePriority;\n                selectedProcess = i;\n            }\n        }\n\n        if (selectedProcess == -1) {\n            currentTime++;\n            continue;\n        }\n\n        // Execute selected process\n        processes[selectedProcess].waitingTime = currentTime - processes[selectedProcess].arrivalTime;\n        currentTime += processes[selectedProcess].burstTime;\n        processes[selectedProcess].turnaroundTime = currentTime - processes[selectedProcess].arrivalTime;\n        processes[selectedProcess].burstTime = 0;\n        completed++;\n\n        // Reset aging counter for executed process\n        agingCounter[selectedProcess] = 0;\n\n        // Increase aging counters for waiting processes\n        for (int i = 0; i < n; i++) {\n            if (i != selectedProcess && processes[i].arrivalTime <= currentTime && processes[i].burstTime > 0) {\n                agingCounter[i] += 1;  // Increase priority by 1 for each unit of waiting\n            }\n        }\n    }\n\n    // Print results\n    float totalWaiting = 0, totalTurnaround = 0;\n    printf(\"PID\\tPriority\\tWaiting\\tTurnaround\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\t%d\\t\t%d\\t%d\\n\",\n               processes[i].pid, processes[i].priority,\n               processes[i].waitingTime, processes[i].turnaroundTime);\n        totalWaiting += processes[i].waitingTime;\n        totalTurnaround += processes[i].turnaroundTime;\n    }\n    printf(\"Average Waiting Time: %.2f\\n\", totalWaiting/n);\n    printf(\"Average Turnaround Time: %.2f\\n\", totalTurnaround/n);\n}\n\nint main() {\n    Process processes[] = {\n        {1, 0, 10, 1, 0, 0},\n        {2, 1, 5, 3, 0, 0},\n        {3, 2, 8, 2, 0, 0}\n    };\n    int n = sizeof(processes) / sizeof(processes[0]);\n\n    prioritySchedulerWithAging(processes, n);\n    return 0;\n}",
+      "explanation": "This C program implements priority scheduling with aging to prevent starvation. Aging increases the effective priority of waiting processes over time, ensuring that low-priority processes eventually get CPU time even when higher-priority processes keep arriving.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

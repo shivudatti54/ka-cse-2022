@@ -1,0 +1,55 @@
+{
+  "topicId": "elementary-graph-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "DFS Traversal Implementation",
+      "description": "Recursive Depth First Search traversal of a graph using adjacency list",
+      "code": "from collections import defaultdict\n\nclass Graph:\n    def __init__(self):\n        self.graph = defaultdict(list)\n    \n    def add_edge(self, u, v):\n        self.graph[u].append(v)\n    \n    def dfs_util(self, v, visited):\n        visited[v] = True\n        print(v, end=' ')\n        for neighbor in self.graph[v]:\n            if not visited[neighbor]:\n                self.dfs_util(neighbor, visited)\n    \n    def dfs(self, start):\n        visited = [False] * (max(self.graph) + 1)\n        self.dfs_util(start, visited)\n\ng = Graph()\ng.add_edge(0, 1)\ng.add_edge(0, 2)\ng.add_edge(1, 3)\ng.add_edge(2, 3)\ng.dfs(0)",
+      "explanation": "DFS uses recursion to explore as deep as possible before backtracking. The visited array prevents processing vertices twice and handles cycles.",
+      "timeComplexity": "O(V+E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "BFS Traversal Implementation",
+      "description": "Breadth First Search traversal using queue for level-order exploration",
+      "code": "from collections import defaultdict, deque\n\nclass Graph:\n    def __init__(self):\n        self.graph = defaultdict(list)\n    \n    def add_edge(self, u, v):\n        self.graph[u].append(v)\n    \n    def bfs(self, start):\n        visited = [False] * (max(self.graph) + 1)\n        queue = deque([start])\n        visited[start] = True\n        \n        while queue:\n            v = queue.popleft()\n            print(v, end=' ')\n            for neighbor in self.graph[v]:\n                if not visited[neighbor]:\n                    visited[neighbor] = True\n                    queue.append(neighbor)\n\ng = Graph()\ng.add_edge(0, 1)\ng.add_edge(0, 2)\ng.add_edge(1, 3)\ng.add_edge(2, 3)\ng.bfs(0)",
+      "explanation": "BFS uses a queue to process vertices in order of their distance from the source. Vertices are explored level by level, making it suitable for finding shortest paths in unweighted graphs.",
+      "timeComplexity": "O(V+E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Adjacency Matrix Operations",
+      "description": "C program demonstrating graph operations using adjacency matrix representation",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX 100\n\ntypedef struct {\n    int V;\n    int matrix[MAX][MAX];\n} GraphMatrix;\n\nvoid init_matrix(GraphMatrix *g, int v) {\n    g->V = v;\n    for(int i=0; i<v; i++)\n        for(int j=0; j<v; j++)\n            g->matrix[i][j] = 0;\n}\n\nvoid add_edge_matrix(GraphMatrix *g, int u, int v) {\n    if(u < g->V && v < g->V) {\n        g->matrix[u][v] = 1;\n        g->matrix[v][u] = 1;  // undirected\n    }\n}\n\nint is_adjacent_matrix(GraphMatrix *g, int u, int v) {\n    return g->matrix[u][v] == 1;\n}\n\nint main() {\n    GraphMatrix g;\n    init_matrix(&g, 4);\n    add_edge_matrix(&g, 0, 1);\n    add_edge_matrix(&g, 0, 2);\n    printf(\"Edge 0-1: %d\\n\", is_adjacent_matrix(&g, 0, 1));\n    return 0;\n}",
+      "explanation": "Adjacency matrix provides O(1) edge lookup. Adding an edge is simply setting matrix[u][v] = 1. Suitable for dense graphs but wastes space for sparse graphs.",
+      "timeComplexity": "O(1) for edge operations, O(V\u00b2) for initialization",
+      "spaceComplexity": "O(V\u00b2)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Finding Connected Components",
+      "description": "Algorithm to find all connected components using DFS",
+      "code": "from collections import defaultdict\n\nclass Graph:\n    def __init__(self):\n        self.graph = defaultdict(list)\n    \n    def add_edge(self, u, v):\n        self.graph[u].append(v)\n        self.graph[v].append(u)  # undirected\n    \n    def dfs_component(self, v, visited, component):\n        visited[v] = True\n        component.append(v)\n        for neighbor in self.graph[v]:\n            if not visited[neighbor]:\n                self.dfs_component(neighbor, visited, component)\n    \n    def find_components(self):\n        if not self.graph:\n            return []\n        visited = {v: False for v in self.graph}\n        components = []\n        for vertex in self.graph:\n            if not visited[vertex]:\n                component = []\n                self.dfs_component(vertex, visited, component)\n                components.append(component)\n        return components\n\ng = Graph()\ng.add_edge(0, 1)\ng.add_edge(1, 2)\ng.add_edge(3, 4)\nprint(g.find_components())  # Output: [[0,1,2], [3,4]]",
+      "explanation": "To find connected components, we run DFS starting from unvisited vertices. Each new DFS start marks a new component. This is useful for network analysis and cluster identification.",
+      "timeComplexity": "O(V+E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-5",
+      "language": "java",
+      "title": "Adjacency List with Generic Types",
+      "description": "Java implementation of adjacency list for graph storage and operations",
+      "code": "import java.util.*;\n\npublic class Graph<T> {\n    private Map<T, List<T>> adjacencyList;\n    \n    public Graph() {\n        adjacencyList = new HashMap<>();\n    }\n    \n    public void addVertex(T vertex) {\n        if (!adjacencyList.containsKey(vertex)) {\n            adjacencyList.put(vertex, new LinkedList<>());\n        }\n    }\n    \n    public void addEdge(T source, T destination) {\n        addVertex(source);\n        addVertex(destination);\n        adjacencyList.get(source).add(destination);\n    }\n    \n    public boolean isAdjacent(T source, T destination) {\n        return adjacencyList.containsKey(source) && \n               adjacencyList.get(source).contains(destination);\n    }\n    \n    public List<T> getNeighbors(T vertex) {\n        return adjacencyList.getOrDefault(vertex, new LinkedList<>());\n    }\n    \n    public void display() {\n        for (T vertex : adjacencyList.keySet()) {\n            System.out.println(vertex + \" -> \" + adjacencyList.get(vertex));\n        }\n    }\n}",
+      "explanation": "Generic adjacency list implementation allows any type as vertex. Uses HashMap for vertex lookup and LinkedList for storing neighbors. Efficient for sparse graphs.",
+      "timeComplexity": "O(1) add vertex, O(1) add edge, O(degree) isAdjacent",
+      "spaceComplexity": "O(V+E)"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "topicId": "sigsuspend-function",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is the primary purpose of sigsuspend()?",
+      "back": "sigsuspend() temporarily replaces the signal mask of a process and atomically waits for a signal to be delivered. It allows a process to wait for a specific signal while controlling which signals can be delivered during the wait."
+    },
+    {
+      "id": "fc-2",
+      "front": "Why is sigsuspend() considered atomic?",
+      "back": "The operation of changing the signal mask and waiting for a signal is atomic, meaning no other signals can intervene between these two operations. This prevents race conditions in signal handling."
+    },
+    {
+      "id": "fc-3",
+      "front": "How does sigsuspend() differ from pause()?",
+      "back": "pause() simply waits for any signal, while sigsuspend() can temporarily change the signal mask before waiting. pause() doesn't allow control over which signals are blocked, but sigsuspend() provides fine-grained control."
+    },
+    {
+      "id": "fc-4",
+      "front": "What is a signal mask in UNIX?",
+      "back": "A signal mask is a set of signals that are currently blocked from delivery to a process. Each process has its own signal mask that determines which signals can be caught and which are held pending."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the relationship between sigsuspend() and sigprocmask()?",
+      "back": "sigprocmask() is used to examine/change the signal mask, while sigsuspend() temporarily replaces the current mask with a new one. They are often used together: sigprocmask() to save current mask, sigsuspend() with new mask, then sigprocmask() to restore."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the return value of sigsuspend()?",
+      "back": "sigsuspend() returns -1 when a signal is caught (signal handler returns). It sets errno to EINTR if interrupted by a signal."
+    },
+    {
+      "id": "fc-7",
+      "front": "What signals can be delivered during sigsuspend()?",
+      "back": "Only unblocked signals (not in the signal mask) can be delivered during sigsuspend(). Signals in the mask remain blocked until sigsuspend() returns."
+    },
+    {
+      "id": "fc-8",
+      "front": "Why is sigsuspend() used to protect critical sections?",
+      "back": "It allows blocking signals that could interrupt critical code, waiting for a specific signal, then restoring the original mask - ensuring atomic execution of protected sections."
+    },
+    {
+      "id": "fc-9",
+      "front": "What happens when a signal handler is invoked during sigsuspend()?",
+      "back": "After the signal handler executes and returns, sigsuspend() returns -1 and the original signal mask is automatically restored (before the call)."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is the typical programming pattern using sigsuspend()?",
+      "back": "1) Save current signal mask using sigprocmask()\n2) Block the signals temporarily\n3) Set up signal handler\n4) Do the critical operation\n5) Use sigsuspend() to wait while allowing specific signals\n6) Restore original mask with sigprocmask()"
+    },
+    {
+      "id": "fc-11",
+      "front": "How does sigsuspend() solve the race condition in signal handling?",
+      "back": "It atomically changes the mask and waits, preventing a signal from being delivered between checking a flag and calling pause() - a common race condition called \"lost wakeup\"."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is the lost wakeup problem that sigsuspend() solves?",
+      "back": "If a process checks a flag, sees it's not set, then calls pause() to wait, but the signal arrives just before pause(), the process sleeps forever. sigsuspend() ensures atomic change-mask-and-wait."
+    },
+    {
+      "id": "fc-13",
+      "front": "Can sigsuspend() be interrupted by multiple signals?",
+      "back": "sigsuspend() blocks until any unblocked signal is delivered and its handler returns. The first such signal causes it to return."
+    },
+    {
+      "id": "fc-14",
+      "front": "What header file defines sigsuspend()?",
+      "back": "The sigsuspend() function is defined in <signal.h> header file in POSIX-compliant systems."
+    }
+  ]
+}

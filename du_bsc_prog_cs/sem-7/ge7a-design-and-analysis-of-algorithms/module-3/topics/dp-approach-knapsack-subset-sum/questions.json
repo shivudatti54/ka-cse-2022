@@ -1,0 +1,151 @@
+{
+  "topicId": "dp-approach-knapsack-subset-sum",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between 0/1 Knapsack and Fractional Knapsack. Why can't we use greedy approach for 0/1 Knapsack?",
+      "keyPoints": [
+        "0/1: items cannot be divided; Fractional: items can be taken fractionally",
+        "Greedy works for Fractional by taking highest value/weight ratio items first",
+        "Greedy fails for 0/1 because it may include parts of items leading to suboptimal solutions",
+        "Example: items weight=10,value=60 and weight=20,value=100 with capacity 15 - greedy takes first (value=60) but optimal is second (value=100)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define optimal substructure and overlapping subproblems with reference to Knapsack problem.",
+      "keyPoints": [
+        "Optimal substructure: optimal solution contains optimal solutions to subproblems",
+        "Knapsack: best value for capacity w using first i items uses best solution for smaller capacity or smaller item set",
+        "Overlapping subproblems: same subproblems solved multiple times in recursive approach",
+        "DP solves this by storing results in table"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write the pseudocode for 0/1 Knapsack using bottom-up DP approach.",
+      "keyPoints": [
+        "Initialize DP table of size (n+1) x (W+1) with zeros",
+        "Base case: DP[0][w] = 0 for all w, DP[i][0] = 0 for all i",
+        "For i from 1 to n, for w from 1 to W",
+        "Apply recurrence: if wt[i-1] \u2264 w then DP[i][w] = max(DP[i-1][w], val[i-1] + DP[i-1][w-wt[i-1]]) else DP[i][w] = DP[i-1][w]",
+        "Return DP[n][W]"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the Subset Sum problem. How is it related to 0/1 Knapsack?",
+      "keyPoints": [
+        "Subset Sum: find if any subset of given numbers sums to target S",
+        "Similar to 0/1 Knapsack where all values = 1 and target = knapsack capacity",
+        "DP state: DP[i][sum] = true if subset of first i elements sums to sum",
+        "Recurrence: DP[i][sum] = DP[i-1][sum] OR DP[i-1][sum-arr[i-1]]",
+        "Time: O(nS), Space: O(nS)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is space optimization in 0/1 Knapsack? Why do we traverse capacity in reverse order?",
+      "keyPoints": [
+        "Space optimization reduces 2D table O(nW) to 1D array O(W)",
+        "Traverse from W down to 0 (reverse order)",
+        "Reverse ensures each item is used only once",
+        "Going forward would overwrite values needed for current item, causing reuse",
+        "1D: for w from W down to wt[i-1]: dp[w] = max(dp[w], val[i-1] + dp[w-wt[i-1]])"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Compare memoization (top-down) and tabulation (bottom-up) approaches for solving 0/1 Knapsack.",
+      "keyPoints": [
+        "Memoization: recursive approach with caching, starts from main problem, solves only needed subproblems",
+        "Tabulation: iterative approach, builds table from base cases, solves all subproblems",
+        "Memoization may have recursion overhead, tabulation may compute unnecessary states",
+        "Both give same time complexity O(nW), space differs based on implementation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Given n=3, W=5, values=[60,100,120], weights=[10,20,30]. What is the maximum value using 0/1 Knapsack? Show the DP table.",
+      "keyPoints": [
+        "Only items with weight \u22645 can fit - none of them individually fit",
+        "DP table shows maximum value = 0",
+        "No combination fits within capacity 5",
+        "Answer: 0 (or empty set is the only valid selection)",
+        "This demonstrates importance of checking weight constraints"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Solve the 0/1 Knapsack problem for the following instance using DP: n=4, W=8, values=[10, 10, 12, 18], weights=[2, 3, 4, 5]. Show complete DP table and trace the solution.",
+      "keyPoints": [
+        "Initialize 5x9 table with zeros",
+        "Fill row by row using recurrence relation",
+        "DP[4][8] = 18 (optimal value)",
+        "Traceback: start from cell (4,8), determine if item 4 included",
+        "Complete table shows each decision at each state",
+        "Solution: Select items with weights 3 and 5 (values 10+18=28) or weights 2+4+2=8 (10+12=22) - verify optimal"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write and explain the algorithm to find all subsets that sum to a given target S using dynamic programming. Also compute all subsets for set {2,3,5,7,10} that sum to 12.",
+      "keyPoints": [
+        "Create DP table where each cell stores list of subsets",
+        "DP[i][sum] contains subsets using first i elements that sum to sum",
+        "For each element, either include or exclude",
+        "Alternatively, backtrack through boolean DP table",
+        "For {2,3,5,7,10} summing to 12: {2,10}, {5,7}, {2,3,7}, {2,5,5(not allowed)}, {2,3,2,5(not unique)} - actual: {2,10}, {5,7}, {2,3,7}",
+        "Show complete subset enumeration process"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Prove that 0/1 Knapsack has optimal substructure property. Also explain how you would modify the solution for the bounded knapsack problem where each item has a limited quantity.",
+      "keyPoints": [
+        "Optimal substructure proof: consider optimal solution for n items and capacity W",
+        "If item n is not in optimal solution, then solution must be optimal for first n-1 items and capacity W",
+        "If item n is included, remaining must be optimal for first n-1 items with capacity W-wn",
+        "Proof by contradiction: if sub-solution wasn't optimal, replacing it would improve overall solution",
+        "Bounded Knapsack: treat each copy as separate item (inefficient) or use DP with item count dimension",
+        "3D DP: DP[i][w][c] = max value using first i items with capacity w and c copies of current item",
+        "Or convert to binary representation of quantities for optimization"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a program (in C/Python/Java) to implement 0/1 Knapsack using both recursive memoization and bottom-up tabulation. Compare their performance for different inputs.",
+      "keyPoints": [
+        "Memoization: use dictionary/cache, recursive call with (i,w) parameters",
+        "Tabulation: nested loops building 2D table",
+        "Code should include: function definitions, base cases, recurrence implementation",
+        "For large n, memoization may outperform (solves fewer subproblems)",
+        "For small n, tabulation may be faster (no recursion overhead)",
+        "Space: memoization uses O(nW) for cache + recursion stack, tabulation always O(nW)",
+        "Show sample output comparing both approaches"
+      ],
+      "marks": 10
+    }
+  ]
+}

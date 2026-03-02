@@ -1,0 +1,162 @@
+{
+  "topicId": "multiplication-of-large-integers-and-strassens-matrix-multiplication",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the divide-and-conquer approach used in Karatsuba multiplication with an example for 2-digit numbers.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Split each n-digit number into two halves: a = a₁·10^(n/2) + a₀ and b = b₁·10^(n/2) + b₀",
+        "Instead of computing 4 products (a₁b₁, a₁b₀, a₀b₁, a₀b₀), Karatsuba computes 3: z₂=a₁b₁, z₀=a₀b₀, z₁=(a₁+a₀)(b₁+b₀)",
+        "The middle term a₁b₀ + a₀b₁ = z₁ - z₂ - z₀",
+        "Result = z₂·10^n + z₁·10^(n/2) + z₀",
+        "For example: 12 × 34: a₁=1, a₀=2, b₁=3, b₀=4, then compute z₂=1×3=3, z₀=2×4=8, z₁=(1+2)(3+4)=3×7=21, so result = 3×100 + 21×10 + 8 = 408"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "State and prove the time complexity of Karatsuba multiplication algorithm.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Karatsuba uses divide-and-conquer with recurrence: T(n) = 3T(n/2) + O(n) for n > 1, T(n) = O(1) for n ≤ 1",
+        "Using Master Theorem: a=3, b=2, f(n)=n",
+        "Since n^(log₂3) = n^1.585 > f(n) = n, we have T(n) = Θ(n^(log₂3))",
+        "Therefore, T(n) = O(n^1.585) ≈ O(n^1.585)",
+        "This is asymptotically better than grade-school multiplication O(n²)"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List and define the 7 intermediate matrices (M1 to M7) computed in Strassen's matrix multiplication.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Given A = [A₁₁ A₁₂; A₂₁ A₂₂] and B = [B₁₁ B₁₂; B₂₁ B₂₂], partition as [A B; C D] and [E F; G H]",
+        "M1 = A × (F - H)",
+        "M2 = (A + B) × H",
+        "M3 = (C + D) × E",
+        "M4 = D × (G - E)",
+        "M5 = (A + D) × (E + H)",
+        "M6 = (B - D) × (G + H)",
+        "M7 = (A - C) × (E + F)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Derive the time complexity of Strassen's matrix multiplication algorithm.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Strassen uses divide-and-conquer with recurrence: T(n) = 7T(n/2) + O(n²) for n > 1",
+        "Here a=7, b=2, f(n)=n²",
+        "Since n^(log₂7) = n^2.807 > f(n) = n², by Master Theorem",
+        "T(n) = Θ(n^(log₂7)) = Θ(n^2.807)",
+        "This is better than naive O(n³) for large matrices"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the practical limitations of Strassen's algorithm despite its better asymptotic complexity?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "High constant factors: The algorithm involves 18 matrix additions/subtractions per level",
+        "Memory overhead: Requires storing 7 intermediate matrices of size n/2 × n/2",
+        "Slower for small matrices: Typically slower than naive O(n³) for n < 16 to 32",
+        "Numerical stability: More prone to rounding errors due to more arithmetic operations",
+        "Complex implementation: More difficult to implement correctly and optimize"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Compare Karatsuba multiplication and Strassen's matrix multiplication in terms of their approach and complexity improvements.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Both use divide-and-conquer paradigm",
+        "Karatsuba: Splits integer into halves, reduces 4 multiplications to 3 → O(n^1.585)",
+        "Strassen: Splits matrix into quadrants, reduces 8 multiplications to 7 → O(n^2.807)",
+        "Karatsuba is used practically for large integer multiplication (e.g., cryptographic libraries)",
+        "Strassen has more overhead and is rarely used in practice due to constant factor issues",
+        "Both are theoretical breakthroughs showing O(n²) and O(n³) are not optimal"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the Strassen's matrix multiplication algorithm in detail. Show how the 7 intermediate matrices are computed and how the final result matrix is obtained from them. Also derive its time complexity.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Given A and B as 2×2 block matrices: A=[A B; C D], B=[E F; G H]",
+        "Compute M1 to M7 with formulas as given in answer 3",
+        "Combine results: C₁₁ = M₄ + M₅, C₁₂ = M₁ + M₂, C₂₁ = M₃ + M₆, C₂₂ = M₁ + M₃ + M₅ - M₇",
+        "Recurrence: T(n) = 7T(n/2) + O(n²)",
+        "Solving: T(n) = Θ(n^log₂7) ≈ Θ(n^2.807) using Master Theorem",
+        "Compare with naive O(n³) - improvement by factor of n^(3-2.807) ≈ n^0.193",
+        "Practical considerations: overhead, memory, small matrix limitations"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the divide-and-conquer approach for multiplying large integers. Explain Karatsuba algorithm with a detailed example and derive its complexity.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Traditional grade-school: O(n²) by multiplying each digit of first number by each digit of second",
+        "Karatsuba insight: Compute result using only 3 multiplications instead of 4",
+        "Algorithm: Split n-digit numbers a and b as a=a₁·10^(n/2)+a₀ and b=b₁·10^(n/2)+b₀",
+        "Compute: z₂=a₁b₁ (high), z₀=a₀b₀ (low), z₁=(a₁+a₀)(b₁+b₀)-z₂-z₀ (middle)",
+        "Result = z₂·10^n + z₁·10^(n/2) + z₀",
+        "Example with specific numbers showing detailed calculation",
+        "Recurrence: T(n)=3T(n/2)+O(n), solving to O(n^log₂3)≈O(n^1.585)",
+        "Comparison: For n=1024, Karatsuba ~1024^1.585 = ~130,000 vs grade-school 1024²=1,048,576 operations"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the naive divide-and-conquer matrix multiplication approach and show how Strassen's algorithm improves upon it. What are the trade-offs in using Strassen's algorithm?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Naive approach: Divide A and B into 4 quadrants each, compute C₁₁=E·G+C·F, etc.",
+        "This requires 8 recursive matrix multiplications: O(n³) complexity",
+        "Strassen's improvement: Use 7 clever combinations (M1-M7) to get same result with only 7 multiplications",
+        "Time complexity improved from O(n³) to O(n^2.807)",
+        "Trade-offs: More matrix additions/subtractions (18 instead of 4), higher constant factors",
+        "Practical issues: Only beneficial for large matrices (n > 32 typically), more memory required",
+        "In practice, most libraries use optimized O(n³) or Strassen only for very large matrices",
+        "Coppersmith-Winograd and later algorithms push exponent further but with even higher constants"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the evolution of fast multiplication algorithms from grade-school to FFT-based methods. What determines the choice of algorithm for a given problem size?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Grade-school: O(n²) - simple but slow for large n",
+        "Karatsuba: O(n^1.585) - breakthrough showing O(n²) not optimal, practical for moderate n",
+        "Toom-Cook: Generalization of Karatsuba, O(n^log_k(2k-1)) for k-way split",
+        "FFT-based: O(n log n) - uses Fast Fourier Transform to convert to convolution",
+        "Choice depends on: Input size, hardware, implementation complexity",
+        "For small n (< 50): Grade-school best due to low overhead",
+        "For medium n (50-1000): Karatsuba or Toom-Cook preferred",
+        "For very large n (>10000): FFT-based methods dominate",
+        "Modern libraries use hybrid approaches combining multiple methods",
+        "The 'knuth' algorithm in GNU MP uses this adaptive strategy"
+      ]
+    }
+  ]
+}

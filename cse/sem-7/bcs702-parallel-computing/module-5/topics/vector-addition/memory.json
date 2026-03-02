@@ -1,0 +1,80 @@
+{
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "CUDA Memory Transfer Mnemonic",
+      "content": "H2D = Host to Device (cudaMemcpy with cudaMemcpyHostToDevice), D2H = Device to Host. Think: 'H to D, write to device; D to H, harvest results' - always copy inputs H2D, compute on GPU, copy results D2H."
+    },
+    {
+      "id": "m-2",
+      "title": "Thread Index Formula",
+      "content": "GLOBAL INDEX = blockIdx \u00d7 blockDim + threadIdx. Remember: 'Big Block times Dim plus Tiny Thread' - blockIdx (big groups) determines base offset, threadIdx (within block) adds local offset."
+    },
+    {
+      "id": "m-3",
+      "title": "Kernel Launch Syntax",
+      "content": "kernel_name<<<gridDim, blockDim>>>(args). Think: 'Grid groups blocks, Block holds threads' - first param is number of blocks (grid), second is threads per block."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "CUDA",
+      "expansion": "Compute Unified Device Architecture",
+      "usage": "NVIDIA's parallel computing platform and API for GPU programming."
+    },
+    {
+      "term": "SIMD",
+      "expansion": "Single Instruction Multiple Data",
+      "usage": "Execution model where one instruction operates on multiple data elements simultaneously - how GPUs process vector addition."
+    },
+    {
+      "term": "SM",
+      "expansion": "Streaming Multiprocessor",
+      "usage": "The GPU processing unit that executes warps of threads. Vector addition distributes work across multiple SMs."
+    },
+    {
+      "term": "PCIe",
+      "expansion": "Peripheral Component Interconnect Express",
+      "usage": "Bus used for data transfer between host CPU and GPU device. Bandwidth limit affects vector addition performance for large vectors."
+    },
+    {
+      "term": "GPU",
+      "expansion": "Graphics Processing Unit",
+      "usage": "The device that executes parallel CUDA kernels for vector addition."
+    },
+    {
+      "term": "H2D",
+      "expansion": "Host to Device",
+      "usage": "Direction of cudaMemcpy for copying input vectors a and b from CPU to GPU memory."
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Thread-Block-Grid Mapping",
+      "visualization": "Imagine a 2D grid of Post-it notes: Grid = entire bulletin board, each Block = a group of Post-its (thread cluster), each Post-it = one thread. Each thread knows its Block position (blockIdx) and position within Block (threadIdx), giving unique global index for array element."
+    },
+    {
+      "concept": "Memory Coalescing",
+      "visualization": "Think of 32 swimmers (warp) diving in sequence into consecutive lanes (memory addresses). They dive together (SIMD) and emerge together - efficient! Random access is like swimmers diving into random lanes one-by-one - very inefficient."
+    },
+    {
+      "concept": "Device-Host Memory Separation",
+      "visualization": "Draw two separate rooms: Host (CPU) Room has original arrays a,b and empty result c. Device (GPU) Room has copies. Operations: (1) Copy a,b to GPU Room, (2) Workers in GPU Room do addition, (3) Copy result c back to Host Room. Rooms don't share addresses!"
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Vector Addition as Factory Assembly Line",
+      "analogy": "Imagine a factory assembly line: Input array A has parts, array B has other parts. Each GPU thread is a worker station. Worker 0 assembles part 0 from A[0]+B[0], Worker 1 does [1], etc. All work simultaneously. With stride pattern, after completing assigned tasks, workers check for more work - efficient load balancing."
+    },
+    {
+      "concept": "Grid and Block as Organization Hierarchy",
+      "analogy": "Think of grading 10,000 exam papers: Each Block = one teaching assistant (TA), each TA manages BlockDim student graders (threads). blockIdx tells which TA, threadIdx tells which grader. Global index = TA number \u00d7 students_per_TA + grader_number. Multiple TAs work in parallel, each TA's graders work in parallel."
+    },
+    {
+      "concept": "cudaMalloc as Hotel Room Booking",
+      "analogy": "cudaMalloc is like reserving hotel rooms on the GPU 'Resort' (device). You get room numbers (pointers) but can't stay there yourself - only GPU workers can use those rooms. cudaMemcpy is the shuttle bus\u8f93\u9001 guests (data) to/from the resort. cudaFree is checking out. Don't forget to checkout or you'll have memory leaks!"
+    }
+  ],
+  "topicId": "vector-addition"
+}

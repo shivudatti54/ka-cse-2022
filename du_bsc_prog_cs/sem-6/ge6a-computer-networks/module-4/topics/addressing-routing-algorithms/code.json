@@ -1,0 +1,45 @@
+{
+  "topicId": "addressing-routing-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Dijkstra's Shortest Path Algorithm",
+      "description": "Algorithm to find shortest path from source to all other nodes in a weighted graph, used by OSPF",
+      "code": "ALGORITHM Dijkstra(Graph, Source)\nBEGIN\n  FOR each vertex v IN Graph\n    distance[v] = INFINITY\n    previous[v] = NULL\n    visited[v] = FALSE\n  END FOR\n\n  distance[Source] = 0\n\n  FOR i = 1 TO numberOfVertices\n    u = vertex with minimum distance[u] AND NOT visited[u]\n    visited[u] = TRUE\n\n    FOR each neighbor v OF u\n      IF NOT visited[v] THEN\n        alt = distance[u] + weight(u, v)\n        IF alt < distance[v] THEN\n          distance[v] = alt\n          previous[v] = u\n        END IF\n      END IF\n    END FOR\n  END FOR\n\n  RETURN distance, previous\nEND",
+      "explanation": "Dijkstra's algorithm starts with source node distance 0 and all others infinity. It repeatedly selects the unvisited node with smallest distance, marks it visited, and updates distances to its neighbors if a shorter path is found through the current node.",
+      "timeComplexity": "O(V\u00b2) with array, O(E log V) with priority queue",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Bellman-Ford Algorithm",
+      "description": "Distance vector routing algorithm that can handle negative edge weights, used by RIP",
+      "code": "ALGORITHM BellmanFord(Graph, Source)\nBEGIN\n  FOR each vertex v IN Graph\n    distance[v] = INFINITY\n    predecessor[v] = NULL\n  END FOR\n\n  distance[Source] = 0\n\n  // Relax edges V-1 times\n  FOR i = 1 TO |V| - 1\n    FOR each edge (u, v) IN Graph with weight w\n      IF distance[u] + w < distance[v] THEN\n        distance[v] = distance[u] + w\n        predecessor[v] = u\n      END IF\n    END FOR\n  END FOR\n\n  // Check for negative weight cycles\n  FOR each edge (u, v) IN Graph with weight w\n    IF distance[u] + w < distance[v] THEN\n      RETURN \"Negative cycle detected\"\n    END IF\n  END FOR\n\n  RETURN distance, predecessor\nEND",
+      "explanation": "Bellman-Ford relaxes all edges |V|-1 times to find shortest paths. It can detect negative weight cycles which would cause infinite loops in routing. The algorithm is simpler but slower than Dijkstra's.",
+      "timeComplexity": "O(V \u00d7 E)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Routing Table Lookup - Longest Prefix Match",
+      "description": "Demonstrates how routers perform longest prefix match to determine next hop",
+      "code": "def longest_prefix_match(ip_address, routing_table):\n    \"\"\"\n    Find the best matching route in routing table using LPM\n    \n    Args:\n        ip_address: Destination IP (string)\n        routing_table: List of dicts with 'network', 'mask', 'next_hop'\n    \n    Returns:\n        Next hop IP or None if no match\n    \"\"\"\n    # Convert IP to 32-bit integer\n    ip_int = ip_to_int(ip_address)\n    \n    best_match = None\n    longest_mask = -1\n    \n    for route in routing_table:\n        network_int = ip_to_int(route['network'])\n        mask_int = ip_to_int(route['mask'])\n        \n        # Check if network portion matches\n        if (ip_int & mask_int) == (network_int & mask_int):\n            # Count bits in mask (prefix length)\n            prefix_len = count_bits(mask_int)\n            \n            # Choose route with longest prefix\n            if prefix_len > longest_mask:\n                longest_mask = prefix_len\n                best_match = route['next_hop']\n    \n    return best_match\n\ndef ip_to_int(ip):\n    \"\"\"Convert dotted decimal IP to integer\"\"\"\n    octets = list(map(int, ip.split('.')))\n    return (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]\n\ndef count_bits(n):\n    \"\"\"Count number of 1s in binary representation\"\"\"\n    count = 0\n    while n:\n        count += n & 1\n        n >>= 1\n    return count\n\n# Example usage\nrouting_table = [\n    {'network': '192.168.1.0', 'mask': '255.255.255.0', 'next_hop': '10.0.0.1'},    # /24\n    {'network': '192.168.0.0', 'mask': '255.255.0.0', 'next_hop': '10.0.0.2'},      # /16\n    {'network': '0.0.0.0', 'mask': '0.0.0.0', 'next_hop': '10.0.0.254'}             # default\n]\n\ndest_ip = '192.168.1.50'\nnext_hop = longest_prefix_match(dest_ip, routing_table)\nprint(f\"For {dest_ip}, forward to: {next_hop}\")  # Output: 10.0.0.1",
+      "explanation": "This code demonstrates the Longest Prefix Match algorithm used by routers. When multiple routes match, the router chooses the one with the longest (most specific) subnet mask. In the example, the /24 route is chosen over /16 because it's more specific.",
+      "timeComplexity": "O(n) where n is number of routes in table",
+      "spaceComplexity": "O(1) besides input table"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Distance Vector Routing Update Process",
+      "description": "Demonstrates how routers exchange and update routing information in distance vector protocols like RIP",
+      "code": "ALGORITHM DistanceVectorUpdate(myRoutingTable, neighborTable, neighborAddress)\nBEGIN\n  FOR each destination d IN neighborTable\n    // Add cost of link to neighbor (usually 1 for RIP)\n    newCost = neighborTable[d].cost + linkCostTo(neighborAddress)\n    \n    // Check if we have a route to this destination\n    IF d NOT IN myRoutingTable THEN\n      // New destination discovered\n      myRoutingTable[d] = Route(\n        destination: d,\n        nextHop: neighborAddress,\n        cost: newCost,\n        interface: interfaceTo(neighborAddress)\n      )\n    ELSE IF newCost < myRoutingTable[d].cost THEN\n      // Found shorter path through this neighbor\n      myRoutingTable[d].nextHop = neighborAddress\n      myRoutingTable[d].cost = newCost\n      myRoutingTable[d].interface = interfaceTo(neighborAddress)\n    ELSE IF myRoutingTable[d].nextHop == neighborAddress THEN\n      // Our current next hop is this neighbor\n      // Update cost (may have changed)\n      myRoutingTable[d].cost = newCost\n    END IF\n  END FOR\n\n  // Trigger update to other neighbors if table changed\n  IF routingTableChanged THEN\n    broadcastUpdate()\n  END IF\nEND\n\n// Split Horizon with Poison Reverse\nFUNCTION SendUpdate(destination, neighbor)\nBEGIN\n  IF nextHop[neighbor] == destination THEN\n    // Don't advertise back to source\n    sendCost = INFINITY  // Poison reverse\n  ELSE\n    sendCost = cost[ destination]\n  END IF\n  send to neighbor: destination, sendCost\nEND",
+      "explanation": "This shows the distance vector update process. When a router receives a neighbor's routing table, it adds the link cost and updates its own table if a shorter path is found. Split horizon prevents advertising routes back to where they were learned from, while poison reverse explicitly sets those routes to infinity.",
+      "timeComplexity": "O(d) where d is number of destinations",
+      "spaceComplexity": "O(d) for routing table"
+    }
+  ]
+}

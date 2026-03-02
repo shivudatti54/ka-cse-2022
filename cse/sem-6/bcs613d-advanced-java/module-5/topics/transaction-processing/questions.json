@@ -1,0 +1,251 @@
+{
+  "topicId": "transaction-processing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the term 'transaction' in the context of JDBC. What are its key characteristics?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Focus on the definition and key characteristics of database transactions",
+      "keyPoints": [
+        "A transaction is a logical unit of work containing one or more database operations",
+        "Transactions ensure atomicity - all operations succeed or all fail",
+        "Transactions maintain data consistency and integrity",
+        "Multiple SQL statements can be grouped into a single transaction",
+        "Transactions can be committed (made permanent) or rolled back (undone)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain the four ACID properties of database transactions.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "ACID is an acronym - remember each property and its significance",
+      "keyPoints": [
+        "Atomicity: All operations complete successfully or none do",
+        "Consistency: Database moves from one valid state to another",
+        "Isolation: Concurrent transactions appear to execute serially",
+        "Durability: Once committed, changes persist even after system failure"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of setAutoCommit(false) in JDBC? When should it be used?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think about scenarios where multiple SQL operations need to be treated as a single unit",
+      "keyPoints": [
+        "setAutoCommit(false) disables automatic commit mode",
+        "All SQL statements are executed as part of a single transaction",
+        "It should be used when multiple database operations need to be grouped atomically",
+        "Developer has control over when to commit or rollback using commit() and rollback() methods",
+        "Default auto-commit mode commits each statement immediately"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the difference between commit() and rollback() methods in JDBC with use cases.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Remember: commit saves changes, rollback reverts changes",
+      "keyPoints": [
+        "commit() makes all changes permanent in the database since last commit/rollback",
+        "rollback() undoes all changes made since last commit/rollback",
+        "commit() is used when all operations succeed",
+        "rollback() is used when any operation fails or error occurs",
+        "Both end the current transaction and start a new one"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are savepoints in JDBC? How do they improve transaction management?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think of savepoints as checkpoints within a transaction",
+      "keyPoints": [
+        "Savepoints are markers within a transaction that allow partial rollback",
+        "Created using Connection.setSavepoint() or setSavepoint(String name)",
+        "Allow rolling back to a specific point without losing entire transaction",
+        "Useful for complex transactions with multiple logical steps",
+        "Released using Connection.releaseSavepoint(savepoint)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What happens if auto-commit is enabled (default) during a batch update operation?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Consider what happens when one statement in a batch fails with auto-commit ON",
+      "keyPoints": [
+        "Each statement is committed individually after execution",
+        "If one statement fails, previous statements cannot be rolled back",
+        "No atomicity guarantee for the batch operation",
+        "May lead to partial updates and data inconsistency",
+        "Not suitable for dependent operations that must succeed together"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain in detail the transaction management process in JDBC with a complete code example showing proper error handling.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Include complete code with proper exception handling and resource cleanup",
+      "keyPoints": [
+        "Load JDBC driver and establish connection",
+        "Disable auto-commit using setAutoCommit(false)",
+        "Create Statement/PreparedStatement objects",
+        "Execute SQL operations within try-catch block",
+        "Call commit() in try block after successful operations",
+        "Call rollback() in catch block on exception",
+        "Finally block to reset auto-commit to true and close connection",
+        "Use try-with-resources for automatic resource management"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the various transaction isolation levels in JDBC. Explain the concurrency problems each level addresses.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Remember the four standard isolation levels and their characteristics",
+      "keyPoints": [
+        "TRANSACTION_READ_UNCOMMITTED: Allows dirty reads, non-repeatable reads, phantom reads",
+        "TRANSACTION_READ_COMMITTED: Prevents dirty reads but allows non-repeatable reads",
+        "TRANSACTION_REPEATABLE_READ: Prevents dirty and non-repeatable reads but allows phantom reads",
+        "TRANSACTION_SERIALIZABLE: Prevents all three concurrency problems",
+        "Set using Connection.setTransactionIsolation(int level)",
+        "Higher isolation reduces concurrency but improves data integrity"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a JDBC program to perform a bank fund transfer from account A to account B, ensuring atomicity. Include proper error handling and rollback mechanism.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Consider edge cases like insufficient balance and network failures",
+      "keyPoints": [
+        "Get connection and disable auto-commit",
+        "Write SQL to deduct amount from source account",
+        "Write SQL to add amount to destination account",
+        "Write transaction record for audit trail",
+        "Use try-catch-finally structure",
+        "Commit transaction only if all operations succeed",
+        "Rollback in catch block if any operation fails",
+        "Reset auto-commit in finally block",
+        "Handle insufficient balance scenario"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare local transactions with distributed transactions in JDBC. When would you use each type?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Think about scenarios requiring operations across multiple databases",
+      "keyPoints": [
+        "Local transactions: Operate on single database, managed by that database",
+        "Distributed transactions: Span multiple databases or resources, require transaction manager",
+        "Local uses JDBC's standard transaction control (commit/rollback)",
+        "Distributed requires JTA (Java Transaction API) and XA protocol",
+        "Local is simpler with lower overhead",
+        "Distributed needed for ACID across multiple systems (e.g., two-phase commit)",
+        "XADataSource for distributed transaction enlistment"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Consider a scenario: Account A has Rs. 5000, Account B has Rs. 3000. A transfer of Rs. 2000 is initiated. Show the state of both accounts after each SQL operation if auto-commit is FALSE and the program crashes after the second UPDATE. Also explain if savepoints could help.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Trace the state changes step by step considering what happens at each point",
+      "keyPoints": [
+        "Initial state: A=5000, B=3000",
+        "After first UPDATE (deduct): A=3000, B=3000",
+        "After second UPDATE (add): A=3000, B=5000",
+        "With rollback: Both revert to initial state",
+        "With savepoint after first update: A=3000, B=3000 remains",
+        "Savepoint allows partial rollback to known good state",
+        "Without transactions: A=3000, B=5000 - inconsistent state persists"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "Given the following transaction sequence in a JDBC program:\n\n1. Connection con = DriverManager.getConnection(url);\n2. con.setAutoCommit(false);\n3. Statement stmt = con.createStatement();\n4. stmt.executeUpdate(\"UPDATE account SET balance = balance - 1000 WHERE id=1\");\n5. Savepoint sp1 = con.setSavepoint(\"point1\");\n6. stmt.executeUpdate(\"UPDATE account SET balance = balance + 1000 WHERE id=2\");\n7. stmt.executeUpdate(\"INSERT INTO log VALUES ('transaction1')\");\n8. con.commit();\n\nIf execution stops after step 6 due to network failure, explain the final state. If step 7 fails, show how to rollback to savepoint sp1.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Understand the difference between committed, uncommitted, and rolled-back states",
+      "keyPoints": [
+        "If stops after step 6: First UPDATE executed, second UPDATE executed but not committed",
+        "Uncommitted changes not visible to other transactions in READ_COMMITTED or higher",
+        "On reconnection: Transaction is still active, needs rollback or commit",
+        "If step 7 fails: con.rollback(sp1) reverts to state after step 4",
+        "After rollback to sp1: First UPDATE remains (balance deducted from account 1)",
+        "Then can either fix error and retry or rollback entire transaction",
+        "Savepoint allows granular recovery without losing entire transaction work"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "An e-commerce system processes orders with the following operations:\n- INSERT into orders table\n- UPDATE inventory table (decrement stock)\n- INSERT into payment table\n- UPDATE customer loyalty points\n\nDesign the transaction logic assuming: (a) All operations must succeed, (b) Inventory update fails at step 2, (c) After rollback, the company wants to retry only the payment processing. Explain how savepoints help in scenario (c).",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Analyze which operations are dependent and which can be independent",
+      "keyPoints": [
+        "Set auto-commit false at start",
+        "Create savepoint after orders insert (sp1)",
+        "Create savepoint after inventory update (sp2)",
+        "On inventory failure at step 2: rollback() reverts all changes",
+        "With savepoint sp1 after orders: Can rollback to sp1",
+        "Retry payment processing from orders already committed",
+        "Savepoint allows partial success: orders placed, inventory unchanged",
+        "Trade-off: Must handle partial completion logically in application code",
+        "Better approach: Separate into independent transactions if logically valid"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "What is a deadlock in database transactions? How does JDBC help in detecting and handling deadlock situations?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Deadlocks are handled at database level, not JDBC level directly",
+      "keyPoints": [
+        "Deadlock occurs when two or more transactions wait indefinitely for each other to release locks",
+        "JDBC does not directly detect deadlocks - database handles this",
+        "Database typically uses timeout mechanism to detect deadlocks",
+        "SQLException may include SQL state indicating deadlock (SQLSTATE = '40001')",
+        "Application should implement retry logic on deadlock detection",
+        "Use shorter transactions and consistent access order to prevent deadlocks"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "long",
+      "question": "Explain the concept of transaction nesting in JDBC. Can JDBC truly support nested transactions? Justify your answer.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Distinguish between savepoints and true nested transactions",
+      "keyPoints": [
+        "JDBC does NOT support true nested transactions",
+        "Savepoints provide appearance of nesting but not true nesting",
+        "setSavepoint() creates named savepoints within single transaction",
+        "Nested commits are not allowed - commit() commits entire transaction",
+        "Rollback to savepoint doesn't end the transaction",
+        "True nested transactions would allow inner commit independent of outer",
+        "Savepoints are the closest JDBC equivalent to nested transactions",
+        "Some frameworks layer true nesting on top of JDBC using separate connections"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "topicId": "resolution",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Binary Resolution Algorithm",
+      "description": "Basic resolution rule for two clauses in propositional logic",
+      "code": "FUNCTION Resolve(C1, C2):\n FOR each literal L1 in C1:\n FOR each literal L2 in C2:\n IF L1 = complement(L2):\n // Found complementary pair\n Resolvent = (C1 - {L1}) ∪ (C2 - {L2})\n RETURN Resolvent\n RETURN null // No resolvent possible\n\nFUNCTION complement(L):\n IF L is positive: RETURN negation(L)\n ELSE: RETURN positive_form(L)",
+      "explanation": "Binary resolution checks all pairs of complementary literals between two clauses. When found, it removes them and combines remaining literals to form resolvent. Returns null if no resolution possible.",
+      "timeComplexity": "O(n × m)",
+      "spaceComplexity": "O(n + m)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Unification Algorithm",
+      "description": "Computes MGU for two literals in first-order logic",
+      "code": "FUNCTION Unify(L1, L2, θ):\n IF θ is failure: RETURN failure\n IF L1 = L2: RETURN θ\n IF L1 is variable:\n RETURN UnifyVar(L1, L2, θ)\n IF L2 is variable:\n RETURN UnifyVar(L2, L1, θ)\n IF L1 or L2 are compound terms:\n IF functor(L1) ≠ functor(L2): RETURN failure\n RETURN Unify(args(L1), args(L2), θ)\n RETURN failure\n\nFUNCTION UnifyVar(var, term, θ):\n IF var in θ: RETURN Unify(substitute(var, θ), term, θ)\n IF var occurs in term: RETURN failure // Occurs check\n RETURN compose(θ, {var/term})",
+      "explanation": "Recursive unification algorithm with occurs check. Handles variables, constants, and compound terms. Returns MGU (substitution) or failure if unification impossible.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Resolution Refutation Prover",
+      "description": "Main algorithm for automated theorem proving using resolution",
+      "code": "FUNCTION ResolutionRefutation(KB, Theorem):\n // Step 1: Convert to CNF\n CNF_KB = ToCNF(KB)\n Negated = ToCNF(NEGATE(Theorem))\n Clauses = CNF_KB ∪ {Negated}\n \n // Step 2: Resolution loop\n NEW = true\n WHILE NEW:\n NEW = false\n NEW_CLAUSES = []\n \n FOR each pair (Ci, Cj) in Clauses:\n Resolvent = Resolve(Ci, Cj)\n \n IF Resolvent = empty_clause:\n RETURN PROOF_FOUND // Contradiction!\n \n IF Resolvent is not subsumed and Resolvent not in Clauses:\n NEW_CLAUSES.append(Resolvent)\n NEW = true\n \n Clauses = Clauses ∪ NEW_CLAUSES\n \n RETURN NO_PROOF // Could not derive contradiction",
+      "explanation": "Main resolution refutation algorithm. Converts KB and negated theorem to CNF, then iteratively resolves all clause pairs until empty clause found (proving theorem) or exhausts possibilities (cannot prove).",
+      "timeComplexity": "Exponential worst case",
+      "spaceComplexity": "Exponential"
+    },
+    {
+      "id": "code-4",
+      "language": "prolog-like",
+      "title": "Horn Clause Resolution (SLD Resolution)",
+      "description": "Logic programming resolution strategy used by Prolog",
+      "code": "// Knowledge Base (Horn Clauses)\nparent(john, mary).\nparent(john, tom).\nparent(mary, ann).\n\nancestor(X, Y) :- parent(X, Y).\nancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).\n\n// Query: ancestor(john, ann)?\n// SLD Resolution trace:\n// Goal: ancestor(john, ann)\n// 1. Match with rule 1: parent(john, ann) - FAIL\n// 2. Match with rule 2: parent(john, Z), ancestor(Z, ann)\n// → parent(john, mary) succeeds, Z=mary\n// → Goal becomes: ancestor(mary, ann)\n// → Matches rule 1: parent(mary, ann) - SUCCEEDS!\n// → PROOF: ancestor(john, ann) is TRUE",
+      "explanation": "SLD (Selective Linear Definite) resolution is the foundation of Prolog. It uses definite Horn clauses and performs goal-reduction through backtracking. Queries are proved by finding matching facts or rules recursively.",
+      "timeComplexity": "Linear in proof depth (for fixed KB)",
+      "spaceComplexity": "Linear"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "CNF Conversion Algorithm",
+      "description": "Complete procedure to convert first-order formula to clause form",
+      "code": "FUNCTION ToCNF(formula):\n // Step 1: Remove implications and biconditional\n F1 = RemoveImplications(formula)\n F2 = RemoveBiconditional(F1)\n \n // Step 2: Move negations inward (NNF)\n F3 = NegateInward(F2)\n \n // Step 3: Standardize apart (rename variables)\n F4 = Standardize(F3)\n \n // Step 4: Skolemize (remove existential quantifiers)\n F5 = Skolemize(F4)\n \n // Step 5: Drop universal quantifiers\n F6 = DropUniversal(F5)\n \n // Step 6: Convert to CNF (distribute ∨ over ∧)\n F7 = Distribute(F6)\n \n // Step 7: Convert to clause set\n Clauses = ConvertToClauses(F7)\n \n RETURN Clauses\n\nFUNCTION Skolemize(formula):\n // Replace ∃x P(x) with P(f(c1,...cn)) where f is new Skolem function\n // c1...cn are universally quantified variables in scope\n RETURN skolemized_formula\n\nFUNCTION ConvertToClauses(cnf_formula):\n // Each conjunct becomes a clause (set of literals)\n RETURN set_of_clauses",
+      "explanation": "Complete CNF conversion for first-order logic. Each step transforms the formula while preserving satisfiability. The final clause set is suitable for resolution-based theorem proving.",
+      "timeComplexity": "Polynomial",
+      "spaceComplexity": "Polynomial"
+    }
+  ]
+}

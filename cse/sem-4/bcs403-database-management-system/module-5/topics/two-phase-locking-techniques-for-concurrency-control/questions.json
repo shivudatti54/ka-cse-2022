@@ -1,0 +1,155 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the two phases of Two-Phase Locking with a diagram.",
+    "expectedPoints": [
+      "Growing phase: locks can be acquired but not released",
+      "Shrinking phase: locks can be released but not acquired",
+      "Lock point: point of maximum locks determines serializability order",
+      "After shrinking begins, no new locks can be obtained"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Differentiate between Shared Lock and Exclusive Lock with examples.",
+    "expectedPoints": [
+      "Shared lock (S-lock): allows reading, multiple transactions can hold simultaneously",
+      "Exclusive lock (X-lock): allows reading and writing, only one transaction can hold",
+      "Lock compatibility: S compatible with S, X incompatible with S and X",
+      "Example: S-lock for SELECT, X-lock for UPDATE operations"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "What is a deadlock? Explain the necessary conditions for deadlock with examples.",
+    "expectedPoints": [
+      "Deadlock: circular wait between transactions for resources",
+      "Four conditions: Mutual exclusion, Hold and wait, No preemption, Circular wait",
+      "Example: T1 holds A waits for B, T2 holds B waits for A",
+      "Can be detected using wait-for graph"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain Strict Two-Phase Locking. How does it prevent cascading rollbacks?",
+    "expectedPoints": [
+      "Strict 2PL: holds exclusive locks until commit/abort",
+      "Shared locks can be released in shrinking phase",
+      "Prevents cascading rollbacks because other transactions cannot read uncommitted data",
+      "All writes become visible only at commit time"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "What is the difference between Strict 2PL and Rigorous 2PL?",
+    "expectedPoints": [
+      "Strict 2PL: holds only X-locks until commit",
+      "Rigorous 2PL: holds ALL locks (both S and X) until commit",
+      "Rigorous 2PL is stricter than Strict 2PL",
+      "Both prevent cascading rollbacks, but Rigorous provides stronger guarantees"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain Conservative Two-Phase Locking and its advantages/disadvantages.",
+    "expectedPoints": [
+      "Conservative 2PL: acquires all needed locks before transaction begins",
+      "Advantage: Prevents deadlocks completely",
+      "Disadvantage: Requires lock anticipation, reduced concurrency, may cause starvation",
+      "Not practical in many real systems due to requiring advance knowledge of locks needed"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "What is the lock compatibility matrix? Draw and explain.",
+    "expectedPoints": [
+      "Matrix showing which locks can be granted when another is held",
+      "Rows: requested lock, Columns: held lock",
+      "S + S = Yes (compatible)",
+      "S + X = No, X + S = No, X + X = No (incompatible)",
+      "This determines whether lock requests can be granted"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "What is Two-Phase Locking (2PL)? Explain the protocol with an example schedule. Also prove that 2PL ensures conflict-serializability.",
+    "expectedPoints": [
+      "Definition: Growing phase (lock acquisition) and shrinking phase (lock release)",
+      "Example schedule showing lock acquisition and release",
+      "Lock point determines serializability order",
+      "Proof: If schedule follows 2PL, it is conflict-serializable",
+      "Lock point ordering theorem: schedules are serializable in order of lock points",
+      "Explain with precedence graph concept"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Discuss deadlock handling in Two-Phase Locking. Explain deadlock detection using wait-for graph and deadlock prevention techniques.",
+    "expectedPoints": [
+      "Deadlock definition and four necessary conditions",
+      "Wait-for graph: nodes = transactions, edge T1\u2192T2 when T1 waits for T2",
+      "Cycle in wait-for graph indicates deadlock",
+      "Prevention: Wait-die and Wound-wait schemes using timestamps",
+      "Detection: Periodic check for cycles in wait-for graph",
+      "Recovery: Rollback one or more transactions to break deadlock"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Compare Timestamp-Based Concurrency Control with Two-Phase Locking. When would you prefer one over the other?",
+    "expectedPoints": [
+      "2PL: Lock-based, ensures conflict serializability, may cause deadlocks",
+      "Timestamp Ordering: Uses timestamps, ensures timestamp-serializable schedules, no deadlocks",
+      "2PL: May block transactions causing delays",
+      "TO: May reject operations causing restarts",
+      "2PL preferred when deadlocks must be avoided through prevention",
+      "TO preferred in systems with high conflict rates where restarts are acceptable",
+      "TO has no blocking but may cause more transaction restarts"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Explain the following: (a) Cascading Rollback (b) Starvation (c) Lock Escalation. How does 2PL handle these issues?",
+    "expectedPoints": [
+      "Cascading Rollback: Abort of one transaction requires abort of others who read uncommitted data",
+      "Starvation: Transaction waits indefinitely due to repeated priority to other transactions",
+      "Lock Escalation: When too many locks held, system escalates to table-level lock",
+      "Strict/Rigorous 2PL prevents cascading rollbacks",
+      "Starvation handled by timeout or priority schemes",
+      "Lock escalation managed by DBMS based on lock thresholds"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  }
+]

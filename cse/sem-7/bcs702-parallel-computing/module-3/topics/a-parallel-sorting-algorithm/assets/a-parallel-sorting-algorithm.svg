@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="10" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3 L 0 6 z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="35" text-anchor="middle" font-size="21" font-weight="bold" fill="#1565c0">A Parallel Sorting Algorithm (Sample Sort)</text>
+
+  <g id="step0" class="step" data-narration="Sample Sort efficiently sorts data across multiple processes. Each process sorts local data, selects samples to determine splitters, redistributes data globally, then sorts locally again.">
+    <rect x="80" y="60" width="640" height="55" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="400" y="82" text-anchor="middle" font-size="13" font-weight="bold" fill="#2e7d32">Sample Sort: Divide, Sample, Redistribute, Sort Locally</text>
+    <text x="400" y="102" text-anchor="middle" font-size="11" fill="#555">Efficient O((n/p) log(n/p)) parallel sorting with MPI collective operations</text>
+  </g>
+
+  <g id="step1" class="step" data-narration="First, each process sorts its local chunk using quicksort. Then each process selects evenly spaced samples from its sorted data to represent its value range.">
+    <text x="400" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Steps 1-2: Local Sort and Sampling</text>
+    <rect x="80" y="155" width="300" height="80" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="230" y="177" text-anchor="middle" font-size="11" font-weight="bold" fill="#1565c0">Step 1: Local Sort</text>
+    <rect x="110" y="192" width="50" height="25" rx="3" fill="#bbdefb"/>
+    <text x="135" y="209" text-anchor="middle" font-size="8" fill="#0d47a1">P0</text>
+    <rect x="170" y="192" width="50" height="25" rx="3" fill="#bbdefb"/>
+    <text x="195" y="209" text-anchor="middle" font-size="8" fill="#0d47a1">P1</text>
+    <rect x="230" y="192" width="50" height="25" rx="3" fill="#bbdefb"/>
+    <text x="255" y="209" text-anchor="middle" font-size="8" fill="#0d47a1">P2</text>
+    <rect x="290" y="192" width="50" height="25" rx="3" fill="#bbdefb"/>
+    <text x="315" y="209" text-anchor="middle" font-size="8" fill="#0d47a1">P3</text>
+    <text x="230" y="222" text-anchor="middle" font-size="9" fill="#555">qsort() on each process</text>
+    <rect x="420" y="155" width="300" height="80" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+    <text x="570" y="177" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">Step 2: Select Samples</text>
+    <rect x="450" y="192" width="240" height="25" rx="4" fill="#c8e6c9" stroke="#43a047" stroke-width="1"/>
+    <text x="570" y="209" text-anchor="middle" font-size="9" fill="#2e7d32">[s1, s2, s3] from each process</text>
+    <text x="570" y="222" text-anchor="middle" font-size="9" fill="#555">p*(p-1) total samples</text>
+  </g>
+
+  <g id="step2" class="step" data-narration="All samples gather at root process via MPI_Gather. Root sorts them and picks splitters. These splitters broadcast to all processes via MPI_Bcast, defining bucket boundaries.">
+    <text x="400" y="260" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Steps 3-4: Determine and Broadcast Splitters</text>
+    <rect x="80" y="280" width="300" height="75" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="230" y="302" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Step 3: Gather + Sort</text>
+    <text x="230" y="322" text-anchor="middle" font-size="9" fill="#333">MPI_Gather samples to root</text>
+    <text x="230" y="340" text-anchor="middle" font-size="9" fill="#333">Sort, select p-1 splitters</text>
+    <rect x="420" y="280" width="300" height="75" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="570" y="302" text-anchor="middle" font-size="11" font-weight="bold" fill="#9c27b0">Step 4: Broadcast</text>
+    <text x="570" y="322" text-anchor="middle" font-size="9" fill="#333">MPI_Bcast splitters to all</text>
+    <text x="570" y="340" text-anchor="middle" font-size="9" fill="#333">Bucket boundaries defined</text>
+  </g>
+
+  <g id="step3" class="step" data-narration="Each process partitions data by splitters. MPI_Alltoall exchanges data between processes. Finally each process sorts received data to produce globally sorted output.">
+    <text x="400" y="380" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Steps 5-6: Redistribute and Final Sort</text>
+    <rect x="80" y="400" width="300" height="75" rx="8" fill="#ffebee" stroke="#e53935" stroke-width="1.5"/>
+    <text x="230" y="422" text-anchor="middle" font-size="11" font-weight="bold" fill="#c62828">Step 5: Redistribute</text>
+    <text x="230" y="442" text-anchor="middle" font-size="9" fill="#333">Partition by splitters</text>
+    <text x="230" y="460" text-anchor="middle" font-size="9" fill="#333">MPI_Alltoall exchanges data</text>
+    <rect x="420" y="400" width="300" height="75" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+    <text x="570" y="422" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">Step 6: Final Sort</text>
+    <text x="570" y="442" text-anchor="middle" font-size="9" fill="#333">Each process sorts received</text>
+    <text x="570" y="460" text-anchor="middle" font-size="9" fill="#333">Globally sorted result</text>
+  </g>
+
+  <g id="step4" class="step" data-narration="Key MPI functions: Gather collects samples, Bcast distributes splitters, Alltoall redistributes data. Local sort costs O((n/p) log(n/p)), sampling costs O(p log p).">
+    <text x="400" y="500" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">MPI Operations and Complexity</text>
+    <rect x="80" y="520" width="200" height="70" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="180" y="542" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">MPI Functions</text>
+    <text x="180" y="560" text-anchor="middle" font-size="9" fill="#333">Gather, Bcast, Alltoall</text>
+    <rect x="300" y="520" width="200" height="70" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="400" y="542" text-anchor="middle" font-size="10" font-weight="bold" fill="#e65100">Time Complexity</text>
+    <text x="400" y="560" text-anchor="middle" font-size="9" fill="#333">O((n/p) log(n/p) + p log p)</text>
+    <rect x="520" y="520" width="200" height="70" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+    <text x="620" y="542" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Scalability</text>
+    <text x="620" y="560" text-anchor="middle" font-size="9" fill="#333">Scales well for large n</text>
+  </g>
+</svg>

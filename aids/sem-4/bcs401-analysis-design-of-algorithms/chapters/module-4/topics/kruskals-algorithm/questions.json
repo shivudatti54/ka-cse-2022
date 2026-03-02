@@ -1,0 +1,155 @@
+{
+  "topicId": "kruskals-algorithm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the greedy choice property that makes Kruskal's Algorithm work. State the Cut Property.",
+      "keyPoints": [
+        "Greedy approach: always choose smallest weight edge that doesn't form cycle",
+        "Cut Property: For any cut, the minimum weight edge crossing it belongs to some MST",
+        "Algorithm repeatedly applies this property by considering edges in increasing order"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the Union-Find data structure used in Kruskal's Algorithm. Explain FIND and UNION operations.",
+      "keyPoints": [
+        "Union-Find (Disjoint Set Union) maintains collection of disjoint sets",
+        "FIND operation returns the representative/root of the set containing a vertex",
+        "UNION operation merges two sets into one",
+        "Path compression and union by rank optimize performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the time complexity of Kruskal's Algorithm? Explain each component of the complexity.",
+      "keyPoints": [
+        "Sorting edges: O(E log E) - dominant factor",
+        "Union-Find operations: O(E \u03b1(V)) - nearly constant amortized",
+        "Overall: O(E log E) or O(E log V)",
+        "Space complexity: O(V + E)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between Kruskal's Algorithm and Prim's Algorithm for finding MST.",
+      "keyPoints": [
+        "Kruskal's: edge-based, starts with individual vertices, better for sparse graphs",
+        "Prim's: vertex-based, starts from a single vertex, better for dense graphs",
+        "Both produce MST but use different approaches",
+        "Kruskal's uses Union-Find; Prim's uses priority queue"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What happens when Kruskal's Algorithm is applied to a disconnected graph? Explain with reason.",
+      "keyPoints": [
+        "Algorithm produces Minimum Spanning Forest instead of MST",
+        "One MST is generated for each connected component",
+        "Process continues until all edges are processed or each component has (Vi-1) edges",
+        "Useful in network design for connecting separate clusters"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Apply Kruskal's Algorithm step by step to find MST of the following graph with vertices {A,B,C,D,E} and edges: AB(1), BC(2), AC(3), CD(3), DE(4), BD(5), CE(6). Show the order of edge selection.",
+      "keyPoints": [
+        "Sort edges: AB(1), BC(2), AC(3), CD(3), DE(4), BD(5), CE(6)",
+        "Select AB(1): no cycle",
+        "Select BC(2): no cycle, connects A-B-C",
+        "Select AC(3): would create cycle A-B-C-A, SKIP",
+        "Select CD(3): no cycle, adds D",
+        "Select DE(4): no cycle, adds E",
+        "Total edges: 4 (V-1=4), MST weight: 1+2+3+4=10"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "State two real-world applications of Kruskal's Algorithm and explain why MST is suitable for these applications.",
+      "keyPoints": [
+        "Application 1: Telephone/communication network design - connect all cities with minimum cable length",
+        "Application 2: Road/railway network planning - connect all places with minimum construction cost",
+        "Cluster analysis in data science",
+        "Image segmentation in computer vision",
+        "MST ensures global connectivity at minimum cost/weight"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Trace through Kruskal's Algorithm on the following weighted graph. Show all steps including the Union-Find operations and explain how cycle detection works. Graph: vertices {1,2,3,4,5,6} with edges: (1-2:3), (1-3:4), (2-3:5), (2-4:6), (3-4:7), (3-5:8), (4-5:9), (5-6:2), (4-6:1)",
+      "keyPoints": [
+        "Sort edges: (4-6:1), (5-6:2), (1-2:3), (1-3:4), (2-3:5), (2-4:6), (3-4:7), (3-5:8), (4-5:9)",
+        "Initialize: each vertex in separate set",
+        "Edge 4-6(1): FIND(4)\u2260FIND(6), UNION, select edge",
+        "Edge 5-6(2): FIND(5)\u2260FIND(6), UNION, select edge",
+        "Edge 1-2(3): FIND(1)\u2260FIND(2), UNION, select edge",
+        "Edge 1-3(4): FIND(1)\u2260FIND(3), UNION, select edge",
+        "Edge 2-3(5): FIND(2)=FIND(3), cycle detected, SKIP",
+        "Edge 2-4(6): FIND(2)\u2260FIND(4), UNION, select edge - MST complete with 5 edges",
+        "Total weight: 1+2+3+4+6=16",
+        "Explain Union-Find state at each step"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Prove that Kruskal's Algorithm always produces a Minimum Spanning Tree. Use the Cut Property in your proof.",
+      "keyPoints": [
+        "State Cut Property: For any cut, minimum crossing edge belongs to some MST",
+        "Base case: After first edge, property holds trivially",
+        "Inductive step: Assume after k edges, we have a partial forest that can be extended to MST",
+        "Consider next edge e selected by algorithm (minimum among non-cycle edges)",
+        "Consider cut separating vertices of e's components",
+        "By Cut Property, there exists MST containing e OR minimum crossing edge",
+        "If MST already contains e, done; otherwise can replace heavier edge",
+        "Show replacement doesn't increase total weight",
+        "Algorithm produces optimal MST by induction"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write an algorithm for Kruskal's Algorithm in pseudocode. Also write the Union-Find operations with path compression and union by rank. Analyze the time and space complexity.",
+      "keyPoints": [
+        "Pseudocode showing: sort edges, initialize Union-Find, iterate edges, use FIND for cycle detection, UNION to merge, stop at V-1 edges",
+        "Union-Find MAKE-SET, FIND with path compression, UNION by rank",
+        "Time: O(E log E) dominated by sorting",
+        "Space: O(V + E) for edges and Union-Find structure",
+        "Explain optimization benefits of path compression and union by rank",
+        "Mention practically constant amortized time O(\u03b1(n)) for Union-Find"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare Kruskal's Algorithm and Prim's Algorithm for finding Minimum Spanning Tree. Under what conditions would you prefer one over the other? Provide examples of suitable graph types for each.",
+      "keyPoints": [
+        "Comparison points: starting approach, data structures used, time complexity variations",
+        "Kruskal's: O(E log E), edge-based, Union-Find, better for sparse graphs",
+        "Prim's: O(E + V log V) with Fibonacci heap, vertex-based, better for dense graphs",
+        "Choose Kruskal's when: graph has many vertices but few edges, edges are already sorted or easily sortable",
+        "Choose Prim's when: graph is dense, need to start from specific vertex, graph represented as adjacency matrix",
+        "Example: For V=1000, E=5000 (sparse), prefer Kruskal's; For V=100, E=4500 (dense), prefer Prim's"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "addressing-modes-risc-cisc",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Indexed Addressing in Array Sum",
+      "description": "Calculate sum of array elements using indexed addressing mode",
+      "code": "// Pseudocode for array sum using indexed addressing\nFUNCTION ArraySum(array[], n)\n  sum = 0\n  index = 0\n  baseAddr = address of array[0]\n  \n  WHILE index < n DO\n    // Effective address = baseAddr + (index * elementSize)\n    effectiveAddr = baseAddr + (index * 4)\n    value = LOAD(effectiveAddr)  // Indexed addressing\n    sum = sum + value\n    index = index + 1\n  END WHILE\n  \n  RETURN sum\nEND FUNCTION",
+      "explanation": "This demonstrates indexed addressing where each array element is accessed by adding the index multiplied by element size to the base address. The effective address calculation: Base + (Index \u00d7 Element_Size).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "RISC-Style Load-Store Operations",
+      "description": "Demonstrates load-store architecture typical of RISC processors",
+      "code": "# RISC-style Load-Store Architecture Simulation\n# Only LOAD and STORE can access memory\n\n# Register file simulation\nregisters = [0] * 8  # 8 general-purpose registers\nmemory = [0] * 100   # Simple memory simulation\n\ndef LOAD(register_num, address):\n    \"\"\"Load from memory to register (LOAD instruction)\"\"\"\n    registers[register_num] = memory[address]\n    return registers[register_num]\n\ndef STORE(register_num, address):\n    \"\"\"Store from register to memory (STORE instruction)\"\"\"\n    memory[address] = registers[register_num]\n\ndef ADD(dest_reg, src_reg1, src_reg2):\n    \"\"\"Register-to-register ADD (only operates on registers)\"\"\"\n    registers[dest_reg] = registers[src_reg1] + registers[src_reg2]\n\ndef SUB(dest_reg, src_reg1, src_reg2):\n    \"\"\"Register-to-register SUB\"\"\"\n    registers[dest_reg] = registers[src_reg1] - registers[src_reg2]\n\n# Example: result = a[0] + a[1] using RISC-style operations\nmemory[10] = 5   # a[0] in memory\nmemory[14] = 10  # a[1] in memory\n\n# LOAD from memory to registers\nLOAD(1, 10)     # R1 = a[0]\nLOAD(2, 14)     # R2 = a[1]\n\n# ADD operates only on registers\nADD(3, 1, 2)    # R3 = R1 + R2\n\n# STORE result back to memory\nSTORE(3, 20)    # result = R3\n\nprint(f\"Result: {registers[3]}\")  # Output: 15",
+      "explanation": "This demonstrates RISC's load-store architecture: memory is accessed only via LOAD and STORE instructions. All arithmetic (ADD, SUB) operates strictly between registers. This separation simplifies the instruction pipeline and enables single-cycle execution.",
+      "timeComplexity": "O(1) per instruction",
+      "spaceComplexity": "O(n) for memory simulation"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "CISC-Style Memory-to-Memory Operation",
+      "description": "Demonstrates complex instruction that performs memory-to-memory operation",
+      "code": "// CISC-style complex instruction demonstration\n// In CISC, a single instruction can perform memory-to-memory operation\n\n// Traditional CISC instruction: ADD (A), (B), (C)\n// Meaning: MEM[C] = MEM[A] + MEM[B]\n// This is a single instruction that accesses three memory locations\n\n// Equivalent in RISC would require:\n// LOAD R1, A      // Load A into register\n// LOAD R2, B      // Load B into register  \n// ADD R3, R1, R2  // Add registers\n// STORE C, R3     // Store result to C\n// (4 instructions vs 1)\n\n// CISC complex instruction example\nINSTRUCTION ADD_MEMORY(dest_addr, src1_addr, src2_addr)\n  // Fetch operand from first source address\n  operand1 = READ_MEMORY(src1_addr)\n  \n  // Fetch operand from second source address  \n  operand2 = READ_MEMORY(src2_addr)\n  \n  // Perform addition in ALU\n  result = operand1 + operand2\n  \n  // Store result to destination address\n  WRITE_MEMORY(dest_addr, result)\nEND INSTRUCTION\n\n// Single CISC instruction accomplishes what needs\n// multiple RISC instructions",
+      "explanation": "This shows CISC's ability to perform complex memory-to-memory operations in a single instruction. While more powerful per instruction, these complex operations typically take multiple clock cycles. Modern CISC processors internally translate these to simpler micro-operations similar to RISC.",
+      "timeComplexity": "Varies (typically 2-10+ cycles per instruction)",
+      "spaceComplexity": "O(1) additional memory"
+    },
+    {
+      "id": "code-4",
+      "language": "mips",
+      "title": "MIPS Addressing Modes Example",
+      "description": "MIPS (RISC) assembly demonstrating various addressing modes",
+      "code": "# MIPS Addressing Modes Demonstration\n# MIPS is a classic RISC architecture\n\n# Immediate Addressing:\n# Operand is part of instruction\naddi $t0, $zero, 100     # $t0 = 0 + 100 (immediate value)\nli    $t1, 50            # $t1 = 50 (load immediate)\n\n# Register Addressing:\n# Operand in register\nadd  $t2, $t0, $t1       # $t2 = $t0 + $t1 (register operands)\n\n# Base-Register (Displacement) Addressing:\n# Effective address = Base Register + Offset\nlw   $t3, 0($t0)         # Load: $t3 = Memory[$t0 + 0]\nsw   $t4, 100($sp)       # Store: Memory[$sp + 100] = $t4\n\n# PC-Relative Addressing:\n# Used in branch instructions (offset from PC)\nbeq  $t0, $t1, LOOP      # Branch if $t0 == $t1\n                        # Target = PC + (offset * 4)\nj    EXIT               # Jump: Target = PC[31:28] || address * 4\n\n# Pseudodirect Addressing (Jump):\n# Upper 4 bits of PC concatenated with 26-bit address\nj    NEXT_LABEL         # Jump to label\n\n# Register Indirect Addressing (using $t0 as pointer):\nlw   $t5, 0($t0)         # Load word at address in $t0\n\n# MIPS does NOT support:\n# - Direct/Absolute addressing (full address in instruction)\n# - Memory-to-memory operations\n# This is typical of RISC - simple addressing modes only",
+      "explanation": "MIPS demonstrates RISC addressing characteristics: Immediate (addi, li), Register (add), Base-Register/Displacement (lw, sw with offset), and PC-relative (beq). Note the absence of direct addressing and memory-to-memory operations - all typical RISC limitations.",
+      "timeComplexity": "1 cycle per instruction (ideal pipelined)",
+      "spaceComplexity": "N/A (fixed instruction format)"
+    }
+  ]
+}

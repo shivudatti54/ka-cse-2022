@@ -1,0 +1,380 @@
+{
+  "topicId": "shared-memory-programming-with-openmp-openmp-pragm",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Consider the following OpenMP code: #pragma omp parallel for schedule(static, 3) for(i=0; i<12; i++) A[i] = i; How many iterations will thread 1 execute?",
+      "options": [
+        {
+          "key": "A",
+          "text": "3 iterations (i=0,1,2)"
+        },
+        {
+          "key": "B",
+          "text": "3 iterations (i=3,4,5)"
+        },
+        {
+          "key": "C",
+          "text": "4 iterations (i=0,1,2,3)"
+        },
+        {
+          "key": "D",
+          "text": "4 iterations (i=8,9,10,11)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "With schedule(static, 3), iterations are distributed in blocks of 3: Thread 0 gets i=0,1,2; Thread 1 gets i=3,4,5; Thread 2 gets i=6,7,8; Thread 3 gets i=9,10,11. Thread 1 executes 3 iterations (i=3,4,5).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Given the code: int x = 5; #pragma omp parallel private(x) { x = omp_get_thread_num(); } printf(\"%d\", x); What is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0 (thread 0's value)"
+        },
+        {
+          "key": "B",
+          "text": "5 (original value preserved)"
+        },
+        {
+          "key": "C",
+          "text": "Unpredictable value from any thread"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'private' clause creates an uninitialized private copy of x for each thread. After the parallel region, the original x retains its value of 5 (unchanged), since the private copies were modified, not the original variable.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Which OpenMP schedule is best for load balancing when loop iterations have highly variable workloads?",
+      "options": [
+        {
+          "key": "A",
+          "text": "static with large chunk size"
+        },
+        {
+          "key": "B",
+          "text": "dynamic with small chunk size"
+        },
+        {
+          "key": "C",
+          "text": "guided"
+        },
+        {
+          "key": "D",
+          "text": "auto"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dynamic scheduling with small chunk sizes provides the best load balancing for variable workloads because threads can immediately grab new work after completing their current chunk, preventing idle threads while other threads still have heavy iterations.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What is the primary cause of performance degradation due to false sharing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lock contention from critical sections"
+        },
+        {
+          "key": "B",
+          "text": "Cache line invalidation between threads"
+        },
+        {
+          "key": "C",
+          "text": "Excessive thread creation overhead"
+        },
+        {
+          "key": "D",
+          "text": "Memory bandwidth limitations"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "False sharing occurs when multiple threads modify different variables that share the same cache line. The cache coherency protocol must invalidate and transfer the entire cache line on each write, causing severe performance degradation even though there's no actual data dependency.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "In OpenMP, what is the result of using #pragma omp atomic write vs #pragma omp critical for updating a shared counter?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are functionally equivalent but atomic is faster"
+        },
+        {
+          "key": "B",
+          "text": "Critical requires explicit lock management"
+        },
+        {
+          "key": "C",
+          "text": "Atomic only works for increment operations"
+        },
+        {
+          "key": "D",
+          "text": "There is no difference in performance"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The atomic directive uses hardware-level atomic operations which are more efficient than critical's mutex implementation. However, atomic is more restricted - it only ensures atomicity for the single read-write statement, while critical can protect arbitrary code regions.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-6",
+      "question": "For a parallel loop computing sum = 0; for(i=0; i<N; i++) sum += A[i]; with 4 threads, which is the correct reduction clause?",
+      "options": [
+        {
+          "key": "A",
+          "text": "reduction(+:sum)"
+        },
+        {
+          "key": "B",
+          "text": "reduction(sum:+)"
+        },
+        {
+          "key": "C",
+          "text": "reduction(&&:sum)"
+        },
+        {
+          "key": "D",
+          "text": "reduction(*:sum)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The correct syntax for reduction clause is reduction(operator:list). For addition, the operator is '+' and the variable is 'sum'. The runtime initializes each thread's private sum to 0 (the identity for addition), computes partial sums, and combines them at the end using the + operator.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What does #pragma omp parallel default(none) shared(A) private(i) accomplish?",
+      "options": [
+        {
+          "key": "A",
+          "text": "All variables are shared by default"
+        },
+        {
+          "key": "B",
+          "text": "All variables must be explicitly scoped"
+        },
+        {
+          "key": "C",
+          "text": "Only 'i' is private, 'A' is shared, and all others cause compile error"
+        },
+        {
+          "key": "D",
+          "text": "Variables are automatically determined"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "default(none) forces the programmer to explicitly specify the data sharing attribute for every variable referenced in the parallel region that isn't a loop index. This prevents accidental data races by requiring explicit decisions for all variables.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "In a parallel quicksort implementation using OpenMP, which directive is most appropriate?",
+      "options": [
+        {
+          "key": "A",
+          "text": "parallel for with static scheduling"
+        },
+        {
+          "key": "B",
+          "text": "parallel sections"
+        },
+        {
+          "key": "C",
+          "text": "task with taskwait"
+        },
+        {
+          "key": "D",
+          "text": "single directive"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Recursive algorithms like quicksort have irregular, dynamic parallelism that emerges during execution. The task directive allows creation of work units for each recursive call, and taskwait ensures sub-tasks complete before returning. This enables efficient parallelization of divide-and-conquer algorithms.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Consider: #pragma omp parallel for ordered for(i=0; i<N; i++) { #pragma omp ordered printf(\"%d \", i); } What is the output behavior?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Iterations may execute in any order"
+        },
+        {
+          "key": "B",
+          "text": "Iterations execute in sequential order (0,1,2,...,N-1)"
+        },
+        {
+          "key": "C",
+          "text": "Only even-indexed iterations print"
+        },
+        {
+          "key": "D",
+          "text": "Output is random per run"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The ordered directive ensures that the ordered region executes in the original sequential iteration order, regardless of which thread processes which iteration. This maintains correctness when loop iterations have dependencies or when sequential output order is required.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What is the time complexity of a parallel reduction with N elements using P threads using the tree-based approach?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(N) - same as sequential"
+        },
+        {
+          "key": "B",
+          "text": "O(N/P) for computation + O(log P) for combining"
+        },
+        {
+          "key": "C",
+          "text": "O(N/P) only"
+        },
+        {
+          "key": "D",
+          "text": "O(log N)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Each thread processes N/P elements in O(N/P) time (linear computation). The partial results are combined using a tree-based reduction in O(log P) time. Total time = O(N/P + log P). For large N, the computation term dominates, giving near-linear speedup.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "Which synchronization directive does NOT have an implicit barrier?",
+      "options": [
+        {
+          "key": "A",
+          "text": "parallel for end"
+        },
+        {
+          "key": "B",
+          "text": "sections end"
+        },
+        {
+          "key": "C",
+          "text": "single end"
+        },
+        {
+          "key": "D",
+          "text": "taskwait"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "The taskwait directive creates an explicit synchronization point for tasks but does not have an implicit barrier like parallel for or sections. Only the 'single' directive has a nowait option; by default it has a barrier. taskwait specifically waits for child tasks created in the current task context.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "A loop has a loop-carried dependency where each iteration i uses the value computed in iteration i-1. What happens when this loop is parallelized with '#pragma omp parallel for'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It will run faster due to parallelism"
+        },
+        {
+          "key": "B",
+          "text": "It produces incorrect results due to race condition"
+        },
+        {
+          "key": "C",
+          "text": "Compiler automatically detects and serializes it"
+        },
+        {
+          "key": "D",
+          "text": "Runtime automatically adds necessary synchronization"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Loop-carried dependencies require values from previous iterations. When parallelized without addressing this dependency, the results are incorrect because threads may execute before the dependent value is computed. This is a data dependency that must be handled through algorithm redesign, not just synchronization.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What is the purpose of 'firstprivate' clause compared to 'private'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "firstprivate is faster than private"
+        },
+        {
+          "key": "B",
+          "text": "firstprivate initializes private copies with the master thread's value"
+        },
+        {
+          "key": "C",
+          "text": "firstprivate makes variables shared at the end"
+        },
+        {
+          "key": "D",
+          "text": "There is no difference"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'firstprivate' is a special form of private that initializes each thread's private copy with the value from the master thread before the parallel region executes. This is essential when the initial value of a variable is needed for computation within the parallel region.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "Given 2 threads and OMP_NUM_THREADS=2, analyze: double area = 0; #pragma omp parallel for reduction(+:area) for(i=0; i<1000; i++) area += (x[i] + x[i+1])/2 * h; What is the race condition here?",
+      "options": [
+        {
+          "key": "A",
+          "text": "No race condition - reduction handles it"
+        },
+        {
+          "key": "B",
+          "text": "Race on 'i' variable"
+        },
+        {
+          "key": "C",
+          "text": "Potential overflow in area accumulation"
+        },
+        {
+          "key": "D",
+          "text": "Bounds error accessing x[i+1]"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "The loop accesses x[i+1], so for i=999, it accesses x[1000] which may be out of bounds. This is not a race condition but a memory access error. A reduction clause protects the area variable but doesn't prevent array bounds violations. The correct bound should be i<999 or use x[i+1] carefully.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "When should you use 'master' directive vs 'single' directive in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are interchangeable"
+        },
+        {
+          "key": "B",
+          "text": "master executes only on thread 0, single executes on exactly one thread (any)"
+        },
+        {
+          "key": "C",
+          "text": "single has implicit barrier, master does not"
+        },
+        {
+          "key": "D",
+          "text": "master is faster for small regions"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'master' specifies code that runs only on the master thread (thread 0) with no implicit barrier. 'single' specifies code that runs exactly once by any thread, with an implicit barrier at the end (unless nowait is specified). Choose based on whether you need thread 0 specifically or just need one execution.",
+      "difficulty": "medium"
+    }
+  ]
+}

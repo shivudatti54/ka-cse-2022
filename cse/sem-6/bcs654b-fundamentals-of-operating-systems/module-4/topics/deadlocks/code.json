@@ -1,0 +1,45 @@
+{
+  "topicId": "deadlocks",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Banker's Safety Algorithm",
+      "description": "Determines if a system is in a safe state by simulating resource allocation",
+      "code": "ALGORITHM BankersSafety\nBEGIN\n Initialize Work = Available\n Initialize Finish[i] = false for all i\n \n REPEAT\n found = false\n FOR each process Pi:\n IF Finish[i] == false AND Need[i] <= Work THEN\n Work = Work + Allocation[i]\n Finish[i] = true\n found = true\n UNTIL no more processes can be allocated\n \n IF all Finish[i] == true THEN\n return SAFE\n ELSE\n return UNSAFE\nEND",
+      "explanation": "1. Work vector initialized with available resources\n2. Iteratively find processes that can complete with current resources\n3. Releases allocated resources back to Work\n4. Checks if all processes can finish",
+      "timeComplexity": "O(n²*m)",
+      "spaceComplexity": "O(n*m)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Implementation: Banker's Algorithm",
+      "description": "Python implementation of safety algorithm with sample data",
+      "code": "def bankers(available, max_need, allocation):\n n = len(allocation)\n m = len(available)\n need = [[max_need[i][j] - allocation[i][j] for j in range(m)] for i in range(n)]\n work = available.copy()\n finish = [False] * n\n\n for _ in range(n):\n for i in range(n):\n if not finish[i] and all(need[i][j] <= work[j] for j in range(m)):\n for j in range(m):\n work[j] += allocation[i][j]\n finish[i] = True\n\n return all(finish)\n\n# Example usage\navailable = [3, 3, 2]\nmax_need = [[7,5,3],[3,2,2],[9,0,2],[2,2,2],[4,3,3]]\nallocation = [[0,1,0],[2,0,0],[3,0,2],[2,1,1],[0,0,2]]\nprint(bankers(available, max_need, allocation)) # Output: True",
+      "explanation": "1. Calculates need matrix dynamically\n2. Implements safety check through nested loops\n3. Returns True if system is in safe state\n4. Sample data shows safe allocation scenario",
+      "timeComplexity": "O(n²*m)",
+      "spaceComplexity": "O(n*m)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Algorithm: Deadlock Detection using Wait-For Graph",
+      "description": "Detects deadlocks by finding cycles in wait-for graph",
+      "code": "ALGORITHM DetectDeadlockWFG\nBEGIN\n Construct wait-for graph from resource dependencies\n FOR each process Pi not visited:\n IF DFS(Pi, path) returns true:\n RETURN 'Deadlock Detected'\n RETURN 'No Deadlock'\nEND\n\nFUNCTION DFS(process, path)\nBEGIN\n ADD process to path\n MARK process as visited\n \n FOR each neighbor Pj in wait-for graph:\n IF Pj in path:\n RETURN true # Cycle detected\n IF not visited AND DFS(Pj, path):\n RETURN true\n \n REMOVE process from path\n RETURN false\nEND",
+      "explanation": "1. Converts resource allocation to wait-for graph\n2. Uses DFS to detect cycles in graph\n3. Maintains path stack for cycle detection\n4. Returns immediately when cycle found",
+      "timeComplexity": "O(n + e)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Algorithm: Victim Selection for Recovery",
+      "description": "Selects process with lowest priority & resources for termination",
+      "code": "ALGORITHM SelectVictim\nBEGIN\n candidates = [processes in deadlock]\n IF empty(candidates):\n RETURN error\n\n victim = candidates[0]\n min_priority = victim.priority\n min_resources = count_resources(victim)\n\n FOR process IN candidates[1:]:\n curr_priority = process.priority\n curr_res = count_resources(process)\n \n IF (curr_priority < min_priority) OR \n (curr_priority == min_priority AND curr_res < min_resources):\n victim = process\n min_priority = curr_priority\n min_resources = curr_res\n\n RETURN victim\nEND",
+      "explanation": "1. Prioritizes processes with lower priority values\n2. Breaks ties using resource count\n3. Selects process minimizing recovery cost\n4. Works with any deadlocked process subset",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

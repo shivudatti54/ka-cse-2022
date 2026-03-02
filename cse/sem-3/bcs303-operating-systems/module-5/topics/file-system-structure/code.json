@@ -1,0 +1,23 @@
+{
+  "topicId": "file-concepts",
+  "examples": [
+    {
+      "id": "file-operations-in-c-c",
+      "title": "C: File Operations in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <sys/stat.h>\n\nint main() {\n // Using standard library\n FILE *fp;\n \n // Create and write\n fp = fopen(\"test.txt\", \"w\");\n if (fp == NULL) {\n perror(\"fopen\");\n return 1;\n }\n fprintf(fp, \"Hello, File Systems!\\n\");\n fclose(fp);\n \n // Read\n fp = fopen(\"test.txt\", \"r\");\n char buffer[100];\n fgets(buffer, 100, fp);\n printf(\"Read: %s\", buffer);\n fclose(fp);\n \n // Using system calls\n int fd;\n \n // Open with flags\n fd = open(\"test2.txt\", O_CREAT | O_WRONLY, 0644);\n write(fd, \"System call write\\n\", 18);\n close(fd);\n \n // File info\n struct stat st;\n stat(\"test.txt\", &st);\n printf(\"Size: %lld bytes\\n\", (long long)st.st_size);\n printf(\"Inode: %llu\\n\", (unsigned long long)st.st_ino);\n \n // Delete\n remove(\"test.txt\");\n unlink(\"test2.txt\");\n \n return 0;\n}"
+    },
+    {
+      "id": "file-operations-in-c-python",
+      "title": "Python: File Operations in C",
+      "language": "python",
+      "code": "import os\nimport stat\n\n# Create and write\nwith open('test.txt', 'w') as f:\n f.write('Hello, File Systems!\\n')\n\n# Read (sequential)\nwith open('test.txt', 'r') as f:\n content = f.read()\n print(f\"Content: {content}\")\n\n# Direct access with seek\nwith open('test.txt', 'r+') as f:\n f.seek(7) # Move to position 7\n print(f\"From position 7: {f.read()}\")\n \n f.seek(0) # Back to beginning\n f.write('HELLO') # Overwrite\n\n# File attributes\nfile_stat = os.stat('test.txt')\nprint(f\"\\nFile Attributes:\")\nprint(f\"Size: {file_stat.st_size} bytes\")\nprint(f\"Inode: {file_stat.st_ino}\")\nprint(f\"Mode: {oct(file_stat.st_mode)}\")\nprint(f\"Modified: {file_stat.st_mtime}\")\n\n# Check permissions\nprint(f\"\\nPermissions:\")\nprint(f\"Readable: {os.access('test.txt', os.R_OK)}\")\nprint(f\"Writable: {os.access('test.txt', os.W_OK)}\")\nprint(f\"Executable: {os.access('test.txt', os.X_OK)}\")\n\n# Delete\nos.remove('test.txt')\nprint(\"\\nFile deleted.\")"
+    },
+    {
+      "id": "file-operations-in-c-java",
+      "title": "Java: File Operations in C",
+      "language": "java",
+      "code": "import java.io.*;\nimport java.nio.file.*;\nimport java.nio.file.attribute.*;\n\npublic class FileOperations {\n public static void main(String[] args) throws IOException {\n Path path = Paths.get(\"test.txt\");\n \n // Create and write\n Files.write(path, \"Hello, File Systems!\\n\".getBytes());\n System.out.println(\"File created\");\n \n // Read\n String content = Files.readString(path);\n System.out.println(\"Content: \" + content);\n \n // File attributes\n BasicFileAttributes attrs = Files.readAttributes(\n path, BasicFileAttributes.class);\n \n System.out.println(\"\\nFile Attributes:\");\n System.out.println(\"Size: \" + attrs.size() + \" bytes\");\n System.out.println(\"Created: \" + attrs.creationTime());\n System.out.println(\"Modified: \" + attrs.lastModifiedTime());\n System.out.println(\"Is Directory: \" + attrs.isDirectory());\n \n // Random access\n try (RandomAccessFile raf = new RandomAccessFile(\"test.txt\", \"rw\")) {\n raf.seek(7); // Move to position 7\n byte[] buffer = new byte[10];\n raf.read(buffer);\n System.out.println(\"\\nFrom position 7: \" + new String(buffer));\n }\n \n // Delete\n Files.delete(path);\n System.out.println(\"\\nFile deleted\");\n }\n}"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What are the sigsetjmp and siglongjmp functions used for in Unix system programming?",
+    "back": "They are used for non-local jumps that save and restore the process signal mask, allowing a program to jump back to a saved point in the code while also preserving the state of the signal mask."
+  },
+  {
+    "id": "f2",
+    "front": "What is the key difference between the `setjmp`/`longjmp` pair and the `sigsetjmp`/`siglongjmp` pair?",
+    "back": "The key difference is that `sigsetjmp` and `siglongjmp` take an additional argument to specify whether the process's current signal mask is saved and restored, providing control over signal handling context during the jump."
+  },
+  {
+    "id": "f3",
+    "front": "What is the function signature and purpose of the `savesigs` argument in `sigsetjmp`?",
+    "back": "`int sigsetjmp(sigjmp_buf env, int savesigs);` The `savesigs` argument is non-zero if the current signal mask should be saved in `env`. If it is zero, the signal mask is not saved."
+  },
+  {
+    "id": "f4",
+    "front": "When calling `siglongjmp`, how does it determine whether to restore the saved signal mask?",
+    "back": "It checks the value that was originally passed to the corresponding `sigsetjmp` call. If the `savesigs` argument was non-zero, `siglongjmp` will restore the saved signal mask; if it was zero, it will not."
+  },
+  {
+    "id": "f5",
+    "front": "Why is it crucial to use sigsetjmp/siglongjmp instead of setjmp/longjmp in signal handlers?",
+    "back": "Because when a signal handler is invoked, the signal that caused it is automatically added to the process's signal mask. Using the regular `longjmp` from a handler could permanently block that signal. `siglongjmp` allows you to properly restore the mask and avoid this issue."
+  }
+]

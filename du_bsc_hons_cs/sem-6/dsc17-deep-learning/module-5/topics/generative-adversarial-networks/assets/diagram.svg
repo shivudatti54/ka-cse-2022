@@ -1,0 +1,144 @@
+<svg width="420" height="400" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg" data-topic-id="generative-adversarial-networks">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa"/>
+      <stop offset="100%" style="stop-color:#e4eaf0"/>
+    </linearGradient>
+    <linearGradient id="generatorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8edea"/>
+      <stop offset="100%" style="stop-color:#fed6e3"/>
+    </linearGradient>
+    <linearGradient id="discriminatorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d299c2"/>
+      <stop offset="100%" style="stop-color:#fef9d7"/>
+    </linearGradient>
+    <linearGradient id="noiseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    .title { animation: fadeIn 0.8s ease-out forwards; font-family: Georgia, serif; }
+    .gen-box { animation: slideInLeft 0.6s ease-out forwards; }
+    .disc-box { animation: slideInRight 0.6s ease-out forwards; }
+    .noise-source { animation: pulse 2s ease-in-out infinite; }
+    .output-box { animation: fadeIn 0.8s ease-out 0.4s forwards; opacity: 0; }
+    .arrow-line { stroke-dasharray: 200; animation: drawLine 1s ease-out forwards; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; }
+    .detail { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #4a5568; }
+    .section-box { rx: 8; ry: 8; stroke-width: 2; }
+    text { fill: #2d3748; }
+  </style>
+  
+  <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title" font-size="22" font-weight="bold" fill="#2d3748">Generative Adversarial Networks</text>
+  <text x="210" y="50" text-anchor="middle" class="title" font-size="13" fill="#718096">GAN Architecture Overview</text>
+  
+  <!-- Noise Input Section -->
+  <g data-narration="Random noise vector from latent space serves as the seed input for the generator network">
+    <rect x="20" y="70" width="100" height="60" rx="8" fill="url(#noiseGrad)" class="noise-source"/>
+    <text x="70" y="95" text-anchor="middle" class="label" font-weight="bold">Random Noise</text>
+    <text x="70" y="112" text-anchor="middle" class="detail">z ~ N(0,1)</text>
+    <text x="70" y="125" text-anchor="middle" class="detail" font-size="10">Latent Space</text>
+  </g>
+  
+  <!-- Arrow from noise to generator -->
+  <line x1="70" y1="130" x2="70" y2="160" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" class="arrow-line"/>
+  
+  <!-- Generator Network -->
+  <g data-narration="The Generator network transforms random noise into synthetic data samples through deep neural network layers">
+    <rect x="30" y="160" width="80" height="70" rx="8" fill="url(#generatorGrad)" class="gen-box" stroke="#88b04b" stroke-width="2"/>
+    <text x="70" y="185" text-anchor="middle" class="label" font-weight="bold">Generator</text>
+    <text x="70" y="202" text-anchor="middle" class="detail">Network G</text>
+    <text x="70" y="217" text-anchor="middle" class="detail" font-size="10">Neural Network</text>
+  </g>
+  
+  <!-- Arrow from generator to fake samples -->
+  <line x1="70" y1="230" x2="70" y2="260" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" class="arrow-line"/>
+  
+  <!-- Fake Samples -->
+  <g data-narration="Generated fake samples are created by the generator and passed to the discriminator for classification">
+    <rect x="20" y="260" width="100" height="50" rx="8" fill="#fed6e3" class="gen-box" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="70" y="280" text-anchor="middle" class="label" font-weight="bold">Generated</text>
+    <text x="70" y="297" text-anchor="middle" class="detail">Fake Samples G(z)</text>
+  </g>
+  
+  <!-- Real Data -->
+  <g data-narration="Real training data samples are fed into the discriminator for comparison with generated samples">
+    <rect x="300" y="180" width="100" height="60" rx="8" fill="url(#discriminatorGrad)" class="disc-box" stroke="#48bb78" stroke-width="2"/>
+    <text x="350" y="205" text-anchor="middle" class="label" font-weight="bold">Real Data</text>
+    <text x="350" y="222" text-anchor="middle" class="detail">Training Samples</text>
+    <text x="350" y="235" text-anchor="middle" class="detail" font-size="10">x ~ Pdata(x)</text>
+  </g>
+  
+  <!-- Arrows to discriminator -->
+  <line x1="120" y1="285" x2="180" y2="285" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" class="arrow-line"/>
+  <line x1="300" y1="210" x2="250" y2="210" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" class="arrow-line"/>
+  
+  <!-- Discriminator Network -->
+  <g data-narration="The Discriminator network classifies inputs as real or fake, providing adversarial feedback to the generator">
+    <rect x="180" y="170" width="120" height="80" rx="8" fill="#fef9d7" class="disc-box" stroke="#9f7aea" stroke-width="2"/>
+    <text x="240" y="195" text-anchor="middle" class="label" font-weight="bold">Discriminator</text>
+    <text x="240" y="215" text-anchor="middle" class="detail">Network D</text>
+    <text x="240" y="232" text-anchor="middle" class="detail">Binary Classifier</text>
+  </g>
+  
+  <!-- Output Section -->
+  <g data-narration="The discriminator outputs a probability score indicating whether the input is real (1) or fake (0)">
+    <rect x="190" y="270" width="100" height="50" rx="8" fill="#e2e8f0" class="output-box" stroke="#4a5568" stroke-width="2"/>
+    <text x="240" y="290" text-anchor="middle" class="label" font-weight="bold">Output D(x)</text>
+    <text x="240" y="308" text-anchor="middle" class="detail">Real/Fake</text>
+  </g>
+  
+  <!-- Feedback arrow from discriminator to generator -->
+  <path d="M 240 250 Q 240 320 120 320 Q 40 320 70 250" fill="none" stroke="#e53e3e" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+  <text x="180" y="340" text-anchor="middle" class="detail" fill="#e53e3e" font-size="11">Adversarial</text>
+  <text x="180" y="352" text-anchor="middle" class="detail" fill="#e53e3e" font-size="11">Feedback</text>
+  
+  <!-- Mini discriminator on fake path -->
+  <g>
+    <rect x="130" y="310" width="30" height="20" rx="3" fill="#fed6e3" stroke="#ff6b6b" stroke-width="1"/>
+    <text x="145" y="324" text-anchor="middle" class="detail" font-size="8">D</text>
+  </g>
+  
+  <!-- Game Theory Label -->
+  <g data-narration="GANs implement a minimax zero-sum game where the generator tries to minimize its loss while the discriminator tries to maximize its classification accuracy">
+    <rect x="280" y="310" width="120" height="45" rx="6" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1"/>
+    <text x="340" y="328" text-anchor="middle" class="detail" font-weight="bold">Minimax Game</text>
+    <text x="340" y="343" text-anchor="middle" class="detail" font-size="10">Generator vs</text>
+    <text x="340" y="355" text-anchor="middle" class="detail" font-size="10">Discriminator</text>
+  </g>
+  
+  <!-- Key equations box -->
+  <g data-narration="The GAN objective function represents a minimax game where both networks optimize competing objectives">
+    <rect x="15" y="330" width="130" height="35" rx="6" fill="#ebf8ff" stroke="#4299e1" stroke-width="1"/>
+    <text x="80" y="345" text-anchor="middle" class="detail" font-size="10" font-family="Times New Roman, serif">minG maxD V(D,G)</text>
+    <text x="80" y="358" text-anchor="middle" class="detail" font-size="9">Adversarial Loss</text>
+  </g>
+</svg>

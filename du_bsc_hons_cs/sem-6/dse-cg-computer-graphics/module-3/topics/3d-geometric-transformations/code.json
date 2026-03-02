@@ -1,0 +1,35 @@
+{
+  "topicId": "3d-geometric-transformations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Basic 3D Translation and Scaling",
+      "description": "Demonstrates fundamental 3D geometric transformations: translation and scaling using homogeneous coordinates",
+      "code": "import numpy as np\n\n# Define a 3D point in homogeneous coordinates\npoint = np.array([2, 3, 4, 1])\n\n# Translation matrix (move by dx=1, dy=2, dz=3)\nt_translation = np.array([\n    [1, 0, 0, 1],\n    [0, 1, 0, 2],\n    [0, 0, 1, 3],\n    [0, 0, 0, 1]\n])\n\n# Scaling matrix (scale x by 2, y by 1.5, z by 1)\nt_scaling = np.array([\n    [2, 0, 0, 0],\n    [0, 1.5, 0, 0],\n    [0, 0, 1, 0],\n    [0, 0, 0, 1]\n])\n\n# Apply translation\ntranslated = t_translation @ point\nprint(f\"Original: {point[:3]}\")\nprint(f\"Translated: {translated[:3]}\")\n\n# Apply scaling\nscaled = t_scaling @ point\nprint(f\"Scaled: {scaled[:3]}\")\n\n# Apply both: translate then scale\ntransformed = t_scaling @ t_translation @ point\nprint(f\"Translated then Scaled: {transformed[:3]}\")",
+      "explanation": "1. Points are represented in homogeneous coordinates (x, y, z, 1)\n2. Translation matrix uses the last column to add offsets\n3. Scaling matrix uses diagonal elements for x, y, z scaling\n4. Matrix multiplication (@) applies transformations right-to-left\n5. Combined transformations are done by multiplying matrices",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "3D Rotation Matrices",
+      "description": "Implements rotation transformations around X, Y, and Z axes using rotation matrices",
+      "code": "import numpy as np\nimport math\n\ndef rotation_matrix_x(theta):\n    \"\"\"Rotation around X-axis by theta radians\"\"\"\n    c, s = math.cos(theta), math.sin(theta)\n    return np.array([\n        [1, 0, 0, 0],\n        [0, c, -s, 0],\n        [0, s, c, 0],\n        [0, 0, 0, 1]\n    ])\n\ndef rotation_matrix_y(theta):\n    \"\"\"Rotation around Y-axis by theta radians\"\"\"\n    c, s = math.cos(theta), math.sin(theta)\n    return np.array([\n        [c, 0, s, 0],\n        [0, 1, 0, 0],\n        [-s, 0, c, 0],\n        [0, 0, 0, 1]\n    ])\n\ndef rotation_matrix_z(theta):\n    \"\"\"Rotation around Z-axis by theta radians\"\"\"\n    c, s = math.cos(theta), math.sin(theta)\n    return np.array([\n        [c, -s, 0, 0],\n        [s, c, 0, 0],\n        [0, 0, 1, 0],\n        [0, 0, 0, 1]\n    ])\n\n# Test rotation\npoint = np.array([1, 0, 0, 1])\n\n# Rotate 90 degrees around Y-axis\nry_90 = rotation_matrix_y(math.pi / 2)\nrotated = ry_90 @ point\nprint(f\"Original: {point[:3]}\")\nprint(f\"Rotated 90° around Y: {rotated[:3]}\")\n\n# Rotate around Z then X (combined rotation)\nrz_45 = rotation_matrix_z(math.pi / 4)\nrx_30 = rotation_matrix_x(math.pi / 6)\ncombined = rx_30 @ rz_45 @ point\nprint(f\"Rotated Z45° then X30°: {combined[:3]}\")",
+      "explanation": "1. Rotation matrices are derived from trigonometric relationships\n2. Rotation around X uses cos/sin in Y-Z plane\n3. Rotation around Y uses cos/sin in X-Z plane\n4. Rotation around Z uses cos/sin in X-Y plane\n5. Multiple rotations combine via matrix multiplication\n6. Angles are in radians (π radians = 180°)",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "3D Transformation Pipeline with Projection",
+      "description": "Complete 3D graphics pipeline: model → world → view → projection → viewport transformation",
+      "code": "import numpy as np\nimport math\n\ndef create_transform_pipeline():\n    \"\"\"Create a complete transformation pipeline\"\"\"\n    \n    # Model transformation: position cube at (2, 1, 0), rotate 45°\n    model_translation = np.array([\n        [1, 0, 0, 2],\n        [0, 1, 0, 1],\n        [0, 0, 1, 0],\n        [0, 0, 0, 1]\n    ])\n    model_rotation = rotation_matrix_y(math.pi / 4)\n    model_matrix = model_translation @ model_rotation\n    \n    # View transformation: camera at (0, 5, 10), looking at origin\n    # Simplified view matrix (camera at eye position)\n    eye = np.array([0, 5, 10])\n    target = np.array([0, 0, 0])\n    up = np.array([0, 1, 0])\n    \n    # Calculate camera coordinate system\n    forward = target - eye\n    forward = forward / np.linalg.norm(forward)\n    right = np.cross(forward, up)\n    right = right / np.linalg.norm(right)\n    up = np.cross(right, forward)\n    \n    # View matrix (look-at transformation)\n    view_matrix = np.array([\n        [right[0], right[1], right[2], -np.dot(right, eye)],\n        [up[0], up[1], up[2], -np.dot(up, eye)],\n        [-forward[0], -forward[1], -forward[2], np.dot(forward, eye)],\n        [0, 0, 0, 1]\n    ])\n    \n    # Perspective projection matrix\n    fov = math.pi / 4  # 45 degrees\n    aspect = 16 / 9\n    near = 0.1\n    far = 100.0\n    \n    f = 1.0 / math.tan(fov / 2)\n    proj_matrix = np.array([\n        [f / aspect, 0, 0, 0],\n        [0, f, 0, 0],\n        [0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],\n        [0, 0, -1, 0]\n    ])\n    \n    return model_matrix, view_matrix, proj_matrix\n\ndef rotation_matrix_y(theta):\n    c, s = math.cos(theta), math.sin(theta)\n    return np.array([\n        [c, 0, s, 0],\n        [0, 1, 0, 0],\n        [-s, 0, c, 0],\n        [0, 0, 0, 1]\n    ])\n\n# Define a cube's 8 vertices\ncube_vertices = np.array([\n    [0, 0, 0, 1],\n    [1, 0, 0, 1],\n    [1, 1, 0, 1],\n    [0, 1, 0, 1],\n    [0, 0, 1, 1],\n    [1, 0, 1, 1],\n    [1, 1, 1, 1],\n    [0, 1, 1, 1]\n])\n\n# Get transformation matrices\nmodel, view, projection = create_transform_pipeline()\nmvp = projection @ view @ model\n\n# Transform all vertices\nprint(\"Transforming cube through pipeline:\\n\")\nfor i, vertex in enumerate(cube_vertices):\n    transformed = mvp @ vertex\n    # Perspective divide (convert from clip to NDC)\n    ndc = transformed[:3] / transformed[3]\n    print(f\"Vertex {i}: Original {vertex[:3]} -> NDC {ndc}\")",
+      "explanation": "1. Model transformation: places object in world space (translation + rotation + scaling)\n2. View transformation: positions camera and transforms world to camera space\n3. Projection transformation: applies perspective or orthographic projection\n4. Viewport transformation: maps NDC to screen coordinates\n5. MVP matrix combines all three: Model × View × Projection\n6. Perspective divide converts homogeneous coordinates to 3D points\n7. This pipeline is fundamental to all real-time 3D graphics",
+      "timeComplexity": "O(v) where v = number of vertices",
+      "spaceComplexity": "O(1) excluding input vertices"
+    }
+  ]
+}

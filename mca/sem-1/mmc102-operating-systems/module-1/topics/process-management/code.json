@@ -1,0 +1,45 @@
+{
+  "topicId": "process-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Process Creation using fork()",
+      "description": "Demonstrates creating a child process in C using fork() system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n    pid_t pid;\n    printf(\"Before fork: Process ID = %d\\n\", getpid());\n    \n    pid = fork();\n    \n    if (pid < 0) {\n        printf(\"Fork failed!\\n\");\n        return 1;\n    }\n    else if (pid == 0) {\n        // Child process\n        printf(\"Child: My PID = %d, Parent PID = %d\\n\", \n               getpid(), getppid());\n    }\n    else {\n        // Parent process\n        printf(\"Parent: My PID = %d, Child PID = %d\\n\", \n               getpid(), pid);\n        wait(NULL); // Wait for child to complete\n    }\n    \n    return 0;\n}",
+      "explanation": "fork() creates an identical copy of the process. The child gets PID=0 in its context, parent gets child's PID. Both continue execution from after fork(). Parent calls wait() to prevent zombie child.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n) where n is address space size"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Round Robin CPU Scheduling",
+      "description": "Implementation of Round Robin scheduling algorithm",
+      "code": "def round_robin(processes, burst_time, quantum):\n    n = len(processes)\n    remaining_bt = burst_time.copy()  # Remaining burst time\n    wait_time = [0] * n\n    turnaround_time = [0] * n\n    t = 0  # Current time\n    \n    # Process until all are done\n    while True:\n        done = True\n        for i in range(n):\n            if remaining_bt[i] > 0:\n                done = False\n                \n                if remaining_bt[i] > quantum:\n                    t += quantum\n                    remaining_bt[i] -= quantum\n                else:\n                    t += remaining_bt[i]\n                    wait_time[i] = t - burst_time[i]\n                    remaining_bt[i] = 0\n        \n        if done:\n            break\n    \n    # Calculate turnaround time\n    for i in range(n):\n        turnaround_time[i] = wait_time[i] + burst_time[i]\n    \n    # Print results\n    print(\"Process\\tBurst\\tWaiting\\tTurnaround\")\n    for i in range(n):\n        print(f\"P{i+1}\\t{burst_time[i]}\\t{wait_time[i]}\\t{turnaround_time[i]}\")\n\n# Example\nprocesses = [1, 2, 3, 4]\nburst_time = [10, 5, 8, 12]\nquantum = 4\nround_robin(processes, burst_time, quantum)",
+      "explanation": "Round Robin gives each process equal time slice (quantum). If burst > quantum, process is preempted and goes to back of ready queue. Provides fair scheduling and good response time for interactive systems.",
+      "timeComplexity": "O(n \u00d7 q) where q is quantum, n is number of processes",
+      "spaceComplexity": "O(n) for storing times"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Semaphore Implementation and Usage",
+      "description": "Demonstrates semaphore for process synchronization",
+      "code": "#include <stdio.h>\n#include <pthread.h>\n#include <semaphore.h>\n\nsem_t mutex;  // Semaphore for mutual exclusion\nint shared_variable = 0;\n\nvoid* thread_function(void* arg) {\n    int local = *(int*)arg;\n    \n    // Wait (decrement) on semaphore\n    sem_wait(&mutex);\n    \n    // Critical Section - only one thread here at a time\n    shared_variable++;\n    printf(\"Thread %d: shared_variable = %d\\n\", local, shared_variable);\n    \n    // Signal (increment) on semaphore\n    sem_post(&mutex);\n    \n    return NULL;\n}\n\nint main() {\n    pthread_t threads[5];\n    int ids[5];\n    \n    // Initialize semaphore: 1 = binary (mutex)\n    sem_init(&mutex, 0, 1);\n    \n    // Create 5 threads\n    for (int i = 0; i < 5; i++) {\n        ids[i] = i;\n        pthread_create(&threads[i], NULL, thread_function, &ids[i]);\n    }\n    \n    // Join all threads\n    for (int i = 0; i < 5; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"Final value: %d\\n\", shared_variable);\n    sem_destroy(&mutex);\n    \n    return 0;\n}",
+      "explanation": "Semaphore is an integer with atomic wait() and signal() operations. wait() decrements and blocks if value becomes 0. signal() increments and wakes blocked process. This ensures mutual exclusion (binary semaphore = mutex).",
+      "timeComplexity": "O(1) for wait and signal operations",
+      "spaceComplexity": "O(s) where s is number of semaphores"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "SJF (Shortest Job First) Scheduling",
+      "description": "Implementation of non-preemptive SJF scheduling",
+      "code": "def sjf_scheduling(processes, burst_time):\n    n = len(processes)\n    \n    # Pair and sort by burst time\n    pairs = list(zip(processes, burst_time))\n    pairs.sort(key=lambda x: x[1])  # Sort by burst time\n    \n    waiting_time = [0] * n\n    turnaround_time = [0] * n\n    \n    # First process has 0 waiting time\n    waiting_time[0] = 0\n    \n    # Calculate waiting times\n    for i in range(1, n):\n        waiting_time[i] = pairs[i-1][1] + waiting_time[i-1]\n    \n    # Calculate turnaround times\n    for i in range(n):\n        turnaround_time[i] = waiting_time[i] + pairs[i][1]\n    \n    # Print results\n    print(\"Process\\tBurst\\tWaiting\\tTurnaround\")\n    for i in range(n):\n        print(f\"P{pairs[i][0]}\\t{pairs[i][1]}\\t{waiting_time[i]}\\t{turnaround_time[i]}\")\n    \n    avg_wait = sum(waiting_time) / n\n    avg_turnaround = sum(turnaround_time) / n\n    print(f\"\\nAverage Waiting Time: {avg_wait}\")\n    print(f\"Average Turnaround Time: {avg_turnaround}\")\n\n# Example\nprocesses = [1, 2, 3, 4]\nburst_time = [6, 8, 7, 3]\nsjf_scheduling(processes, burst_time)",
+      "explanation": "SJF selects the process with shortest burst time first. It provides optimal average waiting time but requires knowing burst times in advance. It can cause starvation of long processes. This is non-preemptive version.",
+      "timeComplexity": "O(n log n) for sorting",
+      "spaceComplexity": "O(n) for storing times"
+    }
+  ]
+}

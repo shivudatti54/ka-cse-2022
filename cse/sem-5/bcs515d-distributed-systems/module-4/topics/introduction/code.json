@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple RPC Client-Server Pseudocode",
+      "description": "Demonstrates how RPC provides access transparency by making remote calls appear local",
+      "code": "# Server Side (Service Provider)\ndef remote_add(a, b):\n return a + b\n\n# Client Side (Service Requestor)\n# Using stub to make remote call look local\nresult = stub.remote_add(5, 3) # Appears local, but actually sends RPC\nprint(result) # Output: 8",
+      "explanation": "The stub at client side marshals parameters, sends request to server, waits for response, and unmarshals the result. This provides access transparency - the programmer writes normal function call syntax while the middleware handles all distributed communication.",
+      "timeComplexity": "O(1) per call",
+      "spaceComplexity": "O(m) where m is message size"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Heartbeat-based Failure Detection",
+      "description": "Simple algorithm to detect node failures in distributed system",
+      "code": "BEGIN\n CONSTANT heartbeat_interval = 5 seconds\n CONSTANT timeout_threshold = 3\n \n FUNCTION monitor_nodes():\n FOR each node in active_nodes:\n IF current_time - node.last_heartbeat > heartbeat_interval * timeout_threshold:\n mark node as FAILED\n initiate failover_protocol(node)\n ELSE\n node.status = HEALTHY\n \n FUNCTION receive_heartbeat(node_id):\n active_nodes[node_id].last_heartbeat = current_time\n active_nodes[node_id].status = HEALTHY\nEND",
+      "explanation": "Each monitored node sends periodic heartbeats. If no heartbeat arrives within timeout_threshold \u00d7 interval, the node is considered failed. This handles partial failures - the monitor continues even if some nodes fail. Trade-off: longer timeouts reduce false positives but delay failure detection.",
+      "timeComplexity": "O(n) where n = number of nodes monitored",
+      "spaceComplexity": "O(n) for storing node state"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Lamport Timestamp for Event Ordering",
+      "description": "Demonstrates logical clock to order events without global clock",
+      "code": "BEGIN\n GLOBAL counter = 0\n \n FUNCTION lamport_timestamp():\n counter = counter + 1\n RETURN counter\n \n FUNCTION send_message(message):\n message.timestamp = lamport_timestamp()\n send(message)\n \n FUNCTION receive_message(message):\n counter = max(counter, message.timestamp) + 1\n process(message)\n \n # Each process maintains local counter\n # Events are partially ordered by timestamps\n # This enables causality tracking without global clock\nEND",
+      "explanation": "Lamport timestamps provide causal ordering of events in distributed systems. Each event increments a logical counter. When receiving a message with timestamp T, the receiver sets its counter to max(local, T) + 1. This creates a partial order reflecting causal relationships without requiring synchronized physical clocks.",
+      "timeComplexity": "O(1) per event",
+      "spaceComplexity": "O(1) per process"
+    }
+  ]
+}

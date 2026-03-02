@@ -1,0 +1,121 @@
+{
+  "topicId": "methods",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Servlet Lifecycle Methods Flow",
+      "description": "A horizontal flowchart showing the lifecycle of a servlet from initialization to destruction",
+      "elements": [
+        "Servlet Container loads the servlet class",
+        "Constructor is called - creates servlet instance",
+        "init() method is invoked - initializes servlet config",
+        "For each client request: service() method is called, which dispatches to doGet()/doPost()",
+        "Container decides to remove servlet: destroy() method is called - cleanup resources",
+        "Servlet class is unloaded from memory"
+      ],
+      "purpose": "Students understand the complete lifecycle of a servlet and when each method is invoked. Essential for exam questions on servlet lifecycle and thread safety considerations."
+    },
+    {
+      "id": "diagram-2",
+      "title": "HTTP Request-Response Flow with Servlet Methods",
+      "description": "A vertical diagram showing how HTTP requests flow through servlet methods to generate responses",
+      "elements": [
+        "Client Browser sends HTTP Request (GET/POST)",
+        "Tomcat Server receives request",
+        "service(request, response) method is called",
+        "service() checks request type and calls appropriate handler: doGet() or doPost()",
+        "Servlet processes request using: getParameter(), getRequestDispatcher(), etc.",
+        "Servlet creates response using: setContentType(), getWriter(), etc.",
+        "Response sent back to client via Tomcat Server",
+        "HTTP Response displayed in browser"
+      ],
+      "purpose": "Students understand the complete flow from client request to server response, including which methods are involved at each stage. Helps in debugging and understanding request handling."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Servlet API Class Hierarchy",
+      "description": "A hierarchical tree diagram showing the inheritance structure of servlet classes and interfaces",
+      "elements": [
+        "java.lang.Object (root)",
+        "GenericServlet (abstract class) implements Servlet, ServletConfig, Serializable",
+        "HttpServlet (abstract class) extends GenericServlet",
+        "User-defined Servlet class extends HttpServlet",
+        "Servlet Interface: init(), service(), destroy(), getServletConfig(), getServletInfo()",
+        "ServletConfig Interface: getInitParameter(), getServletContext(), getServletName()",
+        "HttpServletRequest Interface: getParameter(), getMethod(), getSession()",
+        "HttpServletResponse Interface: setContentType(), getWriter(), addCookie()"
+      ],
+      "purpose": "Students understand the inheritance hierarchy and know which methods are inherited at each level. Important for understanding method overriding and interface implementation."
+    },
+    {
+      "id": "diagram-4",
+      "title": "JSP Lifecycle Methods Flow",
+      "description": "A flowchart showing JSP page translation and lifecycle phases",
+      "description2": "JSP page is requested by client",
+      "elements": [
+        "JSP page is requested by client",
+        "Tomcat checks if JSP file has been translated to servlet",
+        "If not translated: JSP is translated to _jsp.java servlet source file",
+        "_jsp.java is compiled to _jsp.class bytecode",
+        "Servlet instance is created via jspInit() method",
+        "For each request: _jspService(request, response) is called - handles HTTP method",
+        "When container shuts down: jspDestroy() is called - cleanup"
+      ],
+      "purpose": "Students understand how JSP files are converted to servlets internally and when jspInit, _jspService, and jspDestroy methods are invoked."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Reading Servlet Parameters Flow",
+      "description": "A diagram showing how HTML form data is read using getParameter() method",
+      "elements": [
+        "HTML Form with input fields (username, password)",
+        "Form submits via GET or POST method",
+        "Tomcat creates HttpServletRequest object",
+        "Servlet extracts parameter: String user = request.getParameter(\"username\")",
+        "If multiple values: String[] hobbies = request.getParameterValues(\"hobby\")",
+        "Parameter names and values stored in request object as key-value pairs",
+        "Servlet processes data and generates response"
+      ],
+      "purpose": "Students learn how to retrieve user input from HTML forms in servlets. Essential for building form-handling web applications."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison-table",
+      "title": "doGet() vs doPost() Method Comparison",
+      "content": "Purpose: Compare HTTP GET and POST methods in servlets\n\n| Aspect | doGet() | doPost() |\n|--------|---------|----------|\n| Method Type | GET request | POST request |\n| Data Location | Query string (URL) | Request body |\n| Data Size | Limited (~240 chars) | Unlimited (no limit) |\n| Security | Less secure (visible in URL) | More secure (hidden) |\n| Bookmarkable | Yes | No |\n| Caching | Cached by browsers | Not cached |\n| Idempotent | Yes | No |\n| Default Behavior | Yes (if not overridden) | Must explicitly override |\n| Use Case | Search, navigation | Form submission, file upload |\n| Speed | Faster | Slightly slower |\n\nExam Tip: Questions frequently ask when to use doGet vs doPost and the differences between them."
+    },
+    {
+      "type": "flowchart",
+      "title": "Servlet Lifecycle Decision Flow",
+      "content": "Purpose: Decision flowchart for servlet lifecycle management\n\n[Start] → [Container Starts] → [Load Servlet Class] → [Create Instance (constructor)] → [Call init()] → [Ready for Requests]\n\n[For Each Request] → [service() called] → [Is GET request?] → Yes → [doGet()] → [Generate Response]\n ↓ No\n [Is POST request?] → Yes → [doPost()] → [Generate Response]\n ↓ No\n [Other methods: doPut, doDelete, doHead, doOptions, doTrace]\n\n[Container Shuts Down] → [destroy() called] → [Release resources] → [Unload Servlet Class] → [End]\n\nNote: service() method is thread-safe if implemented properly; doGet/doPost are not thread-safe by default."
+    },
+    {
+      "type": "classification-chart",
+      "title": "Servlet API Methods Classification",
+      "content": "Purpose: Categorize all important servlet methods by functionality\n\nLifecycle Methods:\n• init() - Called once during initialization\n• service() - Called for each request (dispatches to doXxx)\n• destroy() - Called during shutdown\n\nRequest Handling Methods:\n• doGet() - Handle GET requests\n• doPost() - Handle POST requests\n• doPut() - Handle PUT requests\n• doDelete() - Handle DELETE requests\n• doHead() - Handle HEAD requests\n• doOptions() - Handle OPTIONS requests\n• doTrace() - Handle TRACE requests\n\nRequest Information Methods:\n• getParameter() - Single parameter value\n• getParameterValues() - Multiple values\n• getParameterNames() - All parameter names\n• getMethod() - GET/POST/PUT/etc\n• getRequestURI() - Requested URL\n\nResponse Methods:\n• setContentType() - Set MIME type\n• getWriter() - Get PrintWriter\n• setStatus() - Set HTTP status code\n• sendRedirect() - Redirect to another URL\n• setHeader() - Set response header\n\nDispatcher Methods:\n• getRequestDispatcher() - Forward request\n• include() - Include another resource"
+    },
+    {
+      "type": "comparison-table",
+      "title": "Servlet vs JSP Lifecycle Methods",
+      "content": "Purpose: Compare servlet and JSP lifecycle methods\n\n| Aspect | Servlet | JSP |\n|--------|---------|-----|\n| File Extension | .java | .jsp |\n| Translation | Not required | Translated to servlet |\n| init() equivalent | init() | jspInit() |\n| service() equivalent | service() | _jspService() |\n| destroy() equivalent | destroy() | jspDestroy() |\n| Default Method | service() handles all | _jspService() handles all |\n| Override | Override any method | Override jspInit/jspDestroy only |\n| Thread Safety | Manual handling needed | Less control |\n| When Called | Per request | Translation + per request |\n| Developer Override | Full control | jspInit/jspDestroy only |\n\nKey Point: JSP is translated to servlet internally; jspInit() and jspDestroy() are the only lifecycle methods developers should override."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Servlet and JSP Methods",
+      "branches": [
+        "Servlet Lifecycle Methods (init → service → destroy)",
+        "HTTP Request Handler Methods (doGet, doPost, doPut, doDelete)",
+        "JSP Lifecycle Methods (jspInit, _jspService, jspDestroy)",
+        "Request Methods (getParameter, getAttribute, getMethod)",
+        "Response Methods (setContentType, getWriter, sendRedirect)",
+        "Session Methods (getSession, invalidate, setAttribute)",
+        "Cookie Methods (getCookies, addCookie)",
+        "Dispatcher Methods (forward, include)",
+        "Annotation Methods (@WebServlet, @WebInitParam)"
+      ],
+      "purpose": "Provides comprehensive overview of all methods in servlet and JSP technology. Students can use this for quick revision and to understand relationships between different method categories. Essential for exam preparation as it covers the entire method landscape of Module 4."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "topicId": "scheduling-criteria",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FCFS Scheduling Algorithm",
+      "description": "First Come First Serve algorithm implementation demonstrating waiting time calculation",
+      "code": "ALGORITHM FCFS_Scheduling\nINPUT: Array of processes with arrival time and burst time\nOUTPUT: Average waiting time and turnaround time\n\nBEGIN\n  Sort processes by arrival time\n  current_time = 0\n  total_waiting = 0\n  total_turnaround = 0\n\n  FOR each process P in sorted_list DO\n    IF current_time < P.arrival_time THEN\n      current_time = P.arrival_time\n    END IF\n\n    P.waiting_time = current_time - P.arrival_time\n    total_waiting = total_waiting + P.waiting_time\n\n    current_time = current_time + P.burst_time\n    P.turnaround_time = current_time - P.arrival_time\n    total_turnaround = total_turnaround + P.turnaround_time\n  END FOR\n\n  avg_waiting = total_waiting / number_of_processes\n  avg_turnaround = total_turnaround / number_of_processes\n\n  OUTPUT avg_waiting, avg_turnaround\nEND",
+      "explanation": "FCFS executes processes in order of arrival. Simple but can cause long waiting times for short processes that arrive after long ones. Demonstrates how waiting time accumulates based on queue position.",
+      "timeComplexity": "O(n log n) for sorting",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "SJF Non-Preemptive Scheduling",
+      "description": "Shortest Job First algorithm that minimizes average waiting time",
+      "code": "ALGORITHM SJF_Scheduling\nINPUT: Array of processes with arrival time and burst time\nOUTPUT: Average waiting time and turnaround time\n\nBEGIN\n  ready_queue = []\n  completed = 0\n  current_time = 0\n  total_waiting = 0\n  total_turnaround = 0\n\n  WHILE completed < number_of_processes DO\n    // Add all arrived processes to ready queue\n    FOR each process P DO\n      IF P.arrival_time <= current_time AND NOT P.completed THEN\n        Add P to ready_queue\n      END IF\n    END FOR\n\n    // Sort by burst time (shortest first)\n    Sort ready_queue by burst_time ASC\n\n    IF ready_queue is not empty THEN\n      selected = ready_queue[0]  // Shortest job\n      Remove selected from ready_queue\n\n      selected.waiting_time = current_time - selected.arrival_time\n      total_waiting = total_waiting + selected.waiting_time\n\n      current_time = current_time + selected.burst_time\n      selected.turnaround_time = current_time - selected.arrival_time\n      total_turnaround = total_turnaround + selected.turnaround_time\n\n      selected.completed = TRUE\n      completed = completed + 1\n    ELSE\n      current_time = current_time + 1  // Idle time\n    END IF\n  END WHILE\n\n  OUTPUT total_waiting/n, total_turnaround/n\nEND",
+      "explanation": "SJF selects the process with smallest burst time from ready queue, minimizing average waiting time. However, can cause starvation for long processes if short ones keep arriving.",
+      "timeComplexity": "O(n\u00b2) with sorting at each step",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Round Robin Scheduling",
+      "description": "Time-sliced scheduling algorithm ensuring fairness through equal time quantum",
+      "code": "ALGORITHM Round_Robin\nINPUT: Processes, time_quantum\nOUTPUT: Average waiting time and turnaround time\n\nBEGIN\n  ready_queue = queue()\n  current_time = 0\n  total_waiting = 0\n  total_turnaround = 0\n\n  // Initialize: add all arriving at time 0\n  FOR each process P with arrival = 0 DO\n    ready_queue.enqueue(P)\n  END FOR\n\n  WHILE ready_queue is not empty DO\n    current_process = ready_queue.dequeue()\n\n    // Record waiting time before execution\n    current_process.waiting_time = current_time - current_process.arrival_time\n    total_waiting = total_waiting + current_process.waiting_time\n\n    // Execute for time_quantum or remaining burst\n    execute_time = MIN(time_quantum, current_process.remaining_time)\n    current_time = current_time + execute_time\n    current_process.remaining_time = current_process.remaining_time - execute_time\n\n    // Check if new processes arrived during execution\n    FOR each process P DO\n      IF P.arrival_time <= current_time AND NOT P.in_queue THEN\n        ready_queue.enqueue(P)\n        P.in_queue = TRUE\n      END IF\n    END FOR\n\n    // If process not complete, re-queue\n    IF current_process.remaining_time > 0 THEN\n      ready_queue.enqueue(current_process)\n    ELSE\n      current_process.turnaround_time = current_time - current_process.arrival_time\n      total_turnaround = total_turnaround + current_process.turnaround_time\n    END IF\n  END WHILE\n\n  OUTPUT total_waiting/n, total_turnaround/n\nEND",
+      "explanation": "Round Robin gives each process equal CPU time slices, ensuring no starvation. Response time is good but throughput may suffer with small time quantum due to context switch overhead.",
+      "timeComplexity": "O(n \u00d7 average_burst / quantum)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Priority Scheduling with Aging",
+      "description": "Priority scheduling that implements aging to prevent starvation",
+      "code": "def priority_scheduling_with_aging(processes):\n    \"\"\"\n    Demonstrates priority scheduling with aging to prevent starvation.\n    Aging increases priority of waiting processes over time.\n    \"\"\"\n    current_time = 0\n    completed = []\n    ready_queue = processes.copy()\n\n    # Initialize aging counter\n    aging_factor = 1  # Priority increases by 1 every unit\n\n    while len(completed) < len(processes):\n        # Increase waiting process priorities (aging)\n        for p in ready_queue:\n            if p not in completed and p.arrival_time <= current_time:\n                p.priority += aging_factor\n\n        # Sort by priority (higher priority first)\n        ready_queue.sort(key=lambda x: x.priority, reverse=True)\n\n        # Select highest priority process\n        current_process = None\n        for p in ready_queue:\n            if p.arrival_time <= current_time and p not in completed:\n                current_process = p\n                break\n\n        if current_process:\n            # Execute process\n            current_process.waiting_time = current_time - current_process.arrival_time\n            current_time += current_process.burst_time\n            current_process.turnaround_time = current_time - current_process.arrival_time\n            completed.append(current_process)\n        else:\n            # Idle CPU until next process arrives\n            current_time = min(p.arrival_time for p in ready_queue if p not in completed)\n\n    return completed\n\n# Example usage would show how aging prevents starvation\n# by gradually increasing priority of low-priority waiting processes",
+      "explanation": "Priority scheduling assigns higher priority to important processes. Without aging, low-priority processes may starve. Aging increases priority based on waiting time, ensuring all processes eventually get CPU time.",
+      "timeComplexity": "O(n\u00b2 log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Calculate Scheduling Metrics",
+      "description": "C program to calculate CPU scheduling criteria metrics",
+      "code": "#include <stdio.h>\n\nstruct Process {\n    int pid;\n    int arrival_time;\n    int burst_time;\n    int completion_time;\n    int turnaround_time;\n    int waiting_time;\n    int response_time;\n};\n\nvoid calculateMetrics(struct Process proc[], int n) {\n    int current_time = 0;\n    int total_waiting = 0, total_turnaround = 0, total_response = 0;\n\n    // FCFS: processes sorted by arrival time assumed\n    for (int i = 0; i < n; i++) {\n        if (current_time < proc[i].arrival_time)\n            current_time = proc[i].arrival_time;\n\n        // Response time: first CPU access - arrival\n        proc[i].response_time = current_time - proc[i].arrival_time;\n\n        // Waiting time: turnaround - burst time\n        current_time += proc[i].burst_time;\n        proc[i].completion_time = current_time;\n        proc[i].turnaround_time = proc[i].completion_time - proc[i].arrival_time;\n        proc[i].waiting_time = proc[i].turnaround_time - proc[i].burst_time;\n\n        total_waiting += proc[i].waiting_time;\n        total_turnaround += proc[i].turnaround_time;\n        total_response += proc[i].response_time;\n    }\n\n    printf(\"Average Waiting Time: %.2f\\n\", (float)total_waiting/n);\n    printf(\"Average Turnaround Time: %.2f\\n\", (float)total_turnaround/n);\n    printf(\"Average Response Time: %.2f\\n\", (float)total_response/n);\n}\n\nint main() {\n    struct Process proc[] = {{1, 0, 10}, {2, 1, 5}, {3, 2, 8}};\n    int n = sizeof(proc)/sizeof(proc[0]);\n    calculateMetrics(proc, n);\n    return 0;\n}",
+      "explanation": "This C code demonstrates calculation of all scheduling metrics: waiting time, turnaround time, and response time. Shows the mathematical relationships between these criteria.",
+      "timeComplexity": "O(n) for simple FCFS",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

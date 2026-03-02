@@ -1,0 +1,45 @@
+{
+  "topicId": "static-dynamic-memory-allocation",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C++",
+      "title": "Dynamic 1D Array Allocation",
+      "description": "Demonstrates basic dynamic memory allocation for a 1D array in C++",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cout << \"Enter size of array: \";\n    cin >> n;\n    \n    // Dynamic allocation\n    int* arr = new int[n];\n    \n    // Initialize array\n    for (int i = 0; i < n; i++) {\n        arr[i] = i * 10;\n    }\n    \n    // Display elements\n    cout << \"Array elements: \";\n    for (int i = 0; i < n; i++) {\n        cout << arr[i] << \" \";\n    }\n    cout << endl;\n    \n    // Deallocate memory\n    delete[] arr;\n    \n    return 0;\n}",
+      "explanation": "This program dynamically allocates an integer array of size entered by user at runtime. Memory is allocated on heap using 'new', used, then freed using 'delete[]' to prevent memory leak.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "C++",
+      "title": "Dynamic 2D Array (Row Pointer Method)",
+      "description": "Allocates a 2D array using array of pointers",
+      "code": "#include <iostream>\nusing namespace std;\n\nint** createMatrix(int rows, int cols) {\n    // Allocate array of pointers (rows)\n    int** matrix = new int*[rows];\n    \n    // Allocate each row\n    for (int i = 0; i < rows; i++) {\n        matrix[i] = new int[cols];\n    }\n    \n    // Initialize with zeros\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++) {\n            matrix[i][j] = 0;\n        }\n    }\n    \n    return matrix;\n}\n\nvoid deleteMatrix(int** matrix, int rows) {\n    // First delete each row\n    for (int i = 0; i < rows; i++) {\n        delete[] matrix[i];\n    }\n    // Then delete the array of pointers\n    delete[] matrix;\n}\n\nint main() {\n    int rows = 3, cols = 4;\n    int** mat = createMatrix(rows, cols);\n    \n    // Assign values\n    mat[0][0] = 1;\n    mat[2][3] = 99;\n    \n    // Display\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++) {\n            cout << mat[i][j] << \" \";\n        }\n        cout << endl;\n    }\n    \n    deleteMatrix(mat, rows);\n    return 0;\n}",
+      "explanation": "Creates a 2D array using pointer-to-pointer technique. Each row is independently allocated, allowing for flexible row sizes. Memory must be freed in reverse order - first rows, then the pointer array.",
+      "timeComplexity": "O(rows \u00d7 cols)",
+      "spaceComplexity": "O(rows \u00d7 cols)"
+    },
+    {
+      "id": "code-3",
+      "language": "C++",
+      "title": "Class with Dynamic Memory (Rule of Three)",
+      "description": "Implements a String class demonstrating proper memory management",
+      "code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nclass String {\nprivate:\n    char* str;\n    int length;\n    \npublic:\n    // Constructor\n    String(const char* s = \"\") {\n        length = strlen(s);\n        str = new char[length + 1];\n        strcpy(str, s);\n    }\n    \n    // Destructor\n    ~String() {\n        delete[] str;\n    }\n    \n    // Copy Constructor (Deep Copy)\n    String(const String& s) {\n        length = s.length;\n        str = new char[length + 1];\n        strcpy(str, s.str);\n    }\n    \n    // Assignment Operator (Deep Copy)\n    String& operator=(const String& s) {\n        if (this != &s) {  // Check for self-assignment\n            delete[] str;   // Free old memory\n            length = s.length;\n            str = new char[length + 1];\n            strcpy(str, s.str);\n        }\n        return *this;\n    }\n    \n    void display() {\n        cout << str << endl;\n    }\n};\n\nint main() {\n    String s1(\"Hello\");\n    String s2 = s1;        // Copy constructor\n    String s3(\"World\");\n    s3 = s1;               // Assignment operator\n    \n    s1.display();\n    s2.display();\n    s3.display();\n    \n    return 0;\n}",
+      "explanation": "This String class demonstrates the Rule of Three. The destructor frees memory, copy constructor performs deep copy, and assignment operator checks self-assignment before copying. This prevents memory leaks and dangling pointers.",
+      "timeComplexity": "O(n) for copy operations",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "C++",
+      "title": "Smart Pointer Example",
+      "description": "Demonstrates automatic memory management using unique_ptr",
+      "code": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nclass Resource {\npublic:\n    Resource() { cout << \"Resource acquired\\n\"; }\n    ~Resource() { cout << \"Resource released\\n\"; }\n    void display() { cout << \"Using Resource\\n\"; }\n};\n\nvoid functionWithSmartPtr() {\n    // unique_ptr automatically manages memory\n    unique_ptr<Resource> ptr = make_unique<Resource>();\n    ptr->display();\n    \n    // No need to call delete - automatically freed when function ends\n}  // ptr goes out of scope, Resource is automatically deleted\n\nint main() {\n    cout << \"Entering function\\n\";\n    functionWithSmartPtr();\n    cout << \"Left function\\n\";\n    \n    // Example with shared_ptr\n    shared_ptr<Resource> ptr1 = make_shared<Resource>();\n    shared_ptr<Resource> ptr2 = ptr1;  // Reference count = 2\n    \n    cout << \"Reference count: \" << ptr1.use_count() << endl;\n    \n    ptr1.reset();  // Reference count = 1\n    cout << \"After reset, count: \" << ptr2.use_count() << endl;\n    \n    return 0;\n}",
+      "explanation": "Smart pointers provide automatic memory management. unique_ptr has exclusive ownership - automatically deletes when out of scope. shared_ptr uses reference counting and only deletes when all references are gone. This prevents memory leaks.",
+      "timeComplexity": "O(1) for pointer operations",
+      "spaceComplexity": "O(1) additional for control block"
+    }
+  ]
+}

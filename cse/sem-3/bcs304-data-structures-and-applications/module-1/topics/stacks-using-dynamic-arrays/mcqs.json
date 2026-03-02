@@ -1,0 +1,380 @@
+{
+  "topicId": "stacks-using-dynamic-arrays",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "A dynamic stack starts empty with initial capacity 4. After pushing 10 elements, what is the final capacity (assuming doubling strategy)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "10"
+        },
+        {
+          "key": "B",
+          "text": "16"
+        },
+        {
+          "key": "C",
+          "text": "32"
+        },
+        {
+          "key": "D",
+          "text": "20"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Starting at capacity 4: pushes 1-4 fill capacity 4 (no resize), push 5 triggers doubling to 8, pushes 5-8 fill capacity 8, push 9 triggers doubling to 16, push 9 fills index 8, push 10 fills index 9. Final capacity is 16.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Using aggregate method, what is the total number of element copies when pushing n=100 elements into a dynamic stack with doubling strategy?",
+      "options": [
+        {
+          "key": "A",
+          "text": "100"
+        },
+        {
+          "key": "B",
+          "text": "127"
+        },
+        {
+          "key": "C",
+          "text": "198"
+        },
+        {
+          "key": "D",
+          "text": "256"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Copies occur at sizes: 1\u21922 (1 copy), 2\u21924 (2 copies), 4\u21928 (4), 8\u219216 (8), 16\u219232 (16), 32\u219264 (32), 64\u2192128 (64). Total = 1+2+4+8+16+32+64 = 127. Since 100 < 128, we stop at 64\u2192128 capacity but only copy 100 elements when resizing, totaling 127 copies.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What is the amortized cost per operation for n push operations on a dynamic stack?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(n)"
+        },
+        {
+          "key": "B",
+          "text": "O(n log n)"
+        },
+        {
+          "key": "C",
+          "text": "O(1)"
+        },
+        {
+          "key": "D",
+          "text": "O(log n)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Using aggregate analysis, total cost for n pushes = n + (1+2+4+...+2^\u230alog\u2082(n)\u230b) < n + 2n = 3n = O(n). Therefore amortized cost = O(n)/n = O(1).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "In a stack with shrink-to-fit, at what threshold does the stack typically shrink (assuming halving)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When top < capacity - 1"
+        },
+        {
+          "key": "B",
+          "text": "When top < capacity/2"
+        },
+        {
+          "key": "C",
+          "text": "When top < capacity/4"
+        },
+        {
+          "key": "D",
+          "text": "When top == 0"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The stack shrinks when the number of elements falls below capacity/4. Using 1/4 threshold prevents thrashing: if we shrink at 1/2, alternating push-pop could cause repeated grow-shrink cycles.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the time complexity of the push operation when resize is NOT needed?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(n)"
+        },
+        {
+          "key": "B",
+          "text": "O(1)"
+        },
+        {
+          "key": "C",
+          "text": "O(log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n\u00b2)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When the array has space, push simply increments top and stores the element - O(1) time. Only when resizing occurs does it take O(n) for copying elements.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Consider a dynamic stack with initial capacity 1. After exactly 1000 push operations followed by 998 pop operations, what is the capacity?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "4"
+        },
+        {
+          "key": "D",
+          "text": "8"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "After 1000 pushes: capacities 1\u21922\u21924\u21928\u219216\u219232\u219264\u2192128\u2192256\u2192512\u21921024. After push 1000, capacity is 1024, top is at 999. After 998 pops: 2 elements remain, top is at 1. Shrink threshold: 1024/4 = 256. Since 2 < 256, we shrink to 512? No, wait - we check during pop. Actually: With 2 elements, we shrink from 1024 when 2 < 1024/4 (256) is false. So capacity remains 1024. Wait - let me recalculate: At 998 pops, we have 2 elements. 1024/4 = 256. Since 2 < 256, shrink to 512. After 999th pop (1 element left), 512/4 = 128. 1 < 128, shrink to 256. After 1000th pop (0 elements), 256/4 = 64. 0 < 64, shrink to 128. But typically we don't shrink below minimum. So we need minimum size check. If MIN_SIZE = 4, then at 0 elements we can't shrink below 4. Wait - the question asks after 998 pops (leaving 2 elements). At 2 elements, 1024/4 = 256, so 2 < 256 \u2192 shrink to 512. But 512/4 = 128, 2 < 128 \u2192 shrink again to 256. 256/4 = 64, 2 < 64 \u2192 shrink to 128. 128/4 = 32, 2 < 32 \u2192 shrink to 64. 64/4 = 16, 2 < 16 \u2192 shrink to 32. 32/4 = 8, 2 < 8 \u2192 shrink to 16. 16/4 = 4, 2 < 4 \u2192 shrink to 8. 8/4 = 2, 2 < 2 is FALSE. So final capacity = 8.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Which data structure operation is most efficient for implementing a stack that requires dynamic resizing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Linked list with head insertion"
+        },
+        {
+          "key": "B",
+          "text": "Dynamic array (resizing)"
+        },
+        {
+          "key": "C",
+          "text": "Static array with MAX_SIZE"
+        },
+        {
+          "key": "D",
+          "text": "Circular buffer"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dynamic arrays provide O(1) amortized time for push/pop with better cache locality than linked lists. While linked lists also provide O(1) push/pop, they have higher memory overhead (pointers) and poor cache performance.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the space overhead of a dynamic array stack compared to a linked list stack storing n elements?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Same overhead"
+        },
+        {
+          "key": "B",
+          "text": "Less overhead (no pointer storage)"
+        },
+        {
+          "key": "C",
+          "text": "More overhead (pre-allocates extra space)"
+        },
+        {
+          "key": "D",
+          "text": "Depends on element size"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dynamic array stacks have less memory overhead per element because they store only data, not pointers. Linked lists require extra memory for next/prev pointers. However, dynamic arrays may have unused capacity (up to 3n in worst case).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "In the accounting method for amortized analysis, what charge is assigned to each push operation?",
+      "key": "C",
+      "options": [
+        {
+          "key": "A",
+          "text": "$1"
+        },
+        {
+          "key": "B",
+          "text": "$2"
+        },
+        {
+          "key": "C",
+          "text": "$3"
+        },
+        {
+          "key": "D",
+          "text": "$n"
+        }
+      ],
+      "explanation": "A charge of $3 per push is commonly used: $1 pays for the push itself, $2 pays for copying this element during future doubling. When doubling from k to 2k, we have k elements each with $2 stored, giving $2k to pay for copying k elements.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What happens if we use incremental growth (adding fixed size k) instead of doubling?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Amortized push remains O(1)"
+        },
+        {
+          "key": "B",
+          "text": "Amortized push becomes O(n)"
+        },
+        {
+          "key": "C",
+          "text": "Space complexity improves"
+        },
+        {
+          "key": "D",
+          "text": "No resizing is needed"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "With incremental growth, copying costs: 1+2+3+...+n/k \u2248 n\u00b2/2k, giving O(n) amortized cost. Total cost for n pushes = O(n\u00b2), so amortized = O(n).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "A dynamic stack has capacity 100 after a resize operation. If the shrink threshold is 1/4, at what element count will the NEXT shrink operation occur?",
+      "options": [
+        {
+          "key": "A",
+          "text": "24"
+        },
+        {
+          "key": "B",
+          "text": "25"
+        },
+        {
+          "key": "C",
+          "text": "26"
+        },
+        {
+          "key": "D",
+          "text": "49"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Shrink occurs when elements < capacity/4. Here capacity = 100, so threshold = 100/4 = 25. Shrink happens when count falls below 25, i.e., at 24 elements.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is the main advantage of using a template/generic dynamic array over type-specific implementation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Faster execution"
+        },
+        {
+          "key": "B",
+          "text": "Code reusability for multiple data types"
+        },
+        {
+          "key": "C",
+          "text": "Less memory usage"
+        },
+        {
+          "key": "D",
+          "text": "Simpler implementation"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Template-based implementations allow the same stack code to work with any data type without rewriting, promoting code reuse and type safety at compile time.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "In a C implementation of dynamic stack, what indicates stack underflow?",
+      "options": [
+        {
+          "key": "A",
+          "text": "top == capacity"
+        },
+        {
+          "key": "B",
+          "text": "top == -1"
+        },
+        {
+          "key": "C",
+          "text": "capacity == 0"
+        },
+        {
+          "key": "D",
+          "text": "NULL pointer"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Stack underflow occurs when attempting to pop from an empty stack. With top initialized to -1, underflow is detected when top == -1 (stack is empty before the operation).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-14",
+      "question": "If we perform n push operations followed by n pop operations on a dynamic stack, what is the total time complexity?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(n)"
+        },
+        {
+          "key": "B",
+          "text": "O(n\u00b2)"
+        },
+        {
+          "key": "C",
+          "text": "O(n log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(1)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "n pushes cost O(n) amortized. n pops (without shrink) cost O(n). Even with shrink-to-fit, the total remains O(n) because elements are moved at most O(log n) times. Overall O(n).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Why is cache locality better in array-based stacks compared to linked list stacks?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Arrays are larger"
+        },
+        {
+          "key": "B",
+          "text": "Elements are stored contiguously in memory"
+        },
+        {
+          "key": "C",
+          "text": "Linked lists use pointers"
+        },
+        {
+          "key": "D",
+          "text": "Dynamic arrays are faster"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Array elements are stored contiguously in memory, enabling prefetching and minimizing cache misses. Linked list nodes may be scattered in memory, causing more cache misses and slower access.",
+      "difficulty": "medium"
+    }
+  ]
+}

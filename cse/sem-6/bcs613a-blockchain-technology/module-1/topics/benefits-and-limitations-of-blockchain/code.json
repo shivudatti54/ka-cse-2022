@@ -1,0 +1,35 @@
+{
+  "topicId": "benefits-and-limitations-of-blockchain",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simulating Transaction Confirmation Process",
+      "description": "Pseudocode demonstrating how transactions flow through blockchain and how consensus affects confirmation time, illustrating scalability limitations.",
+      "code": "BEGIN\n FUNCTION broadcast_transaction(transaction):\n ADD transaction TO mempool\n SET status = \"pending\"\n RETURN status\n\n FUNCTION wait_for_confirmation(transaction, max_attempts):\n attempts = 0\n WHILE attempts < max_attempts:\n IF transaction IN valid_block:\n RETURN \"confirmed\"\n ELSE:\n WAIT block_time (Bitcoin: 10 min, Ethereum: 12-14 sec)\n attempts = attempts + 1\n RETURN \"timeout - low fee or network congestion\"\n\n // Illustrating scalability limitation\n FUNCTION calculate_throughput(block_size, block_time):\n max_tps = (block_size_bytes / avg_transaction_size) / block_time_seconds\n RETURN max_tps\n // Bitcoin: ~7 TPS, Ethereum: ~15-30 TPS\nEND",
+      "explanation": "This code demonstrates why blockchain has limited TPS. The 'wait_for_confirmation' shows why we must wait for block creation, and 'calculate_throughput' directly shows how block size and block time mathematically limit transactions per second.",
+      "timeComplexity": "O(n) for finding transaction in blocks",
+      "spaceComplexity": "O(n) for mempool storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Demonstrating 51% Attack Scenario",
+      "description": "Pseudocode showing how an attacker with majority hash power can manipulate the blockchain, illustrating a key security limitation of blockchain.",
+      "code": "BEGIN\n FUNCTION honest_mining(blockchain, honest_power):\n WHILE network_active:\n new_block = mine_block(blockchain.tip, honest_power)\n ADD new_block TO blockchain\n IF blockchain.length > attacker_chain.length:\n SWITCH_TO_longest_chain()\n\n FUNCTION attack_mining(blockchain, attacker_power):\n secret_chain = CREATE new_chain(blockchain.tip)\n WHILE network_active:\n new_block = mine_block(secret_chain.tip, attacker_power)\n ADD new_block TO secret_chain\n IF secret_chain.length > blockchain.length + 2:\n BROADCAST secret_chain\n // Result: Double-spend attack succeeds\n\n // KEY INSIGHT: If attacker_hash_rate > 50%, attack succeeds\nEND",
+      "explanation": "This pseudocode illustrates the 51% attack mechanism. With majority hash power, an attacker creates a longer secret chain that replaces the honest chain when broadcast - enabling double-spending. This is why network decentralization matters for security.",
+      "timeComplexity": "O(1) if 51% achieved",
+      "spaceComplexity": "O(n) for chain storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Immutability Verification Process",
+      "description": "Pseudocode demonstrating how blockchain ensures immutability through cryptographic hashing, making past transactions impossible to alter.",
+      "code": "BEGIN\n FUNCTION calculate_block_hash(block):\n header_data = block.version + block.previous_hash + \n block.merkle_root + block.timestamp + block.difficulty\n RETURN SHA256(header_data)\n\n FUNCTION verify_chain_integrity(blockchain):\n FOR i FROM 1 TO blockchain.length:\n current_block = blockchain[i]\n computed_hash = calculate_block_hash(current_block)\n IF computed_hash != current_block.hash:\n RETURN FALSE\n IF i > 1 AND current_block.previous_hash != blockchain[i-1].hash:\n RETURN FALSE\n RETURN TRUE\n\n FUNCTION attempt_modify_block(blockchain, index, new_data):\n blockchain[index].data = new_data\n blockchain[index].hash = calculate_block_hash(blockchain[index])\n FOR i FROM index+1 TO blockchain.length:\n blockchain[i].previous_hash = blockchain[i-1].hash\n blockchain[i].hash = calculate_block_hash(blockchain[i])\n RETURN blockchain\nEND",
+      "explanation": "This demonstrates why blockchain is immutable. To modify any past transaction, an attacker must recompute ALL subsequent block hashes faster than the honest network adds new blocks - computationally infeasible for established blockchains.",
+      "timeComplexity": "O(n) for verification, O(n\u00b2) for modification",
+      "spaceComplexity": "O(1) for verification, O(n) for modification"
+    }
+  ]
+}

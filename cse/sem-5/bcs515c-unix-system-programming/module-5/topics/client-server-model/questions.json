@@ -1,0 +1,117 @@
+{
+  "topicId": "client-server-model",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between iterative and concurrent servers. When would you choose one over the other?",
+      "keyPoints": [
+        "Iterative servers handle one client at a time, blocking until completion",
+        "Concurrent servers handle multiple clients simultaneously using forks/threads/multiplexing",
+        "Choose iterative for simple, quick transactions",
+        "Choose concurrent for long-running services with multiple clients",
+        "Iterative is simpler but has poor scalability"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the role of the sockaddr_in structure in socket programming. List at least four important fields.",
+      "keyPoints": [
+        "sockaddr_in is the IPv4 socket address structure",
+        "Contains sin_family (address family, AF_INET)",
+        "Contains sin_port (port number in network byte order)",
+        "Contains sin_addr (IP address in network byte order)",
+        "sin_zero padding for compatibility with sockaddr"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of the listen() system call? Explain the backlog parameter and its significance.",
+      "keyPoints": [
+        "listen() marks socket as passive (server) socket",
+        "Transforms active socket to listening state",
+        "backlog specifies maximum pending connection queue length",
+        "If queue full, new connections refused",
+        "Typical values: 5-128 depending on expected load"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the steps involved in establishing a TCP connection between a client and server.",
+      "keyPoints": [
+        "Server: socket(), bind(), listen(), accept()",
+        "Client: socket(), connect()",
+        "Three-way handshake: SYN \u2192 SYN-ACK \u2192 ACK",
+        "Server gets new socket from accept()",
+        "Both sides can now use send()/recv()"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the advantages and disadvantages of using UDP compared to TCP?",
+      "keyPoints": [
+        "UDP advantages: lower overhead, faster, suitable for real-time",
+        "UDP disadvantages: no reliability, no ordering, potential packet loss",
+        "No connection setup overhead",
+        "Applications: DNS, video streaming, VoIP",
+        "Need application-level reliability if required"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Write a complete TCP echo server program in C using socket programming functions. Include error handling and explain each step.",
+      "keyPoints": [
+        "Create socket with socket()",
+        "Bind to address with bind()",
+        "Listen with listen()",
+        "Accept connections with accept()",
+        "Fork child process for each client",
+        "Child handles echo, then exits",
+        "Parent closes client socket, continues accepting",
+        "Use appropriate headers and error checking"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a concurrent TCP server using fork(). Explain how zombie processes are prevented and how the server handles multiple clients simultaneously.",
+      "keyPoints": [
+        "Parent calls accept(), obtains client socket",
+        "Parent forks child process",
+        "Child handles client communication",
+        "Parent closes client socket, continues listening",
+        "Use signal(SIGCHLD, SIG_IGN) or wait() to prevent zombies",
+        "SO_REUSEADDR for quick restart",
+        "Explain file descriptor inheritance and closure"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast select() and poll() for I/O multiplexing in Unix network programming. When would you choose one over the other?",
+      "keyPoints": [
+        "Both enable monitoring multiple file descriptors",
+        "select() uses fd_set, limited to FD_SETSIZE (typically 1024)",
+        "poll() uses pollfd array, no fixed limit",
+        "select() can be less efficient with many descriptors",
+        "poll() provides more uniform interface",
+        "Both block until descriptor ready or timeout",
+        "select() is older, poll() more flexible",
+        "epoll() (Linux) better for large-scale servers"
+      ],
+      "marks": 10
+    }
+  ]
+}

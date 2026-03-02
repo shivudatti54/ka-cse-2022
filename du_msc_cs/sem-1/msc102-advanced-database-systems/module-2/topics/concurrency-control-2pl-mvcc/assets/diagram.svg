@@ -1,0 +1,163 @@
+<svg width="420" height="400" viewBox="0 0 420 400" data-topic-id="concurrency-control-2pl-mvcc" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f7ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5f0ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fff0f5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="plGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90d9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d5a8a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="mvccGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5cb85c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3d8b3d;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      0% { transform: translateX(-30px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      0% { transform: translateX(30px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes growUp {
+      0% { transform: scaleY(0); transform-origin: bottom; }
+      100% { transform: scaleY(1); transform-origin: bottom; }
+    }
+    @keyframes lockPulse {
+      0%, 100% { fill: #e74c3c; }
+      50% { fill: #c0392b; }
+    }
+    .title { animation: fadeIn 0.8s ease-out forwards; font-family: Georgia, serif; font-weight: bold; }
+    .box-2pl { animation: slideInLeft 0.6s ease-out forwards; }
+    .box-mvcc { animation: slideInRight 0.6s ease-out forwards; }
+    .pulse-anim { animation: pulse 2s ease-in-out infinite; transform-origin: center; }
+    .lock-bar { animation: growUp 0.5s ease-out forwards; }
+    .lock-icon { animation: lockPulse 1.5s ease-in-out infinite; }
+    .version-bar { animation: growUp 0.4s ease-out forwards; animation-delay: 0.3s; transform-origin: bottom; opacity: 0; }
+    .version-bar:nth-child(1) { animation-delay: 0.1s; }
+    .version-bar:nth-child(2) { animation-delay: 0.3s; }
+    .version-bar:nth-child(3) { animation-delay: 0.5s; }
+    .version-bar { animation-fill-mode: forwards; }
+    .phase-label { animation: fadeIn 1s ease-out forwards; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)" rx="12"/>
+  
+  <!-- Title -->
+  <text x="210" y="28" text-anchor="middle" class="title" fill="#2c3e50" font-size="18" font-weight="bold">Concurrency Control</text>
+  <text x="210" y="46" text-anchor="middle" class="title" fill="#5a6c7d" font-size="14" font-style="italic">2PL vs MVCC</text>
+  
+  <!-- Divider line -->
+  <line x1="210" y1="55" x2="210" y2="380" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,4"/>
+  
+  <!-- 2PL Section (Left) -->
+  <g class="box-2pl" data-narration="Two-Phase Locking uses a growing phase to acquire locks and a shrinking phase to release them">
+    <rect x="15" y="65" width="185" height="145" fill="white" stroke="url(#plGradient)" stroke-width="2" rx="8" filter="url(#shadow)"/>
+    <text x="108" y="82" text-anchor="middle" fill="#2d5a8a" font-size="14" font-weight="bold">Two-Phase Locking (2PL)</text>
+    
+    <!-- Timeline -->
+    <line x1="30" y1="130" x2="175" y2="130" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+    <line x1="30" y1="130" x2="80" y2="130" stroke="#4a90d9" stroke-width="5" class="lock-bar"/>
+    <line x1="80" y1="130" x2="175" y2="130" stroke="#95a5a6" stroke-width="5" class="lock-bar" style="animation-delay: 0.3s"/>
+    
+    <text x="55" y="150" text-anchor="middle" fill="#2d5a8a" font-size="10" font-weight="bold">Growing</text>
+    <text x="128" y="150" text-anchor="middle" fill="#7f8c8d" font-size="10" font-weight="bold">Shrinking</text>
+    
+    <!-- Lock icons -->
+    <g transform="translate(35, 155)">
+      <rect x="0" y="0" width="16" height="14" rx="2" fill="#e74c3c" class="lock-icon"/>
+      <rect x="2" y="2" width="12" height="3" fill="white" opacity="0.5"/>
+    </g>
+    <g transform="translate(55, 155)">
+      <rect x="0" y="0" width="16" height="14" rx="2" fill="#e74c3c" class="lock-icon" style="animation-delay: 0.2s"/>
+      <rect x="2" y="2" width="12" height="3" fill="white" opacity="0.5"/>
+    </g>
+    <g transform="translate(100, 155)">
+      <rect x="0" y="0" width="16" height="14" rx="2" fill="#95a5a6"/>
+      <rect x="2" y="2" width="12" height="3" fill="white" opacity="0.5"/>
+    </g>
+    <g transform="translate(120, 155)">
+      <rect x="0" y="0" width="16" height="14" rx="2" fill="#95a5a6"/>
+      <rect x="2" y="2" width="12" height="3" fill="white" opacity="0.5"/>
+    </g>
+    
+    <text x="108" y="188" text-anchor="middle" fill="#e74c3c" font-size="9" font-weight="bold">🔒 Acquire → Release</text>
+  </g>
+  
+  <!-- 2PL Key Points -->
+  <g class="box-2pl" data-narration="Key 2PL variants include Strict 2PL and Conservative 2PL">
+    <rect x="15" y="218" width="185" height="55" fill="white" stroke="#4a90d9" stroke-width="1" stroke-dasharray="3,3" rx="6"/>
+    <text x="108" y="235" text-anchor="middle" fill="#2c3e50" font-size="11" font-weight="bold">Variants</text>
+    <text x="108" y="252" text-anchor="middle" fill="#5a6c7d" font-size="10">Strict 2PL • Conservative 2PL</text>
+    <text x="108" y="266" text-anchor="middle" fill="#7f8c8d" font-size="9">Deadlock: Wait-die, Wound-wait</text>
+  </g>
+  
+  <!-- MVCC Section (Right) -->
+  <g class="box-mvcc" data-narration="MVCC maintains multiple versions of data allowing non-blocking reads">
+    <rect x="220" y="65" width="185" height="145" fill="white" stroke="url(#mvccGradient)" stroke-width="2" rx="8" filter="url(#shadow)"/>
+    <text x="312" y="82" text-anchor="middle" fill="#3d8b3d" font-size="14" font-weight="bold">MVCC</text>
+    
+    <!-- Version timeline -->
+    <text x="235" y="105" fill="#5a6c7d" font-size="10">Version History:</text>
+    
+    <g transform="translate(235, 112)">
+      <rect x="0" y="0" width="155" height="18" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="3" class="version-bar"/>
+      <text x="5" y="13" fill="#2e7d32" font-size="8">v3 (latest)</text>
+    </g>
+    <g transform="translate(235, 133)">
+      <rect x="0" y="0" width="155" height="18" fill="#c8e6c9" stroke="#81c784" stroke-width="1" rx="3" class="version-bar" style="animation-delay: 0.2s"/>
+      <text x="5" y="13" fill="#388e3c" font-size="8">v2 (committed)</text>
+    </g>
+    <g transform="translate(235, 154)">
+      <rect x="0" y="0" width="155" height="18" fill="#a5d6a7" stroke="#66bb6a" stroke-width="1" rx="3" class="version-bar" style="animation-delay: 0.4s"/>
+      <text x="5" y="13" fill="#2e7d32" font-size="8">v1 (old)</text>
+    </g>
+    
+    <!-- Snapshot view -->
+    <rect x="235" y="178" width="155" height="25" fill="#f3e5f5" stroke="#ce93d8" stroke-width="1" rx="4"/>
+    <text x="312" y="194" text-anchor="middle" fill="#7b1fa2" font-size="10" font-weight="bold">📸 Snapshot Isolation</text>
+  </g>
+  
+  <!-- MVCC Key Points -->
+  <g class="box-mvcc" data-narration="MVCC uses append-only storage with garbage collection for old versions">
+    <rect x="220" y="218" width="185" height="55" fill="white" stroke="#5cb85c" stroke-width="1" stroke-dasharray="3,3" rx="6"/>
+    <text x="312" y="235" text-anchor="middle" fill="#2c3e50" font-size="11" font-weight="bold">Features</text>
+    <text x="312" y="252" text-anchor="middle" fill="#5a6c7d" font-size="10">Append-only • Non-blocking reads</text>
+    <text x="312" y="266" text-anchor="middle" fill="#7f8c8d" font-size="9">Vacuum GC • First-committer-wins</text>
+  </g>
+  
+  <!-- Comparison Arrow/Box -->
+  <g data-narration="Both approaches ensure serializability but with different tradeoffs">
+    <rect x="95" y="285" width="230" height="40" fill="linear-gradient(#fff3e0, #ffe0b2)" stroke="#ffb74d" stroke-width="1" rx="6"/>
+    <text x="210" y="302" text-anchor="middle" fill="#e65100" font-size="11" font-weight="bold">Goal: Serializable Isolation</text>
+    <text x="210" y="318" text-anchor="middle" fill="#8d6e63" font-size="9">2PL: Lock-based • MVCC: Version-based</text>
+  </g>
+  
+  <!-- Use Cases -->
+  <g data-narration="Modern databases like PostgreSQL use MVCC, while some use hybrid approaches">
+    <rect x="15" y="335" width="390" height="38" fill="white" stroke="#78909c" stroke-width="1" rx="6" filter="url(#shadow)"/>
+    <text x="210" y="352" text-anchor="middle" fill="#37474f" font-size="10" font-weight="bold">Real-world: PostgreSQL (MVCC) • CockroachDB (Hybrid) • YugabyteDB (Hybrid)</text>
+    <text x="210" y="367" text-anchor="middle" fill="#546e7a" font-size="9">HTAP workloads • Distributed systems</text>
+  </g>
+  
+  <!-- Animated decorative elements -->
+  <circle cx="30" cy="380" r="4" fill="#4a90d9" class="pulse-anim"/>
+  <circle cx="390" cy="380" r="4" fill="#5cb85c" class="pulse-anim" style="animation-delay: 0.5s"/>
+</svg>

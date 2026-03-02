@@ -1,0 +1,52 @@
+{
+  "topicId": "arrays-and-expressions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of array‑to‑pointer decay in C++ and illustrate how the expression arr[i] is equivalent to *(arr + i). Also comment on the role of operator precedence in evaluating *(arr + i).",
+      "keyPoints": [
+        "Array name decays to pointer to its first element in most expressions.",
+        "Pointer arithmetic: arr + i yields address of the i‑th element; *(arr + i) accesses that element.",
+        "Operator precedence: subscript [] binds tighter than unary *, so *(arr + i) is evaluated as *( (arr + i) ).",
+        "Distinction between arrays and pointers: arrays have known size at compile time, pointers are just addresses."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write a function int linearSearch(int *arr, int size, int key) that uses pointer arithmetic to perform a linear search and returns the index of the first occurrence of key or -1 if not found. Explain how the function receives the array argument and how the caller passes it, contrasting the treatment of arrays and pointers in function parameters.",
+      "keyPoints": [
+        "Function signature uses int* to receive the array; pointer points to first element.",
+        "Loop advances pointer (ptr++) until key is found or pointer reaches arr+size.",
+        "Linear search runs in O(n) time; early exit on match.",
+        "When an array is passed, it decays to a pointer; modifications via the pointer affect the original array."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Write a complete C++ program that:\n1. Dynamically allocates a 3×4 integer matrix using the operator new.\n2. Fills each element with a random integer in the range 1–100.\n3. Computes and prints the sum of each row and each column.\n4. Sorts each row in ascending order and prints the sorted matrix.\n5. Deallocates all allocated memory properly.\nIn addition, discuss the memory layout of a dynamically allocated 2‑D array (contiguous block versus array of pointers) and identify potential pitfalls such as memory leaks, fragmentation, and out‑of‑bounds access.",
+      "keyPoints": [
+        "Use int **matrix = new int*[3]; then allocate each row: matrix[i] = new int[4]; (or a single contiguous block).",
+        "Populate with rand() % 100 + 1; compute row sums by iterating each row, column sums by accumulating over rows.",
+        "Sort each row with std::sort(matrix[i], matrix[i]+4); print sorted matrix row by row.",
+        "Memory layout: contiguous row‑major vs array‑of‑pointers; pitfalls: forgetting delete (leak), double delete, accessing beyond row/column bounds, fragmentation."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Consider the following code snippet:\n\nint arr[] = {5, 10, 15, 20, 25};\nint *ptr = arr + 2;\ncout << *ptr << ' ' << *(ptr - 1) << ' ' << *(ptr + 3) << endl;\ncout << *ptr++ << ' ' << *ptr << endl;\n\na) What is the output of the first cout statement? (2 marks)\nb) Explain how pointer arithmetic yields the values shown in part (a). (4 marks)\nc) In the second cout statement, the expression *ptr++ is used. Using operator precedence, show exactly how this expression is evaluated, what value is printed, and the final value of ptr after the statement. (4 marks)",
+      "keyPoints": [
+        "a) The first line prints 15 10 followed by undefined behaviour (reading beyond the array); if the array were size 6 it would print 30.",
+        "b) ptr points to arr[2] (value 15); ptr‑1 addresses arr[1] (10); ptr+3 addresses arr[5] (one past the last element), dereferencing it is UB.",
+        "c) Post‑fix ++ has higher precedence than *, so *ptr++ is interpreted as *(ptr++), i.e., dereference the original pointer (value 15), then increment the pointer to arr+3 (now points to 20). The second cout therefore prints 15 20, and after the statement ptr points to arr[3]."
+      ],
+      "marks": 10
+    }
+  ]
+}

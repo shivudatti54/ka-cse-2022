@@ -1,0 +1,70 @@
+{
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "DANIS-V Format",
+      "content": "Remember data type order: Date (java.sql.Date), Array (java.sql.Array), Numeric (BigDecimal), Integer (int), String/Varchar (String), Special (Blob, Clob) - helps remember common getObject() return types"
+    },
+    {
+      "id": "m-2",
+      "title": "G-SET Method Pattern",
+      "content": "GET methods follow pattern: get + Type (getInt, getString, getDate). SET methods: set + Type + index (setInt, setString, setDate). Always specify parameter index in PreparedStatement"
+    },
+    {
+      "id": "m-3",
+      "title": "NULL Primitive Trap",
+      "content": "Primitive Getters Return ZERO for NULL: getInt\u21920, getDouble\u21920.0, getBoolean\u2192false. Always check wasNull() or use getObject() for nullable primitives"
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "JDBC",
+      "expansion": "Java Database Connectivity",
+      "usage": "API that bridges Java applications with relational databases"
+    },
+    {
+      "term": "BLOB",
+      "expansion": "Binary Large Object",
+      "usage": "Stores binary data like images, documents - use getBytes()/setBytes() or Blob interface"
+    },
+    {
+      "term": "CLOB",
+      "expansion": "Character Large Object",
+      "usage": "Stores large text data - use getString()/setString() or Clob interface for very large text"
+    },
+    {
+      "term": "DML",
+      "expansion": "Data Manipulation Language",
+      "usage": "SQL commands (SELECT, INSERT, UPDATE, DELETE) that manipulate data"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Type Mapping Matrix",
+      "visualization": "Draw a 2-column table: SQL Types (VARCHAR, INTEGER, DATE, TIMESTAMP, BLOB, CLOB, NUMERIC) \u2192 Java Types (String, int, java.sql.Date, Timestamp, byte[], Reader, BigDecimal). Color-code by category (numeric=blue, date=yellow, binary=green, text=orange)"
+    },
+    {
+      "concept": "ResultSet Getter Decision Tree",
+      "visualization": "Start: Is it NULLable? \u2192 Yes \u2192 Use getObject(). No \u2192 Is it decimal? \u2192 Yes \u2192 getBigDecimal(). No \u2192 Is it date/time? \u2192 Use getDate/getTime/getTimestamp. Is it text? \u2192 getString. Is it binary? \u2192 getBytes. Is it boolean? \u2192 getBoolean"
+    },
+    {
+      "concept": "PreparedStatement Parameter Flow",
+      "visualization": "Java Object \u2192 setXXX(index, value) \u2192 Driver converts \u2192 SQL type \u2192 Database. Draw arrow showing: String 'John' \u2192 setString(1,'John') \u2192 VARCHAR \u2192 Stored in DB"
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "JDBC Data Types",
+      "analogy": "Think of JDBC types as translators between two people speaking different languages. Java speaks 'int, String, Date' while SQL speaks 'INTEGER, VARCHAR, DATE'. JDBC drivers are the translators converting each language appropriately."
+    },
+    {
+      "concept": "getObject() vs Specific Getters",
+      "analogy": "getObject() is like a universal translator that can handle any language but may lose nuance. Specific getters (getInt, getString) are specialized translators that preserve exact meaning but only work for their specific type."
+    },
+    {
+      "concept": "Primitive NULL Problem",
+      "analogy": "Primitives in Java cannot be null (int is always 0, boolean always false). So when SQL NULL arrives, JDBC has no choice but to give you 0 or false - it's like receiving 'nothing' but being forced to unwrap it as a default gift."
+    }
+  ],
+  "topicId": "data-types"
+}

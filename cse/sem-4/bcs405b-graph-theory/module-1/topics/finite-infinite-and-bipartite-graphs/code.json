@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Bipartite Testing using BFS",
+    "description": "Algorithm to check if a graph is bipartite using Breadth-First Search and 2-coloring",
+    "code": "FUNCTION isBipartite(graph G, vertices n)\n // Initialize color array: -1 = uncolored, 0 = first color, 1 = second color\n DECLARE color[n]\n FOR i = 0 to n-1 DO\n color[i] = -1\n END FOR\n\n // Graph may be disconnected, check all components\n FOR i = 0 to n-1 DO\n IF color[i] == -1 THEN\n // Start BFS from this vertex\n color[i] = 0\n CREATE queue q\n q.enqueue(i)\n\n WHILE q is not empty DO\n u = q.dequeue()\n FOR each neighbor v of u DO\n IF color[v] == -1 THEN\n // Assign opposite color\n color[v] = 1 - color[u]\n q.enqueue(v)\n ELSE IF color[v] == color[u] THEN\n // Same color adjacent - NOT bipartite\n RETURN FALSE\n END IF\n END FOR\n END WHILE\n END IF\n END FOR\n\n RETURN TRUE\nEND FUNCTION",
+    "explanation": "The algorithm uses BFS to traverse the graph and assigns colors to vertices. If we find two adjacent vertices with the same color, the graph contains an odd cycle and is not bipartite. The time complexity is O(V+E) where V is vertices and E is edges.",
+    "complexity": {
+      "time": "O(V + E)",
+      "space": "O(V)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Count Edges in K(m,n)",
+    "description": "Simple algorithm to calculate number of edges in complete bipartite graph",
+    "code": "// Complete Bipartite Graph K(m,n)\n// m = vertices in first partition\n// n = vertices in second partition\n\nFUNCTION countEdgesKmn(m, n)\n // In complete bipartite, every vertex in first set\n // connects to every vertex in second set\n \n edges = m * n\n RETURN edges\n\n// Example:\n// K(4,3) has 4 * 3 = 12 edges\n// K(1,5) has 1 * 5 = 5 edges (star graph)",
+    "explanation": "In a complete bipartite graph K(m,n), each of the m vertices in the first partition is connected to all n vertices in the second partition. Since there are m vertices each with n edges, total edges = m \u00d7 n.",
+    "complexity": {
+      "time": "O(1)",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Find Maximum Matching in Bipartite Graph",
+    "description": "Hungarian algorithm or augmenting path method for maximum bipartite matching",
+    "code": "// Simple augmenting path algorithm for maximum matching\nFUNCTION maxBipartiteMatching(graph G, partitions U, V)\n DECLARE matchU[|U|] initialized to -1 // matched vertex in V for each U\n DECLARE matchV[|V|] initialized to -1 // matched vertex in U for each V\n result = 0\n\n FUNCTION bfsFindAugmentingPath()\n DECLARE visited[|U|] initialized to FALSE\n DECLARE queue q\n \n FOR each u in U DO\n IF matchU[u] == -1 THEN\n visited[u] = TRUE\n q.enqueue(u)\n END IF\n END FOR\n\n WHILE q not empty DO\n u = q.dequeue()\n FOR each v neighbor of u DO\n // If v is unmatched or we can find augmenting path\n IF matchV[v] == -1 OR \n (NOT visited[matchV[v]] AND bfsFindPathFrom(matchV[v])) THEN\n matchU[u] = v\n matchV[v] = u\n RETURN TRUE\n END IF\n END FOR\n END WHILE\n RETURN FALSE\n END FUNCTION\n\n // Try to find augmenting paths until none exist\n WHILE bfsFindAugmentingPath() DO\n result = result + 1\n END WHILE\n\n RETURN result\nEND FUNCTION",
+    "explanation": "This algorithm finds maximum matching in a bipartite graph using augmenting paths. A matching is maximum if and only if there is no augmenting path. The algorithm repeatedly finds augmenting paths until none exist. Time complexity is O(VE) for simple implementation.",
+    "complexity": {
+      "time": "O(V \u00d7 E)",
+      "space": "O(V)"
+    }
+  }
+]

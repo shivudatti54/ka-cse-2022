@@ -1,0 +1,98 @@
+{
+  "topicId": "register-allocation",
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "Register Banks Selection",
+      "content": "RS1 RS0: 00=Bank0, 01=Bank1, 10=Bank2, 11=Bank3. Think: 'RS1,RS0 = Binary to Bank Number' - 00\u21920, 01\u21921, 10\u21922, 11\u21923"
+    },
+    {
+      "id": "m-2",
+      "title": "Caller vs Callee Saved",
+      "content": "CALLEE saves what it needs, CALLER saves what it wants to keep. Callee-saved = preserved across call (SP, BP, SB, DB). Caller-saved = can be clobbered (AX, DX, temp registers)."
+    },
+    {
+      "id": "m-3",
+      "title": "8051 Register Memory Map",
+      "content": "00-1F = Register Banks + Bit-addressable area, 20-2F = Bit register area, 30-7F = General RAM. Banks: 00-07 (Bank0), 08-0F (Bank1), 10-17 (Bank2), 18-1F (Bank3)."
+    },
+    {
+      "id": "m-4",
+      "title": "Live Variable Analysis",
+      "content": "Live = 'L'ook 'I'nto 'V'ariables 'E'ventually 'L'ikely to be 'I' used 'V'aluably 'E'verywhere. If a variable will be read before written, it's LIVE."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "SFR",
+      "expansion": "Special Function Register",
+      "usage": "Registers controlling hardware peripherals like timers, UART, ADC in microcontrollers"
+    },
+    {
+      "term": "PSW",
+      "expansion": "Program Status Word",
+      "usage": "Flag register in 8051 storing carry, auxiliary carry, overflow, parity, and register bank select bits"
+    },
+    {
+      "term": "SP",
+      "expansion": "Stack Pointer",
+      "usage": "Points to top of stack, used for pushing/popping registers and local variable storage"
+    },
+    {
+      "term": "PC",
+      "expansion": "Program Counter",
+      "usage": "Holds address of next instruction to execute; modified by jumps, calls, and interrupts"
+    },
+    {
+      "term": "DPTR",
+      "expansion": "Data Pointer",
+      "usage": "16-bit register for external data memory access and lookup table addressing in 8051"
+    },
+    {
+      "term": "LR",
+      "expansion": "Link Register",
+      "usage": "Stores return address during function calls in ARM processors"
+    },
+    {
+      "term": "IR",
+      "expansion": "Instruction Register",
+      "usage": "Holds currently executing instruction fetched from memory"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Register Bank Switching",
+      "visualization": "Draw 4 boxes (banks) labeled 0-3, each containing R0-R7. Show PSW as a switch with 2 bits controlling which box is 'connected' to the R0-R7 names."
+    },
+    {
+      "concept": "Live Variable Interval",
+      "visualization": "Timeline showing variable lifetimes as horizontal bars. Bars that overlap cannot share a register. Where gaps exist, register can be reused."
+    },
+    {
+      "concept": "Stack Frame Layout",
+      "visualization": "Stack growing downward. Draw: [Return Addr][Saved Registers][Local Vars][Params]. SP points below last item. BP provides frame reference."
+    },
+    {
+      "concept": "Interference Graph",
+      "visualization": "Circle nodes = variables. Lines connecting nodes = overlapping lifetimes. Same-color nodes (colors = registers) cannot have connecting lines."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Register Allocation",
+      "analogy": "Like assigning seats to people in a small car. Each person (variable) needs a seat (register). If more people than seats, some must stand (spill to stack)."
+    },
+    {
+      "concept": "Live Variable",
+      "analogy": "Think of a book you're currently reading - it's 'live'. Once you finish and close it, it's 'dead'. Future use = live, only past use = dead."
+    },
+    {
+      "concept": "Register Spilling",
+      "analogy": "When a car's 4 seats are full and 5th person needs to ride, one person must sit in the uncomfortable back seat (stack) to make room."
+    },
+    {
+      "concept": "Calling Conventions",
+      "analogy": "Caller-saved = 'Bring your own lunch' (save your food). Callee-saved = 'The restaurant keeps tables reserved' (function preserves tables/seats)."
+    }
+  ]
+}

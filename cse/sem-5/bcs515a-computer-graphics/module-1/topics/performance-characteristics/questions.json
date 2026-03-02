@@ -1,0 +1,138 @@
+{
+  "topicId": "performance-characteristics",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between fill rate and triangle throughput. How does each affect overall rendering performance?",
+      "keyPoints": [
+        "Fill rate = pixels rendered per second (measured in GP/s)",
+        "Triangle throughput = triangles processed per second (measured in MT/s)",
+        "Fill rate bottleneck: high resolution, many pixel operations, overdraw",
+        "Triangle throughput bottleneck: high geometry complexity, many small triangles",
+        "Relationship: Both must be balanced for optimal performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is memory bandwidth in GPU context? Why is it often the primary bottleneck in modern graphics applications?",
+      "keyPoints": [
+        "Memory bandwidth = data transfer rate between GPU and VRAM (GB/s)",
+        "Bottleneck because: texture fetches, framebuffer writes, vertex data all compete for bandwidth",
+        "Higher resolution/textures = more bandwidth needed",
+        "Solutions: texture compression, render targets, tiling, cache optimization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Define latency in computer graphics. How does it differ from frame rate, and why is low latency critical for VR applications?",
+      "keyPoints": [
+        "Latency = time from input to visual feedback (motion-to-photon)",
+        "Frame rate = frequency of frame display",
+        "They are different: high fps can still have high latency",
+        "VR requires <20ms latency to prevent motion sickness",
+        "Components: input processing, GPU render, display refresh"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare forward rendering and deferred rendering in terms of their performance characteristics with multiple light sources.",
+      "keyPoints": [
+        "Forward: lighting computed per object in single pass, O(objects \u00d7 lights)",
+        "Deferred: geometry/lighting separated, O(pixels \u00d7 lights)",
+        "Forward better for few lights and transparency",
+        "Deferred better for many lights (>16) but uses more memory for G-buffer",
+        "Deferred has fill rate limitations due to large render targets"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain what is meant by 'GPU utilization' and how would you diagnose whether the GPU or CPU is the bottleneck in a graphics application?",
+      "keyPoints": [
+        "GPU utilization = % time GPU is actively rendering",
+        "Low GPU usage (<80%) + low FPS = CPU bottleneck",
+        "High GPU usage (>95%) + low FPS = GPU bottleneck",
+        "Tools: NVIDIA NSight, AMD RGP, RenderDoc, GPU-Z",
+        "Frame time analysis shows which pipeline stage dominates"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is API overhead? How do modern low-level APIs like Vulkan and DirectX 12 reduce this overhead compared to OpenGL?",
+      "keyPoints": [
+        "API overhead = CPU time spent on graphics API calls and driver management",
+        "OpenGL/DirectX11: heavy driver validation, state management on CPU",
+        "Vulkan/DX12: application manages GPU resources, minimal driver intervention",
+        "Benefits: better multi-threading, more predictable performance, reduced draw call cost",
+        "Trade-off: more complex application code"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "A GPU has 8 GB VRAM and 256 GB/s memory bandwidth. A game runs at 4K resolution (3840\u00d72160) at 60 fps. Calculate the minimum memory bandwidth required just for the color buffer, assuming 8-bit per channel RGB.",
+      "keyPoints": [
+        "Resolution: 3840 \u00d7 2160 = 8,294,400 pixels",
+        "At 60 fps: 8,294,400 \u00d7 60 = 497,664,000 pixels/second",
+        "RGB 8-bit = 3 bytes/pixel",
+        "Required bandwidth: 497,664,000 \u00d7 3 = 1,492,992,000 bytes/s \u2248 1.49 GB/s",
+        "This is well under 256 GB/s, but actual requirements much higher with multiple render targets, textures, depth buffer, etc."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the graphics rendering pipeline stages and identify potential performance bottlenecks at each stage. Discuss optimization strategies for each bottleneck type.",
+      "keyPoints": [
+        "Pipeline stages: Application \u2192 Vertex Shader \u2192 Tessellation \u2192 Rasterization \u2192 Fragment Shader \u2192 ROP \u2192 Framebuffer",
+        "Vertex shader bottlenecks: reduce vertex count (LOD), optimize vertex format, use instancing",
+        "Rasterization: simpler geometry, view frustum culling, backface culling",
+        "Fragment shader bottlenecks: reduce overdraw, optimize shaders, use lower precision",
+        "ROP/Framebuffer: reduce render targets, lower resolution, use compression",
+        "Memory: texture compression, mipmapping, cache-friendly access patterns"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "You are designing a game for a mobile device with limited GPU performance. Describe the performance characteristics you need to consider, and propose rendering techniques suitable for maintaining acceptable frame rates on such constrained hardware.",
+      "keyPoints": [
+        "Mobile GPU constraints: lower memory bandwidth, smaller caches, thermal throttling, less shader cores",
+        "Techniques: resolution scaling, reduced shadow map size, baked lighting instead of real-time",
+        "Tile-based deferred rendering (TBDR) - common in mobile GPUs",
+        "Simplified shaders, texture atlasing, reduced draw distances",
+        "Object culling, LOD systems, instancing for repeated geometry",
+        "Mobile-specific APIs: Vulkan, Metal, GLES3.1 with compute shaders"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is the relationship between resolution, frame rate, fill rate, and memory bandwidth? Derive the mathematical relationship and explain why increasing resolution has a quadratic impact on fill rate requirements.",
+      "keyPoints": [
+        "Basic relationship: Frame Rate = Fill Rate / (Resolution \u00d7 Color Depth)",
+        "Fill Rate = Resolution \u00d7 Color Depth \u00d7 Frame Rate",
+        "Resolution = Width \u00d7 Height (pixels)",
+        "When resolution increases by factor k, pixels increase by k\u00b2",
+        "Example: 1080p\u21921440p: 1.78\u00d7 width, 1.78\u00d7 height = 3.16\u00d7 more pixels",
+        "Memory bandwidth scales similarly: more pixels = more data to read/write per frame",
+        "This is why 4K gaming requires ~4\u00d7 the bandwidth of 1080p at same settings"
+      ],
+      "marks": 10
+    }
+  ]
+}

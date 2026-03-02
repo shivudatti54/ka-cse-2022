@@ -1,0 +1,35 @@
+{
+  "topicId": "unification",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Unification Algorithm",
+      "description": "Standard unification algorithm with occurs check",
+      "code": "FUNCTION unify(term1, term2, θ):\n # θ is accumulated substitution\n IF θ is failure THEN return failure\n \n # Apply current substitution\n t1 := apply(θ, term1)\n t2 := apply(θ, term2)\n \n # Base case: terms identical\n IF t1 = t2 THEN return θ\n \n # If t1 is variable\n IF isVariable(t1) THEN\n IF occursCheck(t1, t2) THEN return extend(θ, t1, t2)\n ELSE return failure\n ENDIF\n \n # If t2 is variable\n IF isVariable(t2) THEN\n IF occursCheck(t2, t1) THEN return extend(θ, t2, t1)\n ELSE return failure\n ENDIF\n \n # If both are compounds\n IF isCompound(t1) AND isCompound(t2) THEN\n IF functor(t1) ≠ functor(t2) OR arity(t1) ≠ arity(t2) THEN\n return failure\n ENDIF\n # Unify arguments pairwise\n args1 := arguments(t1)\n args2 := arguments(t2)\n θ' := unifyLists(args1, args2, θ)\n RETURN θ'\n ENDIF\n \n # Otherwise failure\n RETURN failure\n\nFUNCTION occursCheck(var, term):\n IF var ∈ variables(term) THEN return false\n ELSE return true",
+      "explanation": "The algorithm recursively unifies terms, applying substitutions along the way. It checks type compatibility, performs occurs check for variable bindings, and handles compound terms by unifying arguments pairwise.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "prolog",
+      "title": "Prolog Unification Examples",
+      "description": "Demonstrates unification behavior in Prolog",
+      "code": "% Fact\nlikes(john, mary).\n\n% Rule\nloves(X, Y) :- likes(Y, X).\n\n% Unification examples (try in Prolog):\n% ?- f(a, X) = f(a, b).\n% Result: X = b\n\n% ?- f(X, Y) = f(a, b).\n% Result: X = a, Y = b\n\n% ?- f(X, X) = f(a, b).\n% Result: false (X cannot be both a and b)\n\n% ?- X = f(X). % Prolog allows circular term\n% Result: X = f(f(f(...))) % infinite structure\n\n% ?- p(X, Y) = p(A, B), X = a, Y = b.\n% Result: X = a, A = a, Y = b, B = b",
+      "explanation": "Shows various unification scenarios in Prolog: simple variable binding, multiple bindings, failure when conflicts arise, and Prolog's circular term creation (occurs check disabled).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Composition of Substitutions",
+      "description": "How to compose two substitutions",
+      "code": "FUNCTION compose(θ, σ):\n # Apply σ first, then θ\n # Result: { X → θ(σ(X)) | X in domain of σ or affected by θ }\n \n result := empty substitution\n \n # First apply σ to all terms in θ\n FOR EACH (X, t) IN θ:\n new_term := apply(σ, t)\n result := add(result, X, new_term)\n ENDFOR\n \n # Add bindings from σ not affected by θ\n FOR EACH (Y, s) IN σ:\n IF Y not in domain(θ) THEN\n result := add(result, Y, s)\n ENDIF\n ENDFOR\n \n RETURN result\n\n# Example:\n# θ = {X → f(Y)}\n# σ = {Y → a}\n# compose(θ, σ) = {X → f(a), Y → a}",
+      "explanation": "Composition combines two substitutions, where the second substitution is applied to the terms of the first. The result is also normalized to be idempotent.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

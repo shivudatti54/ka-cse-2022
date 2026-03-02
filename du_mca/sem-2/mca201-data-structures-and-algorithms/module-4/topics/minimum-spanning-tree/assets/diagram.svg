@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="minimum-spanning-tree">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="100%" style="stop-color:#d4e8ed"/>
+    </linearGradient>
+    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90a4"/>
+      <stop offset="100%" style="stop-color:#2d5a6b"/>
+    </linearGradient>
+    <linearGradient id="mstEdgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#27ae60"/>
+      <stop offset="100%" style="stop-color:#2ecc71"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes highlight {
+      0%, 100% { stroke-width: 2; }
+      50% { stroke-width: 4; }
+    }
+    .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 22px; font-weight: bold; fill: #1a3a4a; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #2c3e50; }
+    .sublabel { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #5d6d7e; }
+    .concept-box { fill: white; stroke: #3498db; stroke-width: 1.5; rx: 8; filter: url(#shadow); }
+    .edge { stroke: #95a5a6; stroke-width: 2; fill: none; }
+    .edge-anim { stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawLine 1s forwards; }
+    .mst-edge { stroke: url(#mstEdgeGradient); stroke-width: 3; fill: none; }
+    .node { fill: url(#nodeGradient); stroke: #1a3a4a; stroke-width: 2; }
+    .node-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: bold; fill: white; }
+    .weight { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: bold; fill: #e74c3c; }
+    .step-box { fill: #ecf0f1; stroke: #bdc3c7; stroke-width: 1; rx: 5; }
+    .highlighted { stroke: #e74c3c; stroke-width: 3; animation: highlight 0.5s infinite; }
+    .fade-in { animation: fadeIn 0.8s forwards; }
+    .slide-in { animation: slideIn 0.6s forwards; }
+    .pulse { animation: pulse 1s infinite; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" class="title fade-in">Minimum Spanning Tree</text>
+  <text x="210" y="50" text-anchor="middle" class="sublabel fade-in" style="animation-delay: 0.2s">Kruskal's Algorithm Visualization</text>
+  
+  <!-- Section 1: Graph Setup -->
+  <g class="slide-in" style="animation-delay: 0.3s" data-narration="Initial weighted graph with 4 vertices and 5 edges">
+    <text x="15" y="75" class="label" font-weight="bold">Step 1: Initial Graph</text>
+    
+    <!-- Edges -->
+    <line x1="80" y1="130" x2="160" y2="100" class="edge" id="edgeAB"/>
+    <text x="112" y="108" class="weight">3</text>
+    
+    <line x1="80" y1="130" x2="80" y2="220" class="edge" id="edgeAC"/>
+    <text x="65" y="180" class="weight">1</text>
+    
+    <line x1="160" y1="100" x2="160" y2="190" class="edge" id="edgeBC"/>
+    <text x="168" y="150" class="weight">4</text>
+    
+    <line x1="160" y1="190" x2="240" y2="220" class="edge" id="edgeBD"/>
+    <text x="210" y="200" class="weight">2</text>
+    
+    <line x1="80" y1="220" x2="160" y2="190" class="edge" id="edgeCD"/>
+    <text x="110" y="215" class="weight">5</text>
+    
+    <!-- Nodes -->
+    <circle cx="80" cy="130" r="18" class="node"/>
+    <text x="80" y="135" text-anchor="middle" class="node-text">A</text>
+    
+    <circle cx="160" cy="100" r="18" class="node"/>
+    <text x="160" y="105" text-anchor="middle" class="node-text">B</text>
+    
+    <circle cx="160" cy="190" r="18" class="node"/>
+    <text x="160" y="195" text-anchor="middle" class="node-text">C</text>
+    
+    <circle cx="240" cy="220" r="18" class="node"/>
+    <text x="240" y="225" text-anchor="middle" class="node-text">D</text>
+  </g>
+  
+  <!-- Section 2: Edge Sorting -->
+  <g class="slide-in" style="animation-delay: 0.5s" data-narration="Edges sorted by weight in ascending order">
+    <rect x="280" y="90" width="130" height="100" class="concept-box" rx="8"/>
+    <text x="290" y="110" class="label" font-weight="bold">Edge Sorting</text>
+    <text x="290" y="130" class="sublabel">1. A-C: 1 (min)</text>
+    <text x="290" y="148" class="sublabel">2. B-D: 2</text>
+    <text x="290" y="166" class="sublabel">3. A-B: 3</text>
+    <text x="290" y="184" class="sublabel">4. B-C: 4</text>
+    <text x="290" y="202" class="sublabel">5. C-D: 5</text>
+  </g>
+  
+  <!-- Section 3: Algorithm Process -->
+  <g data-narration="Kruskal's adds edges greedily, avoiding cycles using Union-Find" class="slide-in" style="animation-delay: 0.7s">
+    <text x="15" y="265" class="label" font-weight="bold">Step 2: Build MST</text>
+    
+    <!-- Animated MST edges appearing -->
+    <line x1="80" y1="130" x2="80" y2="220" class="mst-edge edge-anim" style="animation-delay: 0.8s"/>
+    <text x="60" y="180" class="weight pulse" style="animation-delay: 0.8s; fill: #27ae60;">1</text>
+    
+    <line x1="160" y1="190" x2="240" y2="220" class="mst-edge edge-anim" style="animation-delay: 1.2s"/>
+    <text x="205" y="210" class="weight pulse" style="animation-delay: 1.2s; fill: #27ae60;">2</text>
+    
+    <line x1="80" y1="130" x2="160" y2="100" class="mst-edge edge-anim" style="animation-delay: 1.6s"/>
+    <text x="105" y="108" class="weight pulse" style="animation-delay: 1.6s; fill: #27ae60;">3</text>
+    
+    <!-- Rejected edge (would form cycle) - shown faded -->
+    <line x1="160" y1="100" x2="160" y2="190" class="edge" style="opacity: 0.3; animation-delay: 2s"/>
+    <text x="168" y="140" class="sublabel" style="animation-delay: 2s">✗ cycle</text>
+  </g>
+  
+  <!-- Section 4: Final MST -->
+  <g data-narration="Final MST with 3 edges and total cost 6" class="slide-in" style="animation-delay: 1s">
+    <rect x="280" y="200" width="130" height="70" class="concept-box" rx="8" style="stroke: #27ae60;"/>
+    <text x="290" y="220" class="label" font-weight="bold" fill="#27ae60">MST Complete!</text>
+    <text x="290" y="242" class="sublabel">Edges: A-C, B-D, A-B</text>
+    <text x="290" y="260" class="sublabel">Total Cost: 1+2+3 = 6</text>
+  </g>
+  
+  <!-- Key Concepts Box -->
+  <g class="slide-in" style="animation-delay: 1.2s" data-narration="Key concepts: Spanning tree, greedy approach, cut property, cycle property">
+    <rect x="15" y="290" width="390" height="95" class="concept-box" rx="8" style="fill: #f8f9fa;"/>
+    <text x="25" y="310" class="label" font-weight="bold">Key Concepts</text>
+    
+    <text x="25" y="332" class="sublabel">• <tspan font-weight="bold">Spanning Tree</tspan>: |V|-1 edges, no cycles</text>
+    <text x="25" y="350" class="sublabel">• <tspan font-weight="bold">Greedy Strategy</tspan>: Pick minimum edge, no cycle</text>
+    <text x="25" y="368" class="sublabel">• <tspan font-weight="bold">Union-Find</tspan>: Efficient cycle detection</text>
+    <text x="25" y="386" class="sublabel">• <tspan font-weight="bold">Time: O(E log V)</tspan>: Sort edges + find operations</text>
+  </g>
+  
+  <!-- Arrow indicators -->
+  <g class="fade-in" style="animation-delay: 1.5s">
+    <path d="M 270 140 L 250 140" stroke="#3498db" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+    <path d="M 270 235 L 250 250" stroke="#27ae60" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+    </marker>
+  </defs>
+</svg>

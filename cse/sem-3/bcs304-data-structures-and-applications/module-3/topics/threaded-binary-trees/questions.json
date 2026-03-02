@@ -1,0 +1,110 @@
+{
+  "topicId": "threaded-binary-trees",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Prove that in any binary tree with n nodes, exactly n+1 pointer fields contain NULL values.",
+      "keyPoints": [
+        "A binary tree with n nodes has exactly 2n pointer fields (left and right for each node)",
+        "Each node except the root has exactly one incoming edge from its parent, giving n-1 non-NULL pointers",
+        "Total NULL pointers = Total pointers - Non-NULL pointers = 2n - (n-1) = n+1",
+        "This holds for trees of all shapes: complete, full, or skewed"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the difference between single-threaded and double-threaded binary trees. What are the advantages and disadvantages of each?",
+      "keyPoints": [
+        "Single-threaded uses only one direction (left or right) for threading, saving less memory",
+        "Double-threaded uses both directions, enabling bi-directional traversal",
+        "Advantage of single: Less overhead (only 1 flag), simpler structure",
+        "Advantage of double: Complete traversal capability in both directions",
+        "Disadvantage of single: Can only traverse in one direction efficiently",
+        "Disadvantage of double: More flags per node (2 vs 1)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the algorithm for inorder traversal in a threaded binary tree without using recursion or a stack.",
+      "keyPoints": [
+        "Start by finding the leftmost node (keep going left until NULL)",
+        "Visit the current node",
+        "If rthread = 1, follow right pointer to successor and repeat step 2",
+        "If rthread = 0, move to right child and go to leftmost descendant",
+        "Continue until NULL is reached"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Given a binary tree with 15 nodes, calculate: (a) Number of NULL pointers in conventional representation, (b) Number of pointers saved after converting to doubly-threaded tree, (c) Additional space required for flags.",
+      "keyPoints": [
+        "(a) For n=15, NULL pointers = n+1 = 16",
+        "(b) All 16 NULL pointers become threads, so 16 pointers saved",
+        "(c) Each node needs 2 flag bits, so 15 \u00d7 2 = 30 bits = approximately 4 bytes (if stored as bytes) or 15 \u00d7 2 booleans"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the node structure of a doubly-threaded binary tree. How do the flags help distinguish between child pointers and threads?",
+      "keyPoints": [
+        "Node contains: left pointer, lthread flag, data, rthread flag, right pointer",
+        "lthread = 0: left pointer points to left child; lthread = 1: left pointer points to inorder predecessor",
+        "rthread = 0: right pointer points to right child; rthread = 1: right pointer points to inorder successor",
+        "Flags solve the ambiguity of whether a pointer is a child or a thread"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Insert the following keys in order into an initially empty threaded binary search tree: 20, 10, 30, 5, 15, 25, 35. Show the final tree structure and identify all thread connections.",
+      "keyPoints": [
+        "Insert 20 as root",
+        "Insert 10: goes left of 20 (no left child), becomes left child with threads",
+        "Insert 30: goes right of 20 (no right child), becomes right child",
+        "Insert 5: goes left of 10, then left of 5's parent becomes leftmost with thread to predecessor",
+        "Insert 15: goes right of 10, left of 20 - position found",
+        "Insert 25: goes left of 30, right of 20",
+        "Insert 35: goes right of 30 - rightmost",
+        "After all insertions, update all threads: leftmost node (5) has left thread to NULL, right thread to 10; rightmost node (35) has right thread to NULL",
+        "All NULL pointers replaced with inorder predecessor/successor links"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write an algorithm to insert a new node as the left child of a given parent in a doubly-threaded binary tree. Include thread updates and analyze the time complexity.",
+      "keyPoints": [
+        "Algorithm steps: Create new node with lthread=1, rthread=1 initially",
+        "Set newnode->left = parent->left (old subtree)",
+        "Set newnode->right = parent (new node's successor is parent)",
+        "If parent had no left child (parent->lthread=1): update predecessor's right thread to point to newnode",
+        "Set parent->left = newnode, parent->lthread = 0",
+        "Time complexity: O(h) where h is height, worst case O(n) for skewed tree",
+        "Finding position dominates; actual insertion and thread updates are O(1)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare conventional binary trees and threaded binary trees in terms of: (a) Memory usage, (b) Traversal complexity, (c) Operations complexity (search, insert, delete). Provide a mathematical analysis.",
+      "keyPoints": [
+        "(a) Memory: Conventional uses 2n pointers (all used or NULL). Threaded uses 2n pointers + 2n flag bits, but saves n+1 NULL pointers. Net: Threaded saves (n+1) pointers worth of space minus overhead of 2n bits",
+        "(b) Traversal: Conventional needs O(n) stack space + O(n) time. Threaded needs O(1) extra space + O(n) time. Both O(n) time but threaded is space-efficient",
+        "(c) Search: Both O(h), same complexity. Insert/Delete: Conventional O(h). Threaded also O(h) for finding position plus O(1) for thread updates. Threaded deletion is more complex due to thread maintenance"
+      ],
+      "marks": 10
+    }
+  ]
+}

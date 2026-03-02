@@ -1,0 +1,45 @@
+{
+  "topicId": "pclose-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Reading Command Output with popen/pclose",
+      "description": "Program to execute 'ls -l' and read its output using popen() and pclose()",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n FILE *pipe_fp;\n char buffer[256];\n int exit_status;\n \n // Open pipe to read from 'ls -l' command\n pipe_fp = popen(\"ls -l\", \"r\");\n if (pipe_fp == NULL) {\n perror(\"popen failed\");\n return 1;\n }\n \n // Read command output line by line\n while (fgets(buffer, sizeof(buffer), pipe_fp) != NULL) {\n printf(\"%s\", buffer);\n }\n \n // Close pipe and get exit status\n exit_status = pclose(pipe_fp);\n \n // Check if command executed successfully\n if (WIFEXITED(exit_status)) {\n printf(\"\\nCommand exit code: %d\\n\", \n WEXITSTATUS(exit_status));\n } else {\n printf(\"Command terminated abnormally\\n\");\n }\n \n return 0;\n}",
+      "explanation": "This program demonstrates the basic usage of popen() in 'r' mode to read command output. It opens a pipe to 'ls -l', reads each line using fgets(), prints the output, and uses pclose() to close the pipe and retrieve the command's exit status using WEXITSTATUS macro.",
+      "timeComplexity": "O(n) where n is number of output lines",
+      "spaceComplexity": "O(1) for buffer, O(n) for total output stored"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Writing to Command with popen/pclose",
+      "description": "Program to send input to a command (wc -l to count lines) using popen() and pclose()",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n FILE *pipe_fp;\n const char *input_data = \"line 1\\nline 2\\nline 3\\n\";\n int exit_status;\n \n // Open pipe to write to 'wc -l' command\n pipe_fp = popen(\"wc -l\", \"w\");\n if (pipe_fp == NULL) {\n perror(\"popen failed\");\n return 1;\n }\n \n // Write data to command's stdin\n fprintf(pipe_fp, \"%s\", input_data);\n \n // Close pipe - IMPORTANT: close before checking status\n exit_status = pclose(pipe_fp);\n \n // Check exit status\n if (WIFEXITED(exit_status)) {\n printf(\"Command exit code: %d\\n\", \n WEXITSTATUS(exit_status));\n }\n \n return 0;\n}",
+      "explanation": "This demonstrates popen() in 'w' mode to send data to a command. The program writes three lines to 'wc -l' which counts the lines and outputs '3'. The pclose() is called to close the pipe and wait for the command to complete, collecting its exit status.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Error Handling with pclose",
+      "description": "Demonstrates proper error handling for pclose() return value",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <errno.h>\n#include <sys/wait.h>\n\nint main() {\n FILE *pipe_fp;\n int status;\n \n pipe_fp = popen(\"ls /nonexistent\", \"r\");\n if (pipe_fp == NULL) {\n perror(\"popen\");\n return 1;\n }\n \n // Read output (will be error message)\n char buffer[256];\n while (fgets(buffer, sizeof(buffer), pipe_fp) != NULL) {\n fprintf(stderr, \"%s\", buffer);\n }\n \n // Close pipe and get status\n status = pclose(pipe_fp);\n \n // Error handling for pclose\n if (status == -1) {\n perror(\"pclose error\");\n } else if (WIFEXITED(status)) {\n int exit_code = WEXITSTATUS(status);\n printf(\"Command exited with code: %d\\n\", exit_code);\n } else if (WIFSIGNALED(status)) {\n printf(\"Command killed by signal: %d\\n\", WTERMSIG(status));\n }\n \n return 0;\n}",
+      "explanation": "This code shows comprehensive error handling for both popen() and pclose(). It handles the case when pclose() returns -1 (error), and also uses WIFEXITED and WIFSIGNALED to properly interpret the exit status, distinguishing between normal exit and signal termination.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "popen/pclose Algorithm Summary",
+      "description": "High-level algorithm showing the complete popen and pclose workflow",
+      "code": "ALGORITHM popen_and_pclose(command, mode)\nBEGIN\n // Step 1: Create pipe\n CREATE pipe with pipe() system call\n \n // Step 2: Fork child process\n pid = fork()\n \n IF pid == 0 THEN // Child process\n CLOSE read end of pipe (if mode = 'w')\n CLOSE write end of pipe (if mode = 'r')\n REDIRECT stdout/stdin to pipe\n EXEC /bin/sh with -c flag to run command\n ELSE // Parent process\n CLOSE write end of pipe (if mode = 'r')\n CLOSE read end of pipe (if mode = 'w')\n RETURN FILE pointer to pipe\n END IF\nEND\n\nALGORITHM pclose(pipe_stream)\nBEGIN\n // Step 1: Close the pipe stream\n CLOSE(pipe_stream)\n \n // Step 2: Wait for child process\n waitpid(child_pid, &status, 0)\n \n // Step 3: Return status\n RETURN status\nEND",
+      "explanation": "This pseudocode shows the internal working of popen() and pclose(). popen() creates a pipe, forks a child that executes the command via shell, and returns a FILE pointer. pclose() closes the stream and waits for the child to finish, returning its exit status.",
+      "timeComplexity": "O(1) for both functions",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

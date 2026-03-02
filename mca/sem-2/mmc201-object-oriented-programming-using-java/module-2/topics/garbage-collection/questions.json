@@ -1,0 +1,159 @@
+{
+  "topicId": "garbage-collection",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the Mark and Sweep algorithm used in garbage collection.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Mark phase: Starting from GC roots, traverse object graph and mark all reachable objects as live",
+        "Sweep phase: Scan through entire heap and identify unmarked objects (garbage)",
+        "Optional compaction phase: Move live objects together to eliminate memory fragmentation",
+        "Mention that this is a stop-the-world operation in basic implementations"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are GC roots? List at least four examples of GC roots in Java.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "GC roots are objects that are inherently reachable and not subject to garbage collection",
+        "Examples: 1) Local variables and parameters in methods, 2) Active threads, 3) Static fields (class variables), 4) JNI (Java Native Interface) references, 5) Exception objects in the exception stack",
+        "All objects reachable (directly or indirectly) from GC roots are considered live"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the different generations in Java heap memory and their purpose.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Young Generation: Where new objects are allocated; contains Eden space and two Survivor spaces (S0, S1)",
+        "Old Generation (Tenured): Stores long-lived objects that survive multiple minor GCs",
+        "Permanent Generation (MetaSpace in Java 8+): Stores class metadata, method information (MetaSpace is in native memory)",
+        "Purpose: Different generations allow different collection strategies, optimizing GC performance based on object lifetime patterns"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the difference between Minor GC and Major (Full) GC?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Minor GC: Occurs in Young Generation when Eden space is full; fast operation; copies live objects to Survivor spaces or promotes to Old Gen",
+        "Major/Full GC: Occurs in Old Generation; collects entire heap including Young Gen; slower and more expensive",
+        "Minor GC is stop-the-world but usually brief; Full GC causes longer pauses",
+        "Full GC may involve Mark-Sweep-Compaction phases"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "List four practices that can help garbage collection in Java applications.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "1) Nullify references after use - set object references to null when no longer needed",
+        "2) Avoid unnecessary object creation - use StringBuilder instead of String concatenation in loops",
+        "3) Use appropriate collection sizes and clear collections when no longer needed",
+        "4) Avoid static collections that grow indefinitely",
+        "5) Use object pooling for frequently created expensive objects",
+        "6) Close resources properly (try-with-resources)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is memory leak in Java? Explain one common cause and how to prevent it.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Memory leak: Condition where objects are no longer needed but remain in memory due to unintended references",
+        "Common cause: Objects added to static collections (like HashMap, ArrayList) without removal",
+        "Prevention: 1) Clear collections when objects are no longer needed, 2) Use WeakHashMap for caching, 3) Properly close resources, 4) Be careful with equals/hashCode implementations",
+        "Memory leaks cause OutOfMemoryError over time"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the purpose and limitations of the finalize() method in Java.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Purpose: Called by GC before reclaiming object's memory; intended for cleanup operations (releasing native resources)",
+        "Limitations: 1) Not guaranteed to execute, 2) Can cause performance issues, 3) Deprecated since Java 9",
+        "Better alternatives: Try-with-resources for AutoCloseable objects, PhantomReference for custom cleanup"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the working of generational garbage collection in Java. Why is the heap divided into generations and how does this improve GC performance?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Heap divided into Young Generation (Eden + Survivor spaces) and Old Generation based on object lifetime patterns",
+        "Most objects are short-lived (die young) - 'weak generational hypothesis'",
+        "Young Generation: Minor GC is fast because most objects are dead; copies surviving objects to Survivor spaces",
+        "Objects surviving multiple minor GCs are promoted to Old Generation",
+        "Old Generation: Major GC runs less frequently but handles long-lived objects",
+        "This division allows using different algorithms for each generation, optimizing for speed in Young Gen and thoroughness in Old Gen",
+        "Result: Most GCs are fast (minor), reducing overall application pause time"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the different garbage collection algorithms available in JVM. Compare Serial, Parallel, CMS, G1, and ZGC collectors.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Serial GC: Single-threaded, stop-the-world; simple, suitable for small applications",
+        "Parallel (Throughput) GC: Multi-threaded, stop-the-world; optimized for throughput; default in Java 8",
+        "CMS (Concurrent Mark Sweep): Low pause times, runs concurrently with application; deprecated in Java 14",
+        "G1 (Garbage First): Region-based, predictable pauses, preferred for large heaps; default since Java 9",
+        "ZGC: Scalable, very low pause times (<10ms), works with large heaps (TBs); Java 11+",
+        "Shenandoah: Low pause times, concurrent compaction; different from ZGC in approach",
+        "Comparison criteria: Pause time, throughput, heap size support, CPU usage"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is System.gc()? Explain why calling it explicitly is generally discouraged in production applications.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "System.gc() is a method that suggests JVM to run garbage collection",
+        "Internally calls Runtime.getRuntime().gc()",
+        "Does not guarantee immediate or complete garbage collection",
+        "Why discouraged in production: 1) It's just a hint, JVM may ignore; 2) Can trigger unnecessary stop-the-world events; 3) Adds overhead and unpredictable pauses; 4) Modern JVMs have sophisticated GC that runs optimally without manual intervention",
+        "Proper approach: Let JVM handle GC automatically; tune JVM flags if needed; use appropriate GC algorithm for application needs",
+        "May be useful in development/testing for testing GC behavior"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain how reference counting works as a garbage collection technique. Why is it not used in Java? What technique does Java use instead?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Reference counting: Each object has a counter tracking references pointing to it",
+        "When reference count becomes zero, object is garbage and can be reclaimed immediately",
+        "Advantage: Can reclaim memory immediately without stop-the-world",
+        "Disadvantage: Cannot handle circular references (A references B, B references A but neither is reachable from GC roots)",
+        "Also has overhead of maintaining counters and complication in multi-threaded environments",
+        "Java uses 'Mark and Sweep' (and its variations) instead, which can handle circular references",
+        "Java's approach: Trace from GC roots to mark reachable objects, sweep unmarked objects, optionally compact"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "topicId": "transport-layer-security",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "TLS Protocol Architecture",
+      "description": "Shows the layered architecture of TLS showing how different protocols fit together",
+      "elements": [
+        "Application Layer (HTTP, FTP, SMTP)",
+        "TLS Record Protocol Layer (Bottom) - provides confidentiality, integrity, authentication",
+        "TLS Handshake Protocol Layer (Middle) - negotiates cipher suites, authenticates, establishes keys",
+        "TLS Alert Protocol Layer (Top) - sends error messages",
+        "TLS Change Cipher Spec Protocol - activates cipher suite",
+        "Underlying TCP/UDP Transport",
+        "Underlying IP Network Layer"
+      ],
+      "purpose": "Students understand the layered structure of TLS and how the four sub-protocols work together to provide security services"
+    },
+    {
+      "id": "diagram-2",
+      "title": "TLS Handshake Protocol Flow",
+      "description": "Detailed step-by-step flow diagram showing the full TLS handshake process between client and server",
+      "elements": [
+        "Client sends ClientHello (random bytes, session ID, cipher suites, compression methods)",
+        "Server responds with ServerHello (selected cipher suite, random bytes, session ID)",
+        "Server sends Certificate (X.509 certificate chain)",
+        "Server sends ServerKeyExchange (if required for key exchange)",
+        "Server requests Client Certificate (if required)",
+        "Server sends ServerHelloDone",
+        "Client sends Certificate (if requested)",
+        "Client sends ClientKeyExchange (pre-master secret encrypted with server public key)",
+        "Client sends CertificateVerify (signed hash for client authentication)",
+        "Client sends ChangeCipherSpec (activates pending cipher spec)",
+        "Client sends Finished (encrypted handshake summary)",
+        "Server sends ChangeCipherSpec",
+        "Server sends Finished",
+        "Application Data begins encrypted"
+      ],
+      "purpose": "Students learn the complete handshake sequence, understanding each message purpose and how keys and cipher suites are negotiated and established"
+    },
+    {
+      "id": "diagram-3",
+      "title": "TLS Record Protocol Data Flow",
+      "description": "Shows how data is processed through the TLS Record Protocol layer before transmission",
+      "elements": [
+        "Application Data (from upper layer)",
+        "Fragmentation - divides data into 16KB blocks",
+        "Compression - compresses data (optional, often null)",
+        "MAC Generation - HMAC using MAC key for integrity",
+        "Encryption - encrypts compressed data + MAC using session key",
+        "TLS Record Header - prepends type, version, length",
+        "Encrypted Fragment - final encrypted unit sent via TCP"
+      ],
+      "purpose": "Students understand how TLS provides confidentiality and integrity at the record layer, including the sequence of operations performed on each data chunk"
+    },
+    {
+      "id": "diagram-4",
+      "title": "TLS Session vs Connection States",
+      "description": "Block diagram showing the relationship between TLS sessions and connections and their state parameters",
+      "elements": [
+        "Session State Box - contains session ID, cipher suite, compression method, master secret, is resumable flag",
+        "Connection State Box - contains server random, client random, MAC write key, MAC read key, encryption write key, encryption read key, sequence numbers",
+        "Arrows showing session can have multiple connections",
+        "Arrow showing session can be resumed to create new connection without full handshake"
+      ],
+      "purpose": "Students distinguish between TLS sessions (persistent security parameters) and connections (transient communication instances), understanding session resumption mechanism"
+    }
+  ],
+  "charts": [
+    {
+      "type": "table",
+      "title": "TLS Protocol Versions Comparison",
+      "content": "Comparison table showing evolution from SSL 2.0 through TLS 1.3: SSL 2.0 (1994, deprecated, weak cipher suites, no MD5), SSL 3.0 (1995, foundation of TLS, deprecated due to POODLE), TLS 1.0 (1999, adds explicit IV, mitigates CBC attacks), TLS 1.1 (2006, added protection against CBC attacks, explicit IV required), TLS 1.2 (2008, supports AEAD ciphers like AES-GCM, SHA-256, removed MD5/SHA-1 in signatures), TLS 1.3 (2018, removes static RSA/ Diffie-Hellman, mandates forward secrecy, reduces handshake to 1-RTT or 0-RTT, removes compression)"
+    },
+    {
+      "type": "flowchart",
+      "title": "Cipher Suite Negotiation Flow",
+      "content": "Shows how client and server negotiate cipher suite: Client sends list of supported cipher suites in ClientHello → Server receives list → Server selects strongest mutually supported cipher suite → Server sends selected cipher in ServerHello → Both parties initialize cipher with agreed algorithm → If no match found, connection fails with handshake_failure alert → Example flow: Client offers [TLS_AES_128_GCM_SHA256, TLS_CHACHA20_POLY1305_SHA256, TLS_RSA_WITH_AES_128_CBC_SHA] → Server selects TLS_AES_128_GCM_SHA256 → Both initialize AES-128-GCM with derived keys"
+    },
+    {
+      "type": "comparison-table",
+      "title": "TLS vs SSL Comparison",
+      "content": "Comparison between SSL and TLS: SSL (Secure Sockets Layer) - original protocol, version numbers 2.0, 3.0, uses MAC-then-encrypt, vulnerable to POODLE attack, uses MD5/SHA-1, handshake simpler, vulnerable to renegotiation attacks; TLS (Transport Layer Security) - IETF standard, versions 1.0, 1.1, 1.2, 1.3, uses encrypt-then-MAC (more secure), backward compatibility with SSL removed in 1.3, uses SHA-256+, enhanced handshake with extensions, protected against renegotiation, supports AEAD, mandatory forward secrecy in 1.3"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Transport Layer Security (TLS)",
+      "branches": [
+        "Handshake Protocol - Authentication, Cipher Suite Negotiation, Key Exchange",
+        "Record Protocol - Confidentiality, Integrity, Fragmentation, Compression",
+        "Alert Protocol - Warning and Fatal Alerts, Error Codes",
+        "Change Cipher Spec - Activates Cipher Suite",
+        "Security Services - Authentication (X.509 Certificates), Confidentiality (AES/ChaCha20), Integrity (HMAC/AEAD), Forward Secrecy (ECDHE/DHE)",
+        "Key Exchange Methods - RSA Key Exchange, DHE, ECDHE, Pre-shared Keys (PSK)",
+        "Session Management - Session ID, Session Tickets, Session Resumption",
+        "TLS Versions - SSL 3.0, TLS 1.0-1.3, TLS 1.3 improvements"
+      ],
+      "purpose": "Comprehensive overview connecting all TLS components showing how they integrate to provide end-to-end secure communication with emphasis on protocol layers, security services, and key management"
+    }
+  ]
+}

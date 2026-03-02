@@ -1,0 +1,33 @@
+{
+  "topicId": "resource-management-operating-system-structures",
+  "examples": [
+    {
+      "id": "pseudocode-process-scheduling",
+      "title": "Algorithm: Process Scheduling",
+      "description": "Demonstrates a basic process scheduling algorithm",
+      "language": "pseudocode",
+      "code": "ALGORITHM ScheduleProcesses\nINPUT: processes (list of processes)\nOUTPUT: scheduledProcesses (list of scheduled processes)\n\nBEGIN\n FOR EACH process IN processes\n IF process.arrivalTime <= currentTime\n Add process to readyQueue\n END FOR\n WHILE readyQueue IS NOT EMPTY\n process = Dequeue(readyQueue)\n Assign CPU to process\n currentTime += process.burstTime\n Add process to scheduledProcesses\n END WHILE\n RETURN scheduledProcesses\nEND",
+      "explanation": "This pseudocode demonstrates a basic process scheduling algorithm. It iterates over a list of processes, adds them to a ready queue if their arrival time is less than or equal to the current time, and then assigns the CPU to each process in the ready queue."
+    },
+    {
+      "id": "python-process-scheduling",
+      "title": "Python: Process Scheduling",
+      "description": "Implements a basic process scheduling algorithm in Python",
+      "language": "python",
+      "code": "class Process:\n def __init__(self, arrival_time, burst_time):\n self.arrival_time = arrival_time\n self.burst_time = burst_time\n\ndef schedule_processes(processes):\n scheduled_processes = []\n current_time = 0\n ready_queue = []\n for process in processes:\n if process.arrival_time <= current_time:\n ready_queue.append(process)\n while ready_queue:\n process = ready_queue.pop(0)\n current_time += process.burst_time\n scheduled_processes.append(process)\n return scheduled_processes\n\n# Example usage:\nprocesses = [Process(0, 5), Process(2, 3), Process(4, 1)]\nscheduled_processes = schedule_processes(processes)\nfor process in scheduled_processes:\n print(f'Process arrived at {process.arrival_time} and took {process.burst_time} units of time')",
+      "explanation": "This Python code implements a basic process scheduling algorithm. It defines a `Process` class to represent processes with arrival and burst times, and a `schedule_processes` function to schedule these processes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-process-scheduling",
+      "title": "C: Process Scheduling",
+      "description": "Implements a basic process scheduling algorithm in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Process {\n int arrival_time;\n int burst_time;\n} Process;\n\nProcess* schedule_processes(Process* processes, int n) {\n Process* scheduled_processes = (Process*)malloc(n * sizeof(Process));\n int current_time = 0;\n int ready_queue[n];\n int front = 0, rear = 0;\n for (int i = 0; i < n; i++) {\n if (processes[i].arrival_time <= current_time) {\n ready_queue[rear++] = i;\n }\n }\n while (front < rear) {\n int process_index = ready_queue[front++];\n current_time += processes[process_index].burst_time;\n scheduled_processes[process_index] = processes[process_index];\n }\n return scheduled_processes;\n}\n\nint main() {\n Process processes[] = {{0, 5}, {2, 3}, {4, 1}};\n int n = sizeof(processes) / sizeof(Process);\n Process* scheduled_processes = schedule_processes(processes, n);\n for (int i = 0; i < n; i++) {\n printf('Process arrived at %d and took %d units of time\\n', scheduled_processes[i].arrival_time, scheduled_processes[i].burst_time);\n }\n return 0;\n}",
+      "explanation": "This C code implements a basic process scheduling algorithm. It defines a `Process` struct to represent processes with arrival and burst times, and a `schedule_processes` function to schedule these processes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

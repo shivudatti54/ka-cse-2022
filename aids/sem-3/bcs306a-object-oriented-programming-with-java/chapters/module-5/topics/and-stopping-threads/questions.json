@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain two different ways to stop a thread in Java and discuss the key difference between them.",
+    "expectedPoints": [
+      "The `stop()` method is deprecated and unsafe because it can leave shared data in an inconsistent state.",
+      "The preferred method is to use a volatile boolean flag that the thread checks periodically to exit its run loop cleanly.",
+      "Another method is to use the `interrupt()` method to set the thread's interrupt status, which the thread can check using `isInterrupted()` or handle an `InterruptedException`."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Why is the Thread.stop() method deprecated? Describe a simple and safe alternative for terminating a thread.",
+    "expectedPoints": [
+      "Thread.stop() is deprecated because it abruptly terminates the thread, potentially leaving critical shared data or resources in an inconsistent state, leading to hard-to-debug issues.",
+      "It releases all locks the thread holds, which can break the invariants of any objects protected by those locks.",
+      "A safe alternative is to use a volatile boolean variable (e.g., `isRunning`) that the thread checks within its run loop. When set to false, the thread can exit gracefully after completing its current task or cleaning up."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the mechanisms of interrupting a thread versus using a flag variable for termination. In a scenario where a thread is often blocked (e.g., on I/O or a monitor lock), which method is more appropriate and why?",
+    "expectedPoints": [
+      "A flag variable requires the thread to actively poll its state to know when to terminate. It is simple but ineffective if the thread is blocked, as it cannot check the flag.",
+      "Thread interruption uses the built-in `interrupt()` method and interrupt status. It can unblock certain blocking calls (like `Thread.sleep()`, `Object.wait()`) by throwing an `InterruptedException`, providing an immediate way to break out.",
+      "For a thread frequently blocked on I/O or synchronization, interruption is more appropriate. Most blocking library methods are designed to be responsive to interruption, allowing the thread to exit the blocked state immediately and handle the termination request, whereas a flag would be useless while blocked."
+    ],
+    "marks": 10
+  }
+]

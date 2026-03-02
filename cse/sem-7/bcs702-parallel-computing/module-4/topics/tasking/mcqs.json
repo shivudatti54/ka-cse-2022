@@ -1,0 +1,505 @@
+{
+  "topicId": "tasking",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the primary purpose of the `#pragma omp task` directive in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To create a parallel region with multiple threads"
+        },
+        {
+          "key": "B",
+          "text": "To define a unit of work that can be executed asynchronously by any thread"
+        },
+        {
+          "key": "C",
+          "text": "To synchronize all threads at a specific point"
+        },
+        {
+          "key": "D",
+          "text": "To distribute loop iterations across threads"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The `#pragma omp task` directive creates a task - an independent unit of work that the OpenMP runtime can schedule for execution by any available thread. Unlike parallel for which distributes iterations, tasks are explicitly created and queued for later execution, enabling handling of irregular workloads like recursive algorithms.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which directive is used to ensure all tasks created within a block have completed before proceeding?",
+      "options": [
+        {
+          "key": "A",
+          "text": "#pragma omp barrier"
+        },
+        {
+          "key": "B",
+          "text": "#pragma omp taskwait"
+        },
+        {
+          "key": "C",
+          "text": "#pragma omp flush"
+        },
+        {
+          "key": "D",
+          "text": "#pragma omp atomic"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "`#pragma omp taskwait` suspends the current task until all child tasks (tasks created in the same parallel region or single region) have completed. This is specifically designed for task synchronization, whereas barrier synchronizes all threads in a team, and atomic handles only atomic updates to variables.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In OpenMP tasking, when does the actual execution of a task typically begin?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Immediately when the task directive is encountered"
+        },
+        {
+          "key": "B",
+          "text": "When the creating task reaches a task scheduling point"
+        },
+        {
+          "key": "C",
+          "text": "Only when explicitly triggered by the programmer"
+        },
+        {
+          "key": "D",
+          "text": "At the end of the parallel region"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tasks are created when the task directive is encountered, but their execution may be deferred until the creating task reaches a task scheduling point (like taskwait, explicit taskyield, or the end of the region). This allows the runtime to batch task creation and optimize scheduling through work-stealing.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What does the `task depend` clause specify in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The priority level of a task"
+        },
+        {
+          "key": "B",
+          "text": "The order in which tasks should be created"
+        },
+        {
+          "key": "C",
+          "text": "Dependency relationships between tasks (input/output)"
+        },
+        {
+          "key": "D",
+          "text": "The number of threads that should execute the task"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The `task depend` clause specifies dependency relationships between tasks using 'depend(in)', 'depend(out)', and 'depend(inout)' specifiers. This allows the runtime to ensure tasks execute in the correct order based on data dependencies, enabling proper handling of producer-consumer and other dependency patterns.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Consider the following code:\n\n#pragma omp parallel\n#pragma omp single\n{\n #pragma omp task\n { process_data(10); }\n printf(\"Task created\\n\");\n}\n\nWhat is the correct order of execution?",
+      "options": [
+        {
+          "key": "A",
+          "text": "process_data(10) executes first, then \"Task created\" is printed"
+        },
+        {
+          "key": "B",
+          "text": "\"Task created\" is printed first, then process_data(10) executes"
+        },
+        {
+          "key": "C",
+          "text": "Both execute in parallel"
+        },
+        {
+          "key": "D",
+          "text": "Execution order is undefined"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a task is created with `#pragma omp task`, execution of the task is deferred. The creating task continues executing, so \"Task created\" will be printed before process_data(10) actually executes. The runtime schedules the task for execution by any thread in the team.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What is the purpose of `#pragma omp taskyield`?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To terminate a task prematurely"
+        },
+        {
+          "key": "B",
+          "text": "To yield the CPU to other tasks, allowing the runtime to schedule pending tasks"
+        },
+        {
+          "key": "C",
+          "text": "To synchronize all pending tasks"
+        },
+        {
+          "key": "D",
+          "text": "To create a new task"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "`#pragma omp taskyield` is a task scheduling point that allows the current thread to suspend its current task and let the runtime schedule other available tasks. This is useful in long-running tasks to improve responsiveness and allow work-stealing by other threads.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-7",
+      "question": "In a divide-and-conquer algorithm implemented with OpenMP tasks, which pattern best describes the task creation strategy?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Producer-consumer pattern"
+        },
+        {
+          "key": "B",
+          "text": "Task dependency pattern"
+        },
+        {
+          "key": "C",
+          "text": "Recursive task generation (fork-join of tasks)"
+        },
+        {
+          "key": "D",
+          "text": "Pipeline pattern"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Divide-and-conquer algorithms naturally map to recursive task creation: each recursive call creates new tasks for sub-problems. This creates a tree of tasks that are dynamically scheduled, demonstrating the fork-join model at the task level rather than at the thread level.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the default data sharing attribute for variables declared inside a task region?",
+      "options": [
+        {
+          "key": "A",
+          "text": "shared"
+        },
+        {
+          "key": "B",
+          "text": "private"
+        },
+        {
+          "key": "C",
+          "text": "firstprivate"
+        },
+        {
+          "key": "D",
+          "text": "shared for scalar, private for arrays"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "By default, variables declared within a task region are `private` to each task instance. Each task gets its own copy of the variable. This differs from parallel regions where variables are shared by default. The `shared` clause can override this default if needed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "What is 'task granularity' in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The size of the thread team"
+        },
+        {
+          "key": "B",
+          "text": "The amount of work assigned to each task"
+        },
+        {
+          "key": "C",
+          "text": "The number of tasks created"
+        },
+        {
+          "key": "D",
+          "text": "The priority of a task"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Task granularity refers to the amount of work assigned to each task. Fine-grained tasks (small work units) create more parallelism but increase scheduling overhead. Coarse-grained tasks have less overhead but may lead to load imbalance. Choosing the right granularity is crucial for performance.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which of the following is NOT a valid task dependency type in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "depend(in)"
+        },
+        {
+          "key": "B",
+          "text": "depend(out)"
+        },
+        {
+          "key": "C",
+          "text": "depend(inout)"
+        },
+        {
+          "key": "D",
+          "text": "depend(flow)"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "OpenMP defines three dependency types: 'depend(in)' for input dependencies, 'depend(out)' for output dependencies, and 'depend(inout)' for both input and output. 'depend(flow)' is not a valid dependency type in OpenMP specification.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is an 'implicit task' in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A task created without using the task directive"
+        },
+        {
+          "key": "B",
+          "text": "The initial task executed by each thread in a parallel region"
+        },
+        {
+          "key": "C",
+          "text": "A task that is automatically generated by the compiler"
+        },
+        {
+          "key": "D",
+          "text": "A task with no dependencies"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "An implicit task is the task that each thread executes as part of a parallel region. When a parallel region is encountered, each thread in the team is assigned an implicit task. Explicit tasks are those created using `#pragma omp task` within these implicit or explicit tasks.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is 'work-stealing' in the context of OpenMP task scheduling?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Tasks stealing data from other tasks"
+        },
+        {
+          "key": "B",
+          "text": "Idle threads stealing pending tasks from busy threads' queues"
+        },
+        {
+          "key": "C",
+          "text": "A task waiting for another task to complete"
+        },
+        {
+          "key": "D",
+          "text": "Dividing work equally among all threads"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Work-stealing is a load balancing technique where idle threads can steal pending tasks from the queues of busy threads. This helps maintain good load balance even when tasks have varying execution times. OpenMP implementations typically use work-stealing schedulers for task execution.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Consider this code with task dependencies:\n\n#pragma omp parallel\n#pragma omp single\n{\n #pragma omp task depend(in: a) depend(out: b)\n { process1(); }\n #pragma omp task depend(in: b) depend(out: c)\n { process2(); }\n}\n\nWhich statement is correct about execution order?",
+      "options": [
+        {
+          "key": "A",
+          "text": "process1 and process2 can execute in parallel"
+        },
+        {
+          "key": "B",
+          "text": "process2 must complete before process1 starts"
+        },
+        {
+          "key": "C",
+          "text": "process1 must complete before process2 starts"
+        },
+        {
+          "key": "D",
+          "text": "Execution order is undefined"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The dependency 'depend(out: b)' on process1 and 'depend(in: b)' on process2 creates a data dependency: process2 reads variable 'b' which is written by process1. Therefore, process1 must complete and write 'b' before process2 can start reading 'b'. This enforces sequential execution of these tasks.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "When should you prefer `#pragma omp task` over `#pragma omp parallel for`?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When loop iterations are independent and uniformly distributed"
+        },
+        {
+          "key": "B",
+          "text": "When work is irregular, recursive, or cannot be expressed as a loop"
+        },
+        {
+          "key": "C",
+          "text": "When you need deterministic execution order"
+        },
+        {
+          "key": "D",
+          "text": "When working with simple numeric arrays"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "`#pragma omp task` is preferred for irregular workloads like tree traversals, graph algorithms, recursive divide-and-conquer, or when the number of work items is not known upfront. `parallel for` is ideal for regular loop parallelism where iterations are independent and have similar computational cost.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What is the effect of the `if` clause in a task directive?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To conditionally create a task based on a scalar expression"
+        },
+        {
+          "key": "B",
+          "text": "To specify task priority"
+        },
+        {
+          "key": "C",
+          "text": "To define task dependencies"
+        },
+        {
+          "key": "D",
+          "text": "To set the number of threads for task execution"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The `if` clause in `#pragma omp task` allows conditional task creation. If the condition evaluates to false, the task is executed immediately by the current thread (called a 'merged' or 'included' task) rather than being deferred for execution by any thread. This is useful to avoid overhead for very small work items.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-16",
+      "question": "Which OpenMP directive is specifically designed for creating multiple tasks from a loop without writing explicit task directives?",
+      "options": [
+        {
+          "key": "A",
+          "text": "#pragma omp task"
+        },
+        {
+          "key": "B",
+          "text": "#pragma omp taskloop"
+        },
+        {
+          "key": "C",
+          "text": "#pragma omp parallel for"
+        },
+        {
+          "key": "D",
+          "text": "#pragma omp sections"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "`#pragma omp taskloop` (introduced in OpenMP 4.0) allows creating multiple tasks from a loop in a single directive. It's useful when you want task-based parallelism for loop iterations but don't want to write individual task directives for each iteration.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-17",
+      "question": "What is 'false sharing' in the context of OpenMP tasks?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When two tasks incorrectly depend on each other"
+        },
+        {
+          "key": "B",
+          "text": "When threads access different variables that happen to be on the same cache line"
+        },
+        {
+          "key": "C",
+          "text": "When a task is created but never executed"
+        },
+        {
+          "key": "D",
+          "text": "When task dependencies are incorrectly specified"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "False sharing occurs when different threads modify variables that reside on the same cache line. Even though the threads access different variables, the cache coherency protocol must synchronize the cache line, degrading performance. In task-based parallelism, careful data layout can help avoid false sharing.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "What happens if you use `taskwait` inside a task that has child tasks?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The program terminates immediately"
+        },
+        {
+          "key": "B",
+          "text": "The task waits until all its child tasks complete before continuing"
+        },
+        {
+          "key": "C",
+          "text": "The task continues without waiting"
+        },
+        {
+          "key": "D",
+          "text": "It creates a deadlock"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When a task encounters a `taskwait` directive, it suspends execution and waits for all its child tasks (tasks created in its lexical scope) to complete. Once all child tasks finish, the original task resumes execution. This provides task-level synchronization.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-19",
+      "question": "Which of the following statements about task priorities is correct in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Task priorities are guaranteed to be honored by all implementations"
+        },
+        {
+          "key": "B",
+          "text": "The `priority` clause sets the priority of a task relative to other tasks"
+        },
+        {
+          "key": "C",
+          "text": "Higher priority tasks always execute before lower priority tasks"
+        },
+        {
+          "key": "D",
+          "text": "Task priorities are only advisory in OpenMP"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The `priority` clause in `#pragma omp task` sets a numeric priority value for the task. Higher values indicate higher priority. However, OpenMP states that the priority clause is a 'hint' to the runtime scheduler - implementations are not required to strictly honor these values, but most modern implementations use them for task scheduling decisions.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-20",
+      "question": "In a producer-consumer pattern implemented with OpenMP tasks, how would you ensure the consumer waits for data produced by the producer?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Using #pragma omp barrier after each task"
+        },
+        {
+          "key": "B",
+          "text": "Using task dependencies: producer has depend(out), consumer has depend(in)"
+        },
+        {
+          "key": "C",
+          "text": "Using #pragma omp atomic for the data variable"
+        },
+        {
+          "key": "D",
+          "text": "The consumer always waits automatically"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Task dependencies enforce ordering: if the producer task has 'depend(out: data)' and the consumer task has 'depend(in: data)', the runtime ensures the producer completes and writes to 'data' before the consumer starts reading 'data'. This implements the producer-consumer synchronization without explicit waits or barriers.",
+      "difficulty": "medium"
+    }
+  ]
+}

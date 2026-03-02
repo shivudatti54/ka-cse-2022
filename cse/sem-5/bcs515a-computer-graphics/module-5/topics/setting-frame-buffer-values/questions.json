@@ -1,0 +1,136 @@
+{
+  "topicId": "setting-frame-buffer-values",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the relationship between resolution, color depth, and frame buffer size with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Frame buffer size = Horizontal resolution × Vertical resolution × Color depth in bits",
+        "For 1920×1080 at 24-bit: 1920×1080×24 = 49,766,400 bits ≈ 6.22 MB",
+        "Higher resolution or color depth requires larger frame buffer"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is double buffering? Explain how it eliminates screen flicker.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Double buffering uses two frame buffers - front buffer (displayed) and back buffer (being drawn)",
+        "Drawing is done on back buffer while front buffer shows current image",
+        "When drawing completes, buffers are swapped - display shows complete frame instantly",
+        "This prevents viewer from seeing partial/incomplete drawings causing flicker"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the RGBA pixel format and explain the purpose of each component.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "R (Red), G (Green), B (Blue) - primary colors combining to form any visible color",
+        "A (Alpha) - represents transparency/opacity value (0=fully transparent, 255=fully opaque)",
+        "Typically 8 bits per component = 32 bits per pixel in RGBA format",
+        "Used for blending operations and creating transparent overlays in graphics"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is a Z-buffer and how does it solve the hidden surface problem?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Z-buffer (depth buffer) stores the z-coordinate (depth) of each pixel",
+        "For every pixel, depth of new surface is compared with existing stored depth",
+        "If new surface is closer (smaller z-value), its color replaces the pixel's color",
+        "This ensures only visible surfaces are rendered, properly handling object occlusion"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between refresh rate and frame rate.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Refresh rate: How many times per second the display hardware reads frame buffer (measured in Hz)",
+        "Frame rate: How many complete frames the GPU renders per second (measured in fps)",
+        "Refresh rate is hardware-dependent; frame rate is software-dependent",
+        "Ideally, frame rate should match or be multiple of refresh rate for smooth display"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain packed pixel format versus planar format.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Packed pixel: All color components of a pixel stored together in single memory unit (e.g., 32-bit word)",
+        "Planar (planar color): Each color component stored in separate memory plane",
+        "Packed format offers faster random pixel access",
+        "Planar format can be more efficient for bulk operations like filling an entire color channel"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "With a 2560×1440 resolution display at 32-bit RGBA color: (i) Calculate the frame buffer size in megabytes. (ii) If the display refreshes at 60Hz, what is the data transfer rate required? (iii) Explain why VRAM is preferred over regular DRAM for frame buffers.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "(i) Size = 2560×1440×32 bits = 11,796,480,000 bits = 14,092,800 bytes ≈ 13.44 MB",
+        "(ii) At 60Hz, data transferred per second = 2560×1440×32×60 = 707,788,800,000 bits/sec ≈ 707.8 Gbps or 88.5 GB/s",
+        "(iii) VRAM has dual-port architecture allowing simultaneous read (display) and write (GPU) operations; regular DRAM cannot read and write simultaneously, causing bottleneck; VRAM also has higher bandwidth"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the complete pipeline from application drawing commands to pixel display on screen, explaining the role of frame buffer at each stage.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "1. Application issues graphics commands (draw triangle, set color)",
+        "2. GPU processes geometry through vertex shader, rasterizer creates fragments/pixels",
+        "3. Fragment shader calculates final color for each pixel",
+        "4. Pixel color values written to back buffer (frame buffer) in framebuffer object",
+        "5. Depth/stencil tests applied using respective buffers",
+        "6. When frame complete, front and back buffers swapped (or displayed)",
+        "7. Display hardware continuously reads frame buffer at refresh rate",
+        "8. Pixel values converted to analog signals driving display pixels",
+        "Frame buffer acts as the critical intermediary between GPU and display"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of color lookup tables (CLUT). For an 8-bit color mode with 256 colors: (i) What is the size of the CLUT? (ii) How does pixel indexing work? (iii) What are the advantages and limitations compared to true color modes?",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "(i) CLUT stores 256 colors × 24 bits (for RGB) = 6144 bits = 768 bytes",
+        "(ii) Each pixel stores 8-bit index (0-255), which acts as address into CLUT to retrieve actual RGB color",
+        "(iii) Advantages: Smaller frame buffer (1 byte vs 3 bytes per pixel), lower memory bandwidth, faster operations. Limitations: Limited color palette, color banding visible in gradients, less photorealistic images"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare progressive scan and interlaced display methods. Include in your answer: (i) How each method works (ii) Advantages and disadvantages (iii) Typical applications where each is used.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "(i) Progressive: Draws all scanlines sequentially every frame. Interlaced: Draws odd lines in first frame, even lines in second frame (alternating)",
+        "(ii) Progressive advantages: Smoother motion, no flicker, better for fast motion. Interlaced advantages: Half bandwidth requirement, works on older equipment. Progressive disadvantages: Higher bandwidth. Interlaced disadvantages: Visible artifacts (combing effect) in motion",
+        "(iii) Progressive used in: Computer monitors, modern TV (1080p), gaming. Interlaced used in: Older TV broadcast systems (NTSC, PAL), some streaming for bandwidth efficiency"
+      ]
+    }
+  ]
+}

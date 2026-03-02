@@ -1,0 +1,26 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "ER to Relational Schema Conversion Algorithm",
+    "description": "Algorithm to convert ER diagram entities to relational database tables",
+    "code": "// ER TO RELATIONAL MODEL CONVERSION\n// BCS403 - Database Management System\n\nALGORITHM Convert_ER_to_Relational\nBEGIN\n // Step 1: Convert Strong Entities\n FOR EACH Strong_Entity E DO\n Create relation R with all simple attributes of E\n Include all key attributes as primary key\n Include composite attributes' simple components\n END FOR\n\n // Step 2: Convert Weak Entities\n FOR EACH Weak_Entity W DO\n Create relation R with all attributes of W\n Include primary key of owner entity as foreign key\n Composite primary key = (owner_key, partial_key)\n END FOR\n\n // Step 3: Convert Binary 1:1 Relationships\n FOR EACH 1:1 Relationship R DO\n Option 1: Merge with one entity\n Option 2: Create separate relation with foreign keys\n END FOR\n\n // Step 4: Convert Binary 1:M Relationships\n FOR EACH 1:M Relationship R DO\n Include primary key of 'one' side as foreign key\n Add relationship attributes to 'many' side relation\n END FOR\n\n // Step 5: Convert Binary M:N Relationships\n FOR EACH M:N Relationship R DO\n Create new relation R_assoc\n Include primary keys of both entities (composite FK)\n Include relationship attributes\n Composite primary key = (PK1, PK2)\n END FOR\n\n // Step 6: Convert Multi-valued Attributes\n FOR EACH Multi-valued Attribute A DO\n Create new relation R\n Include A as single-valued attribute\n Include primary key of entity as foreign key\n Primary Key = (Entity_PK, A)\n END FOR\n\nEND",
+    "explanation": "This algorithm outlines the steps to convert an ER diagram into relational database schema. Strong entities become tables with primary keys. Weak entities include the owner's primary key. 1:M relationships add foreign key to 'many' side. M:N relationships require an associative table. Multi-valued attributes become separate tables.",
+    "complexity": {
+      "time": "O(n) where n is number of entities/relationships",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "sql",
+    "title": "Sample SQL for ER Diagram Implementation",
+    "description": "SQL DDL statements to create tables based on an ER diagram",
+    "code": "-- ER DIAGRAM IMPLEMENTATION EXAMPLE\n-- Entity: STUDENT (Strong)\n-- Entity: COURSE\n-- Relationship: ENROLLS (M:N)\n\n-- Creating Student Table\nCREATE TABLE Student (\n Student_ID VARCHAR(10) PRIMARY KEY,\n Name VARCHAR(50) NOT NULL,\n Age NUMBER(3),\n Gender CHAR(1),\n Address VARCHAR(100),\n Email VARCHAR(50) UNIQUE\n);\n\n-- Creating Course Table\nCREATE TABLE Course (\n Course_ID VARCHAR(10) PRIMARY KEY,\n Course_Name VARCHAR(50) NOT NULL,\n Credits NUMBER(2),\n Department VARCHAR(30)\n);\n\n-- Creating Enrolment (Associative Entity for M:N)\nCREATE TABLE Enrolment (\n Student_ID VARCHAR(10),\n Course_ID VARCHAR(10),\n Enrollment_Date DATE,\n Grade CHAR(2),\n PRIMARY KEY (Student_ID, Course_ID),\n FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),\n FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID)\n);\n\n-- Creating Phone (Multi-valued attribute of Student)\nCREATE TABLE Student_Phone (\n Student_ID VARCHAR(10),\n Phone_No VARCHAR(15),\n PRIMARY KEY (Student_ID, Phone_No),\n FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID)\n);",
+    "explanation": "This SQL demonstrates how ER diagram components translate to actual database tables. Student and Course are strong entities. Enrolment is an associative entity resolving the M:N relationship. Student_Phone handles the multi-valued attribute Phone_No.",
+    "complexity": {
+      "time": "O(1) DDL operations",
+      "space": "O(1)"
+    }
+  }
+]

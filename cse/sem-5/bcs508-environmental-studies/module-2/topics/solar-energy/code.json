@@ -1,0 +1,35 @@
+{
+  "topicId": "solar-energy",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Solar Panel Output Calculation",
+      "description": "Calculate daily energy output from solar panels based on panel specifications and location",
+      "code": "ALGORITHM SolarEnergyCalculation\nBEGIN\n INPUT panelPowerWatts // Panel rated power in Watts\n INPUT panelEfficiency // Panel efficiency as decimal (e.g., 0.20)\n INPUT sunHoursPerDay // Average peak sun hours\n INPUT systemLosses // Total system losses (wiring, inverter, etc.)\n\n // Calculate theoretical daily generation\n peakPowerWatts = panelPowerWatts * panelEfficiency\n theoreticalDailykWh = (peakPowerWatts * sunHoursPerDay) / 1000\n\n // Apply system losses\n actualDailykWh = theoreticalDailykWh * (1 - systemLosses)\n\n // Calculate annual generation\n annualkWh = actualDailykWh * 365\n\n OUTPUT actualDailykWh\n OUTPUT annualkWh\n\n // Example: 300W panel, 20% efficiency, 5 sun hours, 20% losses\n // peakPower = 300 * 0.20 = 60W\n // theoretical = 60 * 5 / 1000 = 0.3 kWh\n // actual = 0.3 * 0.80 = 0.24 kWh/day\nEND",
+      "explanation": "This algorithm calculates the actual energy output of a solar panel system by considering panel efficiency, available sunlight hours, and system losses. It demonstrates the practical considerations in solar energy estimation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Solar Panel Optimal Angle Calculator",
+      "description": "Calculate optimal tilt angle for solar panels based on latitude",
+      "code": "ALGORITHM CalculateOptimalAngle\nBEGIN\n INPUT latitude // Location latitude in degrees\n\n // Winter optimal angle (for best winter performance)\n winterAngle = latitude + 15\n\n // Summer optimal angle (for best summer performance) summerAngle = latitude - 15\n\n // Year-round optimal angle (average) yearlyAngle = latitude\n\n // Output angles for different seasons OUTPUT \"Winter optimal: \" + winterAngle + \" degrees\"\n OUTPUT \"Summer optimal: \" + summerAngle + \" degrees\" OUTPUT \"Year-round optimal: \" + yearlyAngle + \" degrees\"\n\n // For latitude = 20°: // Winter: 35°, Summer: 5°, Year-round: 20°\nEND",
+      "explanation": "This algorithm calculates optimal tilt angles for solar panels throughout the year. The angle affects how directly sunlight strikes the panel surface, maximizing energy capture.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Solar Battery Charging State Management",
+      "description": "Manage battery charging states in a solar PV system with battery backup",
+      "code": "ALGORITHM BatteryManagement\nBEGIN\n INPUT batteryCapacity // Battery capacity in Ah\n INPUT currentSOC // Current State of Charge (0-100%)\n INPUT solarInput // Current solar power input (Watts)\n INPUT loadPower // Current load demand (Watts)\n INPUT batteryVoltage // Battery system voltage\n\n availablePower = solarInput - loadPower\n\n IF availablePower > 0 THEN\n // Excess power available - charge battery\n chargeCurrent = availablePower / batteryVoltage\n maxChargeCurrent = batteryCapacity * 0.2 // 20% C-rate\n\n IF chargeCurrent > maxChargeCurrent THEN\n chargeCurrent = maxChargeCurrent\n ENDIF\n\n newSOC = currentSOC + (chargeCurrent * 100 / batteryCapacity)\n newSOC = MIN(newSOC, 100) // Cap at 100%\n ELSE\n // Deficit - discharge battery dischargeCurrent = -availablePower / batteryVoltage\n maxDischargeCurrent = batteryCapacity * 0.5 // 50% C-rate safe discharge\n\n IF dischargeCurrent > maxDischargeCurrent THEN // Draw max safe current, grid supplements rest dischargeCurrent = maxDischargeCurrent ENDIF\n\n newSOC = currentSOC - (dischargeCurrent * 100 / batteryCapacity) newSOC = MAX(newSOC, 20) // Keep 20% minimum SOC\n ENDIF\n\n OUTPUT newSOC\n OUTPUT chargeCurrent (if charging) OUTPUT dischargeCurrent (if discharging)\nEND",
+      "explanation": "This algorithm manages battery charging and discharging in a solar system, ensuring safe charging rates and preventing deep discharge that can damage batteries.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

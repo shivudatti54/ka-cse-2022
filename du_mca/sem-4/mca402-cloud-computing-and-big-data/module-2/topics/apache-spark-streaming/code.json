@@ -1,0 +1,15 @@
+{
+  "topicId": "apache-spark-streaming",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Word Count Streaming",
+      "description": "Basic streaming word count from TCP socket",
+      "code": "from pyspark import SparkContext\nfrom pyspark.streaming import StreamingContext\n\nsc = SparkContext('local[2]', 'WordCount')\nssc = StreamingContext(sc, 5)\nlines = ssc.socketTextStream('localhost', 9999)\ncounts = lines.flatMap(lambda line: line.split())\\n              .map(lambda word: (word, 1))\\n              .reduceByKey(lambda a,b: a+b)\ncounts.pprint()\nssc.start()\nssc.awaitTermination()",
+      "explanation": "Creates DStream from socket, processes in 5s batches, counts words",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(k) - where k is unique words"
+    }
+  ]
+}

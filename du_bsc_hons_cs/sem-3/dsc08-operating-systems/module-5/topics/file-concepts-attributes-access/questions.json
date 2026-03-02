@@ -1,0 +1,144 @@
+{
+  "topicId": "file-concepts-attributes-access",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of a file in operating systems and list any six file attributes.",
+      "keyPoints": [
+        "File is a named collection of related information stored on secondary storage",
+        "File provides logical view of data abstraction",
+        "Attributes: Name, Identifier, Type, Location, Size, Protection, Timestamps, Owner"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between sequential access and direct (random) access methods with examples of storage media suited for each.",
+      "keyPoints": [
+        "Sequential: Records accessed in order, must read all preceding records - suited for magnetic tape",
+        "Direct: Records accessed directly by address - suited for magnetic disks",
+        "Direct access uses formula: address = base + (record number \u00d7 record size)",
+        "Sequential is slower for random access, direct is slower for sequential processing"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is a file descriptor? Explain the purpose of open() and close() operations.",
+      "keyPoints": [
+        "File descriptor is a small non-negative integer identifying open file",
+        "Open() returns file descriptor, checks permissions, loads FCB, sets position to beginning",
+        "Close() flushes buffers, updates metadata, releases file descriptor",
+        "File descriptor is process-specific and reused after close"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the indexed file access method. How does it improve search performance?",
+      "keyPoints": [
+        "Uses an index file containing key values and pointers to data blocks",
+        "Two-level access: first search index, then access data block directly",
+        "Combines benefits of sequential and direct access",
+        "Suitable for large files requiring frequent random lookups"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the three timestamps maintained for a file? Explain when each is updated.",
+      "keyPoints": [
+        "Creation time: Set when file is first created",
+        "Modification time (mtime): Updated when file content changes",
+        "Access time (atime): Updated when file is read or written",
+        "Operating systems maintain these in inode/FCB"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the purpose of file buffering in operating systems. How does it improve I/O performance?",
+      "keyPoints": [
+        "Buffers temporarily store data in memory before disk write or after disk read",
+        "Reduces number of physical I/O operations by grouping small reads/writes",
+        "Write-behind: data written to buffer, actual disk write delayed",
+        "Read-ahead: anticipated data prefetched into buffer",
+        "Improves throughput and reduces disk access overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is an inode in Unix/Linux file systems? List any five pieces of information stored in an inode.",
+      "keyPoints": [
+        "Inode (index node) is a data structure storing file metadata",
+        "Contains: File type, permissions, owner ID, group ID, file size, timestamps (atime, mtime, ctime), block pointers, link count, extended attributes",
+        "Each file has unique inode number",
+        "Directory entries map filenames to inode numbers"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the various file operations performed by an operating system. Explain how the file control block (FCB) is used in managing these operations.",
+      "keyPoints": [
+        "File operations: Create, Delete, Open, Close, Read, Write, Seek, Rename, Truncate",
+        "Create: allocates FCB, initializes attributes, creates directory entry",
+        "Open: validates permissions, loads FCB into memory, returns file descriptor",
+        "Read/Write: transfer data between memory and file, update position pointer",
+        "Seek: reposition file pointer for direct access",
+        "Close: flush buffers, update FCB to disk, release descriptor",
+        "FCB contains all file metadata and current state - central to all operations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare hard links and soft (symbolic) links in Unix/Linux file systems. Discuss their advantages, limitations, and behavior when the original file is deleted.",
+      "keyPoints": [
+        "Hard links: Multiple directory entries pointing to same inode, share data blocks, same inode number",
+        "Soft links: Special file containing path to target, different inode number, can cross filesystem boundaries",
+        "Hard link limitations: Cannot link across filesystems, cannot link to directories (without special privileges)",
+        "Soft link limitations: Broken if target deleted/moved, overhead of reading link content",
+        "When original deleted: Hard link still accesses data until all links deleted; Soft link becomes broken pointer",
+        "Link count in inode tracks number of hard links"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the three major file access methods: Sequential, Direct/Random, and Indexed. Discuss the advantages, disadvantages, and suitable applications of each.",
+      "keyPoints": [
+        "Sequential: Records accessed one after another, simple implementation, suitable for tape and batch processing, inefficient for random access",
+        "Direct: Calculate record address directly, very fast random access, requires fixed-length records, suitable for disks, causes external fragmentation",
+        "Indexed: Use index file for pointers, two-step access, combines sequential and direct benefits, index overhead, suitable for large databases with multiple access patterns",
+        "Choice depends on: access pattern (sequential vs random), storage medium, record size, file size, frequency of updates"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is file locking? Explain different types of locks and discuss the problems of improper file locking in multi-process environments.",
+      "keyPoints": [
+        "File locking prevents concurrent access conflicts in multi-process systems",
+        "Shared Lock (Read Lock): Multiple processes can read simultaneously, prevents exclusive write",
+        "Exclusive Lock (Write Lock): Only one process can access, prevents both read and write",
+        "Mandatory vs Advisory locking: OS enforces mandatory; Advisory requires processes to cooperate",
+        "Problems without locking: Race conditions, data corruption, lost updates, inconsistent file state",
+        "Example: Two processes writing to same file simultaneously can corrupt data or lose updates"
+      ],
+      "marks": 10
+    }
+  ]
+}

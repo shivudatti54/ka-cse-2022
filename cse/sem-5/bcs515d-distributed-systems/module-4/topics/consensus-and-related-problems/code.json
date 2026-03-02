@@ -1,0 +1,45 @@
+{
+  "topicId": "consensus-and-related-problems",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Paxos Proposer Algorithm",
+      "description": "Shows how a proposer initiates consensus in Paxos",
+      "code": "PROCEDURE Propose(value)\nBEGIN\n proposalNumber = GenerateUniqueNumber()\n \n // PREPARE PHASE\n PREPARE_MSG = CreateMessage(proposalNumber, PREPARE)\n responses = BROADCAST_TO_ALL_ACCEPTORS(PREPARE_MSG)\n \n // Check for promised proposals\n highestPromised = MAX(responses.promisedNumbers)\n IF highestPromised > proposalNumber THEN\n RETURN Reject() // Another proposer won\n ENDIF\n \n // ACCEPT PHASE \n acceptedValue = value\n IF responses.hasAccepted THEN\n acceptedValue = responses.latestAcceptedValue\n ENDIF\n \n ACCEPT_MSG = CreateMessage(proposalNumber, acceptedValue, ACCEPT)\n acceptResponses = BROADCAST_TO_ALL_ACCEPTORS(ACCEPT_MSG)\n \n // Check for majority acceptance\n IF COUNT(acceptResponses.accepted) > n/2 THEN\n BROADCAST_TO_LEARNERS(acceptedValue)\n RETURN Success()\n ELSE\n RETURN RetryWithHigherNumber()\n ENDIF\nEND",
+      "explanation": "Proposer initiates Paxos by sending prepare with unique number. If majority promises, proposer sends accept with value. If majority accepts, consensus is reached. If rejected, retry with higher number.",
+      "timeComplexity": "O(n) messages",
+      "spaceComplexity": "O(n) for log"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Raft Leader Election",
+      "description": "Shows the leader election process in Raft",
+      "code": "PROCEDURE StartElection()\nBEGIN\n currentTerm = currentTerm + 1\n votedFor = self.nodeId\n voteCount = 1\n state = CANDIDATE\n \n // Request votes from all other nodes\n FOR EACH peer IN allPeers DO\n IF peer.lastLogTerm > myLastLogTerm OR \n (peer.lastLogTerm == myLastLogTerm AND \n peer.lastLogIndex >= myLastLogIndex) THEN\n vote = RequestVote(currentTerm, myNodeId, \n myLastLogIndex, myLastLogTerm)\n IF vote.granted THEN\n voteCount = voteCount + 1\n ENDIF\n ENDIF\n ENDFOR\n \n // If majority votes received\n IF voteCount > (totalNodes / 2) THEN\n state = LEADER\n BROADCAST_HEARTBEAT()\n FOR EACH peer IN allPeers DO\n SendAppendEntries(peer, currentTerm)\n ENDFOR\n ELSE\n // Election failed, become follower again\n state = FOLLOWER\n RestartElectionTimer()\n ENDIF\nEND",
+      "explanation": "Candidate increments term, votes for self, requests votes from peers. If peer has equal or newer log, votes are granted. If majority votes, becomes leader. Otherwise, reverts to follower.",
+      "timeComplexity": "O(n) for n nodes",
+      "spaceComplexity": "O(1) per node"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Two Phase Commit Protocol",
+      "description": "Shows atomic commit in distributed transactions",
+      "code": "PROCEDURE TwoPhaseCommit(transactionId)\nBEGIN\n coordinator = GetCoordinator()\n participants = GetParticipants(transactionId)\n \n // PHASE 1: PREPARE\n FOR EACH participant IN participants DO\n response = participant.CanCommit()\n IF response != YES THEN\n // Any participant votes NO\n FOR EACH p IN participants DO\n p.DoAbort()\n ENDFOR\n RETURN ABORTED\n ENDIF\n ENDFOR\n \n // All participants voted YES\n // PHASE 2: COMMIT\n FOR EACH participant IN participants DO\n participant.DoCommit()\n ENDFOR\n \n RETURN COMMITTED\nEND\n\nPROCEDURE ParticipantCanCommit()\nBEGIN\n IF CanLocalCommit() THEN\n WritePrepareToLog()\n RETURN YES\n ELSE\n RETURN NO\n ENDIF\nEND",
+      "explanation": "Coordinator asks all participants to prepare. If all vote YES, coordinator sends commit to all. If any votes NO, all abort. Problem: coordinator failure before commit leaves participants blocked.",
+      "timeComplexity": "O(2n) messages",
+      "spaceComplexity": "O(n) for logs"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Byzantine Agreement Algorithm",
+      "description": "Simplified Byzantine agreement for reaching consensus with faulty nodes",
+      "code": "PROCEDURE ByzantineAgree(value, f)\nBEGIN\n // Assumes n >= 3f + 1 nodes\n n = totalNodes\n receivedValues = []\n \n // Round 1: Each node broadcasts its value\n FOR i = 1 TO n DO\n BROADCAST(value[i])\n ENDFOR\n \n // Collect values from all nodes\n FOR i = 1 TO n DO\n receivedValues.APPEND(value[i])\n ENDFOR\n \n // Round 2: Exchange values (to detect liars)\n exchangedValues = []\n FOR i = 1 TO n DO\n FOR j = 1 TO n DO\n IF i != j THEN\n exchangedValues[i].APPEND(\n ValueFromNode(j))\n ENDIF\n ENDFOR\n ENDFOR\n \n // Majority function: choose most common value\n decidedValue = MAJORITY(exchangedValues)\n \n // If all correct nodes follow this, \n // they will decide the same value\n RETURN decidedValue\nEND\n\nFUNCTION MAJORITY(values)\nBEGIN\n counts = COUNT_OCCURRENCES(values)\n RETURN value with highest count\nEND",
+      "explanation": "Simplified Byzantine agreement requires 3f+1 nodes. With f traitors, 2f correct nodes can identify the majority value despite f false values. Each round exchanges values to detect inconsistencies.",
+      "timeComplexity": "O(n²) messages",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

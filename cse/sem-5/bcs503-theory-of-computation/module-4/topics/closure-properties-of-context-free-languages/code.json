@@ -1,0 +1,35 @@
+{
+  "topicId": "closure-properties-of-context-free-languages",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CFG Construction for Union of CFLs",
+      "description": "Algorithm to construct CFG for union of two CFLs",
+      "code": "// Given CFG G1 with start symbol S1 and G2 with start symbol S2\n// Construct CFG G for L(G1) ∪ L(G2)\n\nALGORITHM UnionCFG(G1, G2):\nBEGIN\n // Create new start symbol\n S_new = new_nonterminal()\n \n // New production: S_new → S1 | S2\n add_production(S_new, S1)\n add_production(S_new, S2)\n \n // Copy all productions from G1\n FOR each production p in G1.productions:\n add_production(p)\n \n // Copy all productions from G2\n FOR each production p in G2.productions:\n add_production(p)\n \n RETURN new_grammar(S_new, productions)\nEND",
+      "explanation": "Creates a new grammar with a new start symbol that can derive either the first language or the second language, proving closure under union.",
+      "timeComplexity": "O(n1 + n2) where n1, n2 are production counts",
+      "spaceComplexity": "O(n1 + n2)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "CFG Construction for Concatenation of CFLs",
+      "description": "Algorithm to construct CFG for concatenation of two CFLs",
+      "code": "// Given CFG G1 with start symbol S1 and G2 with start symbol S2\n// Construct CFG G for L(G1)L(G2)\n\nALGORITHM ConcatenationCFG(G1, G2):\nBEGIN\n // Create new start symbol\n S_new = new_nonterminal()\n \n // New production: S_new → S1 S2\n add_production(S_new, concatenate(S1, S2))\n \n // Copy all productions from G1\n FOR each production p in G1.productions:\n add_production(p)\n \n // Copy all productions from G2\n FOR each production p in G2.productions:\n add_production(p)\n \n RETURN new_grammar(S_new, productions)\nEND",
+      "explanation": "Creates a new grammar where the start symbol derives the concatenation of strings from both languages by having S1 S2 as the only production from the new start symbol.",
+      "timeComplexity": "O(n1 + n2)",
+      "spaceComplexity": "O(n1 + n2)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "CFG Construction for Kleene Star of CFL",
+      "description": "Algorithm to construct CFG for L* where L is CFL",
+      "code": "// Given CFG G with start symbol S\n// Construct CFG for L*\n\nALGORITHM KleeneStarCFG(G):\nBEGIN\n // Create new start symbol\n S_new = new_nonterminal()\n \n // New productions for Kleene star\n // S_new → S S_new | ε\n add_production(S_new, concatenate(S, S_new))\n add_production(S_new, epsilon) // epsilon production\n \n // Copy all productions from G\n FOR each production p in G.productions:\n add_production(p)\n \n RETURN new_grammar(S_new, productions)\nEND",
+      "explanation": "The new start symbol can generate zero or more occurrences of the original language by recursively expanding S_new → S S_new, with epsilon as the base case for zero repetitions.",
+      "timeComplexity": "O(n) where n is production count",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

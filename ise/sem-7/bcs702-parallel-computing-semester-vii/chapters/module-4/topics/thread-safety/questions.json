@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Define thread safety and explain why a non-thread-safe function, such as a counter that uses 'count++', can produce incorrect results in a multi-threaded environment.",
+    "expectedPoints": [
+      "Definition: A class or method is thread-safe if it behaves correctly when accessed from multiple threads, regardless of the scheduling or interleaving of the execution of those threads, and without requiring additional synchronization from the calling code.",
+      "The operation 'count++' is not atomic; it consists of three steps: read the value, increment it, write it back.",
+      "Without synchronization (e.g., a mutex), two threads can read the same value simultaneously, both increment it, and both write back the same new value, resulting in a lost update.",
+      "This interleaving of operations is a race condition, leading to inconsistent and incorrect final results."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast the use of mutex locks and atomic operations as techniques to achieve thread safety. Discuss a scenario where one might be preferred over the other.",
+    "expectedPoints": [
+      "Mutex locks are synchronization primitives that enforce mutual exclusion, allowing only one thread to execute a critical section at a time. They are powerful and can protect large, complex sections of code.",
+      "Atomic operations are indivisible machine-level instructions (like Compare-and-Swap) that complete in a single step relative to other threads. They are typically used for simple operations on single variables (e.g., incrementing a counter).",
+      "Key difference: Mutexes involve blocking/waiting, which can lead to context switches and performance overhead. Atomic operations are often non-blocking and can be more efficient for very specific operations.",
+      "Scenario: For a simple counter, an atomic operation is vastly preferred for its performance and simplicity. For protecting access to an entire linked list or a complex data structure, a mutex lock is necessary."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Analyze the concept of reentrancy as a strategy for thread safety. Explain how a function can be made reentrant and discuss its advantages and limitations compared to other thread-safety techniques like locking.",
+    "expectedPoints": [
+      "Definition: A reentrant function can be interrupted in the middle of its execution (e.g., by a signal or another thread) and safely called again ('re-entered') before previous invocations complete. All reentrant functions are thread-safe, but not all thread-safe functions are reentrant.",
+      "How to achieve it: Rely only on local variables stored on the stack (not global or static data) and parameters passed by the caller. Avoid non-constant shared state.",
+      "Advantages: Avoids the performance overhead and complexity of locks entirely. Eliminates risks associated with locking, such as deadlock, priority inversion, and convoying.",
+      "Limitations: Severely restrictive. Many problems inherently require shared state (e.g., a shared cache, a work queue). It is not a viable strategy for making existing stateful code thread-safe; it is a design principle for writing new, stateless code."
+    ],
+    "marks": 10
+  }
+]

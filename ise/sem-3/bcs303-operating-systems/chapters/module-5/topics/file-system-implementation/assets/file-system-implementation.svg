@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" data-topic-id="file-system-implementation">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8EAF6"/>
+      <stop offset="100%" style="stop-color:#C5CAE9"/>
+    </linearGradient>
+    <marker id="arrowTeal" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0,0 7,2.5 0,5" fill="#00695C"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0,0 7,2.5 0,5" fill="#E65100"/>
+    </marker>
+  </defs>
+  <rect width="420" height="400" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Group 1: Title -->
+  <g data-narration="File System Implementation covers how the OS stores files on disk using allocation methods and manages free space." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.3s" fill="freeze"/>
+    <text x="210" y="22" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#283593">File System Implementation</text>
+    <line x1="80" y1="28" x2="340" y2="28" stroke="#3949AB" stroke-width="1.5" stroke-dasharray="4,3"/>
+  </g>
+
+  <!-- Group 2: Contiguous Allocation -->
+  <g data-narration="Contiguous Allocation: a file occupies consecutive disk blocks such as 5, 6, 7, 8. This gives fast sequential and direct access but causes external fragmentation." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze"/>
+    <text x="14" y="46" font-family="Arial" font-size="10" font-weight="bold" fill="#3949AB">1. Contiguous Allocation</text>
+    <!-- Disk bar: blocks 0-11, each 30px wide with 2px gap -->
+    <rect x="14" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="27" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">0</text>
+    <rect x="42" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="55" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">1</text>
+    <rect x="70" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="83" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">2</text>
+    <rect x="98" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="111" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">3</text>
+    <rect x="126" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="139" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">4</text>
+    <!-- Highlighted file blocks 5,6,7,8 -->
+    <rect x="154" y="52" width="26" height="20" rx="2" fill="#3949AB" stroke="#283593" stroke-width="1"/>
+    <text x="167" y="65" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="white">5</text>
+    <rect x="182" y="52" width="26" height="20" rx="2" fill="#3949AB" stroke="#283593" stroke-width="1"/>
+    <text x="195" y="65" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="white">6</text>
+    <rect x="210" y="52" width="26" height="20" rx="2" fill="#3949AB" stroke="#283593" stroke-width="1"/>
+    <text x="223" y="65" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="white">7</text>
+    <rect x="238" y="52" width="26" height="20" rx="2" fill="#3949AB" stroke="#283593" stroke-width="1"/>
+    <text x="251" y="65" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="white">8</text>
+    <!-- Remaining blocks -->
+    <rect x="266" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="279" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">9</text>
+    <rect x="294" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="307" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">10</text>
+    <rect x="322" y="52" width="26" height="20" rx="2" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.5"/>
+    <text x="335" y="65" text-anchor="middle" font-family="monospace" font-size="7" fill="#757575">11</text>
+    <!-- Bracket -->
+    <line x1="154" y1="76" x2="264" y2="76" stroke="#3949AB" stroke-width="1.5"/>
+    <text x="209" y="85" text-anchor="middle" font-family="Arial" font-size="7" fill="#3949AB">File A [5,6,7,8]</text>
+    <text x="14" y="96" font-family="Arial" font-size="7" fill="#C62828">Fast access | External fragmentation</text>
+  </g>
+
+  <!-- Group 3: Linked Allocation -->
+  <g data-narration="Linked Allocation: each block stores a pointer to the next block in the file, forming a chain like 5 to 8 to 2 to 11. This eliminates external fragmentation but random access is slow." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="3.0s" fill="freeze"/>
+    <text x="14" y="114" font-family="Arial" font-size="10" font-weight="bold" fill="#00695C">2. Linked Allocation</text>
+    <!-- Block 5 -->
+    <rect x="14" y="120" width="52" height="28" rx="4" fill="#00695C" stroke="#004D40" stroke-width="1"/>
+    <text x="40" y="133" text-anchor="middle" font-family="monospace" font-size="8" fill="white">Blk 5</text>
+    <text x="40" y="143" text-anchor="middle" font-family="monospace" font-size="6" fill="#B2DFDB">ptr-&gt;8</text>
+    <!-- Arrow 5->8 -->
+    <line x1="66" y1="134" x2="98" y2="134" stroke="#00695C" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+    <!-- Block 8 -->
+    <rect x="100" y="120" width="52" height="28" rx="4" fill="#00695C" stroke="#004D40" stroke-width="1"/>
+    <text x="126" y="133" text-anchor="middle" font-family="monospace" font-size="8" fill="white">Blk 8</text>
+    <text x="126" y="143" text-anchor="middle" font-family="monospace" font-size="6" fill="#B2DFDB">ptr-&gt;2</text>
+    <!-- Arrow 8->2 -->
+    <line x1="152" y1="134" x2="184" y2="134" stroke="#00695C" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+    <!-- Block 2 -->
+    <rect x="186" y="120" width="52" height="28" rx="4" fill="#00695C" stroke="#004D40" stroke-width="1"/>
+    <text x="212" y="133" text-anchor="middle" font-family="monospace" font-size="8" fill="white">Blk 2</text>
+    <text x="212" y="143" text-anchor="middle" font-family="monospace" font-size="6" fill="#B2DFDB">ptr-&gt;11</text>
+    <!-- Arrow 2->11 -->
+    <line x1="238" y1="134" x2="270" y2="134" stroke="#00695C" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+    <!-- Block 11 -->
+    <rect x="272" y="120" width="52" height="28" rx="4" fill="#00695C" stroke="#004D40" stroke-width="1"/>
+    <text x="298" y="133" text-anchor="middle" font-family="monospace" font-size="8" fill="white">Blk 11</text>
+    <text x="298" y="143" text-anchor="middle" font-family="monospace" font-size="6" fill="#B2DFDB">null</text>
+    <text x="14" y="162" font-family="Arial" font-size="7" fill="#C62828">No fragmentation | Slow random access</text>
+  </g>
+
+  <!-- Group 4: Indexed Allocation -->
+  <g data-narration="Indexed Allocation: an index block holds pointers to all data blocks of the file. The index block stores entries 5, 8, 2, 11 giving direct access without fragmentation, at the cost of index overhead." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="4.5s" fill="freeze"/>
+    <text x="14" y="180" font-family="Arial" font-size="10" font-weight="bold" fill="#E65100">3. Indexed Allocation</text>
+    <!-- Index block -->
+    <rect x="14" y="186" width="60" height="48" rx="4" fill="#E65100" stroke="#BF360C" stroke-width="1"/>
+    <text x="44" y="197" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="white">Index Blk</text>
+    <text x="44" y="207" text-anchor="middle" font-family="monospace" font-size="6" fill="#FFE0B2">[0] -&gt; 5</text>
+    <text x="44" y="215" text-anchor="middle" font-family="monospace" font-size="6" fill="#FFE0B2">[1] -&gt; 8</text>
+    <text x="44" y="223" text-anchor="middle" font-family="monospace" font-size="6" fill="#FFE0B2">[2] -&gt; 2</text>
+    <text x="44" y="231" text-anchor="middle" font-family="monospace" font-size="6" fill="#FFE0B2">[3] -&gt; 11</text>
+    <!-- Arrows from index to data blocks -->
+    <line x1="74" y1="204" x2="108" y2="196" stroke="#E65100" stroke-width="1" marker-end="url(#arrowOrange)"/>
+    <line x1="74" y1="212" x2="108" y2="212" stroke="#E65100" stroke-width="1" marker-end="url(#arrowOrange)"/>
+    <line x1="74" y1="220" x2="148" y2="196" stroke="#E65100" stroke-width="1" marker-end="url(#arrowOrange)"/>
+    <line x1="74" y1="228" x2="148" y2="212" stroke="#E65100" stroke-width="1" marker-end="url(#arrowOrange)"/>
+    <!-- Data blocks in 2x2 grid -->
+    <rect x="110" y="188" width="34" height="16" rx="3" fill="#FB8C00" stroke="#E65100" stroke-width="0.8"/>
+    <text x="127" y="199" text-anchor="middle" font-family="monospace" font-size="7" fill="white">Blk 5</text>
+    <rect x="110" y="206" width="34" height="16" rx="3" fill="#FB8C00" stroke="#E65100" stroke-width="0.8"/>
+    <text x="127" y="217" text-anchor="middle" font-family="monospace" font-size="7" fill="white">Blk 8</text>
+    <rect x="150" y="188" width="34" height="16" rx="3" fill="#FB8C00" stroke="#E65100" stroke-width="0.8"/>
+    <text x="167" y="199" text-anchor="middle" font-family="monospace" font-size="7" fill="white">Blk 2</text>
+    <rect x="150" y="206" width="34" height="16" rx="3" fill="#FB8C00" stroke="#E65100" stroke-width="0.8"/>
+    <text x="167" y="217" text-anchor="middle" font-family="monospace" font-size="7" fill="white">Blk 11</text>
+    <text x="14" y="246" font-family="Arial" font-size="7" fill="#C62828">Direct access, no fragmentation | Index block overhead</text>
+  </g>
+
+  <!-- Group 5: Free Space Management - Bit Vector -->
+  <g data-narration="Free Space Management uses a bit vector or bitmap where each bit represents a disk block. A value of 1 means the block is allocated and 0 means free. This allows fast lookup of free blocks." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="6.0s" fill="freeze"/>
+    <text x="14" y="264" font-family="Arial" font-size="10" font-weight="bold" fill="#C62828">4. Free Space Mgmt - Bit Vector</text>
+    <!-- Row labels -->
+    <text x="14" y="278" font-family="monospace" font-size="6" fill="#616161">Blk:</text>
+    <text x="14" y="290" font-family="monospace" font-size="6" fill="#616161">Bit:</text>
+    <!-- Block 0 - used -->
+    <rect x="40" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="49" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">0</text>
+    <text x="49" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 1 - used -->
+    <rect x="60" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="69" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">1</text>
+    <text x="69" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 2 - free -->
+    <rect x="80" y="270" width="18" height="12" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="89" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="#1B5E20">2</text>
+    <text x="89" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#2E7D32">0</text>
+    <!-- Block 3 - used -->
+    <rect x="100" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="109" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">3</text>
+    <text x="109" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 4 - free -->
+    <rect x="120" y="270" width="18" height="12" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="129" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="#1B5E20">4</text>
+    <text x="129" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#2E7D32">0</text>
+    <!-- Block 5 - free -->
+    <rect x="140" y="270" width="18" height="12" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="149" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="#1B5E20">5</text>
+    <text x="149" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#2E7D32">0</text>
+    <!-- Block 6 - used -->
+    <rect x="160" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="169" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">6</text>
+    <text x="169" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 7 - used -->
+    <rect x="180" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="189" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">7</text>
+    <text x="189" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 8 - free -->
+    <rect x="200" y="270" width="18" height="12" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="209" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="#1B5E20">8</text>
+    <text x="209" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#2E7D32">0</text>
+    <!-- Block 9 - used -->
+    <rect x="220" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="229" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">9</text>
+    <text x="229" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Block 10 - free -->
+    <rect x="240" y="270" width="18" height="12" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="249" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="#1B5E20">10</text>
+    <text x="249" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#2E7D32">0</text>
+    <!-- Block 11 - used -->
+    <rect x="260" y="270" width="18" height="12" rx="1" fill="#3949AB" stroke="#283593" stroke-width="0.5"/>
+    <text x="269" y="279" text-anchor="middle" font-family="monospace" font-size="6" fill="white">11</text>
+    <text x="269" y="290" text-anchor="middle" font-family="monospace" font-size="6" font-weight="bold" fill="#3949AB">1</text>
+    <!-- Legend -->
+    <rect x="296" y="270" width="10" height="10" rx="1" fill="#3949AB"/>
+    <text x="310" y="279" font-family="Arial" font-size="7" fill="#424242">= Used (1)</text>
+    <rect x="296" y="282" width="10" height="10" rx="1" fill="#A5D6A7" stroke="#66BB6A" stroke-width="0.5"/>
+    <text x="310" y="291" font-family="Arial" font-size="7" fill="#424242">= Free (0)</text>
+  </g>
+
+  <!-- Group 6: Comparison Table -->
+  <g data-narration="Comparison: Contiguous allocation is fast but has fragmentation. Linked allocation is flexible with no fragmentation but has slow random access. Indexed allocation balances both but adds index block overhead." opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="7.5s" fill="freeze"/>
+    <text x="14" y="314" font-family="Arial" font-size="10" font-weight="bold" fill="#283593">5. Comparison</text>
+    <!-- Table header -->
+    <rect x="14" y="320" width="96" height="16" rx="2" fill="#3949AB"/>
+    <text x="62" y="331" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="white">Method</text>
+    <rect x="112" y="320" width="138" height="16" rx="2" fill="#3949AB"/>
+    <text x="181" y="331" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="white">Advantage</text>
+    <rect x="252" y="320" width="154" height="16" rx="2" fill="#3949AB"/>
+    <text x="329" y="331" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="white">Disadvantage</text>
+    <!-- Row 1: Contiguous -->
+    <rect x="14" y="338" width="96" height="16" rx="1" fill="#E8EAF6" stroke="#C5CAE9" stroke-width="0.5"/>
+    <text x="62" y="349" text-anchor="middle" font-family="Arial" font-size="7" fill="#3949AB">Contiguous</text>
+    <rect x="112" y="338" width="138" height="16" rx="1" fill="#E8F5E9" stroke="#C8E6C9" stroke-width="0.5"/>
+    <text x="181" y="349" text-anchor="middle" font-family="Arial" font-size="7" fill="#2E7D32">Fast sequential + direct access</text>
+    <rect x="252" y="338" width="154" height="16" rx="1" fill="#FFEBEE" stroke="#FFCDD2" stroke-width="0.5"/>
+    <text x="329" y="349" text-anchor="middle" font-family="Arial" font-size="7" fill="#C62828">External fragmentation</text>
+    <!-- Row 2: Linked -->
+    <rect x="14" y="356" width="96" height="16" rx="1" fill="#E0F2F1" stroke="#B2DFDB" stroke-width="0.5"/>
+    <text x="62" y="367" text-anchor="middle" font-family="Arial" font-size="7" fill="#00695C">Linked</text>
+    <rect x="112" y="356" width="138" height="16" rx="1" fill="#E8F5E9" stroke="#C8E6C9" stroke-width="0.5"/>
+    <text x="181" y="367" text-anchor="middle" font-family="Arial" font-size="7" fill="#2E7D32">No fragmentation, flexible</text>
+    <rect x="252" y="356" width="154" height="16" rx="1" fill="#FFEBEE" stroke="#FFCDD2" stroke-width="0.5"/>
+    <text x="329" y="367" text-anchor="middle" font-family="Arial" font-size="7" fill="#C62828">Slow random access</text>
+    <!-- Row 3: Indexed -->
+    <rect x="14" y="374" width="96" height="16" rx="1" fill="#FFF3E0" stroke="#FFE0B2" stroke-width="0.5"/>
+    <text x="62" y="385" text-anchor="middle" font-family="Arial" font-size="7" fill="#E65100">Indexed</text>
+    <rect x="112" y="374" width="138" height="16" rx="1" fill="#E8F5E9" stroke="#C8E6C9" stroke-width="0.5"/>
+    <text x="181" y="385" text-anchor="middle" font-family="Arial" font-size="7" fill="#2E7D32">Balanced: direct + no frag</text>
+    <rect x="252" y="374" width="154" height="16" rx="1" fill="#FFEBEE" stroke="#FFCDD2" stroke-width="0.5"/>
+    <text x="329" y="385" text-anchor="middle" font-family="Arial" font-size="7" fill="#C62828">Index block overhead</text>
+  </g>
+</svg>

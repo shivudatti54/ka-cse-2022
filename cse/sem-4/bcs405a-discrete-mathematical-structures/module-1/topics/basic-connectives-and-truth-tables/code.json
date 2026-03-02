@@ -1,0 +1,45 @@
+{
+  "topicId": "basic-connectives-and-truth-tables",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Truth Table Generator for Two Variables",
+      "description": "Generates complete truth table for any compound proposition with 2 variables",
+      "code": "ALGORITHM GenerateTruthTable2Vars\nBEGIN\n DECLARE variables = [\"p\", \"q\"]\n DECLARE operators = [\"AND\", \"OR\", \"IMPLIES\", \"IFF\"]\n \n PRINT \"Truth Table for 2 Variables:\"\n PRINT \"p\tq\"\n PRINT \"-\t-\"\n \n FOR i FROM 0 TO 3 DO\n p = (i / 2) mod 2 // 0 or 1\n q = i mod 2 // 0 or 1\n PRINT p, q\n END FOR\n \n // Output order: 00, 01, 10, 11\nEND",
+      "explanation": "This algorithm generates all 4 combinations of truth values for 2 propositional variables in systematic binary order: p=F,q=F; p=F,q=T; p=T,q=F; p=T,q=T.",
+      "timeComplexity": "O(4)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Evaluate Logical Connectives",
+      "description": "Functions to evaluate basic logical connectives given boolean inputs",
+      "code": "FUNCTION Neg(p)\n RETURN NOT p\nEND FUNCTION\n\nFUNCTION And(p, q)\n RETURN p AND q\nEND FUNCTION\n\nFUNCTION Or(p, q)\n RETURN p OR q\nEND FUNCTION\n\nFUNCTION Implies(p, q)\n // p→q is FALSE only when p=TRUE and q=FALSE\n IF p = TRUE AND q = FALSE THEN\n RETURN FALSE\n ELSE\n RETURN TRUE\n END IF\nEND FUNCTION\n\nFUNCTION Iff(p, q)\n // p↔q is TRUE when both have same value\n IF p = q THEN\n RETURN TRUE\n ELSE\n RETURN FALSE\n END IF\nEND FUNCTION",
+      "explanation": "Each function implements the truth table definition for the corresponding connective. The Implies function is particularly important as it differs from simple boolean operations.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Check Tautology or Contradiction",
+      "description": "Algorithm to determine if a compound proposition is tautology, contradiction, or contingency",
+      "code": "ALGORITHM ClassifyProposition(prop, n)\nBEGIN\n DECLARE resultList = []\n numRows = 2^n\n \n FOR i FROM 0 TO numRows-1 DO\n // Generate truth values for n variables\n values = GetBinaryValues(i, n)\n result = Evaluate(prop, values)\n APPEND result TO resultList\n END FOR\n \n allTrue = TRUE\n allFalse = TRUE\n \n FOR EACH val IN resultList DO\n IF val = FALSE THEN allTrue = FALSE\n IF val = TRUE THEN allFalse = FALSE\n END FOR\n \n IF allTrue THEN\n RETURN \"Tautology\"\n ELSE IF allFalse THEN\n RETURN \"Contradiction\"\n ELSE\n RETURN \"Contingency\"\n END IF\nEND",
+      "explanation": "This algorithm evaluates a proposition for all possible combinations and classifies it based on the results: all true = tautology, all false = contradiction, mixed = contingency.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Verify Logical Equivalence",
+      "description": "Algorithm to check if two propositions are logically equivalent using truth tables",
+      "code": "ALGORITHM CheckLogicalEquivalence(prop1, prop2, n)\nBEGIN\n numRows = 2^n\n equivalent = TRUE\n \n FOR i FROM 0 TO numRows-1 DO\n values = GetBinaryValues(i, n)\n result1 = Evaluate(prop1, values)\n result2 = Evaluate(prop2, values)\n \n IF result1 != result2 THEN\n equivalent = FALSE\n BREAK\n END IF\n END FOR\n \n IF equivalent THEN\n PRINT prop1 + \" ≡ \" + prop2\n PRINT \"They are logically equivalent!\"\n ELSE\n PRINT prop1 + \" ≠ \" + prop2\n PRINT \"They are NOT logically equivalent.\"\n END IF\nEND",
+      "explanation": "Two propositions are logically equivalent if they have the same truth value for every possible combination of input values. This algorithm systematically checks all combinations.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "counting-binary-trees",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Recursive Binary Tree Count using Catalan Recurrence",
+      "description": "Algorithm to compute number of binary trees with n nodes using dynamic programming based on Catalan recurrence T(n) = \u03a3(i=0 to n-1) T(i)T(n-1-i)",
+      "code": "FUNCTION CountBinaryTrees(n):\n  // Returns the nth Catalan number C\u2099\n  IF n <= 1 THEN\n    RETURN 1\n  ENDIF\n  \n  // Using dynamic programming for efficiency\n  CREATE ARRAY dp[0..n]\n  SET dp[0] = 1\n  SET dp[1] = 1\n  \n  FOR i FROM 2 TO n:\n    SET dp[i] = 0\n    FOR j FROM 0 TO i-1:\n      dp[i] = dp[i] + dp[j] * dp[i-1-j]\n    ENDFOR\n  ENDFOR\n  \n  RETURN dp[n]\nEND FUNCTION\n\n// Example: CountBinaryTrees(4) returns 14",
+      "explanation": "The algorithm implements the Catalan recurrence relation using dynamic programming. The outer loop computes each C\u2099, and the inner loop performs convolution to combine smaller subtree counts. Time complexity: O(n\u00b2) for computing C\u2099. Space complexity: O(n). This is much faster than naive recursion which has exponential time complexity.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Generate All Binary Tree Structures",
+      "description": "Recursive algorithm to enumerate all distinct binary tree structures with n nodes",
+      "code": "FUNCTION GenerateAllTrees(n):\n  // Returns list of all binary tree structures with n nodes\n  IF n == 0 THEN\n    RETURN [NULL]  // Empty tree\n  ENDIF\n  IF n == 1 THEN\n    RETURN [new Node(null, null)]  // Single node tree\n  ENDIF\n  \n  SET result = EMPTY LIST\n  \n  // For each possible left subtree size i\n  FOR leftSize FROM 0 TO n-1:\n    rightSize = n - 1 - leftSize\n    \n    leftTrees = GenerateAllTrees(leftSize)\n    rightTrees = GenerateAllTrees(rightSize)\n    \n    // Combine each left tree with each right tree\n    FOR EACH lt IN leftTrees:\n      FOR EACH rt IN rightTrees:\n        root = new Node(lt, rt)\n        ADD root TO result\n      ENDFOR\n    ENDFOR\n  ENDFOR\n  \n  RETURN result\nEND FUNCTION\n\n// To generate and count: trees = GenerateAllTrees(4)\n// Count will be 14 = C\u2084",
+      "explanation": "This algorithm generates all C\u2099 binary tree structures through recursive decomposition. For n nodes, it iterates through all possible splits (leftSize from 0 to n-1), generates all left and right subtrees, and combines them with a root node. The total output size is \u0398(C\u2099 \u00d7 n) representing all trees. Time complexity is O(C\u2099 \u00d7 n) which is optimal since we must output all trees. Space complexity is O(n) for recursion stack plus O(C\u2099 \u00d7 n) for storing all generated trees.",
+      "timeComplexity": "O(C\u2099 \u00d7 n)",
+      "spaceComplexity": "O(n + C\u2099 \u00d7 n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Verify Binary Tree Properties",
+      "description": "Algorithm to verify whether a given binary tree is full, complete, or perfect",
+      "code": "FUNCTION CheckTreeType(root):\n  SET result = {}\n  \n  // Count nodes and check properties\n  nodeCount = CountNodes(root)\n  height = GetHeight(root)\n  \n  // Check if perfect: all leaves at same level\n  result.isPerfect = CheckPerfect(root, 0, height)\n  \n  // Check if full: every node has 0 or 2 children\n  result.isFull = CheckFull(root)\n  \n  // Check if complete: all levels filled except possibly last\n  result.isComplete = CheckComplete(root)\n  \n  RETURN result\nEND FUNCTION\n\nFUNCTION CheckPerfect(node, level, height):\n  IF node == NULL THEN\n    RETURN TRUE\n  ENDIF\n  IF level == height THEN\n    // At deepest level, must be leaf\n    RETURN (node.left == NULL AND node.right == NULL)\n  ENDIF\n  // Internal nodes must have both children\n  IF node.left == NULL OR node.right == NULL THEN\n    RETURN FALSE\n  ENDIF\n  RETURN CheckPerfect(node.left, level+1, height) AND\n         CheckPerfect(node.right, level+1, height)\nEND FUNCTION\n\nFUNCTION CheckFull(node):\n  IF node == NULL THEN\n    RETURN TRUE\n  ENDIF\n  IF (node.left == NULL AND node.right != NULL) OR\n     (node.left != NULL AND node.right == NULL) THEN\n    RETURN FALSE\n  ENDIF\n  RETURN CheckFull(node.left) AND CheckFull(node.right)\nEND FUNCTION\n\nFUNCTION CheckComplete(node):\n  // Use level-order traversal with flag for missing node\n  IF node == NULL THEN\n    RETURN TRUE\n  ENDIF\n  SET queue = [node]\n  SET foundNull = FALSE\n  \n  WHILE queue is not empty:\n    temp = queue.dequeue()\n    IF temp == NULL THEN\n      foundNull = TRUE\n    ELSE IF foundNull == TRUE THEN\n      RETURN FALSE  // Non-null after null violates completeness\n    ELSE:\n      queue.enqueue(temp.left)\n      queue.enqueue(temp.right)\n    ENDIF\n  ENDWHILE\n  \n  RETURN TRUE\nEND FUNCTION",
+      "explanation": "This code demonstrates verification of three binary tree properties. CheckPerfect uses recursive traversal comparing leaf depths. CheckFull recursively ensures no node has exactly one child. CheckComplete uses BFS with a flag - once a null child is found, all subsequent nodes must also be null. Time complexities: CheckPerfect O(n), CheckFull O(n), CheckComplete O(n). Space complexities: CheckPerfect/Full O(h), CheckComplete O(n) for queue.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

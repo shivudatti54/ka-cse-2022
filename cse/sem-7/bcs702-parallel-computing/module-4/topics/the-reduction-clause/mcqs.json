@@ -1,0 +1,505 @@
+{
+  "topicId": "the-reduction-clause",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the correct syntax for using reduction clause with addition?",
+      "options": [
+        {
+          "key": "A",
+          "text": "reduction(+:sum)"
+        },
+        {
+          "key": "B",
+          "text": "reduction(+:sum)"
+        },
+        {
+          "key": "C",
+          "text": "reduction(add:sum)"
+        },
+        {
+          "key": "D",
+          "text": "reduction(sum:+)"
+        }
+      ],
+      "correctAnswer": "reduction(+:sum)",
+      "explanation": "The operator is specified first, followed by a colon, then the variable list. For addition, the operator is '+'.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What is the initial value for reduction with multiplication operator (*)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "-1"
+        },
+        {
+          "key": "D",
+          "text": "NULL"
+        }
+      ],
+      "correctAnswer": "1",
+      "explanation": "For multiplication, the identity element is 1 (since 1*x = x). For addition, it's 0 (since 0+x = x).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Which clause is implicitly applied to reduction variables?",
+      "options": [
+        {
+          "key": "A",
+          "text": "shared"
+        },
+        {
+          "key": "B",
+          "text": "private"
+        },
+        {
+          "key": "C",
+          "text": "firstprivate"
+        },
+        {
+          "key": "D",
+          "text": "none"
+        }
+      ],
+      "correctAnswer": "private",
+      "explanation": "Reduction variables are implicitly private. Each thread works on its private copy, and results are combined at the end.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What will be the output of the following code if run with 4 threads?\nint sum = 0;\n#pragma omp parallel for reduction(+:sum)\nfor(int i=1; i<=100; i++)\n sum += i;",
+      "options": [
+        {
+          "key": "A",
+          "text": "5050"
+        },
+        {
+          "key": "B",
+          "text": "Depends on thread execution order"
+        },
+        {
+          "key": "C",
+          "text": "Compilation error"
+        },
+        {
+          "key": "D",
+          "text": "0"
+        }
+      ],
+      "correctAnswer": "5050",
+      "explanation": "The reduction clause correctly computes the sum of 1 to 100, which is 5050. The reduction handles combining private copies correctly regardless of execution order.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Which operator is NOT supported by OpenMP reduction clause?",
+      "options": [
+        {
+          "key": "A",
+          "text": "+"
+        },
+        {
+          "key": "B",
+          "text": "-"
+        },
+        {
+          "key": "C",
+          "text": "/"
+        },
+        {
+          "key": "D",
+          "text": "&&"
+        }
+      ],
+      "correctAnswer": "/",
+      "explanation": "Division (/) is not a supported reduction operator. Supported operators include: +, -, *, &, |, ^, &&, ||, min, max.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What is the identity element for logical AND (&&) reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "true"
+        },
+        {
+          "key": "D",
+          "text": "false"
+        }
+      ],
+      "correctAnswer": "1",
+      "explanation": "For logical AND, the identity is 1 (true) because (1 && x) = x. For logical OR, the identity is 0 (false) because (0 || x) = x.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What happens if you declare a reduction variable as shared?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It causes a compilation error"
+        },
+        {
+          "key": "B",
+          "text": "It causes a runtime error"
+        },
+        {
+          "key": "C",
+          "text": "The behavior is undefined"
+        },
+        {
+          "key": "D",
+          "text": "It works correctly"
+        }
+      ],
+      "correctAnswer": "The behavior is undefined",
+      "explanation": "Reduction variables should not be explicitly declared as shared. The reduction clause implicitly makes them private. Mixing them leads to undefined behavior.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the result of using reduction with floating-point numbers?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Exact same result every time"
+        },
+        {
+          "key": "B",
+          "text": "May vary slightly due to floating-point precision"
+        },
+        {
+          "key": "C",
+          "text": "Always zero"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "May vary slightly due to floating-point precision",
+      "explanation": "Floating-point operations are not associative. Different thread schedules may produce slightly different results due to rounding.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Which of the following is the correct way to use max reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "reduction(max:result)"
+        },
+        {
+          "key": "B",
+          "text": "reduction(>:result)"
+        },
+        {
+          "key": "C",
+          "text": "reduction(maximum:result)"
+        },
+        {
+          "key": "D",
+          "text": "reduction(greater:result)"
+        }
+      ],
+      "correctAnswer": "reduction(max:result)",
+      "explanation": "The keywords 'min' and 'max' are used directly as operators in the reduction clause.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What is array reduction in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Built-in reduction for arrays"
+        },
+        {
+          "key": "B",
+          "text": "Manual technique using private arrays and critical section"
+        },
+        {
+          "key": "C",
+          "text": "A type of data decomposition"
+        },
+        {
+          "key": "D",
+          "text": "None of the above"
+        }
+      ],
+      "correctAnswer": "Manual technique using private arrays and critical section",
+      "explanation": "Array reduction is a manual technique where each thread maintains a private array, and results are combined using a critical section or atomic operations.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "Which header file is required for OpenMP in C/C++?",
+      "options": [
+        {
+          "key": "A",
+          "text": "<omp.h>"
+        },
+        {
+          "key": "B",
+          "text": "<openmp.h>"
+        },
+        {
+          "key": "C",
+          "text": "<pthread.h>"
+        },
+        {
+          "key": "D",
+          "text": "<parallel.h>"
+        }
+      ],
+      "correctAnswer": "<omp.h>",
+      "explanation": "The <omp.h> header file provides the OpenMP API function prototypes and constants.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is the default number of threads in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Number of CPU cores"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "4"
+        },
+        {
+          "key": "D",
+          "text": "Undefined"
+        }
+      ],
+      "correctAnswer": "Number of CPU cores",
+      "explanation": "By default, OpenMP uses the number of available CPU cores as the number of threads. This can be changed using omp_set_num_threads() or num_threads clause.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Can reduction be used inside a parallel region without a for loop?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Yes, with #pragma omp parallel reduction"
+        },
+        {
+          "key": "B",
+          "text": "No, always requires for loop"
+        },
+        {
+          "key": "C",
+          "text": "Only with #pragma omp sections"
+        },
+        {
+          "key": "D",
+          "text": "None of the above"
+        }
+      ],
+      "correctAnswer": "Yes, with #pragma omp parallel reduction",
+      "explanation": "Reduction can be used with #pragma omp parallel (not just parallel for). The reduction happens after all threads complete the parallel region.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What is the identity value for bitwise OR (|) reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "0xFFFFFFFF"
+        },
+        {
+          "key": "B",
+          "text": "0"
+        },
+        {
+          "key": "C",
+          "text": "1"
+        },
+        {
+          "key": "D",
+          "text": "-1"
+        }
+      ],
+      "correctAnswer": "0",
+      "explanation": "For bitwise OR, identity is 0 because (0 | x) = x. For bitwise AND, identity is all bits 1 (all bits set).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Which OpenMP version introduced task reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "OpenMP 3.0"
+        },
+        {
+          "key": "B",
+          "text": "OpenMP 4.0"
+        },
+        {
+          "key": "C",
+          "text": "OpenMP 4.5"
+        },
+        {
+          "key": "D",
+          "text": "OpenMP 5.0"
+        }
+      ],
+      "correctAnswer": "OpenMP 4.5",
+      "explanation": "Task reduction was introduced in OpenMP 4.5, allowing reduction semantics in task-based parallelism.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-16",
+      "question": "What is the purpose of the nowait clause with reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To disable implicit barrier"
+        },
+        {
+          "key": "B",
+          "text": "To increase thread count"
+        },
+        {
+          "key": "C",
+          "text": "To make variables shared"
+        },
+        {
+          "key": "D",
+          "text": "To enable nested parallelism"
+        }
+      ],
+      "correctAnswer": "To disable implicit barrier",
+      "explanation": "The nowait clause removes the implicit barrier at the end of the worksharing construct. However, reduction synchronization still occurs.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-17",
+      "question": "What is the output of:\nint x = 10;\n#pragma omp parallel for reduction(max:x)\nfor(int i=0; i<5; i++)\n x = i;\nprintf(\"%d\", x);",
+      "options": [
+        {
+          "key": "A",
+          "text": "10"
+        },
+        {
+          "key": "B",
+          "text": "4"
+        },
+        {
+          "key": "C",
+          "text": "0"
+        },
+        {
+          "key": "D",
+          "text": "Depends on scheduling"
+        }
+      ],
+      "correctAnswer": "4",
+      "explanation": "The initial value for max reduction is the smallest possible value. Each iteration updates x to i (0,1,2,3,4). The maximum is 4. However, the initial value 10 may be considered, so it could be 10 depending on implementation - OpenMP uses FLT_MAX-like value for initialization.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "How do you specify the number of threads in OpenMP?",
+      "options": [
+        {
+          "key": "A",
+          "text": "omp_set_num_threads()"
+        },
+        {
+          "key": "B",
+          "text": "num_threads clause"
+        },
+        {
+          "key": "C",
+          "text": "Both A and B"
+        },
+        {
+          "key": "D",
+          "text": "set_num_threads()"
+        }
+      ],
+      "correctAnswer": "Both A and B",
+      "explanation": "You can use omp_set_num_threads() function or the num_threads clause in the parallel directive.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-19",
+      "question": "What is the difference between #pragma omp critical and reduction?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Critical is slower but more general"
+        },
+        {
+          "key": "B",
+          "text": "Reduction is optimized for specific operations"
+        },
+        {
+          "key": "C",
+          "text": "Both are same"
+        },
+        {
+          "key": "D",
+          "text": "Critical is for parallel regions only"
+        }
+      ],
+      "correctAnswer": "Reduction is optimized for specific operations",
+      "explanation": "Reduction is specifically optimized for accumulation patterns and is generally faster than using critical sections for the same purpose.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-20",
+      "question": "What happens if reduction variable is used before the parallel region?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Initial value is preserved"
+        },
+        {
+          "key": "B",
+          "text": "Value is lost"
+        },
+        {
+          "key": "C",
+          "text": "Undefined behavior"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "Initial value is preserved",
+      "explanation": "The initial value of the reduction variable from before the parallel region is used to determine the identity value for the reduction operation.",
+      "difficulty": "hard"
+    }
+  ]
+}

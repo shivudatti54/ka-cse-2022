@@ -1,0 +1,26 @@
+{
+  "topicId": "enabling-and-disabling-interrupts",
+  "questions": [
+    {
+      "id": "sa1",
+      "question": "Explain, in detail, why it is necessary for a processor to have a mechanism to disable interrupts. Describe a specific scenario in a computer system where disabling interrupts is a critical requirement.",
+      "difficulty": "medium",
+      "modelAnswer": "A processor needs a mechanism to disable interrupts to prevent race conditions during critical sections of code, such as when accessing or modifying shared data structures. This ensures atomicity of operations that must complete without being preempted, like a context switch or modifying the interrupt enable bit itself. A specific scenario is an operating system's scheduler modifying the process control block; an interrupt during this update could corrupt the data and crash the system.",
+      "type": "long"
+    },
+    {
+      "id": "sa2",
+      "question": "Describe the basic mechanism a CPU uses to disable and later re-enable interrupts. What is the purpose of having separate instructions for these operations (e.g., `cli` and `sti` in x86) rather than a single toggle instruction?",
+      "difficulty": "easy",
+      "modelAnswer": "The CPU has a dedicated interrupt enable (IE) flip-flop in the control unit. Instructions like Clear Interrupt (CLI) set it to 0 (disable), and Set Interrupt (STI) set it to — (enable). Separate instructions provide explicit control, allowing software to define precise boundaries for a critical section. A single toggle instruction would be non-deterministic; the programmer would not know the current state before toggling and could accidentally enable interrupts inside a critical section.",
+      "type": "long"
+    },
+    {
+      "id": "sa3",
+      "question": "A modern processor often implements a prioritized interrupt system. Explain how interrupt masking differs from simply disabling all interrupts. Discuss the trade-offs between disabling all interrupts versus using precise masking for handling a high-priority interrupt service routine (ISR).",
+      "difficulty": "hard",
+      "modelAnswer": "Disabling all interrupts (global disable) blocks every interrupt request, regardless of priority. Interrupt masking, however, selectively blocks interrupts based on priority levels or specific interrupt sources via a mask register. The trade-off is that global disabling is simple but increases latency for all interrupts, including high-priority ones. Precise masking allows high-priority interrupts to still be serviced while blocking only lower-priority ones, improving system responsiveness but requiring more complex software management.",
+      "type": "long"
+    }
+  ]
+}

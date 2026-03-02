@@ -1,0 +1,45 @@
+{
+  "topicId": "functions-one-to-one-onto",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Check if Function is One-to-One",
+      "description": "Algorithm to verify if a function represented as dictionary is injective",
+      "code": "def is_one_to_one(f, domain, codomain):\n    \"\"\"\n    Check if function f: domain \u2192 codomain is one-to-one\n    f is dict mapping elements from domain to codomain\n    \"\"\"\n    images = set()\n    for x in domain:\n        y = f[x]\n        if y in images:\n            return False  # Two different inputs map to same output\n        images.add(y)\n    return True\n\n# Example usage\ndomain = [1, 2, 3]\ncodomain = ['a', 'b', 'c', 'd']\nf = {1: 'a', 2: 'b', 3: 'c'}\nprint(is_one_to_one(f, domain, codomain))  # True",
+      "explanation": "We iterate through domain, collect all images. If any image repeats, function is not one-to-one. Uses set to detect duplicates.",
+      "timeComplexity": "O(n) where n = |domain|",
+      "spaceComplexity": "O(n) for storing images set"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Check if Function is Onto",
+      "description": "Algorithm to verify if a function from domain to codomain is surjective",
+      "code": "def is_onto(f, domain, codomain):\n    \"\"\"\n    Check if function f: domain \u2192 codomain is onto\n    \"\"\"\n    images = set(f[x] for x in domain)\n    # Function is onto if every codomain element appears in images\n    for y in codomain:\n        if y not in images:\n            return False\n    return True\n\n# Example: f: {1,2,3} \u2192 {a,b,c}\ndomain = [1, 2, 3]\ncodomain = {'a', 'b', 'c'}\nf = {1: 'a', 2: 'b', 3: 'a'}  # Not onto - 'c' missing\nprint(is_onto(f, domain, codomain))  # False",
+      "explanation": "We collect all images in a set, then check if every element in codomain appears in this set. If any codomain element is missing, function is not onto.",
+      "timeComplexity": "O(n + m) where n=|domain|, m=|codomain|",
+      "spaceComplexity": "O(m) for storing images set"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Binary Search as Bijective Function",
+      "description": "Demonstrates bijective property in a finite sorted array mapping indices to values",
+      "code": "// Binary Search in sorted array [0..n-1]\nALGORITHM BinarySearch(arr, target)\nBEGIN\n  left \u2190 0\n  right \u2190 n - 1\n  \n  WHILE left \u2264 right DO\n    mid \u2190 (left + right) DIV 2\n    \n    IF arr[mid] = target THEN\n      RETURN mid  // Found - unique position\n    ELSE IF arr[mid] < target THEN\n      left \u2190 mid + 1\n    ELSE\n      right \u2190 mid - 1\n    END IF\n  END WHILE\n  \n  RETURN -1  // Not found\nEND\n\n// Property: For sorted array with distinct elements,\n// each value maps to unique index \u2192 ONE-TO-ONE\n// Not necessarily ONTO (not all indices have targets)",
+      "explanation": "In a sorted array with distinct elements, each value corresponds to exactly one position (one-to-one). Binary search efficiently finds this unique mapping using divide and conquer.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Function Composition Implementation",
+      "description": "Java program demonstrating composition of functions",
+      "code": "import java.util.*;\nimport java.util.function.*;\n\npublic class FunctionComposition {\n    public static void main(String[] args) {\n        // Define f: x \u2192 x + 2\n        Function<Integer, Integer> f = x -> x + 2;\n        \n        // Define g: x \u2192 x * 3\n        Function<Integer, Integer> g = x -> x * 3;\n        \n        // Composition g\u2218f: first apply f, then g\n        Function<Integer, Integer> gof = g.compose(f);\n        \n        // Test: gof(5) = g(f(5)) = g(7) = 21\n        System.out.println(\"(g\u2218f)(5) = \" + gof.apply(5));\n        \n        // Test f\u2218g\n        Function<Integer, Integer> fog = f.compose(g);\n        System.out.println(\"(f\u2218g)(5) = \" + fog.apply(5));\n        \n        // Check if f is bijective (for integers, yes)\n        System.out.println(\"f is bijective: \" + \n            isBijective(f, -100, 100));\n    }\n    \n    public static boolean isBijective(Function<Integer, Integer> f, \n                                       int start, int end) {\n        Set<Integer> images = new HashSet<>();\n        for (int i = start; i <= end; i++) {\n            images.add(f.apply(i));\n        }\n        return images.size() == (end - start + 1);\n    }\n}",
+      "explanation": "Java's Function interface provides compose() method for function composition. gof.apply(x) = g(f(x)). The isBijective check verifies if all inputs map to unique outputs (injective) by comparing set size to domain size.",
+      "timeComplexity": "O(n) for bijectivity check",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

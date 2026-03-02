@@ -1,0 +1,45 @@
+{
+  "topicId": "tree-traversal-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Recursive Tree Traversals",
+      "description": "Implementation of Preorder, Inorder, and Postorder traversals using recursion",
+      "code": "class TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\n# Preorder: Root -> Left -> Right\ndef preorder(node):\n    if node:\n        print(node.val, end=' ')  # Visit root\n        preorder(node.left)       # Traverse left\n        preorder(node.right)      # Traverse right\n\n# Inorder: Left -> Root -> Right\ndef inorder(node):\n    if node:\n        inorder(node.left)        # Traverse left\n        print(node.val, end=' ')  # Visit root\n        inorder(node.right)       # Traverse right\n\n# Postorder: Left -> Right -> Root\ndef postorder(node):\n    if node:\n        postorder(node.left)      # Traverse left\n        postorder(node.right)     # Traverse right\n        print(node.val, end=' ')  # Visit root",
+      "explanation": "Recursive traversals use the call stack implicitly. Each function call handles one node and recursively processes subtrees in the specified order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h) where h is height of tree"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Iterative Inorder Traversal",
+      "description": "Inorder traversal without recursion using explicit stack",
+      "code": "def inorder_iterative(root):\n    stack = []\n    current = root\n    result = []\n    \n    while current or stack:\n        # Go to leftmost node\n        while current:\n            stack.append(current)\n            current = current.left\n        \n        # Current is None, pop from stack\n        current = stack.pop()\n        result.append(current.val)  # Visit node\n        \n        # Move to right subtree\n        current = current.right\n    \n    return result",
+      "explanation": "Uses explicit stack to simulate recursion. First pushes all left children, then processes node and moves to right subtree.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Level Order Traversal",
+      "description": "Breadth-First Search traversal of binary tree using queue",
+      "code": "from collections import deque\n\ndef level_order(root):\n    if not root:\n        return []\n    \n    queue = deque([root])\n    result = []\n    \n    while queue:\n        node = queue.popleft()  # Dequeue front\n        result.append(node.val)  # Visit node\n        \n        # Enqueue left child\n        if node.left:\n            queue.append(node.left)\n        \n        # Enqueue right child\n        if node.right:\n            queue.append(node.right)\n    \n    return result",
+      "explanation": "Uses FIFO queue to process nodes level by level. Nodes are dequeued and their children are enqueued, ensuring level-order processing.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(w) where w is maximum width of tree"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Expression Tree Evaluation",
+      "description": "Building and evaluating expression tree using postorder traversal",
+      "code": "class ExprNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\ndef evaluate(node):\n    if node is None:\n        return 0\n    \n    # Leaf node (operand)\n    if node.left is None and node.right is None:\n        return int(node.val)\n    \n    # Evaluate left and right subtrees\n    left_val = evaluate(node.left)\n    right_val = evaluate(node.right)\n    \n    # Apply operator\n    if node.val == '+':\n        return left_val + right_val\n    elif node.val == '-':\n        return left_val - right_val\n    elif node.val == '*':\n        return left_val * right_val\n    elif node.val == '/':\n        return left_val / right_val\n\n# Build tree for (3+4)*(5-2)\n#         *\n#        / \\\n#       +   -\n#      / \\ / \\\n#     3  4 5  2\nroot = ExprNode('*')\nroot.left = ExprNode('+')\nroot.left.left = ExprNode('3')\nroot.left.right = ExprNode('4')\nroot.right = ExprNode('-')\nroot.right.left = ExprNode('5')\nroot.right.right = ExprNode('2')\n\nprint(evaluate(root))  # Output: 21",
+      "explanation": "Expression trees are evaluated using postorder (left-right-root) which naturally gives operands before operator. This is equivalent to evaluating postfix notation.",
+      "timeComplexity": "O(n) where n is number of nodes in expression tree",
+      "spaceComplexity": "O(h) for recursion stack"
+    }
+  ]
+}

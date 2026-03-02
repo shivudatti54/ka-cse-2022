@@ -1,0 +1,33 @@
+{
+  "topicId": "line-and-edge-detection",
+  "examples": [
+    {
+      "id": "pseudocode-sobel-edge-detection",
+      "title": "Algorithm: Sobel Edge Detection",
+      "description": "Sobel edge detection using gradient magnitude and direction",
+      "language": "pseudocode",
+      "code": "ALGORITHM SobelEdgeDetection\nINPUT: Image I\nOUTPUT: Edge map E\n\nBEGIN\n  FOR each pixel (x,y) in I\n    Gx = [-1 0 +1] * I(x-1:x+1, y)\n    Gy = [-1 -2 -1] * I(x, y-1:y+1)\n    M = √(Gx² + Gy²)\n    θ = tan⁻¹(Gy/Gx)\n    E(x,y) = M > threshold\n  END FOR\nEND",
+      "explanation": "This pseudocode demonstrates the Sobel edge detection algorithm, which computes the gradient magnitude and direction at each pixel and thresholds the result to produce an edge map."
+    },
+    {
+      "id": "python-canny-edge-detection",
+      "title": "Python: Canny Edge Detection",
+      "description": "Canny edge detection using OpenCV",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Load the image\nimg = cv2.imread('image.jpg')\n\n# Convert to grayscale\ngray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)\n\n# Apply Gaussian smoothing\nsmoothed = cv2.GaussianBlur(gray, (5,5), 0)\n\n# Compute gradient magnitude and direction\ngrad_x = cv2.Sobel(smoothed, cv2.CV_8U, 1, 0, ksize=3)\ngrad_y = cv2.Sobel(smoothed, cv2.CV_8U, 0, 1, ksize=3)\n\n# Non-maximum suppression and hysteresis thresholding\nedges = cv2.Canny(grad_x, grad_y, 50, 150)\n\n# Display the edge map\ncv2.imshow('Edges', edges)\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "explanation": "This Python code demonstrates the Canny edge detection algorithm using OpenCV, including Gaussian smoothing, gradient computation, non-maximum suppression, and hysteresis thresholding.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-laplacian-of-gaussian",
+      "title": "C: Laplacian of Gaussian (LoG)",
+      "description": "Laplacian of Gaussian (LoG) implementation in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Define the LoG kernel\nint log_kernel[5][5] = {{0, 0, -1, 0, 0},\n                        {0, -1, -2, -1, 0},\n                        {-1, -2, 16, -2, -1},\n                        {0, -1, -2, -1, 0},\n                        {0, 0, -1, 0, 0}};\n\n// Apply the LoG kernel to an image\nvoid apply_log(int **img, int width, int height) {\n  int i, j, k, l;\n  int sum;\n  for (i = 2; i < height - 2; i++) {\n    for (j = 2; j < width - 2; j++) {\n      sum = 0;\n      for (k = -2; k <= 2; k++) {\n        for (l = -2; l <= 2; l++) {\n          sum += img[i+k][j+l] * log_kernel[k+2][l+2];\n        }\n      }\n      img[i][j] = sum;\n    }\n  }\n}\n\nint main() {\n  // Load an image\n  int width, height;\n  int **img = load_image(&width, &height);\n\n  // Apply the LoG kernel\n  apply_log(img, width, height);\n\n  // Display the result\n  display_image(img, width, height);\n\n  return 0;\n}",
+      "explanation": "This C code demonstrates the Laplacian of Gaussian (LoG) implementation, including the definition of the LoG kernel and its application to an image.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

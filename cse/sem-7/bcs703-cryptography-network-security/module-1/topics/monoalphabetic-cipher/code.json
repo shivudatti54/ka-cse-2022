@@ -1,0 +1,35 @@
+{
+  "topicId": "monoalphabetic-cipher",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Monoalphabetic Cipher Encryption",
+      "description": "Implementation of encryption using a given substitution key",
+      "code": "INPUT: plaintext P, key K (permutation array of size 26)\nOUTPUT: ciphertext C\n\nFUNCTION Encrypt(P, K):\n  C \u2190 empty string\n  FOR each character p in P:\n    IF p is letter:\n      idx \u2190 Ord(p) - Ord('A')        // Convert A-Z to 0-25\n      c \u2190 K[idx]                      // Apply substitution\n      C \u2190 C + c\n    ELSE:\n      C \u2190 C + p                        // Non-letters unchanged\n  RETURN C\n\n// Example key: A\u2192X, B\u2192Y, C\u2192Z, D\u2192P, ...\n// Encrypt(\"HELLO\") with key above \u2192 \"XPGGW\"",
+      "explanation": "Each plaintext letter is converted to its alphabetical index (0-25), looked up in the key permutation array to get the ciphertext letter. The key is a direct lookup table representing the permutation \u03c3.",
+      "timeComplexity": "O(n) where n is plaintext length",
+      "spaceComplexity": "O(1) excluding input/output storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Frequency Analysis Attack",
+      "description": "Cryptanalysis algorithm to break monoalphabetic cipher",
+      "code": "INPUT: ciphertext CT\nOUTPUT: decrypted plaintext (approximation)\n\nFUNCTION FrequencyAnalyze(CT):\n  // Step 1: Compute letter frequencies\n  freq[26] \u2190 array of zeros\n  total \u2190 0\n  FOR each character c in CT:\n    IF c is letter:\n      idx \u2190 Ord(c) - Ord('A')\n      freq[idx] \u2190 freq[idx] + 1\n      total \u2190 total + 1\n  \n  // Step 2: Normalize frequencies\n  FOR i from 0 to 25:\n    freq[i] \u2190 freq[i] / total\n  \n  // Step 3: Standard English frequencies\n  engFreq \u2190 ['E','T','A','O','I','N','S','H','R','D','L','U',...]  \n  \n  // Step 4: Sort and map\n  sortedCipher \u2190 SortLettersByFreq(freq)  // Descending\n  keyGuess \u2190 empty mapping\n  FOR i from 0 to 25:\n    keyGuess[sortedCipher[i]] \u2190 engFreq[i]\n  \n  // Step 5: Decrypt and verify with digrams\n  plaintext \u2190 Decrypt(CT, keyGuess)\n  RETURN plaintext\n\n// Verification step can iterate through multiple mappings\n// if initial decryption is not meaningful",
+      "explanation": "The algorithm counts ciphertext letter frequencies, sorts them, and maps highest ciphertext letters to highest English letters. Initial mapping is refined using digram/trigram analysis to improve accuracy.",
+      "timeComplexity": "O(n + 26 log 26) \u2248 O(n)",
+      "spaceComplexity": "O(1) for fixed-size arrays"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Inverse Key Generation",
+      "description": "Generate decryption key from encryption key",
+      "code": "INPUT: encryptionKey E[0..25] (where E[i] = ciphertext for plaintext letter i)\nOUTPUT: decryptionKey D[0..25]\n\nFUNCTION GenerateInverseKey(E):\n  D \u2190 array of size 26\n  FOR i from 0 to 25:\n    // Find which plaintext index maps to ciphertext letter E[i]\n    // E[i] is a character, convert to index\n    cipherIdx \u2190 Ord(E[i]) - Ord('A')\n    D[cipherIdx] \u2190 Char(i + Ord('A'))\n  RETURN D\n\n// Example: If encryption key is A\u2192X (index 0\u219223)\n// Then decryption key at index 23 (X) should be 'A'\n// Verify: Decrypt(X, D) should yield A\n\nFUNCTION DecryptWithKey(C, D):\n  // Similar to encrypt but using decryption key\n  P \u2190 empty string\n  FOR each character c in C:\n    IF c is letter:\n      idx \u2190 Ord(c) - Ord('A')\n      p \u2190 D[idx]\n      P \u2190 P + p\n    ELSE:\n      P \u2190 P + c\n  RETURN P",
+      "explanation": "Since monoalphabetic cipher uses a permutation \u03c3, decryption requires the inverse permutation \u03c3\u207b\u00b9. This function computes the inverse by reversing the mapping: if \u03c3(i) = j, then \u03c3\u207b\u00b9(j) = i.",
+      "timeComplexity": "O(n + 26) \u2248 O(n)",
+      "spaceComplexity": "O(1) excluding I/O"
+    }
+  ]
+}

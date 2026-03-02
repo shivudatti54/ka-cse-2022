@@ -1,0 +1,45 @@
+{
+  "topicId": "virtual-memory-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "FIFO Page Replacement Algorithm",
+      "description": "Implementation of First-In-First-Out page replacement algorithm",
+      "code": "def fifo_page_replacement(reference_string, num_frames):\n    frames = []\n    page_faults = 0\n    queue = []  # To track insertion order\n    \n    for page in reference_string:\n        if page not in frames:\n            page_faults += 1\n            if len(frames) < num_frames:\n                frames.append(page)\n                queue.append(page)\n            else:\n                # Replace oldest page (FIFO)\n                victim = queue.pop(0)\n                frames.remove(victim)\n                frames.append(page)\n                queue.append(page)\n        print(f\"Page {page}: Frames={frames}, Fault={page_faults}\")\n    \n    return page_faults\n\n# Example usage\nreference = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]\nprint(f\"Total Page Faults (FIFO): {fifo_page_replacement(reference, 3)}\")",
+      "explanation": "This code simulates FIFO page replacement. When a page fault occurs and all frames are full, the page that entered memory first is replaced. A queue maintains the order of page arrivals.",
+      "timeComplexity": "O(n \u00d7 f) where n = reference string length, f = number of frames",
+      "spaceComplexity": "O(f) for storing frames and queue"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "LRU Page Replacement Algorithm",
+      "description": "Implementation of Least Recently Used page replacement algorithm",
+      "code": "def lru_page_replacement(reference_string, num_frames):\n    frames = []\n    page_faults = 0\n    # Dictionary to store last used time for each page\n    last_used = {}\n    time_counter = 0\n    \n    for page in reference_string:\n        time_counter += 1\n        \n        if page not in frames:\n            page_faults += 1\n            if len(frames) < num_frames:\n                frames.append(page)\n            else:\n                # Find LRU page (least recent access)\n                lru_page = min(frames, key=lambda p: last_used.get(p, 0))\n                frames.remove(lru_page)\n                frames.append(page)\n        \n        last_used[page] = time_counter\n        print(f\"Page {page}: Frames={frames}, Fault={page_faults}\")\n    \n    return page_faults\n\n# Example usage\nreference = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]\nprint(f\"Total Page Faults (LRU): {lru_page_replacement(reference, 3)}\")",
+      "explanation": "LRU replaces the page that was not used for the longest time. This implementation uses a time counter to track the last access time of each page in memory.",
+      "timeComplexity": "O(n \u00d7 f) where n = reference string length, f = number of frames",
+      "spaceComplexity": "O(f) for frames plus O(f) for tracking last used times"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "TLB Simulation",
+      "description": "Simulation of Translation Lookaside Buffer operations in C",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define TLB_SIZE 4\n#define PAGE_TABLE_SIZE 16\n\ntypedef struct {\n    int virtual_page;\n    int frame_number;\n    bool valid;\n} TLBEntry;\n\nTLBEntry tlb[TLB_SIZE];\nint tlb_index = 0;\nint page_table[PAGE_TABLE_SIZE] = {0, 1, 2, 3, -1, 5, -1, 7, 8, 9, -1, 11, -1, 13, 14, 15};\n\n// Initialize TLB\nvoid init_tlb() {\n    for (int i = 0; i < TLB_SIZE; i++) {\n        tlb[i].valid = false;\n    }\n}\n\n// Search TLB for virtual page\nint tlb_lookup(int vpn) {\n    for (int i = 0; i < TLB_SIZE; i++) {\n        if (tlb[i].valid && tlb[i].virtual_page == vpn) {\n            return tlb[i].frame_number;  // TLB Hit\n        }\n    }\n    return -1;  // TLB Miss\n}\n\n// Add entry to TLB (FIFO replacement)\nvoid tlb_insert(int vpn, int frame) {\n    tlb[tlb_index].virtual_page = vpn;\n    tlb[tlb_index].frame_number = frame;\n    tlb[tlb_index].valid = true;\n    tlb_index = (tlb_index + 1) % TLB_SIZE;\n}\n\n// Translate virtual to physical address\nint translate_address(int virtual_addr, bool *tlb_hit) {\n    int vpn = virtual_addr / 256;  // Assuming page size 256\n    int offset = virtual_addr % 256;\n    \n    int frame = tlb_lookup(vpn);\n    \n    if (frame != -1) {\n        *tlb_hit = true;\n    } else {\n        *tlb_hit = false;\n        frame = page_table[vpn];\n        if (frame != -1) {\n            tlb_insert(vpn, frame);\n        }\n    }\n    \n    return (frame * 256) + offset;\n}\n\nint main() {\n    init_tlb();\n    bool hit;\n    int phys_addr = translate_address(1024, &hit);  // VPN=4\n    printf(\"Virtual: 1024 -> Physical: %d, TLB Hit: %s\\n\", phys_addr, hit ? \"Yes\" : \"No\");\n    return 0;\n}",
+      "explanation": "This C program simulates TLB operations including lookup, insertion with FIFO replacement, and address translation. It demonstrates the two-level process: first check TLB, then page table if TLB miss occurs.",
+      "timeComplexity": "TLB lookup O(TLB_SIZE), page table access O(1)",
+      "spaceComplexity": "O(TLB_SIZE) for TLB cache plus O(PAGE_TABLE_SIZE) for page table"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Clock Page Replacement Algorithm",
+      "description": "Implementation of Second Chance (Clock) page replacement algorithm",
+      "code": "class ClockAlgorithm:\n    def __init__(self, num_frames):\n        self.num_frames = num_frames\n        self.frames = []\n        self.reference_bits = []  # Use bits for each frame\n        self.pointer = 0  # Clock hand position\n        self.page_faults = 0\n    \n    def replace_page(self, page):\n        # Keep rotating until we find a page with reference bit = 0\n        while True:\n            if self.reference_bits[self.pointer] == 0:\n                # Replace this page\n                self.frames[self.pointer] = page\n                self.reference_bits[self.pointer] = 1  # Set reference bit\n                self.pointer = (self.pointer + 1) % self.num_frames\n                return\n            else:\n                # Give second chance: clear reference bit\n                self.reference_bits[self.pointer] = 0\n                self.pointer = (self.pointer + 1) % self.num_frames\n    \n    def access_page(self, page):\n        if page in self.frames:\n            # Page hit - set reference bit to 1\n            idx = self.frames.index(page)\n            self.reference_bits[idx] = 1\n            print(f\"Page {page}: HIT - Frames: {self.frames}\")\n        else:\n            # Page fault\n            self.page_faults += 1\n            if len(self.frames) < self.num_frames:\n                self.frames.append(page)\n                self.reference_bits.append(1)\n            else:\n                self.replace_page(page)\n            print(f\"Page {page}: FAULT - Frames: {self.frames}\")\n    \n    def run(self, reference_string):\n        for page in reference_string:\n            self.access_page(page)\n        return self.page_faults\n\n# Example usage\nclock = ClockAlgorithm(3)\nreference = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]\ntotal_faults = clock.run(reference)\nprint(f\"\\nTotal Page Faults: {total_faults}\")",
+      "explanation": "The Clock algorithm uses a circular buffer and reference bits. It gives pages a second chance if recently used (reference bit = 1). This approach approximates LRU while being implementable efficiently.",
+      "timeComplexity": "O(n \u00d7 c) where n = reference length, c = number of frames (worst case may scan all frames)",
+      "spaceComplexity": "O(f) for frames and reference bits"
+    }
+  ]
+}

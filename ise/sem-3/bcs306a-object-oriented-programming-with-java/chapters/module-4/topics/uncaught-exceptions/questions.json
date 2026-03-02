@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain what an uncaught exception is in Java and describe the default mechanism the Java Runtime Environment (JRE) uses to handle it. What is the outcome for the program when this occurs?",
+    "expectedPoints": [
+      "Definition: An uncaught exception is a thrown exception that is not handled by any `catch` block in the call stack.",
+      "Default Mechanism: The JRE's default uncaught exception handler is invoked.",
+      "Handler Action: The handler prints the exception's stack trace to the standard error stream (`System.err`).",
+      "Program Outcome: The thread in which the exception occurred terminates abruptly."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose and typical implementation of a custom UncaughtExceptionHandler in a multi-threaded Java application. Provide a simple code snippet showing how to set one for a specific Thread.",
+    "expectedPoints": [
+      "Purpose: To gracefully handle exceptions that terminate a thread, allowing for custom logging, notification, or cleanup instead of just printing a stack trace.",
+      "Implementation: By creating a class that implements the `Thread.UncaughtExceptionHandler` interface and overriding the `uncaughtException(Thread t, Throwable e)` method.",
+      "Setting the Handler: The handler can be set on a per-thread basis using `thread.setUncaughtExceptionHandler(handler)` or as a default for all threads with `Thread.setDefaultUncaughtExceptionHandler(handler)`.",
+      "Code Snippet Example: `myThread.setUncaughtExceptionHandler((t, e) -> { System.out.println(\"Thread \" + t.getName() + \" threw: \" + e.getMessage()); });`"
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Analyze the key differences between checked and unchecked exceptions in Java, focusing on how the compiler and runtime handle them. Explain why unchecked exceptions are more likely to become uncaught and the design philosophy behind this choice. Discuss a scenario where letting an unchecked exception propagate uncaught to the JVM is a valid design decision.",
+    "expectedPoints": [
+      "Compiler Enforcement: Checked exceptions must be declared or handled at compile time; unchecked exceptions (RuntimeException and its subclasses) are not subject to this requirement.",
+      "Likelihood of Being Uncaught: Unchecked exceptions are more likely to be uncaught because the compiler does not force the programmer to handle them, leading to potential oversight.",
+      "Design Philosophy: Unchecked exceptions often represent programming errors (e.g., NullPointerException, ArrayIndexOutOfBoundsException) or unrecoverable conditions where the correct action is to let the thread terminate and log the error.",
+      "Valid Scenario: In a simple command-line tool, an unhandled IllegalArgumentException (unchecked) could terminate the program and print a clear stack trace, which is sufficient for the user to understand the invalid input. Implementing a complex recovery handler would be unnecessary overhead."
+    ],
+    "marks": 10
+  }
+]

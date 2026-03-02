@@ -1,0 +1,1 @@
+To provide B.Tech/MSc students with comprehensive theoretical and practical knowledge of Apache Storm for real-time IoT data analysis. Students will understand Storm's architecture, reliability mechanisms, parallelism model, and be able to design and implement production-ready topologies for IoT streaming applications.

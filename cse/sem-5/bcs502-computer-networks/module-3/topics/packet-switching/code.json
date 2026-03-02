@@ -1,0 +1,55 @@
+{
+  "topicId": "packet-switching",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Packet Forwarding Algorithm (Store-and-Forward)",
+      "description": "Demonstrates how a router processes and forwards packets using store-and-forward technique",
+      "code": "PROCEDURE RouterProcessPacket(packet)\nBEGIN\n // Step 1: Receive entire packet\n inputBuffer.receive(packet)\n \n // Step 2: Processing delay - examine header\n header = packet.extractHeader()\n destAddress = header.destinationIP\n \n // Step 3: Error checking (FCS/CRC)\n IF NOT packet.verifyChecksum() THEN\n packet.drop()\n RETURN error\n END IF\n \n // Step 4: Lookup routing table\n nextHop = routingTable.lookup(destAddress)\n \n // Step 5: Queuing delay - wait for output port\n outputQueue.enqueue(packet)\n \n // Step 6: Transmission delay - send bits\n WHILE NOT packet.transmitted() DO\n outputLink.send(packet.bits)\n END WHILE\n \n RETURN success\nEND PROCEDURE",
+      "explanation": "This pseudocode shows the step-by-step process a router follows: receiving the packet, checking for errors (processing delay), determining the next hop through routing table lookup, queuing for output, and transmitting the packet bits onto the link (transmission delay).",
+      "timeComplexity": "O(n) where n is packet size",
+      "spaceComplexity": "O(n) for packet buffer storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Packet Fragmentation Algorithm",
+      "description": "Algorithm for fragmenting large packets when MTU is exceeded",
+      "code": "PROCEDURE FragmentPacket(packet, mtu)\nBEGIN\n header = packet.header\n payload = packet.payload\n payloadSize = payload.length\n \n // Calculate max payload per fragment\n maxPayloadPerFragment = mtu - headerSize\n \n // Calculate number of fragments needed\n numFragments = CEIL(payloadSize / maxPayloadPerFragment)\n \n fragments = []\n offset = 0\n \n FOR i = 1 TO numFragments DO\n fragment = NEW Packet\n \n // Set header fields for fragmentation\n fragment.header.sourceIP = header.sourceIP\n fragment.header.destIP = header.destIP\n fragment.header.fragmentOffset = offset\n fragment.header.moreFragmentsFlag = (i < numFragments)\n fragment.header.identification = header.identification\n \n // Copy payload portion\n fragment.payload = payload.substring(offset, maxPayloadPerFragment)\n \n fragments.append(fragment)\n offset = offset + maxPayloadPerFragment\n END FOR\n \n RETURN fragments\nEND PROCEDURE",
+      "explanation": "This algorithm breaks down a large packet into smaller fragments when the MTU of the outgoing interface is smaller than the packet size. Each fragment carries offset information to allow proper reassembly at the destination.",
+      "timeComplexity": "O(n) where n is payload size",
+      "spaceComplexity": "O(n) for storing fragments"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "End-to-End Packet Transmission (Simple)",
+      "description": "Demonstrates packet transmission from source to destination through multiple routers",
+      "code": "PROCEDURE SendPacket(source, destination, data)\nBEGIN\n // Create packet with header\n packet = NEW Packet\n packet.header.sourceIP = source.address\n packet.header.destIP = destination.address\n packet.payload = data\n packet.header.sequenceNumber = nextSequenceNumber\n \n // Transmission begins\n currentRouter = source.connectedRouter\n \n WHILE currentRouter != destination DO\n // Store-and-forward at each router\n packet = RouterProcessPacket(packet)\n \n // Routing decision\n nextRouter = packet.routeTo(destination)\n currentRouter = nextRouter\n END WHILE\n \n // Deliver to destination\n destination.receive(packet)\n \n RETURN success\nEND PROCEDURE",
+      "explanation": "This pseudocode shows the end-to-end packet transmission process. The packet goes through multiple routers, each performing store-and-forward processing, until it reaches the destination host.",
+      "timeComplexity": "O(h × n) where h = hops, n = packet size",
+      "spaceComplexity": "O(n) per router buffer"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Simple Priority Queuing (QoS)",
+      "description": "Demonstrates a QoS mechanism with priority queues for different traffic types",
+      "code": "PROCEDURE PriorityScheduler(queues)\nBEGIN\n // queues[0] = high priority (VoIP)\n // queues[1] = medium priority (video)\n // queues[2] = low priority (best-effort)\n \n packet = NULL\n \n // Check highest priority queue first\n FOR priority = 0 TO 2 DO\n IF NOT queues[priority].isEmpty() THEN\n packet = queues[priority].dequeue()\n BREAK\n END IF\n END FOR\n \n IF packet != NULL THEN\n outputLink.transmit(packet)\n ELSE\n // No packets to send - idle\n WAIT for packet arrival\n END IF\n \n RETURN\nEND PROCEDURE",
+      "explanation": "This shows a simple priority queuing QoS mechanism where packets are dequeued based on priority. Higher priority traffic (like VoIP) is served first, ensuring low-latency delivery for time-sensitive applications.",
+      "timeComplexity": "O(1) for dequeue operation",
+      "spaceComplexity": "O(w) where w is queue depth"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Calculate Total End-to-End Delay",
+      "description": "Algorithm to compute total delay a packet experiences in packet-switched network",
+      "code": "FUNCTION CalculateTotalDelay(packet, path)\nBEGIN\n totalDelay = 0\n \n FOR EACH router IN path DO\n // Processing delay\n procDelay = router.processingTime\n \n // Queuing delay (depends on congestion)\n queueDelay = router.queueWaitingTime(packet)\n \n // Transmission delay\n transDelay = packet.size / router.linkBandwidth\n \n // Propagation delay\n propDelay = router.linkLength / router.signalSpeed\n \n // Add to total\n totalDelay = totalDelay + procDelay + queueDelay + transDelay + propDelay\n END FOR\n \n RETURN totalDelay\nEND FUNCTION\n\n// Example calculation\n// Given: 3 routers, packet size = 1000 bytes, link bandwidth = 1 Mbps\n// Processing: 0.001s each, Queue: varies, Prop: 0.002s per link",
+      "explanation": "This function calculates the total end-to-end delay by summing all four delay components at each hop in the network path. It's used for network performance analysis and planning.",
+      "timeComplexity": "O(h) where h is number of hops",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

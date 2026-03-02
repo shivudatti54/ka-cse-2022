@@ -1,0 +1,101 @@
+{
+  "topicId": "global-states",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the happens-before relation (\u2192) in distributed systems. What does it mean for two events to be concurrent?",
+      "keyPoints": [
+        "Define \u2192 as partial order with three rules: same process order, send\u2192receive, transitivity",
+        "Explain that concurrent events are those where neither a\u2192b nor b\u2192a",
+        "Emphasize it captures causal, not temporal, ordering"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the key differences between a consistent and an inconsistent global state? Give an example of an inconsistent state.",
+      "keyPoints": [
+        "Consistent: every receive has matching send in state",
+        "Inconsistent: receive appears without send (or vice versa)",
+        "Example: Process P recorded receiving msg m, but Q didn't record sending it"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the Chandy-Lamport snapshot algorithm. How does it ensure a consistent global state?",
+      "keyPoints": [
+        "Initiator sends markers on all outgoing channels",
+        "First marker arrival: record local state and start recording channel",
+        "Subsequent markers: stop recording that channel",
+        "Markers act as delimiters capturing in-transit messages"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the 'cut' of a distributed computation? When is a cut consistent?",
+      "keyPoints": [
+        "Cut is a frontier dividing past from future in space-time diagram",
+        "Consistent cut: no message crosses from future to past",
+        "Inconsistent cut: a message crosses backward violating causality",
+        "Consistent cuts correspond to valid global states"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the problem of termination detection in distributed systems. What conditions must hold for the system to be considered terminated?",
+      "KeyPoints": [
+        "Goal: detect when entire computation has finished",
+        "Two conditions: (a) all processes are locally terminated (passive)",
+        "(b) all channels are empty (no in-transit messages)",
+        "Both necessary - either alone is insufficient"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Why is it impossible to capture a true 'instantaneous' global state in a distributed system?",
+      "keyPoints": [
+        "No global clock exists - clocks cannot be perfectly synchronized",
+        "Communication has non-zero delay",
+        "Events happen concurrently at different sites",
+        "We can only capture consistent states, not simultaneous ones"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain in detail the Chandy-Lamport global snapshot algorithm. How does it handle (a) process states, (b) channel states, and (c) ensures consistency? Include the marker rules in your answer.",
+      "keyPoints": [
+        "Initiator: records own state, sends markers on all outgoing channels",
+        "Process receiving first marker: records state, starts recording channel, forwards markers",
+        "Process receiving subsequent marker: stops recording that channel",
+        "Channel state: messages in transit at marker arrival time",
+        "Consistency: markers delineate boundaries ensuring receive includes matching send"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the concept of 'consistent global state' in distributed systems. What is the relationship between consistent cuts, the happens-before relation, and consistent global states? How does the Chandy-Lamport algorithm guarantee consistency?",
+      "keyPoints": [
+        "Consistent state: no message received without send being recorded",
+        "Happens-before (\u2192) defines causal ordering",
+        "Consistent cut respects \u2192: no backward message crossing",
+        "All consistent global states correspond to consistent cuts",
+        "Chandy-Lamport markers create consistent cut boundaries"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "topicId": "mimic-functions",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "What is the difference between blocking and non-blocking communication in MPI?",
+      "type": "short",
+      "expectedPoints": [
+        "Blocking calls (e.g., MPI_Send/Recv) do not return until the operation is 'complete' (buffer safe to reuse for Send, data received for Recv).",
+        "Non-blocking calls (e.g., MPI_Isend/Irecv) return immediately, allowing computation to overlap with communication.",
+        "Non-blocking operations require separate wait/test calls (e.g., MPI_Wait) to complete."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Describe the parallel trapezoidal rule algorithm using MPI. Explain the steps involved, including data distribution, local computation, and result aggregation.",
+      "type": "long",
+      "expectedPoints": [
+        "Problem is decomposed by dividing the integration interval [a, b] into n trapezoids.",
+        "Process 0 (root) reads parameters and broadcasts them (a, b, n) to all processes using MPI_Bcast.",
+        "Each process calculates its local segment of the integral based on its rank (local_n = n / comm_sz, local_a = a + my_rank*local_n*h, etc.).",
+        "Each process computes the area for its assigned trapezoids using the Trap function.",
+        "All processes use MPI_Reduce with the MPI_SUM operation to sum their local integrals into a global total on the root process.",
+        "The root process finally prints the result."
+      ]
+    }
+  ]
+}

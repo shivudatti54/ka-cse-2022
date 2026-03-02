@@ -1,0 +1,380 @@
+{
+  "topicId": "distributed-memory",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In a 2D mesh interconnection network with 64 nodes arranged as an 8\u00d78 grid, what is the diameter of the network?",
+      "options": [
+        {
+          "key": "A",
+          "text": "8 hops"
+        },
+        {
+          "key": "B",
+          "text": "14 hops"
+        },
+        {
+          "key": "C",
+          "text": "16 hops"
+        },
+        {
+          "key": "D",
+          "text": "7 hops"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In an 8\u00d78 mesh, the maximum distance is between opposite corners. In the worst case, a packet may need to travel 7 hops in the x-direction and 7 hops in the y-direction, totaling 14 hops. The diameter is (8-1) + (8-1) = 14.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Consider a distributed memory system with \u03b1 = 1 \u03bcs latency and \u03b2 = 0.01 \u03bcs/byte bandwidth. Calculate the time to send a 1000-byte message between two processors.",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 \u03bcs"
+        },
+        {
+          "key": "B",
+          "text": "10 \u03bcs"
+        },
+        {
+          "key": "C",
+          "text": "11 \u03bcs"
+        },
+        {
+          "key": "D",
+          "text": "1000 \u03bcs"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Using the model T = \u03b1 + \u03b2m, we have T = 1 + 0.01 \u00d7 1000 = 1 + 10 = 11 \u03bcs. The latency dominates the startup time, while the bandwidth term contributes 10 \u03bcs for transmitting 1000 bytes.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Which interconnection network topology provides logarithmic diameter and high bisection bandwidth for N processors?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Linear array"
+        },
+        {
+          "key": "B",
+          "text": "2D mesh"
+        },
+        {
+          "key": "C",
+          "text": "Hypercube"
+        },
+        {
+          "key": "D",
+          "text": "Ring"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A hypercube with N = 2^d processors has diameter d = log\u2082(N), providing logarithmic scaling. Each dimension doubling adds one more bisection, resulting in excellent bisection bandwidth proportional to N/2.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "In an MPI program, if process 0 sends a message to process 1 and process 1 sends a message to process 0 simultaneously using blocking sends, what deadlock scenario may occur?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Acyclic dependency deadlock"
+        },
+        {
+          "key": "B",
+          "text": "Communication deadlock due to buffer unavailability"
+        },
+        {
+          "key": "C",
+          "text": "Resource deadlock"
+        },
+        {
+          "key": "D",
+          "text": "No deadlock will occur"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "With synchronous blocking MPI_Ssend, both processes may block waiting for the other's receive to be posted, creating a deadlock. This is a form of communication deadlock where both senders are waiting for matching receives that haven't been posted yet.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "A distributed memory system has 256 processors connected in a hypercube topology. What is the maximum number of hops a message may need to travel?",
+      "options": [
+        {
+          "key": "A",
+          "text": "256"
+        },
+        {
+          "key": "B",
+          "text": "16"
+        },
+        {
+          "key": "C",
+          "text": "8"
+        },
+        {
+          "key": "D",
+          "text": "128"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A hypercube with 256 = 2\u2078 processors has dimension d = 8. The diameter of a hypercube equals its dimension, so the maximum path length is 8 hops.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Which collective communication operation reduces data from all processes to a single process using a specified reduction operation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "MPI_Broadcast"
+        },
+        {
+          "key": "B",
+          "text": "MPI_Scatter"
+        },
+        {
+          "key": "C",
+          "text": "MPI_Reduce"
+        },
+        {
+          "key": "D",
+          "text": "MPI_Gather"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "MPI_Reduce combines values from all processes in a communicator using an associative operator (like SUM, MAX, MIN) and returns the result to a single designated root process.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "In a k-ary n-cube torus with 64 nodes, if k = 4 and n = 3, what is the bisection bandwidth relative to a similar-sized hypercube?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Equal to hypercube"
+        },
+        {
+          "key": "B",
+          "text": "Half of hypercube"
+        },
+        {
+          "key": "C",
+          "text": "Double of hypercube"
+        },
+        {
+          "key": "D",
+          "text": "One-fourth of hypercube"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A k-ary n-cube has k\u207f nodes. Here, 4\u00b3 = 64 nodes. The hypercube has log\u2082(64) = 6 dimensions, dividing the network into 2\u2075 = 32 links per bisection. The torus has k^(n-1) \u00d7 n = 4\u00b2 \u00d7 3 = 48 links per bisection, roughly half the hypercube's bisection bandwidth.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the primary advantage of distributed memory systems over shared memory for large-scale parallel computing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lower hardware cost due to simpler memory organization"
+        },
+        {
+          "key": "B",
+          "text": "Natural scalability as memory bandwidth per processor remains constant"
+        },
+        {
+          "key": "C",
+          "text": "Simpler programming model without synchronization concerns"
+        },
+        {
+          "key": "D",
+          "text": "Faster context switching between processes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Distributed memory systems scale better because each processor has dedicated memory bandwidth. Adding more processors adds more memory bandwidth, avoiding the memory contention bottleneck of shared memory systems.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "In a pipeline communication pattern where 4 processors must sequentially exchange data (P0\u2192P1\u2192P2\u2192P3\u2192P0), assuming each message takes time t, what is the total completion time?",
+      "options": [
+        {
+          "key": "A",
+          "text": "3t"
+        },
+        {
+          "key": "B",
+          "text": "4t"
+        },
+        {
+          "key": "C",
+          "text": "12t"
+        },
+        {
+          "key": "D",
+          "text": "16t"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "With sequential pipelining, P0 sends to P1 (t), then P1 to P2 (t), then P2 to P3 (t), then P3 to P0 (t). The total time is 4t. If overlapped, it could be 3t, but with blocking sends it's 4t.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which MPI function performs a barrier synchronization across all processes in a communicator?",
+      "options": [
+        {
+          "key": "A",
+          "text": "MPI_Send and MPI_Recv"
+        },
+        {
+          "key": "B",
+          "text": "MPI_Barrier"
+        },
+        {
+          "key": "C",
+          "text": "MPI_Wait"
+        },
+        {
+          "key": "D",
+          "text": "MPI_Test"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "MPI_Barrier blocks until all processes in the communicator have called it, ensuring no process proceeds until all have reached the barrier point.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "For a butterfly network with 32 inputs and outputs, what is the number of stages required for routing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "5 stages"
+        },
+        {
+          "key": "B",
+          "text": "4 stages"
+        },
+        {
+          "key": "C",
+          "text": "6 stages"
+        },
+        {
+          "key": "D",
+          "text": "32 stages"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "A butterfly network with N inputs requires log\u2082(N) stages. With 32 = 2\u2075 inputs, the network requires 5 stages of switching elements to route any input to any output.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What is the primary drawback of increasing network radix (degree) in distributed memory topologies?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Increased latency due to more hops"
+        },
+        {
+          "key": "B",
+          "text": "Higher node complexity and cost per switch"
+        },
+        {
+          "key": "C",
+          "text": "Reduced bisection bandwidth"
+        },
+        {
+          "key": "D",
+          "text": "Decreased scalability"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Higher radix networks require more network links and switching elements per node, increasing node complexity, cost, and potentially the pin count required on processors.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "In the isoefficiency analysis of parallel algorithms, if the problem size W scales as O(P\u00b2) for P processors, what is the scalability behavior?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Strongly scalable"
+        },
+        {
+          "key": "B",
+          "text": "Weakly scalable"
+        },
+        {
+          "key": "C",
+          "text": "Poorly scalable"
+        },
+        {
+          "key": "D",
+          "text": "Perfectly scalable"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When W must grow as O(P\u00b2) to maintain constant efficiency, the algorithm exhibits poor scalability. The required problem growth rate is quadratic in the number of processors, indicating limited ability to utilize more processors effectively.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What type of data distribution is optimal for a stencil computation on a 2D distributed grid?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Block distribution with ghost cells for halo exchange"
+        },
+        {
+          "key": "B",
+          "text": "Random distribution across all processors"
+        },
+        {
+          "key": "C",
+          "text": "Horizontal strip distribution only"
+        },
+        {
+          "key": "D",
+          "text": "Vertical strip distribution only"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Stencil computations require access to neighboring grid points. Block distribution with ghost cells allows each processor to compute locally while exchanging boundary values with neighbors in each dimension, minimizing communication while maintaining data locality.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "The communication cost for all-to-all personalization pattern where every processor sends a unique message to every other processor follows which complexity?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(P) for P processors"
+        },
+        {
+          "key": "B",
+          "text": "O(P\u00b2) regardless of message size"
+        },
+        {
+          "key": "C",
+          "text": "O(P \u00d7 m) where m is message size"
+        },
+        {
+          "key": "D",
+          "text": "O(log P)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In all-to-all communication (also called complete exchange), each of P processors must send P-1 messages to every other processor. This results in O(P\u00b2) communication events, making it one of the most expensive collective operations.",
+      "difficulty": "hard"
+    }
+  ]
+}

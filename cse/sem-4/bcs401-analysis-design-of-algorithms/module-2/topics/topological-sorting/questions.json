@@ -1,0 +1,107 @@
+{
+  "topicId": "topological-sorting",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define topological sorting and explain why it is applicable only to DAGs.",
+      "keyPoints": [
+        "Definition: linear ordering of vertices for every directed edge (u,v), u appears before v",
+        "DAG requirement: graph must have no directed cycles",
+        "If cycle exists, no topological order exists because vertices in cycle depend circularly",
+        "Proof: if topological order exists, no cycle can exist (otherwise edge would go backwards)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain Kahn's algorithm for topological sorting with its time and space complexity analysis.",
+      "keyPoints": [
+        "Step 1: Compute indegree of all vertices",
+        "Step 2: Initialize queue with all vertices having indegree 0",
+        "Step 3: While queue not empty: dequeue vertex v, add to output, for each neighbor w: decrease indegree of w, if indegree becomes 0, enqueue w",
+        "Time: O(V + E) - each vertex and edge processed once",
+        "Space: O(V) - for queue, indegree array, and result"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain DFS-based topological sorting. How does it utilize finish times?",
+      "keyPoints": [
+        "Perform DFS on the graph",
+        "For each vertex, after exploring all outgoing edges, push vertex to stack",
+        "Vertices are added in reverse order of their finish times",
+        "This works because when vertex v finishes, all vertices that v depends on have already finished",
+        "Finally, pop all vertices from stack to get topological order"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Prove that a directed graph has a topological ordering if and only if it is a DAG.",
+      "keyPoints": [
+        "Forward direction (\u21d2): If topological order exists, graph cannot have cycles. Proof by contradiction: if cycle exists, for edge (u,v) in cycle, u must come before v in order, but traversing cycle would require going backwards",
+        "Backward direction (\u21d0): If graph is DAG, topological order exists. Proof by induction: DAG has at least one source (indegree 0). Remove source, recursively get topological order of remaining DAG. Source comes first in final order",
+        "This is a fundamental theorem in graph theory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "How does Kahn's algorithm detect cycles in a directed graph?",
+      "keyPoints": [
+        "If graph contains a cycle, vertices in the cycle can never have indegree 0",
+        "Each vertex in a cycle has at least one incoming edge from another vertex in the cycle",
+        "Therefore, during Kahn's algorithm, if processed vertex count < V, cycle exists",
+        "If all vertices processed (count = V), graph is acyclic (DAG)",
+        "This cycle detection is O(1) - just compare count with V"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Apply Kahn's algorithm step by step on the following graph: Vertices = {A, B, C, D, E}, Edges = {A\u2192B, A\u2192C, B\u2192D, C\u2192D, D\u2192E}. Show the queue contents at each step.",
+      "keyPoints": [
+        "Initial indegrees: A=0, B=1, C=1, D=2, E=1",
+        "Step 1: Queue = {A}, process A, add to result, decrease B,C indegrees: B=0, C=0",
+        "Step 2: Queue = {B, C}, process B, decrease D indegree: D=1",
+        "Step 3: Queue = {C}, process C, decrease D indegree: D=0",
+        "Step 4: Queue = {D}, process D, decrease E indegree: E=0",
+        "Step 5: Queue = {E}, process E. Final order: A, B, C, D, E (or A, C, B, D, E depending on queue processing order)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare and contrast Kahn's algorithm and DFS-based topological sorting. Include in your answer: (a) their approaches, (b) time and space complexities, (c) cycle detection methods, (d) advantages and disadvantages.",
+      "keyPoints": [
+        "Kahn's: BFS-based using indegrees and queue; DFS: uses recursion/stack and finish times",
+        "Both have O(V+E) time and O(V) space complexity",
+        "Kahn's detects cycle by checking if all vertices processed; DFS can detect cycle during traversal if back edge found",
+        "Kahn's advantage: intuitive, easy to understand; disadvantage: needs indegree computation",
+        "DFS advantage: can be implemented with single DFS pass; disadvantage: recursion can cause stack overflow for large graphs",
+        "Both produce valid topological orderings but potentially different ones"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Prove the correctness of Kahn's algorithm: show that the algorithm produces a valid topological ordering and that if the algorithm fails to process all vertices, the graph contains a cycle.",
+      "keyPoints": [
+        "Lemma 1: When vertex v is dequeued, all vertices that have edges to v have already been processed. This is because v's indegree became 0 only after all its predecessors were processed",
+        "Lemma 2: The algorithm produces a topological order. For any edge (u,v) in original graph, when u is processed, v's indegree is decreased but u finishes before v is ever enqueued (unless other paths exist). Actually, v is only enqueued after ALL predecessors processed, so u appears before v in result",
+        "Cycle detection proof: If graph has cycle, no vertex in cycle can ever reach indegree 0 (each has at least one incoming from cycle). Thus algorithm stops prematurely with count < V. Conversely, if algorithm stops with count < V, remaining vertices form a cycle (cannot reach indegree 0)",
+        "This proves correctness and completeness of Kahn's algorithm"
+      ],
+      "marks": 10
+    }
+  ]
+}

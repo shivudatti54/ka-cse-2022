@@ -1,0 +1,158 @@
+{
+  "topicId": "the-critical-section-problem",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the critical section problem and its three fundamental requirements.",
+      "keyPoints": [
+        "Critical section is code accessing shared resources requiring mutual exclusion",
+        "Three requirements: Mutual Exclusion, Progress, Bounded Waiting",
+        "Mutual Exclusion: Only one process in CS at a time",
+        "Progress: If CS empty and processes want entry, selection must be made",
+        "Bounded Waiting: Limit on entries after a process requests entry to prevent starvation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a race condition? Give an example to illustrate.",
+      "keyPoints": [
+        "Race condition occurs when outcome depends on timing of concurrent operations",
+        "Multiple processes access/modify shared data simultaneously",
+        "Result becomes unpredictable based on interleaving",
+        "Example: Two processes decrementing a shared counter from 1 to -1 instead of 0"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the structure of a process solution to the critical section problem.",
+      "keyPoints": [
+        "Process has four sections: Entry Section, Critical Section, Exit Section, Remainder Section",
+        "Entry Section: Code to request permission and wait if needed",
+        "Critical Section: Code accessing shared resources",
+        "Exit Section: Code to signal release/wake waiting processes",
+        "Remainder Section: Non-critical code executing outside CS"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain Peterson's solution for two processes. What are its limitations?",
+      "keyPoints": [
+        "Peterson's solution is a software-based algorithm for two processes",
+        "Uses two shared variables: flag[2] and turn",
+        "flag[i] indicates whether process i wants to enter CS",
+        "turn indicates whose turn it is to enter if both want entry",
+        "Limitation: Works only for two processes, not scalable"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the Test-and-Set instruction? How does it help in solving the critical section problem?",
+      "keyPoints": [
+        "Test-and-Set is a hardware atomic instruction",
+        "It reads a boolean variable and sets it to true in one indivisible operation",
+        "Returns the old value, allowing lock implementation",
+        "Enables implementing mutual exclusion without busy-wait loops",
+        "Process can test lock, and if free, acquire atomically"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Distinguish between busy-wait and blocking synchronization mechanisms.",
+      "keyPoints": [
+        "Busy-wait (spinlock): Process continuously checks condition in a loop",
+        "Wastes CPU cycles while waiting",
+        "Blocking: Process is put to sleep by OS, awakened when resource available",
+        "No CPU waste in blocking approach",
+        "Busy-wait useful for short waits, blocking for long waits"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of bounded waiting with an example.",
+      "keyPoints": [
+        "Bounded waiting limits how many times other processes can enter after a process requests entry",
+        "Prevents starvation/live-lock",
+        "Example: If process P0 requests entry, at most N-1 other processes can enter before P0 gets admitted",
+        "Ensures fairness in critical section access",
+        "Part of three requirements for valid CS solution"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the three requirements for a valid solution to the critical section problem. For each requirement, explain what happens when it is violated.",
+      "keyPoints": [
+        "MUTUAL EXCLUSION: Only one process in CS at any time - violation leads to inconsistent data",
+        "PROGRESS: If no process in CS and some want to enter, selection must be made without delay - violation causes deadlock or indefinite postponement",
+        "BOUNDED WAITING: After request, limit on other entries before admission - violation leads to starvation",
+        "All three must be satisfied for correct synchronization",
+        "Examples: Race condition (ME violation), starvation (bounded waiting violation), deadlock (progress violation)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the Bakery algorithm for N processes. How does it achieve deadlock-free and starvation-free mutual exclusion?",
+      "keyPoints": [
+        "Bakery algorithm assigns unique ticket numbers to processes wanting to enter",
+        "Process with smallest ticket number enters CS (lexicographic comparison if tie)",
+        "Ticket numbering: can use shared counter or incrementing counter",
+        "Achieves mutual exclusion through ticket comparison",
+        "Progress: New arrivals get higher numbers, cannot skip ahead",
+        "Bounded waiting: Each process eventually gets lowest ticket among waiters",
+        "Deadlock-free: No circular wait possible due to total ordering",
+        "Starvation-free: FIFO ordering based on tickets ensures fairness"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare software-based solutions (Peterson's algorithm) with hardware-based solutions (Test-and-Set) for the critical section problem.",
+      "keyPoints": [
+        "Software solutions: Written in programming language, no special hardware needed",
+        "Hardware solutions: Use atomic CPU instructions like Test-and-Set, Swap",
+        "Peterson's: Only for two processes, works on uniprocessors",
+        "Test-and-Set: Works for any number of processes, requires atomic instruction",
+        "Software: More complex, may have more overhead due to busy-wait",
+        "Hardware: Simpler to implement, efficient for small critical sections",
+        "Both aim to satisfy mutual exclusion, progress, bounded waiting",
+        "Test-and-Set is more scalable and widely used in practice"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is deadlock? Discuss the conditions necessary for a deadlock to occur in the context of process synchronization.",
+      "keyPoints": [
+        "Deadlock is a situation where processes are blocked indefinitely waiting for each other",
+        "Four necessary conditions (Coffman conditions):",
+        "1. Mutual Exclusion: Resource can be used by only one process at a time",
+        "2. Hold and Wait: Processes hold resources while waiting for others",
+        "3. No Preemption: Resources cannot be forcibly taken away",
+        "4. Circular Wait: Circular chain of processes waiting for resources held by others",
+        "In critical section context: Can occur when multiple locks are acquired in different orders",
+        "Prevention: Break any of the four conditions",
+        "Avoidance: Use algorithms like Banker's for resource allocation",
+        "Detection: Analyze resource allocation graph for cycles"
+      ],
+      "marks": 10
+    }
+  ]
+}

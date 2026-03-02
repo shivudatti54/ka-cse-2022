@@ -1,0 +1,45 @@
+{
+  "topicId": "the-critical-section-problem",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Test-and-Set Lock Implementation",
+      "description": "Implementation of mutual exclusion using atomic Test-and-Set instruction in C",
+      "code": "// Shared lock variable initialized to false\nvolatile bool lock = false;\n\n// Test-and-Set atomic instruction\nbool TestAndSet(bool *target) {\n    bool temp = *target;\n    *target = true;\n    return temp;\n}\n\n// Process trying to enter critical section\nvoid processEntry() {\n    while (TestAndSet(&lock)) {\n        // Busy wait - lock is held, keep checking\n        // This is spinlock implementation\n    }\n    // Critical section begins here\n    // ... shared resource access ...\n}\n\nvoid processExit() {\n    lock = false;  // Release lock\n    // Remainder section continues\n}",
+      "explanation": "Test-and-Set atomically reads the old value of lock and sets it to true. The while loop continues (busy waits) if lock was already true (another process holds it). When it returns false, the current process has acquired the lock and can enter the critical section. The exit section simply sets lock to false.",
+      "timeComplexity": "O(1) for lock acquisition in best case, O(n) worst case where n is waiting processes",
+      "spaceComplexity": "O(1) - only uses one boolean variable"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Peterson's Algorithm Implementation",
+      "description": "Software solution for two-process mutual exclusion using shared variables",
+      "code": "# Shared variables for two processes\nflag = [False, False]  # flag[i] = True means process i wants to enter\nturn = 0               # whose turn it is (0 or 1)\n\ndef process_entry(process_id):\n    other = 1 - process_id\n    flag[process_id] = True    # I want to enter\n    turn = other               # Give priority to other\n    \n    # Wait while other wants to enter AND it's other's turn\n    while flag[other] and turn == other:\n        pass  # Busy wait - remain in entry section\n    \n    # Critical section starts here\n    # ... access shared resources ...\n\ndef process_exit(process_id):\n    flag[process_id] = False   # I am done with critical section\n    # Remainder section continues",
+      "explanation": "Each process first declares its intention by setting flag[process_id]=True. Then it gives priority to the other process by setting turn=other. The while loop blocks this process if the other process wants to enter AND it's the other's turn. This ensures mutual exclusion, progress, and bounded waiting for two processes.",
+      "timeComplexity": "O(1) in worst case for entry",
+      "spaceComplexity": "O(1) - uses constant memory for flag array and turn variable"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Swap-based Mutual Exclusion",
+      "description": "Implementation using atomic Swap instruction to implement mutex lock",
+      "code": "// Shared variables\nvolatile bool lock = false;\nvolatile bool key = false;\n\n// Atomic swap function (hardware instruction)\nvoid Swap(bool *a, bool *b) {\n    bool temp = *a;\n    *a = *b;\n    *b = temp;\n    // This must be atomic - implemented in hardware\n}\n\n// Process entry\nvoid processEntry() {\n    do {\n        key = true;\n        Swap(&key, &lock);  // Atomically swap key with lock\n    } while (key);  // If key is true after swap, lock was held\n    \n    // Critical section begins\n    // ... shared resource access ...\n}\n\n// Process exit\nvoid processExit() {\n    lock = false;  // Release lock\n    // Remainder section continues\n}",
+      "explanation": "Each process sets its local key to true and atomically swaps it with the shared lock. If the lock was already held (true), after swap, key becomes true and the process waits. If the lock was free (false), after swap, lock becomes true (held) and key becomes false (free), so the process enters its critical section.",
+      "timeComplexity": "O(1) average, can vary based on contention",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Spinlock with Memory Barrier",
+      "description": "Java implementation of spinlock with volatile keyword and memory barriers",
+      "code": "import java.util.concurrent.atomic.AtomicBoolean;\n\npublic class Spinlock {\n    // AtomicBoolean uses compare-and-swap internally\n    private AtomicBoolean lock = new AtomicBoolean(false);\n    \n    public void lock() {\n        // Spin until we acquire the lock\n        while (!lock.compareAndSet(false, true)) {\n            // Lock was already held, try again\n            Thread.yield();  // Optionally yield to reduce CPU usage\n        }\n    }\n    \n    public void unlock() {\n        lock.set(false);  // Release the lock\n    }\n}\n\n// Usage in critical section\npublic class SharedResource {\n    private Spinlock spinlock = new Spinlock();\n    private int sharedData = 0;\n    \n    public void criticalSectionMethod() {\n        spinlock.lock();\n        try {\n            // Critical section - access sharedData\n            sharedData++;\n            System.out.println(\"Updated: \" + sharedData);\n        } finally {\n            spinlock.unlock();  // Always unlock in finally block\n        }\n    }\n}",
+      "explanation": "This Java implementation uses AtomicBoolean with compareAndSet which provides atomicity. The lock() method spins until it successfully sets the lock from false to true. Using volatile ensures visibility across threads. The try-finally pattern ensures the lock is always released even if an exception occurs.",
+      "timeComplexity": "O(1) average case, worst case unbounded if lock is held",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

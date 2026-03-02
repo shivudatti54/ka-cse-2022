@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary purpose of the `chdir` system call in Unix? Briefly describe its function and the required header files.",
+    "expectedPoints": [
+      "Changes the current working directory of the calling process.",
+      "Takes a single argument: a pathname (string) to the new directory.",
+      "Requires the inclusion of the `unistd.h` header file."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the difference between the `chdir` and `fchdir` system calls. Include a discussion of their parameters, potential advantages, and how their success/failure is determined.",
+    "expectedPoints": [
+      "`chdir` takes a pathname string as its argument.",
+      "`fchdir` takes an open file descriptor (obtained from `open`) for a directory as its argument.",
+      "`fchdir` can be more secure and efficient as it avoids parsing a pathname and uses an already-verified directory reference.",
+      "Both return 0 on success and -1 on error, with `errno` set to indicate the specific error."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A common programming task is to traverse a directory structure. Detail the complete process of how you would programmatically navigate to a parent directory and then return to the original directory using `chdir`. Discuss why this approach is necessary and explain the role of the `getcwd` function in implementing it.",
+    "expectedPoints": [
+      "First, use `getcwd` to save the absolute path of the current directory in a buffer.",
+      "Then, use `chdir(\"..\")` to move to the parent directory.",
+      "To return, use `chdir` with the saved path.",
+      "This is necessary because the working directory is a property of the *process*; `chdir` changes it for all subsequent operations.",
+      "`getcwd` is crucial for obtaining the absolute path of the current directory so it can be used later to navigate back, as relative paths (like `../sibling`) are unreliable after the first `chdir` call."
+    ],
+    "marks": 10
+  }
+]

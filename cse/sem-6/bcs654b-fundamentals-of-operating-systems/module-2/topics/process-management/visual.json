@@ -1,0 +1,131 @@
+{
+  "topicId": "process-management",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Process State Transition Diagram",
+      "description": "A state machine diagram showing the five distinct states a process goes through during its lifetime, with transitions between states labeled by triggering events.",
+      "elements": [
+        "Five circular nodes in a clockwise arrangement: New (top), Ready (upper right), Running (right), Waiting (lower right), Terminated (bottom)",
+        "Arrow from New to Ready labeled 'Admitted'",
+        "Bidirectional curved arrow between Ready and Running labeled 'Scheduler Dispatch' (Ready→Running) and 'Preempt' (Running→Ready)",
+        "Arrow from Running to Waiting labeled 'I/O or Event Wait'",
+        "Arrow from Waiting to Ready labeled 'I/O or Event Complete'",
+        "Arrow from Running to Ready labeled 'Exit' or 'Terminate'",
+        "Color coding: green for active states, gray for terminal state, yellow for transitional states"
+      ],
+      "purpose": "Students understand the complete lifecycle of a process and recognize that state transitions are triggered by specific events like system calls, I/O requests, or scheduler decisions. This is foundational for understanding process scheduling algorithms and deadlock concepts."
+    },
+    {
+      "id": "diagram-2",
+      "title": "Process Control Block (PCB) Structure",
+      "description": "A hierarchical block diagram showing all the data fields stored in the PCB for each process, organized into logical categories.",
+      "elements": [
+        "Central rectangular PCB container",
+        "Four main sub-blocks connected by vertical lines: Process Identification (Process ID, Parent Process ID, User IDs), Process State Information (State, Program Counter, CPU Registers, Priority), CPU Scheduling Information (Pointers to queues, Scheduling parameters), Memory Management (Base/Limit registers, Page table pointer)",
+        "Bottom section showing Accounting Information (CPU time used, Time limits, Process number) and I/O Status Information (Open files list, I/O device descriptors, Signal handlers)",
+        "Visual hierarchy showing primary and secondary information",
+        "Each field labeled with brief description"
+      ],
+      "purpose": "Students learn how the OS maintains complete information about each process. The PCB is essential for context switching, process suspension, and resume operations. Understanding PCB structure helps in comprehending how context switching overhead is incurred."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Process Scheduling Queues",
+      "description": "A queue-based diagram illustrating how processes are organized in memory and managed by the OS using various queues.",
+      "elements": [
+        "CPU box at the center with 'Dispatcher' label",
+        "Ready Queue represented as horizontal queue of Process Control Blocks (PCBs) with arrows showing front and rear",
+        "Job Queue as the main entry queue from secondary storage",
+        "Multiple I/O Device Queues shown as separate queues (Printer Queue, Disk Queue, Network Queue)",
+        "Arrow from Job Queue to Ready Queue labeled 'Job Scheduler'",
+        "Arrow from Ready Queue to CPU labeled 'CPU Scheduler/Dispatcher'",
+        "Arrow from CPU to I/O Device Queues during I/O wait",
+        "Arrow returning from I/O Device Queues to Ready Queue upon I/O completion",
+        "Process boxes showing: PID, State, Priority at each queue position"
+      ],
+      "purpose": "Students visualize how the OS manages multiple concurrent processes through queuing mechanisms. This demonstrates the basis for batch scheduling, CPU scheduling algorithms, and helps understand queueing theory concepts in OS design."
+    },
+    {
+      "id": "diagram-4",
+      "title": "Process Creation Flowchart",
+      "description": "A flowchart showing the steps involved when a parent process creates a child process in UNIX/Linux systems.",
+      "elements": [
+        "Start diamond labeled 'Parent Process Executes fork()'",
+        "Decision diamond 'fork() returns?' with two paths: 'Returns child PID (>0) to parent' and 'Returns 0 to child process'",
+        "Parent branch leading to action 'Parent continues execution, may call wait()'",
+        "Child branch leading to decision 'exec() called?' with paths: 'Yes: Replace child image with new program' and 'No: Continue with parent's program'",
+        "Both branches converging to parallel execution boxes showing 'Parent and Child run concurrently'",
+        "Terminal boxes showing 'Parent calls wait() to collect exit status' and 'Child completes execution, calls exit()'",
+        "Arrow from exit() to 'Parent receives SIGCHLD signal' and finally to 'Process table entry removed'",
+        "Different colored arrows for parent path (blue) and child path (green)"
+      ],
+      "purpose": "Students understand the mechanism of process creation in UNIX systems using fork() and exec() system calls. This is crucial for understanding how new programs are loaded, the relationship between parent and child processes, and the concept of orphaned/zombie processes."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Thread vs Process Architecture",
+      "description": "A comparative block diagram showing the difference between single-threaded and multi-threaded process architectures, highlighting resource sharing.",
+      "elements": [
+        "Single-threaded process box showing: Separate code section, Separate data section, Separate heap, Separate stack, Single execution flow arrow",
+        "Multi-threaded process box showing: Shared code section, Shared data section, Shared heap, Multiple separate stacks (one per thread), Multiple execution flow arrows",
+        "Callout boxes showing: 'Threads share: Address space, Open files, Global variables' and 'Threads have private: Program counter, Registers, Stack, State'",
+        "Visual representation of thread IDs (TID) for each thread",
+        "Resource sharing arrows showing shared elements with solid lines, private elements with dashed lines"
+      ],
+      "purpose": "Students distinguish between processes and threads, understanding that threads provide lightweight parallelism within a process. This is essential for the multithreading module and for understanding thread libraries (Pthreads, Java threads)."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "Process vs Program Comparison Table",
+      "content": "A two-column comparison table with rows for: Definition (Program: Static set of instructions stored on disk | Process: Program in execution with active state), Nature (Program: Passive entity | Process: Active entity), Existence (Program: Exists in secondary storage | Process: Exists in primary memory), Creation (Program: No creation needed, just stored | Process: Created by OS via system calls), Execution (Program: Cannot execute by itself | Process: Can execute instructions), Uniqueness (Program: Single copy in memory | Process: Can have multiple instances), Resource Usage (Program: No system resources | Process: Allocates CPU, memory, I/O devices), Lifespan (Program: Permanent until deleted | Process: Temporary, ends after execution)"
+    },
+    {
+      "type": "flowchart",
+      "title": "Process State Transition Events",
+      "content": "Flowchart showing events that cause state transitions: New→Ready (OS admits process), Ready→Running (CPU scheduler dispatches), Running→Ready (Time slice expires OR preempted by higher priority), Running→Waiting (I/O request OR wait for event), Waiting→Ready (I/O complete OR event occurs), Running→Terminated (Normal exit OR fatal error). Each transition shows both trigger event and resulting state."
+    },
+    {
+      "type": "classification",
+      "title": "Types of Process Scheduling Queues",
+      "content": "Classification chart with three main queue types: Job Queue (contains all processes entering system, stored in secondary memory), Ready Queue (contains all processes in main memory ready to execute, maintained in primary memory), Device Queue (contains processes waiting for specific I/O device, one queue per device). Shows relationship: Processes move from Job Queue → Ready Queue → CPU → Device Queue (if I/O needed) → Back to Ready Queue."
+    },
+    {
+      "type": "comparison",
+      "title": "Kernel-Level vs User-Level Threads",
+      "content": "Comparison table with rows for: Mapping (Kernel: One-to-one model, OS manages directly | User: Many-to-one model, thread library manages), Blocking (Kernel: If one thread blocks, other threads can run | User: If one thread blocks, entire process blocks), Examples (Kernel: Windows, Linux, Mac OS X | User: Green threads, GNU Portable Threads), Advantages (Kernel: True parallelism, can use multiple CPUs | User: Fast, no kernel intervention), Disadvantages (Kernel: Slower context switching | User: Cannot utilize multiple CPUs, entire process blocks on I/O)"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Process Management",
+      "branches": [
+        "Process Definition and Characteristics (program in execution, active entity, dynamic)",
+        "Process States (New, Ready, Running, Waiting, Terminated)",
+        "Process Control Block (PCB) - data structure storing process info",
+        "Process Scheduling (CPU scheduling, queues, dispatchers)",
+        "Process Operations (creation via fork(), termination, communication)",
+        "Multi-threading (threads vs processes, thread models, thread libraries)",
+        "Synchronization (inter-process communication, shared data)",
+        "Process Types (CPU-bound vs I/O-bound, daemon processes)"
+      ],
+      "purpose": "Provides comprehensive overview connecting all process management concepts. Students can trace relationships between process states, PCB structure, scheduling mechanisms, and thread concepts. This mind map serves as quick revision tool before examinations and helps in answering 10-15 mark questions requiring holistic understanding."
+    },
+    {
+      "centralConcept": "Process Lifecycle",
+      "branches": [
+        "Birth Phase: Process created via system call (fork/exec), PCB allocated, initial state = New",
+        "Ready Phase: Process admitted to ready queue, waiting for CPU allocation",
+        "Running Phase: Instructions executing on CPU, process has control of processor",
+        "Waiting Phase: Process blocked for I/O or event, not eligible for CPU",
+        "Termination Phase: Process completes execution, resources released, parent notified (wait/exit)",
+        "Resource Management: Memory allocated/deallocated, files opened/closed, I/O devices managed",
+        "Context Switching: Saving/restoring CPU state when switching between processes, overhead incurred",
+        "Communication: IPC mechanisms (pipes, message queues, shared memory, signals)"
+      ],
+      "purpose": "Shows end-to-end process lifecycle from creation to termination. Helps students understand that processes are dynamic entities requiring continuous OS management. Important for exam questions on process states and context switching. The lifecycle perspective connects theoretical concepts to practical OS behavior during program execution."
+    }
+  ]
+}

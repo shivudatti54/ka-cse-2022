@@ -1,0 +1,144 @@
+{
+  "topicId": "kruskals-algorithm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the greedy approach used in Kruskal's Algorithm for finding MST.",
+      "keyPoints": [
+        "Kruskal's Algorithm is a greedy algorithm that selects edges in increasing order of weight",
+        "At each step, it chooses the minimum weight edge that does not form a cycle",
+        "The algorithm continues until V-1 edges are added (where V is the number of vertices)",
+        "This greedy choice leads to an optimal solution (global minimum)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the role of Union-Find data structure in Kruskal's Algorithm.",
+      "keyPoints": [
+        "Union-Find maintains disjoint sets of vertices",
+        "Find operation determines if two vertices belong to the same set",
+        "Union operation merges two sets when an edge is added to MST",
+        "Path Compression and Union by Rank optimize operations to nearly O(1)",
+        "Used to detect cycles - if endpoints of an edge are in same set, adding it creates a cycle"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write the time complexity analysis of Kruskal's Algorithm.",
+      "keyPoints": [
+        "Sorting all E edges: O(E log E) or O(E log V)",
+        "Union-Find operations: O(E \u03b1(V)) \u2248 O(E) where \u03b1 is inverse Ackermann function",
+        "Total time complexity: O(E log E) or O(E log V)",
+        "Space complexity: O(E + V) for storing edges and Union-Find"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare Kruskal's Algorithm with Prim's Algorithm for finding MST.",
+      "keyPoints": [
+        "Kruskal's is edge-based; Prim's is vertex-based",
+        "Kruskal's starts with V single-vertex trees; Prim's grows from a single vertex",
+        "Kruskal's works well for sparse graphs; Prim's works well for dense graphs",
+        "Both are greedy algorithms and produce the same optimal MST",
+        "Implementation differs: Kruskal's uses Union-Find; Prim's uses Priority Queue"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the cut property of MST? How does Kruskal's Algorithm use it?",
+      "keyPoints": [
+        "Cut property: For any cut in the graph, the minimum weight edge crossing the cut belongs to some MST",
+        "Kruskal's algorithm implicitly uses this property by always selecting the minimum weight edge that doesn't create a cycle",
+        "Each edge added by Kruskal's is the minimum crossing some cut in the graph",
+        "This ensures the algorithm produces an optimal MST"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How does Kruskal's Algorithm handle a graph with multiple edges of equal weight?",
+      "keyPoints": [
+        "When edges have equal weights, any edge can be chosen without affecting optimality",
+        "The algorithm is non-deterministic in this case",
+        "Different choices may lead to different but equally valid MSTs",
+        "The MST is unique only when all edge weights are distinct",
+        "Equal weight edges can be processed in any order"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Trace through Kruskal's Algorithm step by step for the following graph: A graph with vertices {A,B,C,D,E} and edges: AB(1), AC(3), AD(4), BC(2), BD(5), CD(6), DE(7), CE(8). Show the order of edge selection and explain the cycle detection at each step.",
+      "keyPoints": [
+        "Step 1: Sort edges by weight: AB(1), BC(2), AC(3), AD(4), BD(5), CD(6), DE(7), CE(8)",
+        "Step 2: Start with Union-Find with 5 separate sets for A,B,C,D,E",
+        "Step 3: Add AB(1): A and B are in different sets - Union them",
+        "Step 4: Add BC(2): B and C are in different sets - Union them (now A,B,C connected)",
+        "Step 5: Add AC(3): A and C already in same set - DISCARD (would create cycle)",
+        "Step 6: Add AD(4): A and D in different sets - Union them",
+        "Step 7: Add BD(5): B and D already connected - DISCARD",
+        "Step 8: Add CD(6): C and D already connected - DISCARD",
+        "Step 9: MST complete with V-1=4 edges: AB, BC, AD, DE",
+        "Total MST weight: 1+2+4+7 = 14"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a detailed algorithm for Kruskal's Minimum Spanning Tree and explain how cycle detection works using Union-Find with an example.",
+      "keyPoints": [
+        "Algorithm: 1) Sort all edges by weight 2) Initialize Union-Find with each vertex as separate set 3) For each edge in sorted order: if Find(u) != Find(v), Union(u,v) and add edge to MST 4) Stop when V-1 edges added",
+        "Cycle Detection: Use Find operation to check if u and v are in same set",
+        "If Find(u) == Find(v): adding edge would connect vertices already in same component - creates cycle - skip edge",
+        "If Find(u) != Find(v): no cycle - Union the sets and include edge",
+        "Union-Find operations: Find with path compression, Union with union by rank",
+        "Example with vertices 1,2,3,4 and edges showing how sets merge"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Prove that Kruskal's Algorithm always produces a Minimum Spanning Tree.",
+      "keyPoints": [
+        "Use proof by contradiction and cut property",
+        "Let T be the tree produced by Kruskal's, T* be any MST",
+        "Consider first edge e in T that's not in T* (edges sorted by weight)",
+        "When e was added, its endpoints were in different components in T* (otherwise cycle)",
+        "Let f be minimum weight edge in T* crossing this cut (by cut property, f is in some MST)",
+        "Since e \u2264 f (Kruskal picks minimum), if f < e, Kruskal would have picked f first - contradiction",
+        "Therefore e must have same weight as f, can be substituted - T is also MST",
+        "Kruskal's always produces optimal MST"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the applications of Minimum Spanning Tree and Kruskal's Algorithm in real-world problems.",
+      "keyPoints": [
+        "Network Design: Laying cable, telephone lines, or fiber optic cables with minimum cost",
+        "Cluster Analysis: In clustering algorithms to find natural groupings",
+        "Image Segmentation: For segmenting images in computer vision",
+        "Transportation Networks: Designing road and rail networks with minimum cost",
+        "Computer Network Routing: Finding minimum cost spanning tree for routing",
+        "Electrical Wiring: Minimizing wire length in electrical circuits",
+        "Approximation Algorithms: Used in approximation algorithms for NP-hard problems like traveling salesman",
+        "Water Supply Networks: Designing pipe networks with minimum material cost"
+      ],
+      "marks": 10
+    }
+  ]
+}

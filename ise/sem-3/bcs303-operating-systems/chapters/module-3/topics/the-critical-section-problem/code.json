@@ -1,0 +1,45 @@
+{
+  "topicId": "the-critical-section-problem",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Peterson's Algorithm in C",
+      "description": "Implementation of Peterson's solution for two processes using shared variables",
+      "code": "// Shared variables (accessible by both processes\nvolatile int flag[2] = {0, 0};\nvolatile int turn;\n\n// Process 0 entry section\nvoid process_0_entry() {\n    flag[0] = 1;        // P0 wants to enter\n    turn = 1;          // Give priority to P1\n    while (flag[1] && turn == 1);  // Wait if P1 wants in and it's P1's turn\n}\n\n// Process 0 exit section\nvoid process_0_exit() {\n    flag[0] = 0;        // P0 is done, no longer wants entry\n}\n\n// Similarly for Process 1:\n// Process 1 entry: flag[1]=1; turn=0; while(flag[0] && turn==0);\n// Process 1 exit: flag[1]=0;",
+      "explanation": "Peterson's solution uses two flags indicating desire to enter and a turn variable. Both processes declare their interest, give priority to the other, and wait only if the other wants to enter and it's the other's turn.",
+      "timeComplexity": "O(1) - bounded wait time",
+      "spaceComplexity": "O(1) - only three shared variables"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Test-and-Set Lock Implementation",
+      "description": "Using atomic test-and-set instruction to implement mutual exclusion lock",
+      "code": "import threading\n\nclass TestAndSetLock:\n    def __init__(self):\n        self.lock = threading.Lock()  # Python's lock for demonstration\n        self._locked = False          # Shared lock variable\n    \n    def test_and_set(self):\n        \"\"\"Atomic test-and-set operation\"\"\"\n        # In actual hardware, this would be a single atomic instruction\n        # Here we simulate using Python's atomic swap\n        import ctypes\n        old_value = self._locked\n        self._locked = True\n        return old_value\n    \n    def acquire(self):\n        \"\"\"Entry section - busy wait until lock is acquired\"\"\"\n        while self.test_and_set():\n            pass  # Busy wait - spinlock\n    \n    def release(self):\n        \"\"\"Exit section - release the lock\"\"\"\n        self._locked = False\n\n# Usage\nlock = TestAndSetLock()\n\ndef process_code():\n    lock.acquire()      # Entry section\n    # Critical section - access shared resources\n    print(\"In critical section\")\n    lock.release()      # Exit section",
+      "explanation": "Test-and-Set atomically reads the lock value and sets it to true in one indivisible operation. The acquire function busy-waits until the lock was previously free (returned false), then proceeds into the critical section.",
+      "timeComplexity": "O(n) worst case - depends on contention",
+      "spaceComplexity": "O(1) - single boolean variable"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Simple Lock using AtomicInteger",
+      "description": "Implementing mutual exclusion using Java's atomic operations",
+      "code": "import java.util.concurrent.atomic.AtomicBoolean;\n\npublic class LockExample {\n    // Atomic boolean acts as the lock\n    private static AtomicBoolean lock = new AtomicBoolean(false);\n    \n    // Shared counter for demonstration\n    private static int counter = 0;\n    \n    public static void main(String[] args) throws InterruptedException {\n        // Create multiple threads\n        Thread[] threads = new Thread[5];\n        for (int i = 0; i < 5; i++) {\n            threads[i] = new Thread(new Worker(), \"Thread-\" + i);\n            threads[i].start();\n        }\n        \n        // Wait for all threads to complete\n        for (Thread t : threads) {\n            t.join();\n        }\n        \n        System.out.println(\"Final counter value: \" + counter);\n    }\n    \n    static class Worker implements Runnable {\n        @Override\n        public void run() {\n            // Entry section - acquire lock\n            while (!lock.compareAndSet(false, true)) {\n                // Lock was busy, try again (busy wait)\n            }\n            \n            // Critical Section\n            for (int i = 0; i < 1000; i++) {\n                counter++;\n            }\n            \n            // Exit section - release lock\n            lock.set(false);\n        }\n    }\n}",
+      "explanation": "Java's AtomicBoolean provides compareAndSet which is atomic (equivalent to Test-and-Set). The lock is acquired by atomically setting from false to true. The critical section increments a shared counter. The exit section releases the lock by setting it back to false.",
+      "timeComplexity": "O(n) worst case depending on thread contention",
+      "spaceComplexity": "O(1) - single AtomicBoolean and counter"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Bakery Algorithm Pseudocode",
+      "description": "Lamport's bakery algorithm for N processes achieving deadlock-free and starvation-free mutual exclusion",
+      "code": "// SHARED VARIABLES\nDECLARE choosing[1..N] : BOOLEAN    // Indicates process is choosing a ticket number\nDECLARE number[1..N] : INTEGER      // Ticket number for each process\n\n// INITIALIZATION\nFOR i = 1 TO N DO\n    choosing[i] = FALSE\n    number[i] = 0\nEND FOR\n\n// PROCESS i ENTRY SECTION\nENTRY_SECTION(i):\n    choosing[i] = TRUE                       // Show that I'm choosing a number\n    number[i] = max(number[1], ..., number[N]) + 1    // Get ticket (higher than all others)\n    choosing[i] = FALSE                      // Finished choosing\n    \n    // Wait until it's my turn\n    FOR j = 1 TO N DO\n        WHILE choosing[j] = TRUE DO          // Wait while any process is choosing\n            // busy wait\n        END WHILE\n        \n        WHILE number[j] \u2260 0 AND (number[j] < number[i] OR (number[j] = number[i] AND j < i)) DO\n            // Wait if j has valid ticket and goes before me\n            // busy wait\n        END WHILE\n    END FOR\n\n// CRITICAL SECTION\n// Only one process can be here at a time\n\n// PROCESS i EXIT SECTION\nEXIT_SECTION(i):\n    number[i] = 0                             // Give up my ticket\n\n// REMAINDER SECTION\n// Non-critical work",
+      "explanation": "The bakery algorithm assigns unique increasing ticket numbers. A process waits until no one is choosing a ticket, and then waits until its ticket is the smallest (breaking ties by process ID). This guarantees fairness (bounded waiting), progress, and mutual exclusion.",
+      "timeComplexity": "O(N) for entry section, N is number of processes",
+      "spaceComplexity": "O(N) - arrays of size N for choosing and number variables"
+    }
+  ]
+}

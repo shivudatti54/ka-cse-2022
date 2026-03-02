@@ -1,0 +1,427 @@
+<svg viewBox="0 0 800 1450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd"/>
+      <stop offset="100%" style="stop-color:#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0"/>
+      <stop offset="100%" style="stop-color:#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5"/>
+      <stop offset="100%" style="stop-color:#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee"/>
+      <stop offset="100%" style="stop-color:#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1976d2"/>
+      <stop offset="100%" style="stop-color:#1565c0"/>
+    </linearGradient>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    
+    <!-- Filter for shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="1450" fill="#f8f9fa"/>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fillUp {
+      from { height: 0; y: 50; }
+      to { height: 30; y: 20; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .draw-anim { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 1s ease-out forwards; }
+  </style>
+
+  <!-- STEP 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to our exploration of Set Associativity in Cache Memory, a fundamental concept in computer memory organization.">
+    <rect x="100" y="10" width="600" height="45" rx="10" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="40" text-anchor="middle" font-size="18" font-weight="bold" fill="white">Set Associativity in Cache Memory</text>
+  </g>
+
+  <!-- STEP 1: Why Cache Matters -->
+  <g class="step" id="step1" data-narration="Cache memory acts as a high-speed buffer between CPU and main memory, dramatically reducing memory access times.">
+    <rect x="40" y="65" width="720" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="85" font-size="12" font-weight="bold" fill="#1565c0">Why Cache Memory?</text>
+    <text x="60" y="105" font-size="10" fill="#424242">CPU processes data much faster than main memory can supply it</text>
+    <text x="60" y="120" font-size="10" fill="#424242">Cache: Fast SRAM buffer (1-10ns) | Main Memory: Slow DRAM (50-100ns)</text>
+    <text x="60" y="135" font-size="10" fill="#424242">Without cache: CPU waits idle | With cache: Data ready when needed</text>
+    <!-- CPU Icon -->
+    <rect x="620" y="80" width="50" height="40" rx="4" fill="#1976d2"/>
+    <text x="645" y="105" text-anchor="middle" font-size="10" fill="white">CPU</text>
+    <!-- Arrow -->
+    <path d="M580 100 L615 100" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <!-- Cache Box -->
+    <rect x="520" y="85" width="50" height="30" rx="4" fill="#4caf50"/>
+    <text x="545" y="105" text-anchor="middle" font-size="9" fill="white">Cache</text>
+    <path d="M475 100 L515 100" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <!-- Main Memory Box -->
+    <rect x="380" y="85" width="85" height="30" rx="4" fill="#ff9800"/>
+    <text x="422" y="105" text-anchor="middle" font-size="9" fill="white">Main Memory</text>
+  </g>
+
+  <!-- STEP 2: Three Mapping Techniques -->
+  <g class="step" id="step2" data-narration="There are three cache mapping techniques: direct-mapped, fully associative, and set-associative - each with trade-offs.">
+    <rect x="40" y="160" width="720" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="180" font-size="12" font-weight="bold" fill="#e65100">Three Cache Mapping Techniques</text>
+    <!-- Direct Mapped -->
+    <rect x="70" y="195" width="180" height="40" rx="5" fill="#ffcdd2"/>
+    <text x="160" y="215" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">Direct-Mapped</text>
+    <text x="160" y="228" text-anchor="middle" font-size="8" fill="#424242">1 way | Fast but many conflicts</text>
+    <!-- Set Associative -->
+    <rect x="270" y="195" width="180" height="40" rx="5" fill="#c8e6c9">
+      <animate attributeName="fill" values="#c8e6c9;#a5d6a7;#c8e6c9" dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="360" y="215" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Set-Associative</text>
+    <text x="360" y="228" text-anchor="middle" font-size="8" fill="#424242">N ways | Balanced approach</text>
+    <!-- Fully Associative -->
+    <rect x="470" y="195" width="180" height="40" rx="5" fill="#e1bee7"/>
+    <text x="560" y="215" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Fully Associative</text>
+    <text x="560" y="228" text-anchor="middle" font-size="8" fill="#424242">All lines | Best hit rate, complex</text>
+  </g>
+
+  <!-- STEP 3: Set-Associative Structure -->
+  <g class="step" id="step3" data-narration="In set-associative cache, memory is organized into sets, each containing multiple ways or lines for data storage.">
+    <rect x="40" y="255" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="275" font-size="12" font-weight="bold" fill="#2e7d32">Set-Associative Cache Structure</text>
+    <!-- Visual: Set and Ways -->
+    <text x="60" y="295" font-size="9" fill="#424242">Cache = Sets × Ways | Each way stores one data block + tag</text>
+    
+    <!-- Set Diagram -->
+    <rect x="100" y="305" width="60" height="35" rx="3" fill="#1976d2"/>
+    <text x="130" y="327" text-anchor="middle" font-size="9" fill="white">Set 0</text>
+    
+    <rect x="170" y="305" width="60" height="35" rx="3" fill="#388e3c"/>
+    <text x="200" y="327" text-anchor="middle" font-size="9" fill="white">Set 1</text>
+    
+    <rect x="240" y="305" width="60" height="35" rx="3" fill="#f57c00"/>
+    <text x="270" y="327" text-anchor="middle" font-size="9" fill="white">Set 2</text>
+    
+    <text x="320" y="322" font-size="10" fill="#424242">... S sets</text>
+    
+    <!-- Ways expansion -->
+    <rect x="420" y="305" width="80" height="35" rx="3" fill="#9c27b0"/>
+    <text x="460" y="320" text-anchor="middle" font-size="8" fill="white">Each Set has</text>
+    <text x="460" y="333" text-anchor="middle" font-size="8" fill="white">N Ways</text>
+    
+    <!-- Formula -->
+    <text x="550" y="310" font-size="10" font-weight="bold" fill="#1565c0">Formula:</text>
+    <text x="550" y="325" font-size="9" fill="#424242">Sets = Cache Size /</text>
+    <text x="550" y="338" font-size="9" fill="#424242">(Block Size × Ways)</text>
+  </g>
+
+  <!-- STEP 4: Address Division -->
+  <g class="step" id="step4" data-narration="Memory addresses are divided into three fields: Tag, Set Index, and Block Offset for cache organization.">
+    <rect x="40" y="360" width="720" height="95" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="380" font-size="12" font-weight="bold" fill="#7b1fa2">Address Division in Set-Associative Cache</text>
+    
+    <!-- Address bits visual -->
+    <rect x="80" y="395" width="400" height="50" rx="5" fill="white" stroke="#9c27b0" stroke-width="2"/>
+    
+    <!-- Tag field -->
+    <rect x="82" y="397" width="120" height="46" rx="3" fill="#e1bee7"/>
+    <text x="142" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="#7b1fa2">TAG</text>
+    <text x="142" y="440" text-anchor="middle" font-size="8" fill="#424242">t bits</text>
+    
+    <!-- Set Index field -->
+    <rect x="204" y="397" width="100" height="46" rx="3" fill="#ce93d8"/>
+    <text x="254" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="#7b1fa2">SET</text>
+    <text x="254" y="440" text-anchor="middle" font-size="8" fill="#424242">s bits</text>
+    
+    <!-- Offset field -->
+    <rect x="306" y="397" width="172" height="46" rx="3" fill="#f3e5f5"/>
+    <text x="392" y="425" text-anchor="middle" font-size="11" font-weight="bold" fill="#7b1fa2">OFFSET</text>
+    <text x="392" y="440" text-anchor="middle" font-size="8" fill="#424242">b bits</text>
+    
+    <!-- Explanation -->
+    <text x="500" y="410" font-size="9" fill="#424242">Tag: Identifies the memory block</text>
+    <text x="500" y="425" font-size="9" fill="#424242">Set: Which cache set to use</text>
+    <text x="500" y="440" font-size="9" fill="#424242">Offset: Byte within block</text>
+  </g>
+
+  <!-- STEP 5: How Cache Access Works -->
+  <g class="step" id="step5" data-narration="CPU calculates the set index from address bits, then searches all ways in parallel to find a tag match.">
+    <rect x="40" y="465" width="720" height="95" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="485" font-size="12" font-weight="bold" fill="#1565c0">Cache Access Process</text>
+    
+    <!-- Step 1 -->
+    <rect x="70" y="500" width="150" height="50" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="145" y="520" text-anchor="middle" font-size="9" font-weight="bold" fill="#1976d2">Step 1</text>
+    <text x="145" y="535" text-anchor="middle" font-size="8" fill="#424242">Extract Set Index</text>
+    <text x="145" y="546" text-anchor="middle" font-size="7" fill="#616161">from address</text>
+    
+    <!-- Arrow -->
+    <path d="M230 525 L265 525" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    
+    <!-- Step 2 -->
+    <rect x="275" y="500" width="150" height="50" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="350" y="520" text-anchor="middle" font-size="9" font-weight="bold" fill="#1976d2">Step 2</text>
+    <text x="350" y="535" text-anchor="middle" font-size="8" fill="#424242">Access ALL ways</text>
+    <text x="350" y="546" text-anchor="middle" font-size="7" fill="#616161">in that set</text>
+    
+    <!-- Arrow -->
+    <path d="M435 525 L470 525" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    
+    <!-- Step 3 -->
+    <rect x="480" y="500" width="150" height="50" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="555" y="520" text-anchor="middle" font-size="9" font-weight="bold" fill="#1976d2">Step 3</text>
+    <text x="555" y="535" text-anchor="middle" font-size="8" fill="#424242">Compare Tags</text>
+    <text x="555" y="546" text-anchor="middle" font-size="7" fill="#616161">in parallel</text>
+    
+    <!-- Arrow -->
+    <path d="M640 525 L675 525" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    
+    <!-- Result -->
+    <rect x="685" y="500" width="60" height="50" rx="5" fill="#c8e6c9">
+      <animate attributeName="fill" values="#c8e6c9;#a5d6a7;#c8e6c9" dur="1.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="715" y="530" text-anchor="middle" font-size="8" font-weight="bold" fill="#2e7d32">HIT</text>
+  </g>
+
+  <!-- STEP 6: Cache Hit vs Miss -->
+  <g class="step" id="step6" data-narration="A cache hit occurs when the tag matches and valid bit is set. A miss requires fetching from main memory.">
+    <rect x="40" y="570" width="720" height="95" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="60" y="590" font-size="12" font-weight="bold" fill="#c62828">Cache Hit vs Cache Miss</text>
+    
+    <!-- Hit Box -->
+    <rect x="80" y="605" width="250" height="50" rx="5" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="205" y="625" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">CACHE HIT ✓</text>
+    <text x="205" y="642" text-anchor="middle" font-size="9" fill="#424242">Tag matches + Valid bit = 1</text>
+    
+    <!-- Miss Box -->
+    <rect x="350" y="605" width="250" height="50" rx="5" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+    <text x="475" y="625" text-anchor="middle" font-size="11" font-weight="bold" fill="#c62828">CACHE MISS ✗</text>
+    <text x="475" y="642" text-anchor="middle" font-size="9" fill="#424242">No tag match OR Valid bit = 0</text>
+    
+    <!-- Action on Miss -->
+    <rect x="620" y="605" width="130" height="50" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="685" y="625" text-anchor="middle" font-size="9" font-weight="bold" fill="#e65100">On Miss:</text>
+    <text x="685" y="642" text-anchor="middle" font-size="8" fill="#424242">Fetch from RAM</text>
+  </g>
+
+  <!-- STEP 7: Replacement Policies -->
+  <g class="step" id="step7" data-narration="When a cache miss occurs and all ways are full, replacement policies decide which block to evict.">
+    <rect x="40" y="675" width="720" height="95" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="695" font-size="12" font-weight="bold" fill="#e65100">Replacement Policies</text>
+    
+    <!-- LRU -->
+    <rect x="70" y="710" width="210" height="50" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="175" y="730" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">LRU (Least Recently Used)</text>
+    <text x="175" y="748" text-anchor="middle" font-size="8" fill="#424242">Evict block not used for longest time</text>
+    
+    <!-- FIFO -->
+    <rect x="295" y="710" width="210" height="50" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="730" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">FIFO (First In First Out)</text>
+    <text x="400" y="748" text-anchor="middle" font-size="8" fill="#424242">Evict block that has been longest</text>
+    
+    <!-- Random -->
+    <rect x="520" y="710" width="210" height="50" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="625" y="730" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Random</text>
+    <text x="625" y="748" text-anchor="middle" font-size="8" fill="#424242">Evict a random block</text>
+  </g>
+
+  <!-- STEP 8: Write Policies -->
+  <g class="step" id="step8" data-narration="Write policies determine how CPU write operations update both cache and main memory for data consistency.">
+    <rect x="40" y="780" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="800" font-size="12" font-weight="bold" fill="#2e7d32">Write Policies</text>
+    
+    <!-- Write Through -->
+    <rect x="70" y="815" width="300" height="50" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="220" y="835" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Write Through</text>
+    <text x="220" y="852" text-anchor="middle" font-size="8" fill="#424242">Write to BOTH cache and main memory | Consistent but slower</text>
+    
+    <!-- Write Back -->
+    <rect x="390" y="815" width="300" height="50" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="540" y="835" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">Write Back</text>
+    <text x="540" y="852" text-anchor="middle" font-size="8" fill="#424242">Write to cache only, update RAM on eviction | Faster, needs dirty bit</text>
+  </g>
+
+  <!-- STEP 9: Numerical Example - Part 1 -->
+  <g class="step" id="step9" data-narration="Let's solve a numerical problem: Calculate sets, tag, set index, and offset bits for a 64KB 4-way cache.">
+    <rect x="40" y="885" width="720" height="95" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="905" font-size="12" font-weight="bold" fill="#1565c0">Example: Calculate Cache Parameters</text>
+    
+    <text x="60" y="925" font-size="10" fill="#424242">Given: Main Memory = 64MB (26 address bits) | Cache = 64KB | Block = 16B | 4-way set-associative</text>
+    
+    <!-- Calculation boxes -->
+    <rect x="60" y="935" width="160" height="40" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="140" y="950" text-anchor="middle" font-size="9" fill="#1565c0">Offset = log₂(16) =</text>
+    <text x="140" y="965" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">4 bits</text>
+    
+    <rect x="230" y="935" width="160" height="40" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="310" y="950" text-anchor="middle" font-size="9" fill="#1565c0">Sets = 2¹⁶/(16×4) =</text>
+    <text x="310" y="965" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">1024 = 2¹⁰</text>
+    
+    <rect x="400" y="935" width="160" height="40" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="480" y="950" text-anchor="middle" font-size="9" fill="#1565c0">Set Index = log₂(1024)</text>
+    <text x="480" y="965" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">= 10 bits</text>
+    
+    <rect x="570" y="935" width="160" height="40" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="650" y="950" text-anchor="middle" font-size="9" fill="#1565c0">Tag = 26 - 10 - 4 =</text>
+    <text x="650" y="965" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">12 bits</text>
+  </g>
+
+  <!-- STEP 10: Numerical Example - Hit/Miss -->
+  <g class="step" id="step10" data-narration="Now trace memory accesses to determine hits and misses in a 2-way set-associative cache with FIFO replacement.">
+    <rect x="40" y="990" width="720" height="95" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1010" font-size="12" font-weight="bold" fill="#7b1fa2">Example: Cache Hit/Miss Analysis</text>
+    
+    <text x="60" y="1030" font-size="9" fill="#424242">2-way cache, 4 sets, FIFO. Accesses: Read 0, Read 4, Read 8, Read 0, Read 12, Read 8</text>
+    
+    <!-- Cache State Table -->
+    <rect x="60" y="1040" width="680" height="40" rx="4" fill="white" stroke="#9c27b0"/>
+    <text x="100" y="1055" font-size="8" fill="#424242">Access</text>
+    <text x="100" y="1072" font-size="7" fill="#616161">Addr</text>
+    <text x="180" y="1055" font-size="8" fill="#424242">Set</text>
+    <text x="180" y="1072" font-size="7" fill="#616161">(Addr%4)</text>
+    <text x="260" y="1055" font-size="8" fill="#424242">Hit/Miss</text>
+    <text x="350" y="1055" font-size="8" fill="#424242">Action (FIFO)</text>
+    
+    <!-- Results -->
+    <rect x="60" y="1080" width="680" height="1" stroke="#9c27b0"/>
+    
+    <text x="100" y="1098" font-size="8" fill="#424242">0</text>
+    <text x="180" y="1098" font-size="8" fill="#424242">0</text>
+    <text x="260" y="1098" font-size="8" fill="#c62828">Miss</text>
+    <text x="350" y="1098" font-size="8" fill="#424242">Load block 0 → Way 0</text>
+    
+    <text x="100" y="1113" font-size="8" fill="#424242">4</text>
+    <text x="180" y="1113" font-size="8" fill="#424242">0</text>
+    <text x="260" y="1113" font-size="8" fill="#c62828">Miss</text>
+    <text x="350" y="1113" font-size="8" fill="#424242">Load block 4 → Way 1</text>
+    
+    <text x="100" y="1128" font-size="8" fill="#424242">8</text>
+    <text x="180" y="1128" font-size="8" fill="#424242">0</text>
+    <text x="260" y="1128" font-size="8" fill="#c62828">Miss</text>
+    <text x="350" y="1128" font-size="8" fill="#424242">Replace 0 (FIFO), load 8 → Way 0</text>
+  </g>
+
+  <!-- STEP 11: Performance Comparison -->
+  <g class="step" id="step11" data-narration="Higher associativity improves hit ratio but increases hardware complexity and access time due to parallel comparison.">
+    <rect x="40" y="1095" width="720" height="95" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1115" font-size="12" font-weight="bold" fill="#e65100">Performance: Associativity vs Hit Ratio</text>
+    
+    <!-- Bar chart -->
+    <text x="80" y="1135" font-size="9" fill="#424242">Access sequence: 0, 2, 4, 0, 2, 6, 0, 2, 4, 6</text>
+    
+    <!-- Direct Mapped Bar -->
+    <rect x="100" y="1155" width="30" height="50" fill="#ffcdd2">
+      <animate attributeName="height" from="0" to="50" dur="0.5s" fill="freeze"/>
+      <animate attributeName="y" from="1205" to="1155" dur="0.5s" fill="freeze"/>
+    </rect>
+    <text x="115" y="1180" text-anchor="middle" font-size="8" fill="#c62828">20%</text>
+    <text x="115" y="1195" text-anchor="middle" font-size="7" fill="#424242">Direct</text>
+    
+    <!-- 2-Way Bar -->
+    <rect x="180" y="1155" width="30" height="80" fill="#fff9c4">
+      <animate attributeName="height" from="0" to="80" dur="0.7s" fill="freeze"/>
+      <animate attributeName="y" from="1235" to="1155" dur="0.7s" fill="freeze"/>
+    </rect>
+    <text x="195" y="1180" text-anchor="middle" font-size="8" fill="#f9a825">40%</text>
+    <text x="195" y="1195" text-anchor="middle" font-size="7" fill="#424242">2-Way</text>
+    
+    <!-- 4-Way Bar -->
+    <rect x="260" y="1155" width="30" height="110" fill="#c8e6c9">
+      <animate attributeName="height" from="0" to="110" dur="0.9s" fill="freeze"/>
+      <animate attributeName="y" from="1265" to="1155" dur="0.9s" fill="freeze"/>
+    </rect>
+    <text x="275" y="1180" text-anchor="middle" font-size="8" fill="#2e7d32">70%</text>
+    <text x="275" y="1195" text-anchor="middle" font-size="7" fill="#424242">4-Way</text>
+    
+    <!-- Key insight -->
+    <rect x="340" y="1145" width="400" height="40" rx="5" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="540" y="1165" text-anchor="middle" font-size="9" fill="#424242">Trade-off: Higher associativity →</text>
+    <text x="540" y="1180" text-anchor="middle" font-size="9" fill="#424242">Better hit ratio but more hardware cost</text>
+  </g>
+
+  <!-- STEP 12: Key Formulas Summary -->
+  <g class="step" id="step12" data-narration="Remember these essential formulas for solving cache organization problems in your exams.">
+    <rect x="40" y="1200" width="720" height="85" rx="8" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1220" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Key Formulas for Exams</text>
+    
+    <rect x="60" y="1230" width="150" height="45" rx="5" fill="rgba(255,255,255,0.9)"/>
+    <text x="135" y="1245" text-anchor="middle" font-size="9" fill="#1565c0">Number of Sets</text>
+    <text x="135" y="1260" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">Cache / (Block × Ways)</text>
+    
+    <rect x="220" y="1230" width="150" height="45" rx="5" fill="rgba(255,255,255,0.9)"/>
+    <text x="295" y="1245" text-anchor="middle" font-size="9" fill="#1565c0">Offset Bits</text>
+    <text x="295" y="1260" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">log₂(Block Size)</text>
+    
+    <rect x="380" y="1230" width="150" height="45" rx="5" fill="rgba(255,255,255,0.9)"/>
+    <text x="455" y="1245" text-anchor="middle" font-size="9" fill="#1565c0">Set Index Bits</text>
+    <text x="455" y="1260" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">log₂(Number of Sets)</text>
+    
+    <rect x="540" y="1230" width="150" height="45" rx="5" fill="rgba(255,255,255,0.9)"/>
+    <text x="615" y="1245" text-anchor="middle" font-size="9" fill="#1565c0">Tag Bits</text>
+    <text x="615" y="1260" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">Addr - Set - Offset</text>
+  </g>
+
+  <!-- STEP 13: Final Summary -->
+  <g class="step" id="step13" data-narration="In summary, set-associative cache balances performance and hardware cost, crucial for embedded systems and exam success.">
+    <rect x="40" y="1295" width="720" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1315" font-size="12" font-weight="bold" fill="#2e7d32">Summary: What We Learned</text>
+    
+    <!-- Bullet points -->
+    <circle cx="80" cy="1335" r="4" fill="#2e7d32"/>
+    <text x="95" y="1338" font-size="9" fill="#424242">Set-associative = hybrid of direct-mapped and fully associative</text>
+    
+    <circle cx="80" cy="1353" r="4" fill="#2e7d32"/>
+    <text x="95" y="1356" font-size="9" fill="#424242">Address = Tag + Set Index + Block Offset</text>
+    
+    <circle cx="80" cy="1371" r="4" fill="#2e7d32"/>
+    <text x="95" y="1374" font-size="9" fill="#424242">Cache hit = tag matches AND valid bit = 1</text>
+    
+    <circle cx="350" cy="1335" r="4" fill="#2e7d32"/>
+    <text x="365" y="1338" font-size="9" fill="#424242">LRU, FIFO, Random are replacement policies</text>
+    
+    <circle cx="350" cy="1353" r="4" fill="#2e7d32"/>
+    <text x="365" y="1356" font-size="9" fill="#424242">Higher associativity = better hit ratio, more hardware</text>
+    
+    <circle cx="350" cy="1371" r="4" fill="#2e7d32"/>
+    <text x="365" y="1374" font-size="9" fill="#424242">Write policies: Write-through vs Write-back</text>
+    
+    <!-- Footer -->
+    <text x="400" y="1395" text-anchor="middle" font-size="10" font-style="italic" fill="#1565c0">Master these concepts for university examinations!</text>
+  </g>
+</svg>

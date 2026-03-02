@@ -1,0 +1,142 @@
+{
+  "topicId": "access-methods",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain Sequential Access Method and state two situations where it is most appropriate.",
+      "keyPoints": [
+        "Records accessed in order they appear in file",
+        "To reach record n, records 1 to n-1 must be read first",
+        "Most suitable for magnetic tape storage",
+        "Appropriate for batch processing where all records need to be processed",
+        "Useful when data is naturally sequential in nature"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is Direct Access Method? How does it achieve O(1) access time?",
+      "keyPoints": [
+        "Allows direct retrieval of any record without reading preceding records",
+        "Uses Relative Record Numbers (RRN) for record identification",
+        "Physical address calculated as: (RRN - 1) \u00d7 Record Size + Base Address",
+        "No searching or sequential traversal required",
+        "Each record has predetermined fixed physical location"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between Dense Index and Sparse Index with examples.",
+      "keyPoints": [
+        "Dense index: one entry per record in data file; Sparse index: one entry per data block",
+        "Dense index provides faster retrieval but requires more storage",
+        "Sparse index requires additional search within block to locate record",
+        "Example: Dense index like dictionary listing every word; Sparse index like floor directory listing sections not individual items",
+        "Dense better for random access, sparse better when data is sequential"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is Indexed Sequential Access Method (ISAM)? Mention its key components and advantages.",
+      "keyPoints": [
+        "ISAM combines sequential organization with multi-level indexing",
+        "Key components: data file (sequentially organized), index file (hierarchical), overflow area",
+        "Provides both fast random access via index and efficient sequential processing",
+        "Records stored in key sequence on disk",
+        "Advantages: reduced access time, supports both access types, efficient for range queries"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of hash-based access. What is a hash collision and mention two methods to handle it?",
+      "keyPoints": [
+        "Hash-based access uses hash function to compute record address from key value",
+        "Hash function maps search key to bucket address providing O(1) average access",
+        "Hash collision: different keys produce same bucket address",
+        "Handling methods: 1) Linear probing - check next sequential bucket",
+        "2) Chaining - maintain list of records in each bucket",
+        "3) Quadratic probing, 4) Rehashing with new function"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the role of B+ trees in indexed file access.",
+      "keyPoints": [
+        "B+ trees are balanced tree structures used for indexes",
+        "All data pointers stored only at leaf nodes",
+        "Internal nodes contain only key values for routing",
+        "Provides O(log n) access time for both point queries and range queries",
+        "Tree remains balanced during insertions and deletions, ensuring consistent performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare Sequential Access Method, Direct Access Method, and Indexed Access Method. Under what circumstances would you choose each?",
+      "keyPoints": [
+        "Sequential: records accessed in order, simple implementation, suitable for tape and batch processing",
+        "Direct: random access using RRN, O(1) time, ideal for disk with known record positions",
+        "Indexed: uses index structure for fast access, combines sequential and random access, best for mixed workloads",
+        "Choice criteria: storage medium (tape vs disk), access pattern (sequential vs random), frequency of queries, update frequency",
+        "ISAM provides best of both sequential and direct methods for general-purpose applications"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the process of file access in an Indexed Sequential Access Method (ISAM) system when: (a) A record is accessed randomly using a key value (b) Records are accessed sequentially in key order. Discuss the structure and maintenance of indexes.",
+      "keyPoints": [
+        "Random access: search primary index \u2192 identify cylinder index \u2192 track index \u2192 locate data block \u2192 find record",
+        "Sequential access: follow index chain or read sequentially from sorted data file",
+        "Index structure: typically hierarchical (primary, cylinder, track indexes)",
+        "Index maintenance: overflow areas handle insertions, periodic reorganization needed",
+        "Advantages: fast random access, efficient sequential processing, suitable for interactive applications",
+        "Disadvantages: index overhead, performance degradation with many overflows, requires reorganization"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "What is the difference between logical and physical organization of files? How do access methods relate to physical organization? Discuss with reference to blocking and record addressing.",
+      "keyPoints": [
+        "Logical organization: user view of data structure (record format, relationships)",
+        "Physical organization: actual storage layout on disk (allocation, access paths)",
+        "Access methods implement physical organization strategies",
+        "Blocking: grouping logical records into physical blocks for efficient I/O",
+        "Blocking factor = number of records per block",
+        "Record addressing: calculated from RRN or via index pointers",
+        "Trade-offs: blocking affects I/O efficiency vs storage utilization, addressing affects access speed"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a file access strategy for a banking transaction system that handles both high-volume sequential processing (end-of-day batch jobs) and random individual account access (teller transactions). Justify your design choices.",
+      "keyPoints": [
+        "Need hybrid approach supporting both access patterns",
+        "ISAM or indexed organization ideal for this scenario",
+        "Primary index on account number for random teller access",
+        "Sequential processing uses index or reads in account number order",
+        "Considerations: transaction volume, response time requirements, update frequency",
+        "Implementation: clustered index on account number, secondary indexes on transaction date",
+        "Backup and recovery considerations due to critical nature of banking data",
+        "Blocking strategy: larger blocks for sequential batch, optimal for disk efficiency"
+      ],
+      "marks": 10
+    }
+  ]
+}

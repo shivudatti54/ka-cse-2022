@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is a User Defined Function (UDF) in the context of Big Data Analytics? Briefly describe its primary purpose and one key advantage of using UDFs.",
+    "expectedPoints": [
+      "A UDF is a function written by the user to extend the capabilities of a data processing framework (e.g., Spark, Hive) when built-in functions are insufficient.",
+      "Its primary purpose is to allow for custom data transformations and complex business logic to be applied directly within SQL-like queries or data processing jobs.",
+      "A key advantage is code reusability, as the same UDF can be invoked multiple times across different queries or jobs, simplifying maintenance."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the process of creating and registering a UDF in Apache Spark using the DataFrame API. Your answer should detail the key steps from writing the function to using it in a query.",
+    "expectedPoints": [
+      "First, define the function logic in a supported language like Scala, Python, or Java. This function should take specific inputs and return a single output value.",
+      "Next, register the function with the SparkSession to make it available for use in SQL. In Scala/Python, this is done using `spark.udf.register('functionName', yourFunction)`.",
+      "Finally, the registered UDF can be invoked within a Spark SQL query just like a built-in function, e.g., `spark.sql(\"SELECT functionName(column) FROM table\")` or used directly on a DataFrame with `df.withColumn(\"newCol\", udfFunction(col(\"oldCol\")))`."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the performance implications of using UDFs in Spark. Discuss why UDFs can be a performance bottleneck and describe two strategies a developer can use to optimize UDF execution.",
+    "expectedPoints": [
+      "UDFs are a performance bottleneck because they are often 'black boxes' to Spark's Catalyst optimizer, preventing it from applying advanced optimizations like predicate pushdown or code generation. Furthermore, UDFs (especially in Python) can cause expensive data serialization between the JVM and the Python interpreter.",
+      "One optimization strategy is to use built-in functions whenever possible, as they are optimized and executed directly within the highly efficient Tungsten engine.",
+      "Another strategy is to implement the UDF using the DataFrame API itself, which is a set of built-in column-based functions. If a custom UDF is unavoidable, writing it in Scala/Java instead of Python can reduce serialization overhead by keeping execution within the JVM."
+    ],
+    "marks": 10
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "topicId": "deadlock-prevention",
+  "examples": [
+    {
+      "id": "pseudocode-deadlock-prevention",
+      "title": "Algorithm: Deadlock Prevention using Resource Ordering",
+      "description": "Pseudocode demonstrating deadlock prevention using resource ordering",
+      "language": "pseudocode",
+      "code": "ALGORITHM PreventDeadlock\nINPUT: resourceOrder (array of resource types in order)\nOUTPUT: none\n\nBEGIN\n FOR EACH process P\n FOR EACH resource R requested by P\n IF R is not in resourceOrder\n THROW Error \"Resource not in order\"\n ELSE IF P has not requested all resources before R in resourceOrder\n THROW Error \"Resources out of order\"\n END IF\n END FOR\n END FOR\nEND",
+      "explanation": "This pseudocode demonstrates deadlock prevention using resource ordering. Each process must request resources in the order specified by the resourceOrder array."
+    },
+    {
+      "id": "python-deadlock-prevention",
+      "title": "Python: Deadlock Prevention using Resource Ordering",
+      "description": "Python implementation of deadlock prevention using resource ordering",
+      "language": "python",
+      "code": "class ResourceOrdering:\n def __init__(self, resource_order):\n self.resource_order = resource_order\n\n def request_resource(self, process, resource):\n if resource not in self.resource_order:\n raise ValueError(\"Resource not in order\")\n elif not all(r in process.requested_resources for r in self.resource_order[:self.resource_order.index(resource)]):\n raise ValueError(\"Resources out of order\")\n process.requested_resources.append(resource)\n\n# Example usage:\nresource_order = ['R1', 'R2', 'R3']\nprocess = type('Process', (), {'requested_resources': []})\nordering = ResourceOrdering(resource_order)\nordering.request_resource(process, 'R1')\nordering.request_resource(process, 'R2')\nordering.request_resource(process, 'R3')",
+      "explanation": "This Python implementation demonstrates deadlock prevention using resource ordering. The `ResourceOrdering` class ensures that each process requests resources in the correct order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-deadlock-prevention",
+      "title": "C: Deadlock Prevention using Resource Ordering",
+      "description": "C implementation of deadlock prevention using resource ordering",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX_RESOURCES 10\n\nchar* resource_order[MAX_RESOURCES];\nint num_resources;\n\nvoid request_resource(char* process, char* resource) {\n int i;\n for (i = 0; i < num_resources; i++) {\n if (strcmp(resource_order[i], resource) == 0) {\n break;\n }\n }\n if (i == num_resources) {\n printf(\"Error: Resource not in order\\n\");\n exit(1);\n }\n // Simulate process requesting resources in order\n for (int j = 0; j < i; j++) {\n printf(\"Process %s requests resource %s\\n\", process, resource_order[j]);\n }\n}\n\nint main() {\n num_resources = 3;\n resource_order[0] = \"R1\";\n resource_order[1] = \"R2\";\n resource_order[2] = \"R3\";\n request_resource(\"P1\", \"R1\");\n request_resource(\"P1\", \"R2\");\n request_resource(\"P1\", \"R3\");\n return 0;\n}",
+      "explanation": "This C implementation demonstrates deadlock prevention using resource ordering. The `request_resource` function ensures that each process requests resources in the correct order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "topicId": "memory-management",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between internal fragmentation and external fragmentation in memory management.",
+      "keyPoints": [
+        "Internal fragmentation: wasted space within allocated memory blocks due to fixed partition/page sizes",
+        "External fragmentation: free memory scattered in non-contiguous blocks throughout memory",
+        "Internal occurs in paging and fixed partitioning; external occurs in variable partitioning",
+        "Compaction addresses external fragmentation; paging eliminates it"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the steps that occur when a page fault is generated.",
+      "keyPoints": [
+        "Page fault occurs when process accesses a page not in physical memory",
+        "OS must find a free frame or evict an existing page",
+        "If frame is dirty, write it to disk (page replacement)",
+        "Load required page from secondary storage into the free frame",
+        "Update page table entry with new frame number and valid bit",
+        "Restart the interrupted instruction"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are the advantages of paging over contiguous memory allocation?",
+      "keyPoints": [
+        "Eliminates external fragmentation completely",
+        "Allows non-contiguous allocation of physical memory",
+        "Simplifies memory allocation (only frame allocation needed)",
+        "Facilitates sharing of code and data between processes",
+        "Enables virtual memory allowing programs larger than physical memory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the working set model for memory management.",
+      "keyPoints": [
+        "Working set is the set of pages a process is actively using",
+        "Defined by window size - pages used in last n references",
+        "Processthrashes if allocated frames < working set size",
+        "Goal: keep working set in memory to prevent thrashing",
+        "OS monitors and adjusts frame allocation based on working set"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the purpose of a Translation Lookaside Buffer (TLB)? How does it improve performance?",
+      "keyPoints": [
+        "TLB is a hardware cache for page table entries",
+        "Stores recent virtual-to-physical address translations",
+        "Avoids expensive page table lookups in main memory",
+        "On TLB hit: O(1) address translation",
+        "On TLB miss: must access page table then update TLB",
+        "Typical hit rate: 90-99% making average access time close to cache speed"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between paging and segmentation.",
+      "keyPoints": [
+        "Paging: fixed-size blocks (pages/frames), eliminates external fragmentation",
+        "Segmentation: variable-sized logical divisions (code, data, stack)",
+        "Segmentation provides logical view of memory with meaningful segments",
+        "Paging is transparent to programmer; segmentation requires programmer awareness",
+        "Both can be combined: segmented paging or paged segments"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is virtual memory? How does demand paging implement virtual memory?",
+      "keyPoints": [
+        "Virtual memory gives illusion of more memory than physically available",
+        "Programs can be larger than actual RAM",
+        "Demand paging loads pages only when referenced (on demand)",
+        "Pages not in memory marked 'not present' in page table",
+        "Page fault handler loads pages from disk as needed",
+        "Allows execution of programs larger than physical memory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the various page replacement algorithms. Compare FIFO, Optimal, and LRU algorithms with respect to page faults and practical implementation.",
+      "keyPoints": [
+        "FIFO: Evicts oldest page in memory - simple but suffers from Belady's anomaly",
+        "Optimal (OPT): Evicts page that will not be used longest - impossible to implement but theoretical benchmark",
+        "LRU: Evicts least recently used page - good approximation of OPT but requires hardware support",
+        "Belady's anomaly: FIFO can have more page faults with more frames",
+        "LRU implementation: counters or stack algorithm approximations",
+        "Clock (Second Chance) algorithm: practical LRU approximation using reference bit",
+        "Performance: OPT < LRU < Clock < FIFO in most cases"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the structure and types of page tables. Explain multi-level page tables and their advantages.",
+      "keyPoints": [
+        "Single-level page table: one entry per virtual page - becomes huge for large address spaces",
+        "Multi-level page tables: hierarchical structure - outer page table points to inner page tables",
+        "Inverted page tables: one entry per physical frame instead of virtual page",
+        "Hashed page tables: use hash function for virtual page to physical frame mapping",
+        "Advantages of multi-level: only allocate page tables for valid pages, reduces memory overhead",
+        "Each level adds one memory access for translation (more translation time)",
+        "TLB helps mitigate multi-level page table overhead"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of thrashing. How does the operating system detect and prevent thrashing?",
+      "keyPoints": [
+        "Thrashing: excessive page fault activity causing CPU to spend more time on paging than execution",
+        "Symptoms: CPU utilization drops, disk I/O increases sharply, processes compete for too few frames",
+        "Detection: monitor page fault frequency and CPU utilization",
+        "Prevention strategies: working set model, page fault frequency approach",
+        "Working set: keep active pages in memory based on recent reference history",
+        "Page fault frequency: maintain fault rate within acceptable range by adjusting allocated frames",
+        "Local vs global replacement: local prevents one process affecting others",
+        "Some systems use process suspension to recover from thrashing"
+      ],
+      "marks": 10
+    }
+  ]
+}

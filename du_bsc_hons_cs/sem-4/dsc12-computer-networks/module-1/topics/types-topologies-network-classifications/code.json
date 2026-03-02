@@ -1,0 +1,35 @@
+{
+  "topicId": "types-topologies-network-classifications",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Token Passing Algorithm (Ring Topology)",
+      "description": "Simulates token passing mechanism used in Token Ring networks",
+      "code": "ALGORITHM TokenPassing\nBEGIN\n  Initialize token = TRUE at Station 1\n  WHILE network_active DO\n    FOR each station in ring_order DO\n      IF station.has_data_to_send AND token == TRUE THEN\n        station.create_frame(data)\n        station.attach_destination_address\n        station.set_token_bit = FALSE\n        Send frame to next_station\n        token = FALSE\n      ELSE\n        Pass frame to next_station\n      ENDIF\n      \n      IF frame.reaches_destination THEN\n        station.extract_data\n        station.send_acknowledgment\n        station.set_token_bit = TRUE\n      ENDIF\n    ENDFOR\n  ENDWHILE\nEND",
+      "explanation": "Token Ring uses a special frame called a token that circulates on the ring. Only the station possessing the token can transmit data, preventing collisions. When data reaches destination, token is released back.",
+      "timeComplexity": "O(n) where n is number of stations in worst case",
+      "spaceComplexity": "O(1) constant extra space for token and frame buffers"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "CSMA/CD Algorithm (Bus Topology)",
+      "description": "Carrier Sense Multiple Access with Collision Detection used in Ethernet bus networks",
+      "code": "ALGORITHM CSMA_CD\nBEGIN\n  WHILE station_has_data DO\n    station.sense_carrier\n    IF carrier_idle THEN\n      station.wait_random_backoff\n      station.transmit_frame\n      WHILE transmitting DO\n        IF collision_detected THEN\n          station.stop_transmission\n          station.send_jam_signal\n          station.increment_collision_count\n          IF collision_count > max_retries THEN\n            station.discard_frame\n            exit\n          ENDIF\n          wait exponential_backoff(collision_count)\n          goto line 2  // retry\n        ENDIF\n      ENDWHILE\n      station.wait_inter_frame_gap\n    ELSE\n      wait until carrier_idle\n    ENDIF\n  ENDWHILE\nEND",
+      "explanation": "CSMA/CD allows multiple stations to share a common bus medium. Stations listen before transmitting (Carrier Sense). If two stations transmit simultaneously, collision is detected and both wait random times before retrying.",
+      "timeComplexity": "O(1) for successful transmission, exponential backoff adds delay on collision",
+      "spaceComplexity": "O(1) for frame buffer and counters"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Network Classification by Scale",
+      "description": "Simple program to classify network type based on geographic coverage input",
+      "code": "FUNCTION ClassifyNetwork(coverage_km, devices_count)\nBEGIN\n  IF coverage_km < 0.01 THEN\n    RETURN \"PAN - Personal Area Network\"\n  ELSE IF coverage_km < 2 THEN\n    IF devices_count < 100 THEN\n      RETURN \"LAN - Local Area Network\"\n    ELSE\n      RETURN \"CAN - Campus Area Network\"\n    ENDIF\n  ELSE IF coverage_km < 50 THEN\n    RETURN \"MAN - Metropolitan Area Network\"\n  ELSE\n    RETURN \"WAN - Wide Area Network\"\n  ENDIF\nEND FUNCTION\n\n// Example usage:\nPRINT ClassifyNetwork(0.005, 5)    // Output: PAN\nPRINT ClassifyNetwork(0.5, 50)     // Output: LAN  \nPRINT ClassifyNetwork(5, 500)      // Output: CAN\nPRINT ClassifyNetwork(30, 2000)    // Output: MAN\nPRINT ClassifyNetwork(500, 10000)  // Output: WAN",
+      "explanation": "This pseudocode demonstrates how networks are classified by geographic coverage. Modern classification also considers device count and connectivity requirements.",
+      "timeComplexity": "O(1) simple conditional checks",
+      "spaceComplexity": "O(1) constant space for variables"
+    }
+  ]
+}

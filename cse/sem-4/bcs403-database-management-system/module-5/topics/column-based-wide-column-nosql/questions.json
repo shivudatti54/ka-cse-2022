@@ -1,0 +1,169 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the fundamental difference between row-based and column-based storage in databases.",
+    "expectedPoints": [
+      "Row-based stores complete rows together on disk - optimized for transactional operations",
+      "Column-based stores values of same column together - optimized for analytical queries",
+      "Column-based allows better compression and aggregation operations",
+      "Different I/O patterns for read/write operations"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What is Apache Cassandra? Explain its key architectural features.",
+    "expectedPoints": [
+      "Distributed, wide-column NoSQL database",
+      "Peer-to-peer architecture with no single point of failure",
+      "Uses Gossip Protocol for node communication",
+      "Tunable consistency model",
+      "SSTable-based storage with MemTable caching",
+      "Partition-based data distribution using virtual nodes"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain the concept of Tunable Consistency in Cassandra with examples of different consistency levels.",
+    "expectedPoints": [
+      "Allows trade-off between consistency, availability, and partition tolerance",
+      "ONE: Fastest - only one replica needs to respond",
+      "QUORUM: Majority of replicas must respond",
+      "ALL: All replicas must respond",
+      "LOCAL_QUORUM: Majority in local datacenter",
+      "Explains how to choose based on application requirements"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Describe the data model in Cassandra including Keyspace, Column Family, Row Key, and Column Qualifier.",
+    "expectedPoints": [
+      "Keyspace: Top-level container similar to database",
+      "Column Family (Table): Collection of rows with similar structure",
+      "Row Key: Primary identifier determining data partition",
+      "Column Qualifier: Column name within a row - can be dynamic",
+      "Column Family can have unlimited columns per row",
+      "Supports composite partition keys and clustering columns"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "What are the primary use cases for wide-column NoSQL databases?",
+    "expectedPoints": [
+      "Time-series data storage and analysis",
+      "Write-heavy workloads requiring high throughput",
+      "Large-scale data warehousing",
+      "IoT and sensor data storage",
+      "Analytics and business intelligence",
+      "Applications requiring horizontal scalability",
+      "Write-heavy logging and event tracking"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain the write path in Cassandra from client request to disk persistence.",
+    "expectedPoints": [
+      "Coordinator node receives write request",
+      "Write appended to Commit Log for durability",
+      "Data written to MemTable in memory",
+      "MemTable flushed to SSTable when threshold reached",
+      "Multiple SSTables stored on disk",
+      "Compaction periodically merges SSTables"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "What is the CAP Theorem? How does Cassandra handle the consistency-availability tradeoff?",
+    "expectedPoints": [
+      "CAP Theorem: Cannot have all three - Consistency, Availability, Partition tolerance simultaneously",
+      "Network partitions will happen in distributed systems",
+      "Cassandra chooses AP (Availability and Partition tolerance)",
+      "Provides eventual consistency by default",
+      "Tunable consistency allows applications to choose their tradeoff",
+      "Strong consistency possible with higher consistency levels"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Compare and contrast Apache Cassandra and Apache HBase in terms of architecture, data model, consistency model, and use cases.",
+    "expectedPoints": [
+      "Architecture: Cassandra - peer-to-peer, no master; HBase - master-slave with HDFS",
+      "Data Model: Both wide-column but HBase has stricter model",
+      "Consistency: Cassandra - eventual by default, tunable; HBase - strong consistency",
+      "Query Language: CQL for Cassandra, native API for HBase",
+      "Use Cases: Cassandra for write-heavy, global distribution; HBase for Hadoop ecosystem integration",
+      "Scalability: Both scale horizontally but differently",
+      "Dependencies: HBase needs Hadoop/ZooKeeper, Cassandra is self-contained"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Explain the concept of partitioning and replication in Cassandra. How does the partitioner work and what are the replication strategies available?",
+    "expectedPoints": [
+      "Partitioning: Row key hash determines node placement using Partitioner",
+      "Murmur3Partitioner is default - distributes evenly",
+      "Replication Factor: Number of copies of data stored",
+      "NetworkTopologyStrategy: Rack-aware and datacenter-aware replication",
+      "SimpleStrategy: Single datacenter, replica placement",
+      "Virtual Nodes: Each node owns multiple token ranges for better distribution",
+      "Gossip Protocol maintains cluster state information"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Describe the read and write operations in Cassandra, including the concepts of MemTable, SSTable, Bloom Filters, and Compaction.",
+    "expectedPoints": [
+      "Write Path: Coordinator -> Commit Log (durability) -> MemTable (memory) -> Flush to SSTable",
+      "Read Path: Check MemTable first, then Bloom Filter for SSTable candidates, read from SSTables",
+      "Bloom Filter: Probabilistic structure to check if data exists in SSTable",
+      "Compaction: Merges multiple SSTables to improve read performance",
+      "Types: Size-tiered compaction, Leveled compaction",
+      "Tombstones: Markers for deleted data, cleaned during compaction",
+      "Key Cache: Stores frequently accessed row keys"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Design a Cassandra schema for a social media application where users can post messages, follow other users, and like posts. Explain your keyspace design, table structures, and partition strategy.",
+    "expectedPoints": [
+      "Keyspace: SocialMedia with NetworkTopologyStrategy",
+      "Users table: UserID as partition key, stores profile info",
+      "Followers table: UserID + FollowerID as composite key",
+      "Posts table: UserID + Timestamp as compound key for time-series",
+      "Likes table: PostID + UserID to prevent duplicate likes",
+      "Likes count: Denormalized counter table per post",
+      "Partition strategy: User-centric for user data, post-centric for timeline queries",
+      "Optimized for common query patterns"
+    ]
+  }
+]

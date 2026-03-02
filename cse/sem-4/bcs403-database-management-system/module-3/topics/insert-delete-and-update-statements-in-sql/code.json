@@ -1,0 +1,74 @@
+[
+  {
+    "id": "code-1",
+    "language": "sql",
+    "title": "Basic INSERT Examples",
+    "description": "Demonstrates various INSERT operations",
+    "code": "-- Single row INSERT\nINSERT INTO employees (emp_id, name, salary, department)\nVALUES (101, 'John Smith', 50000, 'IT');\n\n-- Multiple rows in one INSERT\nINSERT INTO employees (emp_id, name, salary, department)\nVALUES \n (102, 'Mary Jane', 45000, 'HR'),\n (103, 'Bob Wilson', 55000, 'Finance'),\n (104, 'Alice Brown', 48000, 'IT');\n\n-- INSERT with DEFAULT\nINSERT INTO products (product_id, name, price, status)\nVALUES (201, 'New Product', 999, DEFAULT);\n\n-- INSERT with NULL\nINSERT INTO employees (emp_id, name, salary, manager_id)\nVALUES (105, 'New Emp', 40000, NULL);",
+    "explanation": "Shows single row, multiple rows, DEFAULT and NULL value insertion",
+    "complexity": {
+      "time": "O(1) for single, O(n) for multiple rows",
+      "space": "O(n) for n rows inserted"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "sql",
+    "title": "INSERT SELECT - Copy Data Between Tables",
+    "description": "Inserting data from one table to another",
+    "code": "-- Create backup table first\nCREATE TABLE employees_backup AS \nSELECT * FROM employees WHERE 1=0;\n\n-- Copy all IT employees to backup\nINSERT INTO employees_backup\nSELECT * FROM employees \nWHERE department = 'IT';\n\n-- Copy with specific columns\nINSERT INTO employee_summary (dept, total_emp, avg_sal)\nSELECT department, COUNT(*), AVG(salary)\nFROM employees\nGROUP BY department;",
+    "explanation": "INSERT SELECT combines INSERT and SELECT to copy data efficiently",
+    "complexity": {
+      "time": "O(n) where n is rows copied",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "sql",
+    "title": "UPDATE Statement Examples",
+    "description": "Various UPDATE operations with expressions",
+    "code": "-- Basic UPDATE with WHERE\nUPDATE employees\nSET salary = 55000\nWHERE emp_id = 101;\n\n-- Update multiple columns\nUPDATE employees\nSET salary = 60000, department = 'Sr. IT'\nWHERE emp_id = 101;\n\n-- Update with expression (10% raise)\nUPDATE employees\nSET salary = salary * 1.10\nWHERE department = 'IT';\n\n-- UPDATE with subquery\nUPDATE employees\nSET salary = (\n SELECT AVG(salary) FROM employees\n)\nWHERE performance_rating = 'Average';",
+    "explanation": "UPDATE modifies existing data; WHERE is crucial to target specific rows",
+    "complexity": {
+      "time": "O(n) where n is rows updated",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "sql",
+    "title": "DELETE Statement Examples",
+    "description": "Various DELETE operations with WHERE conditions",
+    "code": "-- Delete specific row\nDELETE FROM employees\nWHERE emp_id = 105;\n\n-- Delete with condition\nDELETE FROM employees\nWHERE department = 'Temp' \nAND join_date < '2023-01-01';\n\n-- Delete with subquery\nDELETE FROM employees\nWHERE department IN (\n SELECT dept_id FROM departments\n WHERE status = 'Closed'\n);\n\n-- Delete all rows (dangerous!)\nDELETE FROM temp_data;",
+    "explanation": "DELETE removes rows; without WHERE, all rows are deleted",
+    "complexity": {
+      "time": "O(n) where n is rows deleted",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "sql",
+    "title": "Transaction Control Example",
+    "description": "COMMIT and ROLLBACK demonstration with banking transaction",
+    "code": "-- Start transaction\nBEGIN TRANSACTION;\n\n-- Debit from account A001\nUPDATE accounts\nSET balance = balance - 5000\nWHERE account_no = 'A001';\n\n-- Credit to account A002\nUPDATE accounts\nSET balance = balance + 5000\nWHERE account_no = 'A002';\n\n-- Verify the transaction\nSELECT * FROM accounts\nWHERE account_no IN ('A001', 'A002');\n\n-- Commit if successful, rollback if error\n-- COMMIT; -- Uncomment to make permanent\n-- ROLLBACK; -- Uncomment to undo changes",
+    "explanation": "Transactions ensure data integrity; COMMIT makes changes permanent, ROLLBACK reverts",
+    "complexity": {
+      "time": "O(1) per operation",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-6",
+    "language": "sql",
+    "title": "TRUNCATE vs DELETE Comparison",
+    "description": "Demonstrating differences between TRUNCATE and DELETE",
+    "code": "-- DELETE - removes rows, can be rolled back, logged\nDELETE FROM log_table;\n-- This can be rolled back before COMMIT\n\n-- TRUNCATE - removes all pages, usually cannot rollback\nTRUNCATE TABLE log_table;\n\n-- Difference in behavior:\n-- DELETE: Removes rows one by one, triggers triggers\n-- TRUNCATE: Deallocates data pages, resets identity counter\n\n-- Note: Some databases allow TRUNCATE to be rolled back\n-- in same transaction",
+    "explanation": "TRUNCATE is faster but less flexible than DELETE",
+    "complexity": {
+      "time": "DELETE: O(n), TRUNCATE: O(1)",
+      "space": "O(1)"
+    }
+  }
+]

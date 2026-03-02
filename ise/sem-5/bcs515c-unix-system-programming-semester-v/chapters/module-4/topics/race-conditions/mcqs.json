@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is a race condition in UNIX system programming?",
+    "options": [
+      "A situation where the outcome of a process depends on the sequence or timing of other uncontrollable events.",
+      "A type of compiler error that occurs during the linking phase.",
+      "A hardware failure related to the system clock.",
+      "A specific error code returned by the UNIX kernel."
+    ],
+    "correctIndex": 0,
+    "explanation": "A race condition occurs when the behavior of a software system depends on the relative timing of events, such as the order in which threads are scheduled, often leading to unpredictable and erroneous results."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following operations on a shared variable is most likely to cause a race condition if performed by multiple processes?",
+    "options": [
+      "A simple read operation (e.g., `int x = shared_var;`)",
+      "An atomic assignment (e.g., `shared_var = 10;`)",
+      "A read-modify-write operation (e.g., `shared_var++;`)",
+      "A operation that checks if a file exists using `access()`"
+    ],
+    "correctIndex": 2,
+    "explanation": "A read-modify-write operation is non-atomic. It involves reading the value, modifying it, and writing it back. If multiple processes perform this concurrently, the final value can be incorrect due to interleaving of these steps."
+  },
+  {
+    "id": "q3",
+    "question": "The classic TOCTTOU (Time-of-Check-to-Time-of-Use) bug is a specific type of race condition often found when:",
+    "options": [
+      "Managing shared memory segments.",
+      "Handling signals with `sigaction`.",
+      "Performing file system operations based on a previous state check.",
+      "Using the `fork()` system call to create child processes."
+    ],
+    "correctIndex": 2,
+    "explanation": "A TOCTTOU bug occurs when a program first checks the state of a resource (e.g., using `access()` to check file permissions) and then uses it (e.g., `open()`). Between the check and the use, a malicious actor can change the resource, leading to a security vulnerability."
+  },
+  {
+    "id": "q4",
+    "question": "Which primitive is specifically designed to protect a critical region from a race condition between threads within the same process?",
+    "options": [
+      "Semaphore",
+      "Advisory File Lock (`fcntl`)",
+      "Mandatory File Lock",
+      "Named Pipe (FIFO)"
+    ],
+    "correctIndex": 0,
+    "explanation": "Semaphores (and mutexes, which are a type of semaphore) are synchronization primitives designed for coordinating access to shared resources between threads of the same process. File locks are more commonly used for synchronization between independent processes."
+  },
+  {
+    "id": "q5",
+    "question": "Why is the following code susceptible to a race condition, even after the `open` call succeeds? `fd = open(\"myfile.lock\", O_WRONLY | O_CREAT | O_EXCL, 0644);`",
+    "options": [
+      "The `O_EXCL` flag is not supported on all UNIX filesystems.",
+      "The file descriptor `fd` could be closed by a signal handler before the process uses it.",
+      "Another process could create a symbolic link named 'myfile.lock' pointing to a critical system file after the `open` call returns but before the locking logic is applied.",
+      "The `open()` call itself is a non-atomic operation and must be wrapped in a signal handler."
+    ],
+    "correctIndex": 1,
+    "explanation": "While the `open` with `O_CREAT | O_EXCL` is an atomic operation for checking existence and creating the file, the resulting file descriptor `fd` is a resource held by the process. If this process receives a signal whose handler closes file descriptors, `fd` could be closed. This would invalidate the lock, as the process would no longer hold the resource it used to signify ownership, allowing another process to create 'myfile.lock' and believe it holds the lock."
+  }
+]

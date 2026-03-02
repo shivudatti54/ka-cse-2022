@@ -1,0 +1,25 @@
+{
+  "topicId": "name-services-and-the-domain-name-system",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Recursive DNS Query Algorithm",
+      "description": "Demonstrates how a recursive DNS resolver works",
+      "code": "FUNCTION RecursiveQuery(domainName, queryType)\n // Check local cache first\n IF cache.contains(domainName, queryType) THEN\n RETURN cache.get(domainName, queryType)\n END IF\n \n // Start with root server\n currentServer = GetRootServer()\n \n WHILE TRUE DO\n // Query current server\n response = currentServer.query(domainName, queryType)\n \n IF response.isAuthoritative THEN\n // Found the answer\n cache.store(domainName, queryType, response)\n RETURN response\n ELSIF response.referral THEN\n // Follow the referral\n currentServer = response.nextServer\n END IF\n END WHILE\nEND FUNCTION",
+      "explanation": "This algorithm shows the recursive resolution process: check cache, query root server, follow referrals through TLD to authoritative server, and cache the result.",
+      "timeComplexity": "O(number of lookups)",
+      "spaceComplexity": "O(cache size)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "DNS Zone Transfer (AXFR)",
+      "description": "Shows how secondary servers synchronize zone data",
+      "code": "// Primary Server\nFUNCTION HandleZoneTransfer(zoneName, clientIP)\n IF NOT authorizedForTransfer(clientIP) THEN\n RETURN REFUSED\n END IF\n \n records = GetZoneRecords(zoneName)\n RETURN records\nEND FUNCTION\n\n// Secondary Server\nFUNCTION SyncWithPrimary(primaryIP)\n serial = GetCurrentSerial()\n \n // Query for SOA to check if update needed\n soa = Query(primaryIP, zoneName, SOA)\n \n IF soa.serial > serial THEN\n // Zone needs update - request full transfer\n fullZone = TransferZone(primaryIP, zoneName)\n UpdateLocalZone(fullZone)\n END IF\nEND FUNCTION",
+      "explanation": "Zone transfer uses TCP port 53 (AXFR protocol) to replicate DNS records between primary and secondary servers, ensuring consistency.",
+      "timeComplexity": "O(zone size)",
+      "spaceComplexity": "O(zone size)"
+    }
+  ]
+}

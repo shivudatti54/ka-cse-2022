@@ -1,0 +1,53 @@
+{
+  "topicId": "relational-algebra-operators",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the Set Difference operator (–) in relational algebra, give its formal definition, and illustrate with an example using two relations R and S that are union‑compatible.",
+      "keyPoints": [
+        "Formal definition: R – S = { t | t ∈ R and t ∉ S }",
+        "Requires R and S to have identical attribute sets (union‑compatible)",
+        "Example: R = { (1,Alice), (2,Bob) }, S = { (1,Alice) } → R – S = { (2,Bob) }",
+        "Difference returns tuples in R not present in S"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the Rename operator (ρ) in relational algebra. Show how it can be used to resolve attribute‑name conflicts when performing a natural join between two relations.",
+      "keyPoints": [
+        "Syntax: ρ_{newRel(attr1, attr2, …)}(R) or ρ_{newRel}(R)",
+        "Creates a new relation with a new name and/or renamed attributes",
+        "Useful in joins to avoid duplicate attribute names, e.g., R ⋈ ρ_{S'(B1)}(S)",
+        "Example: ρ_{Emp2(EmpID, Name, DeptID)}(Employee) renames the relation and its attributes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Given the relations Student(SID, SName, Major), Enroll(SID, CID, Grade) and Course(CID, CName, Credits), write relational‑algebra queries for the following: (a) List the names of all students who have enrolled in the course ‘Database Systems’. Use the Rename operator to avoid attribute‑name clashes. (b) Find the IDs of students who have enrolled in both ‘Database Systems’ and ‘Algorithms’ courses (use set intersection). (c) Find the IDs of students who have enrolled in at least one course but not in ‘Database Systems’ (use set difference). (d) Discuss the commutativity of natural join with union and intersection, providing algebraic identities.",
+      "keyPoints": [
+        "(a) π_{SName}(σ_{CName='Database Systems'}(Student ⋈ Enroll ⋈ Course)) with ρ for attribute renaming",
+        "(b) π_{SID}(σ_{CName='Database Systems'}(Student ⋈ Enroll ⋈ Course)) ∩ π_{SID}(σ_{CName='Algorithms'}(Student ⋈ Enroll ⋈ Course))",
+        "(c) π_{SID}(Enroll) – π_{SID}(σ_{CName='Database Systems'}(Student ⋈ Enroll ⋈ Course))",
+        "Natural join distributes over ∪ and ∩: R ⋈ (S ∪ T) = (R ⋈ S) ∪ (R ⋈ T) and R ⋈ (S ∩ T) = (R ⋈ S) ∩ (R ⋈ T) (under appropriate attribute compatibility)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Consider relations R(A, B) and S(B, C). Write relational‑algebra expressions for: (i) Natural join R ⋈ S, (ii) Theta join with condition R.B > S.B, (iii) Division: find all A values that are related to every C value in S. Also explain how you can simulate a theta join using Cartesian product and selection, and discuss the associativity of the join operation (i.e., (R ⋈ S) ⋈ T = R ⋈ (S ⋈ T) under what conditions).",
+      "keyPoints": [
+        "(i) R ⋈ S = π_{A, R.B, C}(σ_{R.B = S.B}(R × S))",
+        "(ii) R ⋈_{R.B > S.B} S = σ_{R.B > S.B}(R × S)",
+        "(iii) Division: (π_{A,B}(R) ÷ π_{C}(S)) where π_{A,B}(R) projects A and B, then division yields A values that appear with all B values that equal each C in S (assuming S has attribute C only)",
+        "Theta join = selection on Cartesian product; join is associative when the join condition involves only common attributes and the schemas are compatible, i.e., (R ⋈ S) ⋈ T = R ⋈ (S ⋈ T) if the join attributes are the same and the conditions are symmetric"
+      ],
+      "marks": 10
+    }
+  ]
+}

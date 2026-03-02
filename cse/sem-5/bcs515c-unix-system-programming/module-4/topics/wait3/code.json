@@ -1,0 +1,45 @@
+{
+  "topicId": "wait3",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Algorithm: Process Synchronization with wait3",
+      "description": "Basic workflow for parent-child process synchronization using wait3",
+      "code": "ALGORITHM Wait3Workflow\nBEGIN\n 1. Create child process using fork()\n 2. IF fork returns 0:\n a. Execute child operations\n b. Exit with status code\n 3. ELSE IF fork returns >0:\n a. Parent calls wait3() with rusage pointer\n b. Check process termination status using WIFEXITED/WEXITSTATUS\n c. Analyze resource usage from rusage structure\n 4. ELSE:\n a. Handle fork error\nEND",
+      "explanation": "1. fork() creates child process\n3a. wait3() blocks until child exits\n3b. WIFEXITED checks normal termination\n3c. rusage contains CPU times and memory usage",
+      "timeComplexity": "O(1) per child",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Basic wait3 Usage with Resource Monitoring",
+      "description": "Demonstrates waiting for child process and printing resource usage statistics",
+      "code": "#include <sys/wait.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid == -1) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n\n if (pid == 0) {\n // Child process\n printf(\"Child process executing\\n\");\n sleep(2);\n exit(42);\n } else {\n // Parent process\n int status;\n struct rusage usage;\n pid_t child_pid = wait3(&status, 0, &usage);\n \n if (child_pid == -1) {\n perror(\"wait3 failed\");\n exit(EXIT_FAILURE);\n }\n\n if (WIFEXITED(status)) {\n printf(\"Child %d exited with status %d\\n\", child_pid, WEXITSTATUS(status));\n }\n\n printf(\"Resource usage:\\n\");\n printf(\"User CPU time: %ld.%06ld seconds\\n\", \n usage.ru_utime.tv_sec, usage.ru_utime.tv_usec);\n printf(\"System CPU time: %ld.%06ld seconds\\n\",\n usage.ru_stime.tv_sec, usage.ru_stime.tv_usec);\n }\n return 0;\n}",
+      "explanation": "1. fork() creates child process\n2. Child sleeps and exits with status 42\n3. wait3() blocks until child termination\n4. WIFEXITED checks normal exit\n5. Prints user/system CPU times from rusage",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Non-blocking Wait with WNOHANG",
+      "description": "Using wait3 with WNOHANG option to check child status without blocking",
+      "code": "#include <sys/wait.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n\nint main() {\n pid_t pid = fork();\n \n if (pid == -1) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n\n if (pid == 0) {\n // Child process\n sleep(3);\n exit(0);\n } else {\n // Parent process\n int status;\n struct rusage usage;\n pid_t child_pid;\n \n do {\n child_pid = wait3(&status, WNOHANG, &usage);\n if (child_pid == 0) {\n printf(\"Child still running...\\n\");\n sleep(1);\n }\n } while (child_pid == 0);\n\n if (child_pid == -1) {\n perror(\"wait3 error\");\n exit(EXIT_FAILURE);\n }\n\n printf(\"Child %d exited\\n\", child_pid);\n }\n return 0;\n}",
+      "explanation": "1. Uses WNOHANG to prevent blocking\n2. Polls child status in loop\n3. Sleeps between checks\n4. Final wait3 returns when child exits",
+      "timeComplexity": "O(n) checks",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Multiple Child Process Management",
+      "description": "Handling multiple child processes with wait3 in loop",
+      "code": "#include <sys/wait.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n\nint main() {\n for (int i = 0; i < 3; i++) {\n pid_t pid = fork();\n \n if (pid == -1) {\n perror(\"fork failed\");\n exit(EXIT_FAILURE);\n }\n\n if (pid == 0) {\n printf(\"Child %d started\\n\", getpid());\n sleep(i + 1);\n exit(0);\n }\n }\n\n // Parent reaps children\n int status;\n struct rusage usage;\n pid_t child_pid;\n \n while ((child_pid = wait3(&status, 0, &usage)) != -1) {\n printf(\"Child %d exited\\n\", child_pid);\n }\n\n return 0;\n}",
+      "explanation": "1. Creates 3 children with different sleep durations\n2. Parent waits for all children in loop\n3. wait3 returns PID of each exiting child\n4. Prevents zombie processes",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

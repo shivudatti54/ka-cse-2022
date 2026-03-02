@@ -1,0 +1,171 @@
+{
+  "topicId": "sigaction-function",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the structure of struct sigaction and its members.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "sa_handler: pointer to signal handler function",
+        "sa_sigaction: pointer to extended handler (when SA_SIGINFO set)",
+        "sa_mask: signals blocked during handler execution",
+        "sa_flags: modify signal handling behavior"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the advantages of sigaction() over the traditional signal() function?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "More portable across different UNIX variants",
+        "Allows blocking specific signals during handler execution (sa_mask)",
+        "Provides SA_RESTART flag for automatic system call restart",
+        "Supports SA_SIGINFO for additional signal information (sender PID, UID)",
+        "More control over signal handling behavior"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the purpose of the SA_RESTART flag with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Automatically restarts system calls interrupted by signals",
+        "Prevents EINTR error from system calls like read(), write()",
+        "Useful for handling I/O operations without manually checking for interruptions",
+        "Not all system calls are restartable (e.g., select())"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the siginfo_t structure and its important members.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "si_signo: signal number that caused the signal",
+        "si_pid: process ID of the signal sender",
+        "si_uid: user ID of the signal sender",
+        "si_code: reason code for signal generation",
+        "si_status: exit status or signal number (for child signals)"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write a C program to handle SIGINT (Ctrl+C) using sigaction().",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Include <signal.h>",
+        "Define struct sigaction with sa_handler",
+        "Use sigemptyset() to initialize sa_mask",
+        "Set sa_flags appropriately (e.g., 0)",
+        "Call sigaction() with SIGINT and address of struct",
+        "Return 0 on success, -1 on error"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the purpose of sa_flags in sigaction()? List any four important flags.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Modifies behavior of signal handling",
+        "SA_RESTART: restart interrupted system calls",
+        "SA_SIGINFO: use extended handler with siginfo_t",
+        "SA_RESETHAND: reset handler after one use",
+        "SA_NODEFER: allow signal to interrupt its own handler",
+        "SA_NOCLDSTOP: don't generate SIGCHLD for stopped children"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain sigprocmask() and its three operations.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Used to examine/change process signal mask",
+        "SIG_BLOCK: add signals to current mask (block them)",
+        "SIG_UNBLOCK: remove signals from current mask (unblock)",
+        "SIG_SETMASK: replace current mask with new set",
+        "Useful for critical sections that must not be interrupted"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a complete C program that creates a signal handler for SIGALRM using sigaction() with SA_SIGINFO. The handler should display sender information.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define sigaction structure",
+        "Initialize sa_sigaction (not sa_handler for SA_SIGINFO)",
+        "Initialize sa_mask using sigemptyset()",
+        "Set SA_SIGINFO in sa_flags",
+        "Setup siginfo_t parameter in handler",
+        "Display si_pid, si_uid, si_signo in handler",
+        "Use setitimer() or alarm() to generate SIGALRM",
+        "Proper error checking for sigaction() call"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the difference between signal() and sigaction(). Also demonstrate how to implement a robust signal handler that blocks other signals during execution.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "signal() is simple but not portable (behavior varies)",
+        "sigaction() is POSIX-compliant with more control",
+        "sigaction() allows sa_mask for blocking signals",
+        "sigaction() supports SA_RESTART for system calls",
+        "Show code with sa_mask set to block SIGINT during SIGALRM handling",
+        "Explain importance of signal blocking for critical handlers",
+        "Use sigaddset() to add signals to mask",
+        "Use sigemptyset() to initialize mask"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a signal handling scheme for a daemon process that: (a) Ignores SIGHUP, (b) Catches SIGTERM for graceful shutdown, (c) Catches SIGUSR1 to reload configuration, (d) Uses sigaction() with proper flags.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use SA_IGNORE for ignoring SIGHUP (or set handler to SIG_IGN)",
+        "Implement SIGTERM handler with cleanup and exit",
+        "Implement SIGUSR1 handler to reload config",
+        "Set appropriate sa_flags (e.g., SA_RESTART for system calls)",
+        "Block other signals during critical handlers using sa_mask",
+        "Use sigemptyset() and sigaddset() for signal sets",
+        "Return appropriate error codes",
+        "Explain daemon initialization and cleanup"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a program that implements a timeout mechanism using alarm() and sigaction(). The program should attempt a long operation and abort if it takes more than 5 seconds.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Set up SIGALRM handler using sigaction()",
+        "Use SA_RESTART to prevent read/write interruption",
+        "Call alarm(5) to set 5-second timeout",
+        "Perform the long operation (e.g., reading from pipe/FIFO)",
+        "If alarm fires, handler executes and operation returns error",
+        "Cancel alarm with alarm(0) if operation completes",
+        "Handle EINTR error from interrupted system call",
+        "Include proper error checking"
+      ]
+    }
+  ]
+}

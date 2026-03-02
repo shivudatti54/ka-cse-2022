@@ -1,0 +1,39 @@
+{
+  "topicId": "the-jakarta-servlet-package",
+  "questions": [
+    {
+      "id": "sa1",
+      "question": "Explain the role of the `ServletConfig` and `ServletContext` objects in a Jakarta Servlet application. How do they differ in their scope and the type of information they provide?",
+      "marks": 5,
+      "keyPoints": [
+        "ServletConfig is servlet-specific, providing initialization parameters and a reference to the servlet's ServletContext.",
+        "ServletContext is application-wide, shared by all servlets in the web application, providing access to application-level resources and attributes.",
+        "ServletConfig parameters are defined in the `@WebInitParam` annotation or `web.xml` for a single servlet, while ServletContext parameters are defined in `web.xml` and are global."
+      ],
+      "type": "long"
+    },
+    {
+      "id": "sa2",
+      "question": "Describe the purpose and typical use case for a `ServletRequestListener`.",
+      "marks": 2,
+      "keyPoints": [
+        "A ServletRequestListener is used to track the lifecycle of HTTP requests (creation and destruction).",
+        "Its primary purpose is to perform application-level logic at the very beginning (`requestInitialized`) and very end (`requestDestroyed`) of a request's processing.",
+        "A common use case is for gathering request timing metrics, initializing or cleaning up thread-local resources, or auditing request information."
+      ],
+      "type": "long"
+    },
+    {
+      "id": "sa3",
+      "question": "Detail the complete lifecycle of a Jakarta Servlet, from its first deployment to handling multiple concurrent requests. Include the methods invoked by the container, their purpose, and the thread-safety considerations a developer must address.",
+      "marks": 10,
+      "keyPoints": [
+        "Initialization: The container calls `init(ServletConfig config)` once when the servlet is first loaded, typically at application start-up or on first request. This is for one-time setup.",
+        "Request Handling: For each request, the container calls `service(ServletRequest req, ServletResponse res)` on a thread from a pool. `service()` then delegates to `doGet()`, `doPost()`, etc., based on the HTTP method.",
+        "Destruction: The container calls `destroy()` when taking the servlet out of service (e.g., application shutdown) to clean up resources.",
+        "Thread Safety: The `service`, `doGet`, and `doPost` methods must be thread-safe as they handle concurrent requests. Instance variables are shared and therefore unsafe; using local variables or synchronization is critical."
+      ],
+      "type": "long"
+    }
+  ]
+}

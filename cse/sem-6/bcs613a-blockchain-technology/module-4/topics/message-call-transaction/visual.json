@@ -1,0 +1,44 @@
+{
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "Message Call Structure and Flow",
+      "description": "Shows the components of a message call and how data flows from caller to callee",
+      "elements": [
+        "Sender Account (EOA/Contract)",
+        "Message: {sender, recipient, value, gas, payload}",
+        "EVM Execution Context",
+        "Calldata: function selector (4 bytes) + ABI-encoded arguments",
+        "Return Data Flow back to sender",
+        "Recipient executes in own storage"
+      ],
+      "purpose": "Visualize the internal transaction structure and execution context of message calls in Ethereum"
+    },
+    {
+      "id": "d-2",
+      "title": "Call vs Delegatecall vs Staticcall Comparison",
+      "description": "Three-pane comparison showing execution contexts for each call type",
+      "elements": [
+        "CALL: Storage=Recipient, msg.sender=Caller, msg.value=Passed",
+        "DELEGATECALL: Storage=Caller, msg.sender=Original sender preserved",
+        "STATICCALL: Storage=Recipient, NO state modifications allowed",
+        "Color coding: Red=modifies state, Green=read-only"
+      ],
+      "purpose": "Understand when to use each call type and their implications on execution context"
+    },
+    {
+      "id": "d-3",
+      "title": "Reentrancy Attack Diagram",
+      "description": "Shows how reentrancy exploit works and the CEI solution",
+      "elements": [
+        "Victim Contract: balance mapping, withdraw() function",
+        "Attacker calls withdraw() \u2192 balance check passes",
+        "Attacker contract's receive() calls withdraw() again BEFORE balance updated",
+        "Recursion drains all funds",
+        "Solution: CEI - Update state first, THEN call external"
+      ],
+      "purpose": "Visualize the reentrancy vulnerability and how to prevent it with proper coding patterns"
+    }
+  ],
+  "topicId": "message-call-transaction"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "arm-assembly",
+    "title": "FIQ Handler Example",
+    "description": "Example FIQ handler demonstrating banked register usage and fast execution",
+    "code": "; FIQ Handler at 0x1C\nFIQ_Handler:\n ; No need to save r8-r14 (already banked)\n SUB lr, lr, #4 ; Adjust return address\n ; Handle FIQ source\n LDR r0, =FIQ_SOURCE ; Get FIQ source register\n LDR r1, [r0] ; Read status\n CMP r1, #0 ; Check if FIQ pending\n BEQ FIQ_Exit ; Exit if no FIQ\n ; Clear FIQ and process\n MOV r2, #1\n STR r2, [r0, #0x20] ; Clear FIQ\n ; Process FIQ (user code here)\nFIQ_Exit:\n SUBS pc, lr, #4 ; Return and restore CPSR",
+    "explanation": "This FIQ handler demonstrates the advantage of banked registers. Since r8-r14 are banked in FIQ mode, no register saving is needed, reducing latency to minimum. The handler uses SUB to adjust return address and SUBS PC to restore CPSR from SPSR.",
+    "complexity": {
+      "time": "O(1) - typically 4-10 cycles",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "arm-assembly",
+    "title": "IRQ Handler with Nested Support",
+    "description": "IRQ handler showing proper save/restore and enabling nested interrupts",
+    "code": "IRQ_Handler:\n SUB lr, lr, #4 ; Adjust return address\n STMFD sp!, {r0-r3, r12, lr} ; Save working registers\n ; Save SPSR for nested returns\n MRS r0, SPSR\n STMFD sp!, {r0}\n ; Check VIC for IRQ source\n LDR r0, =0xFFFFF000 ; VIC base address\n LDR r1, [r0, #0x00] ; IRQ status\n CMP r1, #0\n BEQ IRQ_End ; No IRQ pending\n ; Find and call specific handler\n BL Find_IRQ_Handler ; Get handler address\n MOV lr, pc\n BX r0 ; Call handler\n ; Enable nested IRQs\n CPSIE I ; Enable IRQ (nested)\n ; ... nested handler code ...\n CPSID I ; Disable IRQ before return\nIRQ_End:\n LDMFD sp!, {r0} ; Restore SPSR\n MSR SPSR_cxsf, r0\n LDMFD sp!, {r0-r3, r12, pc}^ ; Restore and return",
+    "explanation": "This IRQ handler shows complete context saving including SPSR for nested returns. It saves working registers, finds the specific IRQ source using VIC, calls appropriate handler, enables nesting for higher priority interrupts, then properly restores all state.",
+    "complexity": {
+      "time": "O(n) - depends on handler complexity",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "arm-assembly",
+    "title": "Exception Vector Table Setup",
+    "description": "Setting up vector table in startup code",
+    "code": "; Vector Table (placed at 0x00)\nAREA RESET, CODE, ATROOT\nEXPORT __Vectors\n__Vectors\n LDR pc, =Reset_Handler ; 0x00 Reset\n LDR pc, =Undef_Handler ; 0x04 Undefined\n LDR pc, =SWI_Handler ; 0x08 SWI\n LDR pc, =Prefetch_Handler ; 0x0C Prefetch Abort\n LDR pc, =DataAbort_Handler ; 0x10 Data Abort\n NOP ; 0x14 Reserved (for vectored IRQ)\n LDR pc, =IRQ_Handler ; 0x18 IRQ\n LDR pc, =FIQ_Handler ; 0x1C FIQ\n\n; Handlers\nReset_Handler\n ; Initialize stack and jump to main\n LDR sp, =Stack_Top\n B Main\n\nFIQ_Handler\n SUB lr, lr, #4\n ; FIQ processing here\n SUBS pc, lr, #4",
+    "explanation": "This code sets up the ARM exception vector table. Each entry is a branch instruction to the respective handler. Note that 0x14 is reserved - this is where some systems put a vectored IRQ entry. The FIQ handler is at the last position allowing direct placement.",
+    "complexity": {
+      "time": "O(1) - single branch each",
+      "space": "O(8 words)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "arm-assembly",
+    "title": "CPSR Interrupt Control",
+    "description": "Demonstrating how to enable/disable interrupts using CPSR bits",
+    "code": "; Disable all interrupts\n CPSID I ; Set I=1, disable IRQ\n CPSID F ; Set F=1, disable FIQ\n CPSID IF ; Disable both IRQ and FIQ\n\n; Enable interrupts\n CPSIE I ; Clear I=0, enable IRQ\n CPSIE F ; Clear F=0, enable FIQ\n CPSIE IF ; Enable both\n\n; Read current interrupt state\n MRS r0, CPSR ; Move CPSR to r0\n ANDS r0, r0, #0xC0 ; Mask I and F bits\n BEQ interrupts_enabled ; If Z=1, interrupts enabled\n\n; Using CPSR directly\n MRS r0, CPSR\n ORR r0, r0, #0x80 ; Set I bit to disable IRQ\n MSR CPSR_c, r0 ; Update CPSR (c = control field)",
+    "explanation": "This shows different methods to control interrupt enable/disable in ARM. CPSID and CPSIE are preferred for atomic operations. The I bit (bit 7) disables IRQ, F bit (bit 6) disables FIQ. MRS moves from CPSR, MSR moves to CPSR with field specifiers (c=control, s=status, f=flags).",
+    "complexity": {
+      "time": "O(1) - single cycle each",
+      "space": "O(1)"
+    }
+  }
+]

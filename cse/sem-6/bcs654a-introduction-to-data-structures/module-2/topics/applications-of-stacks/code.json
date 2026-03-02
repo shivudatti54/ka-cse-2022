@@ -1,0 +1,33 @@
+{
+  "topicId": "applications-of-stacks",
+  "examples": [
+    {
+      "id": "pseudocode-infix-to-postfix",
+      "title": "Algorithm: Infix to Postfix Conversion",
+      "description": "Converts an infix expression to postfix notation",
+      "language": "pseudocode",
+      "code": "ALGORITHM InfixToPostfix(infixExpression)\nINPUT: infixExpression (string)\nOUTPUT: postfixExpression (string)\n\nBEGIN\n operatorStack = new Stack()\n outputString = \"\"\n\n FOR EACH character IN infixExpression\n IF character IS operand\n ADD character TO outputString\n ELSE IF character IS opening parenthesis\n PUSH character ONTO operatorStack\n ELSE IF character IS closing parenthesis\n WHILE TOP OF operatorStack IS NOT opening parenthesis\n POP operator FROM operatorStack\n ADD operator TO outputString\n POP opening parenthesis FROM operatorStack\n ELSE IF character IS operator\n WHILE operatorStack IS NOT EMPTY AND TOP OF operatorStack HAS HIGHER PRECEDENCE THAN character\n POP operator FROM operatorStack\n ADD operator TO outputString\n PUSH character ONTO operatorStack\n\n WHILE operatorStack IS NOT EMPTY\n POP operator FROM operatorStack\n ADD operator TO outputString\n\n RETURN outputString\nEND",
+      "explanation": "This algorithm uses a stack to keep track of operators and their precedence. It iterates through the infix expression, adding operands to the output string and pushing operators onto the stack. When it encounters a closing parenthesis, it pops operators from the stack and adds them to the output string until it finds the matching opening parenthesis."
+    },
+    {
+      "id": "python-infix-to-postfix",
+      "title": "Python: Infix to Postfix Conversion",
+      "description": "Converts an infix expression to postfix notation",
+      "language": "python",
+      "code": "def infix_to_postfix(infix_expression):\n operator_stack = []\n output_string = \"\"\n\n precedence = {\n '+': 1,\n '-': 1,\n '*': 2,\n '/': 2\n }\n\n for character in infix_expression:\n if character.isalnum():\n output_string += character\n elif character == '(':n operator_stack.append(character)\n elif character == ')':\n while operator_stack[-1] != '(':n output_string += operator_stack.pop()\n operator_stack.pop()\n else:\n while operator_stack and operator_stack[-1] != '(' and precedence[operator_stack[-1]] >= precedence[character]:\n output_string += operator_stack.pop()\n operator_stack.append(character)\n\n while operator_stack:\n output_string += operator_stack.pop()\n\n return output_string",
+      "explanation": "This Python function implements the infix to postfix conversion algorithm using a list as a stack. It iterates through the infix expression, adding operands to the output string and pushing operators onto the stack. When it encounters a closing parenthesis, it pops operators from the stack and adds them to the output string until it finds the matching opening parenthesis.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-evaluate-postfix",
+      "title": "C: Evaluate Postfix Expression",
+      "description": "Evaluates a postfix expression",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint evaluate_postfix(char* postfix_expression) {\n int* stack = (int*)malloc(100 * sizeof(int));\n int top = -1;\n\n for (int i = 0; postfix_expression[i]; i++) {\n if (postfix_expression[i] >= '0' && postfix_expression[i] <= '9') {\n stack[++top] = postfix_expression[i] - '0';\n } else {\n int operand2 = stack[top--];\n int operand1 = stack[top--];\n int result;\n\n switch (postfix_expression[i]) {\n case '+':\n result = operand1 + operand2;\n break;\n case '-':\n result = operand1 - operand2;\n break;\n case '*':\n result = operand1 * operand2;\n break;\n case '/':\n result = operand1 / operand2;\n break;\n }\n\n stack[++top] = result;\n }\n }\n\n return stack[top];\n}",
+      "explanation": "This C function evaluates a postfix expression using a stack. It iterates through the postfix expression, pushing operands onto the stack and popping them when it encounters an operator. It then applies the operator to the two operands and pushes the result back onto the stack.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

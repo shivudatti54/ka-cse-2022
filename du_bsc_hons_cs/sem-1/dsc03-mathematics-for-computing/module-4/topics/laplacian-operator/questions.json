@@ -1,0 +1,53 @@
+{
+  "topicId": "laplacian-operator",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the discrete Laplacian operator used in 2‑D image processing, give the standard 3×3 kernel, and explain how it responds to uniform intensity regions and edges.",
+      "keyPoints": [
+        "Discrete Laplacian approximates the second‑order spatial derivative ∇²I = ∂²I/∂x² + ∂²I/∂y²",
+        "Common 3×3 kernel: [[0,1,0],[1,-4,1],[0,1,0]] (or the variant with diagonal entries)",
+        "In homogeneous areas the kernel output is zero; at intensity changes (edges) it yields non‑zero values, with sign indicating direction of change",
+        "The operator is isotropic for a uniform grid but can be sensitive to noise."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "For an undirected graph with adjacency matrix A = [[0,1,0],[1,0,1],[0,1,0]], compute the degree matrix D, the graph Laplacian L = D − A, and state one fundamental property of L.",
+      "keyPoints": [
+        "Degree matrix D is diagonal: D = diag(2,2,2) for the three‑node path graph",
+        "Graph Laplacian L = D − A = [[2,-1,0],[-1,2,-1],[0,-1,2]]",
+        "L is symmetric positive semidefinite; its number of zero eigenvalues equals the number of connected components of the graph",
+        "The smallest eigenvalue is 0; the corresponding eigenvector is the constant vector."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Describe the Laplacian‑of‑Gaussian (LoG) blob detection method. Derive the 2‑D LoG filter from the Gaussian and Laplacian operators, give the explicit formula including the scale parameter σ, and explain how scale‑space extrema are used to detect blobs. Include a short Python code snippet that loads an image, applies scipy.ndimage.gaussian_laplace, and returns the coordinates of local maxima above a given threshold.",
+      "keyPoints": [
+        "LoG = ∇²G(x,y,σ) = (1/πσ⁴)·(1−(x²+y²)/(2σ²))·e^{−(x²+y²)/(2σ²)} (or equivalently ∂²G/∂x²+∂²G/∂y²)",
+        "Gaussian smooths the image, then Laplacian highlights regions of rapid intensity change; applying LoG in one step is computationally efficient",
+        "Blob detection: convolve image with LoG at multiple σ, find local maxima across scale and space; each blob’s radius ≈ √2·σ",
+        "Python example uses scipy.ndimage.gaussian_laplace and scipy.ndimage.maximum_filter to locate peaks."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Explain the role of the graph Laplacian in spectral clustering. Outline the algorithm steps using the normalized Laplacian (either symmetric or random‑walk version), discuss the meaning of its eigenvalues/eigenvectors (e.g., the first zero eigenvalue indicates connectivity, the k smallest eigenvectors embed the graph), and provide a concise Python‑style pseudo‑code that takes an adjacency matrix, builds L_sym, computes its eigenvectors via scipy.sparse.linalg.eigsh, and performs k‑means on the eigenvector matrix to obtain cluster labels.",
+      "keyPoints": [
+        "Spectral clustering steps: (1) build weighted adjacency matrix W, (2) compute degree matrix D, (3) compute normalized Laplacian L_sym = I − D^{−1/2} W D^{−1/2} (or L_rw = I − D^{−1}W), (4) find k smallest eigenvectors, (5) form feature matrix U (or renormalized), (6) run k‑means on rows of U",
+        "Eigenvalues: the multiplicity of eigenvalue 0 equals the number of connected components; the spectral gap after the k‑th smallest non‑zero eigenvalue indicates cluster separability",
+        "Embedding: each node is represented by a vector in ℝ^k (the eigenvectors), where Euclidean distance approximates graph distance for well‑separated clusters",
+        "Pseudo‑code demonstrates use of numpy, scipy.sparse.linalg.eigsh, and sklearn.cluster.KMeans; mentions practical issues like choice of k, similarity metric, and eigenvector normalization."
+      ],
+      "marks": 10
+    }
+  ]
+}

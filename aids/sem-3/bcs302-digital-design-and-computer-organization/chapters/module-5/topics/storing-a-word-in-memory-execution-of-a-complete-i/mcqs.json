@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the minimum number of clock cycles typically required to store a single word in memory using a standard load-store architecture?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctIndex": 0,
+    "explanation": "A simple store instruction can often be completed in a single clock cycle in a pipelined processor, as the address calculation, data fetch from register, and memory write can be initiated within one cycle (though the actual memory write may complete later)."
+  },
+  {
+    "id": "q2",
+    "question": "During the execution of a MIPS 'sw' (store word) instruction, which main functional units are primarily involved?",
+    "options": [
+      "ALU and Register File",
+      "ALU, Register File, and Data Memory",
+      "Instruction Memory and Data Memory",
+      "Program Counter and Data Memory"
+    ],
+    "correctIndex": 1,
+    "explanation": "The ALU calculates the effective memory address from the base register and offset. The Register File provides the data word to be stored. The Data Memory unit is then written to with the calculated address and data."
+  },
+  {
+    "id": "q3",
+    "question": "In a multi-cycle MIPS datapath, which cycle is responsible for performing the memory write operation for a 'store word' instruction?",
+    "options": [
+      "Cycle 2: Instruction Decode and Register Fetch",
+      "Cycle 3: Execution, Address Calculation",
+      "Cycle 4: Memory Access",
+      "Cycle 5: Write-Back"
+    ],
+    "correctIndex": 2,
+    "explanation": "The standard multi-cycle stages are: 1. Instruction Fetch, 2. Instruction Decode/Register Fetch, 3. Execution, Address Calculation, 4. Memory Access, 5. Write-Back. The actual memory write for a store instruction occurs in the Memory Access cycle (Cycle 4)."
+  },
+  {
+    "id": "q4",
+    "question": "Consider a big-endian machine with a 32-bit word size. What value is stored at the *byte* address 0x1004 after executing 'sw $t0, 0($t1)' where $t1 contains 0x1000 and $t0 contains the 32-bit value 0xAABBCCDD?",
+    "options": [
+      "0xAA",
+      "0xBB",
+      "0xCC",
+      "0xDD"
+    ],
+    "correctIndex": 0,
+    "explanation": "The effective word address is 0x1000 + 0 = 0x1000. In a big-endian system, the most significant byte (0xAA) of the word (0xAABBCCDD) is stored at the lowest byte address (0x1000). The question asks for byte address 0x1004, which is the next consecutive word address (0x1000 + 4 bytes). Therefore, the byte at 0x1004 is the MSB (0xAA) of the *next* word in memory, which is unchanged by this store operation. The store only affects addresses 0x1000 to 0x1003."
+  },
+  {
+    "id": "q5",
+    "question": "A processor uses a non-blocking cache with a write-allocate, write-back policy. A 'store' instruction misses in the data cache. What is the necessary sequence of operations before the store can be considered 'executed' from the program's perspective?",
+    "options": [
+      "1. Allocate a line in the cache. 2. Fetch the missing block from main memory. 3. Merge the store data into the cache line. 4. Mark the line as dirty.",
+      "1. Write the data directly to main memory. 2. Invalidate the corresponding cache line if present.",
+      "1. Allocate a line in the cache. 2. Merge the store data into the newly allocated line. 3. Mark the line as dirty. (No fetch needed)",
+      "1. Write the data directly to a write buffer. 2. The instruction is now considered executed. 3. Later, the write buffer drains the data to main memory."
+    ],
+    "correctIndex": 0,
+    "explanation": "For a write-allocate policy, a miss requires bringing the block containing the target address into the cache. The sequence is: allocate a cache line (potentially evicting a dirty line first), fetch the correct block from memory, merge the store data into the correct offset within that newly fetched cache line, and mark the line as dirty since it now contains data not yet in main memory. The instruction is not complete until the data is written into the cache, making it visible to subsequent loads."
+  }
+]

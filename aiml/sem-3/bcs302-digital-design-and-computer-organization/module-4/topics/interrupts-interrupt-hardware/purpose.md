@@ -1,0 +1,2 @@
+# Interrupts Interrupt Hardware
+This module provides comprehensive coverage of interrupt hardware architecture for students students, covering interrupt controllers (8259A PIC, APIC), vector tables, priority schemes, and quantitative analysis of interrupt latency and overhead. The content establishes theoretical foundations with mathematical derivations essential for system-level programming and embedded development.

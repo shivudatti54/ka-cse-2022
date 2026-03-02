@@ -1,0 +1,45 @@
+{
+  "topicId": "the-unique-nature-of-webapps",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic HTTP Request-Response Pattern",
+      "description": "Demonstrates how web applications handle client requests",
+      "code": "// CLIENT SIDE (Browser)\nFUNCTION sendRequest(url, method, data):\n REQUEST = createHTTPRequest(method, url)\n IF data EXISTS:\n REQUEST.setBody(serializeToJSON(data))\n ENDIF\n RESPONSE = network.send(REQUEST)\n RETURN parseJSON(RESPONSE.body)\nEND FUNCTION\n\n// Example Usage\nresult = sendRequest(\"https://api.example.com/users\", \"GET\", NULL)\ndisplay(result)\n\n// SERVER SIDE\nFUNCTION handleRequest(request):\n method = request.method\n path = request.url\n \n IF method == \"GET\" AND path == \"/users\":\n users = database.query(\"SELECT * FROM users\")\n RETURN createResponse(200, toJSON(users))\n ELSE:\n RETURN createResponse(404, \"Not Found\")\n ENDIF\nEND FUNCTION",
+      "explanation": "Shows the request-response cycle: client creates HTTP request, sends to server, server processes and returns response",
+      "timeComplexity": "O(n) for database queries",
+      "spaceComplexity": "O(n) for response data"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Session Management for Stateless HTTP",
+      "description": "Demonstrates how to maintain state across stateless HTTP requests",
+      "code": "// SERVER SIDE SESSION MANAGEMENT\nSESSION_STORE = {} // In-memory or database\n\nFUNCTION handleLogin(username, password):\n user = database.findUser(username)\n IF user.password == hash(password):\n sessionId = generateUniqueId()\n SESSION_STORE[sessionId] = {\n \"userId\": user.id,\n \"username\": user.username,\n \"loginTime\": currentTime(),\n \"expiry\": currentTime() + 3600 // 1 hour\n }\n RETURN createCookie(\"sessionId\", sessionId)\n ELSE:\n RETURN createResponse(401, \"Invalid credentials\")\n ENDIF\nEND FUNCTION\n\nFUNCTION authenticateRequest(request):\n sessionId = request.cookies[\"sessionId\"]\n session = SESSION_STORE[sessionId]\n \n IF session == NULL OR session.expiry < currentTime():\n RETURN NULL // Not authenticated\n ELSE:\n RETURN session.userId // Return authenticated user\n ENDIF\nEND FUNCTION",
+      "explanation": "Demonstrates how web applications overcome HTTP's stateless nature by using session IDs stored in cookies",
+      "timeComplexity": "O(1) for session lookup",
+      "spaceComplexity": "O(n) for session storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Simple REST API Endpoint",
+      "description": "Demonstrates RESTful web service design principles",
+      "code": "// RESTful API Design\n// Resource: /users\n\nFUNCTION handleAPIRequest(method, path, body, headers):\n // Route to appropriate handler\n IF path == \"/users\":\n SELECT method:\n CASE \"GET\":\n // Get all users\n users = database.query(\"SELECT * FROM users\")\n RETURN createResponse(200, users, \"application/json\")\n \n CASE \"POST\":\n // Create new user\n newUser = parseJSON(body)\n id = database.insert(\"users\", newUser)\n RETURN createResponse(201, {\"id\": id}, \"application/json\")\n \n ENDSELECT\n ELSEIF path MATCHES \"/users/[0-9]+\":\n userId = extractIdFromPath(path)\n \n SELECT method:\n CASE \"GET\":\n user = database.find(\"users\", userId)\n RETURN createResponse(200, user, \"application/json\")\n \n CASE \"PUT\":\n updatedUser = parseJSON(body)\n database.update(\"users\", userId, updatedUser)\n RETURN createResponse(200, \"Updated\", \"application/json\")\n \n CASE \"DELETE\":\n database.delete(\"users\", userId)\n RETURN createResponse(204, NULL, \"application/json\")\n ENDSELECT\n ENDIF\nEND FUNCTION",
+      "explanation": "Shows RESTful design: proper HTTP methods (GET, POST, PUT, DELETE), resource-based URLs, JSON responses",
+      "timeComplexity": "O(n) for queries",
+      "spaceComplexity": "O(n) for response"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "AJAX Call for Asynchronous Update",
+      "description": "Demonstrates how AJAX enables partial page updates without reload",
+      "code": "// CLIENT-SIDE AJAX\nFUNCTION loadUserProfile(userId):\n // Create XMLHttpRequest object\n xhr = new XMLHttpRequest()\n \n // Set up callback for when response arrives\n xhr.onload = FUNCTION():\n IF xhr.status == 200:\n user = JSON.parse(xhr.responseText)\n // Update only the profile section\n document.getElementById(\"username\").innerText = user.name\n document.getElementById(\"email\").innerText = user.email\n document.getElementById(\"profile\").style.display = \"block\"\n ELSE:\n displayError(\"Failed to load profile\")\n ENDIF\n END FUNCTION\n \n // Configure and send request\n xhr.open(\"GET\", \"/api/users/\" + userId, true) // true = async\n xhr.setRequestHeader(\"Content-Type\", \"application/json\")\n xhr.send()\n \n // Page continues to be interactive while loading\n displayLoadingSpinner()\nEND FUNCTION\n\n// Modern fetch API equivalent\nFUNCTION loadUserProfileModern(userId):\n fetch(\"/api/users/\" + userId)\n .then(response => response.json())\n .then(user => updateProfileUI(user))\n .catch(error => displayError(error))\nEND FUNCTION",
+      "explanation": "AJAX enables asynchronous communication - page doesn't reload, only specific sections update, UI remains responsive",
+      "timeComplexity": "O(1) for UI update, O(n) for network",
+      "spaceComplexity": "O(1) for DOM update"
+    }
+  ]
+}

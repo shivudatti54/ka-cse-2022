@@ -1,0 +1,45 @@
+{
+  "topicId": "network-layer-services",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Distance Vector Routing Algorithm",
+      "description": "Pseudocode for Bellman-Ford based distance vector routing",
+      "code": "INITIALIZE ROUTING TABLE\nBEGIN\n FOR each destination D in network DO\n IF D is directly connected THEN\n distance[D] = cost to D\n nextHop[D] = D\n ELSE\n distance[D] = INFINITY\n nextHop[D] = NULL\n END IF\n END FOR\n\nUPDATE ROUTING TABLE\nBEGIN\n FOR each received update from neighbor N DO\n FOR each destination D DO\n newDist = cost to N + distance[N][D]\n IF newDist < distance[D] THEN\n distance[D] = newDist\n nextHop[D] = N\n END IF\n END FOR\n END FOR\nEND",
+      "explanation": "Each router maintains a table of shortest distances to all destinations. Periodically exchanges this table with directly connected neighbors. Updates its table if a shorter path is found through a neighbor using the Bellman-Ford equation.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n×d) where n=neighbors, d=destinations",
+      "spaceComplexity": "O(d) per router"
+    },
+    {
+      "id": "code-2",
+      "title": "Dijkstra's Shortest Path Algorithm",
+      "description": "Pseudocode for link state routing using Dijkstra's algorithm",
+      "code": "DIJKSTRA'S ALGORITHM\nBEGIN\n SET S = {source} // Set of visited vertices\n FOR each vertex v DO\n distance[v] = INFINITY\n previous[v] = NULL\n END FOR\n distance[source] = 0\n\n WHILE S does not contain all vertices DO\n SELECT vertex u in V-S with minimum distance\n ADD u to S\n FOR each neighbor v of u DO\n alt = distance[u] + cost(u,v)\n IF alt < distance[v] THEN\n distance[v] = alt\n previous[v] = u\n END IF\n END FOR\n END WHILE\nEND",
+      "explanation": "Link state protocols like OSPF use this algorithm. Each router has complete topology map. Calculates shortest path to all destinations by progressively building set of visited nodes with known shortest distances.",
+      "language": "pseudocode",
+      "timeComplexity": "O(V²) basic, O(E log V) with priority queue",
+      "spaceComplexity": "O(V+E)"
+    },
+    {
+      "id": "code-3",
+      "title": "Packet Forwarding Process",
+      "description": "Pseudocode showing how router forwards packets based on routing table",
+      "code": "PACKET FORWARDING\nBEGIN\n WHEN packet arrives at router input DO\n Read destination IP from packet header\n Extract destination network prefix\n \n // Longest Prefix Match\n FOR each entry in routing table DO\n IF (destination IP AND subnet_mask) == network_address THEN\n candidate = entry\n END IF\n END FOR\n SELECT entry with longest prefix match\n \n IF entry found THEN\n Decrement TTL by 1\n Recalculate header checksum\n Forward to nextHop interface\n ELSE\n Drop packet\n Send ICMP Destination Unreachable\n END IF\n END WHEN\nEND",
+      "explanation": "Router performs longest prefix match to find best route. Decrements TTL and updates checksum before forwarding. If no matching route exists, packet is dropped and error is reported.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) with TCAM, O(log n) with binary search on prefixes",
+      "spaceComplexity": "O(n) for routing table"
+    },
+    {
+      "id": "code-4",
+      "title": "IP Packet Fragmentation Process",
+      "description": "Pseudocode showing packet fragmentation at router when MTU exceeded",
+      "code": "FRAGMENTATION\nBEGIN\n WHEN packet arrives with size > outgoing_MTU DO\n original_ID = packet.identification\n max_payload = outgoing_MTU - 20 // minus IP header\n offset = 0\n \n WHILE remaining_data > max_payload DO\n Create new fragment\n fragment.identification = original_ID\n fragment.MF = 1 // More Fragments flag\n fragment.offset = offset / 8 // in 8-byte units\n fragment.header = copy original header\n fragment.data = max_payload bytes from original\n Send fragment\n offset = offset + max_payload\n remaining_data = remaining_data - max_payload\n END WHILE\n \n // Last fragment\n Create final fragment\n fragment.identification = original_ID\n fragment.MF = 0 // No more fragments\n fragment.offset = offset / 8\n fragment.header = copy original header\n fragment.data = remaining_data\n Send fragment\n END WHEN\nEND",
+      "explanation": "When a packet exceeds outgoing interface MTU, router fragments it. Each fragment carries same identification, MF flag set on all but last fragment, and offset indicating position in original packet.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) where n = number of fragments",
+      "spaceComplexity": "O(fragment_size) per fragment"
+    }
+  ]
+}

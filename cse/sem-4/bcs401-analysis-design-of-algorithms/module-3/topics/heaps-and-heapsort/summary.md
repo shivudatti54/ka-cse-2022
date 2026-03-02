@@ -1,0 +1,3 @@
+# Heaps And Heapsort
+
+A binary heap is a complete binary tree satisfying the heap property (max-heap: parent ≥ children; min-heap: parent ≤ children). Heapsort transforms the input into a heap structure and then repeatedly extracts the maximum/minimum element. Key operations include MAX-HEAPIFY (O(log n)), BUILD-MAX-HEAP (O(n)), Heap Insert (O(log n)), and Heap Extract (O(log n)). Heapsort achieves O(n log n) worst-case time complexity with O(1) space complexity, making it suitable for memory-constrained environments. The algorithm is not stable but guarantees optimal worst-case performance unlike quicksort. The heap data structure also serves as the foundation for priority queues used in scheduling algorithms and graph algorithms like Dijkstra's shortest path.

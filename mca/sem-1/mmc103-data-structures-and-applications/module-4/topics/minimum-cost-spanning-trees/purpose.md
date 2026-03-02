@@ -1,0 +1,2 @@
+# Minimum Cost Spanning Trees
+To provide students/students/students with comprehensive theoretical and practical knowledge of Minimum Cost Spanning Trees, including formal proofs of correctness (cut property, cycle property), detailed algorithm analysis for both Kruskal's and Prim's methods, complexity analysis, and application-based assessment. This content prepares students for advanced algorithm design courses and competitive examinations.

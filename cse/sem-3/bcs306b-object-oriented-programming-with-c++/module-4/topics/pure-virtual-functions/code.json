@@ -1,0 +1,45 @@
+{
+  "topicId": "pure-virtual-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Abstract Class Example - Shape Hierarchy",
+      "description": "Demonstrates abstract class with pure virtual functions and derived class implementations",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Abstract Base Class\nclass Shape {\npublic:\n // Pure virtual functions - must be overridden\n virtual double area() = 0;\n virtual double perimeter() = 0;\n \n // Virtual destructor - essential for proper cleanup\n virtual ~Shape() {\n cout << \"Shape destructor called\" << endl;\n }\n};\n\n// Derived Class: Circle\nclass Circle : public Shape {\nprivate:\n double radius;\npublic:\n Circle(double r) : radius(r) {}\n \n // Override pure virtual functions\n double area() override {\n return 3.14159 * radius * radius;\n }\n \n double perimeter() override {\n return 2 * 3.14159 * radius;\n }\n \n ~Circle() {\n cout << \"Circle destructor called\" << endl;\n }\n};\n\n// Derived Class: Rectangle\nclass Rectangle : public Shape {\nprivate:\n double length, width;\npublic:\n Rectangle(double l, double w) : length(l), width(w) {}\n \n double area() override {\n return length * width;\n }\n \n double perimeter() override {\n return 2 * (length + width);\n }\n \n ~Rectangle() {\n cout << \"Rectangle destructor called\" << endl;\n }\n};\n\nint main() {\n // Cannot instantiate abstract class\n // Shape s; // Error!\n \n // Use polymorphism through pointers\n Shape* shapes[2];\n shapes[0] = new Circle(5.0);\n shapes[1] = new Rectangle(4.0, 6.0);\n \n for (int i = 0; i < 2; i++) {\n cout << \"Area: \" << shapes[i]->area() << endl;\n cout << \"Perimeter: \" << shapes[i]->perimeter() << endl;\n }\n \n // Proper cleanup with virtual destructor\n for (int i = 0; i < 2; i++) {\n delete shapes[i];\n }\n \n return 0;\n}",
+      "explanation": "This program demonstrates pure virtual functions creating an abstract Shape class. Circle and Rectangle are derived classes that implement the pure virtual functions. The base class pointer array demonstrates runtime polymorphism where the correct area() and perimeter() functions are called based on the actual object type.",
+      "timeComplexity": "O(1) for each function call",
+      "spaceComplexity": "O(n) where n is number of derived classes stored"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Object Slicing Demonstration",
+      "description": "Shows what happens when object slicing occurs and how to prevent it",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n int baseData;\n Base(int b) : baseData(b) {}\n virtual void display() {\n cout << \"Base: \" << baseData << endl;\n }\n virtual ~Base() {}\n};\n\nclass Derived : public Base {\npublic:\n int derivedData;\n Derived(int b, int d) : Base(b), derivedData(d) {}\n \n void display() override {\n cout << \"Base: \" << baseData << \", Derived: \" << derivedData << endl;\n }\n};\n\nvoid showByValue(Base obj) {\n // Object slicing occurs here - derived portion is lost\n obj.display();\n}\n\nvoid showByReference(const Base& obj) {\n // No slicing - polymorphism works\n obj.display();\n}\n\nvoid showByPointer(const Base* obj) {\n // No slicing - polymorphism works\n obj->display();\n}\n\nint main() {\n Derived obj(10, 20);\n \n cout << \"Original object:\" << endl;\n obj.display();\n \n cout << \"\\nPassing by value (slicing occurs):\" << endl;\n showByValue(obj); // Only Base::display() called\n \n cout << \"\\nPassing by reference (no slicing):\" << endl;\n showByReference(obj); // Derived::display() called\n \n cout << \"\\nPassing by pointer (no slicing):\" << endl;\n showByPointer(&obj); // Derived::display() called\n \n return 0;\n}",
+      "explanation": "This code demonstrates object slicing. When a Derived object is passed by value to a function expecting a Base parameter, only the Base portion is copied - the Derived portion is 'sliced off'. Using pointers or references prevents slicing and maintains polymorphism.",
+      "timeComplexity": "O(1) for all operations",
+      "spaceComplexity": "O(1) for reference/pointer, O(1) for pass-by-value copy"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Factory Pattern using Pure Virtual Functions",
+      "description": "Demonstrates Factory Design Pattern implementation with abstract classes",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\n// Abstract Product Interface\nclass Product {\npublic:\n virtual string getName() = 0;\n virtual double getPrice() = 0;\n virtual ~Product() {}\n};\n\n// Concrete Product: Laptop\nclass Laptop : public Product {\nprivate:\n string brand;\n double price;\npublic:\n Laptop(string b, double p) : brand(b), price(p) {}\n \n string getName() override {\n return brand + \" Laptop\";\n }\n \n double getPrice() override {\n return price;\n }\n};\n\n// Concrete Product: Phone\nclass Phone : public Product {\nprivate:\n string brand;\n double price;\npublic:\n Phone(string b, double p) : brand(b), price(p) {}\n \n string getName() override {\n return brand + \" Phone\";\n }\n \n double getPrice() override {\n return price;\n }\n};\n\n// Factory Class\nclass ProductFactory {\npublic:\n enum ProductType {\n LAPTOP,\n PHONE\n };\n \n // Factory method using pure virtual function concept\n static Product* createProduct(ProductType type, string brand, double price) {\n switch(type) {\n case LAPTOP:\n return new Laptop(brand, price);\n case PHONE:\n return new Phone(brand, price);\n default:\n return nullptr;\n }\n }\n};\n\nint main() {\n // Client code doesn't know exact class being created\n Product* p1 = ProductFactory::createProduct(ProductFactory::LAPTOP, \"Dell\", 50000);\n Product* p2 = ProductFactory::createProduct(ProductFactory::PHONE, \"Apple\", 80000);\n \n cout << \"Product: \" << p1->getName() << \", Price: \" << p1->getPrice() << endl;\n cout << \"Product: \" << p2->getName() << \", Price: \" << p2->getPrice() << endl;\n \n delete p1;\n delete p2;\n \n return 0;\n}",
+      "explanation": "The Factory Pattern demonstrates practical use of pure virtual functions. Product is an abstract interface defining the contract. Laptop and Phone are concrete implementations. The factory creates objects without the client knowing the exact class, promoting loose coupling and extensibility.",
+      "timeComplexity": "O(1) for object creation and method calls",
+      "spaceComplexity": "O(1) for factory, O(n) for product storage"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Pure Virtual Function with Default Implementation",
+      "description": "Shows how pure virtual functions can have implementations that derived classes can optionally use",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n // Pure virtual function with default implementation\n virtual void display() = 0;\n \n // Virtual destructor\n virtual ~Base() {}\n};\n\n// Provide implementation for pure virtual function\nvoid Base::display() {\n cout << \"Base class default implementation\" << endl;\n}\n\nclass Derived1 : public Base {\npublic:\n // Override and provide own implementation\n void display() override {\n cout << \"Derived1 custom implementation\" << endl;\n }\n};\n\nclass Derived2 : public Base {\npublic:\n // Use base class default implementation\n void display() override {\n // Call base class implementation\n Base::display();\n }\n};\n\nint main() {\n Derived1 d1;\n Derived2 d2;\n Base* ptr;\n \n ptr = &d1;\n ptr->display(); // Calls Derived1::display()\n \n ptr = &d2;\n ptr->display(); // Calls Derived2 which calls Base::display()\n \n return 0;\n}",
+      "explanation": "This demonstrates that pure virtual functions can have implementations. Derived1 overrides completely, while Derived2 explicitly calls the base class implementation using the scope resolution operator (::). This allows providing default behavior while still requiring derived classes to provide their own implementation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "directory-implementation",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Linear Search in Directory",
+      "description": "Demonstrates searching for a file in a linear list directory implementation",
+      "code": "PROCEDURE SearchDirectory(dirList, targetName)\nBEGIN\n    FOR i \u2190 0 TO dirList.length - 1 DO\n        IF dirList[i].fileName = targetName THEN\n            RETURN dirList[i]  // File found\n        END IF\n    END FOR\n    RETURN NULL  // File not found\nEND PROCEDURE\n// Time Complexity: O(n)\n// Space Complexity: O(1)",
+      "explanation": "This procedure performs linear search through directory entries to find a file by name. In worst case, it may traverse all entries.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Hash Table Directory Implementation",
+      "description": "Python implementation of hash-based directory with collision handling using chaining",
+      "code": "class DirectoryEntry:\n    def __init__(self, filename, metadata):\n        self.filename = filename\n        self.metadata = metadata\n        self.next = None\n\nclass HashDirectory:\n    def __init__(self, size=100):\n        self.size = size\n        self.table = [None] * size\n    \n    def _hash(self, filename):\n        return hash(filename) % self.size\n    \n    def insert(self, filename, metadata):\n        index = self._hash(filename)\n        entry = DirectoryEntry(filename, metadata)\n        entry.next = self.table[index]\n        self.table[index] = entry\n    \n    def search(self, filename):\n        index = self._hash(filename)\n        current = self.table[index]\n        while current:\n            if current.filename == filename:\n                return current.metadata\n            current = current.next\n        return None\n\n# Time Complexity: O(1) average, O(n) worst case\n# Space Complexity: O(n) for n entries",
+      "explanation": "Implements directory using hash table with chaining for collision resolution. Provides O(1) average-case lookup time.",
+      "timeComplexity": "O(1) average, O(n) worst",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Directory Operations",
+      "description": "Pseudocode for common directory operations - create, delete, rename",
+      "code": "PROCEDURE CreateFile(dir, filename, metadata)\nBEGIN\n    IF NOT SearchDirectory(dir, filename) THEN\n        entry \u2190 new DirectoryEntry(filename, metadata)\n        Append entry to dir.list\n        RETURN TRUE\n    ELSE\n        RETURN FALSE  // File already exists\n    END IF\nEND PROCEDURE\n\nPROCEDURE DeleteFile(dir, filename)\nBEGIN\n    entry \u2190 SearchDirectory(dir, filename)\n    IF entry \u2260 NULL THEN\n        Remove entry from dir.list\n        RETURN TRUE\n    ELSE\n        RETURN FALSE  // File not found\n    END IF\nEND PROCEDURE\n\nPROCEDURE RenameFile(dir, oldName, newName)\nBEGIN\n    IF SearchDirectory(dir, newName) = NULL THEN\n        entry \u2190 SearchDirectory(dir, oldName)\n        IF entry \u2260 NULL THEN\n            entry.filename \u2190 newName\n            RETURN TRUE\n        END IF\n    END IF\n    RETURN FALSE\nEND PROCEDURE",
+      "explanation": "These procedures demonstrate basic directory operations. Each operation checks for existence of files to prevent conflicts and maintain directory integrity.",
+      "timeComplexity": "O(n) with linear list",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Inode Structure Representation",
+      "description": "C structure representing inode with direct and indirect block pointers",
+      "code": "#define NUM_DIRECT_BLOCKS 12\n#define POINTER_SIZE 4\n\nstruct inode {\n    int inode_number;\n    int file_type;        // Regular file, directory, etc.\n    int link_count;\n    uid_t owner_uid;\n    gid_t owner_gid;\n    off_t file_size;\n    time_t access_time;\n    time_t modify_time;\n    time_t change_time;\n    \n    // Block pointers\n    int direct_blocks[NUM_DIRECT_BLOCKS];   // 12 direct pointers\n    int single_indirect;    // Level 1 indirect blocks\n    int double_indirect;    // Level 2 indirect blocks\n    int triple_indirect;    // Level 3 indirect blocks\n};\n\n/* Maximum file size calculation:\n * Direct: 12 * 4KB = 48KB\n * Single indirect: 1024 * 4KB = 4MB\n * Double indirect: 1024 * 1024 * 4KB = 4GB\n * Triple indirect: 1024^3 * 4KB = 4TB */",
+      "explanation": "This inode structure shows how UNIX file systems store file metadata and pointers to data blocks. Direct pointers handle small files efficiently, while indirect pointers enable support for very large files.",
+      "timeComplexity": "O(1) for small files, O(log n) for large",
+      "spaceComplexity": "O(1) per inode"
+    }
+  ]
+}

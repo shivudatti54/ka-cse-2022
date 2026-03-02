@@ -1,0 +1,157 @@
+{
+  "topicId": "mass-storage-magnetic-ssd",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the terms 'seek time' and 'rotational latency' in the context of magnetic disk performance. How do they contribute to total disk access time?",
+      "keyPoints": [
+        "Seek time is time taken by disk arm to move head to correct track",
+        "Rotational latency is waiting time for desired sector to rotate under head",
+        "Total access time = Seek time + Rotational latency + Transfer time",
+        "Seek time typically 3-15ms, rotational latency depends on RPM"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the SCAN disk scheduling algorithm with an example showing how it services requests.",
+      "keyPoints": [
+        "Also known as elevator algorithm",
+        "Moves from one end to other servicing all requests in path",
+        "Then reverses direction",
+        "Reduces average seek time compared to FCFS",
+        "Example with track positions would demonstrate the head movement"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is wear leveling in SSDs? Why is it necessary?",
+      "keyPoints": [
+        "Wear leveling distributes writes evenly across flash cells",
+        "Prevents premature wear of specific blocks",
+        "NAND flash has limited P/E cycles (1000-100000)",
+        "Extends SSD lifespan and maintains performance",
+        "Uses logical to physical block mapping"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between magnetic hard disks and Solid State Drives in terms of data storage mechanism.",
+      "keyPoints": [
+        "Magnetic disks use rotating platters and moving read/write heads",
+        "SSDs use NAND flash memory cells storing data as charge",
+        "Magnetic disks have mechanical parts; SSDs are entirely electronic",
+        "SSDs have no seek time or rotational latency",
+        "SSDs cannot overwrite in place; require erase before write"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the TRIM command? How does it help maintain SSD performance?",
+      "keyPoints": [
+        "TRIM is an ATA command allowing OS to inform SSD of deleted data",
+        "SSD can then mark those blocks as free without waiting for new write",
+        "Allows SSD controller to proactively clean invalid pages",
+        "Without TRIM, SSD performance degrades over time",
+        "Essential for maintaining consistent performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain RAID 5 with reference to fault tolerance and performance.",
+      "keyPoints": [
+        "Uses striping with distributed parity",
+        "Requires minimum 3 disks",
+        "Parity distributed across all drives",
+        "Can tolerate failure of one disk",
+        "Read performance good; write slower due to parity calculation",
+        "Suitable for applications needing balance of performance and redundancy"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is garbage collection in SSDs? Explain why it is needed.",
+      "keyPoints": [
+        "Process of reclaiming space from invalid pages",
+        "Flash memory cannot overwrite - must erase entire block first",
+        "Valid data in block must be moved before erasing",
+        "Background process performed by SSD controller",
+        "Essential for maintaining write performance",
+        "Can cause write amplification"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the following disk scheduling algorithms with examples: FCFS, SSTF, SCAN, and C-SCAN. Compare them in terms of performance and fairness.",
+      "keyPoints": [
+        "FCFS: Services requests in arrival order, simple but poor performance",
+        "SSTF: Chooses nearest request, minimum seek time but starvation possible",
+        "SCAN: Like elevator, reverses at ends, good average performance",
+        "C-SCAN: Circular, equal wait times, uniform service",
+        "Performance comparison with examples",
+        "Fairness: FCFS fair but slow, SSTF unfair to distant requests, SCAN and C-SCAN more uniform",
+        "Real-world considerations: workload patterns"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the internal architecture of an SSD including flash memory organization (blocks, pages), controller functions, and the operations of wear leveling and garbage collection.",
+      "keyPoints": [
+        "Flash memory structure: dies \u2192 planes \u2192 blocks \u2192 pages",
+        "Pages typically 2KB-16KB, blocks contain 64-256 pages",
+        "Cannot write to already written page without erase",
+        "Controller handles: mapping, wear leveling, garbage collection, ECC",
+        "Wear leveling maps logical addresses to physical locations evenly",
+        "Garbage collection moves valid data, erases blocks",
+        "Write amplification concept and impact",
+        "TRIM command role"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss RAID technology covering RAID levels 0, 1, 5, and 6. Include details on striping, mirroring, parity, fault tolerance, and performance characteristics.",
+      "keyPoints": [
+        "RAID 0: Striping only, no redundancy, improves performance, no fault tolerance",
+        "RAID 1: Mirroring, exact copy on second disk, good read, slower write",
+        "RAID 5: Striping with distributed parity, minimum 3 disks, good read, slower write due to parity",
+        "RAID 6: Double parity, can tolerate 2 disk failures, minimum 4 disks",
+        "Comparison table of characteristics",
+        "Trade-offs between performance, capacity, reliability",
+        "Common use cases for each level"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Calculate the total disk access time for reading a file consisting of 10,000 sectors (each sector = 512 bytes) from a disk with the following specifications: Seek time = 8ms, Rotational speed = 7200 RPM, Transfer rate = 50 MB/s. Show all calculations.",
+      "keyPoints": [
+        "Calculate rotational latency: Average = 1/2 \u00d7 (60/7200) = 4.17ms",
+        "Total seek time = 8ms (assuming single seek for all sectors in same track)",
+        "For consecutive sectors on same track, only one seek and one rotational latency needed",
+        "Transfer time = (10000 \u00d7 512) / (50 \u00d7 10^6) = 5.12 MB / 50 MB/s = 0.1024s = 102.4ms",
+        "Total = Seek + Latency + Transfer = 8 + 4.17 + 102.4 = 114.57ms",
+        "Note: If sectors span tracks, additional seek times would be needed"
+      ],
+      "marks": 10
+    }
+  ]
+}

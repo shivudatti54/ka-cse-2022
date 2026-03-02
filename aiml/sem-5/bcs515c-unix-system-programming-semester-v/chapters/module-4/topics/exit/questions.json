@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between the `exit()` function and the `_exit()` system call. Under what circumstances would a programmer choose `_exit()` over `exit()`?",
+    "expectedPoints": [
+      "`exit()` is a library function that performs cleanup tasks like flushing stdio buffers and calling functions registered with `atexit()` before terminating the process.",
+      "`_exit()` is a system call that terminates the process immediately without performing any library-level cleanup.",
+      "A programmer would use `_exit()` in a child process after a `fork()` to avoid flushing I/O buffers twice or when an immediate, unconditional termination is required."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "What is the purpose of the integer status argument passed to the `exit()` function? How can a parent process retrieve and interpret this value?",
+    "expectedPoints": [
+      "The status argument is an integer used to communicate the exit reason from a terminating process to its parent.",
+      "A parent process retrieves this value using the `wait()` or `waitpid()` system calls.",
+      "By convention, a status of 0 indicates success, while a non-zero value indicates an error or specific exit condition, which can be interpreted using macros like `WIFEXITED` and `WEXITSTATUS`."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "Describe the complete sequence of actions the UNIX kernel performs when a process calls `exit()`. Your answer should cover the handling of open resources, process relationships, and the sending of signals.",
+    "expectedPoints": [
+      "The kernel closes all open file descriptors, freeing associated resources.",
+      "It severs the process's relationship with its parent and children, making any orphaned children adopted by the `init` process (PID 1).",
+      "The kernel sends a `SIGCHLD` signal to the parent process to notify it of the child's termination and places the exit status into a waitable record until the parent collects it with `wait()`."
+    ],
+    "marks": 10
+  }
+]

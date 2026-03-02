@@ -1,0 +1,51 @@
+{
+  "topicId": "mimd-systems",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain the difference between SIMD and MIMD architectures with examples. (3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "SIMD: Single Instruction, Multiple Data -- one instruction operates on multiple data elements in lockstep. Example: GPU shader cores, AVX vector instructions.",
+        "MIMD: Multiple Instruction, Multiple Data -- each processor independently executes different instructions on different data. Example: multi-core CPUs, clusters.",
+        "SIMD has centralized synchronous control (data parallelism only); MIMD has distributed asynchronous control (supports both data and task parallelism)."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "What is memory contention in shared-memory MIMD systems and how can it be mitigated? (3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "Memory contention occurs when multiple processors compete to access the same memory location or bus simultaneously, causing serialization and performance degradation.",
+        "Mitigation strategies: use NUMA architecture (local memory is faster), use private caches to reduce memory traffic, minimize shared data access, use lock-free algorithms.",
+        "Cache coherence protocols help by keeping data in local caches, reducing main memory accesses."
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "Compare and contrast shared memory and distributed memory MIMD systems, discussing their advantages, disadvantages, and typical use cases. (8 marks)",
+      "type": "long",
+      "keyPoints": [
+        "Memory architecture: shared memory has a global address space; distributed memory has private per-node memory.",
+        "Communication: shared memory uses read/write to common variables; distributed memory uses explicit message passing (MPI).",
+        "Scalability: shared memory limited to hundreds of cores (bus bottleneck, cache coherence); distributed memory scales to thousands+ of cores.",
+        "Programming: shared memory is easier (OpenMP, implicit sharing); distributed memory is harder (MPI, explicit communication).",
+        "Cache coherence: required in shared memory (MESI protocol overhead); not needed in distributed memory.",
+        "Use cases: shared memory for workstations, servers (multi-core); distributed memory for supercomputers, clusters, cloud.",
+        "Modern systems are hybrid: clusters of multi-core nodes using MPI + OpenMP."
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Explain the MESI cache coherence protocol. Describe the four states and give an example of a state transition sequence when two processors access the same memory location. (5 marks)",
+      "type": "long",
+      "keyPoints": [
+        "Modified (M): cache has only copy, data differs from main memory (dirty).",
+        "Exclusive (E): cache has only copy, data matches main memory (clean).",
+        "Shared (S): multiple caches hold the line, all match main memory (clean, shared).",
+        "Invalid (I): cache line is not valid (stale or empty).",
+        "Example: P0 reads address X (no one else has it) -> line goes to E state. P1 reads X -> P0's line transitions to S, P1 gets S. P0 writes to X -> P0's line goes to M, P1's line becomes I (invalidated)."
+      ]
+    }
+  ]
+}

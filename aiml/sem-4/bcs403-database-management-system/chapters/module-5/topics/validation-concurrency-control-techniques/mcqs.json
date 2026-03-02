@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary goal of validation-based concurrency control (Optimistic Concurrency Control)?",
+    "options": [
+      "To avoid conflicts by validating transactions before they commit",
+      "To prevent conflicts by locking data items",
+      "To allow transactions to proceed without any restrictions",
+      "To roll back transactions as soon as a conflict is detected"
+    ],
+    "correctIndex": 0,
+    "explanation": "The primary goal of optimistic concurrency control is to allow transactions to execute freely during their execution phase and then validate for potential conflicts just before they commit, avoiding the overhead of locking during the read/write phases."
+  },
+  {
+    "id": "q2",
+    "question": "In the validation phase of optimistic concurrency control, a transaction's read set is checked against which of the following?",
+    "options": [
+      "The write set of all transactions that committed after it started",
+      "The write set of all transactions that committed after its validation started",
+      "The write set of all transactions that committed after it finished its read phase",
+      "The write set of all active transactions"
+    ],
+    "correctIndex": 2,
+    "explanation": "The validation phase checks a transaction's read set against the write sets of all transactions that committed *after* the validating transaction finished its read phase. If there is an overlap, it indicates a potential conflict and the transaction is rolled back."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following is a key disadvantage of the optimistic concurrency control method?",
+    "options": [
+      "It requires extensive locking mechanisms",
+      "It suffers from high overhead in high-conflict environments",
+      "It cannot be used in distributed database systems",
+      "It guarantees strict two-phase locking"
+    ],
+    "correctIndex": 1,
+    "explanation": "A key disadvantage is that in environments with high contention (where many transactions conflict), the method suffers from high overhead. This is because many transactions will perform their work only to be rolled back during the validation phase, wasting resources."
+  },
+  {
+    "id": "q4",
+    "question": "A transaction T_i is assigned a unique timestamp TS(T_i) at the start of its validation phase. According to the timestamp ordering validation rule, which condition must be true for T_i to be validated successfully against a transaction T_j that has already committed?",
+    "options": [
+      "TS(T_i) < TS(T_j) and T_i finishes its read phase before T_j starts its write phase",
+      "TS(T_i) > TS(T_j) and T_j finishes its write phase before T_i starts its read phase",
+      "TS(T_i) < TS(T_j) and T_j finishes its write phase before T_i starts its read phase",
+      "TS(T_i) > TS(T_j) and T_i finishes its read phase before T_j starts its write phase"
+    ],
+    "correctIndex": 2,
+    "explanation": "The timestamp ordering rule for validation requires that for all T_j with TS(T_j) < TS(T_i), T_j must have finished its write phase before T_i started its read phase. This ensures that T_i read data values that were already updated by older (lower timestamp) transactions, preventing a read-write conflict."
+  },
+  {
+    "id": "q5",
+    "question": "Consider three transactions with timestamps TS(T1)=100, TS(T2)=200, TS(T3)=300. T2 and T3 have committed. T1 is now in its validation phase. Its read set includes data item X. T2's write set includes X, and T3's write set does not. Which condition would cause T1's validation to fail?",
+    "options": [
+      "T2 committed after T1 started its read phase",
+      "T3 committed after T1 started its read phase",
+      "T2 committed before T1 started its read phase",
+      "T3 committed before T1 started its read phase"
+    ],
+    "correctIndex": 0,
+    "explanation": "T1's validation will fail if a transaction with a later timestamp (T2, TS=200) that wrote a data item (X) in T1's read set committed *after* T1 started its read phase. This violates the validation rule because T1 may have read an old value of X before T2 wrote it, leading to an inconsistent view."
+  }
+]

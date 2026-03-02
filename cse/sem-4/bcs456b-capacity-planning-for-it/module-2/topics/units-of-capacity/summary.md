@@ -1,0 +1,3 @@
+# Units Of Capacity
+
+This module examined the fundamental units of capacity measurement in IT systems across four primary domains: processor capacity (MIPS, MFLOPS, clock speed), memory and storage capacity (binary and decimal notation standards from bytes through yottabytes), network capacity (bits per second and latency considerations), and transaction processing capacity (TPC benchmarks and TPS metrics). Key distinctions were explored between performance and capacity metrics, binary and decimal storage notation, and theoretical versus practical capacity limits. The theoretical framework established provides essential knowledge for IT professionals engaged in capacity planning, infrastructure management, and system optimization activities.

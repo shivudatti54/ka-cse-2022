@@ -1,0 +1,400 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes fadeOut {
+        0%, 50% { opacity: 1; }
+        100% { opacity: 0.2; }
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      @keyframes highlight {
+        0%, 100% { stroke: #ffe66d; stroke-width: 3; }
+        50% { stroke: #ff6b6b; stroke-width: 4; }
+      }
+
+      @keyframes grow {
+        from { stroke-dashoffset: 100; }
+        to { stroke-dashoffset: 0; }
+      }
+
+      @keyframes nodeGlow {
+        0%, 100% { filter: drop-shadow(0 0 3px #00d4ff); }
+        50% { filter: drop-shadow(0 0 8px #00d4ff); }
+      }
+
+      .title {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        fill: #ffe66d;
+        animation: fadeIn 1s ease-out;
+      }
+
+      .subtitle {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        fill: #e0e0e0;
+        animation: fadeIn 1.5s ease-out;
+      }
+
+      .node {
+        fill: #00d4ff;
+        stroke: #ffe66d;
+        stroke-width: 2;
+        animation: nodeGlow 2s ease-in-out infinite;
+      }
+
+      .edge {
+        stroke: #4ecdc4;
+        stroke-width: 2;
+        fill: none;
+      }
+
+      .edge-removed {
+        stroke: #4ecdc4;
+        stroke-width: 2;
+        fill: none;
+        animation: fadeOut 3s ease-in-out infinite;
+      }
+
+      .edge-mst {
+        stroke: #ffe66d;
+        stroke-width: 3;
+        fill: none;
+        animation: highlight 2s ease-in-out infinite;
+      }
+
+      .label {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        fill: #1a1a2e;
+        text-anchor: middle;
+      }
+
+      .edge-label {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        fill: #ffe66d;
+        text-anchor: middle;
+      }
+
+      .section-label {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        fill: #ffe66d;
+      }
+
+      .description {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        fill: #e0e0e0;
+      }
+
+      .property-text {
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        fill: #e0e0e0;
+      }
+
+      .algorithm-box {
+        fill: none;
+        stroke: #4ecdc4;
+        stroke-width: 2;
+        rx: 5;
+      }
+
+      .weight-circle {
+        fill: #ff6b6b;
+        stroke: #ffe66d;
+        stroke-width: 1.5;
+      }
+    </style>
+
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#4ecdc4" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#1a1a2e"/>
+
+  <!-- Title Section -->
+  <g data-narration="Title: Spanning Trees - the minimum structure connecting all vertices">
+    <text x="400" y="35" class="title" text-anchor="middle">Spanning Trees</text>
+    <text x="400" y="55" class="subtitle" text-anchor="middle">Minimum structure connecting all vertices</text>
+  </g>
+
+  <!-- Left Side: Original Graph vs Spanning Tree -->
+  <g data-narration="Original graph with 5 vertices and 7 edges compared to spanning tree with 5 vertices and only 4 edges">
+    <!-- Original Graph -->
+    <g>
+      <text x="100" y="95" class="section-label">Original Graph</text>
+
+      <!-- Edges (7 edges) -->
+      <line x1="80" y1="140" x2="140" y2="140" class="edge"/>
+      <line x1="80" y1="140" x2="80" y2="200" class="edge"/>
+      <line x1="140" y1="140" x2="140" y2="200" class="edge"/>
+      <line x1="80" y1="200" x2="140" y2="200" class="edge"/>
+      <line x1="110" y1="110" x2="80" y2="140" class="edge"/>
+      <line x1="110" y1="110" x2="140" y2="140" class="edge"/>
+      <line x1="80" y1="200" x2="110" y2="230" class="edge"/>
+
+      <!-- Nodes -->
+      <circle cx="110" cy="110" r="18" class="node"/>
+      <text x="110" y="116" class="label">A</text>
+
+      <circle cx="80" cy="140" r="18" class="node"/>
+      <text x="80" y="146" class="label">B</text>
+
+      <circle cx="140" cy="140" r="18" class="node"/>
+      <text x="140" y="146" class="label">C</text>
+
+      <circle cx="80" cy="200" r="18" class="node"/>
+      <text x="80" y="206" class="label">D</text>
+
+      <circle cx="140" cy="200" r="18" class="node"/>
+      <text x="140" y="206" class="label">E</text>
+
+      <circle cx="110" cy="230" r="18" class="node"/>
+      <text x="110" y="236" class="label">F</text>
+
+      <text x="110" y="265" class="description" text-anchor="middle">V=6, E=7</text>
+    </g>
+
+    <!-- Spanning Tree -->
+    <g>
+      <text x="240" y="95" class="section-label">Spanning Tree</text>
+
+      <!-- Removed edges (animated to fade) -->
+      <line x1="220" y1="140" x2="280" y2="140" class="edge-removed"/>
+      <line x1="220" y1="200" x2="280" y2="200" class="edge-removed"/>
+      <line x1="220" y1="200" x2="250" y2="230" class="edge-removed"/>
+
+      <!-- Spanning tree edges (4 edges remain) -->
+      <line x1="220" y1="140" x2="220" y2="200" class="edge-mst"/>
+      <line x1="280" y1="140" x2="280" y2="200" class="edge-mst"/>
+      <line x1="250" y1="110" x2="220" y2="140" class="edge-mst"/>
+      <line x1="250" y1="110" x2="280" y2="140" class="edge-mst"/>
+      <line x1="280" y1="200" x2="250" y2="230" class="edge-mst"/>
+
+      <!-- Nodes -->
+      <circle cx="250" cy="110" r="18" class="node"/>
+      <text x="250" y="116" class="label">A</text>
+
+      <circle cx="220" cy="140" r="18" class="node"/>
+      <text x="220" y="146" class="label">B</text>
+
+      <circle cx="280" cy="140" r="18" class="node"/>
+      <text x="280" y="146" class="label">C</text>
+
+      <circle cx="220" cy="200" r="18" class="node"/>
+      <text x="220" y="206" class="label">D</text>
+
+      <circle cx="280" cy="200" r="18" class="node"/>
+      <text x="280" y="206" class="label">E</text>
+
+      <circle cx="250" cy="230" r="18" class="node"/>
+      <text x="250" y="236" class="label">F</text>
+
+      <text x="250" y="265" class="description" text-anchor="middle">V=6, E=5 (V-1)</text>
+    </g>
+
+    <!-- Arrow indicating transformation -->
+    <text x="180" y="175" class="description" font-size="20">→</text>
+  </g>
+
+  <!-- Right Side: MST Algorithms -->
+  <g data-narration="Minimum Spanning Tree algorithms: Kruskal's algorithm sorts edges by weight and picks smallest edges that don't form cycles. Prim's algorithm grows the tree from a starting vertex by always adding the cheapest connecting edge">
+    <text x="420" y="95" class="section-label">MST Algorithms</text>
+
+    <!-- Kruskal's Algorithm Box -->
+    <rect x="420" y="105" width="170" height="140" class="algorithm-box"/>
+    <text x="430" y="125" class="section-label" font-size="14">Kruskal's Algorithm</text>
+
+    <!-- Weighted graph for Kruskal -->
+    <g>
+      <!-- Edges with weights -->
+      <line x1="450" y1="155" x2="490" y2="155" class="edge"/>
+      <circle cx="470" cy="155" r="10" class="weight-circle"/>
+      <text x="470" y="159" class="edge-label" font-size="10" fill="#1a1a2e">1</text>
+
+      <line x1="450" y1="155" x2="450" y2="195" class="edge"/>
+      <circle cx="450" cy="175" r="10" class="weight-circle"/>
+      <text x="450" y="179" class="edge-label" font-size="10" fill="#1a1a2e">2</text>
+
+      <line x1="490" y1="155" x2="490" y2="195" class="edge-mst"/>
+      <circle cx="490" cy="175" r="10" class="weight-circle"/>
+      <text x="490" y="179" class="edge-label" font-size="10" fill="#1a1a2e">3</text>
+
+      <line x1="450" y1="195" x2="490" y2="195" class="edge-mst"/>
+      <circle cx="470" cy="195" r="10" class="weight-circle"/>
+      <text x="470" y="199" class="edge-label" font-size="10" fill="#1a1a2e">4</text>
+
+      <line x1="490" y1="195" x2="530" y2="175" class="edge-mst"/>
+      <circle cx="510" cy="185" r="10" class="weight-circle"/>
+      <text x="510" y="189" class="edge-label" font-size="10" fill="#1a1a2e">5</text>
+
+      <line x1="450" y1="195" x2="530" y2="175" class="edge-removed"/>
+      <circle cx="490" cy="185" r="10" class="weight-circle"/>
+      <text x="490" y="189" class="edge-label" font-size="10" fill="#1a1a2e">6</text>
+
+      <!-- Nodes -->
+      <circle cx="450" cy="155" r="12" class="node"/>
+      <text x="450" y="159" class="label" font-size="10">A</text>
+
+      <circle cx="490" cy="155" r="12" class="node"/>
+      <text x="490" y="159" class="label" font-size="10">B</text>
+
+      <circle cx="450" cy="195" r="12" class="node"/>
+      <text x="450" y="199" class="label" font-size="10">C</text>
+
+      <circle cx="490" cy="195" r="12" class="node"/>
+      <text x="490" y="199" class="label" font-size="10">D</text>
+
+      <circle cx="530" cy="175" r="12" class="node"/>
+      <text x="530" y="179" class="label" font-size="10">E</text>
+    </g>
+
+    <text x="430" y="225" class="description">• Sort edges by weight</text>
+    <text x="430" y="238" class="description">• Pick smallest edge that</text>
+    <text x="438" y="251" class="description">doesn't form cycle</text>
+
+    <!-- Prim's Algorithm Box -->
+    <rect x="610" y="105" width="170" height="140" class="algorithm-box"/>
+    <text x="620" y="125" class="section-label" font-size="14">Prim's Algorithm</text>
+
+    <!-- Weighted graph for Prim -->
+    <g>
+      <!-- Edges -->
+      <line x1="640" y1="155" x2="680" y2="155" class="edge-mst"/>
+      <circle cx="660" cy="155" r="10" class="weight-circle"/>
+      <text x="660" y="159" class="edge-label" font-size="10" fill="#1a1a2e">2</text>
+
+      <line x1="640" y1="155" x2="640" y2="195" class="edge-mst"/>
+      <circle cx="640" cy="175" r="10" class="weight-circle"/>
+      <text x="640" y="179" class="edge-label" font-size="10" fill="#1a1a2e">3</text>
+
+      <line x1="680" y1="155" x2="680" y2="195" class="edge-removed"/>
+      <circle cx="680" cy="175" r="10" class="weight-circle"/>
+      <text x="680" y="179" class="edge-label" font-size="10" fill="#1a1a2e">5</text>
+
+      <line x1="640" y1="195" x2="680" y2="195" class="edge-removed"/>
+      <circle cx="660" cy="195" r="10" class="weight-circle"/>
+      <text x="660" y="199" class="edge-label" font-size="10" fill="#1a1a2e">6</text>
+
+      <line x1="680" y1="195" x2="720" y2="175" class="edge-mst"/>
+      <circle cx="700" cy="185" r="10" class="weight-circle"/>
+      <text x="700" y="189" class="edge-label" font-size="10" fill="#1a1a2e">1</text>
+
+      <line x1="680" y1="155" x2="720" y2="175" class="edge-mst"/>
+      <circle cx="700" cy="165" r="10" class="weight-circle"/>
+      <text x="700" y="169" class="edge-label" font-size="10" fill="#1a1a2e">4</text>
+
+      <!-- Nodes -->
+      <circle cx="640" cy="155" r="12" class="node"/>
+      <text x="640" y="159" class="label" font-size="10">A</text>
+
+      <circle cx="680" cy="155" r="12" class="node"/>
+      <text x="680" y="159" class="label" font-size="10">B</text>
+
+      <circle cx="640" cy="195" r="12" class="node"/>
+      <text x="640" y="199" class="label" font-size="10">C</text>
+
+      <circle cx="680" cy="195" r="12" class="node"/>
+      <text x="680" y="199" class="label" font-size="10">D</text>
+
+      <circle cx="720" cy="175" r="12" class="node"/>
+      <text x="720" y="179" class="label" font-size="10">E</text>
+    </g>
+
+    <text x="620" y="225" class="description">• Start from any vertex</text>
+    <text x="620" y="238" class="description">• Add cheapest edge</text>
+    <text x="628" y="251" class="description">connecting to tree</text>
+  </g>
+
+  <!-- Bottom: Properties -->
+  <g data-narration="Spanning tree properties: exactly V minus 1 edges, connected and acyclic. Kruskal's algorithm has time complexity O of E log E and uses Union-Find data structure. Prim's algorithm has time complexity O of E log V and uses priority queue. DFS and BFS can also produce spanning trees">
+    <text x="50" y="295" class="section-label">Key Properties and Complexity</text>
+
+    <!-- Properties Grid -->
+    <g>
+      <!-- Left Column -->
+      <g>
+        <circle cx="60" cy="320" r="4" fill="#ff6b6b"/>
+        <text x="75" y="325" class="property-text">Spanning tree has exactly V-1 edges</text>
+      </g>
+
+      <g>
+        <circle cx="60" cy="345" r="4" fill="#ff6b6b"/>
+        <text x="75" y="350" class="property-text">Connected and acyclic (no cycles)</text>
+      </g>
+
+      <g>
+        <circle cx="60" cy="370" r="4" fill="#ff6b6b"/>
+        <text x="75" y="375" class="property-text">Removing any edge disconnects the graph</text>
+      </g>
+
+      <g>
+        <circle cx="60" cy="395" r="4" fill="#ff6b6b"/>
+        <text x="75" y="400" class="property-text">Adding any edge creates exactly one cycle</text>
+      </g>
+
+      <g>
+        <circle cx="60" cy="420" r="4" fill="#ff6b6b"/>
+        <text x="75" y="425" class="property-text">A graph with V vertices has V-1 edges if it's a tree</text>
+      </g>
+    </g>
+
+    <!-- Right Column: Algorithms Complexity -->
+    <g>
+      <text x="420" y="295" class="section-label">Algorithm Complexity</text>
+
+      <rect x="420" y="305" width="360" height="70" class="algorithm-box"/>
+      <text x="435" y="325" class="property-text" font-weight="bold" fill="#ffe66d">Kruskal's Algorithm:</text>
+      <text x="450" y="345" class="property-text">• Time: O(E log E) - dominated by edge sorting</text>
+      <text x="450" y="365" class="property-text">• Uses Union-Find (Disjoint Set) data structure</text>
+
+      <rect x="420" y="385" width="360" height="70" class="algorithm-box"/>
+      <text x="435" y="405" class="property-text" font-weight="bold" fill="#ffe66d">Prim's Algorithm:</text>
+      <text x="450" y="425" class="property-text">• Time: O(E log V) - using binary heap/priority queue</text>
+      <text x="450" y="445" class="property-text">• Better for dense graphs (many edges)</text>
+
+      <rect x="420" y="465" width="360" height="50" class="algorithm-box"/>
+      <text x="435" y="485" class="property-text" font-weight="bold" fill="#ffe66d">Other Methods:</text>
+      <text x="450" y="505" class="property-text">• DFS and BFS can also produce spanning trees</text>
+    </g>
+  </g>
+
+  <!-- Visualization Legend -->
+  <g data-narration="Legend showing MST edges in yellow, removed edges faded, and nodes with glow effect">
+    <text x="50" y="465" class="section-label">Legend</text>
+
+    <line x1="50" y1="480" x2="100" y2="480" class="edge-mst"/>
+    <text x="110" y="485" class="description">MST Edge</text>
+
+    <line x1="50" y1="500" x2="100" y2="500" class="edge-removed"/>
+    <text x="110" y="505" class="description">Removed Edge</text>
+
+    <circle cx="75" cy="530" r="12" class="node"/>
+    <text x="110" y="535" class="description">Vertex/Node</text>
+
+    <circle cx="75" cy="560" r="8" class="weight-circle"/>
+    <text x="110" y="565" class="description">Edge Weight</text>
+  </g>
+
+  <!-- Footer Note -->
+  <text x="400" y="590" class="description" text-anchor="middle" font-size="11" fill="#4ecdc4">
+    MST finds minimum total weight to connect all vertices • Applications: Network design, clustering, approximation algorithms
+  </text>
+</svg>

@@ -1,0 +1,144 @@
+{
+  "topicId": "fifos",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between anonymous pipes and named pipes (FIFOs).",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Anonymous pipes exist only during process lifetime, FIFOs persist in filesystem",
+        "Anonymous pipes require parent-child relationship, FIFOs allow unrelated processes",
+        "FIFOs have pathname visible in filesystem, anonymous pipes don't",
+        "FIFOs can be accessed by name, anonymous pipes use file descriptors"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is PIPE_BUF and why is it important for FIFO operations?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "PIPE_BUF is 4096 bytes in Linux",
+        "Defines maximum atomic write size",
+        "Writes smaller than PIPE_BUF are guaranteed atomic",
+        "Writes larger than PIPE_BUF may interleave between multiple writers"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the blocking behavior when opening and FIFOs.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Opening FIFO for reading blocks until writer opens",
+        "Opening FIFO for writing blocks until reader opens",
+        "read blocks if no data available",
+        "write blocks if no reader (buffer full)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "How can deadlock occur when using FIFOs and how can it be prevented?",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Deadlock occurs when both processes wait for each other",
+        "Both ends may block waiting to open",
+        "Prevention: Open in correct order (reader then writer)",
+        "Use O_NONBLOCK flag",
+        "Create two FIFOs for bidirectional communication"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write the procedure for client-server communication using FIFOs.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Server creates request FIFO (well-known)",
+        "Server creates unique response FIFO for each client",
+        "Clients open request FIFO to send requests",
+        "Clients create personal response FIFO for replies",
+        "Server reads from request FIFO, responds via client's response FIFO"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the different ways to create and remove FIFOs?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Shell: mkfifo command",
+        "Programmatically: mkfifo system call",
+        "Removal: rm command",
+        "Removal: unlink system call",
+        "Permissions set with -m option in mkfifo"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a C program to create a FIFO, demonstrate producer-consumer problem using FIFOs.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use mkfifo to create FIFO",
+        "Open FIFO in appropriate mode",
+        "Producer writes data to FIFO",
+        "Consumer reads data from FIFO",
+        "Handle blocking and error conditions",
+        "Proper cleanup with close and unlink"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the various flags and modes used with FIFOs. Discuss O_NONBLOCK and O_RDONLY/O_WRONLY modes.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "O_RDONLY: Open for reading only",
+        "O_WRONLY: Open for writing only",
+        "O_RDWR: Open for both (rarely used for FIFOs)",
+        "O_NONBLOCK: Non-blocking mode",
+        "O_CREAT: Create if doesn't exist (for mkfifo)",
+        "How blocking behavior differs with flags"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a chat system between two processes using FIFOs. Explain the setup and show how bidirectional communication is achieved.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Need two FIFOs for bidirectional communication",
+        "Process A writes to FIFO1, reads from FIFO2",
+        "Process B writes to FIFO2, reads from FIFO1",
+        "Must handle deadlock by opening FIFOs in correct order",
+        "Use separate threads or non-blocking for simultaneous communication"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare FIFOs with other IPC mechanisms like message queues, sockets, and shared memory.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "FIFOs: Simple, file-based, unidirectional",
+        "Message Queues: Similar but with message boundaries, priorities",
+        "Sockets: Network capable, bidirectional, more overhead",
+        "Shared Memory: Fastest but requires synchronization",
+        "FIFOs best for simple producer-consumer scenarios"
+      ]
+    }
+  ]
+}

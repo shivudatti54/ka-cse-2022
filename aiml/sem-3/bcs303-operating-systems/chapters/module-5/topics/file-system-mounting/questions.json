@@ -1,0 +1,157 @@
+{
+  "topicId": "file-system-mounting",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of file system mounting and why it is essential in operating systems.",
+      "keyPoints": [
+        "Mounting integrates a file system into the OS directory tree at a mount point",
+        "Enables access to storage devices and their contents through standard file operations",
+        "Without mounting, each storage device would exist in isolation from the unified file hierarchy",
+        "Supports hot-plugging and dynamic addition of storage resources"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a mount point? Describe the requirements for a valid mount point.",
+      "keyPoints": [
+        "A mount point is an existing directory in the file system hierarchy",
+        "Typically an empty directory but can contain files hidden by the mount",
+        "In Unix: /mnt, /media, /home are common mount points",
+        "In Windows: drive letters (C:, D:) or folder mount points",
+        "Must have appropriate permissions for access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the role of Virtual File System (VFS) in mounting operations.",
+      "keyPoints": [
+        "VFS provides an abstraction layer between OS and actual file systems",
+        "Enables uniform interface for different file system types (NTFS, ext4, FAT32)",
+        "Handles translation of generic operations to file-system-specific operations",
+        "Allows simultaneous mounting of multiple file system types"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the difference between automatic mounting and manual mounting.",
+      "keyPoints": [
+        "Automatic mounting happens at system boot or device hot-plug without user intervention",
+        "Configured through /etc/fstab in Unix or Windows auto-mount settings",
+        "Manual mounting requires explicit user command (mount command)",
+        "Automatic mounting uses predefined options; manual allows custom options each time"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "List and explain three common mount options used in Unix systems.",
+      "keyPoints": [
+        "ro (read-only): Mounts file system without write permissions",
+        "rw (read-write): Allows read and write operations (default)",
+        "noexec: Prevents execution of binaries on that file system (security)",
+        "nosuid: Ignores setuid and setgid bits on files",
+        "sync: Forces synchronous I/O operations for data integrity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What happens during the mount operation? Describe the steps involved.",
+      "keyPoints": [
+        "OS validates the file system by reading superblock",
+        "Allocates kernel data structures for the mount",
+        "Verifies file system type and checks for errors",
+        "Updates the mount table with new mount entry",
+        "Creates VFS node and makes file system accessible at mount point"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the purpose of unmounting? Explain why it is important to unmount before removing a device.",
+      "keyPoints": [
+        "Unmounting detaches the file system from the directory tree",
+        "Ensures all buffered writes are flushed to disk",
+        "Closes all file handles and releases system resources",
+        "Prevents data loss or file system corruption",
+        "Allows safe physical removal of the storage device"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the file system mounting process in Unix/Linux systems. Include discussion of mount tables, configuration files, and the kernel data structures involved.",
+      "keyPoints": [
+        "/etc/fstab contains static mount configuration: device, mount point, type, options",
+        "At boot, init process reads fstab and mounts defined file systems",
+        "Kernel maintains mount table (struct vfsmount) for each mounted filesystem",
+        "/proc/mounts or /etc/mtab shows currently mounted filesystems",
+        "Mount syscall takes device and directory as arguments",
+        "VFS layer creates mount point inode and associates file system operations",
+        "Each mount creates a vfsmount structure with superblock and mount flags",
+        "Umount removes entry from mount table after flushing buffers"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain network file system mounting. How does it differ from local mounting? Discuss NFS as an example.",
+      "keyPoints": [
+        "Network mounting allows mounting remote file systems over a network",
+        "Remote files appear as local directories through mount point",
+        "NFS (Network File System) is Unix standard; SMB/CIFS is Windows equivalent",
+        "Differences: network latency, dependency on network connectivity, security concerns",
+        "Mount uses remote server IP and export path: mount server:/share /mnt/remote",
+        "Client relies on RPC for file operations across network",
+        "Caching strategies differ due to network considerations",
+        "Disconnection handling is more complex than local mounts"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare file system mounting in Unix/Linux and Windows operating systems.",
+      "keyPoints": [
+        "Unix uses directory-based mount points; Windows uses drive letters and folder mounts",
+        "Unix configuration in /etc/fstab; Windows in Registry or Disk Management",
+        "Unix mount is typically command-line; Windows has GUI Disk Management",
+        "Windows mount points called 'volume mount points' since Windows 2000",
+        "Both support automatic and manual mounting",
+        "Unix: multiple file systems unified under single tree; Windows: separate drive letters",
+        "Unix VFS provides abstraction; Windows uses Installable File System (IFS)",
+        "Unmount in Unix: umount command; Windows: dismount or eject"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss bind mounting and loop device mounting. Explain their purposes and use cases.",
+      "keyPoints": [
+        "Bind mounting: maps a directory or file to another location in same filesystem",
+        "Command: mount --bind /source /target or mount -o bind /source /target",
+        "Use cases: containerization, development environments, file sharing without copying",
+        "Loop device mounting: treats disk image files as block devices",
+        "Creates /dev/loop0, /dev/loop1 etc. mapping to image files",
+        "Allows mounting ISO images, disk images without burning to physical media",
+        "Useful for software installation, OS virtualization, backup verification",
+        "Both are special mount types that extend file system flexibility"
+      ],
+      "marks": 10
+    }
+  ]
+}

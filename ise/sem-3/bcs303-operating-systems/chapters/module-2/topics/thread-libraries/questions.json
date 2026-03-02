@@ -1,0 +1,158 @@
+{
+  "topicId": "thread-libraries",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between user-level threads and kernel-level threads. Mention two advantages of each approach.",
+      "keyPoints": [
+        "User-level threads are managed entirely in user space without kernel involvement",
+        "Kernel-level threads are directly supported by the operating system",
+        "User-level threads: fast context switching, flexible scheduling, OS independence",
+        "Kernel-level threads: can utilize multiple processors, kernel can schedule threads independently",
+        "Hybrid approaches combine both advantages"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a race condition? How can it be prevented using mutex locks?",
+      "keyPoints": [
+        "Race condition occurs when multiple threads access/modify shared data concurrently",
+        "Result depends on timing of thread execution - unpredictable behavior",
+        "Mutex ensures only one thread can access critical section at a time",
+        "pthread_mutex_lock() before and pthread_mutex_unlock() after critical section",
+        "Proper lock acquisition and release pattern prevents race conditions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write and explain the syntax of pthread_create() function in POSIX threads.",
+      "keyPoints": [
+        "Function signature: int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg)",
+        "First parameter: pointer to pthread_t to store thread ID",
+        "Second parameter: thread attributes (NULL for default attributes)",
+        "Third parameter: function pointer for thread start routine",
+        "Fourth parameter: argument to pass to start routine",
+        "Returns 0 on success, error code on failure"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the purpose of condition variables in thread synchronization. When should condition variables be used?",
+      "keyPoints": [
+        "Condition variables allow threads to wait for specific conditions to become true",
+        "Used with mutexes for efficient thread coordination",
+        "Typical pattern: lock mutex, check condition, wait (releases lock), signal/broadcast when condition changes",
+        "Used in producer-consumer, reader-writer, and other synchronization scenarios",
+        "Solves the problem of busy-waiting by allowing threads to sleep"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is thread-specific data (TSD)? How is it implemented in Pthreads?",
+      "keyPoints": [
+        "TSD allows each thread to have its own copy of global or static variables",
+        "pthread_key_create() creates a key for thread-specific data",
+        "pthread_setspecific() stores data associated with a key for calling thread",
+        "pthread_getspecific() retrieves thread-specific data for the calling thread",
+        "Useful for maintaining per-thread state without using global variables"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of thread cancellation in POSIX threads. What are the different cancellation types?",
+      "keyPoints": [
+        "pthread_cancel() sends cancellation request to target thread",
+        "Deferred cancellation: cancellation request checked at cancellation points (default type)",
+        "Asynchronous cancellation: cancellation can occur immediately at any point",
+        "Disabled cancellation: thread can protect critical operations using pthread_setcancelstate()",
+        "Cleanup handlers using pthread_cleanup_push() and pthread_cleanup_pop()"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare thread libraries in Windows and POSIX environments. Mention at least three differences.",
+      "keyPoints": [
+        "Windows uses CreateThread(), POSIX uses pthread_create()",
+        "Windows handles are kernel objects, Pthreads use portable thread IDs",
+        "Windows provides WaitForSingleObject(), POSIX uses pthread_join()",
+        "Mutex initialization differs: InitializeCriticalSection() vs pthread_mutex_init()",
+        "POSIX is standardized and portable; Windows threads are platform-specific"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a complete C program using Pthreads to demonstrate producer-consumer problem with a bounded buffer. Include proper synchronization using mutex and condition variables.",
+      "keyPoints": [
+        "Define shared buffer and buffer size",
+        "Initialize mutex and condition variables",
+        "Create producer thread(s) that add items to buffer",
+        "Create consumer thread(s) that remove items from buffer",
+        "Use pthread_cond_signal() when buffer has space",
+        "Use pthread_cond_signal() when buffer has items",
+        "Proper error handling for all pthread functions",
+        "Show correct output demonstrating synchronization"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the various thread scheduling algorithms. How does multi-processor scheduling differ from single-processor scheduling?",
+      "keyPoints": [
+        "First-Come-First-Served (FCFS): jobs scheduled in arrival order",
+        "Shortest Job First (SJF): minimizes average waiting time",
+        "Priority Scheduling: higher priority jobs run first",
+        "Round Robin: time-slicing for fair sharing",
+        "Multi-processor scheduling faces additional challenges: load balancing, processor affinity, cache coherence",
+        "Symmetric multiprocessing (SMP): each processor runs scheduler independently",
+        "NUMA considerations in modern multi-core systems",
+        "Thread migration and its impact on performance"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What are the different threading models? Explain one-to-one, many-to-one, and many-to-many models with their advantages and disadvantages.",
+      "keyPoints": [
+        "One-to-One model: each user thread maps to one kernel thread - good parallelism but limited scalability",
+        "Many-to-One model: multiple user threads map to one kernel thread - efficient but no true parallelism",
+        "Many-to-Many model: many user threads to many kernel threads - combines advantages of both",
+        "Java uses one-to-one model",
+        "Linux and Windows use one-to-one models",
+        "Solaris supports many-to-many model",
+        "Thread pooling as alternative approach"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a Java program demonstrating thread creation using both Thread class and Runnable interface. Explain the difference between these two approaches.",
+      "keyPoints": [
+        "Create thread by extending Thread class and overriding run() method",
+        "Create thread by implementing Runnable interface and passing to Thread constructor",
+        "Runnable approach preferred for Java due to single inheritance limitation",
+        "Thread class provides additional methods like getName(), setPriority()",
+        "Demonstrate starting thread with start() method vs directly calling run()",
+        "Thread lifecycle states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED"
+      ],
+      "marks": 10
+    }
+  ]
+}

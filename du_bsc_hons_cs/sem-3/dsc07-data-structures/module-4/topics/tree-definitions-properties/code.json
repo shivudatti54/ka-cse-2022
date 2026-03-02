@@ -1,0 +1,45 @@
+{
+  "topicId": "tree-definitions-properties",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Binary Tree Node Structure",
+      "description": "Definition of a node structure for binary tree with left and right child pointers",
+      "code": "STRUCTURE TreeNode\n  DATA: value\n  POINTER: left  // Points to left child\n  POINTER: right // Points to right child\nEND STRUCTURE\n\n// Creating a new node\nFUNCTION createNode(value)\n  newNode \u2190 ALLOCATE(TreeNode)\n  newNode.value \u2190 value\n  newNode.left \u2190 NULL\n  newNode.right \u2190 NULL\n  RETURN newNode\nEND FUNCTION",
+      "explanation": "Each node contains data and two pointers - one for left child and one for right child. NULL indicates absence of child.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1) per node"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "BST Insertion Algorithm",
+      "description": "Algorithm to insert a new node maintaining BST property",
+      "code": "FUNCTION insert(root, value)\n  // Base case: found position to insert\n  IF root = NULL THEN\n    RETURN createNode(value)\n  END IF\n  \n  // Recursively find correct position\n  IF value < root.value THEN\n    root.left \u2190 insert(root.left, value)\n  ELSE THEN\n    root.right \u2190 insert(root.right, value)\n  END IF\n  \n  RETURN root\nEND FUNCTION",
+      "explanation": "Compares value with current node, goes left if smaller, right if larger, until NULL position found.",
+      "timeComplexity": "O(h) where h is height",
+      "spaceComplexity": "O(h) for recursion stack"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Tree Traversal Algorithms",
+      "description": "Preorder, Inorder and Postorder traversals of binary tree",
+      "code": "// Preorder: Root, Left, Right\nFUNCTION preorder(node)\n  IF node \u2260 NULL THEN\n    VISIT(node)\n    preorder(node.left)\n    preorder(node.right)\n  END IF\nEND FUNCTION\n\n// Inorder: Left, Root, Right\nFUNCTION inorder(node)\n  IF node \u2260 NULL THEN\n    inorder(node.left)\n    VISIT(node)\n    inorder(node.right)\n  END IF\nEND FUNCTION\n\n// Postorder: Left, Right, Root\nFUNCTION postorder(node)\n  IF node \u2260 NULL THEN\n    postorder(node.left)\n    postorder(node.right)\n    VISIT(node)\n  END IF\nEND FUNCTION",
+      "explanation": "Three depth-first traversal methods differing in order of visiting root relative to children. Used for different applications.",
+      "timeComplexity": "O(n) where n is number of nodes",
+      "spaceComplexity": "O(h) for recursion stack"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Level Order Traversal (BFS)",
+      "description": "Breadth-First Search traversal using queue data structure",
+      "code": "from collections import deque\n\ndef levelOrder(root):\n    if root is None:\n        return []\n    \n    result = []\n    queue = deque([root])  # Initialize queue with root\n    \n    while queue:\n        level_size = len(queue)\n        level_nodes = []\n        \n        for _ in range(level_size):\n            node = queue.popleft()\n            level_nodes.append(node.val)\n            \n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        \n        result.append(level_nodes)\n    \n    return result",
+      "explanation": "Uses queue to process nodes level by level. Nodes at current level are processed before moving to next level.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(w) where w is max width of tree"
+    }
+  ]
+}

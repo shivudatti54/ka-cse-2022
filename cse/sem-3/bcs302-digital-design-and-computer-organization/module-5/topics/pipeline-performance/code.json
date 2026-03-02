@@ -1,0 +1,45 @@
+{
+  "topicId": "pipeline-performance",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Pipeline Execution Time Calculation",
+      "description": "Algorithm to calculate execution time for pipelined processor",
+      "code": "CALCULATE_PIPELINE_TIME(n, k, avgStalls, clockTime)\n// n = number of instructions\n// k = number of pipeline stages\n// avgStalls = average stalls per instruction\n// clockTime = clock cycle time in ns\n\nBEGIN\n baseCycles = k + (n - 1) // Fill pipeline + drain\n stallCycles = n * avgStalls // Total stall cycles\n totalCycles = baseCycles + stallCycles\n \n executionTime = totalCycles * clockTime\n \n speedup = (n * k * clockTime) / executionTime\n avgCPI = totalCycles / n\n \n RETURN executionTime, speedup, avgCPI\nEND",
+      "explanation": "This algorithm calculates total execution time by combining base pipeline cycles (k + n - 1 for fill and drain) with stall cycles. Speedup is compared against non-pipelined execution time (n × k × clockTime). Average CPI includes both ideal cycles and stalls.",
+      "timeComplexity": "O(1) - constant time calculation",
+      "spaceComplexity": "O(1) - only uses a few variables"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Data Forwarding Logic",
+      "description": "Hardware logic to handle data hazards using forwarding paths",
+      "code": "// Detect and resolve RAW hazards using forwarding\n// Stage: EX/MEM and MEM/WB pipeline registers\n\nCHECK_FORWARDING(executeStage, memStage, wbStage)\nBEGIN\n // ALU result from EX/MEM stage to EX stage of dependent instruction\n if (memStage.valid AND memStage.destReg == executeStage.srcReg1) then\n forwardA = MEM/WB.result // Forward from MEM stage\n else if (wbStage.valid AND wbStage.destReg == executeStage.srcReg1) then\n forwardA = WB.result // Forward from WB stage\n else\n forwardA = executeStage.operandA // Use normal register value\n \n // Similar logic for srcReg2\n // ...\n \n RETURN forwardA, forwardB\nEND",
+      "explanation": "Data forwarding routes results directly from pipeline registers to dependent instructions. ForwardA checks EX/MEM register first (most recent result), then MEM/WB register. This eliminates 2-cycle stalls for ALU-ALU dependencies.",
+      "timeComplexity": "O(1) - single cycle check",
+      "spaceComplexity": "O(1) - uses comparators and multiplexers"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Branch Penalty Calculation",
+      "description": "Calculate effective CPI with branch prediction",
+      "code": "CALCULATE_BRANCH_CPI(branchFreq, branchPenalty, predictionAccuracy)\n// branchFreq: frequency of branch instructions (0-1)\n// branchPenalty: cycles lost on misprediction\n// predictionAccuracy: branch predictor accuracy (0-1)\n\nBEGIN\n mispredictionRate = 1 - predictionAccuracy\n branchStallsPerInstruction = branchFreq * mispredictionRate * branchPenalty\n \n effectiveCPI = 1 + branchStallsPerInstruction\n // Ideal CPI = 1 (no hazards)\n \n speedup = 1 / effectiveCPI\n \n RETURN effectiveCPI, speedup\nEND\n\n// Example: branchFreq=0.25, branchPenalty=3, accuracy=0.80\n// mispredictionRate = 0.20\n// branchStalls = 0.25 × 0.20 × 3 = 0.15\n// effectiveCPI = 1.15\n// speedup = 1/1.15 = 0.87 (87% of ideal)",
+      "explanation": "This calculates how branch mispredictions affect overall CPI. The formula multiplies branch frequency by misprediction rate by penalty to get average branch stalls per instruction. Adding to ideal CPI gives effective CPI.",
+      "timeComplexity": "O(1) - simple arithmetic",
+      "spaceComplexity": "O(1) - few variables"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Pipeline Stall Insertion",
+      "description": "Algorithm to insert stalls when hazards cannot be resolved",
+      "code": "DETECT_AND_STALL(IR, pipelineRegisters, hazardDetectUnit)\n// Insert NOP (bubble) when hazard detected\n\nBEGIN\n // Check for RAW hazard in ID stage\n if (hazardDetectUnit.detectRAW(ID/EX, IF/ID)) then\n // Stall: prevent IF/ID from updating\n IF/ID.writeEnable = FALSE\n // Insert bubble in ID/EX\n ID/EX = NOP_instruction\n // Allow previous instruction to proceed\n PC.writeEnable = FALSE\n cyclesStalled = 1\n \n // Check for load-use hazard (special RAW case)\n if (ID/EX.isLoad AND hazardDetectUnit.isDependency(ID/EX.dest, IF/ID.src)) then\n // Need 1 stall cycle for load data\n insertBubble(1)\n cyclesStalled = 1\n \n RETURN cyclesStalled\nEND\n\ninsertBubble(n)\nBEGIN\n for i = 1 to n do\n Insert NOP instruction into pipeline\n Reduce performance\n end for\nEND",
+      "explanation": "Stall insertion prevents incorrect execution by freezing pipeline registers when hazards are detected. A bubble (NOP) is inserted to give time for dependency resolution. This guarantees correctness but reduces performance.",
+      "timeComplexity": "O(n) where n = stall cycles",
+      "spaceComplexity": "O(1) - control logic"
+    }
+  ]
+}

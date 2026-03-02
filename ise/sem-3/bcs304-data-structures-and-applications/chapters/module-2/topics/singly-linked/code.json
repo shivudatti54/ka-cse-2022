@@ -1,0 +1,45 @@
+{
+  "topicId": "singly-linked",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Node Structure Definition in C",
+      "description": "Defines the fundamental node structure for a singly linked list",
+      "code": "struct Node {\n    int data;           // stores the element\n    struct Node *next;  // pointer to next node\n};\n\n// Using typedef for easier usage\ntypedef struct Node node;\n\n// Function to create a new node\nnode* createNode(int value) {\n    node *newNode = (node*)malloc(sizeof(node));\n    if (newNode == NULL) {\n        printf(\"Memory allocation failed\\n\");\n        return NULL;\n    }\n    newNode->data = value;\n    newNode->next = NULL;\n    return newNode;\n}",
+      "explanation": "The structure defines a self-referential structure where the 'next' pointer points to another node of the same type. malloc allocates memory dynamically, sizeof calculates memory needed, and we handle allocation failure.",
+      "timeComplexity": "O(1) for node creation",
+      "spaceComplexity": "O(1) per node (excluding data storage)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Insertion at Beginning in Python",
+      "description": "Implements inserting a new node at the beginning of the list",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass SinglyLinkedList:\n    def __init__(self):\n        self.head = None\n    \n    def insert_at_beginning(self, value):\n        new_node = Node(value)\n        new_node.next = self.head  # Point new node to current head\n        self.head = new_node       # Update head to new node\n    \n    def display(self):\n        current = self.head\n        while current:\n            print(current.data, end=\" -> \")\n            current = current.next\n        print(\"NULL\")\n\n# Usage\nsll = SinglyLinkedList()\nsll.insert_at_beginning(10)\nsll.insert_at_beginning(20)\nsll.insert_at_beginning(30)\nsll.display()  # Output: 30 -> 20 -> 10 -> NULL",
+      "explanation": "The insert_at_beginning method creates a new node and makes its next pointer reference the current head, then updates head to point to the new node. This maintains the chain while adding at the front.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Deletion Operations in C",
+      "description": "Implements deletion of first node and deletion after a given node",
+      "code": "// Delete first node\nvoid deleteFirst(node **head) {\n    if (*head == NULL) {\n        printf(\"List is empty\\n\");\n        return;\n    }\n    node *temp = *head;        // Store current head\n    *head = (*head)->next;     // Move head to next node\n    free(temp);                // Free old head memory\n}\n\n// Delete node after a given node\nvoid deleteAfter(node *prevNode) {\n    if (prevNode == NULL || prevNode->next == NULL) {\n        printf(\"Invalid operation\\n\");\n        return;\n    }\n    node *toDelete = prevNode->next;     // Node to delete\n    prevNode->next = toDelete->next;     // Bypass the node\n    free(toDelete);                      // Free memory\n}\n\n// Search for an element\nint search(node *head, int key) {\n    int position = 1;\n    node *current = head;\n    while (current != NULL) {\n        if (current->data == key) {\n            return position;  // Found at position\n        }\n        current = current->next;\n        position++;\n    }\n    return -1;  // Not found\n}",
+      "explanation": "DeleteFirst uses a temporary pointer to store the node being deleted, moves head to the next node, then frees the memory. DeleteAfter bypasses the target node by re-linking. Search traverses the list comparing each node's data.",
+      "timeComplexity": "O(n) for search, O(1) for deletions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Singly Linked List Implementation in Java",
+      "description": "Complete implementation with insert, delete, and display operations",
+      "code": "public class SinglyLinkedList {\n    private Node head;\n    \n    private class Node {\n        int data;\n        Node next;\n        \n        Node(int d) {\n            data = d;\n            next = null;\n        }\n    }\n    \n    // Insert at end\n    public void insertAtEnd(int data) {\n        Node newNode = new Node(data);\n        if (head == null) {\n            head = newNode;\n            return;\n        }\n        Node current = head;\n        while (current.next != null) {\n            current = current.next;\n        }\n        current.next = newNode;\n    }\n    \n    // Find middle element using slow and fast pointers\n    public Node findMiddle() {\n        Node slow = head;\n        Node fast = head;\n        \n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        return slow;\n    }\n    \n    // Display list\n    public void display() {\n        Node current = head;\n        while (current != null) {\n            System.out.print(current.data + \" -> \");\n            current = current.next;\n        }\n        System.out.println(\"NULL\");\n    }\n    \n    public static void main(String[] args) {\n        SinglyLinkedList list = new SinglyLinkedList();\n        list.insertAtEnd(10);\n        list.insertAtEnd(20);\n        list.insertAtEnd(30);\n        list.insertAtEnd(40);\n        list.display();  // 10 -> 20 -> 30 -> 40 -> NULL\n        \n        Node middle = list.findMiddle();\n        System.out.println(\"Middle element: \" + middle.data);  // 30\n    }\n}",
+      "explanation": "Java implementation uses inner class Node. InsertAtEnd traverses to find the last node. FindMiddle uses the 'tortoise and hare' algorithm where slow pointer moves one step and fast moves two steps - when fast reaches end, slow is at middle.",
+      "timeComplexity": "O(n) for insertAtEnd and findMiddle",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

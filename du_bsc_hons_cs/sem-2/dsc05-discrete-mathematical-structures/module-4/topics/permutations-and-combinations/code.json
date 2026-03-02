@@ -1,0 +1,45 @@
+{
+  "topicId": "permutations-and-combinations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Permutation Calculation - nPr",
+      "description": "Calculate number of permutations P(n,r) = n!/(n-r)!",
+      "code": "ALGORITHM Permutation(n, r)\nBEGIN\n  IF r > n THEN\n    RETURN 0\n  END IF\n  \n  result \u2190 1\n  FOR i FROM 1 TO r DO\n    result \u2190 result \u00d7 (n - r + i)\n    // Or: result \u2190 result \u00d7 (n - i + 1)\n  END FOR\n  \n  RETURN result\nEND\n\n// Example: Permutation(5, 3)\n// result = 5 \u00d7 4 \u00d7 3 = 60",
+      "explanation": "Computes permutations by multiplying r terms starting from n descending. Uses iterative approach to avoid large factorial intermediate values. Returns 0 if r > n (cannot permute more than available).",
+      "timeComplexity": "O(r)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Combination Calculation - nCr",
+      "description": "Calculate number of combinations C(n,r) = n!/(r!(n-r)!",
+      "code": "ALGORITHM Combination(n, r)\nBEGIN\n  // Use symmetry property: C(n,r) = C(n,n-r)\n  IF r > n THEN\n    RETURN 0\n  END IF\n  \n  IF r > n - r THEN\n    r \u2190 n - r  // Use smaller value for efficiency\n  END IF\n  \n  result \u2190 1\n  FOR i FROM 1 TO r DO\n    result \u2190 result \u00d7 (n - r + i) / i\n    // Use integer division after full calculation\n  END FOR\n  \n  RETURN result\nEND\n\n// Example: Combination(5, 2)\n// r = min(2, 3) = 2\n// result = (4\u00d75)/(1\u00d72) = 20/2 = 10",
+      "explanation": "Uses symmetry property to minimize iterations. Computes product of numerators divided by factorial terms. The formula result \u00d7= (n - r + i) / i ensures integer division works correctly when accumulated.",
+      "timeComplexity": "O(min(r, n-r))",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Generate All Permutations",
+      "description": "Generate all permutations of r elements from a list of n elements",
+      "code": "from itertools import permutations\n\ndef generate_permutations(arr, r):\n    \"\"\"Generate all permutations of length r from array arr\"\"\"\n    return list(permutations(arr, r))\n\n# Example usage\nelements = ['A', 'B', 'C']\nresult = generate_permutations(elements, 2)\nprint(result)\n# Output: [('A','B'), ('A','C'), ('B','A'), ('B','C'), ('C','A'), ('C','B')]\nprint(f\"Count: {len(result)}\")  # Output: Count: 6 = P(3,2)",
+      "explanation": "Uses Python's itertools.permutations to generate all ordered arrangements. Each tuple represents one permutation. The count matches P(n,r) formula. Can be used for small n to verify combinatorial formulas.",
+      "timeComplexity": "O(n!/(n-r)!)",
+      "spaceComplexity": "O(n!/(n-r)!)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Generate All Combinations",
+      "description": "Generate all combinations of r elements from a list of n elements",
+      "code": "from itertools import combinations\n\ndef generate_combinations(arr, r):\n    \"\"\"Generate all combinations of length r from array arr\"\"\"\n    return list(combinations(arr, r))\n\n# Example usage\nelements = ['A', 'B', 'C']\nresult = generate_combinations(elements, 2)\nprint(result)\n# Output: [('A','B'), ('A','C'), ('B','C')]\nprint(f\"Count: {len(result)}\")  # Output: Count: 3 = C(3,2)",
+      "explanation": "Uses Python's itertools.combinations to generate all unordered selections. Each tuple represents one combination. The count matches C(n,r) formula. Order within each tuple is sorted.",
+      "timeComplexity": "O(C(n,r) \u00d7 r)",
+      "spaceComplexity": "O(C(n,r) \u00d7 r)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "segments",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "TCP Checksum Calculation Algorithm",
+      "description": "Pseudo-code to calculate TCP checksum using pseudo-header",
+      "code": "BEGIN\n // Construct pseudo-header\n pseudoHeader.srcIP = sourceIPAddress\n pseudoHeader.destIP = destIPAddress\n pseudoHeader.zero = 0\n pseudoHeader.protocol = 6 // TCP protocol number\n pseudoHeader.tcpLength = tcpHeaderLength + dataLength\n\n // Initialize checksum to 0\n checksum = 0\n\n // Sum all 16-bit words in pseudo-header\n FOR each 16-bit word in pseudoHeader:\n checksum = checksum + word\n\n // Sum all 16-bit words in TCP header (exclude checksum field)\n FOR each 16-bit word in tcpHeader (excluding checksum field):\n checksum = checksum + word\n\n // Sum all 16-bit words in data\n FOR each 16-bit word in data:\n checksum = checksum + word\n\n // Fold 32-bit sum to 16 bits (add carry bits to LSB)\n WHILE checksum > 0xFFFF:\n checksum = (checksum AND 0xFFFF) + (checksum >> 16)\n\n // One's complement\n checksum = NOT checksum\n\n RETURN checksum // 16-bit result\nEND",
+      "explanation": "This algorithm computes the TCP checksum at sender. At receiver, same computation including stored checksum should yield 0xFFFF (all bits 1) for valid segment. The pseudo-header ensures protection against IP-level errors.",
+      "timeComplexity": "O(n) where n = total bytes (header + data)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "TCP Segment Receiver Processing",
+      "description": "Pseudo-code showing how receiver processes incoming TCP segment",
+      "code": "BEGIN\n FUNCTION receiveSegment(segment):\n // Step 1: Validate basic header\n IF segment.dataOffset < 5 THEN\n RETURN ERROR // Invalid: header too short\n END IF\n\n // Step 2: Verify checksum (if checksum enabled)\n calculatedChecksum = calculateChecksum(segment)\n IF calculatedChecksum != 0x0000 THEN\n DROP segment // Silent drop - no notification\n RETURN\n END IF\n\n // Step 3: Check if segment is within receive window\n IF segment.seqNumber < receiveNext OR\n segment.seqNumber > (receiveNext + windowSize - 1) THEN\n // Out of window - may be old or future data\n IF segment.seqNumber < receiveNext THEN\n // Old segment - send ACK for current state\n sendACK(receiveNext)\n END IF\n DROP segment\n RETURN\n END IF\n\n // Step 4: Process based on flags\n IF segment.RST THEN\n CLOSE connection\n RETURN\n END IF\n\n IF segment.SYN THEN\n // SYN attack protection or new connection?\n RESET connection\n RETURN\n END IF\n\n // Step 5: Buffer data and send ACK\n bufferData(segment)\n sendACK(calculateNextAck(segment))\n\n IF segment.FIN THEN\n signalEndOfStream()\n END IF\n END FUNCTION\nEND",
+      "explanation": "Receiver processes segments by: validation, checksum verification, window check, flag handling, buffering data, and sending acknowledgments. Out-of-window segments are dropped or ACKed appropriately.",
+      "timeComplexity": "O(k) where k = bytes to buffer",
+      "spaceComplexity": "O(windowSize)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "TCP Sliding Window with Segment Transmission",
+      "description": "Pseudo-code demonstrating sliding window protocol with segment transmission",
+      "code": "BEGIN\n // TCP Sender Variables\n sendBase = 0 // Oldest unacknowledged byte\n nextSeqNum = 0 // Next sequence number to use\n windowSize = 1000 // Advertised receiver window\n MSS = 536 // Maximum Segment Size\n\n FUNCTION sendData(dataSize):\n // Check if window allows more transmission\n WHILE (nextSeqNum < sendBase + windowSize) AND\n (dataRemaining > 0):\n \n segmentSize = MIN(MSS, dataRemaining)\n \n // Create segment\n segment.seqNumber = nextSeqNum\n segment.data = getDataFromBuffer(nextSeqNum, segmentSize)\n segment.ackNumber = 0\n segment.ACK = FALSE\n \n // Send segment\n sendToNetwork(segment)\n \n // Record in sent but not ACKed\n markSent(segment.seqNumber, segmentSize)\n \n nextSeqNum = nextSeqNum + segmentSize\n dataRemaining = dataRemaining - segmentSize\n END WHILE\n END FUNCTION\n\n FUNCTION handleAck(ackNumber):\n IF ackNumber > sendBase THEN\n // Update send base - slide window\n removeAcknowledgedData(sendBase, ackNumber)\n sendBase = ackNumber\n \n // If window opened, continue sending\n IF windowWasZero AND (windowSize > 0) THEN\n signal to resume transmission\n END IF\n END IF\n END FUNCTION\nEND",
+      "explanation": "This demonstrates TCP sliding window: sender maintains 'sendBase' (oldest unacked) and 'nextSeqNum'. Can send up to windowSize bytes ahead. ACKs advance sendBase, opening the window for new transmissions.",
+      "timeComplexity": "O(1) per segment transmission, O(n) for ACK processing",
+      "spaceComplexity": "O(windowSize) for sent-but-unacknowledged buffer"
+    }
+  ]
+}

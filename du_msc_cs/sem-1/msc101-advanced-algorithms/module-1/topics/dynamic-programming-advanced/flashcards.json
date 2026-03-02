@@ -1,0 +1,45 @@
+{
+  "topicId": "dynamic-programming-advanced",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "State Compression DP: What is the key insight behind using bitmasks, and what is the time complexity when processing n ≤ 20 items?",
+      "back": "State compression uses bitmasks (integers where bit i = 1 means element i is included) to represent subsets of elements. The state space is 2^n, making it feasible only when n ≤ 20. Transitions iterate over submasks in O(3^n) worst case, commonly used for TSP, Hamiltonian paths, and bitmask DP on small graphs."
+    },
+    {
+      "id": "fc-2",
+      "front": "Tree DP: Given a rooted tree, how do you compute dp[node][0] and dp[node][1] for vertex cover?",
+      "back": "For vertex cover on trees: dp[node][0] = sum(max(dp[child][0], dp[child][1])) (node NOT taken, children can be taken or not); dp[node][1] = 1 + sum(dp[child][0]) (node taken, children must NOT be taken). Perform post-order DFS. Answer = min(dp[root][0], dp[root][1]). Time O(n)."
+    },
+    {
+      "id": "fc-3",
+      "front": "Digit DP: How do you handle the 'tight' and 'started' flags when counting numbers ≤ N with property P?",
+      "back": "The 'tight' flag (0/1) indicates whether the prefix matches N's prefix—if 1, next digit cannot exceed N's digit at that position. The 'started' flag tracks whether any non-leading-zero digit has been placed; this enables handling numbers with variable lengths. State: dp[pos][state...][tight][started]. Example: dp[i][mod][tight][started] = sum of valid next digits."
+    },
+    {
+      "id": "fc-4",
+      "front": "Divide & Conquer Optimization: State the two required conditions and the resulting complexity improvement.",
+      "back": "Required: (1) Quadrangle inequality: C[a][c] + C[b][d] ≤ C[a][d] + C[b][c] for a ≤ b ≤ c ≤ d, and (2) Monotonicity: opt[i][j-1] ≤ opt[i][j] ≤ opt[i+1][j]. When satisfied, D&C optimization reduces O(kn²) to O(kn log n) for DP recurrence dp[i][j] = min_{k < j} (dp[i-1][k] + C[k][j])."
+    },
+    {
+      "id": "fc-5",
+      "front": "DP on Intervals: For matrix chain multiplication with dimensions [d0, d1, ..., dn], write the recurrence and base case.",
+      "back": "Let dp[i][j] = minimum scalar multiplications for matrices Mi...Mj (i ≤ j). Base: dp[i][i] = 0. Recurrence: dp[i][j] = min_{k=i}^{j-1} (dp[i][k] + dp[k+1][j] + d_{i-1} * d_k * d_j). Answer in dp[1][n]. Time O(n³), space O(n²). Iterate length from 2 to n."
+    },
+    {
+      "id": "fc-6",
+      "front": "Knuth Optimization: Why does it achieve O(n²) instead of O(n³), and what is the monotonicity condition?",
+      "back": "Knuth applies to dp[i][j] = min_{k < j} (dp[i][k] + dp[k][j] + C[i][j]) where C satisfies quadrangle inequality: C[a][c] + C[b][d] ≤ C[a][d] + C[b][c] for a ≤ b ≤ c ≤ d. The key property: opt[i][j-1] ≤ opt[i][j] ≤ opt[i+1][j]. This allows binary search-like narrowing of k for each (i,j), reducing from O(n³) to O(n²). Used in optimal binary search trees, RNA secondary structure."
+    },
+    {
+      "id": "fc-7",
+      "front": "Monotone Queue (Sliding Window) Optimization: For dp[i] = min_{j < i, i-j ≤ w} (dp[j] + cost(j,i)), how does the deque maintain optimality?",
+      "back": "Maintain deque of candidate indices with increasing dp[j] values. For each i: (1) Remove indices < i-w from front, (2) While deque not empty and dp[deque.back] ≥ dp[i], pop back, (3) Push i to back, (4) Answer = dp[deque.front]. Each element enters/exits once → O(n). Requires cost(j,i) to satisfy monotonicity property (quadrangle inequality or convexity)."
+    },
+    {
+      "id": "fc-8",
+      "front": "Tree Rerooting DP: How do you compute answer for EVERY node as root in O(n) instead of O(n²)?",
+      "back": "First DFS computes dpDown[node] for a chosen root using post-order (leaf to root). Second DFS (pre-order) computes dpUp[child] using parent information: dpUp[child] = max(dpDown[sibling] options) + 1, etc. For each node, combine dpDown (from its subtree) with dpUp (from rest of tree). Common pattern: dpAll[node] = f(dpDown[node], dpUp[node]). Rerooting transforms O(n) subtree DP into O(n) all-nodes answers."
+    }
+  ]
+}

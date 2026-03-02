@@ -1,0 +1,172 @@
+{
+  "topicId": "becoming-the-super-user",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between 'su' and 'sudo' commands in Linux.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "su requires root password, sudo uses user's own password",
+        "sudo provides better security through configuration and audit trail",
+        "sudo can limit specific commands per user",
+        "su switches to a new user session, sudo executes single command"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of the /etc/sudoers file and why should you use visudo to edit it?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "/etc/sudoers defines which users can use sudo",
+        "It specifies what commands users can execute with elevated privileges",
+        "visudo performs syntax checking before saving",
+        "Prevents lockout from malformed configurations"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the difference between 'su', 'su -', and 'sudo -i' commands.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "su - switches user with login shell (loads full environment)",
+        "su - switches user without loading new environment",
+        "sudo -i starts interactive root shell using user's password",
+        "All three achieve similar result of becoming root but differ in password and environment"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Why is it recommended to use sudo instead of logging in as root directly?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Better security - doesn't share root password",
+        "Audit trail - logs which user ran commands",
+        "Time-limited privileges - sudo session expires",
+        "Can limit command access per user",
+        "Prevents accidental destructive commands"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the wheel group in Linux and what is its significance?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Wheel group is a special administrative group",
+        "Members can use 'su' command to become root",
+        "Provides controlled access to superuser privileges",
+        "Adding users to wheel is more secure than giving direct root access"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the root user's home directory and explain its significance.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Root's home directory is /root (not /home/root)",
+        "Separate from regular users' /home/<username>",
+        "Contains root's personal files, configurations, and scripts",
+        "Signifies root's special status in the filesystem hierarchy"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain what the prompt symbols $ and # indicate in Linux.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "$ indicates regular user shell",
+        "# indicates root (superuser) shell",
+        "$ represents user-level permissions and restrictions",
+        "# represents full administrative privileges",
+        "Helps users identify their current privilege level"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain in detail the various methods to become the superuser (root) in Linux. Compare their advantages and disadvantages.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Method 1: su command - requires root password, switches user, loads environment based on flags",
+        "Method 2: sudo su - uses user's password if permitted, achieves same result as su",
+        "Method 3: sudo -i - interactive login shell as root using user's password",
+        "Method 4: sudo -s - starts shell with elevated privileges",
+        "Method 5: sudo <command> - single command execution",
+        "Advantages of sudo over su: uses own password, audit trail, time-limited, configurable",
+        "Security implications of each method",
+        "Best practices for different scenarios"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the security aspects and best practices related to root user access in Linux systems.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Never share root password - use sudo instead",
+        "Direct root login provides no audit trail",
+        "Use visudo to prevent configuration errors",
+        "Implement wheel group for controlled su access",
+        "Sudo timeout balances security and convenience",
+        "Regular audit of /var/log/auth.log or sudo logs",
+        "Use key-based authentication for remote root access",
+        "Consider sudoers configuration for command restrictions",
+        "Root login via SSH should be disabled (PermitRootLogin no)",
+        "Create separate admin accounts for daily use"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the Linux user privilege model with special reference to UID 0 and how the superuser differs from regular users.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Every user has unique UID (User Identifier)",
+        "UID 0 is hardcoded as root user in Linux kernel",
+        "UID 0 has bypass of all permission checks",
+        "Regular users have UIDs typically > 1000",
+        "UID determines privilege level in kernel-level operations",
+        "Root can access any file, execute any command, modify any resource",
+        "GID 0 (root group) similarly has special status",
+        "Supplementary groups further control access",
+        "User database stored in /etc/passwd and /etc/shadow",
+        "Process privileges tied to UID/GID of executing user"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "A new system administrator needs to grant sudo access to a user. Explain the step-by-step procedure including configuration file syntax.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Add user to sudo group (usermod -aG sudo username) or wheel group",
+        "Or edit /etc/sudoers using visudo for custom configuration",
+        "Sudoers syntax: username ALL=(ALL:ALL) ALL",
+        "First ALL: run from any host",
+        "(ALL:ALL): run as any user, any group",
+        "ALL: run any command",
+        "Alternative: %groupname ALL=(ALL:ALL) ALL for groups",
+        "Test configuration with sudo -l command",
+        "Explain timestamp timeout behavior",
+        "Document the access granted"
+      ]
+    }
+  ]
+}

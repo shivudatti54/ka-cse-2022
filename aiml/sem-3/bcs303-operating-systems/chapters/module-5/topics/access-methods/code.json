@@ -1,0 +1,45 @@
+{
+  "topicId": "access-methods",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Sequential File Read Algorithm",
+      "description": "Demonstrates reading records sequentially from a file",
+      "code": "PROCEDURE SequentialRead(fileName, targetRecord)\nBEGIN\n  OPEN fileName FOR READING\n  position \u2190 0\n  WHILE NOT EOF(fileName) DO\n    READ record FROM fileName\n    position \u2190 position + 1\n    IF position = targetRecord THEN\n      RETURN record\n    END IF\n  END WHILE\n  CLOSE fileName\n  RETURN NULL  // Record not found\nEND",
+      "explanation": "This algorithm reads records one by one from the beginning until it finds the target record. The file pointer moves sequentially through each record. Time complexity is O(n) where n is the position of the target record.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Direct Access Implementation",
+      "description": "Implements direct access to records using relative record numbers",
+      "code": "class DirectAccessFile:\n    def __init__(self, filename, record_size):\n        self.filename = filename\n        self.record_size = record_size\n    \n    def read_record(self, rrn):\n        \"\"\"Read record at given Relative Record Number\"\"\"\n        byte_offset = (rrn - 1) * self.record_size\n        \n        with open(self.filename, 'rb') as f:\n            f.seek(byte_offset)\n            record = f.read(self.record_size)\n        \n        return record if record else None\n    \n    def write_record(self, rrn, data):\n        \"\"\"Write record at given Relative Record Number\"\"\"\n        byte_offset = (rrn - 1) * self.record_size\n        \n        with open(self.filename, 'rb+') as f:\n            f.seek(byte_offset)\n            f.write(data.ljust(self.record_size, b'\\x00'))\n    \n    def delete_record(self, rrn):\n        \"\"\"Mark record as deleted using deletion flag\"\"\"\n        byte_offset = (rrn - 1) * self.record_size\n        \n        with open(self.filename, 'rb+') as f:\n            f.seek(byte_offset)\n            f.write(b'DELETED')",
+      "explanation": "This Python implementation demonstrates direct access using relative record numbers. The byte offset is calculated directly from the RRN, providing O(1) access time. Records can be read, written, or deleted without affecting other records.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Indexed Sequential Search",
+      "description": "Demonstrates indexed access by first searching the index then the data file",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define INDEX_SIZE 100\n#define RECORD_SIZE 200\n\ntypedef struct {\n    int key;\n    int fileOffset;\n} IndexEntry;\n\n// Binary search on index\nint searchIndex(IndexEntry index[], int size, int searchKey) {\n    int left = 0, right = size - 1;\n    \n    while (left <= right) {\n        int mid = (left + right) / 2;\n        \n        if (index[mid].key == searchKey)\n            return index[mid].fileOffset;\n        else if (index[mid].key < searchKey)\n            left = mid + 1;\n        else\n            right = mid - 1;\n    }\n    return -1;  // Not found\n}\n\n// Read record from data file using offset\nvoid* readRecordAtOffset(FILE* dataFile, int offset) {\n    void* record = malloc(RECORD_SIZE);\n    \n    fseek(dataFile, offset, SEEK_SET);\n    fread(record, RECORD_SIZE, 1, dataFile);\n    \n    return record;\n}\n\n// Main indexed search function\nvoid* indexedSearch(FILE* indexFile, FILE* dataFile, int searchKey) {\n    IndexEntry index[INDEX_SIZE];\n    \n    // Load index into memory\n    fread(index, sizeof(IndexEntry), INDEX_SIZE, indexFile);\n    \n    // Search index - O(log n)\n    int offset = searchIndex(index, INDEX_SIZE, searchKey);\n    \n    if (offset == -1)\n        return NULL;\n    \n    // Read actual record - O(1)\n    return readRecordAtOffset(dataFile, offset);\n}",
+      "explanation": "This C code demonstrates indexed sequential access. First, a binary search is performed on the index (O(log n)), then direct access is used to read the actual record (O(1)). This provides much faster lookups than pure sequential search for large files.",
+      "timeComplexity": "O(log n + 1)",
+      "spaceComplexity": "O(m) where m is index size"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Buffer Management for File I/O",
+      "description": "Demonstrates buffering techniques to reduce I/O operations",
+      "code": "import java.io.*;\n\nclass BufferedFileReader {\n    private FileInputStream fis;\n    private BufferedInputStream buffer;\n    private final int BUFFER_SIZE = 8192;  // 8KB buffer\n    \n    public BufferedFileReader(String filename) throws IOException {\n        fis = new FileInputStream(filename);\n        buffer = new BufferedInputStream(fis, BUFFER_SIZE);\n    }\n    \n    public int read() throws IOException {\n        return buffer.read();  // Reads from buffer, not disk\n    }\n    \n    public byte[] readBlock(int size) throws IOException {\n        byte[] data = new byte[size];\n        int bytesRead = buffer.read(data);\n        \n        if (bytesRead == -1) return null;\n        \n        if (bytesRead < size) {\n            byte[] trimmed = new byte[bytesRead];\n            System.arraycopy(data, 0, trimmed, 0, bytesRead);\n            return trimmed;\n        }\n        return data;\n    }\n    \n    public void close() throws IOException {\n        buffer.close();\n        fis.close();\n    }\n}\n\nclass BufferManager {\n    // Simulated buffer pool\n    private static final int NUM_BUFFERS = 10;\n    private byte[][] bufferPool = new byte[NUM_BUFFERS][4096];\n    private boolean[] dirtyFlags = new boolean[NUM_BUFFERS];\n    private int[] accessCount = new int[NUM_BUFFERS];\n    \n    // Least Recently Used (LRU) replacement\n    public int getFreeBuffer() {\n        for (int i = 0; i < NUM_BUFFERS; i++) {\n            if (accessCount[i] == 0) return i;\n        }\n        \n        // Find LRU buffer and flush if dirty\n        int lru = 0;\n        int minCount = accessCount[0];\n        for (int i = 1; i < NUM_BUFFERS; i++) {\n            if (accessCount[i] < minCount) {\n                minCount = accessCount[i];\n                lru = i;\n            }\n        }\n        \n        if (dirtyFlags[lru]) {\n            flushBuffer(lru);  // Write back to disk\n        }\n        \n        return lru;\n    }\n    \n    private void flushBuffer(int bufferId) {\n        // Write buffer content to disk\n        System.out.println(\"Flushing buffer \" + bufferId + \" to disk\");\n        dirtyFlags[bufferId] = false;\n    }\n    \n    public void markDirty(int bufferId) {\n        dirtyFlags[bufferId] = true;\n    }\n    \n    public void accessBuffer(int bufferId) {\n        accessCount[bufferId]++;\n    }\n}",
+      "explanation": "This Java code demonstrates buffer management for file I/O. BufferedInputStream reduces physical disk reads by caching data in memory. The BufferManager class shows a simple LRU (Least Recently Used) buffer pool implementation that manages multiple buffers, writes dirty buffers back to disk, and tracks buffer usage for optimal performance.",
+      "timeComplexity": "O(1) for buffer reads (when cached), O(n) for disk write",
+      "spaceComplexity": "O(B \u00d7 N) where B is buffer size and N is number of buffers"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain what is meant by the 'granularity' of a data item in the context of database locking. Provide a simple example to illustrate your point.",
+    "expectedPoints": [
+      "Granularity refers to the size or scope of the data item chosen as the unit of protection in a locking protocol.",
+      "A coarse granularity (e.g., locking an entire table) reduces the overhead of managing locks but severely limits concurrency.",
+      "A fine granularity (e.g., locking a single row or attribute) increases concurrency but also increases the overhead of managing a larger number of locks."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the primary problem that Multiple Granularity Locking (MGL) is designed to solve and explain the purpose of 'intention locks' within the MGL protocol.",
+    "expectedPoints": [
+      "MGL solves the problem of efficiently locking data items at different levels of granularity (e.g., database, table, page, row) without the system needing to know in advance what items will be accessed.",
+      "It allows a transaction to explicitly lock a data item at a coarse granularity while implicitly locking all its finer-grained components, providing both efficiency and concurrency.",
+      "Intention locks (Intent-Shared (IS), Intent-Exclusive (IX), Shared+Intent-Exclusive (SIX)) signal a transaction's intention to acquire locks on a finer granularity underneath a node, preventing conflicting coarse-grained locks from being acquired by other transactions."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A transaction T1 needs to scan an entire table to compute an aggregate sum, while transaction T2 needs to update a single row in that same table. Explain how the Multiple Granularity Locking protocol with intention locks would handle these concurrent transactions to ensure serializability while maximizing concurrency. Detail the specific locks each transaction must acquire and at which granularity levels.",
+    "expectedPoints": [
+      "T1, which is reading the entire table, would request an S (Shared) lock on the table itself. Before this can be granted, it must first acquire an IS (Intent-Shared) lock on the database (if applicable) to signal its intent to acquire shared locks further down the hierarchy.",
+      "T2, which is updating a single row, would request an X (Exclusive) lock on the specific row. To do this, it must first acquire an IX (Intent-Exclusive) lock on the table (and potentially an IX on the database).",
+      "The protocol's compatibility matrix allows an IS lock (held by T2 on the table) to be compatible with an S lock (requested by T1 on the table). Therefore, T1's S lock on the table is granted. T1 can then read all rows.",
+      "Simultaneously, T2's IX lock on the table is compatible with T1's S lock on the table. T2's IX lock is granted, allowing it to then acquire the X lock on its specific row and perform the update. This allows both transactions to proceed concurrently without conflict."
+    ],
+    "marks": 10
+  }
+]

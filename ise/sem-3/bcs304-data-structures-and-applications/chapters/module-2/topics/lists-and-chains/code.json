@@ -1,0 +1,55 @@
+{
+  "topicId": "lists-and-chains",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Node Structure Definition in C",
+      "description": "Defines a self-referential structure for singly linked list node",
+      "code": "struct Node {\n    int data;\n    struct Node *next;\n};\n\n// Create a new node\nstruct Node* createNode(int value) {\n    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));\n    newNode->data = value;\n    newNode->next = NULL;\n    return newNode;\n}",
+      "explanation": "The self-referential structure contains data and a pointer to the next node. malloc() allocates memory dynamically on heap. Each node is independent and connected via pointers.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Singly Linked List Implementation in Python",
+      "description": "Complete implementation with insert and delete operations",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n    \n    def insert_at_beginning(self, data):\n        new_node = Node(data)\n        new_node.next = self.head\n        self.head = new_node\n    \n    def delete_from_beginning(self):\n        if self.head is None:\n            return None\n        temp = self.head\n        self.head = self.head.next\n        return temp.data\n    \n    def traverse(self):\n        current = self.head\n        while current:\n            print(current.data, end=\" -> \")\n            current = current.next\n        print(\"None\")",
+      "explanation": "Python class-based implementation. insert_at_beginning: O(1), delete_from_beginning: O(1), traverse: O(n). Uses None instead of NULL.",
+      "timeComplexity": "O(1) for insert/delete at beginning, O(n) for traverse",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Linked Stack Operations",
+      "description": "Stack implementation using linked list with push and pop",
+      "code": "struct StackNode {\n    int data;\n    struct StackNode *next;\n};\n\n// Push operation - insert at beginning\nvoid push(struct StackNode **top, int value) {\n    struct StackNode *newNode = (struct StackNode*)malloc(sizeof(struct StackNode));\n    newNode->data = value;\n    newNode->next = *top;\n    *top = newNode;\n}\n\n// Pop operation - delete from beginning\nint pop(struct StackNode **top) {\n    if (*top == NULL) return -1;\n    struct StackNode *temp = *top;\n    int value = temp->data;\n    *top = (*top)->next;\n    free(temp);\n    return value;\n}\n\n// Check if stack is empty\nint isEmpty(struct StackNode *top) {\n    return top == NULL;\n}",
+      "explanation": "Linked stack uses head as top. Push adds at beginning (O(1)), Pop removes from beginning (O(1)). No overflow unless heap memory exhausted. Uses double pointer to modify head.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Linked Queue Operations",
+      "description": "Queue implementation using linked list with enqueue and dequeue",
+      "code": "struct QueueNode {\n    int data;\n    struct QueueNode *next;\n};\n\nstruct Queue {\n    struct QueueNode *front;\n    struct QueueNode *rear;\n};\n\n// Enqueue - insert at rear\nvoid enqueue(struct Queue *q, int value) {\n    struct QueueNode *newNode = (struct QueueNode*)malloc(sizeof(struct QueueNode));\n    newNode->data = value;\n    newNode->next = NULL;\n    \n    if (q->rear == NULL) {\n        q->front = q->rear = newNode;\n    } else {\n        q->rear->next = newNode;\n        q->rear = newNode;\n    }\n}\n\n// Dequeue - delete from front\nint dequeue(struct Queue *q) {\n    if (q->front == NULL) return -1;\n    struct QueueNode *temp = q->front;\n    int value = temp->data;\n    q->front = q->front->next;\n    \n    if (q->front == NULL) q->rear = NULL;\n    free(temp);\n    return value;\n}",
+      "explanation": "Uses two pointers: front for deletion, rear for insertion. Enqueue: O(1), Dequeue: O(1). When front becomes NULL, rear also set to NULL. Both operations constant time.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Polynomial Representation using Linked List",
+      "description": "Represents polynomial as linked list with terms sorted by exponent",
+      "code": "struct PolynomialNode {\n    int coefficient;\n    int exponent;\n    struct PolynomialNode *next;\n};\n\n// Add two polynomials\nstruct PolynomialNode* addPolynomials(struct PolynomialNode *poly1, struct PolynomialNode *poly2) {\n    struct PolynomialNode *result = NULL;\n    struct PolynomialNode **tail = &result;\n    \n    while (poly1 && poly2) {\n        struct PolynomialNode *newNode = (struct PolynomialNode*)malloc(sizeof(struct PolynomialNode));\n        \n        if (poly1->exponent > poly2->exponent) {\n            newNode->coefficient = poly1->coefficient;\n            newNode->exponent = poly1->exponent;\n            poly1 = poly1->next;\n        } else if (poly2->exponent > poly1->exponent) {\n            newNode->coefficient = poly2->coefficient;\n            newNode->exponent = poly2->exponent;\n            poly2 = poly2->next;\n        } else {\n            newNode->coefficient = poly1->coefficient + poly2->coefficient;\n            newNode->exponent = poly1->exponent;\n            poly1 = poly1->next;\n            poly2 = poly2->next;\n        }\n        newNode->next = NULL;\n        *tail = newNode;\n        tail = &newNode->next;\n    }\n    return result;\n}",
+      "explanation": "Each term (coefficient, exponent) stored as node. Nodes sorted by exponent (descending). Addition merges two polynomials by comparing exponents. Efficient for sparse polynomials.",
+      "timeComplexity": "O(m + n) where m and n are number of terms",
+      "spaceComplexity": "O(m + n)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "random-number-generation",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Linear Congruential Generator",
+      "description": "Implementation of basic LCG PRNG algorithm",
+      "code": "ALGORITHM LCG(seed, a, c, m)\nBEGIN\n  state \u2190 seed\n  WHILE true DO\n    state \u2190 (a * state + c) MOD m\n    yield state\n  END WHILE\nEND\n\n// Example usage: LCG(12345, 1103515245, 12345, 2^31)\n// This is similar to C's rand() implementation",
+      "explanation": "LCG generates sequence using modular arithmetic. The quality depends heavily on parameter selection - poor choices result in short periods and visible patterns.",
+      "timeComplexity": "O(1) per number",
+      "spaceComplexity": "O(1) state storage"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Box-Muller Transform",
+      "description": "Generate Gaussian random numbers from uniform random numbers",
+      "code": "import math\nimport random\n\ndef box_muller_transform():\n    \"\"\"Generate two independent standard normal random variables\"\"\"\n    # Generate two uniform random numbers in (0, 1)\n    u1 = random.random()\n    u2 = random.random()\n    \n    # Apply Box-Muller transformation\n    magnitude = math.sqrt(-2.0 * math.log(u1))\n    z0 = magnitude * math.cos(2.0 * math.pi * u2)\n    z1 = magnitude * math.sin(2.0 * math.pi * u2)\n    \n    return z0, z1\n\n# Generate 1000 Gaussian samples\ngaussian_samples = [box_muller_transform()[0] for _ in range(1000)]",
+      "explanation": "Box-Muller takes two independent uniform random numbers and transforms them using natural log and trigonometric functions to produce normally distributed values with mean 0 and variance 1.",
+      "timeComplexity": "O(1) per sample",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Seeded PRNG for Reproducibility",
+      "description": "C program demonstrating seeding for reproducible random sequences",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <time.h>\n\nvoid print_random_sequence(unsigned int seed, int count) {\n    srand(seed);  // Seed the generator\n    printf(\"Seed %u: \", seed);\n    for (int i = 0; i < count; i++) {\n        printf(\"%d \", rand());\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    // Same seed produces same sequence\n    print_random_sequence(42, 5);\n    print_random_sequence(42, 5);  // Identical output\n    \n    // Different seed produces different sequence\n    print_random_sequence(100, 5);\n    \n    // Time-based seed for randomness\n    srand(time(NULL));\n    printf(\"Random: %d\\n\", rand());\n    \n    return 0;\n}",
+      "explanation": "This demonstrates how seeding enables reproducibility - same seed always produces identical sequences, essential for debugging and reproducible research.",
+      "timeComplexity": "O(n) for n random numbers",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Cryptographically Secure Random Generation",
+      "description": "Using Python secrets module for secure random numbers",
+      "code": "import secrets\nimport string\n\n# Generate cryptographically secure random bytes\nsecure_bytes = secrets.randbits(256)  # 256 random bits\nprint(f\"Secure random integer: {secure_bytes}\")\n\n# Generate secure random byte string\ntoken = secrets.token_bytes(32)  # 32 bytes\nprint(f\"Token bytes: {token.hex()}\")\n\n# Generate URL-safe random string\nurl_token = secrets.token_urlsafe(32)\nprint(f\"URL-safe token: {url_token}\")\n\n# Generate random choice securely\nalphabet = string.ascii_letters + string.digits\nsecure_password = ''.join(\n    secrets.choice(alphabet) for _ in range(16)\n)\nprint(f\"Secure password: {secure_password}\")\n\n# Secure random in range\nsecure_number = secrets.randbelow(1000000)\nprint(f\"Random in range [0, 1000000): {secure_number}\")",
+      "explanation": "Python's secrets module uses OS-level entropy sources (like /dev/urandom) to generate cryptographically strong random numbers suitable for security applications.",
+      "timeComplexity": "O(n) where n is number of bytes",
+      "spaceComplexity": "O(n) for output storage"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "multithreading-models",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Thread Creation Using Pthreads",
+      "description": "Demonstrates basic thread creation using POSIX Pthreads library",
+      "code": "#include <pthread.h>\n#include <stdio.h>\n\nvoid* thread_function(void* arg) {\n    int thread_id = *(int*)arg;\n    printf(\"Thread %d is running\\n\", thread_id);\n    return NULL;\n}\n\nint main() {\n    pthread_t threads[3];\n    int thread_ids[3];\n    \n    // Create 3 threads\n    for (int i = 0; i < 3; i++) {\n        thread_ids[i] = i + 1;\n        pthread_create(&threads[i], NULL, thread_function, &thread_ids[i]);\n    }\n    \n    // Wait for all threads to complete\n    for (int i = 0; i < 3; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"All threads completed\\n\");\n    return 0;\n}",
+      "explanation": "This C program demonstrates One-to-One threading model using POSIX Pthreads. Each pthread_create() call creates both a user thread and maps it to a kernel thread. The pthread_join() waits for thread completion.",
+      "timeComplexity": "O(n) for creating n threads",
+      "spaceComplexity": "O(n) where n is number of threads created"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Thread Pool Implementation",
+      "description": "Demonstrates thread pooling concept using Python's concurrent.futures",
+      "code": "from concurrent.futures import ThreadPoolExecutor\nimport time\n\ndef task(task_id):\n    print(f\"Task {task_id} started by thread\")\n    time.sleep(1)  # Simulating work\n    print(f\"Task {task_id} completed\")\n    return f\"Result of task {task_id}\"\n\ndef main():\n    # Create a thread pool with 3 worker threads\n    with ThreadPoolExecutor(max_workers=3) as executor:\n        # Submit 6 tasks to the pool\n        futures = []\n        for i in range(6):\n            future = executor.submit(task, i)\n            futures.append(future)\n        \n        # Wait for all tasks to complete\n        for future in futures:\n            result = future.result()\n            print(f\"Got result: {result}\")\n    \n    print(\"All tasks completed\")\n\nif __name__ == \"__main__\":\n    main()",
+      "explanation": "This Python code demonstrates thread pooling. Instead of creating 6 separate threads, we create a pool of 3 workers that process 6 tasks from a queue. This reduces thread creation overhead and demonstrates the thread pool concept used in many-to-M many models.",
+      "timeComplexity": "O(n) where n is number of tasks, bounded by pool size for parallelism",
+      "spaceComplexity": "O(w) where w is the maximum number of worker threads in the pool"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Thread Synchronization with Mutex",
+      "description": "Demonstrates thread synchronization using mutex to protect shared resource",
+      "code": "SHARED VARIABLES:\n    counter = 0\n    mutex = MUTEX()\n\nFUNCTION increment_counter(thread_id):\n    // Lock the mutex before accessing shared resource\n    mutex.lock()\n    \n    local_copy = counter\n    local_copy = local_copy + 1\n    counter = local_copy\n    \n    print(\"Thread \" + thread_id + \" incremented counter to \" + counter)\n    \n    // Unlock the mutex after access\n    mutex.unlock()\n\nFUNCTION main():\n    threads = []\n    \n    // Create 5 threads that all increment the counter\n    FOR i FROM 1 TO 5:\n        thread = CREATE_THREAD(increment_counter, i)\n        threads.append(thread)\n    \n    // Wait for all threads\n    FOR each thread IN threads:\n        JOIN_THREAD(thread)\n    \n    PRINT(\"Final counter value: \" + counter)\n    // Without synchronization, final value might be less than 5\n    // With synchronization, final value will be exactly 5",
+      "explanation": "This pseudocode demonstrates thread synchronization using a mutex (mutual exclusion lock). Without synchronization, multiple threads reading and writing to the shared counter simultaneously would cause a race condition, potentially losing updates. The mutex ensures only one thread can access the critical section at a time.",
+      "timeComplexity": "O(n) where n is number of threads",
+      "spaceComplexity": "O(1) additional space for mutex, O(n) for thread storage"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Java Multithreading with Thread Class",
+      "description": "Demonstrates One-to-One threading model in Java",
+      "code": "class WorkerThread extends Thread {\n    private int threadId;\n    \n    public WorkerThread(int id) {\n        this.threadId = id;\n    }\n    \n    @Override\n    public void run() {\n        System.out.println(\"Thread \" + threadId + \" starting\");\n        try {\n            // Simulate work\n            Thread.sleep(1000);\n        } catch (InterruptedException e) {\n            e.printStackTrace();\n        }\n        System.out.println(\"Thread \" + threadId + \" completed\");\n    }\n}\n\npublic class MultithreadingDemo {\n    public static void main(String[] args) {\n        Thread[] threads = new Thread[4];\n        \n        // Create and start 4 threads\n        for (int i = 0; i < 4; i++) {\n            threads[i] = new WorkerThread(i + 1);\n            threads[i].start();  // Starts the thread (One-to-One mapping to kernel thread)\n        }\n        \n        // Wait for all threads to complete\n        for (int i = 0; i < 4; i++) {\n            try {\n                threads[i].join();\n            } catch (InterruptedException e) {\n                e.printStackTrace();\n            }\n        }\n        \n        System.out.println(\"All threads finished execution\");\n    }\n}",
+      "explanation": "This Java program demonstrates the One-to-One threading model. Each Thread.start() call creates a new thread at both user level (Java thread) and kernel level (JVM maps to kernel thread). The join() method waits for thread completion. Java's threading model uses native threads, providing true parallelism on multi-core systems.",
+      "timeComplexity": "O(n) for creating and running n threads",
+      "spaceComplexity": "O(n) for thread objects and their stacks"
+    }
+  ]
+}

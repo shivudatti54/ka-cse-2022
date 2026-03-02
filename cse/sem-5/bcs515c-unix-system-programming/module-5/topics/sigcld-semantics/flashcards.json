@@ -1,0 +1,80 @@
+{
+  "topicId": "sigcld-semantics",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is SIGCLD signal in Unix/Linux?",
+      "back": "SIGCLD (Signal Child) is a signal sent to a parent process when a child process terminates. It indicates the death of a child process and allows the parent to perform cleanup using wait()/waitpid()."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the difference between SIGCLD and SIGCHLD?",
+      "back": "In modern Linux, SIGCLD is synonymous with SIGCHLD. Historically, SIGCLD was the BSD version while SIGCHLD was POSIX. Linux treats them as the same signal with the same signal number (SIGCHLD = 17)."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is a zombie process?",
+      "back": "A zombie process is a terminated child process that remains in the process table because the parent has not yet read its exit status using wait()/waitpid(). The process entry is retained until the parent collects the status."
+    },
+    {
+      "id": "fc-4",
+      "front": "What is the purpose of wait() system call?",
+      "back": "wait() suspends execution of the calling process until one of its child processes terminates. It returns the child's PID and fills the status information, allowing the parent to collect the child's exit status and prevent zombie processes."
+    },
+    {
+      "id": "fc-5",
+      "front": "What does SA_NOCLDSTOP flag do?",
+      "back": "When SA_NOCLDSTOP is set in sigaction(), the parent process does NOT receive SIGCHLD when a child process stops (due to SIGSTOP, SIGTSTP, etc.). By default, SIGCHLD is sent when a child stops."
+    },
+    {
+      "id": "fc-6",
+      "front": "What does SA_NOCLDWAIT flag do?",
+      "back": "When SA_NOCLDWAIT is set, the child process immediately disappears upon termination without becoming a zombie. The parent does not need to call wait() to prevent zombie creation."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is the default disposition of SIGCHLD?",
+      "back": "The default disposition of SIGCHLD is SIG_IGN (ignore). This causes zombie processes to be automatically reaped by the init process, but child exit status is lost."
+    },
+    {
+      "id": "fc-8",
+      "front": "Why should signal handlers for SIGCHLD be reentrant?",
+      "back": "Multiple child processes may terminate simultaneously, causing SIGCHLD to be delivered multiple times. A proper handler must handle this by calling wait() in a loop (e.g., while(waitpid(-1, NULL, WNOHANG) > 0))."
+    },
+    {
+      "id": "fc-9",
+      "front": "What is the difference between wait() and waitpid()?",
+      "back": "wait() blocks until any child terminates. waitpid() offers more control: can wait for specific PID, use WNOHANG for non-blocking, WUNTRACED for stopped processes, and can wait for process groups."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is WNOHANG in waitpid()?",
+      "back": "WNOHANG is a flag that makes waitpid() return immediately instead of blocking. It returns 0 if no child has exited yet, or the PID of a terminated child."
+    },
+    {
+      "id": "fc-11",
+      "front": "How does sigaction() differ from signal() for SIGCHLD?",
+      "back": "sigaction() provides more reliable, POSIX-standard behavior with explicit flags like SA_RESTART, SA_NOCLDSTOP, SA_NOCLDWAIT. signal() behavior varies across Unix implementations."
+    },
+    {
+      "id": "fc-12",
+      "front": "What happens if parent doesn't handle SIGCHLD?",
+      "back": "If SIGCHLD is ignored (default) or unhandled, terminated child processes become zombies, occupying process table entries. This can lead to resource exhaustion if many children terminate."
+    },
+    {
+      "id": "fc-13",
+      "front": "What is double-fork technique for orphan adoption?",
+      "back": "The double-fork technique: parent forks child, child forks grandchild, then child exits. The grandchild becomes orphan and is adopted by init, preventing the parent from dealing with zombies."
+    },
+    {
+      "id": "fc-14",
+      "front": "What is the relationship between SIGCLD and init process?",
+      "back": "When a parent process dies before its child, the child becomes orphaned and is adopted by init (PID 1). init automatically reaps orphaned zombies by calling wait() in its loop."
+    },
+    {
+      "id": "fc-15",
+      "front": "What is sigchld_handler used for?",
+      "back": "sigchld_handler is a user-defined signal handler that gets invoked when SIGCHLD is received. It typically calls waitpid() in a loop to reap all terminated children and prevent zombie creation."
+    }
+  ]
+}

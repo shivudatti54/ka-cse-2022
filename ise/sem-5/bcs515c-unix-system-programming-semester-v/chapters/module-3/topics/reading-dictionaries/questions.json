@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the basic steps and system calls involved in reading a simple dictionary file (a text file with one word per line) into an array in a C program.",
+    "expectedPoints": [
+      "Using `open()` or `fopen()` to obtain a file descriptor or stream pointer for the dictionary file.",
+      "Employing a loop with `read()` or `fgets()` to read the file line by line until EOF is reached.",
+      "Storing each successfully read line (word) into a pre-allocated or dynamically growing array in memory."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the process and considerations for reading a large dictionary file into a dynamic data structure (like a linked list or hash table) in a memory-efficient way. Contrast this with reading into a simple static array.",
+    "expectedPoints": [
+      "The necessity of dynamic memory allocation (`malloc`) for each record/node to avoid pre-allocating a fixed, potentially insufficient, amount of memory.",
+      "The importance of reading line-by-line (e.g., with `getline()` which can allocate memory) instead of reading the entire file at once, to handle files larger than available memory.",
+      "How using a data structure like a linked list facilitates reading an unknown number of entries, compared to a static array which requires knowing the count beforehand (e.g., via a first pass with `wc -l`)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A critical application requires simultaneously reading a shared dictionary file from multiple child processes for analysis. Detail a robust implementation strategy that handles file access, synchronization, and error checking to prevent data corruption and ensure consistency.",
+    "expectedPoints": [
+      "Using `fork()` to create child processes and the importance of each child opening the dictionary file independently to have its own file descriptor and offset.",
+      "The potential problem of concurrent writes if children also modified the file, necessitating advisory locks (`fcntl` locks) or mandatory locks if the data must be protected from other system programs.",
+      "Implementing comprehensive error checking after each system call (`open`, `read`, `close`, `fork`) and having children exit with appropriate status codes if errors occur, allowing the parent (`waitpid`) to handle failures gracefully."
+    ],
+    "marks": 10
+  }
+]

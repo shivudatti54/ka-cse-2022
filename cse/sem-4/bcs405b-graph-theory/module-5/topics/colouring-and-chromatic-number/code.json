@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Greedy Colouring Algorithm",
+    "description": "Greedy colouring assigns colours to vertices in a given order, using smallest available colour",
+    "code": "GREEDY_COLOURING(G, order[])\nBEGIN\n FOR i = 1 to n DO\n colour[i] = 0 // Initialize all vertices as uncoloured\n \n FOR i = 1 to n DO\n v = order[i]\n used[1..n] = FALSE // Colours used by neighbours\n \n FOR each neighbour u of v DO\n IF colour[u] \u2260 0 THEN\n used[colour[u]] = TRUE\n END IF\n END FOR\n \n // Assign smallest available colour\n c = 1\n WHILE used[c] = TRUE DO\n c = c + 1\n END WHILE\n \n colour[v] = c\n END FOR\n \n RETURN colour\nEND",
+    "explanation": "The algorithm processes vertices in the given order. For each vertex, it marks colours used by already-coloured neighbours, then assigns the smallest unused colour. Time complexity: O(n + m) where n vertices, m edges. Space: O(n). Worst-case uses \u0394(G)+1 colours, best case uses \u03c7(G).",
+    "complexity": {
+      "time": "O(n + m)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Chromatic Polynomial Calculation",
+    "description": "Recursive algorithm using deletion-contraction for chromatic polynomial",
+    "code": "CHROMATIC_POLYNOMIAL(G, k)\nBEGIN\n IF |V(G)| = 0 THEN\n RETURN 1 // Empty graph: 1 way to colour\n END IF\n \n IF |V(G)| = 1 THEN\n RETURN k // Single vertex: k colours available\n END IF\n \n // Choose an edge e = (u, v)\n e = ANY_EDGE(G)\n \n // G-e: Graph with edge e deleted\n G1 = DELETE_EDGE(G, e)\n \n // G/e: Graph with edge e contracted (u and v merged)\n G2 = CONTRACT_EDGE(G, e)\n \n // Deletion-Contraction recurrence\n RETURN CHROMATIC_POLYNOMIAL(G1, k) - CHROMATIC_POLYNOMIAL(G2, k)\nEND",
+    "explanation": "Uses the deletion-contraction recurrence: P(G, k) = P(G-e, k) - P(G/e, k). The chromatic polynomial counts all proper k-colourings. Base cases: empty graph has 1 colouring, single vertex has k colourings. Time is exponential in worst case.",
+    "complexity": {
+      "time": "O(2^n)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Check if Graph is k-Colourable",
+    "description": "Backtracking algorithm to check if a graph can be properly coloured with k colours",
+    "code": "IS_K_COLOURABLE(G, k)\nBEGIN\n colour[1..n] = 0 // 0 means uncoloured\n \n RETURN BACKTRACK(1)\n \n BACKTRACK(v)\n BEGIN\n IF v > n THEN\n RETURN TRUE // All vertices coloured\n END IF\n \n FOR c = 1 to k DO\n IF SAFE_TO_COLOUR(v, c) THEN\n colour[v] = c\n IF BACKTRACK(v+1) THEN\n RETURN TRUE\n END IF\n colour[v] = 0 // Backtrack\n END IF\n END FOR\n \n RETURN FALSE\n END\n \n SAFE_TO_COLOUR(v, c)\n BEGIN\n FOR each neighbour u of v DO\n IF colour[u] = c THEN\n RETURN FALSE\n END IF\n END FOR\n RETURN TRUE\n END\nEND",
+    "explanation": "Backtracking tries all possible colour assignments. To find chromatic number, try k = 1, 2, 3... until colouring succeeds. For complete graphs, must try all k colours. Time is O(k^n) in worst case - exponential but works for small graphs.",
+    "complexity": {
+      "time": "O(k^n)",
+      "space": "O(n)"
+    }
+  }
+]

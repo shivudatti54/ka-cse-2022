@@ -1,0 +1,93 @@
+{
+  "topicId": "storing-a-word-in-memory",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the step-by-step sequence of operations involved in executing a Store Word (SW) instruction in a basic processor. Include the role of MAR, MDR, WR, and MFC signals.",
+      "keyPoints": [
+        "Load effective address into MAR from instruction's address field or computed address",
+        "Load data to be stored from source register into MDR",
+        "Assert Write (WR) control signal to enable memory write",
+        "Wait for Memory Function Complete (MFC) signal from memory",
+        "Data is transferred from MDR to memory location addressed by MAR",
+        "After MFC, the operation is complete and control signals are de-asserted"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between write-through and write-back cache policies. Discuss their advantages and disadvantages in terms of performance and consistency.",
+      "keyPoints": [
+        "Write-through: Updates both cache and main memory on every write. Advantages: simple, consistent, no data loss. Disadvantage: slower due to main memory write on every store.",
+        "Write-back: Updates only cache initially, main memory updated on eviction. Advantage: faster for multiple writes to same line. Disadvantage: complex, risk of data loss if crash, needs dirty bit management."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between byte-addressable and word-addressable memory? If a processor has a 16-bit MAR and uses word-addressable memory with 16-bit words, calculate the maximum addressable memory size.",
+      "keyPoints": [
+        "Byte-addressable: each byte has unique address, word spans N consecutive addresses",
+        "Word-addressable: each word has unique address, more efficient for word-oriented operations",
+        "With 16-bit MAR: 2^16 = 65536 unique addresses",
+        "Word size = 16 bits = 2 bytes",
+        "Maximum memory = 65536 \u00d7 2 bytes = 131072 bytes = 128 KB"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the concept of word alignment. Why do some processors impose alignment requirements, and what are the penalties for unaligned access?",
+      "keyPoints": [
+        "Word aligned: word starts at address divisible by word size (e.g., 4-byte word at 0, 4, 8...)",
+        "Unaligned: word starts at address not divisible by word size",
+        "Reasons: Simplifies hardware (single memory access), faster access, prevents cross-cache-line issues",
+        "Penalties: May require multiple memory cycles, potential exceptions on some architectures, slower access times"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Describe the big-endian and little-endian byte ordering schemes with an example. Why is endianness important in store/load operations?",
+      "keyPoints": [
+        "Big-Endian: MSB at lowest address (like reading normally left-to-right)",
+        "Little-Endian: LSB at lowest address (reversed order)",
+        "Example: 0x12345678 at addr 100: Big=[100]=12...,[103]=78; Little=[100]=78...,[103]=12",
+        "Importance: Affects how multi-byte data is stored/retrieved; critical for: (1) interoperability between systems, (2) data structure compatibility, (3) network protocols specify endianness"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "For a 5-stage pipeline processor, analyze the RAW (Read-After-Write) hazards that can occur involving store instructions. Discuss how store-to-load forwarding works and what mechanisms are needed to handle these hazards correctly.",
+      "keyPoints": [
+        "Store instructions write data in MEM stage; loads read in MEM stage",
+        "RAW hazard: if load immediately follows store, load may need data that isn't in memory yet",
+        "Without forwarding: need 1 stall cycle between store and dependent load",
+        "Store-to-load forwarding: forward data from store's EX/MEM stage to load's MEM stage",
+        "Implementation needs: (1) detection logic to match pending stores with loads, (2) forwarding mux in MEM stage, (3) store buffer to hold data for forwarding, (4) stall logic when forwarding not possible",
+        "Example: SW R1, 0(R2) followed by LW R3, 0(R2): need forwarding or stall"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Draw and explain a timing diagram for a store operation in a multi-cycle processor. Show the clock cycles, address and data bus activities, and control signals (WR, MFC) over time. Discuss how this timing differs from a fetch operation.",
+      "keyPoints": [
+        "Timing Diagram showing:\nCycle 1: MAR\u2190Effective Address (address on address bus)\nCycle 2: MDR\u2190Data from register (data placed on data bus)\nCycle 3: WR\u21901, wait for MFC (memory write occurs)\nCycle 4 (optional): MFC received, signals de-asserted",
+        "Key signals: Address bus, Data bus, WR, MFC with proper timing relationships",
+        "Difference from Fetch: Fetch uses RD signal, data flows INTO MDR; Store uses WR, data flows OUT of MDR",
+        "Store requires two bus cycles (address then data), fetch typically one or two depending on design",
+        "Both wait for MFC before completing"
+      ],
+      "marks": 10
+    }
+  ]
+}

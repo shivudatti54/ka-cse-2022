@@ -1,0 +1,143 @@
+{
+  "topicId": "comparators",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between Comparable and Comparator interfaces in Java. When would you prefer one over the other?",
+      "keyPoints": [
+        "Comparable provides natural ordering, implemented by the class itself",
+        "Comparator provides custom/external ordering, doesn't modify the original class",
+        "Use Comparable when you control the source code and want single natural order",
+        "Use Comparator when using third-party classes or need multiple sort orders",
+        "Comparator is a functional interface allowing lambda usage"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the contract for the compare() method? Explain the return value conventions.",
+      "keyPoints": [
+        "Returns negative if o1 < o2",
+        "Returns zero if o1 == o2",
+        "Returns positive if o1 > o2",
+        "Must be consistent: sgn(compare(x, y)) == -sgn(compare(y, x))",
+        "Must be transitive: compare(x,y)>0 && compare(y,z)>0 implies compare(x,z)>0",
+        "compare(x,x) must return 0"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "How do you handle null values in sorting using Comparator? Explain with example.",
+      "keyPoints": [
+        "Direct comparison throws NullPointerException",
+        "Use nullsFirst() to place null at beginning (null < non-null)",
+        "Use nullsLast() to place null at end (null > non-null)",
+        "Chain with naturalOrder() or custom comparator: Comparator.nullsLast(Comparator.naturalOrder())",
+        "Example: list.sort(Comparator.nullsFirst(Comparator.naturalOrder()))"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Write Java code to sort a list of Employee objects by salary (descending) and then by name (ascending).",
+      "keyPoints": [
+        "Use Comparator.comparing with reversed() for descending",
+        "Use thenComparing() to add secondary sort",
+        "Code: Comparator.comparing(Employee::getSalary).reversed().thenComparing(Employee::getName)",
+        "Alternatively: Comparator.comparing(Employee::getSalary, Comparator.reverseOrder()).thenComparing(Employee::getName)",
+        "Apply using Collections.sort(list, comparator) or list.sort(comparator)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the advantages of using Comparator comparingInt(), comparingLong(), comparingDouble() over comparing()?",
+      "keyPoints": [
+        "Avoids autoboxing/unboxing overhead for primitive types",
+        "comparingInt() extracts int, compares as primitives",
+        "Less memory allocation (no Integer/Long/Double wrapper objects)",
+        "Better performance for large datasets with primitive fields",
+        "Method names match primitive type for clarity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain method chaining in Comparator using thenComparing(). How does it work internally?",
+      "keyPoints": [
+        "thenComparing() creates a composite comparator",
+        "First comparator is used, if returns 0 (equal), second comparator decides",
+        "Allows multi-level sorting: primary, secondary, tertiary, etc.",
+        "Returns new Comparator without modifying original",
+        "Internally uses short-circuit evaluation - stops at first non-zero result"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Why should you avoid using (a, b) -> a - b for Integer comparison? What is the correct approach?",
+      "keyPoints": [
+        "a - b can cause integer overflow when values are near Integer.MAX_VALUE",
+        "Example: Integer.MAX_VALUE - (-1) overflows to negative",
+        "Use Comparator.comparingInt(Integer::intValue) or (a, b) -> Integer.compare(a, b)",
+        "Integer.compare() handles overflow correctly",
+        "comparingInt() also optimizes for primitive int to avoid autoboxing"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Create a complete Java program that demonstrates sorting a list of Student objects with multiple criteria: first by branch (CS, IT, ECE ascending), then by CGPA (descending), then by name (case-insensitive ascending). Include proper null handling.",
+      "keyPoints": [
+        "Create Student class with branch, cgpa, name fields",
+        "Define branch order: CS < IT < ECE using Comparator with Map",
+        "Use Comparator.comparing with custom mapping for branch order",
+        "Use reversed() for descending CGPA",
+        "Use comparing for case-insensitive name (String::toLowerCase)",
+        "Chain all with thenComparing: branchComp.thenComparing(cgpaComp).thenComparing(nameComp)",
+        "Handle nulls using nullsFirst/nullsLast as appropriate",
+        "Show output demonstrating all three sort levels"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a Java program that uses Comparator with Lambda expressions to sort various collections: (a) String array by length, (b) List of Integer in reverse order, (c) List of custom objects by multiple fields using method reference.",
+      "keyPoints": [
+        "For (a): Comparator.comparingInt(String::length)",
+        "For (b): Collections.sort(list, Collections.reverseOrder()) or list.sort(Comparator.reverseOrder())",
+        "For (c): Create Employee class with department, salary, name",
+        "Use Comparator.comparing(Employee::getDept).thenComparing(Employee::getSalary).thenComparing(Employee::getName)",
+        "Demonstrate lambda: (a, b) -> a.length() - b.length()",
+        "Show usage with Arrays.sort(), Collections.sort(), List.sort()",
+        "Include explanation of why lambdas work (Comparator is functional interface)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a Comparator that can sort a list of transactions by date (newest first), and for same dates, by amount (highest first), and handle null dates gracefully by placing them at the end.",
+      "keyPoints": [
+        "Create Transaction class with LocalDate date and BigDecimal amount",
+        "Handle null dates using nullsLast() as base",
+        "For non-null dates: Comparator.comparing(Transaction::getDate, Comparator.reverseOrder())",
+        "For amount: Comparator.comparing(Transaction::getAmount, Comparator.reverseOrder())",
+        "Chain: Comparator.nullsLast(Comparator.comparing(Transaction::getDate).reversed()).thenComparing(Transaction::getAmount, Comparator.reverseOrder())",
+        "Or: Comparator.nullsLast(Comparator.comparing(Transaction::getDate).reversed()).thenComparing(Comparator.comparing(Transaction::getAmount).reversed())",
+        "Show test cases with null dates, same dates, different amounts"
+      ],
+      "marks": 10
+    }
+  ]
+}

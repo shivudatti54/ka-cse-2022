@@ -1,0 +1,45 @@
+{
+  "topicId": "memory-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "FIFO Page Replacement Algorithm",
+      "description": "Implementation of First In First Out page replacement algorithm",
+      "code": "ALGORITHM FIFO_Page_Replacement\nINPUT: Reference string, Number of frames\nOUTPUT: Number of page faults\nBEGIN\n  frames \u2190 empty queue\n  pageFaults \u2190 0\n  \n  FOR each page in reference string DO\n    IF page NOT IN frames THEN\n      IF frames is full THEN\n        // Remove oldest page (front of queue)\n        oldest \u2190 frames.dequeue()\n        remove oldest from frames\n      END IF\n      // Add new page to queue\n      frames.enqueue(page)\n      pageFaults \u2190 pageFaults + 1\n    END IF\n  END FOR\n  \n  RETURN pageFaults\nEND",
+      "explanation": "FIFO maintains pages in arrival order. When a new page arrives and all frames are full, the oldest page (first to arrive) is removed. This is simple but may not always give optimal results.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(m) where m is number of frames"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "LRU Page Replacement Algorithm",
+      "description": "Implementation of Least Recently Used page replacement using counter",
+      "code": "def LRU_Page_Replacement(pages, frames):\n    # Initialize frame array with -1 (empty)\n    frame_array = [-1] * frames\n    # Counter for time since last reference\n    last_used = [0] * frames\n    time = 0\n    page_faults = 0\n    \n    for page in pages:\n        time += 1\n        # Check if page is already in frame\n        if page in frame_array:\n            # Update last used time for that frame\n            idx = frame_array.index(page)\n            last_used[idx] = time\n            continue\n        \n        # Page fault occurs\n        page_faults += 1\n        \n        # Find empty frame if available\n        if -1 in frame_array:\n            idx = frame_array.index(-1)\n            frame_array[idx] = page\n            last_used[idx] = time\n        else:\n            # Replace LRU page (minimum last_used value)\n            lru_idx = last_used.index(min(last_used))\n            frame_array[lru_idx] = page\n            last_used[lru_idx] = time\n    \n    return page_faults\n\n# Example usage\npages = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2]\nframes = 3\nprint(f\"Page Faults: {LRU_Page_Replacement(pages, frames)}\")",
+      "explanation": "LRU replaces the page that has not been used for the longest time. It maintains a counter for each frame updated on each page hit. When replacement is needed, the frame with the smallest counter (oldest use time) is selected.",
+      "timeComplexity": "O(n * f) where n is pages and f is frames",
+      "spaceComplexity": "O(f)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Contiguous Memory Allocation - First Fit",
+      "description": "C implementation of first-fit memory allocation strategy",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_MEMORY 1000\n\ntypedef struct {\n    int start;\n    int size;\n    bool allocated;\n    int process_id;\n} MemoryBlock;\n\nMemoryBlock memory[MAX_MEMORY];\nint num_blocks = 0;\n\nvoid initialize_memory() {\n    memory[0].start = 0;\n    memory[0].size = MAX_MEMORY;\n    memory[0].allocated = false;\n    memory[0].process_id = -1;\n    num_blocks = 1;\n}\n\nint first_fit(int process_id, int size) {\n    for (int i = 0; i < num_blocks; i++) {\n        if (!memory[i].allocated && memory[i].size >= size) {\n            // Found suitable block\n            if (memory[i].size > size) {\n                // Split block\n                memory[num_blocks].start = memory[i].start + size;\n                memory[num_blocks].size = memory[i].size - size;\n                memory[num_blocks].allocated = false;\n                memory[num_blocks].process_id = -1;\n                num_blocks++;\n            }\n            memory[i].allocated = true;\n            memory[i].process_id = process_id;\n            memory[i].size = size;\n            return memory[i].start;\n        }\n    }\n    return -1; // No suitable block found\n}\n\nvoid deallocate(int process_id) {\n    for (int i = 0; i < num_blocks; i++) {\n        if (memory[i].allocated && memory[i].process_id == process_id) {\n            memory[i].allocated = false;\n            memory[i].process_id = -1;\n            // Merge with adjacent free blocks\n            // (simplified - would need full coalescing logic)\n            break;\n        }\n    }\n}\n\nint main() {\n    initialize_memory();\n    int addr1 = first_fit(1, 200);\n    int addr2 = first_fit(2, 300);\n    int addr3 = first_fit(3, 150);\n    \n    printf(\"Process 1 allocated at: %d\\n\", addr1);\n    printf(\"Process 2 allocated at: %d\\n\", addr2);\n    printf(\"Process 3 allocated at: %d\\n\", addr3);\n    \n    return 0;\n}",
+      "explanation": "First-fit allocation scans memory from the beginning and allocates the first block that is large enough for the request. It is fast but may lead to external fragmentation over time.",
+      "timeComplexity": "O(n) where n is number of memory blocks",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Demand Paging Page Fault Handler",
+      "description": "Algorithm showing steps when handling a page fault in demand paging system",
+      "code": "ALGORITHM Handle_Page_Fault\nINPUT: virtual_address that caused fault\nBEGIN\n  // Step 1: Identify the faulting virtual page\n  virtual_page_number \u2190 virtual_address / PAGE_SIZE\n  \n  // Step 2: Check if page is valid (not in valid address space)\n  IF NOT is_valid_page(virtual_page_number) THEN\n    terminate_process()\n    RETURN\n  END IF\n  \n  // Step 3: Find a free frame in physical memory\n  IF free_frames_available() THEN\n    frame_number \u2190 allocate_free_frame()\n  ELSE\n    // Step 4: Apply page replacement algorithm\n    victim_page \u2190 select_victim_page()\n    frame_number \u2190 victim_page.frame\n    \n    // If victim page is dirty, write to disk\n    IF victim_page.dirty THEN\n      write_to_disk(victim_page, swap_space)\n    END IF\n  END IF\n  \n  // Step 5: Load the required page from disk to frame\n  page_location \u2190 locate_page_on_disk(virtual_page_number)\n  read_from_disk(page_location, frame_number)\n  \n  // Step 6: Update page table entry\n  page_table[virtual_page_number].valid \u2190 true\n  page_table[virtual_page_number].frame \u2190 frame_number\n  page_table[virtual_page_number].dirty \u2190 false\n  \n  // Step 7: Restart the interrupted instruction\n  restart_instruction()\nEND",
+      "explanation": "This algorithm shows the complete page fault handling process in demand paging. The OS must locate the page on disk, possibly replace an existing page, update page tables, and restart the process instruction.",
+      "timeComplexity": "O(disk_access_time) typically milliseconds",
+      "spaceComplexity": "O(1) additional memory"
+    }
+  ]
+}

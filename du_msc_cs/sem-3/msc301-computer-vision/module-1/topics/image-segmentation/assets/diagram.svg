@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="image-segmentation">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="50%" style="stop-color:#f0e6f6"/>
+      <stop offset="100%" style="stop-color:#e6f0e8"/>
+    </linearGradient>
+    <linearGradient id="encoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7eb8da"/>
+      <stop offset="100%" style="stop-color:#5a9bc4"/>
+    </linearGradient>
+    <linearGradient id="decoderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#b8a5da"/>
+      <stop offset="100%" style="stop-color:#9b7ec4"/>
+    </linearGradient>
+    <linearGradient id="bottleneckGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c4b8da"/>
+      <stop offset="100%" style="stop-color:#a58ec4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .title { animation: fadeIn 0.8s ease-out forwards; font-family: Arial, sans-serif; font-weight: bold; }
+    .encoder-block { animation: slideInLeft 0.6s ease-out forwards; }
+    .decoder-block { animation: slideInRight 0.6s ease-out forwards; }
+    .bottleneck { animation: fadeIn 0.8s ease-out forwards; }
+    .skip-arrow { animation: pulse 2s ease-in-out infinite; }
+    .concept-box { animation: slideUp 0.5s ease-out forwards; }
+    .label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+    .label-large { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #333; }
+    .detail { font-family: Arial, sans-serif; font-size: 10px; fill: #555; }
+  </style>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="28" text-anchor="middle" class="title" font-size="20" font-weight="bold" fill="#2c3e50">Image Segmentation</text>
+  <text x="210" y="45" text-anchor="middle" class="title" font-size="13" fill="#555" style="opacity: 0.8">U-Net Architecture</text>
+  
+  <!-- Encoder Path (Left side) -->
+  <g class="encoder-block" data-narration="The encoder (contracting path) extracts features through convolutional layers, reducing spatial dimensions while increasing feature channels.">
+    <rect x="30" y="80" width="60" height="35" rx="4" fill="url(#encoderGrad)" filter="url(#shadow)"/>
+    <text x="60" y="102" text-anchor="middle" class="label-large" fill="white">Conv</text>
+    <text x="60" y="125" text-anchor="middle" class="detail">64 filters</text>
+  </g>
+  
+  <g class="encoder-block" data-narration="Max pooling halves the spatial dimensions, enabling the network to capture broader context." style="animation-delay: 0.1s">
+    <rect x="30" y="140" width="60" height="35" rx="4" fill="url(#encoderGrad)" filter="url(#shadow)"/>
+    <text x="60" y="162" text-anchor="middle" class="label-large" fill="white">Pool</text>
+    <text x="60" y="185" text-anchor="middle" class="detail">2x2</text>
+  </g>
+  
+  <g class="encoder-block" data-narration="Deeper encoder layers capture more abstract features with increased channels." style="animation-delay: 0.2s">
+    <rect x="30" y="210" width="60" height="35" rx="4" fill="url(#encoderGrad)" filter="url(#shadow)"/>
+    <text x="60" y="232" text-anchor="middle" class="label-large" fill="white">Conv</text>
+    <text x="60" y="255" text-anchor="middle" class="detail">128 filters</text>
+  </g>
+  
+  <g class="encoder-block" style="animation-delay: 0.3s">
+    <rect x="30" y="270" width="60" height="35" rx="4" fill="url(#encoderGrad)" filter="url(#shadow)"/>
+    <text x="60" y="292" text-anchor="middle" class="label-large" fill="white">Pool</text>
+    <text x="60" y="315" text-anchor="middle" class="detail">2x2</text>
+  </g>
+  
+  <!-- Encoder arrows -->
+  <path d="M90 97 L110 97 L110 157 L130 157" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" class="skip-arrow"/>
+  <path d="M90 227 L110 227 L110 287 L130 287" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" class="skip-arrow"/>
+  
+  <!-- Bottleneck -->
+  <g class="bottleneck" data-narration="The bottleneck contains the most compressed representation of the input image." style="animation-delay: 0.4s">
+    <rect x="130" y="305" width="50" height="30" rx="4" fill="url(#bottleneckGrad)" filter="url(#shadow)"/>
+    <text x="155" y="325" text-anchor="middle" class="label" fill="white">Bottleneck</text>
+  </g>
+  
+  <!-- Decoder Path (Right side) -->
+  <g class="decoder-block" data-narration="The decoder (expanding path) uses transposed convolutions to upsample and recover spatial resolution." style="animation-delay: 0.3s">
+    <rect x="210" y="270" width="60" height="35" rx="4" fill="url(#decoderGrad)" filter="url(#shadow)"/>
+    <text x="240" y="292" text-anchor="middle" class="label-large" fill="white">UpConv</text>
+    <text x="240" y="315" text-anchor="middle" class="detail">128 filters</text>
+  </g>
+  
+  <g class="decoder-block" style="animation-delay: 0.2s">
+    <rect x="210" y="210" width="60" height="35" rx="4" fill="url(#decoderGrad)" filter="url(#shadow)"/>
+    <text x="240" y="232" text-anchor="middle" class="label-large" fill="white">Conv</text>
+    <text x="240" y="255" text-anchor="middle" class="detail">128 filters</text>
+  </g>
+  
+  <!-- Skip connection 1 -->
+  <path d="M90 227 C110 227, 110 200, 130 200 L180 200 C190 200, 200 210, 210 227" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="4,2" class="skip-arrow"/>
+  <text x="150" y="195" text-anchor="middle" class="detail" fill="#c0392b">Skip</text>
+  
+  <g class="decoder-block" style="animation-delay: 0.1s">
+    <rect x="210" y="140" width="60" height="35" rx="4" fill="url(#decoderGrad)" filter="url(#shadow)"/>
+    <text x="240" y="162" text-anchor="middle" class="label-large" fill="white">UpConv</text>
+    <text x="240" y="185" text-anchor="middle" class="detail">64 filters</text>
+  </g>
+  
+  <!-- Skip connection 2 -->
+  <path d="M90 97 C110 97, 110 130, 130 130 L180 130 C190 130, 200 140, 210 157" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="4,2" class="skip-arrow"/>
+  <text x="150" y="120" text-anchor="middle" class="detail" fill="#c0392b">Skip</text>
+  
+  <g class="decoder-block">
+    <rect x="210" y="80" width="60" height="35" rx="4" fill="url(#decoderGrad)" filter="url(#shadow)"/>
+    <text x="240" y="102" text-anchor="middle" class="label-large" fill="white">Conv</text>
+    <text x="240" y="125" text-anchor="middle" class="detail">64 filters</text>
+  </g>
+  
+  <!-- Output -->
+  <g class="bottleneck" style="animation-delay: 0.5s">
+    <rect x="290" y="80" width="50" height="35" rx="4" fill="#27ae60" filter="url(#shadow)"/>
+    <text x="315" y="98" text-anchor="middle" class="label-large" fill="white">Output</text>
+    <text x="315" y="112" text-anchor="middle" class="detail">Mask</text>
+  </g>
+  
+  <path d="M270 97 L290 97" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Key Concepts Boxes -->
+  <g class="concept-box" data-narration="Skip connections concatenate encoder features with decoder features, preserving spatial information lost during downsampling." style="animation-delay: 0.6s">
+    <rect x="290" y="140" width="120" height="45" rx="5" fill="white" stroke="#e74c3c" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="300" y="158" class="label-large" fill="#c0392b">Skip Connections</text>
+    <text x="300" y="175" class="detail">Preserve spatial details</text>
+  </g>
+  
+  <g class="concept-box" data-narration="Encoder-decoder structure enables precise localization while maintaining context awareness." style="animation-delay: 0.7s">
+    <rect x="290" y="195" width="120" height="45" rx="5" fill="white" stroke="#3498db" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="300" y="213" class="label-large" fill="#2980b9">Encoder-Decoder</text>
+    <text x="300" y="230" class="detail">Context + Localization</text>
+  </g>
+  
+  <g class="concept-box" data-narration="Pixel-wise classification produces a segmentation mask where each pixel is assigned to a class." style="animation-delay: 0.8s">
+    <rect x="290" y="250" width="120" height="45" rx="5" fill="white" stroke="#27ae60" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="300" y="268" class="label-large" fill="#1e8449">Pixel-wise Output</text>
+    <text x="300" y="285" class="detail">Binary/Multi-class mask</text>
+  </g>
+  
+  <!-- Input Image indicator -->
+  <g class="concept-box" data-narration="Input image is fed into the encoder path for feature extraction." style="animation-delay: 0.5s">
+    <rect x="10" y="75" width="25" height="45" rx="3" fill="#95a5a6" filter="url(#shadow)"/>
+    <rect x="13" y="80" width="8" height="8" fill="#7f8c8d"/>
+    <rect x="22" y="80" width="8" height="8" fill="#7f8c8d"/>
+    <rect x="13" y="89" width="8" height="8" fill="#7f8c8d"/>
+    <rect x="22" y="89" width="8" height="8" fill="#7f8c8d"/>
+    <text x="22" y="135" text-anchor="middle" class="detail">Input</text>
+    <path d="M35 97 L45 97" stroke="#666" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Bottom info -->
+  <g class="concept-box" style="animation-delay: 0.9s">
+    <rect x="10" y="355" width="400" height="35" rx="5" fill="rgba(255,255,255,0.7)"/>
+    <text x="25" y="373" class="label" fill="#2c3e50">Key Methods: </text>
+    <text x="110" y="373" class="detail" fill="#7f8c8d">Thresholding • Edge-Based • Region Growing • K-Means • Deep Learning</text>
+  </g>
+</svg>

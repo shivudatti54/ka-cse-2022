@@ -1,0 +1,45 @@
+{
+  "topicId": "computing-environments",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Hypervisor Function Simulation",
+      "description": "Demonstrates how a hypervisor allocates resources to virtual machines",
+      "code": "FUNCTION AllocateResources(vm_id, cpu_cores, memory_mb)\nBEGIN\n  IF CheckAvailability(cpu_cores, memory_mb) THEN\n    FOR each vm IN ActiveVMs\n      IF vm.id == vm_id THEN\n        vm.cpu_cores = cpu_cores\n        vm.memory = memory_mb\n        RETURN \"Resources allocated successfully\"\n      END IF\n    END FOR\n    RETURN \"VM not found\"\n  ELSE\n    RETURN \"Insufficient resources available\"\n  END IF\nEND\n\nFUNCTION CheckAvailability(required_cpu, required_mem)\nBEGIN\n  total_cpu = GetTotalCPU()\n  total_mem = GetTotalMemory()\n  used_cpu = GetUsedCPU()\n  used_mem = GetUsedMemory()\n  \n  available_cpu = total_cpu - used_cpu\n  available_mem = total_mem - used_mem\n  \n  RETURN (available_cpu >= required_cpu AND available_mem >= required_mem)\nEND",
+      "explanation": "This pseudocode simulates basic hypervisor functions of checking resource availability and allocating CPU cores and memory to virtual machines.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Client-Server Request Handler",
+      "description": "Demonstrates simple client-server communication in computing environment",
+      "code": "import socket\nimport threading\n\ndef handle_client(client_socket, client_id):\n    print(f\"Client {client_id} connected\")\n    try:\n        request = client_socket.recv(1024).decode('utf-8')\n        print(f\"Request from Client {client_id}: {request}\")\n        \n        # Process request and prepare response\n        response = f\"Server processed: {request}\"\n        client_socket.send(response.encode('utf-8'))\n    except Exception as e:\n        print(f\"Error: {e}\")\n    finally:\n        client_socket.close()\n        print(f\"Client {client_id} disconnected\")\n\ndef start_server(host='localhost', port=9999):\n    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    server.bind((host, port))\n    server.listen(5)\n    print(f\"Server listening on {host}:{port}\")\n    \n    client_id = 1\n    while True:\n        client_socket, addr = server.accept()\n        print(f\"Accepted connection from {addr}\")\n        \n        # Create new thread for each client\n        client_thread = threading.Thread(\n            target=handle_client, \n            args=(client_socket, client_id)\n        )\n        client_thread.start()\n        client_id += 1\n\nif __name__ == \"__main__\":\n    start_server()",
+      "explanation": "This Python code demonstrates a basic TCP server handling multiple clients using threading, representing client-server computing environment.",
+      "timeComplexity": "O(n) for concurrent connections",
+      "spaceComplexity": "O(n) for thread storage"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Real-Time Task Scheduling Simulation",
+      "description": "Demonstrates priority-based scheduling in RTOS environment",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <pthread.h>\n\n#define NUM_TASKS 5\n\ntypedef struct {\n    int task_id;\n    int priority;  // Lower number = higher priority\n    int execution_time;\n    int deadline;\n} Task;\n\nTask tasks[NUM_TASKS] = {\n    {1, 1, 5, 10},\n    {2, 2, 3, 15},\n    {3, 3, 8, 20},\n    {4, 0, 2, 5},   // Highest priority\n    {5, 4, 4, 25}\n};\n\n// Compare function for sorting by priority\nint compare_priority(const void* a, const void* b) {\n    Task* t1 = (Task*)a;\n    Task* t2 = (Task*)b;\n    return t1->priority - t2->priority;\n}\n\nvoid* execute_task(void* arg) {\n    Task* task = (Task*)arg;\n    printf(\"Executing Task %d | Priority: %d | Time: %dms | Deadline: %dms\\n\",\n           task->task_id, task->priority, task->execution_time, task->deadline);\n    // Simulate task execution\n    usleep(task->execution_time * 1000);\n    printf(\"Task %d completed\\n\", task->task_id);\n    return NULL;\n}\n\nint main() {\n    pthread_t threads[NUM_TASKS];\n    \n    // Sort tasks by priority (simulating RTOS scheduling)\n    qsort(tasks, NUM_TASKS, sizeof(Task), compare_priority);\n    \n    printf(\"RTOS Priority-Based Scheduling\\n\");\n    printf(\"Higher priority tasks execute first\\n\\n\");\n    \n    // Create and execute tasks in priority order\n    for (int i = 0; i < NUM_TASKS; i++) {\n        pthread_create(&threads[i], NULL, execute_task, &tasks[i]);\n    }\n    \n    // Wait for all tasks to complete\n    for (int i = 0; i < NUM_TASKS; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"\\nAll real-time tasks completed\\n\");\n    return 0;\n}",
+      "explanation": "This C program demonstrates priority-based task scheduling in real-time systems, where higher priority tasks are executed first.",
+      "timeComplexity": "O(n log n) for sorting, O(n) for execution",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Load Balancer for Distributed Environment",
+      "description": "Demonstrates load distribution across multiple servers in distributed computing",
+      "code": "ALGORITHM LoadBalancer\nBEGIN\n  servers = INITIALIZE_SERVER_LIST()\n  \n  FUNCTION RouteRequest(request)\n  BEGIN\n    // Select server with least current connections\n    selected_server = servers[0]\n    min_connections = selected_server.active_connections\n    \n    FOR i = 1 TO servers.length - 1\n      IF servers[i].active_connections < min_connections THEN\n        selected_server = servers[i]\n        min_connections = servers[i].active_connections\n      END IF\n    END FOR\n    \n    // Forward request to selected server\n    selected_server.active_connections = selected_server.active_connections + 1\n    response = FORWARD_TO_SERVER(selected_server, request)\n    selected_server.active_connections = selected_server.active_connections - 1\n    \n    RETURN response\n  END FUNCTION\n  \n  FUNCTION HealthCheck()\n  BEGIN\n    FOR each server IN servers\n      IF NOT server.is_responsive THEN\n        REMOVE_SERVER(server)\n        LOG(\"Server \" + server.id + \" removed from pool\")\n      END IF\n    END FOR\n  END FUNCTION\n  \n  RETURN RouteRequest, HealthCheck\nEND",
+      "explanation": "This algorithm demonstrates load balancing in distributed environments, distributing client requests across multiple servers based on least connections.",
+      "timeComplexity": "O(n) for selecting server, O(n) for health check",
+      "spaceComplexity": "O(n) for server list storage"
+    }
+  ]
+}

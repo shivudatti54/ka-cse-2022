@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- step0: Title -->
+  <g class="step" id="step0" data-narration="This lesson covers alarm and pause functions in Unix and Linux systems, essential for time-based operations and process synchronization in system programming applications.">
+    <rect x="0" y="0" width="800" height="50" fill="#1976d2"/>
+    <text x="400" y="32" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="white">Alarm and Pause Functions in Unix/Linux</text>
+  </g>
+  
+  <!-- step1: Introduction -->
+  <g class="step" id="step1" data-narration="The alarm function schedules a SIGALRM signal after specified seconds. Pause suspends process until a signal arrives, enabling wait mechanisms in Unix systems.">
+    <rect x="20" y="58" width="760" height="80" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="40" y="78" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Introduction</text>
+    <text x="40" y="95" font-family="Arial" font-size="10" fill="#333">• alarm(seconds): Schedules SIGALRM signal after specified seconds</text>
+    <text x="40" y="110" font-family="Arial" font-size="10" fill="#333">• pause(): Suspends process until a signal is delivered</text>
+    <text x="40" y="125" font-family="Arial" font-size="10" fill="#333">• Used for timeouts, watchdog timers, periodic tasks in system programs</text>
+  </g>
+  
+  <!-- step2: alarm() Function -->
+  <g class="step" id="step2" data-narration="The alarm function prototype is unsigned int alarm(unsigned int seconds). It returns seconds remaining from previous alarm, or zero if no previous alarm was set.">
+    <rect x="20" y="146" width="760" height="85" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="40" y="166" font-family="Arial" font-size="13" font-weight="bold" fill="#388e3c">The alarm() Function</text>
+    <text x="40" y="183" font-family="Arial" font-size="10" fill="#333">Prototype: unsigned int alarm(unsigned int seconds);</text>
+    <text x="40" y="198" font-family="Arial" font-size="10" fill="#333">• Schedules SIGALRM (signal 14) after 'seconds' elapsed</text>
+    <text x="40" y="213" font-family="Arial" font-size="10" fill="#333">• alarm(0) cancels any pending alarm</text>
+    <text x="40" y="228" font-family="Arial" font-size="10" fill="#333">• Returns: seconds remaining from previous alarm, or 0 if none</text>
+  </g>
+  
+  <!-- step3: pause() Function -->
+  <g class="step" id="step3" data-narration="The pause function suspends execution until a signal arrives and is handled. Returns -1 with errno EINTR only when a signal handler is invoked by the system.">
+    <rect x="20" y="239" width="760" height="85" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="40" y="259" font-family="Arial" font-size="13" font-weight="bold" fill="#ff9800">The pause() Function</text>
+    <text x="40" y="276" font-family="Arial" font-size="10" fill="#333">Prototype: int pause(void);</text>
+    <text x="40" y="291" font-family="Arial" font-size="10" fill="#333">• Suspends calling process until any signal is delivered</text>
+    <text x="40" y="306" font-family="Arial" font-size="10" fill="#333">• Returns only when signal handler invoked (returns -1, errno=EINTR)</text>
+    <text x="40" y="321" font-family="Arial" font-size="10" fill="#333">• Default SIGALRM action terminates process - must install handler!</text>
+  </g>
+  
+  <!-- step4: Race Conditions -->
+  <g class="step" id="step4" data-narration="Always set alarm BEFORE pause to avoid race conditions in your code. If the signal arrives before pause is called, the process will block indefinitely on pause.">
+    <rect x="20" y="332" width="760" height="85" rx="5" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="40" y="352" font-family="Arial" font-size="13" font-weight="bold" fill="#f44336">Race Condition Warning</text>
+    <rect x="40" y="362" width="340" height="40" rx="3" fill="#c8e6c9"/>
+    <text x="60" y="378" font-family="Arial" font-size="10" fill="#333">✓ CORRECT ORDER:</text>
+    <text x="60" y="392" font-family="Arial" font-size="10" fill="#333">alarm(5); pause();</text>
+    <rect x="400" y="362" width="340" height="40" rx="3" fill="#ffcdd2"/>
+    <text x="420" y="378" font-family="Arial" font-size="10" fill="#333">✗ WRONG ORDER:</text>
+    <text x="420" y="392" font-family="Arial" font-size="10" fill="#333">pause(); alarm(5); (race!)</text>
+    <text x="40" y="415" font-family="Arial" font-size="9" fill="#666">Setting alarm first ensures signal delivery even if it fires just before pause() call</text>
+  </g>
+  
+  <!-- step5: Signal Handling -->
+  <g class="step" id="step5" data-narration="Use sigaction instead of signal for robust and portable signal handling. Signal handlers must only use async-signal-safe functions like write, never printf for output.">
+    <rect x="20" y="425" width="760" height="85" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="40" y="445" font-family="Arial" font-size="13" font-weight="bold" fill="#9c27b0">Signal Handling Best Practices</text>
+    <text x="40" y="462" font-family="Arial" font-size="10" fill="#333">• Use sigaction() instead of signal() for portable robust handling</text>
+    <text x="40" y="477" font-family="Arial" font-size="10" fill="#333">• Use volatile sig_atomic_t for flags shared with handlers</text>
+    <text x="40" y="492" font-family="Arial" font-size="10" fill="#333">• Handlers: only use async-signal-safe functions (write, _exit), NOT printf</text>
+    <text x="40" y="507" font-family="Arial" font-size="10" fill="#333">• Alarms persist across exec() but NOT across fork()</text>
+  </g>
+  
+  <!-- step6: Example Summary -->
+  <g class="step" id="step6" data-narration="This example implements timeout read functionality: set SIGALRM handler, call alarm(5), attempt read operation, cancel alarm on success. Remember: alarm must be called before the operation.">
+    <rect x="20" y="518" width="760" height="80" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="40" y="538" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Example: Timeout Read Implementation</text>
+    <rect x="40" y="548" width="720" height="40" rx="3" fill="#263238"/>
+    <text x="50" y="563" font-family="Courier" font-size="9" fill="#a5d6a7">signal(SIGALRM, handler); alarm(5); n = read(fd, buf, size); alarm(0);</text>
+    <text x="40" y="592" font-family="Arial" font-size="9" fill="#666">Key: alarm(0) cancels alarm | setitimer() for repeating timers | Default SIGALRM terminates process</text>
+  </g>
+</svg>

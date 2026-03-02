@@ -1,0 +1,61 @@
+{
+  "topicId": "data-types",
+  "examples": [
+    {
+      "id": "basic-types",
+      "title": "Basic Data Type Declarations",
+      "description": "Demonstrating wire, reg, integer, and vector declarations",
+      "language": "verilog",
+      "code": "module data_type_examples;\n    // Net types\n    wire        single_wire;\n    wire [7:0]  data_bus;\n    wire [31:0] address;\n    \n    // Variable types\n    reg         flag;\n    reg [15:0]  counter;\n    reg [7:0]   byte_reg;\n    \n    // Integer (32-bit signed)\n    integer     loop_index;\n    integer     count = 0;\n    \n    // Signed declarations\n    reg signed [7:0]  signed_data;\n    wire signed [15:0] signed_result;\n    \n    // Parameters\n    parameter WIDTH = 8;\n    parameter DEPTH = 256;\n    localparam ADDR_WIDTH = $clog2(DEPTH);  // = 8\n    \nendmodule",
+      "explanation": "This example shows the most common data type declarations. Wire is used for connections, reg for procedural values, and integer for loop counters. Signed types are explicitly declared when needed for arithmetic operations.",
+      "keyPoints": [
+        "wire for continuous connections",
+        "reg for procedural assignments",
+        "integer is 32-bit signed",
+        "Use 'signed' keyword for signed arithmetic"
+      ]
+    },
+    {
+      "id": "number-formats",
+      "title": "Number Representation Formats",
+      "description": "Different ways to specify numeric constants",
+      "language": "verilog",
+      "code": "module number_formats;\n    // Format: <size>'<base><value>\n    \n    // Binary\n    wire [7:0] bin1 = 8'b10101010;\n    wire [7:0] bin2 = 8'b1010_1010;  // Underscore for readability\n    \n    // Hexadecimal\n    wire [7:0] hex1 = 8'hAA;\n    wire [15:0] hex2 = 16'hDEAD;\n    \n    // Decimal\n    wire [7:0] dec1 = 8'd170;\n    wire [7:0] dec2 = 170;  // Size inferred (32-bit default)\n    \n    // Octal\n    wire [7:0] oct1 = 8'o252;\n    \n    // Special values\n    wire [7:0] unknown = 8'bxxxx_xxxx;  // All X\n    wire [7:0] highz = 8'bzzzz_zzzz;    // All Z\n    wire [7:0] partial = 8'b1010_xxxx;  // Partial unknown\n    \n    // Negative numbers\n    wire signed [7:0] neg = -8'd5;\n    \n    // All same value: 170\n    // 8'b10101010 = 8'hAA = 8'd170 = 8'o252\n    \nendmodule",
+      "explanation": "Verilog supports binary, octal, decimal, and hexadecimal number formats. The size prefix specifies bit width. Underscores improve readability. X represents unknown, Z represents high-impedance.",
+      "keyPoints": [
+        "Format: size'base value",
+        "Bases: b(binary), o(octal), d(decimal), h(hex)",
+        "Underscore for readability",
+        "x=unknown, z=high-impedance"
+      ]
+    },
+    {
+      "id": "vectors-arrays",
+      "title": "Vectors and Memory Arrays",
+      "description": "Multi-bit signals and memory declarations",
+      "language": "verilog",
+      "code": "module vectors_and_arrays;\n    // Vector declarations\n    wire [7:0]  byte_data;      // 8-bit, byte_data[7] is MSB\n    reg  [31:0] word_data;      // 32-bit register\n    wire [15:0] half_word;      // 16-bit\n    \n    // Vector part-select\n    wire        msb = byte_data[7];       // Single bit\n    wire [3:0]  upper = byte_data[7:4];   // Upper nibble\n    wire [3:0]  lower = byte_data[3:0];   // Lower nibble\n    \n    // Memory array (256 bytes)\n    reg [7:0] memory [0:255];\n    \n    // Memory operations\n    initial begin\n        memory[0] = 8'hFF;        // Write to address 0\n        memory[100] = 8'hAB;      // Write to address 100\n    end\n    \n    // Read from memory\n    wire [7:0] read_data;\n    reg [7:0] addr;\n    assign read_data = memory[addr];\n    \n    // 2D array (4x4 matrix of bytes)\n    reg [7:0] matrix [0:3][0:3];\n    \n    // Register file (32 registers, 32-bit each)\n    reg [31:0] reg_file [0:31];\n    \nendmodule",
+      "explanation": "Vectors are multi-bit signals with [MSB:LSB] notation. Arrays create memory structures - commonly used for RAM, ROM, and register files. Part-select extracts portions of vectors.",
+      "keyPoints": [
+        "[MSB:LSB] defines bit range",
+        "Part-select: data[7:4]",
+        "Memory: reg [width] name [depth]",
+        "2D arrays for matrices"
+      ]
+    },
+    {
+      "id": "wire-vs-reg",
+      "title": "Wire vs Reg Usage",
+      "description": "When to use wire and when to use reg",
+      "language": "verilog",
+      "code": "module wire_vs_reg_demo (\n    input  wire       clk,\n    input  wire       sel,\n    input  wire [7:0] a, b,\n    output wire [7:0] combo_out,   // Wire: driven by assign\n    output reg  [7:0] seq_out,     // Reg: driven in always\n    output reg  [7:0] combo_reg    // Reg: but still combinational!\n);\n\n    // Wire driven by continuous assignment\n    assign combo_out = sel ? a : b;\n    \n    // Reg driven in sequential always block\n    always @(posedge clk) begin\n        seq_out <= a + b;  // This synthesizes to a register\n    end\n    \n    // Reg driven in combinational always block\n    always @(*) begin\n        if (sel)\n            combo_reg = a;  // This synthesizes to MUX, not register!\n        else\n            combo_reg = b;\n    end\n    \n    // RULE: reg does NOT mean hardware register\n    // reg = assigned in always/initial blocks\n    // wire = assigned by assign or module outputs\n    \nendmodule",
+      "explanation": "The key misconception: 'reg' doesn't mean flip-flop! Use reg when assigning in always/initial blocks. The actual hardware (register or combinational) depends on the sensitivity list, not the data type.",
+      "keyPoints": [
+        "wire: continuous assignment or module output",
+        "reg: procedural assignment (always/initial)",
+        "reg + @(posedge clk) = flip-flop",
+        "reg + @(*) = combinational logic"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "topicId": "replication-introduction",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between synchronous and asynchronous replication. Which one provides stronger consistency and why?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Synchronous waits for replica acknowledgment before commit",
+        "Asynchronous commits locally and propagates later",
+        "Synchronous provides stronger consistency as all copies have data",
+        "Trade-off is higher latency in synchronous"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define master-slave replication and list two advantages and two limitations of this configuration.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Master handles writes, slaves replicate for reads",
+        "Advantages: load balancing for reads, fault tolerance",
+        "Limitations: single write point, write bottleneck",
+        "Slave cannot handle writes, master failure requires failover"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is replication lag? How does it affect data consistency in asynchronous replication systems?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Replication lag is time delay between master commit and replica apply",
+        "In asynchronous systems, replicas are temporarily inconsistent",
+        "Reads from replicas may return stale data",
+        "Critical for applications requiring real-time consistency"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the concept of automatic failover in database replication. What are RPO and RTO in this context?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Automatic failover promotes replica to master on primary failure",
+        "RPO (Recovery Point Objective) = acceptable data loss based on lag",
+        "RTO (Recovery Time Objective) = time to restore service",
+        "Determines replication strategy choice"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between physical and logical replication. Give one use case where each would be preferred.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Physical: byte-level copy, exact replica, less flexible",
+        "Logical: object-level (SQL), more selective replication",
+        "Physical preferred: exact database version copy, simpler setup",
+        "Logical preferred: cross-version replication, selective tables"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a replication conflict in master-master configuration? Mention two methods to resolve such conflicts.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Conflict occurs when same data written on different masters concurrently",
+        "Resolution methods: Last-Write-Wins (timestamp based)",
+        "Conflict detection and manual resolution",
+        "Application-defined merge rules",
+        "Automatic conflict resolution using MVCC"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the concept of high availability in database replication. Discuss different replication topologies (star, chain, ring) and their advantages and disadvantages.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "HA ensures continuous service despite node failures",
+        "Star: central master to all replicas - simple but single point of failure",
+        "Chain: linked series - less network hops but higher latency",
+        "Ring: circular - resilient but complex",
+        "Choose based on network structure, latency requirements"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain CAP theorem and its implications for database replication design. How do synchronous and asynchronous replication relate to CAP properties?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "CAP: Consistency, Availability, Partition Tolerance - only two guaranteed",
+        "Synchronous replication favors consistency + availability (without partitions)",
+        "Asynchronous replication favors availability + partition tolerance",
+        "Replication design must choose trade-offs based on requirements",
+        "Practical systems prioritize availability with eventual consistency"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a database replication strategy for a banking application requiring zero data loss and high availability. Justify your choices for replication mode, topology, and failover mechanism.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use synchronous replication for zero data loss",
+        "Master-slave with hot standby for HA",
+        "Automatic failover with minimal RTO",
+        "Multiple geographically distributed replicas",
+        "Regular failover testing and monitoring",
+        "RPO should be zero, RTO minimal"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare master-slave and master-master replication. For each of the following scenarios, recommend appropriate replication type: (a) E-commerce product catalog (b) Distributed order processing system (c) Analytics reporting database",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Master-slave: simple, single write point, easier conflict resolution",
+        "Master-master: multiple write points, complex conflicts",
+        "E-commerce catalog: master-slave (read-heavy, infrequent writes)",
+        "Order processing: master-master (distributed writes)",
+        "Analytics: master-slave (reads only, tolerate lag)"
+      ]
+    }
+  ]
+}

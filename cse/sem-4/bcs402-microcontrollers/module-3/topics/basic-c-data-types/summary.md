@@ -1,0 +1,3 @@
+# Basic C Data Types
+
+C data types form the foundation of embedded programming, with integer types (char, short, int, long) representing whole numbers using two's complement or unsigned binary representation, and floating-point types (float, double) following IEEE 754 standard. The C standard mandates minimum sizes rather than fixed sizes, making the stdint.h fixed-width types essential for portable microcontroller code. Type qualifiers—particularly volatile—are critical for hardware register access and interrupt service routine communication. Memory optimization in embedded systems requires careful type selection, with smaller types preferred where range permits, and unsigned types used for non-negative values to avoid sign extension overhead.

@@ -1,0 +1,117 @@
+{
+  "topicId": "nearest-centroid-classifier",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the Nearest Centroid Classifier and explain how it makes predictions for a new data point.",
+      "keyPoints": [
+        "NCC computes the centroid (mean vector) for each class from training data",
+        "Prediction: calculate distance from new point to each class centroid",
+        "Assign point to class with minimum distance to its centroid",
+        "Typically uses Euclidean distance metric"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain two key assumptions of the Nearest Centroid Classifier and why violations of these assumptions affect performance.",
+      "keyPoints": [
+        "Assumption 1: Classes are linearly separable (decision boundary is linear hyperplane)",
+        "Assumption 2: Classes have spherical/equal covariance distributions",
+        "When violated: boundaries may be non-linear or misclassified due to variance differences",
+        "NCC fails when class distributions have different spreads or non-linear shapes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Compare the Nearest Centroid Classifier with k-Nearest Neighbors in terms of: (i) storage requirements, (ii) training time, (iii) prediction time, (iv) ability to handle complex boundaries.",
+      "keyPoints": [
+        "Storage: NCC O(k\u00d7d) vs k-NN O(n\u00d7d) - NCC more memory efficient",
+        "Training: NCC O(n\u00d7d) computes centroids vs k-NN O(1) stores data",
+        "Prediction: NCC O(k\u00d7d) vs k-NN O(n\u00d7d) - NCC faster at prediction",
+        "Boundaries: k-NN can model non-linear boundaries; NCC limited to linear"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is shrinkage regularization in NCC? Derive the shrinkage formula and explain its purpose.",
+      "keyPoints": [
+        "Shrinkage formula: c\u1d62(shrunk) = (1-\u03b1)c\u1d62 + \u03b1(c_global) where \u03b1 \u2208 [0,1]",
+        "Purpose: pulls class centroids toward global mean to reduce overfitting",
+        "Useful when: high-dimensional data, sparse classes, or small training sets",
+        "Acts as regularizer - prevents centroids from fitting noise in training data"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain why the Nearest Centroid Classifier is sensitive to outliers. Provide an example scenario where this becomes problematic.",
+      "keyPoints": [
+        "Centroid is computed as arithmetic mean, highly affected by extreme values",
+        "Single outlier can shift centroid significantly toward it",
+        "Example: Class A has points [1,2], [3,4], [100,100]. Centroid becomes [34.67, 35.33]",
+        "This shifted centroid may cause misclassification of legitimate points near true class center"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Given two class centroids c\u2081 = [2, 3, 1] and c\u2082 = [8, 7, 5], derive the equation of the decision boundary that separates these two classes in the Nearest Centroid Classifier.",
+      "keyPoints": [
+        "Decision boundary: perpendicular bisector of line connecting centroids",
+        "Midpoint m = (c\u2081 + c\u2082)/2 = [5, 5, 3]",
+        "Normal vector n = c\u2082 - c\u2081 = [6, 4, 4]",
+        "Equation: n \u00b7 (x - m) = 0 \u2192 6(x\u2081-5) + 4(x\u2082-5) + 4(x\u2083-3) = 0",
+        "Simplified: 6x\u2081 + 4x\u2082 + 4x\u2083 - 54 = 0"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "When is the Nearest Centroid Classifier preferred over other classifiers? Discuss at least three scenarios.",
+      "keyPoints": [
+        "Preferred when: (1) Classes are well-separated and compact",
+        "(2) High-dimensional data with memory constraints (stores only centroids)",
+        "(3) Fast prediction time is critical (no distance to all training points)",
+        "(4) Interpretability needed - centroids show 'prototype' of each class",
+        "(5) Baseline model for comparison with more complex methods"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Derive the mathematical formulation of the Nearest Centroid Classifier including: (i) centroid computation formula, (ii) prediction rule using Euclidean distance, (iii) decision boundary equation for two classes, (iv) discuss the effect of using cosine similarity instead of Euclidean distance.",
+      "keyPoints": [
+        "(i) Centroid: c\u1d62 = (1/n\u1d62)\u03a3x\u2c7c for all x\u2c7c in class i, computed for each dimension",
+        "(ii) Prediction: \u0125(x) = argmin\u1d62 ||x - c\u1d62||\u2082 using Euclidean norm",
+        "(iii) Boundary between classes i and j: set of x where ||x-c\u1d62|| = ||x-c\u2c7c||, simplifies to hyperplane: (c\u2c7c-c\u1d62)\u00b7x = (||c\u2c7c||\u00b2 - ||c\u1d62||\u00b2)/2",
+        "(iv) Cosine similarity: s(x,c\u1d62) = (x\u00b7c\u1d62)/(||x||\u00b7||c\u1d62||), measures angle not magnitude - better for text/high-dim normalized data, produces different (often better for text) boundaries",
+        "Choice affects: Euclidean favors close points; cosine favors similar direction/alignment"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "A biometric authentication system uses NCC to classify users as 'authorized' or 'unauthorized' based on 20-dimensional feature vectors. The system has 1000 authorized users with 50 samples each and 5000 unauthorized samples. (i) What is stored after training? (ii) What is the time complexity for training and prediction? (iii) How would outliers in the unauthorized class affect performance? (iv) Suggest a modification to improve robustness.",
+      "keyPoints": [
+        "(i) After training: 2 centroids (authorized/unauthorized), each 20-dimensional \u2192 40 values total",
+        "(ii) Training: O(1000\u00d750\u00d720 + 5000\u00d720) = O(200000) = O(n\u00d7d). Prediction: O(2\u00d720) = O(k\u00d7d)",
+        "(iii) Outliers in unauthorized class shift its centroid; unauthorized users near shifted centroid may be incorrectly granted access; attacks could exploit this",
+        "(iv) Use shrinkage regularization to pull centroids toward global mean; or use robust estimation (trimmed mean/median); or switch to covariance-aware classifier like LDA which accounts for class spread",
+        "Alternative: use regularized NCC with \u03b1\u22480.1-0.3 to prevent overfitting to outliers"
+      ],
+      "marks": 10
+    }
+  ]
+}

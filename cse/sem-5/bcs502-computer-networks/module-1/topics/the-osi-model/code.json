@@ -1,0 +1,25 @@
+{
+  "topicId": "the-osi-model",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Encapsulation Process Simulation",
+      "description": "Demonstrates how data is encapsulated at each OSI layer",
+      "code": "// ENCAPSULATION PROCESS\nBEGIN\n // Application Layer\n userData = \"Web page request\"\n data = userData // No change at Application\n \n // Presentation Layer - Add presentation header\n data = addHeader(data, \"PRESENTATION\")\n \n // Session Layer - Add session header \n data = addHeader(data, \"SESSION\")\n \n // Transport Layer - Add TCP/UDP header (Segment/Datagram)\n data = addHeader(data, \"TCP_HEADER: srcPort=, destPort=80\")\n \n // Network Layer - Add IP header (Packet)\n data = addHeader(data, \"IP_HEADER: srcIP=192.168.1.10, destIP=142.250.1.1\")\n \n // Data Link Layer - Add frame header and trailer\n data = addHeader(data, \"MAC_HEADER: srcMAC=AA:BB:CC, destMAC=DD:EE:FF\")\n data = addTrailer(data, \"FCS\")\n \n // Physical Layer - Convert to bits\n bits = convertToBits(data)\n \n // Transmit bits over network\n TRANSMIT(bits)\nEND",
+      "explanation": "Each layer adds its own header to the data as it moves down. The receiving end performs de-encapsulation in reverse order to extract the original data.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Packet Forwarding at Different Layers",
+      "description": "Shows how devices at different layers process data based on their layer of operation",
+      "code": "// DEVICE OPERATIONS BY LAYER\nBEGIN\n // Physical Layer (Hub) - No addressing, just repeat\n FUNCTION Hub_Process(bits):\n SIGNAL = amplify(bits)\n OUTPUT(SIGNAL) // Sends to all ports\n \n // Data Link Layer (Switch) - Uses MAC addresses\n FUNCTION Switch_Process(frame):\n destMAC = extractMAC(frame)\n port = MAC_Table lookup(destMAC)\n OUTPUT(frame, port) // Sends to specific port\n \n // Network Layer (Router) - Uses IP addresses\n FUNCTION Router_Process(packet):\n destIP = extractIP(packet)\n routingTable = lookup(destIP)\n nextHop = getNextHop(routingTable)\n OUTPUT(packet, nextHop) // Routes to next network\nEND",
+      "explanation": "Each network device operates at specific OSI layer and makes forwarding decisions based on addresses at that layer. Higher layers can do more intelligent routing.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

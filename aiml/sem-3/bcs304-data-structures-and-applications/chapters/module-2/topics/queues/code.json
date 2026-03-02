@@ -1,0 +1,45 @@
+{
+  "topicId": "queues",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Queue Array Implementation - Basic Operations",
+      "description": "Pseudo-code for array-based queue with enqueue, dequeue, and status checking operations",
+      "code": "CONSTANT MAXSIZE = 100\nARRAY queue[MAXSIZE]\nINTEGER front = -1\nINTEGER rear = -1\n\nFUNCTION isEmpty()\n    IF front == -1 OR front > rear THEN\n        RETURN TRUE\n    ELSE\n        RETURN FALSE\n    END IF\nEND FUNCTION\n\nFUNCTION isFull()\n    IF rear == MAXSIZE - 1 THEN\n        RETURN TRUE\n    ELSE\n        RETURN FALSE\n    END IF\nEND FUNCTION\n\nFUNCTION enqueue(element)\n    IF isFull() THEN\n        PRINT \"Queue Overflow\"\n        RETURN\n    END IF\n    IF front == -1 THEN\n        front = 0\n    END IF\n    rear = rear + 1\n    queue[rear] = element\n    PRINT \"Enqueued: \" + element\nEND FUNCTION\n\nFUNCTION dequeue()\n    IF isEmpty() THEN\n        PRINT \"Queue Underflow\"\n        RETURN NULL\n    END IF\n    element = queue[front]\n    front = front + 1\n    IF front > rear THEN\n        front = -1\n        rear = -1\n    END IF\n    RETURN element\nEND FUNCTION",
+      "explanation": "This pseudo-code demonstrates basic queue operations using array. The isEmpty and isFull functions check queue status. Enqueue adds element at rear and dequeue removes from front. When front exceeds rear after dequeue, queue is reset to empty state.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Circular Queue Operations",
+      "description": "Pseudo-code for circular queue implementation overcoming linear queue limitations",
+      "code": "CONSTANT MAXSIZE = 100\nARRAY queue[MAXSIZE]\nINTEGER front = -1\nINTEGER rear = -1\n\nFUNCTION isEmpty()\n    IF front == -1 THEN\n        RETURN TRUE\n    ELSE\n        RETURN FALSE\n    END IF\nEND FUNCTION\n\nFUNCTION isFull()\n    IF (rear + 1) % MAXSIZE == front THEN\n        RETURN TRUE\n    ELSE\n        RETURN FALSE\n    END IF\nEND FUNCTION\n\nFUNCTION enqueue(element)\n    IF isFull() THEN\n        PRINT \"Queue Overflow\"\n        RETURN\n    END IF\n    IF front == -1 THEN\n        front = 0\n        rear = 0\n    ELSE\n        rear = (rear + 1) % MAXSIZE\n    END IF\n    queue[rear] = element\nEND FUNCTION\n\nFUNCTION dequeue()\n    IF isEmpty() THEN\n        PRINT \"Queue Underflow\"\n        RETURN NULL\n    END IF\n    element = queue[front]\n    IF front == rear THEN\n        front = -1\n        rear = -1\n    ELSE\n        front = (front + 1) % MAXSIZE\n    END IF\n    RETURN element\nEND FUNCTION",
+      "explanation": "Circular queue uses modular arithmetic to wrap rear and front pointers around. The condition (rear+1)%MAXSIZE == front indicates full queue. This eliminates the phantom overflow problem of linear queues by reusing deleted spaces.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Queue Implementation in C",
+      "description": "Complete C program implementing queue using array with full operation support",
+      "code": "#include <stdio.h>\n#define MAXSIZE 100\n\nint queue[MAXSIZE];\nint front = -1, rear = -1;\n\nint isEmpty() {\n    return (front == -1 || front > rear);\n}\n\nint isFull() {\n    return (rear == MAXSIZE - 1);\n}\n\nvoid enqueue(int element) {\n    if (isFull()) {\n        printf(\"Queue Overflow!\\n\");\n        return;\n    }\n    if (front == -1) front = 0;\n    queue[++rear] = element;\n    printf(\"Enqueued: %d\\n\", element);\n}\n\nint dequeue() {\n    if (isEmpty()) {\n        printf(\"Queue Underflow!\\n\");\n        return -1;\n    }\n    int element = queue[front++];\n    if (front > rear) {\n        front = rear = -1;\n    }\n    return element;\n}\n\nvoid display() {\n    if (isEmpty()) {\n        printf(\"Queue is empty\\n\");\n        return;\n    }\n    printf(\"Queue elements: \");\n    for (int i = front; i <= rear; i++) {\n        printf(\"%d \", queue[i]);\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    display();\n    printf(\"Dequeued: %d\\n\", dequeue());\n    display();\n    return 0;\n}",
+      "explanation": "This C program implements queue using static array. The isEmpty and isFull functions check queue status. Enqueue increments rear and stores element. Dequeue returns element at front and increments front. When queue becomes empty after dequeue, both pointers are reset to -1.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Queue Implementation in Python",
+      "description": "Python implementation of queue using list with class-based approach",
+      "code": "class Queue:\n    def __init__(self, maxsize=100):\n        self.queue = []\n        self.maxsize = maxsize\n        self.front = -1\n        self.rear = -1\n    \n    def is_empty(self):\n        return self.front == -1 or self.front > self.rear\n    \n    def is_full(self):\n        return self.rear == self.maxsize - 1\n    \n    def enqueue(self, element):\n        if self.is_full():\n            print(\"Queue Overflow!\")\n            return\n        if self.front == -1:\n            self.front = 0\n        self.rear += 1\n        self.queue.append(element)\n        print(f\"Enqueued: {element}\")\n    \n    def dequeue(self):\n        if self.is_empty():\n            print(\"Queue Underflow!\")\n            return None\n        element = self.queue[self.front]\n        self.front += 1\n        if self.front > self.rear:\n            self.front = self.rear = -1\n            self.queue = []\n        return element\n    \n    def display(self):\n        if self.is_empty():\n            print(\"Queue is empty\")\n            return\n        print(\"Queue:\", self.queue[self.front:self.rear+1])\n\n# Usage\nq = Queue()\nq.enqueue(10)\nq.enqueue(20)\nq.enqueue(30)\nq.display()\nprint(f\"Dequeued: {q.dequeue()}\")\nq.display()",
+      "explanation": "This Python implementation uses a class to encapsulate queue operations. List is used for storage. The enqueue method adds elements at the end and dequeue removes from the front. Python's list append operation provides amortized O(1) complexity.",
+      "timeComplexity": "O(1) amortized",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,390 @@
+<svg viewBox="0 0 800 1500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1565c0"/>
+      <stop offset="100%" stop-color="#0d47a1"/>
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+    <!-- Drop shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 1000; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fillIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect { animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .highlight { animation: pulse 2s ease-in-out infinite; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="800" height="1500" fill="#f8f9fa"/>
+  
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to Exception Priorities in ARM Cortex-M Microcontrollers. This topic covers how the NVIC handles multiple interrupts efficiently.">
+    <rect x="20" y="10" width="760" height="50" rx="12" fill="url(#titleGradient)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" font-size="22" font-weight="bold" fill="white">Exception Priorities in ARM Cortex-M</text>
+    <text x="400" y="65" text-anchor="middle" font-size="12" fill="#546e7a">BCS402 Microcontrollers - university 2022 Scheme</text>
+  </g>
+  
+  <!-- Step 1: What is an Exception? -->
+  <g class="step" id="step1" data-narration="An exception disrupts normal program flow. In ARM Cortex-M, this includes hardware interrupts, faults, system calls like SVCall, and reset events.">
+    <rect x="20" y="70" width="760" height="90" rx="10" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="40" y="95" font-size="14" font-weight="bold" fill="#1565c0">What is an Exception?</text>
+    <text x="40" y="115" font-size="11" fill="#333">Any event that disrupts normal program execution flow</text>
+    <rect x="280" y="85" width="480" height="60" rx="6" fill="white" opacity="0.7"/>
+    <text x="295" y="105" font-size="10" fill="#333">Hardware Interrupts (IRQ 0-239)</text>
+    <text x="295" y="120" font-size="10" fill="#333">System Exceptions: Reset, NMI, Hard Fault, SVCall, PendSV, SysTick</text>
+    <text x="520" y="125" font-size="12" fill="#1976d2" font-weight="bold">Up to 240 IRQs + System Exceptions</text>
+  </g>
+  
+  <!-- Step 2: Why Priority Matters -->
+  <g class="step" id="step2" data-narration="When multiple exceptions occur simultaneously, priorities determine which gets serviced first. Critical tasks like motor control need immediate attention.">
+    <rect x="20" y="170" width="760" height="90" rx="10" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="40" y="195" font-size="14" font-weight="bold" fill="#e65100">Why Exception Priorities Matter</text>
+    <text x="40" y="218" font-size="11" fill="#333">When multiple exceptions occur at once, the processor needs a rule to decide</text>
+    <text x="40" y="235" font-size="11" fill="#333">which exception should be handled first!</text>
+    <!-- Visual: Multiple interrupts scenario -->
+    <circle cx="300" cy="220" r="18" fill="#f44336" opacity="0.8">
+      <animate attributeName="r" values="18;20;18" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="300" y="224" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Timer</text>
+    <circle cx="350" cy="220" r="18" fill="#4caf50" opacity="0.8">
+      <animate attributeName="r" values="18;20;18" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+    </circle>
+    <text x="350" y="224" text-anchor="middle" font-size="9" fill="white" font-weight="bold">UART</text>
+    <circle cx="400" cy="220" r="18" fill="#9c27b0" opacity="0.8">
+      <animate attributeName="r" values="18;20;18" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+    <text x="400" y="224" text-anchor="middle" font-size="9" fill="white" font-weight="bold">ADC</text>
+    <text x="520" y="215" font-size="11" fill="#333">Which one is handled</text>
+    <text x="520" y="230" font-size="11" fill="#333">first?</text>
+    <path d="M480 220 L510 220" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="4,2"/>
+  </g>
+  
+  <!-- Step 3: Exception Model & Types -->
+  <g class="step" id="step3" data-narration="ARM Cortex-M supports various exception types with fixed default priorities. Reset has highest priority (-3), followed by NMI (-2), then Hard Fault (-1).">
+    <rect x="20" y="270" width="760" height="100" rx="10" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+    <text x="40" y="295" font-size="14" font-weight="bold" fill="#7b1fa2">Exception Types in ARM Cortex-M</text>
+    <!-- Exception priority ladder -->
+    <rect x="40" y="310" width="340" height="50" rx="5" fill="#f44336"/>
+    <text x="60" y="330" font-size="10" fill="white" font-weight="bold">Reset (-3)</text>
+    <text x="160" y="330" font-size="10" fill="white">→ Highest Priority</text>
+    
+    <rect x="40" y="320" width="340" height="50" rx="5" fill="#ff9800" transform="translate(0,30)"/>
+    <text x="60" y="350" font-size="10" fill="white" font-weight="bold">NMI (-2)</text>
+    
+    <rect x="40" y="320" width="340" height="50" rx="5" fill="#ff5722" transform="translate(0,60)"/>
+    <text x="60" y="380" font-size="10" fill="white" font-weight="bold">Hard Fault (-1)</text>
+    
+    <rect x="400" y="310" width="370" height="50" rx="5" fill="#2196f3"/>
+    <text x="420" y="330" font-size="10" fill="white" font-weight="bold">Configurable: SVCall, PendSV, SysTick</text>
+    <text x="420" y="345" font-size="9" fill="white">Usage Fault, Bus Fault, MemManage Fault</text>
+    
+    <rect x="400" y="365" width="370" height="50" rx="5" fill="#4caf50"/>
+    <text x="420" y="385" font-size="10" fill="white" font-weight="bold">External Interrupts (IRQ0-IRQ239)</text>
+    <text x="600" y="385" font-size="9" fill="white">up to 240 device interrupts</text>
+  </g>
+  
+  <!-- Step 4: Exception Processing Sequence -->
+  <g class="step" id="step4" data-narration="When an exception occurs: 1) Detect exception, 2) Save processor state to stack, 3) Load handler from vector table, 4) Execute handler, 5) Restore state.">
+    <rect x="20" y="380" width="760" height="100" rx="10" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="40" y="405" font-size="14" font-weight="bold" fill="#1565c0">Exception Processing Sequence</text>
+    
+    <!-- Pipeline steps -->
+    <g transform="translate(50, 420)">
+      <rect x="0" y="0" width="90" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="45" y="22" text-anchor="middle" font-size="9" fill="#1976d2" font-weight="bold">1. Detect</text>
+      
+      <path d="M95 17 L120 17" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="125" y="0" width="90" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="170" y="22" text-anchor="middle" font-size="9" fill="#1976d2" font-weight="bold">2. Save State</text>
+      
+      <path d="M220 17 L245 17" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="250" y="0" width="90" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="295" y="22" text-anchor="middle" font-size="9" fill="#1976d2" font-weight="bold">3. Load Handler</text>
+      
+      <path d="M345 17 L370 17" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="375" y="0" width="90" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="420" y="22" text-anchor="middle" font-size="9" fill="#1976d2" font-weight="bold">4. Execute</text>
+      
+      <path d="M470 17 L495 17" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="500" y="0" width="90" height="35" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+      <text x="545" y="22" text-anchor="middle" font-size="9" fill="#1976d2" font-weight="bold">5. Restore</text>
+    </g>
+    
+    <text x="40" y="475" font-size="10" fill="#555">Stack Frame: 8 registers (R0-R3, R12, LR, PC, xPSR) = 32 bytes</text>
+  </g>
+  
+  <!-- Step 5: Priority Levels -->
+  <g class="step" id="step5" data-narration="Lower numeric priority value means HIGHER importance! Priority 0 is highest (most critical), while Priority 255 is lowest. This confuses many students.">
+    <rect x="20" y="490" width="760" height="95" rx="10" fill="url(#redGradient)" filter="url(#shadow)"/>
+    <text x="40" y="515" font-size="14" font-weight="bold" fill="#c62828">Priority Level Convention - CRITICAL!</text>
+    
+    <!-- Priority visualization -->
+    <rect x="40" y="530" width="200" height="40" rx="6" fill="#4caf50">
+      <animate attributeName="opacity" values="0;1;1" dur="0.8s" fill="freeze"/>
+    </rect>
+    <text x="140" y="555" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Priority 0</text>
+    <text x="250" y="555" font-size="12" fill="#2e7d32" font-weight="bold">= HIGHEST Priority</text>
+    
+    <rect x="40" y="575" width="200" height="40" rx="6" fill="#ff9800">
+      <animate attributeName="opacity" values="0;1;1" dur="0.8s" fill="freeze" begin="0.3s"/>
+    </rect>
+    <text x="140" y="600" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Priority 5</text>
+    <text x="250" y="600" font-size="12" fill="#ef6c00">= Medium Priority</text>
+    
+    <rect x="40" y="620" width="200" height="40" rx="6" fill="#f44336">
+      <animate attributeName="opacity" values="0;1;1" dur="0.8s" fill="freeze" begin="0.6s"/>
+    </rect>
+    <text x="140" y="645" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Priority 255</text>
+    <text x="250" y="645" font-size="12" fill="#c62828" font-weight="bold">= LOWEST Priority</text>
+    
+    <rect x="450" y="535" width="320" height="50" rx="8" fill="white" stroke="#c62828" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="610" y="555" text-anchor="middle" font-size="11" fill="#c62828" font-weight="bold">REMEMBER:</text>
+    <text x="610" y="572" text-anchor="middle" font-size="10" fill="#c62828">Lower Number = Higher Priority!</text>
+  </g>
+  
+  <!-- Step 6: Priority Configuration Registers -->
+  <g class="step" id="step6" data-narration="NVIC uses IP registers (IP[0]-IP[239]) to store priority for each interrupt. Each interrupt has 8-bit priority field, but implementations use fewer bits.">
+    <rect x="20" y="595" width="760" height="100" rx="10" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="40" y="620" font-size="14" font-weight="bold" fill="#1565c0">NVIC Priority Configuration Registers</text>
+    
+    <!-- Register visualization -->
+    <rect x="40" y="640" width="180" height="45" rx="6" fill="#1976d2"/>
+    <text x="130" y="660" text-anchor="middle" font-size="9" fill="white" font-weight="bold">NVIC_IPR[0-239]</text>
+    <text x="130" y="675" text-anchor="middle" font-size="8" fill="white">Interrupt Priority</text>
+    
+    <rect x="240" y="640" width="120" height="45" rx="6" fill="#388e3c"/>
+    <text x="300" y="660" text-anchor="middle" font-size="9" fill="white" font-weight="bold">NVIC_ISER</text>
+    <text x="300" y="675" text-anchor="middle" font-size="8" fill="white">Enable Interrupt</text>
+    
+    <rect x="380" y="640" width="120" height="45" rx="6" fill="#388e3c"/>
+    <text x="440" y="660" text-anchor="middle" font-size="9" fill="white" font-weight="bold">NVIC_ICER</text>
+    <text x="440" y="675" text-anchor="middle" font-size="8" fill="white">Disable Interrupt</text>
+    
+    <!-- Implementation note -->
+    <rect x="520" y="635" width="250" height="55" rx="6" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="640" y="655" text-anchor="middle" font-size="10" fill="#e65100" font-weight="bold">Typical Implementations:</text>
+    <text x="640" y="672" text-anchor="middle" font-size="9" fill="#333">STM32: 4 bits (16 levels)</text>
+    <text x="640" y="685" text-anchor="middle" font-size="9" fill="#333">Some M4: 8 bits (256 levels)</text>
+    
+    <!-- Example code -->
+    <rect x="40" y="695" width="220" height="30" rx="4" fill="#263238"/>
+    <text x="50" y="715" font-size="9" fill="#81c784">NVIC_IPR[19] = (2 &lt;&lt; 4);</text>
+  </g>
+  
+  <!-- Step 7: Priority Grouping -->
+  <g class="step" id="step7" data-narration="Priority grouping splits priority bits into group priority (for preemption) and sub-priority (for ordering). PRIGROUP field in AIRCR controls this split.">
+    <rect x="20" y="705" width="760" height="105" rx="10" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="40" y="730" font-size="14" font-weight="bold" fill="#2e7d32">Priority Grouping - Group vs Sub-Priority</text>
+    
+    <!-- Priority bits split diagram -->
+    <rect x="40" y="750" width="720" height="50" rx="6" fill="white" stroke="#2e7d32" stroke-width="2"/>
+    <text x="100" y="775" text-anchor="middle" font-size="10" fill="#333">Bit 7</text>
+    <line x1="140" y1="745" x2="140" y2="805" stroke="#2e7d32" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="400" y="760" text-anchor="middle" font-size="9" fill="#1565c0" font-weight="bold">GROUP PRIORITY (Preemption)</text>
+    <text x="400" y="790" text-anchor="middle" font-size="8" fill="#666">Determines if nesting can occur</text>
+    <text x="650" y="760" text-anchor="middle" font-size="9" fill="#e65100" font-weight="bold">SUB-PRIORITY</text>
+    <text x="650" y="790" text-anchor="middle" font-size="8" fill="#666">Order when same group</text>
+    <line x1="580" y1="745" x2="580" y2="805" stroke="#e65100" stroke-width="2" stroke-dasharray="4,2"/>
+    
+    <!-- PRIGROUP values -->
+    <rect x="40" y="810" width="720" height="30" rx="4" fill="#e8f5e9"/>
+    <text x="80" y="830" font-size="9" fill="#333">PRIGROUP values: 0 = 7:1 split, 1 = 6:2, 2 = 5:3, ... 7 = 0:8</text>
+  </g>
+  
+  <!-- Step 8: Nested Exceptions & Preemption -->
+  <g class="step" id="step8" data-narration="Higher-priority exception (lower number) can preempt lower-priority handler. The NVIC handles nesting automatically - no software needed for basic cases.">
+    <rect x="20" y="820" width="760" height="105" rx="10" fill="url(#orangeGradient)" filter="url(#shadow)"/>
+    <text x="40" y="845" font-size="14" font-weight="bold" fill="#e65100">Nested Exceptions &amp; Preemption</text>
+    
+    <!-- Visual: Nested execution -->
+    <rect x="40" y="860" width="350" height="70" rx="6" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="60" y="880" font-size="10" fill="#333" font-weight="bold">Lower Priority Handler (Priority 5)</text>
+    <rect x="60" y="890" width="200" height="30" rx="4" fill="#ff9800" opacity="0.5"/>
+    <text x="70" y="908" font-size="9" fill="white">Executing...</text>
+    
+    <!-- Preemption indicator -->
+    <circle cx="420" cy="895" r="15" fill="#f44336">
+      <animate attributeName="r" values="15;18;15" dur="0.8s" repeatCount="indefinite"/>
+    </circle>
+    <text x="420" y="900" text-anchor="middle" font-size="10" fill="white" font-weight="bold">!</text>
+    
+    <rect x="450" y="860" width="320" height="70" rx="6" fill="#ffebee" stroke="#f44336"/>
+    <text x="470" y="880" font-size="10" fill="#333" font-weight="bold">Higher Priority Handler (Priority 2)</text>
+    <text x="470" y="900" font-size="9" fill="#c62828">PREEMPTS the lower priority!</text>
+    <text x="470" y="915" font-size="9" fill="#333">After completion, resumes lower priority</text>
+    
+    <text x="40" y="945" font-size="9" fill="#333">Rule: Exception A preempts Exception B if Priority(A) &lt; Priority(B)</text>
+  </g>
+  
+  <!-- Step 9: BASEPRI, PRIMASK, FAULTMASK -->
+  <g class="step" id="step9" data-narration="Three masking registers control exception handling: PRIMASK masks all except NMI/HardFault, BASEPRI masks below threshold, FAULTMASK also masks HardFault.">
+    <rect x="20" y="935" width="760" height="105" rx="10" fill="url(#purpleGradient)" filter="url(#shadow)"/>
+    <text x="40" y="960" font-size="14" font-weight="bold" fill="#7b1fa2">Exception Masking Registers</text>
+    
+    <!-- Three registers -->
+    <rect x="40" y="980" width="220" height="50" rx="6" fill="#9c27b0"/>
+    <text x="150" y="1000" text-anchor="middle" font-size="10" fill="white" font-weight="bold">PRIMASK</text>
+    <text x="150" y="1018" text-anchor="middle" font-size="8" fill="white">Masks ALL except NMI, HardFault</text>
+    
+    <rect x="280" y="980" width="220" height="50" rx="6" fill="#7b1fa2"/>
+    <text x="390" y="1000" text-anchor="middle" font-size="10" fill="white" font-weight="bold">BASEPRI</text>
+    <text x="390" y="1018" text-anchor="middle" font-size="8" fill="white">Masks priority ≥ BASEPRI value</text>
+    
+    <rect x="520" y="980" width="220" height="50" rx="6" fill="#6a1b9a"/>
+    <text x="630" y="1000" text-anchor="middle" font-size="10" fill="white" font-weight="bold">FAULTMASK</text>
+    <text x="630" y="1018" text-anchor="middle" font-size="8" fill="white">Also masks HardFault!</text>
+    
+    <!-- Example -->
+    <rect x="40" y="1045" width="300" height="25" rx="4" fill="#f3e5f5"/>
+    <text x="50" y="1062" font-size="9" fill="#333">__set_BASEPRI(3 &lt;&lt; 4); // Mask priority ≥ 3</text>
+    <rect x="360" y="1045" width="200" height="25" rx="4" fill="#f3e5f5"/>
+    <text x="370" y="1062" font-size="9" fill="#333">__set_PRIMASK(1); // Disable all</text>
+  </g>
+  
+  <!-- Step 10: Example 1 - Configuring Priorities -->
+  <g class="step" id="step10" data-narration="In this example, Timer0 (IRQ 19) gets priority 2 and UART0 (IRQ 21) gets priority 5. Timer0 can preempt UART0 since 2 &lt; 5.">
+    <rect x="20" y="1050" width="760" height="95" rx="10" fill="url(#blueGradient)" filter="url(#shadow)"/>
+    <text x="40" y="1075" font-size="14" font-weight="bold" fill="#1565c0">Example 1: Configuring Interrupt Priorities</text>
+    
+    <!-- Scenario -->
+    <rect x="40" y="1095" width="240" height="40" rx="5" fill="#4caf50"/>
+    <text x="160" y="1112" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Timer0 (IRQ 19)</text>
+    <text x="160" y="1127" text-anchor="middle" font-size="9" fill="white">Priority = 2 (HIGH)</text>
+    
+    <rect x="300" y="1095" width="240" height="40" rx="5" fill="#ff9800"/>
+    <text x="420" y="1112" text-anchor="middle" font-size="10" fill="white" font-weight="bold">UART0 (IRQ 21)</text>
+    <text x="420" y="1127" text-anchor="middle" font-size="9" fill="white">Priority = 5 (LOW)</text>
+    
+    <!-- Arrow showing preemption -->
+    <path d="M300 1115 L250 1115" stroke="#4caf50" stroke-width="3" marker-end="url(#arrowhead)"/>
+    <text x="275" y="1108" text-anchor="middle" font-size="8" fill="#4caf50" font-weight="bold">preempts!</text>
+    
+    <!-- Code -->
+    <rect x="560" y="1090" width="210" height="50" rx="4" fill="#263238"/>
+    <text x="570" y="1108" font-size="8" fill="#81c784">NVIC_ISER |= (1 &lt;&lt; 19);</text>
+    <text x="570" y="1122" font-size="8" fill="#81c784">NVIC_ISER |= (1 &lt;&lt; 21);</text>
+    <text x="570" y="1136" font-size="8" fill="#81c784">NVIC_IPR[19] = (2 &lt;&lt; 4);</text>
+  </g>
+  
+  <!-- Step 11: Example 2 - Using BASEPRI -->
+  <g class="step" id="step11" data-narration="BASEPRI allows critical sections to run without interruption from lower-priority interrupts. Set BASEPRI to mask priority 3 and below.">
+    <rect x="20" y="1155" width="760" height="95" rx="10" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="40" y="1180" font-size="14" font-weight="bold" fill="#2e7d32">Example 2: Using BASEPRI for Critical Sections</text>
+    
+    <!-- Critical section visualization -->
+    <rect x="40" y="1200" width="500" height="40" rx="6" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="55" y="1218" font-size="9" fill="#333">CRITICAL SECTION</text>
+    <text x="55" y="1232" font-size="8" fill="#666">BASEPRI = 3 → interrupts with priority ≥ 3 blocked</text>
+    
+    <!-- Protected indicators -->
+    <circle cx="580" y="1220" r="12" fill="#4caf50">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1s" repeatCount="indefinite"/>
+    </circle>
+    <text x="580" y="1224" text-anchor="middle" font-size="16" fill="white" font-weight="bold">✓</text>
+    
+    <text x="640" y="1224" font-size="9" fill="#2e7d32" font-weight="bold">Protected!</text>
+    
+    <!-- Code -->
+    <rect x="40" y="1255" width="380" height="35" rx="4" fill="#263238"/>
+    <text x="50" y="1273" font-size="9" fill="#81c784">void critical_section(void) {</text>
+    <text x="60" y="1286" font-size="9" fill="#81c784">  __set_BASEPRI(3 &lt;&lt; 4);</text>
+    <text x="60" y="1299" font-size="9" fill="#81c784">  // ... critical code ...</text>
+    <text x="50" y="1312" font-size="9" fill="#81c784">  __set_BASEPRI(0); // Restore</text>
+    <text x="50" y="1325" font-size="9" fill="#81c784">}</text>
+  </g>
+  
+  <!-- Step 12: Stack Requirements -->
+  <g class="step" id="step12" data-narration="Each exception saves 8 registers (32 bytes) to stack. Nested exceptions require more stack space. Design for worst-case nesting depth.">
+    <rect x="20" y="1260" width="760" height="85" rx="10" fill="url(#redGradient)" filter="url(#shadow)"/>
+    <text x="40" y="1285" font-size="14" font-weight="bold" fill="#c62828">Stack Frame &amp; Nested Exception Requirements</text>
+    
+    <!-- Stack frame visualization -->
+    <rect x="40" y="1300" width="280" height="35" rx="4" fill="#ef5350"/>
+    <text x="180" y="1318" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Stack Frame = 32 bytes</text>
+    <text x="180" y="1330" text-anchor="middle" font-size="8" fill="white">(R0, R1, R2, R3, R12, LR, PC, xPSR)</text>
+    
+    <!-- Nested stack requirement -->
+    <rect x="340" y="1300" width="430" height="35" rx="4" fill="#ffcdd2"/>
+    <text x="550" y="1315" text-anchor="middle" font-size="10" fill="#c62828" font-weight="bold">Nested Exception Stack Usage</text>
+    <text x="550" y="1330" text-anchor="middle" font-size="9" fill="#333">Each nesting level adds 32 bytes - allocate for worst-case!</text>
+  </g>
+  
+  <!-- Step 13: Key Formulas & Summary -->
+  <g class="step" id="step13" data-narration="Key formulas: Max priority = 2^n - 1, nesting possible when Priority(A) &lt; Priority(B). Remember: lower number = higher priority!">
+    <rect x="20" y="1355" width="760" height="95" rx="10" fill="url(#titleGradient)" filter="url(#shadow)"/>
+    <text x="400" y="1380" text-anchor="middle" font-size="16" font-weight="bold" fill="white">Key Formulas &amp; Summary</text>
+    
+    <!-- Formulas grid -->
+    <rect x="40" y="1395" width="340" height="45" rx="5" fill="white" opacity="0.9"/>
+    <text x="50" y="1413" font-size="10" fill="#1565c0" font-weight="bold">Max Priority Levels:</text>
+    <text x="50" y="1430" font-size="11" fill="#333">2^n where n = implemented priority bits</text>
+    <text x="320" y="1422" font-size="12" fill="#1565c0" font-weight="bold">16 or 256 levels</text>
+    
+    <rect x="400" y="1395" width="170" height="45" rx="5" fill="white" opacity="0.9"/>
+    <text x="410" y="1413" font-size="10" fill="#e65100" font-weight="bold">Preemption:</text>
+    <text x="410" y="1430" font-size="11" fill="#333">Priority(A) &lt; Priority(B)</text>
+    
+    <rect x="590" y="1395" width="180" height="45" rx="5" fill="white" opacity="0.9"/>
+    <text x="600" y="1413" font-size="10" fill="#2e7d32" font-weight="bold">Stack Frame:</text>
+    <text x="600" y="1430" font-size="11" fill="#333">32 bytes minimum</text>
+    
+    <!-- Bottom reminder -->
+    <text x="400" y="1465" text-anchor="middle" font-size="12" fill="#bbdefb" font-weight="bold">Remember: Lower Priority Number = Higher Importance!</text>
+  </g>
+</svg>

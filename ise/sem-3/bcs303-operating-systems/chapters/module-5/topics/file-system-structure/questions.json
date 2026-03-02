@@ -1,0 +1,154 @@
+{
+  "topicId": "file-system-structure",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the structure of an inode and list at least five fields it contains.",
+      "keyPoints": [
+        "Inode (index node) stores file metadata",
+        "Fields include: inode number, file type, permissions, timestamps (access, modify, change)",
+        "File size, link count, data block pointers, owner UID",
+        "Does not store filename - that is in directory entry",
+        "Each file has unique inode number in file system"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe three advantages and two disadvantages of indexed file allocation.",
+      "keyPoints": [
+        "Advantages: Supports direct/random access, no external fragmentation, efficient for sequential access",
+        "Disadvantages: Wasted space for small files (index block overhead), extra disk I/O for index block access, single point failure (if index block corrupted)",
+        "Better than contiguous for large files requiring non-contiguous storage"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the purpose of the boot block and superblock in a file system? Differentiate between them.",
+      "keyPoints": [
+        "Boot block: First sector containing bootstrap code for OS loading, present regardless of file system",
+        "Superblock: Contains file system metadata - total size, free blocks, free inodes, block size, mount status",
+        "Superblock is critical and duplicated for redundancy",
+        "Boot block is hardware-level, superblock is file system-level concept"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare contiguous and linked file allocation methods.",
+      "keyPoints": [
+        "Contiguous: Files stored in consecutive blocks - fast random access but suffers external fragmentation",
+        "Linked: Files stored as linked list of blocks - no external fragmentation but no random access, pointer overhead",
+        "Contiguous allocation requires knowing file size beforehand",
+        "Linked allocation has poor random access performance due to sequential traversal"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the hierarchical directory structure with a diagram example.",
+      "keyPoints": [
+        "Hierarchical (tree) structure has root directory with nested subdirectories",
+        "Allows logical grouping of related files",
+        "Users can navigate using absolute or relative paths",
+        "Common in modern OS (Windows, Unix/Linux, Mac OS)",
+        "Supports file sharing through symbolic/hard links",
+        "Example: /home/user/documents/report.txt shows path from root"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe four techniques for free space management in file systems.",
+      "keyPoints": [
+        "Bit Vector (Bitmap): One bit per block indicating free/allocated",
+        "Linked List: Each free block points to next free block",
+        "Grouping: First free block stores addresses of n other free blocks",
+        "Counting: Maintains (starting block, count) pairs for consecutive free blocks",
+        "Each method has trade-offs in speed and memory usage"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is file system mounting? Explain the mounting process.",
+      "keyPoints": [
+        "Mounting attaches a file system to the directory tree at a mount point",
+        "Operating system validates file system by reading superblock",
+        "Mount point is typically an empty directory",
+        "After mounting, files in that file system become accessible",
+        "Unmounting flushes buffers and updates superblock before detachment"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the on-disk structure of a typical UNIX file system. Draw a diagram showing the organization and explain the purpose of each component.",
+      "keyPoints": [
+        "Boot block: First sector for bootstrap code",
+        "Superblock: File system metadata (size, free inodes/blocks, block size)",
+        "Inode table: Array of inodes for all files",
+        "Data blocks: Actual file content storage",
+        "Boot block and superblock duplicated for reliability",
+        "Inodes contain metadata and direct/indirect block pointers",
+        "Directory structure implemented as special files containing (inode number, filename) pairs",
+        "Should include diagram showing: [Boot][Superblock][Inode Table][Data Blocks]"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss in detail the three main file allocation methods: contiguous, linked, and indexed. Compare them in terms of external fragmentation, internal fragmentation, random access support, and access time complexity.",
+      "keyPoints": [
+        "Contiguous: Consecutive blocks - O(1) random access, suffers external fragmentation",
+        "Linked: Blocks with pointers - no external fragmentation, no random access (O(n))",
+        "Indexed: Index block with pointers - supports random access (O(1)), internal fragmentation",
+        "External fragmentation: Contiguous worst, Linked/Indexed none",
+        "Internal fragmentation: Indexed worst (index block overhead), Contiguous minimal",
+        "Access time: Contiguous best for random, Linked best for sequential (no seek), Indexed moderate",
+        "All methods can be combined (e.g., linked with index blocks in UNIX)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is the Virtual File System (VFS)? Explain how it provides abstraction and allows multiple file system types to coexist. Also explain file sharing and protection mechanisms.",
+      "keyPoints": [
+        "VFS is an abstraction layer providing uniform interface for different file systems",
+        "Applications interact with VFS without knowing underlying FS type (ext4, NTFS, FAT)",
+        "VFS defines standard operations (open, read, write, close) that each FS must implement",
+        "Supports file system mounting and integration",
+        "File sharing requires proper mechanisms: file locking (shared/exclusive), permission bits",
+        "Protection: User IDs, access control lists (ACLs), read/write/execute permissions",
+        "In distributed systems: needs concurrency control to prevent data inconsistency"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the free space management techniques in detail with advantages and disadvantages of each.",
+      "keyPoints": [
+        "Bit Vector: Fast allocation finding consecutive blocks but requires memory proportional to disk size",
+        "Linked List: Simple but cannot efficiently find contiguous blocks, traversing is slow",
+        "Grouping: Combines advantages - quick allocation of multiple blocks but complex implementation",
+        "Counting: Efficient for contiguous free space but poor for scattered blocks",
+        "Trade-off between memory usage and allocation speed",
+        "Modern file systems use combinations and journaling for reliability",
+        "Choice depends on typical file size and access patterns"
+      ],
+      "marks": 10
+    }
+  ]
+}

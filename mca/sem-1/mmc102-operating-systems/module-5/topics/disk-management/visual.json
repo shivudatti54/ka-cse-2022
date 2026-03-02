@@ -1,0 +1,156 @@
+{
+  "topicId": "disk-management",
+  "visuals": [
+    {
+      "id": "disk-management-svg",
+      "title": "Disk Management Overview",
+      "description": "Visual overview of disk formatting levels, boot process, bad block handling techniques, and swap-space management",
+      "type": "animated-svg",
+      "file": "assets/disk-management.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "Boot Process",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Power On → BIOS/UEFI (ROM)"
+          },
+          {
+            "id": "n2",
+            "label": "Read MBR (Sector 0)"
+          },
+          {
+            "id": "n3",
+            "label": "MBR Bootstrap → Find Active Partition"
+          },
+          {
+            "id": "n4",
+            "label": "Load Boot Block from Active Partition"
+          },
+          {
+            "id": "n5",
+            "label": "Boot Block → Load OS Kernel"
+          },
+          {
+            "id": "n6",
+            "label": "Kernel Initializes System"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2"
+          },
+          {
+            "from": "n2",
+            "to": "n3"
+          },
+          {
+            "from": "n3",
+            "to": "n4"
+          },
+          {
+            "from": "n4",
+            "to": "n5"
+          },
+          {
+            "from": "n5",
+            "to": "n6"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Formatting Levels",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Blank Disk (no structure)"
+          },
+          {
+            "id": "n2",
+            "label": "Low-Level Formatting: Creates sectors (Header + Data + ECC)"
+          },
+          {
+            "id": "n3",
+            "label": "Partitioning: Divide into partitions"
+          },
+          {
+            "id": "n4",
+            "label": "Logical Formatting: Write file system (superblock, root dir)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "to": "n2",
+            "label": "Factory"
+          },
+          {
+            "from": "n2",
+            "to": "n3",
+            "label": "OS/User"
+          },
+          {
+            "from": "n3",
+            "to": "n4",
+            "label": "OS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Bad Block Handling: Sparing vs Slipping",
+      "type": "comparison",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Sector Sparing: Remap bad sector to spare from reserved pool"
+          },
+          {
+            "id": "n2",
+            "label": "Sector Slipping: Shift adjacent sectors to fill the gap"
+          },
+          {
+            "id": "n3",
+            "label": "Sparing breaks sequential order; Slipping preserves it"
+          }
+        ],
+        "edges": []
+      }
+    },
+    {
+      "id": "d4",
+      "title": "Swap Space: Raw Partition vs File System",
+      "type": "comparison",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Raw Partition: Faster, no FS overhead, fixed size"
+          },
+          {
+            "id": "n2",
+            "label": "File System Swap: Easier to manage, slower, resizable"
+          },
+          {
+            "id": "n3",
+            "label": "Modern OS: Swap at page granularity with swap map"
+          }
+        ],
+        "edges": []
+      }
+    }
+  ]
+}

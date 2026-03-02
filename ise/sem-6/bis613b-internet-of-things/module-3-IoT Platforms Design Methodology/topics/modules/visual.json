@@ -1,0 +1,196 @@
+{
+  "topicId": "modules",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Python Module Import Mechanism",
+      "description": "Shows how Python imports modules, the search path order, and how code is executed upon import",
+      "elements": [
+        "Rectangle: Python Script (main.py)",
+        "Arrow: import statement triggers",
+        "Rounded Rectangle: sys.path Search Path",
+        "List inside: 1. Current directory, 2. PYTHONPATH, 3. Standard library paths, 4. Site-packages",
+        "Diamond: Module Found? (Yes/No branches)",
+        "Yes Arrow → Folder: Module Directory (with __init__.py)",
+        "No Arrow → Error: ModuleNotFoundError",
+        "Rectangle: Module Code Execution (top-to-bottom)",
+        "Output Arrow → Object in memory: module namespace"
+      ],
+      "purpose": "Students understand the complete import mechanism, why PYTHONPATH matters for IoT projects, and that import statements execute module code immediately"
+    },
+    {
+      "id": "diagram-2",
+      "title": "IoT Project Module Structure",
+      "description": "Hierarchical structure of a typical IoT application showing modular organization",
+      "elements": [
+        "Root Folder: iot_weather_station/",
+        "Main File: main.py (entry point)",
+        "Sub-folder: sensors/ with __init__.py, temperature.py, humidity.py, pressure.py",
+        "Sub-folder: communication/ with __init__.py, mqtt_client.py, wifi_handler.py",
+        "Sub-folder: data/ with __init__.py, logger.py, data_processor.py",
+        "Sub-folder: utils/ with __init__.py, config_loader.py, helpers.py",
+        "Arrows: main.py imports from each submodule"
+      ],
+      "purpose": "Students learn how to organize IoT code into logical modules - sensor drivers, communication handlers, data processors - enabling team collaboration and code reuse"
+    },
+    {
+      "id": "diagram-3",
+      "title": "Module Namespace and Aliasing",
+      "description": "Demonstrates how namespaces work with modules and the alias pattern for cleaner code",
+      "elements": [
+        "Box: Import statements showing all variations",
+        "Line 1: import sensor (full namespace: sensor.read_temp())",
+        "Line 2: from sensor import read_temp (direct function)",
+        "Line 3: from sensor import * (all public names - not recommended)",
+        "Line 4: import sensor as sen (aliasing)",
+        "Two overlapping circles: Global Namespace + Module Namespace",
+        "Label: __name__ attribute stores module name",
+        "Label: dir() function lists all available names"
+      ],
+      "purpose": "Students understand namespace isolation between modules, how to use different import styles, and when to use aliasing for brevity in IoT code"
+    },
+    {
+      "id": "diagram-4",
+      "title": "__name__ == '__main__' Execution Flow",
+      "description": "Shows how the special __name__ variable controls code execution - critical for making modules runnable and importable",
+      "elements": [
+        "Start Node: Python Interprets Module",
+        "Diamond: Check __name__ == '__main__'?",
+        "True Branch → Rectangle: Run test code / main() function",
+        "False Branch → Rectangle: Module imported (skip test code)",
+        "Example Code Box: if __name__ == '__main__': print('Direct run') else: print('Imported')",
+        "Two scenarios: Running python sensor.py vs import sensor"
+      ],
+      "purpose": "Students learn to create modules that can both run directly for testing and be imported by other modules without side effects - essential for IoT sensor drivers"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "Built-in Modules vs External Packages vs User Modules",
+      "content": [
+        {
+          "Category": "Built-in Modules",
+          "Examples": "os, sys, json, time, datetime, math, random",
+          "Location": "Python Standard Library",
+          "Installation": "Pre-installed with Python",
+          "IoT Use": "File operations, system config, JSON data, timing"
+        },
+        {
+          "Category": "External Packages",
+          "Examples": "RPi.GPIO, smbus, paho-mqtt, requests, numpy",
+          "Location": "PyPI / pip install",
+          "Installation": "pip install package-name",
+          "IoT Use": "GPIO control, I2C communication, MQTT, HTTP requests"
+        },
+        {
+          "Category": "User Modules",
+          "Examples": "sensor.py, mqtt_handler.py, config.py",
+          "Location": "Project directory or PYTHONPATH",
+          "Installation": "Create as .py files",
+          "IoT Use": "Custom sensor drivers, project-specific logic"
+        }
+      ]
+    },
+    {
+      "type": "comparison",
+      "title": "Import Statement Variations",
+      "content": [
+        {
+          "Syntax": "import module_name",
+          "Usage": "module_name.function()",
+          "Pros": "Clear source, avoids namespace conflicts",
+          "Cons": "Verbose for repeated use"
+        },
+        {
+          "Syntax": "from module_name import name",
+          "Usage": "Direct: function()",
+          "Pros": "Concise, clear what is imported",
+          "Cons": "May overwrite existing names"
+        },
+        {
+          "Syntax": "from module_name import name as alias",
+          "Usage": "alias()",
+          "Pros": "Avoids conflicts, shorter names",
+          "Cons": "Alias must be remembered"
+        },
+        {
+          "Syntax": "from module_name import *",
+          "Usage": "Direct: function()",
+          "Pros": "Quick prototyping",
+          "Cons": "Pollutes namespace, unclear what is available"
+        },
+        {
+          "Syntax": "import module_name.submodule",
+          "Usage": "module_name.submodule.function()",
+          "Pros": "Organized, hierarchical",
+          "Cons": "Longer access path"
+        }
+      ]
+    },
+    {
+      "type": "flowchart",
+      "title": "Module Selection Decision for IoT Developers",
+      "content": [
+        "Step 1: Need functionality? → Check Python Standard Library first",
+        "Step 2: Not in stdlib? → Search PyPI (pip search or pypi.org)",
+        "Step 3: Found package? → pip install package-name",
+        "Step 4: Not found? → Create custom module",
+        "Step 5: Reusable across projects? → Convert to package with setup.py",
+        "Common IoT Modules: RPi.GPIO (GPIO), smbus (I2C), paho-mqtt (MQTT), requests (HTTP)"
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Key Module Attributes and Functions",
+      "content": [
+        {
+          "Attribute/Function": "__name__",
+          "Type": "String",
+          "Purpose": "Module name; '__main__' if run directly"
+        },
+        {
+          "Attribute/Function": "__file__",
+          "Type": "String",
+          "Purpose": "Path to the module source file"
+        },
+        {
+          "Attribute/Function": "__path__",
+          "Type": "List",
+          "Purpose": "Package directory list (for packages)"
+        },
+        {
+          "Attribute/Function": "__all__",
+          "Type": "List",
+          "Purpose": "Public API - names exported with 'from module import *'"
+        },
+        {
+          "Attribute/Function": "dir(module)",
+          "Type": "Function",
+          "Purpose": "Returns list of all names in module namespace"
+        },
+        {
+          "Attribute/Function": "help(module)",
+          "Type": "Function",
+          "Purpose": "Displays module documentation"
+        }
+      ]
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Python Modules for IoT",
+      "branches": [
+        "Definition: Reusable .py files that encapsulate related functionality",
+        "Purpose: Code organization, namespace management, reusability across IoT projects",
+        "Types: Built-in (os, sys, json), External (RPi.GPIO, paho-mqtt), User-defined (sensor.py)",
+        "Import Mechanism: sys.path search order, module execution on import, namespace creation",
+        "Key Concepts: __name__ == '__main__', __init__.py for packages, dir() for inspection",
+        "IoT Applications: Sensor drivers (temperature, humidity), Communication (MQTT, HTTP), Data logging",
+        "Best Practices: Explicit imports, __all__ for public API, test in __main__ block, organize by function",
+        "Packages: Directories with __init__.py, hierarchical organization, import package.submodule"
+      ],
+      "purpose": "Comprehensive overview connecting module concepts to IoT development - shows students the complete picture from basic definition to practical IoT applications"
+    }
+  ]
+}

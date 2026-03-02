@@ -1,0 +1,57 @@
+[
+  {
+    "id": "q1",
+    "question": "In the context of the UNIX password system, what is the primary function of the `/etc/passwd` file?",
+    "options": [
+      "To store user account information",
+      "To store encrypted user passwords",
+      "To define system-wide environment variables",
+      "To list all currently running processes"
+    ],
+    "correctIndex": 0,
+    "explanation": "The `/etc/passwd` file is a text-based database that stores essential user account information, such as username, user ID (UID), group ID (GID), home directory, and login shell."
+  },
+  {
+    "id": "q2",
+    "question": "Which field in a typical `/etc/passwd` file entry historically contained the encrypted password hash?",
+    "options": ["The first field", "The second field", "The fifth field", "The last field"],
+    "correctIndex": 1,
+    "explanation": "The second field in a `/etc/passwd` entry was historically used for the password hash. For security reasons, modern systems now place an 'x' in this field and store the actual hash in the more protected `/etc/shadow` file."
+  },
+  {
+    "id": "q3",
+    "question": "What is the main security rationale for moving user password hashes from `/etc/passwd` to `/etc/shadow`?",
+    "options": [
+      "To make passwords longer",
+      "To allow for case-sensitive passwords",
+      "To separate world-readable data from sensitive data",
+      "To improve hashing algorithm speed"
+    ],
+    "correctIndex": 2,
+    "explanation": "The `/etc/passwd` file must be world-readable for many system functions (e.g., mapping UIDs to usernames). Storing the password hash there exposed it to offline password cracking attacks. `/etc/shadow` is readable only by root, protecting the sensitive hash."
+  },
+  {
+    "id": "q4",
+    "question": "A system programmer needs to programmatically change a user's encrypted password from within a C application. Which function and database should they use?",
+    "options": [
+      "`putpwent()` and `/etc/passwd`",
+      "`putspent()` and `/etc/shadow`",
+      "`getpwnam()` and `/etc/passwd`",
+      "`crypt()` and a custom file"
+    ],
+    "correctIndex": 1,
+    "explanation": "The `putspent()` function is specifically designed to write entries to the `/etc/shadow` file. Directly manipulating these files with standard I/O is error-prone and dangerous; using the dedicated functions is the correct, safe programming practice."
+  },
+  {
+    "id": "q5",
+    "question": "When a user runs the `passwd` command to change their password, which of the following best describes the sequence of privilege escalation that occurs?",
+    "options": [
+      "The command runs with setuid root, reads the new password, and directly writes to `/etc/shadow`.",
+      "The command runs with the user's privileges, requests root authorization via `sudo`, then proceeds.",
+      "The command runs with setuid root, which allows it to read the TTY and update the privileged `/etc/shadow` database.",
+      "The command runs as a daemon process owned by root, which the user client communicates with over a socket."
+    ],
+    "correctIndex": 2,
+    "explanation": "The `/usr/bin/passwd` executable has the set-user-ID (setuid) bit set and is owned by root. When executed, it runs with root privileges. This allows it to read the password directly from the user's terminal (a privileged operation) and update the root-owned `/etc/shadow` file."
+  }
+]

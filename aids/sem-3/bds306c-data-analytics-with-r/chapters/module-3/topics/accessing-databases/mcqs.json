@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "Which R package provides a common, DBI-compliant interface for connecting to various types of SQL databases?",
+    "options": [
+      "DBI",
+      "dbConnect",
+      "odbc",
+      "RSQLite"
+    ],
+    "correctIndex": 0,
+    "explanation": "The DBI (Database Interface) package defines a common set of classes and methods for communicating with different database management systems, providing a standardized interface regardless of the specific database backend."
+  },
+  {
+    "id": "q2",
+    "question": "In the DBI framework, which function is used to submit and execute a SQL query (e.g., SELECT) and return the result as a dataframe?",
+    "options": [
+      "dbGetQuery()",
+      "dbExecute()",
+      "dbSendQuery()",
+      "dbFetch()"
+    ],
+    "correctIndex": 0,
+    "explanation": "dbGetQuery() is a convenience function that combines dbSendQuery() and dbFetch() to send a query, retrieve all results, and clear the result set, returning them in a single step as a dataframe."
+  },
+  {
+    "id": "q3",
+    "question": "What is the primary purpose of using dbSendQuery() instead of dbGetQuery() when working with large result sets from a database?",
+    "options": [
+      "To manage memory by fetching results in chunks",
+      "To improve the speed of the SQL query itself",
+      "To avoid establishing a database connection",
+      "To write data to the database instead of reading"
+    ],
+    "correctIndex": 0,
+    "explanation": "dbSendQuery() submits the query but does not immediately retrieve the results. This allows you to use dbFetch() to pull the results back in manageable chunks, which is crucial for handling large datasets that might not fit entirely in memory."
+  },
+  {
+    "id": "q4",
+    "question": "When using the dplyr package to work with a database table, what is the key advantage of using its verbs (e.g., filter(), select()) over writing raw SQL?",
+    "options": [
+      "dplyr translates its code into efficient, database-specific SQL, allowing you to work with database syntax using R code",
+      "dplyr processes the data faster on the database server than native SQL",
+      "dplyr eliminates the need for any database connection",
+      "dplyr can only work with local data frames, not remote databases"
+    ],
+    "correctIndex": 0,
+    "explanation": "dplyr's database backend uses 'lazy evaluation' and translation. It builds a query plan in R and only transmits the necessary, translated SQL to the database when you request the data (e.g., with collect()), allowing you to use a consistent R syntax for both local and remote data manipulation."
+  },
+  {
+    "id": "q5",
+    "question": "You need to perform a complex data transformation that involves a Window Function (e.g., RANK() OVER(PARTITION BY...)) on a large table in a remote PostgreSQL database. Which is the most efficient and recommended approach?",
+    "options": [
+      "Use dplyr to construct the query, which will translate window functions to the appropriate SQL for the PostgreSQL backend",
+      "Use dbGetQuery() to pull the entire table into R and perform the ranking with dplyr on the local dataframe",
+      "Use the RPostgres package-specific functions that are unavailable in DBI",
+      "It is impossible to perform window functions without writing raw SQL"
+    ],
+    "correctIndex": 0,
+    "explanation": "The most efficient method is to push the computational work of the window function to the database server. dplyr can translate many of its functions, including those for window operations (like min_rank()), into the correct SQL syntax for the specific database (PostgreSQL in this case), keeping the heavy processing on the database and only returning the final result set to R."
+  }
+]

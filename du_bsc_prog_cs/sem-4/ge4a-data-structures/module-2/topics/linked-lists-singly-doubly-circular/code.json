@@ -1,0 +1,25 @@
+{
+  "topicId": "linked-lists-singly-doubly-circular",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Singly Linked List Implementation",
+      "description": "A complete implementation of a singly linked list with Node class, insertion at head/tail, deletion, and traversal operations.",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass SinglyLinkedList:\n    def __init__(self):\n        self.head = None\n    \n    def append(self, data):\n        new_node = Node(data)\n        if not self.head:\n            self.head = new_node\n            return\n        current = self.head\n        while current.next:\n            current = current.next\n        current.next = new_node\n    \n    def prepend(self, data):\n        new_node = Node(data)\n        new_node.next = self.head\n        self.head = new_node\n    \n    def delete(self, data):\n        if not self.head:\n            return\n        if self.head.data == data:\n            self.head = self.head.next\n            return\n        current = self.head\n        while current.next and current.next.data != data:\n            current = current.next\n        if current.next:\n            current.next = current.next.next\n    \n    def display(self):\n        elements = []\n        current = self.head\n        while current:\n            elements.append(str(current.data))\n            current = current.next\n        print(\" -> \".join(elements) + \" -> None\")\n\n# Usage\nsll = SinglyLinkedList()\nsll.append(1)\nsll.append(2)\nsll.append(3)\nsll.prepend(0)\nsll.display()  # 0 -> 1 -> 2 -> 3 -> None\nsll.delete(2)\nsll.display()  # 0 -> 1 -> 3 -> None",
+      "explanation": "The singly linked list stores nodes with data and a pointer to the next node. The Node class holds the data and reference. The SinglyLinkedList class manages operations: append adds to end, prepend adds to beginning, delete removes by value, and display prints all elements. Each node only links forward, hence 'singly'.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Circular Doubly Linked List",
+      "description": "Implementation of a circular doubly linked list where each node has both previous and next pointers, and the last node points back to head.",
+      "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.prev = None\n        self.next = None\n\nclass CircularDoublyLinkedList:\n    def __init__(self):\n        self.head = None\n    \n    def append(self, data):\n        new_node = Node(data)\n        if not self.head:\n            new_node.next = new_node.prev = new_node\n            self.head = new_node\n            return\n        tail = self.head.prev\n        tail.next = new_node\n        new_node.prev = tail\n        new_node.next = self.head\n        self.head.prev = new_node\n    \n    def delete(self, data):\n        if not self.head:\n            return\n        current = self.head\n        while True:\n            if current.data == data:\n                if current == current.next:\n                    self.head = None\n                else:\n                    current.prev.next = current.next\n                    current.next.prev = current.prev\n                    if current == self.head:\n                        self.head = current.next\n                return\n            current = current.next\n            if current == self.head:\n                break\n    \n    def display(self, count=10):\n        if not self.head:\n            print(\"Empty list\")\n            return\n        elements = []\n        current = self.head\n        for _ in range(count):\n            elements.append(str(current.data))\n            current = current.next\n        print(\" <-> \".join(elements) + \" (circular)\")\n\n# Usage\ncdll = CircularDoublyLinkedList()\ncdll.append(1)\ncdll.append(2)\ncdll.append(3)\ncdll.display()  # 1 <-> 2 <-> 3 (circular)\ncdll.delete(2)\ncdll.display()  # 1 <-> 3 (circular)",
+      "explanation": "A circular doubly linked list combines bidirectional links with circular connectivity. Each node has prev and next pointers, allowing traversal in both directions. The last node's next points to head, and head's prev points to tail, creating a circle. This implementation handles edge cases like single node deletion and maintains circular references throughout all operations.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

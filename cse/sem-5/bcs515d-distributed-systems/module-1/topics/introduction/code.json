@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Client-Server Interaction",
+      "description": "Basic pseudocode demonstrating client-server model in distributed systems",
+      "code": "BEGIN\n // Server Process\n PROCEDURE StartServer()\n serverSocket = CreateSocket(PORT)\n WHILE True DO\n clientSocket = serverSocket.Accept()\n REQUEST = clientSocket.Receive()\n RESPONSE = ProcessRequest(REQUEST)\n clientSocket.Send(RESPONSE)\n clientSocket.Close()\n END WHILE\n END PROCEDURE\n \n // Client Process\n PROCEDURE StartClient()\n clientSocket = CreateSocket(SERVER_IP, PORT)\n REQUEST = GetUserRequest()\n clientSocket.Send(REQUEST)\n RESPONSE = clientSocket.Receive()\n DisplayResult(RESPONSE)\n clientSocket.Close()\n END PROCEDURE\nEND",
+      "explanation": "This pseudocode shows the fundamental client-server interaction: server listens for and processes requests, while client initiates requests and receives responses. This pattern forms the basis of many distributed systems.",
+      "timeComplexity": "O(1) per request",
+      "spaceComplexity": "O(n) for concurrent connections"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Middleware Request Routing",
+      "description": "Demonstrates how middleware provides transparency in distributed systems",
+      "code": "BEGIN\n // Middleware Layer\n PROCEDURE HandleClientRequest(request)\n // Location transparency: client doesn't know where service is\n serviceLocation = LookupService(request.serviceName)\n \n // May involve remote communication\n IF serviceLocation.isLocal THEN\n result = ExecuteLocally(request)\n ELSE\n result = ForwardToRemote(serviceLocation, request)\n END IF\n \n // Return result to client - transparent to client\n RETURN result\n END PROCEDURE\n \n // Service Lookup (may use naming service)\n PROCEDURE LookupService(serviceName)\n RETURN NamingService.Resolve(serviceName)\n END PROCEDURE\nEND",
+      "explanation": "This demonstrates how middleware provides transparency - clients make requests without knowing whether the service is local or remote, or where exactly it's located. The middleware handles all complexity of location and communication.",
+      "timeComplexity": "O(log n) for service lookup",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Distributed Resource Replication",
+      "description": "Shows replication transparency in distributed systems",
+      "code": "BEGIN\n // Replicated Service with Transparency\n VARIABLE replicas = [\"Server1\", \"Server2\", \"Server3\"]\n \n PROCEDURE ReadRequest(resourceId)\n // Replication transparency: user doesn't know about replicas\n // System chooses best replica automatically\n replica = SelectReplica(replicas)\n RETURN replica.Read(resourceId)\n END PROCEDURE\n \n PROCEDURE WriteRequest(resourceId, data)\n // Must update ALL replicas for consistency\n FOR EACH replica IN replicas DO\n replica.Write(resourceId, data)\n END FOR\n RETURN SUCCESS\n END PROCEDURE\n \n PROCEDURE SelectReplica(replicaList)\n // Load balancing: choose least loaded\n RETURN replicaList.FindMin(load)\n END PROCEDURE\nEND",
+      "explanation": "This demonstrates replication transparency - users interact with what appears to be a single resource, while the system manages multiple replicas. The code shows both read (load-balanced) and write (synchronized across replicas) operations.",
+      "timeComplexity": "O(n) for write (all replicas), O(1) for read",
+      "spaceComplexity": "O(n) for replica list"
+    }
+  ]
+}

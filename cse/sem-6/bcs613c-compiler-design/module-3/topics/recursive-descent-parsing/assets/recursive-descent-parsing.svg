@@ -1,0 +1,119 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowgreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#388e3c"/>
+    </marker>
+    <marker id="arroworange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ff9800"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="35" text-anchor="middle" font-size="21" font-weight="bold" fill="#1976d2" font-family="Arial">Recursive Descent Parsing</text>
+
+  <!-- Step 0: Entry point - parseE() -->
+  <g id="step0" class="step" data-narration="Recursive descent parsing uses one procedure per nonterminal. Parsing begins by calling parseE for the start symbol E. Each procedure examines the lookahead token and chooses which production to apply.">
+    <rect x="310" y="55" width="180" height="55" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="3"/>
+    <text x="400" y="78" text-anchor="middle" font-size="15" font-weight="bold" fill="#1976d2" font-family="Arial">parseE()</text>
+    <text x="400" y="98" text-anchor="middle" font-size="10" fill="#1976d2" font-family="Arial">E -> T E'</text>
+    <line x1="355" y1="110" x2="200" y2="145" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="265" y="122" font-size="9" fill="#1976d2" font-family="Arial">call</text>
+    <line x1="445" y1="110" x2="600" y2="145" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowgreen)"/>
+    <text x="535" y="122" font-size="9" fill="#388e3c" font-family="Arial">then call</text>
+  </g>
+
+  <!-- Step 1: parseT() procedure -->
+  <g id="step1" class="step" data-narration="The parseT procedure handles the nonterminal T. Since T produces F followed by T-prime, it first calls parseF and then parseTPrime. This mirrors the grammar structure directly in code.">
+    <rect x="100" y="145" width="180" height="55" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="190" y="168" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2" font-family="Arial">parseT()</text>
+    <text x="190" y="188" text-anchor="middle" font-size="10" fill="#1976d2" font-family="Arial">T -> F T'</text>
+    <line x1="145" y1="200" x2="90" y2="240" stroke="#ff9800" stroke-width="2" marker-end="url(#arroworange)"/>
+    <text x="102" y="218" font-size="9" fill="#ff9800" font-family="Arial">call</text>
+    <line x1="235" y1="200" x2="290" y2="240" stroke="#ff9800" stroke-width="2" marker-end="url(#arroworange)"/>
+    <text x="278" y="218" font-size="9" fill="#ff9800" font-family="Arial">call</text>
+  </g>
+
+  <!-- Step 2: parseEPrime() procedure with decision diamond -->
+  <g id="step2" class="step" data-narration="ParseEPrime checks the lookahead token. If it is plus, it matches plus, calls parseT, then recursively calls itself. If the lookahead is in FOLLOW of E-prime, it applies the epsilon production and returns.">
+    <rect x="510" y="145" width="180" height="55" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2.5"/>
+    <text x="600" y="168" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c" font-family="Arial">parseEPrime()</text>
+    <text x="600" y="188" text-anchor="middle" font-size="10" fill="#388e3c" font-family="Arial">E' -> +TE' | e</text>
+    <line x1="600" y1="200" x2="600" y2="240" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowgreen)"/>
+    <polygon points="600,240 650,270 600,300 550,270" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="600" y="268" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff9800" font-family="Arial">token</text>
+    <text x="600" y="280" text-anchor="middle" font-size="10" fill="#ff9800" font-family="Arial">== + ?</text>
+    <line x1="650" y1="270" x2="720" y2="270" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowgreen)"/>
+    <text x="683" y="263" font-size="9" fill="#388e3c" font-family="Arial">Yes</text>
+    <rect x="725" y="248" width="60" height="45" rx="6" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="755" y="265" text-anchor="middle" font-size="9" fill="#388e3c" font-family="Arial">match +</text>
+    <text x="755" y="278" text-anchor="middle" font-size="9" fill="#388e3c" font-family="Arial">parseT</text>
+    <text x="755" y="290" text-anchor="middle" font-size="9" fill="#388e3c" font-family="Arial">parseE'</text>
+    <line x1="550" y1="270" x2="470" y2="270" stroke="#f44336" stroke-width="2"/>
+    <text x="505" y="263" font-size="9" fill="#f44336" font-family="Arial">No</text>
+    <rect x="410" y="255" width="60" height="30" rx="6" fill="#ffebee" stroke="#f44336" stroke-width="1.5"/>
+    <text x="440" y="274" text-anchor="middle" font-size="9" fill="#f44336" font-family="Arial">apply e</text>
+  </g>
+
+  <!-- Step 3: parseF() with terminal matching -->
+  <g id="step3" class="step" data-narration="ParseF handles terminals directly. If the lookahead is open-paren, it matches the paren, calls parseE recursively, then matches close-paren. If the lookahead is id, it matches and consumes the identifier token.">
+    <rect x="30" y="240" width="130" height="55" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2.5"/>
+    <text x="95" y="263" text-anchor="middle" font-size="14" font-weight="bold" fill="#ff9800" font-family="Arial">parseF()</text>
+    <text x="95" y="283" text-anchor="middle" font-size="9" fill="#ff9800" font-family="Arial">F -> (E) | id</text>
+    <line x1="95" y1="295" x2="95" y2="325" stroke="#ff9800" stroke-width="2" marker-end="url(#arroworange)"/>
+    <polygon points="95,325 135,350 95,375 55,350" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="95" y="348" text-anchor="middle" font-size="9" font-weight="bold" fill="#ff9800" font-family="Arial">token</text>
+    <text x="95" y="360" text-anchor="middle" font-size="9" fill="#ff9800" font-family="Arial">type?</text>
+    <line x1="55" y1="350" x2="10" y2="395" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="20" y="370" font-size="8" fill="#1976d2" font-family="Arial">(</text>
+    <rect x="5" y="395" width="90" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="50" y="413" text-anchor="middle" font-size="8" fill="#1976d2" font-family="Arial">match (</text>
+    <text x="50" y="426" text-anchor="middle" font-size="8" fill="#1976d2" font-family="Arial">parseE, match )</text>
+    <line x1="135" y1="350" x2="180" y2="395" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="170" y="370" font-size="8" fill="#9c27b0" font-family="Arial">id</text>
+    <rect x="140" y="395" width="80" height="30" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="180" y="414" text-anchor="middle" font-size="9" fill="#9c27b0" font-family="Arial">match(id)</text>
+  </g>
+
+  <!-- Step 4: parseTPrime() -->
+  <g id="step4" class="step" data-narration="ParseTPrime works like parseEPrime. If the lookahead is star, it matches the star, calls parseF, then recursively calls itself for more factors. Otherwise it applies the epsilon production for T-prime.">
+    <rect x="240" y="240" width="130" height="55" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2.5"/>
+    <text x="305" y="263" text-anchor="middle" font-size="13" font-weight="bold" fill="#ff9800" font-family="Arial">parseTPrime()</text>
+    <text x="305" y="283" text-anchor="middle" font-size="9" fill="#ff9800" font-family="Arial">T' -> *FT' | e</text>
+    <line x1="305" y1="295" x2="305" y2="325" stroke="#ff9800" stroke-width="2" marker-end="url(#arroworange)"/>
+    <polygon points="305,325 345,350 305,375 265,350" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="305" y="348" text-anchor="middle" font-size="9" font-weight="bold" fill="#ff9800" font-family="Arial">token</text>
+    <text x="305" y="360" text-anchor="middle" font-size="9" fill="#ff9800" font-family="Arial">== * ?</text>
+    <line x1="345" y1="350" x2="395" y2="350" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="370" y="343" font-size="8" fill="#388e3c" font-family="Arial">Yes</text>
+    <rect x="400" y="335" width="80" height="35" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="440" y="350" text-anchor="middle" font-size="8" fill="#388e3c" font-family="Arial">match *</text>
+    <text x="440" y="362" text-anchor="middle" font-size="8" fill="#388e3c" font-family="Arial">parseF, parseT'</text>
+    <line x1="265" y1="350" x2="230" y2="350" stroke="#f44336" stroke-width="1.5"/>
+    <text x="245" y="343" font-size="8" fill="#f44336" font-family="Arial">No</text>
+    <rect x="185" y="340" width="45" height="22" rx="5" fill="#ffebee" stroke="#f44336" stroke-width="1"/>
+    <text x="207" y="355" text-anchor="middle" font-size="8" fill="#f44336" font-family="Arial">apply e</text>
+  </g>
+
+  <!-- Step 5: Trace of parsing id + id * id -->
+  <g id="step5" class="step" data-narration="Tracing input id plus id star id: parseE calls parseT which calls parseF matching id. Then parseTPrime applies epsilon. ParseEPrime matches plus, calls parseT again for the remaining input.">
+    <rect x="30" y="448" width="740" height="65" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="468" text-anchor="middle" font-size="13" font-weight="bold" fill="#1976d2" font-family="Arial">Parsing Trace: id + id * id</text>
+    <text x="50" y="490" font-size="10" font-family="monospace" fill="#1976d2">parseE -> parseT -> parseF(match id) -> parseT'(e) -> parseE'(match +) -> parseT -> parseF(match id) -> parseT'(match *) -> ...</text>
+  </g>
+
+  <!-- Step 6: Left recursion warning and FIRST set usage -->
+  <g id="step6" class="step" data-narration="Recursive descent requires grammars free of left recursion, since A calling parseA immediately causes infinite loops. Left-recursive grammars must be transformed. FIRST sets guide the choice of production at each step.">
+    <rect x="30" y="525" width="350" height="65" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="205" y="548" text-anchor="middle" font-size="12" font-weight="bold" fill="#f44336" font-family="Arial">Prerequisite: No Left Recursion</text>
+    <text x="50" y="568" font-size="10" fill="#f44336" font-family="Arial">A -> Aa | b causes infinite loop.</text>
+    <text x="50" y="582" font-size="10" fill="#f44336" font-family="Arial">Transform to: A -> bA', A' -> aA' | e</text>
+
+    <rect x="400" y="525" width="370" height="65" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="585" y="548" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c" font-family="Arial">Decision via FIRST Sets</text>
+    <text x="420" y="568" font-size="10" fill="#388e3c" font-family="Arial">Lookahead in FIRST(a) -> choose production A->a</text>
+    <text x="420" y="582" font-size="10" fill="#388e3c" font-family="Arial">Predictive: no backtracking needed for LL(1)</text>
+  </g>
+</svg>

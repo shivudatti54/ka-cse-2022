@@ -1,0 +1,33 @@
+{
+  "topicId": "boundary-preprocessing-boundary-following-chain-co",
+  "examples": [
+    {
+      "id": "pseudocode-boundary-following",
+      "title": "Algorithm: Boundary Following",
+      "description": "This pseudocode demonstrates the boundary following technique used in morphological image processing.",
+      "language": "pseudocode",
+      "code": "ALGORITHM BoundaryFollowing\nINPUT: binary image\nOUTPUT: chain code\n\nBEGIN\n  DEFINE directions as (0, 1), (1, 0), (0, -1), (-1, 0)\n  INITIALIZE chain code as empty sequence\n  FOR EACH pixel in the image\n    IF pixel is a boundary point\n      ADD chain code number to the sequence\n  RETURN chain code\nEND",
+      "explanation": "This pseudocode defines the boundary following technique used to extract the boundaries of an object in an image. It iterates over each pixel in the image, checks if the pixel is a boundary point, and adds the corresponding chain code number to the sequence."
+    },
+    {
+      "id": "python-boundary-following",
+      "title": "Python: Boundary Following",
+      "description": "This Python implementation demonstrates the boundary following technique used in morphological image processing.",
+      "language": "python",
+      "code": "import numpy as np\n\ndef boundary_following(image):\n  # Define the 4-way directions\n  directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]\n  # Initialize the chain code\n  chain_code = []\n  # Iterate over the pixels in the image\n  for i in range(image.shape[0]):\n    for j in range(image.shape[1]):\n      # Check if the current pixel is a boundary point\n      if image[i, j] == 255 and (i == 0 or image[i - 1, j] == 0) and (j == 0 or image[i, j - 1] == 0):\n        # Add the chain code number to the sequence\n        chain_code.append(get_direction(i, j, directions))\n  return chain_code\n\ndef get_direction(i, j, directions):\n  # Calculate the direction of the edge at the current point\n  for direction in directions:\n    if direction == (0, 1) and i > 0 and j == 0:\n      return 0\n    elif direction == (1, 0) and i == 0 and j > 0:\n      return 1\n    elif direction == (0, -1) and i > 0 and j == image.shape[1] - 1:\n      return 2\n    elif direction == (-1, 0) and i == 0 and j == image.shape[1] - 1:\n      return 3\n    else:\n      continue\n  return -1",
+      "explanation": "This Python implementation defines the boundary following technique used to extract the boundaries of an object in an image. It iterates over each pixel in the image, checks if the pixel is a boundary point, and adds the corresponding chain code number to the sequence.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(n*m)"
+    },
+    {
+      "id": "c-boundary-following",
+      "title": "C: Boundary Following",
+      "description": "This C implementation demonstrates the boundary following technique used in morphological image processing.",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Define the 4-way directions\nint directions[][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};\n\n// Function to get the direction of the edge at a point\nint get_direction(int i, int j, int directions[][2]) {\n  // Calculate the direction of the edge at the current point\n  for (int k = 0; k < 4; k++) {\n    if (directions[k][0] == 0 && directions[k][1] == 1 && i > 0 && j == 0) {\n      return 0;\n    } else if (directions[k][0] == 1 && directions[k][1] == 0 && i == 0 && j > 0) {\n      return 1;\n    } else if (directions[k][0] == 0 && directions[k][1] == -1 && i > 0 && j == 255) {\n      return 2;\n    } else if (directions[k][0] == -1 && directions[k][1] == 0 && i == 0 && j == 255) {\n      return 3;\n    } else {\n      continue;\n    }\n  }\n  return -1;\n}\n\n// Function to perform boundary following\nvoid boundary_following(int image[][256]) {\n  // Initialize the chain code\n  int chain_code[256];\n  int index = 0;\n  // Iterate over the pixels in the image\n  for (int i = 0; i < 256; i++) {\n    for (int j = 0; j < 256; j++) {\n      // Check if the current pixel is a boundary point\n      if (image[i][j] == 255 && (i == 0 || image[i - 1][j] == 0) && (j == 0 || image[i][j - 1] == 0)) {\n        // Add the chain code number to the sequence\n        chain_code[index++] = get_direction(i, j, directions);\n      }\n    }\n  }\n}",
+      "explanation": "This C implementation defines the boundary following technique used to extract the boundaries of an object in an image. It iterates over each pixel in the image, checks if the pixel is a boundary point, and adds the corresponding chain code number to the sequence.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(n*m)"
+    }
+  ]
+}

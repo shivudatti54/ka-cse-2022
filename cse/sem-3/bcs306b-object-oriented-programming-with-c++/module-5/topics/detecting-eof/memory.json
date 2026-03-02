@@ -1,0 +1,79 @@
+{
+  "topicId": "detecting-eof",
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "EOF Detection Methods",
+      "content": "'Good E-Fail Bad' - GEB: Good() checks goodbit, E checks eof(), Fail() checks failbit, Bad() checks badbit. Remember: Good includes nothing, E only EOF, Fail covers EOF+errors, Bad covers fatal errors only."
+    },
+    {
+      "id": "m-2",
+      "title": "Stream States Order",
+      "content": "'Good Before Eating Failure Badly' - GEEFB: Goodbit \u2192 eofbit \u2192 failbit \u2192 badbit. This represents progressive failure states in file streams."
+    },
+    {
+      "id": "m-3",
+      "title": "Read Until EOF Pattern",
+      "content": "'Get Line Loop' - GL: Getline returns false at EOF, Get returns stream (true if success), both work for line-by-line reading."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "EOF",
+      "expansion": "End Of File - the marker indicating no more data to read",
+      "usage": "Used in while conditions, get() return values, and stream state checks"
+    },
+    {
+      "term": "eof()",
+      "expansion": "end of file function - returns state of eofbit flag",
+      "usage": "Use while(!infile.eof()) or if(infile.eof()) to check end condition"
+    },
+    {
+      "term": "fail()",
+      "expansion": "failure function - returns true for eofbit or failbit",
+      "usage": "Use while(!infile.fail()) as general read-until-failure condition"
+    },
+    {
+      "term": "bad()",
+      "expansion": "bad bit function - returns true for fatal I/O errors",
+      "usage": "Use if(infile.bad()) to check for critical errors like disk failure"
+    },
+    {
+      "term": "peek()",
+      "expansion": "peek character function - looks at next char without extracting",
+      "usage": "Use infile.peek() != EOF to look ahead before reading"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "EOF Detection Flowchart",
+      "visualization": "Draw decision diamond: Read \u2192 Success? \u2192 Yes\u2192Continue, No\u2192Check eofbit set? \u2192 Yes\u2192EOF reached, No\u2192Error occurred (failbit/badbit). Each branch leads to different handling."
+    },
+    {
+      "concept": "Stream State Flags",
+      "visualization": "Show four circles in sequence: Good(goodbit) \u2192 eofbit \u2192 failbit \u2192 badbit. Fill them progressively as errors occur. eofbit and failbit commonly overlap."
+    },
+    {
+      "concept": "Reading Past EOF Timeline",
+      "visualization": "Draw timeline: [Data1] [Data2] [Data3] [EOF reached] [Attempt read] [eofbit+failbit set]. Show that flags set AFTER attempted read past end."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "eof() vs fail()",
+      "analogy": "eof() is like reaching the last page of a book (you know you've finished), while fail() is like trying to read a blank page (something went wrong). You can be at EOF without failing, but once you try to read past it, you fail."
+    },
+    {
+      "concept": "EOF detection in binary files",
+      "analogy": "Binary file EOF is like reaching the end of a tape - there's no marker telling you it's over; you simply discover it when you can't play anymore. Text files are like books with page numbers - you can count them."
+    },
+    {
+      "concept": "clear() function",
+      "analogy": "clear() is like clearing a 'finished' flag on a document so you can continue editing it. The file pointer is still at end, but you've reset the 'we're done' mental flag."
+    },
+    {
+      "concept": "get() returning int",
+      "analogy": "Returning int instead of char for get() is like having a special 'out of stock' signal (-1) distinct from all valid products (0-255). You need to distinguish between 'nothing left' and 'nothing there'."
+    }
+  ]
+}

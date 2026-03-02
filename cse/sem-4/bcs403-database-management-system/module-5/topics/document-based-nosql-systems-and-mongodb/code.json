@@ -1,0 +1,62 @@
+[
+  {
+    "id": "code-1",
+    "language": "javascript",
+    "title": "Basic MongoDB CRUD Operations",
+    "description": "Demonstrates fundamental database operations in MongoDB shell",
+    "code": "// CREATE - Insert documents\ndb.users.insertOne({\n name: \"John Doe\",\n email: \"john@example.com\",\n age: 25,\n address: { city: \"Bangalore\", state: \"Karnataka\" },\n courses: [\"MongoDB\", \"Node.js\"]\n});\n\n// READ - Query documents\ndb.users.find({ age: { $gt: 20 } });\ndb.users.findOne({ email: \"john@example.com\" });\ndb.users.find({}, { name: 1, email: 1 });\n\n// UPDATE - Modify documents\ndb.users.updateOne(\n { email: \"john@example.com\" },\n { $set: { age: 26 }, $push: { courses: \"React\" } }\n);\n\n// DELETE - Remove documents\ndb.users.deleteOne({ email: \"john@example.com\" });\ndb.users.deleteMany({ age: { $lt: 18 } });",
+    "explanation": "CRUD operations form the foundation of MongoDB interactions. insertOne/addMany create documents, find retrieves them, updateOne/updateMany modify them, and delete removes them.",
+    "complexity": {
+      "time": "O(log n) with index, O(n) without",
+      "space": "O(1) per operation"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "javascript",
+    "title": "Aggregation Pipeline Example",
+    "description": "Shows data analysis using aggregation framework",
+    "code": "// Example: Sales analysis by category\ndb.orders.aggregate([\n // Stage 1: Filter recent orders\n {\n $match: {\n orderDate: { $gte: ISODate(\"2024-01-01\") },\n status: \"completed\"\n }\n },\n // Stage 2: Unwind products array\n { $unwind: \"$products\" },\n // Stage 3: Group by category and calculate totals\n {\n $group: {\n _id: \"$products.category\",\n totalRevenue: { $sum: { $multiply: [\"$products.price\", \"$products.quantity\"] } },\n orderCount: { $sum: 1 }\n }\n },\n // Stage 4: Sort by revenue descending\n { $sort: { totalRevenue: -1 } },\n // Stage 5: Project final output\n {\n $project: {\n category: \"$_id\",\n totalRevenue: 1,\n orderCount: 1,\n _id: 0\n }\n }\n]);",
+    "explanation": "Aggregation pipeline processes documents through multiple stages. $match filters data, $unwind expands arrays, $group aggregates data, $sort orders results, and $project reshapes output.",
+    "complexity": {
+      "time": "O(n) at each stage, overall O(n)",
+      "space": "O(n) for intermediate results"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "javascript",
+    "title": "Index Creation and Query Optimization",
+    "description": "Demonstrates creating indexes and analyzing queries",
+    "code": "// Create single-field index\ndb.users.createIndex({ email: 1 }, { unique: true });\n\n// Create compound index (order matters)\ndb.products.createIndex({ category: 1, price: -1 });\n\n// Create text index for search\ndb.articles.createIndex({ title: \"text\", content: \"text\" });\n\n// Analyze query performance\nexplain(\"executionStats\")\ndb.products.find({ category: \"Electronics\", price: { $lt: 50000 } });\n\n// Text search example\ndb.articles.find({ $text: { $search: \"MongoDB database\" } });\n\n// Drop index\ndb.products.dropIndex(\"category_1_price_-1\");",
+    "explanation": "Indexes significantly improve query performance. Unique indexes ensure data integrity, compound indexes optimize multi-field queries, and text indexes enable full-text search.",
+    "complexity": {
+      "time": "Index creation: O(n log n), Queries: O(log n) with index",
+      "space": "O(n) per index"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "javascript",
+    "title": "MongoDB Data Modeling Examples",
+    "description": "Shows embedded vs referenced document patterns",
+    "code": "// Embedded document pattern (one-to-few)\ndb.customers.insertOne({\n name: \"Alice\",\n addresses: [\n { type: \"home\", city: \"Bangalore\", pincode: \"560001\" },\n { type: \"office\", city: \"Mysore\", pincode: \"570001\" }\n ]\n});\n\n// Referenced document pattern (one-to-many/many-to-many)\ndb.authors.insertMany([\n { _id: 1, name: \"Author A\", genre: \"Fiction\" },\n { _id: 2, name: \"Author B\", genre: \"Science\" }\n]);\n\ndb.books.insertOne({\n title: \"Book Title\",\n authorIds: [1, 2], // References\n publishedYear: 2023\n});\n\n// Lookup (join) for referenced data\ndb.books.aggregate([\n { $lookup: {\n from: \"authors\",\n localField: \"authorIds\",\n foreignField: \"_id\",\n as: \"authorDetails\"\n }}\n]);",
+    "explanation": "Embedded documents store related data together for fast reads. Referenced documents use IDs for normalization and are better for frequently updated data. $lookup performs joins between collections.",
+    "complexity": {
+      "time": "Embedded: O(1) read, Referenced: O(n) with lookup",
+      "space": "Embedded: more storage, Referenced: normalized"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "javascript",
+    "title": "Replica Set Configuration",
+    "description": "Demonstrates setting up and using replica sets",
+    "code": "// Initialize replica set (in shell)\nrs.initiate({\n _id: \"myReplSet\",\n members: [\n { _id: 0, host: \"localhost:27017\" },\n { _id: 1, host: \"localhost:27018\" },\n { _id: 2, host: \"localhost:27019\" }\n ]\n});\n\n// Check replica set status\nrs.status();\n\n// Write concern (acknowledged)\ndb.collection.insertOne(\n { data: \"test\" },\n { writeConcern: { w: \"majority\", wtimeout: 5000 } }\n);\n\n// Read preference for secondary\ndb.collection.find().readPref(\"secondaryPreferred\");\n\n// Force reconfiguration (if primary fails)\nrs.reconfig(cfg, { force: true });",
+    "explanation": "Replica sets provide high availability with automatic failover. Write concern ensures write acknowledgment, and read preference distributes queries to secondaries for load balancing.",
+    "complexity": {
+      "time": "Replication is asynchronous, O(1) for failover",
+      "space": "O(n) storage per replica"
+    }
+  }
+]

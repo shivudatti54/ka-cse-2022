@@ -1,0 +1,25 @@
+{
+  "topicId": "gauss-jordan-method",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Gauss-Jordan Method",
+      "description": "A pseudocode implementation of the Gauss-Jordan method for solving systems of linear equations.",
+      "code": "FUNCTION GaussJordan(A, b)\n  // Transform A into reduced row echelon form\n  FOR i FROM 1 TO n\n    // Search for pivot element\n    FOR j FROM i TO n\n      IF A[j, i] != 0 THEN\n        // Swap rows i and j\n        SWAP(A[i], A[j])\n        // Eliminate elements below pivot\n        FOR k FROM i + 1 TO n\n          A[k, i] = A[k, i] / A[i, i]\n          FOR l FROM i + 1 TO n\n            A[k, l] = A[k, l] - A[k, i] * A[i, l]\n        END FOR\n      END IF\n    END FOR\n  END FOR\n  // Solve for variables\n  FOR i FROM n TO 1\n    x[i] = A[i, n + 1] / A[i, i]\n    FOR j FROM i - 1 TO 1\n      A[j, n + 1] = A[j, n + 1] - A[j, i] * x[i]\n    END FOR\n  END FOR\n  RETURN x\nEND FUNCTION",
+      "explanation": "This pseudocode implementation of the Gauss-Jordan method takes a matrix A and a vector b as input and returns the solution vector x.",
+      "timeComplexity": "O(n^3)",
+      "spaceComplexity": "O(n^2)"
+    },
+    {
+      "id": "code-2",
+      "language": "C",
+      "title": "Gauss-Jordan Method",
+      "description": "A C implementation of the Gauss-Jordan method for solving systems of linear equations.",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid gaussJordan(double **A, double *b, int n) {\n  // Transform A into reduced row echelon form\n  for (int i = 0; i < n; i++) {\n    // Search for pivot element\n    for (int j = i; j < n; j++) {\n      if (A[j][i] != 0) {\n        // Swap rows i and j\n        double *temp = A[i];\n        A[i] = A[j];\n        A[j] = temp;\n        // Eliminate elements below pivot\n        for (int k = i + 1; k < n; k++) {\n          double factor = A[k][i] / A[i][i];\n          for (int l = i + 1; l <= n; l++) {\n            A[k][l] -= factor * A[i][l];\n          }\n        }\n      }\n    }\n  }\n  // Solve for variables\n  for (int i = n - 1; i >= 0; i--) {\n    b[i] = A[i][n] / A[i][i];\n    for (int j = i - 1; j >= 0; j--) {\n      A[j][n] -= A[j][i] * b[i];\n    }\n  }\n}\n\nint main() {\n  int n = 3;\n  double **A = (double **)malloc(n * sizeof(double *));\n  for (int i = 0; i < n; i++) {\n    A[i] = (double *)malloc((n + 1) * sizeof(double));\n  }\n  double *b = (double *)malloc(n * sizeof(double));\n\n  // Initialize A and b\n  for (int i = 0; i < n; i++) {\n    for (int j = 0; j <= n; j++) {\n      A[i][j] = 0;\n    }\n    b[i] = 0;\n  }\n\n  // Set up system of linear equations\n  A[0][0] = 2;\n  A[0][1] = 1;\n  A[0][2] = 1;\n  A[0][3] = 4;\n  A[1][0] = 1;\n  A[1][1] = 2;\n  A[1][2] = 1;\n  A[1][3] = 5;\n  A[2][0] = 1;\n  A[2][1] = 1;\n  A[2][2] = 2;\n  A[2][3] = 6;\n\n  gaussJordan(A, b, n);\n\n  // Print solution\n  for (int i = 0; i < n; i++) {\n    printf(\"x[%d] = %f\\n\", i, b[i]);\n  }\n\n  return 0;\n}",
+      "explanation": "This C implementation of the Gauss-Jordan method takes a matrix A and a vector b as input and returns the solution vector x.",
+      "timeComplexity": "O(n^3)",
+      "spaceComplexity": "O(n^2)"
+    }
+  ]
+}

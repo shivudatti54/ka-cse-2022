@@ -1,0 +1,100 @@
+{
+  "topicId": "dijkstras-algorithm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain why Dijkstra's algorithm fails when the graph contains negative edge weights. Provide a counterexample to illustrate the failure.",
+      "keyPoints": [
+        "With negative weights, when a vertex is extracted, a shorter path may still be discovered through an undiscovered vertex",
+        "Counterexample: Source A\u2192B weight 2, A\u2192C weight 5, C\u2192B weight -3. Dijkstra extracts B at distance 2, but actual shortest path is A\u2192C\u2192B = 2"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Compare and contrast Dijkstra's algorithm with Prim's algorithm. Despite similar structure, what different problems do they solve?",
+      "keyPoints": [
+        "Both use greedy approach with priority queue for minimum extraction",
+        "Dijkstra minimizes path distance from single source to each vertex (uses edge weights as path costs)",
+        "Prim minimizes total tree weight connecting all vertices (uses edge weights as connection costs)",
+        "Different objective functions lead to different results on same graph"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Analyze the time complexity of Dijkstra's algorithm when implemented with (i) Array, (ii) Binary Heap, (iii) Fibonacci Heap. Justify your answer.",
+      "keyPoints": [
+        "Array: O(V\u00b2) - extract-min scans all vertices, O(E) relaxations",
+        "Binary Heap: O((V+E) log V) - extract-min O(log V), decrease-key O(log V)",
+        "Fibonacci Heap: O(E + V log V) - extract-min O(log V), decrease-key O(1) amortized",
+        "Fibonacci heap better for dense graphs where E >> V"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Define the relaxation operation in Dijkstra's algorithm. Prove that if dist[u] is the shortest distance from source to u, then after relaxation of edge (u,v), dist[v] \u2264 dist[u] + w(u,v).",
+      "keyPoints": [
+        "Relaxation: if dist[u] + w(u,v) < dist[v], then update dist[v] and predecessor[v]",
+        "Proof: The RHS represents the distance via u to v. If this is shorter, we update. Since dist[u] is shortest, any path through u has length dist[u] + w(u,v), so dist[v] can only decrease to at most this value."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Prove the correctness of Dijkstra's algorithm using proof by contradiction. What assumption leads to contradiction?",
+      "keyPoints": [
+        "Invariant: When vertex u is extracted, dist[u] equals shortest path distance",
+        "Assume contradiction: Let u be first extracted vertex with incorrect distance",
+        "There exists path P from source to u with length < dist[u]",
+        "Let x be first vertex on P not yet extracted (except u)",
+        "Then dist[x] \u2264 length(source to x) < dist[u], contradicting u being minimum"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Apply Dijkstra's algorithm step-by-step on the following graph starting from vertex S: Edges: S-A(4), S-B(2), A-C(3), A-B(1), B-A(1), B-C(4), C-D(2), B-D(7). Show the distance table after each extraction.",
+      "keyPoints": [
+        "Start: S=0, A=4, B=2, C=\u221e",
+        "Extract S: no change",
+        "Extract B(2): update A=min(4,2+1)=3, C=min(\u221e,2+4)=6, D=2+7=9",
+        "Extract A(3): update C=min(6,3+3)=6",
+        "Extract C(6): update D=min(9,6+2)=8",
+        "Final: S=0, A=3, B=2, C=6, D=8"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "(a) What is the optimal substructure property in the context of shortest path problems? (b) Show how Dijkstra's algorithm exemplifies the greedy method design paradigm. (c) Why can't dynamic programming solve single-source shortest path more efficiently than Dijkstra for non-negative weights?",
+      "keyPoints": [
+        "(a) Optimal substructure: shortest path to destination consists of shortest subpaths to intermediate vertices",
+        "(b) Greedy: at each step, choose locally optimal (minimum distance) vertex; unlike DP which considers all possibilities",
+        "(c) DP approaches (Bellman-Ford) require V-1 relaxations over all edges giving O(VE); Dijkstra's greedy choice with proper data structure achieves O((V+E) log V), which is better for sparse graphs with non-negative weights"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design an algorithm to find the k-th shortest path from source to destination using Dijkstra's algorithm as a subroutine. Analyze its time complexity. What are the practical challenges in implementation?",
+      "keyPoints": [
+        "Approach: Modify Dijkstra to maintain up to k shortest distances per vertex using min-heaps of size k",
+        "Store list of k shortest distances at each vertex during relaxation",
+        "Time complexity: O(kE log(kV)) for binary heap",
+        "Challenges: Memory overhead for k paths, handling cycles correctly, ensuring distinct paths, dealing with paths that share edges",
+        "Alternative: Yen's algorithm specifically for k-shortest simple paths"
+      ],
+      "marks": 10
+    }
+  ]
+}

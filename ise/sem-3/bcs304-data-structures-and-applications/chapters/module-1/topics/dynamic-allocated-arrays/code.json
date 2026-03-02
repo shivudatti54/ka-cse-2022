@@ -1,0 +1,45 @@
+{
+  "topicId": "dynamic-allocated-arrays",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Dynamic 1D Array Creation and Usage",
+      "description": "Demonstrates creating, using, and freeing a dynamic 1D integer array in C",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int n, i;\n    int *arr;\n    \n    printf(\"Enter array size: \");\n    scanf(\"%d\", &n);\n    \n    // Allocate memory for n integers\n    arr = (int*)malloc(n * sizeof(int));\n    \n    // Check if allocation succeeded\n    if (arr == NULL) {\n        printf(\"Memory allocation failed\\n\");\n        return 1;\n    }\n    \n    // Initialize array elements\n    for (i = 0; i < n; i++) {\n        arr[i] = i * 10;  // or *(arr + i) = i * 10;\n    }\n    \n    // Display array elements\n    printf(\"Array elements: \");\n    for (i = 0; i < n; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    printf(\"\\n\");\n    \n    // Free allocated memory\n    free(arr);\n    \n    return 0;\n}",
+      "explanation": "This program demonstrates the complete lifecycle of dynamic memory allocation: requesting memory with malloc, checking for allocation failure, using the array, and freeing the memory. Note the use of (int*) cast and sizeof(int) for portability.",
+      "timeComplexity": "O(n) for initialization and display",
+      "spaceComplexity": "O(n) for the dynamic array"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Dynamic 2D Array Using Pointer-to-Pointer",
+      "description": "Creates a 2D array where each row is separately allocated",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int rows = 3, cols = 4;\n    int **arr;\n    int i, j;\n    \n    // Allocate array of row pointers\n    arr = (int**)malloc(rows * sizeof(int*));\n    if (arr == NULL) {\n        printf(\"Memory allocation failed\\n\");\n        return 1;\n    }\n    \n    // Allocate each row\n    for (i = 0; i < rows; i++) {\n        arr[i] = (int*)malloc(cols * sizeof(int));\n        if (arr[i] == NULL) {\n            // Handle failure - free previously allocated\n            for (j = 0; j < i; j++) {\n                free(arr[j]);\n            }\n            free(arr);\n            return 1;\n        }\n    }\n    \n    // Initialize and display elements\n    for (i = 0; i < rows; i++) {\n        for (j = 0; j < cols; j++) {\n            arr[i][j] = i * cols + j;\n        }\n    }\n    \n    printf(\"2D Array:\\n\");\n    for (i = 0; i < rows; i++) {\n        for (j = 0; j < cols; j++) {\n            printf(\"%3d \", arr[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    \n    // Free memory in reverse order\n    for (i = 0; i < rows; i++) {\n        free(arr[i]);\n    }\n    free(arr);\n    \n    return 0;\n}",
+      "explanation": "This creates a true 2D array using pointer-to-pointer technique. Each row is a separate allocation, allowing for ragged arrays (variable row lengths). Memory must be freed in reverse order of allocation to avoid leaks.",
+      "timeComplexity": "O(rows * cols) for initialization and display",
+      "spaceComplexity": "O(rows * cols) for the 2D array plus O(rows) for row pointers"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Dynamic List as Dynamic Array in Python",
+      "description": "Demonstrates how Python lists work as dynamic arrays with automatic resizing",
+      "code": "# Python's list is a dynamic array\n# No explicit malloc/free needed - automatic memory management\n\n# Create a dynamic list\ndynamic_list = []  # Starts empty\n\n# Append elements - list grows automatically\nfor i in range(10):\n    dynamic_list.append(i * 10)\n    print(f\"Added {i*10}, Current length: {len(dynamic_list)}\")\n\n# Access elements like regular array\nprint(f\"Element at index 5: {dynamic_list[5]}\")\n\n# Python handles:\n# - Initial allocation\n# - Automatic resizing (typically doubles when full)\n# - Memory deallocation when list goes out of scope\n# - No explicit memory management needed\n\n# Demonstrate growth behavior\nimport sys\nsizes = []\nfor i in range(20):\n    dynamic_list.append(i)\n    # Get memory size of list object\n    sizes.append(sys.getsizeof(dynamic_list))\n    \nprint(f\"\\nCapacity growth: {sizes}\")\nprint(\"Notice: capacity increases in chunks, not one-by-one\")",
+      "explanation": "Python lists demonstrate dynamic array concepts internally: they allocate a buffer larger than needed, and when full, allocate a larger buffer (typically double the size) and copy elements. This is why append is usually O(1) amortized. The growth pattern shows memory being allocated in chunks.",
+      "timeComplexity": "O(1) amortized per append, O(n) for inserting at beginning",
+      "spaceComplexity": "O(n) where n is number of elements"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Dynamic Array with Auto-Growth Implementation",
+      "description": "Implements a dynamic array similar to C++ vectors with automatic capacity doubling",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <stdbool.h>\n\ntypedef struct {\n    int *data;      // Pointer to array\n    int size;       // Current number of elements\n    int capacity;   // Total allocated slots\n} DynamicArray;\n\n// Initialize dynamic array\nvoid init(DynamicArray *arr, int initial_capacity) {\n    arr->data = (int*)malloc(initial_capacity * sizeof(int));\n    arr->size = 0;\n    arr->capacity = initial_capacity;\n}\n\n// Resize if needed\nvoid ensureCapacity(DynamicArray *arr) {\n    if (arr->size == arr->capacity) {\n        int new_capacity = arr->capacity * 2;\n        int *new_data = (int*)realloc(arr->data, new_capacity * sizeof(int));\n        if (new_data == NULL) {\n            printf(\"Memory allocation failed\\n\");\n            return;\n        }\n        arr->data = new_data;\n        arr->capacity = new_capacity;\n        printf(\"Resized from %d to %d\\n\", arr->capacity/2, arr->capacity);\n    }\n}\n\n// Add element at end\nvoid pushBack(DynamicArray *arr, int value) {\n    ensureCapacity(arr);\n    arr->data[arr->size++] = value;\n}\n\n// Get element at index\nint get(DynamicArray *arr, int index) {\n    if (index >= 0 && index < arr->size) {\n        return arr->data[index];\n    }\n    return -1;  // Error value\n}\n\n// Free memory\nvoid destroy(DynamicArray *arr) {\n    free(arr->data);\n    arr->data = NULL;\n    arr->size = arr->capacity = 0;\n}\n\n// Main function demonstrating usage\nint main() {\n    DynamicArray arr;\n    init(&arr, 2);  // Start with capacity 2\n    \n    printf(\"Adding elements to dynamic array:\\n\");\n    for (int i = 1; i <= 10; i++) {\n        pushBack(&arr, i * 10);\n    }\n    \n    printf(\"\\nArray contents: \");\n    for (int i = 0; i < arr.size; i++) {\n        printf(\"%d \", arr.data[i]);\n    }\n    printf(\"\\nSize: %d, Capacity: %d\\n\", arr.size, arr.capacity);\n    \n    destroy(&arr);\n    return 0;\n}",
+      "explanation": "This implementation shows how dynamic arrays grow: start with initial capacity (2), when full, double the capacity using realloc(). This gives O(1) amortized time for push operations. The key insight is that occasional expensive reallocations are offset by many cheap appends. Always check realloc() return value before updating the pointer.",
+      "timeComplexity": "O(1) amortized per pushBack, O(n) for full resize",
+      "spaceComplexity": "O(capacity) where capacity >= size"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In Java multithreading, what is the primary purpose of the `isAlive()` method?",
+    "options": [
+      "To check if a thread has finished execution",
+      "To check if a thread is currently running",
+      "To immediately terminate a thread",
+      "To start a new thread"
+    ],
+    "correctIndex": 1,
+    "explanation": "The `isAlive()` method returns `true` if the thread upon which it is called is still active (has been started and has not yet died). It is used to check the current state of a thread."
+  },
+  {
+    "id": "q2",
+    "question": "Consider the following code snippet. What will be the most likely output?\n\n```java\nThread t = new Thread(() -> System.out.print(\"Hello\"));\nt.start();\nSystem.out.print(t.isAlive() ? \"Alive\" : \"Not Alive\");\n```",
+    "options": [
+      "HelloAlive",
+      "AliveHello",
+      "HelloNot Alive",
+      "Not AliveHello"
+    ],
+    "correctIndex": 0,
+    "explanation": "The new thread `t` is started, which prints \"Hello\". Meanwhile, the main thread immediately checks `t.isAlive()`. Because the new thread's work is very short, it's highly probable that it will still be alive (not yet terminated) when the main thread checks, resulting in \"HelloAlive\". However, this is not guaranteed due to thread scheduling."
+  },
+  {
+    "id": "q3",
+    "question": "What is the key function of the `join()` method when called on a Thread object?",
+    "options": [
+      "To merge two threads into one",
+      "To pause the current thread until the target thread terminates",
+      "To check if a thread is joinable",
+      "To force the target thread to execute immediately"
+    ],
+    "correctIndex": 1,
+    "explanation": "The `join()` method causes the current thread (e.g., the main thread) to wait (block) until the thread on which `join()` is called has finished its execution. This is crucial for ensuring one thread completes before another proceeds."
+  },
+  {
+    "id": "q4",
+    "question": "A program has a main thread and a worker thread `t`. The main thread calls `t.join(1000)`. Which of the following best describes the behavior?",
+    "options": [
+      "The main thread will wait for exactly 1000 milliseconds, regardless of thread `t`",
+      "The main thread will wait for thread `t` to finish, but for a maximum of 1000 milliseconds",
+      "Thread `t` will be forced to finish within 1000 milliseconds",
+      "The main thread will wait for 1000 milliseconds after thread `t` has finished"
+    ],
+    "correctIndex": 1,
+    "explanation": "The overloaded `join(long millis)` method makes the current thread wait for the target thread to die, but only for the specified maximum number of milliseconds (1000ms in this case). If the thread finishes sooner, the join returns immediately. If it doesn't finish in time, the main thread continues execution after the timeout."
+  },
+  {
+    "id": "q5",
+    "question": "Analyze the following code. What is a key issue with its attempt to use the result from a thread?\n\n```java\nclass Calculator implements Runnable {\n    public int result;\n    public void run() {\n        result = calculate();\n    }\n    private int calculate() { /* Long calculation */ return 42; }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Calculator c = new Calculator();\n        Thread t = new Thread(c);\n        t.start();\n        System.out.println(\"The result is: \" + c.result);\n    }\n}\n```",
+    "options": [
+      "The `calculate()` method is private",
+      "The `result` field should be declared `volatile`",
+      "The main thread does not wait for thread `t` to finish before accessing `c.result`",
+      "A Runnable cannot have a field like `result`"
+    ],
+    "correctIndex": 2,
+    "explanation": "The main issue is a race condition. The main thread starts thread `t` and then immediately tries to print `c.result`. It is highly likely that the worker thread `t` has not yet finished its long calculation and updated `result`, so the main thread will print an incorrect value (likely 0). The solution is to use `t.join()` before accessing `c.result` to ensure the calculation is complete."
+  }
+]

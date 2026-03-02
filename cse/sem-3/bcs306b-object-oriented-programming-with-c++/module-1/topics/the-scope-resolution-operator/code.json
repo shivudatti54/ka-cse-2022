@@ -1,0 +1,65 @@
+{
+  "topicId": "the-scope-resolution-operator",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Accessing Global and Local Variables",
+      "description": "Demonstrates using :: to access global variable when local variable has same name",
+      "code": "// Global variable\nint x = 10;\n\nint main() {\n // Local variable with same name\n int x = 5;\n \n cout << \"Local x: \" << x << endl; // Prints 5\n cout << \"Global x: \" << ::x << endl; // Prints 10\n \n return 0;\n}",
+      "explanation": "The leading :: before x explicitly accesses the global variable, ignoring the local variable with the same name.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Member Function Outside Class",
+      "description": "Shows how to define a member function outside the class using scope resolution",
+      "code": "class MyClass {\npublic:\n void display(); // Function prototype\n int getValue();\n};\n\n// Define outside class using ::\nvoid MyClass::display() {\n cout << \"Display function\" << endl;\n}\n\nint MyClass::getValue() {\n return 100;\n}\n\nint main() {\n MyClass obj;\n obj.display(); // Prints: Display function\n cout << obj.getValue(); // Prints: 100\n return 0;\n}",
+      "explanation": "The :: operator associates the outside function definition with the MyClass scope, making it a member of the class.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Enum Class with Scope Resolution",
+      "description": "Demonstrates scoped enumerations requiring :: to access values",
+      "code": "// Enum class - strongly typed enumeration\nenum class Color {\n Red,\n Green,\n Blue\n};\n\nint main() {\n Color c = Color::Red; // Must use :: to access\n \n if (c == Color::Red) {\n cout << \"Color is Red\" << endl;\n }\n \n // Cannot do: int x = Red; // Error!\n // Must do: int x = (int)Color::Red;\n \n return 0;\n}",
+      "explanation": "Enum class constants are scoped to the enum type and require :: for access. This prevents naming conflicts.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Base Class Member Access in Inheritance",
+      "description": "Shows using :: to access base class members from derived class",
+      "code": "class Base {\npublic:\n void display() {\n cout << \"Base display\" << endl;\n }\n};\n\nclass Derived : public Base {\npublic:\n void display() {\n cout << \"Derived display\" << endl;\n }\n \n void showBase() {\n Base::display(); // Access base class version\n }\n};\n\nint main() {\n Derived obj;\n obj.display(); // Calls Derived::display()\n obj.Base::display(); // Explicitly calls Base::display()\n return 0;\n}",
+      "explanation": ":: allows explicit access to base class members even when they are overridden in the derived class.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Static Member Definition",
+      "description": "Demonstrates defining static members outside class using ::",
+      "code": "class Counter {\npublic:\n static int count; // Declaration\n \n Counter() {\n count++;\n }\n \n static void getCount() {\n cout << \"Count: \" << count << endl;\n }\n};\n\n// Definition using :: - MUST be outside\nint Counter::count = 0;\n\nint main() {\n Counter c1, c2, c3;\n Counter::getCount(); // Access static without object\n return 0;\n}",
+      "explanation": "Static member variables must be defined once globally using ClassName::memberName syntax.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-6",
+      "language": "cpp",
+      "title": "Namespace Usage with std::",
+      "description": "Shows proper usage of :: with namespaces",
+      "code": "#include <iostream>\nusing std::cout; // Only bring specific names\nusing std::endl;\n\nint main() {\n // Explicit qualification (preferred)\n std::cout << \"Using std::cout\" << std::endl;\n \n // Using imported names\n cout << \"Using 'using' for specific names\" << endl;\n \n // Avoid: using namespace std; // Bad practice\n \n return 0;\n}",
+      "explanation": "Using std:: explicitly is preferred over 'using namespace std' to avoid potential naming conflicts.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

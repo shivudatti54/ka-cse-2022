@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction-to-cnn-convolution-pooling",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "NumPy Implementation of 2D Convolution",
+      "description": "Manual implementation of convolution operation to understand the underlying mechanism",
+      "code": "import numpy as np\n\ndef conv2d(image, kernel, padding=0, stride=1):\n    # Add padding to input\n    if padding > 0:\n        padded = np.pad(image, padding, mode='constant')\n    else:\n        padded = image\n    \n    # Calculate output dimensions\n    ih, iw = padded.shape\n    kh, kw = kernel.shape\n    oh = (ih - kh) // stride + 1\n    ow = (iw - kw) // stride + 1\n    \n    # Initialize output feature map\n    feature_map = np.zeros((oh, ow))\n    \n    # Perform convolution\n    for i in range(oh):\n        for j in range(ow):\n            # Extract region and compute dot product\n            region = padded[i*stride:i*stride+kh, j*stride:j*stride+kw]\n            feature_map[i, j] = np.sum(region * kernel)\n    \n    return feature_map\n\n# Example usage\nimage = np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]])\nkernel = np.array([[1,0,-1],[1,0,-1],[1,0,-1]])  # Edge detection\noutput = conv2d(image, kernel, padding=1)\nprint(output)",
+      "explanation": "This code demonstrates the convolution operation: sliding a kernel over padded input, computing dot products to produce a feature map. The kernel detects vertical edges.",
+      "timeComplexity": "O(n \u00d7 m \u00d7 k\u00b2) where n,m are output dimensions and k is kernel size",
+      "spaceComplexity": "O(n \u00d7 m) for feature map output"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Max Pooling Implementation",
+      "description": "Implementation of max pooling operation for downsampling",
+      "code": "import numpy as np\n\ndef max_pooling(feature_map, pool_size=2, stride=2):\n    ih, iw = feature_map.shape\n    oh = (ih - pool_size) // stride + 1\n    ow = (iw - pool_size) // stride + 1\n    \n    pooled = np.zeros((oh, ow))\n    \n    for i in range(oh):\n        for j in range(ow):\n            region = feature_map[i*stride:i*stride+pool_size,\n                                  j*stride:j*stride+pool_size]\n            pooled[i, j] = np.max(region)\n    \n    return pooled\n\n# Example\nfeature_map = np.array([[1,3,2,1],[4,9,5,2],[3,1,7,8],[1,2,4,6]])\npooled_output = max_pooling(feature_map, pool_size=2, stride=2)\nprint(\"Pooled output:\\n\", pooled_output)\n# Output: [[9, 5], [3, 8]]",
+      "explanation": "Max pooling extracts the maximum value from each 2x2 region, preserving the strongest activation while reducing spatial dimensions by half.",
+      "timeComplexity": "O(n \u00d7 m \u00d7 pool_size\u00b2)",
+      "spaceComplexity": "O(n \u00d7 m)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Keras CNN Model for Image Classification",
+      "description": "Complete CNN architecture using Keras for MNIST digit classification",
+      "code": "from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense\n\nmodel = Sequential([\n    # First Conv Block\n    Conv2D(32, (3, 3), activation='relu', padding='same', \n           input_shape=(28, 28, 1)),\n    MaxPooling2D((2, 2), strides=2),\n    \n    # Second Conv Block\n    Conv2D(64, (3, 3), activation='relu', padding='same'),\n    MaxPooling2D((2, 2), strides=2),\n    \n    # Fully Connected Layers\n    Flatten(),\n    Dense(128, activation='relu'),\n    Dense(10, activation='softmax')  # 10 classes for digits 0-9\n])\n\nmodel.summary()\n# Output shape after conv1: (28,28,32)\n# After pool1: (14,14,32)\n# After conv2: (14,14,64)\n# After pool2: (7,7,64)",
+      "explanation": "This CNN model demonstrates the typical architecture: alternating Conv and MaxPooling layers followed by Flatten and Dense layers for classification on MNIST dataset.",
+      "timeComplexity": "Depends on input size and filter count, O(n\u00b2 \u00d7 f \u00d7 k\u00b2)",
+      "spaceComplexity": "O(parameters + feature maps)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Complete CNN Forward Pass Algorithm",
+      "description": "Pseudocode showing the complete forward propagation in a CNN",
+      "code": "ALGORITHM CNN_Forward_Pass\nBEGIN\n  INPUT: Input_Image[Height][Width][Channels]\n  \n  // Layer 1: Convolution + ReLU + Pooling\n  FOR each filter f1 IN Conv1_Filters DO\n    Feature_Map_1[f1] = Convolve(Input_Image, Kernel[f1], stride=1)\n    Feature_Map_1[f1] = ReLU(Feature_Map_1[f1])  // max(0, x)\n  END FOR\n  \n  Pooled_1 = Max_Pool(Feature_Map_1, pool_size=2, stride=2)\n  \n  // Layer 2: Convolution + ReLU + Pooling\n  FOR each filter f2 IN Conv2_Filters DO\n    Feature_Map_2[f2] = Convolve(Pooled_1, Kernel[f2], stride=1)\n    Feature_Map_2[f2] = ReLU(Feature_Map_2[f2])\n  END FOR\n  \n  Pooled_2 = Max_Pool(Feature_Map_2, pool_size=2, stride=2)\n  \n  // Flatten for Fully Connected Layer\n  Flattened = Flatten(Pooled_2)\n  \n  // Fully Connected Layer\n  FC_Output = Dense(Flattened, num_neurons=128)\n  FC_Output = ReLU(FC_Output)\n  \n  // Output Layer\n  Output = Softmax(Dense(FC_Output, num_classes=10))\n  \n  RETURN Output\nEND\n\nFUNCTION Convolve(Input, Kernel, stride)\nBEGIN\n  Output_H = floor((H - K + 2P)/stride) + 1\n  Output_W = floor((W - K + 2P)/stride) + 1\n  \n  FOR i IN 0 TO Output_H-1 DO\n    FOR j IN 0 TO Output_W-1 DO\n      Region = Input[i*stride : i*stride+K, j*stride : j*stride+K]\n      Output[i][j] = Sum(Region * Kernel)\n    END FOR\n  END FOR\n  RETURN Output\nEND",
+      "explanation": "This pseudocode shows the complete CNN forward pass: convolution extracts features, ReLU activates, pooling downsamples, flattening prepares for fully connected layers, and softmax produces class probabilities.",
+      "timeComplexity": "O(n \u00d7 c \u00d7 k\u00b2 \u00d7 f) for each conv layer",
+      "spaceComplexity": "O(f \u00d7 n \u00d7 m) for storing feature maps"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the core principle behind the Newton-Raphson (NR) method for optimization. How does it differ from using the same method for finding roots of equations?",
+    "expectedPoints": [
+      "The NR method for optimization uses a quadratic approximation (2nd-order Taylor expansion) of the objective function at the current point.",
+      "It finds the critical point of this quadratic approximation by setting its gradient to zero, leading to the update rule: x_{k+1} = x_k - [\u2207\u00b2f(x_k)]\u207b\u00b9 \u2207f(x_k).",
+      "For root-finding, the NR method uses a linear approximation (1st-order Taylor series) of the function whose root is sought, leading to a different update rule: x_{k+1} = x_k - f(x_k)/f'(x_k)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the key algorithmic steps of the Newton-Raphson method for minimizing a convex function. Outline one major advantage and one significant disadvantage of this method compared to Gradient Descent.",
+    "expectedPoints": [
+      "Algorithm Steps: 1) Start with an initial guess x_0. 2) Compute the gradient (\u2207f(x_k)) and the Hessian matrix (\u2207\u00b2f(x_k)) at the current point. 3) Solve the linear system \u2207\u00b2f(x_k) d = -\u2207f(x_k) for the descent direction d. 4) Update the iterate: x_{k+1} = x_k + d. 5) Repeat until ||\u2207f(x_k)|| is sufficiently small.",
+      "Major Advantage: It has a quadratic rate of convergence near the optimum, which is much faster than the linear convergence of Gradient Descent.",
+      "Significant Disadvantage: It requires the computation and inversion of the Hessian matrix, which is computationally expensive (O(n\u00b3)) for high-dimensional problems."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "The pure Newton-Raphson method can fail if the Hessian matrix is not positive definite. Analyze this problem and discuss two common modifications used to ensure the method converges to a local minimum, even when this condition is not met. Compare the trade-offs involved in these modifications.",
+    "expectedPoints": [
+      "Problem Analysis: If the Hessian is not positive definite, the quadratic model has a saddle point or a maximum, not a minimum. The resulting Newton step may not be a descent direction, causing the algorithm to diverge.",
+      "Modification 1: Hessian Modification (or Eigenvalue Thresholding). The Hessian is altered to be positive definite, e.g., by adding a scaled identity matrix: H_modified = H + \u03bbI, where \u03bb is chosen to make all eigenvalues positive. This ensures a descent direction.",
+      "Modification 2: Using a Trust Region. Instead of solving for the full Newton step, a trust region method restricts the step size to a region where the quadratic model is considered accurate. The direction is found by solving a constrained subproblem min_d { \u2207f\u1d40d + \u00bd d\u1d40Hd } subject to ||d|| \u2264 \u0394.",
+      "Trade-offs: Hessian modification is simpler but can distort the original objective's curvature. The trust region method is more robust and theoretically sound but involves solving a more complex subproblem, increasing computational cost per iteration."
+    ],
+    "marks": 10
+  }
+]

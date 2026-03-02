@@ -1,0 +1,26 @@
+{
+  "topicId": "decomposition-techniques",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "problem",
+      "question": "Decompose R(A,B,C,D) with FDs: A\u2192B, B\u2192C, C\u2192D into BCNF. Verify each step.",
+      "answer": "Key is A (A+ = ABCD). Violation: B\u2192C (B not superkey).\nDecompose: R1(B,C), R2(A,B,D).\nR2 violation: Still has B\u2192C derived? No, B\u2192C not in R2.\nBut R2 has C\u2192D issue? No, C not in R2.\nR1 is BCNF (B is key). Check R2: A\u2192B,D? Need to check. A+ in R2 = {A,B,D} using A\u2192B. So A is key of R2.\nFinal: R1(B,C) and R2(A,B,D) but wait - C is not in R2. Need to reconsider.\nActual: Violation B\u2192C. R1=(B,C), R2=R-(C-B)=(A,B,C,D)-(C)=(A,B,D). But C\u2192D applies to neither directly.\nCorrect decomposition: R1(B,C), R2(A,B,D). Then in R2, no FD violations (A\u2192B holds, A is key).",
+      "marks": 8
+    },
+    {
+      "id": "q2",
+      "type": "short-answer",
+      "question": "What is the condition for lossless-join decomposition of R into R1 and R2?",
+      "answer": "The decomposition is lossless if and only if the common attributes (R1 \u2229 R2) form a superkey of at least one of the relations. Formally: (R1 \u2229 R2) \u2192 R1 or (R1 \u2229 R2) \u2192 R2 must hold.",
+      "marks": 4
+    },
+    {
+      "id": "q3",
+      "type": "conceptual",
+      "question": "Why might BCNF decomposition not preserve all functional dependencies?",
+      "answer": "When we decompose to remove a BCNF violation X\u2192Y, we split the relation. If there was another FD involving attributes now in different relations, we cannot check that FD without joining. 3NF guarantees dependency preservation, BCNF does not.",
+      "marks": 5
+    }
+  ]
+}

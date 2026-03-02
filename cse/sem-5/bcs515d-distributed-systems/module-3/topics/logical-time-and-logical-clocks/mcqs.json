@@ -1,0 +1,505 @@
+{
+  "topicId": "logical-time-and-logical-clocks",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In the happened-before relation, if process P sends message M to process Q, what is the relationship between send and receive events?",
+      "options": [
+        {
+          "key": "A",
+          "text": "send(M) → receive(M)"
+        },
+        {
+          "key": "B",
+          "text": "send(M) ← receive(M)"
+        },
+        {
+          "key": "C",
+          "text": "send(M) || receive(M)"
+        },
+        {
+          "key": "D",
+          "text": "send(M) = receive(M)"
+        }
+      ],
+      "correctAnswer": "send(M) → receive(M)",
+      "explanation": "By definition of happened-before, if a is sending a message and b is receiving it, then a→b. The send must happen before receive.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Lamport timestamps provide which type of ordering?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Causal ordering only"
+        },
+        {
+          "key": "B",
+          "text": "Total ordering only"
+        },
+        {
+          "key": "C",
+          "text": "Partial ordering"
+        },
+        {
+          "key": "D",
+          "text": "Chronological ordering"
+        }
+      ],
+      "correctAnswer": "Total ordering",
+      "explanation": "Lamport timestamps assign a total order (total ordering) to all events in a distributed system, even concurrent ones.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What does a vector clock at process Pi contain?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only its own counter"
+        },
+        {
+          "key": "B",
+          "text": "Counter of the coordinator"
+        },
+        {
+          "key": "C",
+          "text": "Vector of counters from all processes"
+        },
+        {
+          "key": "D",
+          "text": "Timestamp of last message"
+        }
+      ],
+      "correctAnswer": "Vector of counters from all processes",
+      "explanation": "Vector clocks maintain an array where entry V[i] represents the number of events process Pi knows have occurred at process j.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Two events with vector clocks V1 = [2,1,0] and V2 = [1,2,0] are:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Causally related (V1→V2)"
+        },
+        {
+          "key": "B",
+          "text": "Causally related (V2→V1)"
+        },
+        {
+          "key": "C",
+          "text": "Concurrent"
+        },
+        {
+          "key": "D",
+          "text": "Identical"
+        }
+      ],
+      "correctAnswer": "Concurrent",
+      "explanation": "Neither V1 ≤ V2 nor V2 ≤ V1 (since V1[0]=2 > V2[0]=1 and V2[1]=2 > V1[1]=1), so they are concurrent.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "When updating a vector clock upon receiving a message, each element is set to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Received value + 1"
+        },
+        {
+          "key": "B",
+          "text": "Max(local, received)"
+        },
+        {
+          "key": "C",
+          "text": "Local + received"
+        },
+        {
+          "key": "D",
+          "text": "Zero"
+        }
+      ],
+      "correctAnswer": "Max(local, received)",
+      "explanation": "Upon receiving a message with timestamp Vm, process updates its vector V[i] = max(V[i], Vm[i]) for all i, preserving causality.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "The happened-before relation is:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Total order"
+        },
+        {
+          "key": "B",
+          "text": "Partial order"
+        },
+        {
+          "key": "C",
+          "text": "No order"
+        },
+        {
+          "key": "D",
+          "text": "Linear order"
+        }
+      ],
+      "correctAnswer": "Partial order",
+      "explanation": "Happened-before is a partial order because it is reflexive, antisymmetric (for distinct events), and transitive, but not all events are comparable.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the key advantage of vector clocks over Lamport timestamps?",
+      "explanation": "Vector clocks can detect causality between events, while Lamport timestamps cannot distinguish between concurrent and causally related events.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Smaller size"
+        },
+        {
+          "key": "B",
+          "text": "Detect causality"
+        },
+        {
+          "key": "C",
+          "text": "Faster computation"
+        },
+        {
+          "key": "D",
+          "text": "Simpler implementation"
+        }
+      ],
+      "correctAnswer": "Detect causality",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-8",
+      "question": "If event A has Lamport timestamp 5 and event B has timestamp 3, what can we conclude?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A definitely happened after B"
+        },
+        {
+          "key": "B",
+          "text": "B definitely happened after A"
+        },
+        {
+          "key": "C",
+          "text": "A may have happened after B"
+        },
+        {
+          "key": "D",
+          "text": "Nothing about causality"
+        }
+      ],
+      "correctAnswer": "A may have happened after B",
+      "explanation": "Lamport timestamps provide total ordering but not causality. A higher timestamp doesn't guarantee causal relationship; events could be concurrent.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "In a system with 3 processes, each vector clock has how many components?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "Depends on message size"
+        }
+      ],
+      "correctAnswer": "3",
+      "explanation": "Vector clock at each process contains one entry per process in the system, so for n processes, each vector has n components.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Total order broadcast ensures:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Causal delivery only"
+        },
+        {
+          "key": "B",
+          "text": "Same order at all receivers"
+        },
+        {
+          "key": "C",
+          "text": "Faster delivery"
+        },
+        {
+          "key": "D",
+          "text": "Message loss prevention"
+        }
+      ],
+      "correctAnswer": "Same order at all receivers",
+      "explanation": "Total order broadcast (or atomic broadcast) guarantees that all receivers deliver messages in exactly the same order.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "Causal order is weaker than total order:",
+      "options": [
+        {
+          "key": "A",
+          "text": "True"
+        },
+        {
+          "key": "B",
+          "text": "False"
+        },
+        {
+          "key": "C",
+          "text": "Depends on system"
+        },
+        {
+          "key": "D",
+          "text": "Only in synchronous systems"
+        }
+      ],
+      "correctAnswer": "True",
+      "explanation": "Causal order only orders causally related messages, while total order orders ALL messages identically. Total order implies causal order but not vice versa.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What happens when a process increments its logical clock in Lamport's algorithm?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Increments by random value"
+        },
+        {
+          "key": "B",
+          "text": "Increments by 1"
+        },
+        {
+          "key": "C",
+          "text": "Decrements by 1"
+        },
+        {
+          "key": "D",
+          "text": "No change"
+        }
+      ],
+      "correctAnswer": "Increments by 1",
+      "explanation": "Each process increments its counter by 1 for every event (local event or message send/receive) in Lamport timestamps.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Physical clocks cannot be perfectly synchronized due to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "CPU speed"
+        },
+        {
+          "key": "B",
+          "text": "Clock drift and network delays"
+        },
+        {
+          "key": "C",
+          "text": "Operating system"
+        },
+        {
+          "key": "D",
+          "text": "Memory size"
+        }
+      ],
+      "correctAnswer": "Clock drift and network delays",
+      "explanation": "Physical clocks drift due to oscillator imperfections and network delays prevent perfect synchronization, which is why logical time is needed.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-14",
+      "question": "For two vector clocks V1 and V2, V1 < V2 if:",
+      "options": [
+        {
+          "key": "A",
+          "text": "V1[0] < V2[0]"
+        },
+        {
+          "key": "B",
+          "text": "All elements of V1 ≤ V2 and at least one <"
+        },
+        {
+          "key": "C",
+          "text": "Sum of V1 < sum of V2"
+        },
+        {
+          "key": "D",
+          "text": "V1.length < V2.length"
+        }
+      ],
+      "correctAnswer": "All elements of V1 ≤ V2 and at least one <",
+      "explanation": "Vector clock comparison follows component-wise comparison: V1 ≤ V2 iff V1[i] ≤ V2[i] for all i, and strict < requires at least one strict inequality.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Which logical clock can distinguish between concurrent and causally related events?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lamport timestamps"
+        },
+        {
+          "key": "B",
+          "text": "Physical clocks"
+        },
+        {
+          "key": "C",
+          "text": "Vector clocks"
+        },
+        {
+          "key": "D",
+          "text": "No logical clock"
+        }
+      ],
+      "correctAnswer": "Vector clocks",
+      "explanation": "Vector clocks can determine if events are concurrent (neither clock is ≤ the other) or causally related (one clock is ≤ the other).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-16",
+      "question": "The transitivity property of happened-before states: if a→b and b→c, then:",
+      "options": [
+        {
+          "key": "A",
+          "text": "a || c"
+        },
+        {
+          "key": "B",
+          "text": "a→c"
+        },
+        {
+          "key": "C",
+          "text": "c→a"
+        },
+        {
+          "key": "D",
+          "text": "No relation"
+        }
+      ],
+      "correctAnswer": "a→c",
+      "explanation": "Transitivity is a fundamental property of happened-before: if a happens before b and b before c, then a must happen before c.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-17",
+      "question": "In Lamport's algorithm, when a process receives a message with timestamp T, it sets its counter to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "T"
+        },
+        {
+          "key": "B",
+          "text": "T + 1"
+        },
+        {
+          "key": "C",
+          "text": "max(local, T) + 1"
+        },
+        {
+          "key": "D",
+          "text": "local + T"
+        }
+      ],
+      "correctAnswer": "max(local, T) + 1",
+      "explanation": "The receiver updates its clock to max(local_counter, received_timestamp) + 1 to ensure causality is preserved.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-18",
+      "question": "A vector clock [2,2,2] at process P compared with [2,2,2] at Q means:",
+      "options": [
+        {
+          "key": "A",
+          "text": "P caused Q"
+        },
+        {
+          "key": "B",
+          "text": "Q caused P"
+        },
+        {
+          "key": "C",
+          "text": "Same events occurred"
+        },
+        {
+          "key": "D",
+          "text": "Cannot be determined"
+        }
+      ],
+      "correctAnswer": "Same events occurred",
+      "explanation": "Equal vector clocks indicate identical knowledge about event counts at all processes, meaning the events are identical in the causal ordering.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-19",
+      "question": "Logical time is used when:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Physical time is available"
+        },
+        {
+          "key": "B",
+          "text": "Precise real-world timing is needed"
+        },
+        {
+          "key": "C",
+          "text": "Causal ordering without physical time is sufficient"
+        },
+        {
+          "key": "D",
+          "text": "Clocks are perfectly synchronized"
+        }
+      ],
+      "correctAnswer": "Causal ordering without physical time is sufficient",
+      "explanation": "Logical time is designed for ordering events based on causality when physical clock accuracy cannot be guaranteed.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-20",
+      "question": "Causal ordering of messages is important for:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Performance optimization"
+        },
+        {
+          "key": "B",
+          "text": "Maintaining correct cause-effect relationships"
+        },
+        {
+          "key": "C",
+          "text": "Reducing network traffic"
+        },
+        {
+          "key": "D",
+          "text": "Clock synchronization"
+        }
+      ],
+      "correctAnswer": "Maintaining correct cause-effect relationships",
+      "explanation": "Causal ordering ensures that effects don't precede their causes in the delivery order, which is critical for correctness in distributed applications.",
+      "difficulty": "medium"
+    }
+  ]
+}

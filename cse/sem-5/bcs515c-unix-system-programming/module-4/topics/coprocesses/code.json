@@ -1,0 +1,35 @@
+{
+  "topicId": "coprocesses",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Basic Coprocess with bc Calculator",
+      "description": "Creates a coprocess with bc for mathematical calculations, demonstrating bidirectional communication",
+      "code": "#!/bin/bash\n# Basic coprocess calculator using bc\n\ncoproc BC { bc -l; }\n\n# Function to send expression and get result\ncalc() {\n echo \"$1\" >&\"${BC[1]}\"\n read -r result <&\"${BC[0]}\"\n echo \"$result\"\n}\n\n# Perform calculations\necho \"Result: $(calc '2 + 3')\"\necho \"Result: $(calc '10 * 5')\"\necho \"Result: $(calc 'scale=2; 10/3')\"\n\n# Signal end of input and wait for completion\nexec {BC[1]}>&-\nwait $BC_PID\necho \"Calculator exited with status: $?\"",
+      "explanation": "This script creates a persistent bc process. Each call to calc() writes an expression to the coprocess and reads the result. The write end must be closed (exec {BC[1]}>&-) to send EOF when done. Finally, wait obtains the exit status.",
+      "timeComplexity": "O(n) where n is number of calculations",
+      "spaceComplexity": "O(1) besides the bc process itself",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Named FIFO Coprocess Server",
+      "description": "Implements a simple server using named pipes (FIFOs) for inter-process communication with a coprocess",
+      "code": "#!/bin/bash\n# Server using FIFOs with coprocess\n\nINPUT_FIFO=\"/tmp/server_input_$$\"\nOUTPUT_FIFO=\"/tmp/server_output_$$\"\n\n# Create FIFOs\nmkfifo \"$INPUT_FIFO\" \"$OUTPUT_FIFO\"\n\n# Start server coprocess that reads commands\ncoproc SERVER {\n exec bc -l >\"$OUTPUT_FIFO\" <\"$INPUT_FIFO\"\n}\n\n# Function to communicate with server\nsend_command() {\n local cmd=\"$1\"\n echo \"$cmd\" >\"$INPUT_FIFO\"\n read -r result <\"$OUTPUT_FIFO\"\n echo \"$result\"\n}\n\n# Process multiple requests\necho \"Server started with PID $SERVER_PID\"\necho \"10 + 5 = $(send_command '10 + 5')\"\necho \"100 / 4 = $(send_command '100 / 4')\"\necho \"2^10 = $(send_command '2^10')\"\n\n# Cleanup\nkill \"$SERVER_PID\" 2>/dev/null\nrm -f \"$INPUT_FIFO\" \"$OUTPUT_FIFO\"",
+      "explanation": "This creates two named pipes: one for input, one for output. The coprocess runs bc with its stdin/stdout connected to these FIFOs. Multiple commands can be sent without recreating the process, maintaining state between calculations.",
+      "timeComplexity": "O(n) for n commands (each command processed once)",
+      "spaceComplexity": "O(1) besides FIFOs and bc process",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Interactive Coprocess with Timeout",
+      "description": "Demonstrates handling blocking reads, timeouts, and proper cleanup in coprocess communication",
+      "code": "#!/bin/bash\n\n# Create coprocess with cat for demonstration\ncoproc CAT { cat; }\n\n# Function to read with timeout (requires bash 4+)\nread_with_timeout() {\n local fd=$1\n local timeout=$2\n local data\n \n # Use read with timeout (-t) in subshell\n if read -t \"$timeout\" -r data <&\"$fd\"; then\n echo \"$data\"\n return 0\n else\n return 1\n fi\n}\n\n# Write to coproc\necho \"Hello, Coprocess!\" >&\"${CAT[1]}\"\n\n# Read response with 2-second timeout\nif read_with_timeout \"${CAT[0]}\" 2; then\n echo \"Received: $data\"\nelse\n echo \"Read timed out!\"\nfi\n\n# Clean termination\nexec {CAT[1]}>&-\nwait $CAT_PID 2>/dev/null\n\n# Disown if needed (uncomment to test)\n# disown $CAT_PID",
+      "explanation": "This shows handling of blocking I/O with timeouts. The read command can block indefinitely, so using read -t provides a timeout. Proper cleanup involves closing the write end to signal EOF, then waiting for the process. disown prevents shell status messages.",
+      "timeComplexity": "O(1) per read operation",
+      "spaceComplexity": "O(1)",
+      "language": "pseudocode"
+    }
+  ]
+}

@@ -1,0 +1,380 @@
+{
+  "topicId": "accessing-a-collection-via-an-iterator",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Given: ArrayList<String> list = new ArrayList<>(Arrays.asList(\"A\",\"B\",\"C\")); Iterator<String> it = list.iterator(); list.add(\"D\"); System.out.println(it.next()); What is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "No output - throws ConcurrentModificationException immediately"
+        },
+        {
+          "key": "C",
+          "text": "D"
+        },
+        {
+          "key": "D",
+          "text": "null"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The iterator is fail-fast. After creating the iterator, the list is structurally modified (add). When any iterator method is called, it checks modCount and throws ConcurrentModificationException.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What will be printed?\nList<Integer> list = new LinkedList<>(Arrays.asList(1,2,3));\nIterator<Integer> it = list.iterator();\nit.next();\nit.remove();\nSystem.out.println(list);",
+      "options": [
+        {
+          "key": "A",
+          "text": "[1, 2, 3]"
+        },
+        {
+          "key": "B",
+          "text": "[2, 3]"
+        },
+        {
+          "key": "C",
+          "text": "[1, 3]"
+        },
+        {
+          "key": "D",
+          "text": "[]"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Iterator.remove() removes the last element returned by next(). After it.next() returns 1, it.remove() removes that element from the underlying collection, leaving [2, 3].",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Which iterator method is NOT part of the java.util.Iterator interface?",
+      "options": [
+        {
+          "key": "A",
+          "text": "hasNext()"
+        },
+        {
+          "key": "B",
+          "text": "next()"
+        },
+        {
+          "key": "C",
+          "text": "previous()"
+        },
+        {
+          "key": "D",
+          "text": "remove()"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "previous() is a method of ListIterator, not Iterator. Iterator provides hasNext(), next(), and remove(). ListIterator extends Iterator and adds previous(), hasPrevious(), add(), set().",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-4",
+      "question": "What is the correct way to safely remove even numbers from a List using iterator?\nList<Integer> nums = new ArrayList<>(Arrays.asList(1,2,3,4,5));",
+      "options": [
+        {
+          "key": "A",
+          "text": "for(Integer n : nums) { if(n%2==0) nums.remove(n); }"
+        },
+        {
+          "key": "B",
+          "text": "Iterator<Integer> it = nums.iterator(); while(it.hasNext()) { if(it.next()%2==0) it.remove(); }"
+        },
+        {
+          "key": "C",
+          "text": "nums.removeIf(n -> n%2==0);"
+        },
+        {
+          "key": "D",
+          "text": "Both B and C are correct approaches"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Both approaches work. Option B uses Iterator.remove() which is safe during iteration. Option C uses Java 8's removeIf() which internally uses iterator. Option A causes ConcurrentModificationException.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What does Iterator's hasNext() method return when all elements have been traversed?",
+      "options": [
+        {
+          "key": "A",
+          "text": "null"
+        },
+        {
+          "key": "B",
+          "text": "Throws NoSuchElementException"
+        },
+        {
+          "key": "C",
+          "text": "false"
+        },
+        {
+          "key": "D",
+          "text": "The last element"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "hasNext() returns false when there are no more elements to iterate. It does not throw exception - it simply returns boolean indicating traversal status.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Consider: List<String> list = Arrays.asList(\"X\",\"Y\",\"Z\"); Iterator<String> it = list.iterator(); System.out.println(it.next() + \"-\" + it.next()); What is the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "X-Y"
+        },
+        {
+          "key": "B",
+          "text": "X-Y-Z"
+        },
+        {
+          "key": "C",
+          "text": "X-null"
+        },
+        {
+          "key": "D",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "it.next() returns \"X\" then \"Y\", concatenating with \"-\" gives \"X-Y\". After two calls, iteration position is at \"Z\" but we don't access it.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Which collection class provides fail-safe iterators in Java?",
+      "options": [
+        {
+          "key": "A",
+          "text": "ArrayList"
+        },
+        {
+          "key": "B",
+          "text": "HashSet"
+        },
+        {
+          "key": "C",
+          "text": "CopyOnWriteArrayList"
+        },
+        {
+          "key": "D",
+          "text": "LinkedList"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "CopyOnWriteArrayList provides fail-safe iterators that operate on a snapshot of the array at the time the iterator was created. ConcurrentHashMap also provides fail-safe iterators.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the time complexity of iterator traversal for ArrayList?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1) per element"
+        },
+        {
+          "key": "B",
+          "text": "O(n) total for all elements"
+        },
+        {
+          "key": "C",
+          "text": "O(n\u00b2)"
+        },
+        {
+          "key": "D",
+          "text": "O(log n)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Iterator traversal over ArrayList visits each element once, making total time O(n). The hasNext() and next() methods are O(1) each. However, for LinkedList, iterator is also O(n) total but each next() call could be O(1) if index is optimally maintained.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "After executing these lines, what does list contain?\nList<Character> list = new ArrayList<>(Arrays.asList('A','B','C'));\nListIterator<Character> lit = list.listIterator();\nlit.next();\nlit.add('X');\nSystem.out.println(list);",
+      "options": [
+        {
+          "key": "A",
+          "text": "[A, B, C]"
+        },
+        {
+          "key": "B",
+          "text": "[X, A, B, C]"
+        },
+        {
+          "key": "C",
+          "text": "[A, X, B, C]"
+        },
+        {
+          "key": "D",
+          "text": "[A, B, C, X]"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "ListIterator.add('X') inserts element BEFORE the cursor position. After lit.next() moves cursor after 'A', add('X') inserts 'X' before 'A', resulting in [X, A, B, C].",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which statement about Iterator and for-each loop is FALSE?",
+      "options": [
+        {
+          "key": "A",
+          "text": "For-each loop can modify collection elements but not structure"
+        },
+        {
+          "key": "B",
+          "text": "Iterator allows removing elements during traversal"
+        },
+        {
+          "key": "C",
+          "text": "For-each loop is faster than Iterator for ArrayList"
+        },
+        {
+          "key": "D",
+          "text": "Iterator can traverse multiple collections in lockstep"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "For ArrayList, Iterator and for-each have identical performance because for-each uses Iterator internally. The iterator's hasNext()/next() are O(1), same as index-based access.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What happens when you call remove() twice without calling next() in between?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It removes the same element twice"
+        },
+        {
+          "key": "B",
+          "text": "It removes the next element"
+        },
+        {
+          "key": "C",
+          "text": "It throws IllegalStateException"
+        },
+        {
+          "key": "D",
+          "text": "It removes nothing"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Iterator tracks state - remove() can only be called once after each next() call. Calling it twice throws IllegalStateException because there's no 'last returned element' to remove.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "Given a HashSet, which is the correct way to find and remove an element 'B'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Iterator it = set.iterator(); while(it.hasNext()) { if(it.next().equals(\"B\")) it.remove(); }"
+        },
+        {
+          "key": "B",
+          "text": "set.remove(\"B\") during iteration"
+        },
+        {
+          "key": "C",
+          "text": "for(String s : set) if(s.equals(\"B\")) set.remove(s);"
+        },
+        {
+          "key": "D",
+          "text": "set.removeIf(s -> s.equals(\"B\"));"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Only A correctly uses iterator's remove() method. Options B and C cause ConcurrentModificationException. Option D works but doesn't demonstrate iterator usage directly.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What does list.listIterator(2) return for a List with 5 elements?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Iterator starting from index 2 (third element)"
+        },
+        {
+          "key": "B",
+          "text": "Iterator positioned at index 2 but will return element at index 3 first"
+        },
+        {
+          "key": "C",
+          "text": "Iterator positioned BEFORE index 2 (before third element)"
+        },
+        {
+          "key": "D",
+          "text": "Iterator starting from end"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "listIterator(index) returns a ListIterator positioned BEFORE the element at that index. So listIterator(2) means next() will return element at index 2 (third element).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "Which interface method signature indicates an optional operation that may throw UnsupportedOperationException?",
+      "options": [
+        {
+          "key": "A",
+          "text": "public boolean hasNext()"
+        },
+        {
+          "key": "B",
+          "text": "public E next()"
+        },
+        {
+          "key": "C",
+          "text": "public void remove()"
+        },
+        {
+          "key": "D",
+          "text": "public void forEachRemaining(Consumer<? super E> action)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The remove() method is optional. Collections like UnmodifiableCollection throw UnsupportedOperationException when remove() is called. This is specified in the Iterator interface documentation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "When should you prefer Iterator over index-based for loop?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Always for ArrayList"
+        },
+        {
+          "key": "B",
+          "text": "When iterating over collections that don't support random access (LinkedList, Set)"
+        },
+        {
+          "key": "C",
+          "text": "When you need to modify the collection during iteration"
+        },
+        {
+          "key": "D",
+          "text": "Never - for loop is always better"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "For LinkedList and Set, index-based iteration would be inefficient (O(n\u00b2) for LinkedList) or impossible (Set has no indices). Iterator provides O(n) traversal regardless of underlying structure.",
+      "difficulty": "medium"
+    }
+  ]
+}

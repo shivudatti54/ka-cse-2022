@@ -1,0 +1,205 @@
+{
+  "topicId": "dml-select-insert-update-delete",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which SQL clause is used to specify the columns to be retrieved from a table?",
+      "options": [
+        {
+          "key": "A",
+          "text": "FROM"
+        },
+        {
+          "key": "B",
+          "text": "SELECT"
+        },
+        {
+          "key": "C",
+          "text": "WHERE"
+        },
+        {
+          "key": "D",
+          "text": "ORDER BY"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The SELECT clause defines which columns should be included in the result set.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Consider the table Employee(emp_id, name, salary, dept_id). Which INSERT statement will execute successfully without specifying column names, assuming all columns are NOT NULL?",
+      "options": [
+        {
+          "key": "A",
+          "text": "INSERT INTO Employee VALUES (101, 'John', 50000);"
+        },
+        {
+          "key": "B",
+          "text": "INSERT INTO Employee VALUES (101, 'John', 50000, 10);"
+        },
+        {
+          "key": "C",
+          "text": "INSERT INTO Employee (emp_id, name) VALUES (101, 'John');"
+        },
+        {
+          "key": "D",
+          "text": "INSERT INTO Employee SET emp_id=101, name='John';"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When column names are omitted, VALUES must provide values for ALL columns in the table's defined order.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "Given the Students table, which WHERE clause will find all students whose roll_number is either 101, 102, or 103?",
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE roll_number = 101 OR 102 OR 103"
+        },
+        {
+          "key": "B",
+          "text": "WHERE roll_number BETWEEN 101 AND 103"
+        },
+        {
+          "key": "C",
+          "text": "WHERE roll_number IN (101, 102, 103)"
+        },
+        {
+          "key": "D",
+          "text": "WHERE roll_number = 101 = 102 = 103"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The IN operator checks membership in a set of values, making it ideal for multiple discrete values.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "In a Products table, what will be the effect of executing: UPDATE Products SET price = price * 1.10 WHERE category = 'Electronics' AND stock < 100;?",
+      "options": [
+        {
+          "key": "A",
+          "text": "All electronics products will have their price increased by 10%"
+        },
+        {
+          "key": "B",
+          "text": "Only electronics products with stock less than 100 will have their price increased by 10%"
+        },
+        {
+          "key": "C",
+          "text": "The price will be set to 1.10 for all products in Electronics category"
+        },
+        {
+          "key": "D",
+          "text": "No changes will occur due to syntax error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "UPDATE modifies rows matching ALL conditions in the WHERE clause; this increases price by 10% only for low-stock electronics.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "After executing: DELETE FROM Orders WHERE order_date < '2024-01-01' AND status = 'Shipped';, what is true about the deleted rows?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are permanently removed and cannot be recovered"
+        },
+        {
+          "key": "B",
+          "text": "They are moved to a recycle bin and can be recovered"
+        },
+        {
+          "key": "C",
+          "text": "They are marked as deleted but remain until COMMIT"
+        },
+        {
+          "key": "D",
+          "text": "The data is archived automatically before deletion"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "DELETE permanently removes rows from the table; without a transaction, they cannot be rolled back once committed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "To insert all courses with credits > 3 from the Courses table into another table ArchiveCourses( course_id, course_name, credits), which syntax is correct?",
+      "options": [
+        {
+          "key": "A",
+          "text": "INSERT INTO ArchiveCourses VALUES (SELECT * FROM Courses WHERE credits > 3);"
+        },
+        {
+          "key": "B",
+          "text": "INSERT INTO ArchiveCourses (course_id, course_name, credits) SELECT course_id, course_name, credits FROM Courses WHERE credits > 3;"
+        },
+        {
+          "key": "C",
+          "text": "INSERT INTO ArchiveCourses SELECT * FROM Courses WHERE credits > 3;"
+        },
+        {
+          "key": "D",
+          "text": "Both B and C if column order matches"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "INSERT...SELECT can omit column names if SELECT returns columns in the exact order expected by the target table.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Consider tables: Students(sid, name, age, city) and Enrollments(sid, cid, grade). Which query lists each city with the count of students who have enrolled in at least one course?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT city, COUNT(*) FROM Students WHERE sid IN (SELECT sid FROM Enrollments) GROUP BY city;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT s.city, COUNT(DISTINCT s.sid) FROM Students s JOIN Enrollments e ON s.sid = e.sid GROUP BY s.city;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT city, COUNT(sid) FROM Students GROUP BY city HAVING COUNT(sid) > 0;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT DISTINCT city, COUNT(*) FROM Students, Enrollments WHERE Students.sid = Enrollments.sid;"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "JOIN with COUNT(DISTINCT) ensures each enrolled student is counted once per city, excluding those never enrolled.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "A database has autocommit disabled. User A executes: BEGIN; UPDATE accounts SET balance = balance - 5000 WHERE acc_id = 1; UPDATE accounts SET balance = balance + 5000 WHERE acc_id = 2; After these statements (before COMMIT), User B queries the accounts table. What will User B see?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Both account balances reflect the transfer of 5000"
+        },
+        {
+          "key": "B",
+          "text": "Neither account balance has changed"
+        },
+        {
+          "key": "C",
+          "text": "Account 1 shows 5000 deducted, but account 2 still shows old balance"
+        },
+        {
+          "key": "D",
+          "text": "An error occurs because both updates must succeed together"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In an uncommitted transaction, User A sees uncommitted changes (dirty reads possible), but other sessions cannot see them until COMMIT.",
+      "difficulty": "hard"
+    }
+  ]
+}

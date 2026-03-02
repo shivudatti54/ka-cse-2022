@@ -1,0 +1,35 @@
+{
+  "topicId": "code-generation-issues-in-the-design-of-a-code-gen",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Register Allocation Algorithm",
+      "description": "Basic register allocation using graph coloring",
+      "code": "PROCEDURE AllocateRegisters(CFG, numRegisters)\n FOR each basic_block IN CFG DO\n // Step 1: Liveness Analysis\n ComputeLiveOut(basic_block)\n \n // Step 2: Build Interference Graph\n interferenceGraph = NewGraph()\n FOR each instruction IN basic_block (in reverse) DO\n FOR each pair (v1, v2) IN currentLiveSet DO\n AddEdge(interferenceGraph, v1, v2)\n AddToLiveSet(instruction.def)\n RemoveFromLiveSet(instruction.use)\n END FOR\n \n // Step 3: Graph Coloring\n coloredVars = GraphColor(interferenceGraph, numRegisters)\n \n // Step 4: Handle Spills\n IF uncolored_vars exists THEN\n FOR each spilledVar IN uncolored_vars DO\n GenerateLoad(spilledVar, baseRegister)\n GenerateSpillCode(spilledVar)\n GenerateReload(spilledVar, baseRegister)\n END FOR\n END IF\n END FOR\nEND PROCEDURE",
+      "explanation": "This algorithm performs liveness analysis in reverse order, builds an interference graph where edges connect simultaneously live variables, attempts to color the graph with available registers, and generates spill code when coloring fails.",
+      "timeComplexity": "O(n \u00d7 k\u00b2) where n = instructions, k = registers",
+      "spaceComplexity": "O(v + e) where v = variables, e = interference edges"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Instruction Selection using Tree Pattern Matching",
+      "description": "Pattern matching approach for instruction selection from syntax trees",
+      "code": "PROCEDURE InstructionSelect(treeNode)\n SWITCH treeNode.type OF\n \n CASE 'load':\n RETURN EmitLoad(treeNode.address)\n \n CASE 'add':\n leftCode = InstructionSelect(treeNode.left)\n rightCode = InstructionSelect(treeNode.right)\n // Choose instruction based on addressing modes\n IF treeNode.right.type == 'const' THEN\n RETURN leftCode + EmitAddImmediate(rightValue)\n ELSE\n RETURN leftCode + rightCode + EmitAdd()\n END IF\n \n CASE 'mul':\n leftCode = InstructionSelect(treeNode.left)\n rightCode = InstructionSelect(treeNode.right)\n // Use multiply or shift-add based on constant power of 2\n IF IsPowerOfTwo(treeNode.right.value) THEN\n RETURN leftCode + EmitShiftLeft(log2(value))\n ELSE\n RETURN leftCode + rightCode + EmitMultiply()\n END IF\n \n CASE 'store':\n valueCode = InstructionSelect(treeNode.value)\n RETURN valueCode + EmitStore(treeNode.address)\n \n END SWITCH\nEND PROCEDURE",
+      "explanation": "This recursive procedure selects instructions by traversing the expression tree (IR). It chooses machine instructions based on node type and available addressing modes. Optimization includes using efficient operations like shift for powers of 2 multiplication.",
+      "timeComplexity": "O(n) where n = tree nodes",
+      "spaceComplexity": "O(h) recursion stack where h = tree height"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Peephole Optimization Pass",
+      "description": "Local optimization examining sliding window of instructions",
+      "code": "PROCEDURE PeepholeOptimization(code)\n i = 0\n WHILE i < code.length - 1 DO\n // Get window of 2-4 instructions\n window = code[i : i + windowSize]\n \n // Pattern 1: Redundant Load-Store\n IF window[0].op == 'load' AND window[1].op == 'store' THEN\n IF window[0].src == window[1].dest THEN\n RemoveInstruction(i) // Eliminate load/store pair\n Continue\n END IF\n END IF\n \n // Pattern 2: Constant Folding\n IF IsArithmeticOp(window[0]) THEN\n result = EvaluateConstant(window[0])\n code[i] = CreateLoadConstant(result)\n RemoveInstruction(i+1)\n Continue\n END IF\n \n // Pattern 3: Jump to Next Instruction\n IF window[0].op == 'goto' AND window[0].target == i+2 THEN\n RemoveInstruction(i) // Remove useless jump\n Continue\n END IF\n \n // Pattern 4: Register Move Elimination\n IF window[0].op == 'mov' AND window[0].src == window[0].dest THEN\n RemoveInstruction(i)\n Continue\n END IF\n \n i = i + 1\n END WHILE\n RETURN code\nEND PROCEDURE",
+      "explanation": "This peephole optimizer scans through generated code looking for local patterns that can be improved. It eliminates redundant operations, folds constants, removes unreachable jumps, and cleans up useless moves. The window size is typically 2-4 instructions.",
+      "timeComplexity": "O(n \u00d7 w) where n = instructions, w = window size",
+      "spaceComplexity": "O(w) for the sliding window"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "binary-tree-traversals",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Recursive Preorder Traversal",
+      "description": "Preorder (Node-Left-Right) traversal using recursion",
+      "code": "ALGORITHM Preorder(node)\nBEGIN\n    IF node = NULL THEN\n        RETURN\n    ENDIF\n    VISIT(node)          // Process current node\n    Preorder(node.left)  // Traverse left subtree\n    Preorder(node.right) // Traverse right subtree\nEND",
+      "explanation": "Preorder visits each node before its subtrees. First the root is processed, then recursively the entire left subtree, then the right subtree. For the example tree, output: A-B-D-E-C-F.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Python Implementation of Inorder Traversal",
+      "description": "Both recursive and iterative inorder traversal implementations",
+      "code": "# Recursive Inorder\ndef inorder_recursive(root):\n    if root:\n        inorder_recursive(root.left)\n        print(root.val)  # Visit node\n        inorder_recursive(root.right)\n\n# Iterative Inorder using Stack\ndef inorder_iterative(root):\n    stack = []\n    current = root\n    while current or stack:\n        # Go to leftmost node\n        while current:\n            stack.append(current)\n            current = current.left\n        # Process node\n        current = stack.pop()\n        print(current.val)\n        # Move to right subtree\n        current = current.right",
+      "explanation": "Recursive version uses call stack implicitly. Iterative version uses explicit stack to simulate recursion: push all left nodes, pop and visit, then move right. Output for BST gives sorted order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "C Implementation of Level Order Traversal",
+      "description": "Level order (BFS) traversal using queue",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    char data;\n    struct Node* left;\n    struct Node* right;\n};\n\nstruct Queue {\n    struct Node** items;\n    int front, rear, size;\n};\n\nvoid levelOrder(struct Node* root) {\n    if (root == NULL) return;\n    \n    struct Queue q;\n    q.size = 100;\n    q.front = q.rear = 0;\n    q.items = malloc(q.size * sizeof(struct Node*));\n    \n    enqueue(&q, root);\n    \n    while (!isEmpty(&q)) {\n        struct Node* temp = dequeue(&q);\n        printf(\"%c \", temp->data);\n        \n        if (temp->left) enqueue(&q, temp->left);\n        if (temp->right) enqueue(&q, temp->right);\n    }\n}",
+      "explanation": "Level order uses a queue (FIFO). Root is enqueued first, then processed and removed while its children are added. This ensures all nodes at depth d are processed before depth d+1. Output: A-B-C-D-E-F for the example tree.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(w) where w is max width"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Java Postorder Traversal Implementation",
+      "description": "Postorder (Left-Right-Node) traversal showing both recursive and iterative approaches",
+      "code": "// Recursive Postorder\nclass TreeTraversal {\n    void postorderRecursive(Node root) {\n        if (root == null) return;\n        postorderRecursive(root.left);   // Traverse left\n        postorderRecursive(root.right);  // Traverse right\n        visit(root);                      // Visit node\n    }\n    \n    // Iterative Postorder using Two Stacks\n    void postorderIterative(Node root) {\n        if (root == null) return;\n        Stack<Node> s1 = new Stack<>();\n        Stack<Node> s2 = new Stack<>();\n        s1.push(root);\n        \n        while (!s1.isEmpty()) {\n            Node temp = s1.pop();\n            s2.push(temp);\n            if (temp.left != null) s1.push(temp.left);\n            if (temp.right != null) s1.push(temp.right);\n        }\n        \n        while (!s2.isEmpty()) {\n            visit(s2.pop());\n        }\n    }\n}",
+      "explanation": "Postorder visits children before parent. Recursive version naturally visits left, right, then node. Iterative uses two stacks: first stack reverses order, second stack produces postorder. Output: D-E-B-F-C-A for example tree. Useful for tree deletion.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h) for recursive, O(n) for iterative with two stacks"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "equivalence-and-minimization-of-automata",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "DFA Minimization using Partition Refinement",
+      "description": "Algorithm to minimize a DFA by iteratively refining partitions of states",
+      "code": "// Input: Complete DFA (Q, Σ, δ, q0, F)\n// Output: Minimal DFA\n\nBEGIN\n // Step 1: Initial partition\n P ← {{F}, {Q - F}} // Accepting, Non-accepting\n P_old ← ∅\n \n // Step 2: Iterative refinement\n WHILE P ≠ P_old DO\n P_old ← P\n P_new ← ∅\n \n FOR EACH group G IN P DO\n // Create subgroups based on transition behavior\n subgroups ← split(G, P_old)\n FOR EACH subgroup S IN subgroups DO\n P_new ← P_new ∪ {S}\n END FOR\n END FOR\n \n P ← P_new\n END WHILE\n \n // Step 3: Construct minimal DFA from final partition\n RETURN build_minimal_dfa(P)\nEND\n\nFUNCTION split(G, P):\n // Split group G into subgroups with different transitions\n RETURN subgroups\nEND FUNCTION",
+      "explanation": "The algorithm starts by separating accepting from non-accepting states, then iteratively splits groups where states have different transition behavior to distinguishable states. When no more splits occur, equivalent states remain in the same group.",
+      "timeComplexity": "O(n² × |Σ|)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Table-Filling Method for Distinguishable States",
+      "description": "Algorithm to find all distinguishable state pairs using table-filling approach",
+      "code": "// Input: DFA (Q, Σ, δ, q0, F)\n// Output: Set of distinguishable state pairs\n\nBEGIN\n n ← |Q|\n states ← array of Q elements\n table ← n×n boolean matrix, initialized to FALSE\n \n // Step 1: Mark initial distinguishable pairs\n FOR each pair (p, q) where p ∈ F and q ∉ F DO\n table[p][q] ← TRUE\n table[q][p] ← TRUE\n END FOR\n \n // Step 2: Iteratively mark more pairs\n changed ← TRUE\n WHILE changed DO\n changed ← FALSE\n FOR each unmarked pair (p, q) DO\n FOR each input symbol a IN Σ DO\n r ← δ(p, a)\n s ← δ(q, a)\n IF table[r][s] = TRUE OR table[s][r] = TRUE THEN\n table[p][q] ← TRUE\n table[q][p] ← TRUE\n changed ← TRUE\n BREAK\n END IF\n END FOR\n END FOR\n END WHILE\n \n // Step 3: Unmarked pairs are equivalent\n RETURN all pairs where table[p][q] = FALSE\nEND",
+      "explanation": "This algorithm marks pairs where one state is accepting and other is non-accepting as initially distinguishable, then repeatedly checks if transitions from an unmarked pair lead to a marked (distinguishable) pair. When stable, unmarked pairs are equivalent.",
+      "timeComplexity": "O(n² × |Σ| × iterations)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Python Implementation of DFA Minimization",
+      "description": "Complete working example of DFA minimization",
+      "code": "def minimize_dfa(Q, sigma, delta, start, F):\n # Remove unreachable states\n reachable = {start}\n queue = [start]\n while queue:\n state = queue.pop(0)\n for symbol in sigma:\n next_state = delta.get((state, symbol))\n if next_state and next_state not in reachable:\n reachable.add(next_state)\n queue.append(next_state)\n \n Q = reachable\n \n # Add dead state if needed for incomplete DFA\n dead_state = 'DEAD'\n for state in Q:\n for symbol in sigma:\n if (state, symbol) not in delta:\n delta[(dead_state, symbol)] = dead_state\n Q = Q ∪ {dead_state}\n \n # Initial partition\n non_F = Q - F\n partitions = [F, non_F] if F and non_F else [Q]\n \n # Refine partitions\n while True:\n new_partitions = []\n for group in partitions:\n if len(group) <= 1:\n new_partitions.append(group)\n continue\n \n # Try to split group\n subgroups = split_group(group, partitions, delta, sigma)\n new_partitions.extend(subgroups)\n \n if partitions == new_partitions:\n break\n partitions = new_partitions\n \n return partitions\n\n# Example usage would construct minimal DFA from partitions",
+      "explanation": "This Python implementation shows practical DFA minimization including unreachable state removal, completion with dead state, and partition refinement. The final partitions represent equivalence classes that become states in the minimal DFA.",
+      "timeComplexity": "O(n² × |Σ|)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

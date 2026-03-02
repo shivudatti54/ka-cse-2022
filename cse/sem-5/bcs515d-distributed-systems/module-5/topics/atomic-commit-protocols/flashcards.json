@@ -1,0 +1,80 @@
+{
+  "topicId": "atomic-commit-protocols",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is an Atomic Commit Protocol?",
+      "back": "A protocol ensuring that in a distributed transaction spanning multiple nodes, either ALL nodes commit the transaction or NONE do. It guarantees atomicity in distributed environments."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the Two-Phase Commit (2PC) protocol?",
+      "back": "A atomic commit protocol with two phases: Vote (participants vote commit/abort) and Decision (coordinator makes global decision). Ensures all-or-nothing execution across distributed databases."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the Three-Phase Commit (3PC) protocol?",
+      "back": "A non-blocking atomic commit protocol with three phases: CanCommit, PreCommit, and DoCommit. Designed to avoid blocking when coordinator fails."
+    },
+    {
+      "id": "fc-4",
+      "front": "What is the role of Coordinator in 2PC?",
+      "back": "The coordinator initiates the transaction, sends commands to participants, collects votes, makes global commit/abort decision, and informs all participants of the final outcome."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the role of Participant in 2PC?",
+      "back": "Participants execute the transaction, vote commit or abort in vote phase, and execute coordinator's final decision (commit or abort) in decision phase."
+    },
+    {
+      "id": "fc-6",
+      "front": "What happens in the Vote Phase of 2PC?",
+      "back": "Coordinator sends VOTE-REQUEST to all participants. Each participant executes transaction, writes undo/redo logs, and responds with VOTE-COMMIT or VOTE-ABORT."
+    },
+    {
+      "id": "fc-7",
+      "front": "What happens in the Decision Phase of 2PC?",
+      "back": "Coordinator collects votes. If all vote commit, sends GLOBAL-COMMIT; if any votes abort, sends GLOBAL-ABORT. Participants then commit or abort accordingly."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the blocking problem in 2PC?",
+      "back": "If coordinator fails after participants vote commit, participants block (wait indefinitely) because they don't know the global decision. They cannot release locks or proceed."
+    },
+    {
+      "id": "fc-9",
+      "front": "How does 3PC solve the blocking problem?",
+      "back": "3PC adds a Prepare phase where participants acknowledge the decision before execution. If coordinator fails, participants can communicate to determine the global state and proceed."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is a prepare message in 2PC?",
+      "back": "The prepare message (VOTE-REQUEST) is sent by coordinator asking participants to prepare to commit. Participants must write a prepare log before voting commit."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is the difference between 2PC and 3PC?",
+      "back": "2PC blocks on coordinator failure; 3PC is non-blocking. 3PC has an extra PreCommit phase. 2PC has 2 rounds; 3PC has 3 rounds of messaging."
+    },
+    {
+      "id": "fc-12",
+      "front": "How is timeout handled in 2PC?",
+      "back": "If coordinator times out waiting for votes, it sends GLOBAL-ABORT. If participant times out waiting for decision, it blocks until coordinator recovers."
+    },
+    {
+      "id": "fc-13",
+      "front": "What is the purpose of write-ahead logging in 2PC?",
+      "back": "Participants write undo and redo logs before voting. If failure occurs, logs enable recovery - either commit (redo) or abort (undo) after coordinator decision is known."
+    },
+    {
+      "id": "fc-14",
+      "front": "What happens when a participant votes ABORT in 2PC?",
+      "back": "When any participant votes ABORT, coordinator immediately decides GLOBAL-ABORT and sends it to all participants. All participants must abort the transaction."
+    },
+    {
+      "id": "fc-15",
+      "front": "What are the three phases in 3PC?",
+      "back": "1) CanCommit: Coordinator asks participants if they can commit. 2) PreCommit: Coordinator sends pre-commit if all can commit. 3) DoCommit: Participants actually commit the transaction."
+    }
+  ]
+}

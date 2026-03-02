@@ -1,0 +1,35 @@
+{
+  "topicId": "partial-derivatives-del-operator",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Basic Partial Derivatives Computation",
+      "description": "Computing partial derivatives of a multivariate function f(x,y) = x^2*y + 3*x*y^2 using symbolic computation",
+      "code": "from sympy import symbols, diff\n\n# Define symbols\nx, y = symbols('x y')\n\n# Define function f(x,y) = x^2*y + 3*x*y^2\nf = x**2 * y + 3 * x * y**2\n\n# Compute partial derivative with respect to x\npartial_x = diff(f, x)\nprint(f\"f(x,y) = {f}\")\nprint(f\"∂f/∂x = {partial_x}\")\n\n# Compute partial derivative with respect to y\npartial_y = diff(f, y)\nprint(f\"∂f/∂y = {partial_y}\")\n\n# Second-order partial derivatives\npartial_xx = diff(f, x, 2)\npartial_yy = diff(f, y, 2)\npartial_xy = diff(diff(f, x), y)\nprint(f\"∂²f/∂x² = {partial_xx}\")\nprint(f\"∂²f/∂y² = {partial_yy}\")\nprint(f\"∂²f/∂x∂y = {partial_xy}\")",
+      "explanation": "We use SymPy library for symbolic mathematics. First, we define symbols x and y. Then we define the function f(x,y). The diff() function computes partial derivatives. We also compute second-order derivatives to demonstrate mixed partials.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Gradient (Del Operator on Scalar Field)",
+      "description": "Computing the gradient vector ∇f for a scalar field f(x,y,z) = x² + y² + z²",
+      "code": "import numpy as np\n\n# Define a scalar function\ndef scalar_field(x, y, z):\n    return x**2 + y**2 + z**2\n\n# Compute gradient numerically using central difference\ndef gradient(f, x, y, z, h=1e-5):\n    grad_x = (f(x+h, y, z) - f(x-h, y, z)) / (2*h)\n    grad_y = (f(x, y+h, z) - f(x, y-h, z)) / (2*h)\n    grad_z = (f(x, y, z+h) - f(x, y, z-h)) / (2*h)\n    return np.array([grad_x, grad_y, grad_z])\n\n# Test at point (1, 2, 3)\npoint = (1, 2, 3)\ngrad = gradient(scalar_field, *point)\n\nprint(f\"Scalar field: f(x,y,z) = x² + y² + z²\")\nprint(f\"Point: {point}\")\nprint(f\"Gradient ∇f = {grad}\")\nprint(f\"Analytical result: [2x, 2y, 2z] = {[2*point[i] for i in range(3)]}\")\n\n# Verify gradient points in direction of steepest ascent\nprint(f\"\\nGradient magnitude: {np.linalg.norm(grad):.6f}\")",
+      "explanation": "The gradient ∇ is the del operator applied to a scalar field, producing a vector. We compute it numerically using central difference approximation. At any point, the gradient points in the direction of steepest ascent, and its magnitude equals the slope in that direction.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Del Operator - Divergence and Curl",
+      "description": "Computing divergence (∇·F) and curl (∇×F) of a vector field F = (yz, xz, xy)",
+      "code": "import numpy as np\n\n# Define vector field F = (P, Q, R) = (yz, xz, xy)\ndef vector_field(x, y, z):\n    return np.array([y*z, x*z, x*y])\n\n# Compute divergence: ∇·F = ∂P/∂x + ∂Q/∂y + ∂R/∂z\ndef divergence(f, x, y, z, h=1e-5):\n    # Partial derivatives using central difference\n    dP_dx = (f(x+h, y, z)[0] - f(x-h, y, z)[0]) / (2*h)\n    dQ_dy = (f(x, y+h, z)[1] - f(x, y-h, z)[1]) / (2*h)\n    dR_dz = (f(x, y, z+h)[2] - f(x, y, z-h)[2]) / (2*h)\n    return dP_dx + dQ_dy + dR_dz\n\n# Compute curl: ∇×F = (∂R/∂y - ∂Q/∂z, ∂P/∂z - ∂R/∂x, ∂Q/∂x - ∂P/∂y)\ndef curl(f, x, y, z, h=1e-5):\n    # ∂R/∂y\n    dR_dy = (f(x, y+h, z)[2] - f(x, y-h, z)[2]) / (2*h)\n    # ∂Q/∂z\n    dQ_dz = (f(x, y, z+h)[1] - f(x, y, z-h)[1]) / (2*h)\n    # ∂P/∂z\n    dP_dz = (f(x, y, z+h)[0] - f(x, y, z-h)[0]) / (2*h)\n    # ∂R/∂x\n    dR_dx = (f(x+h, y, z)[2] - f(x-h, y, z)[2]) / (2*h)\n    # ∂Q/∂x\n    dQ_dx = (f(x+h, y, z)[1] - f(x-h, y, z)[1]) / (2*h)\n    # ∂P/∂y\n    dP_dy = (f(x, y+h, z)[0] - f(x, y-h, z)[0]) / (2*h)\n    \n    return np.array([dR_dy - dQ_dz, dP_dz - dR_dx, dQ_dx - dP_dy])\n\n# Test at point (1, 2, 3)\npoint = (1, 2, 3)\ndiv = divergence(vector_field, *point)\ncurl_result = curl(vector_field, *point)\n\nprint(f\"Vector field F = (yz, xz, xy)\")\nprint(f\"Test point: {point}\")\nprint(f\"Divergence ∇·F = {div}\")\nprint(f\"Curl ∇×F = {curl_result}\")\nprint(f\"\\nAnalytical: Divergence = 0 + 0 + 0 = 0\")\nprint(f\"Analytical: Curl = (x-x, y-y, z-z) = (0, 0, 0)\")",
+      "explanation": "The del operator (∇) applied to vector fields produces divergence (scalar) or curl (vector). Divergence measures source/sink strength at a point. Curl measures rotational tendency. This example computes both numerically for F = (yz, xz, xy) at point (1,2,3).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

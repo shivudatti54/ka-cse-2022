@@ -1,0 +1,45 @@
+{
+  "topicId": "runtime-polymorphism-pointers",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Runtime Polymorphism with Virtual Functions",
+      "description": "Demonstrates runtime polymorphism using base class pointer and virtual functions",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Animal {\npublic:\n    virtual void sound() {  // Virtual function\n        cout << \"Some animal sound\" << endl;\n    }\n    virtual ~Animal() { cout << \"Animal destructor\" << endl; }  // Virtual destructor\n};\n\nclass Dog : public Animal {\npublic:\n    void sound() override {  // Override virtual function\n        cout << \"Dog barks: Woof! Woof!\" << endl;\n    }\n    ~Dog() { cout << \"Dog destructor\" << endl; }\n};\n\nclass Cat : public Animal {\npublic:\n    void sound() override {\n        cout << \"Cat meows: Meow! Meow!\" << endl;\n    }\n    ~Cat() { cout << \"Cat destructor\" << endl; }\n};\n\nint main() {\n    // Base class pointers pointing to derived objects\n    Animal* animals[3];\n    animals[0] = new Animal();\n    animals[1] = new Dog();\n    animals[2] = new Cat();\n    \n    for (int i = 0; i < 3; i++) {\n        animals[i]->sound();  // Runtime polymorphism\n    }\n    \n    for (int i = 0; i < 3; i++) {\n        delete animals[i];  // Proper cleanup with virtual destructor\n    }\n    \n    return 0;\n}",
+      "explanation": "This program demonstrates runtime polymorphism by using base class pointers to derived class objects. The virtual sound() function is resolved at runtime based on the actual object type (Dog or Cat), not the pointer type.",
+      "timeComplexity": "O(1) per function call, O(n) for n objects",
+      "spaceComplexity": "O(1) per object + O(n) for array of n pointers"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Abstract Class with Pure Virtual Functions",
+      "description": "Demonstrates abstract classes and pure virtual functions",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Shape {\nprotected:\n    string name;\npublic:\n    Shape(string n) : name(n) {}\n    virtual double area() = 0;  // Pure virtual function\n    virtual void display() {\n        cout << \"Shape: \" << name << endl;\n    }\n    virtual ~Shape() {}\n};\n\nclass Rectangle : public Shape {\nprivate:\n    double length, width;\npublic:\n    Rectangle(double l, double w) : Shape(\"Rectangle\"), length(l), width(w) {}\n    double area() override {\n        return length * width;\n    }\n};\n\nclass Circle : public Shape {\nprivate:\n    double radius;\npublic:\n    Circle(double r) : Shape(\"Circle\"), radius(r) {}\n    double area() override {\n        return 3.14159 * radius * radius;\n    }\n};\n\nint main() {\n    // Shape s;  // ERROR: Cannot instantiate abstract class\n    Shape* shapes[2];  // Array of base class pointers\n    \n    shapes[0] = new Rectangle(5, 3);\n    shapes[1] = new Circle(4);\n    \n    for (int i = 0; i < 2; i++) {\n        cout << \"Area: \" << shapes[i]->area() << endl;\n    }\n    \n    delete shapes[0];\n    delete shapes[1];\n    \n    return 0;\n}",
+      "explanation": "Shape is an abstract class with pure virtual function area(). Derived classes Rectangle and Circle must implement area() to become concrete. Polymorphism allows calling area() through base class pointer to get correct derived class implementation.",
+      "timeComplexity": "O(1) for area calculation per shape type",
+      "spaceComplexity": "O(1) per object"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Virtual Destructor Demonstration",
+      "description": "Shows importance of virtual destructor for proper cleanup",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n    // Virtual destructor - important for polymorphism\n    virtual ~Base() {\n        cout << \"Base destructor called\" << endl;\n    }\n    virtual void show() {\n        cout << \"Base show\" << endl;\n    }\n};\n\nclass Derived : public Base {\nprivate:\n    int* data;\npublic:\n    Derived() {\n        data = new int[100];  // Allocate memory\n        cout << \"Memory allocated in Derived\" << endl;\n    }\n    \n    ~Derived() override {\n        delete[] data;  // Release memory\n        cout << \"Derived destructor called - memory freed\" << endl;\n    }\n    \n    void show() override {\n        cout << \"Derived show\" << endl;\n    }\n};\n\nint main() {\n    Base* ptr = new Derived();\n    ptr->show();  // Calls Derived::show()\n    \n    delete ptr;  // With virtual destructor: calls Derived then Base\n    // Without virtual: only Base destructor - MEMORY LEAK!\n    \n    return 0;\n}",
+      "explanation": "This demonstrates why virtual destructors are essential. When deleting through base pointer, virtual destructor ensures derived class destructor is called first (freeing derived-allocated memory), then base destructor. Without virtual, only base destructor runs causing memory leaks.",
+      "timeComplexity": "O(1) for destructor calls",
+      "spaceComplexity": "O(n) for dynamically allocated memory in Derived"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Python Equivalent - Duck Typing",
+      "description": "Demonstrates Python's approach to polymorphism (duck typing)",
+      "code": "class Animal:\n    def sound(self):\n        raise NotImplementedError(\"Subclasses must implement sound()\")\n\nclass Dog(Animal):\n    def sound(self):\n        return \"Woof! Woof!\"\n\nclass Cat(Animal):\n    def sound(self):\n        return \"Meow! Meow!\"\n\ndef make_sound(animal):\n    \"\"\"Python uses duck typing - no need for explicit base pointer\"\"\"\n    return animal.sound()\n\n# Usage - Python handles polymorphism automatically\nanimals = [Dog(), Cat(), Dog()]\nfor animal in animals:\n    print(make_sound(animal))\n\n# Output:\n# Woof! Woof!\n# Meow! Meow!\n# Woof! Woof!",
+      "explanation": "Python uses duck typing ('if it walks like a duck...') for polymorphism. No need for explicit virtual functions or base class pointers - any object with sound() method works. This is different from C++ compile-time vtable approach.",
+      "timeComplexity": "O(1) per call",
+      "spaceComplexity": "O(1) per object"
+    }
+  ]
+}

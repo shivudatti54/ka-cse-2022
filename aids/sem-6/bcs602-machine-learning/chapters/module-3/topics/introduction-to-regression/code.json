@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction-to-regression",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Linear Regression Implementation",
+      "description": "Implementation of simple linear regression using gradient descent to find best-fit line",
+      "code": "import numpy as np\n\ndef compute_cost(X, y, theta):\n    m = len(y)\n    predictions = X.dot(theta)\n    cost = (1/(2*m)) * np.sum((predictions - y)**2)\n    return cost\n\ndef gradient_descent(X, y, theta, alpha, iterations):\n    m = len(y)\n    cost_history = []\n    \n    for i in range(iterations):\n        predictions = X.dot(theta)\n        errors = predictions - y\n        gradient = (1/m) * X.T.dot(errors)\n        theta = theta - alpha * gradient\n        cost_history.append(compute_cost(X, y, theta))\n    \n    return theta, cost_history\n\n# Example usage\nX = np.array([[1, 1], [1, 2], [1, 3], [1, 4]])\ny = np.array([1, 2, 3, 4])\ntheta = np.zeros(2)\nalpha = 0.1\niterations = 1000\n\ntheta, cost_history = gradient_descent(X, y, theta, alpha, iterations)\nprint(f\"Parameters: {theta}\")",
+      "explanation": "This code implements simple linear regression using gradient descent. It computes the cost function (MSE) and iteratively adjusts parameters to minimize error until convergence.",
+      "timeComplexity": "O(iterations \u00d7 m \u00d7 n)",
+      "spaceComplexity": "O(m + n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Linear Regression Using Normal Equation",
+      "description": "Direct analytical solution for linear regression using normal equation",
+      "code": "ALGORITHM LinearRegressionNormalEquation\nINPUT: Feature matrix X, target vector y\nOUTPUT: Optimal parameters theta\n\nBEGIN\n  1. ADD BIAS TERM: Insert column of 1s as first column of X\n  2. COMPUTE TRANSPOSE: X_T = transpose(X)\n  3. COMPUTE PRODUCT: X_T_X = X_T \u00d7 X\n  4. COMPUTE INVERSE: X_T_X_INV = inverse(X_T_X)\n  5. COMPUTE THETA: theta = X_T_X_INV \u00d7 X_T \u00d7 y\n  6. RETURN theta\nEND",
+      "explanation": "Normal equation provides closed-form solution for linear regression without iterative optimization. Works well when feature matrix is not too large.",
+      "timeComplexity": "O(n\u00b3 + n\u00b2m)",
+      "spaceComplexity": "O(n\u00b2)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Mean Squared Error Calculation",
+      "description": "Calculate MSE to evaluate regression model performance",
+      "code": "public class RegressionMetrics {\n    \n    // Calculate Mean Squared Error\n    public static double calculateMSE(double[] actual, double[] predicted) {\n        if (actual.length != predicted.length) {\n            throw new IllegalArgumentException(\"Arrays must have same length\");\n        }\n        \n        double sumSquaredError = 0.0;\n        int n = actual.length;\n        \n        for (int i = 0; i < n; i++) {\n            double error = actual[i] - predicted[i];\n            sumSquaredError += error * error;\n        }\n        \n        return sumSquaredError / n;\n    }\n    \n    // Calculate R-Squared\n    public static double calculateRSquared(double[] actual, double[] predicted) {\n        double meanActual = calculateMean(actual);\n        double ssTot = 0.0;  // Total sum of squares\n        double ssRes = 0.0;  // Residual sum of squares\n        \n        for (int i = 0; i < actual.length; i++) {\n            ssTot += Math.pow(actual[i] - meanActual, 2);\n            ssRes += Math.pow(actual[i] - predicted[i], 2);\n        }\n        \n        return 1 - (ssRes / ssTot);\n    }\n    \n    private static double calculateMean(double[] arr) {\n        double sum = 0;\n        for (double val : arr) sum += val;\n        return sum / arr.length;\n    }\n    \n    public static void main(String[] args) {\n        double[] actual = {3.0, 4.0, 5.0, 6.0, 7.0};\n        double[] predicted = {3.1, 4.2, 4.9, 6.2, 6.8};\n        \n        System.out.println(\"MSE: \" + calculateMSE(actual, predicted));\n        System.out.println(\"R-Squared: \" + calculateRSquared(actual, predicted));\n    }\n}",
+      "explanation": "This Java code calculates MSE and R-squared metrics to evaluate regression model quality. MSE measures average squared prediction error, while R-squared shows how much variance the model explains.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Train-Test Split for Regression",
+      "description": "Procedure to split data into training and testing sets for model evaluation",
+      "code": "ALGORITHM TrainTestSplit\nINPUT: Dataset D, test_size ratio (default 0.2), random_state\nOUTPUT: Training set D_train, Testing set D_test\n\nBEGIN\n  1. IF random_state is provided THEN\n        Set random number generator seed to random_state\n  2. SHUFFLE the entire dataset D randomly\n  3. CALCULATE split_index = (1 - test_size) \u00d7 total_samples\n  4. CREATE D_train = first split_index samples from D\n  5. CREATE D_test = remaining samples from D\n  6. RETURN D_train, D_test\nEND\n\nALGORITHM EvaluateRegressionModel\nINPUT: Model, D_train, D_test\nBEGIN\n  1. TRAIN model using D_train\n  2. PREDICT on D_train \u2192 predictions_train\n  3. PREDICT on D_test \u2192 predictions_test\n  4. CALCULATE MSE_train using predictions_train and actual train values\n  5. CALCULATE MSE_test using predictions_test and actual test values\n  6. IF MSE_test >> MSE_train THEN\n        RETURN \"Warning: Possible overfitting\"\n  7. ELSE IF MSE_train and MSE_test both are high THEN\n        RETURN \"Warning: Possible underfitting\"\n  8. ELSE\n        RETURN \"Model generalizes well\"\nEND",
+      "explanation": "This pseudocode demonstrates the standard procedure for splitting data and evaluating whether a regression model generalizes properly or suffers from overfitting/underfitting.",
+      "timeComplexity": "O(n) for splitting",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

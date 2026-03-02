@@ -1,0 +1,35 @@
+{
+  "topicId": "semaphores",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Binary Semaphore Implementation",
+      "description": "Implementation of wait and signal operations for binary semaphore",
+      "code": "// Shared semaphore variable\nSEMAPHORE mutex = 1;\n\n// Wait operation (P)\nwait(SEMAPHORE S):\n S = S - 1;\n if S < 0:\n block this process\n add to waiting queue\n\n// Signal operation (V)\nsignal(SEMAPHORE S):\n S = S + 1;\n if S <= 0:\n wake up one process from waiting queue\n\n// Process using semaphore\nprocess P:\n while true:\n wait(mutex); // Entry section\n // Critical section\n critical_code();\n signal(mutex); // Exit section\n // Remainder section",
+      "explanation": "Binary semaphore initialized to 1 ensures mutual exclusion. Only one process can enter critical section at a time. Other processes block when they find mutex=0.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Producer-Consumer Solution",
+      "description": "Semaphore-based solution for bounded buffer producer-consumer problem",
+      "code": "// Constants and variables\nN = 10; // Buffer size\nbuffer[N];\nin = 0, out = 0;\n\n// Semaphores\nSEMAPHORE empty = N; // Count of empty slots\nSEMAPHORE full = 0; // Count of filled slots\nSEMAPHORE mutex = 1; // For mutual exclusion\n\n// Producer Process\nproducer():\n while true:\n item = produce();\n wait(empty); // Wait for empty slot\n wait(mutex); // Enter critical section\n buffer[in] = item;\n in = (in + 1) % N;\n signal(mutex); // Exit critical section\n signal(full); // Signal filled slot\n\n// Consumer Process\nconsumer():\n while true:\n wait(full); // Wait for filled slot\n wait(mutex); // Enter critical section\n item = buffer[out];\n out = (out + 1) % N;\n signal(mutex); // Exit critical section\n signal(empty); // Signal empty slot\n consume(item);",
+      "explanation": "Two counting semaphores (empty, full) track buffer slots. Binary mutex ensures only one process accesses buffer at a time. This prevents overflow and underflow.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(N)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Readers-Writers Solution (Reader Preference)",
+      "description": "Semaphore solution allowing multiple readers but exclusive writers",
+      "code": "// Shared variables\nSEMAPHORE mutex = 1; // Protects readcount\nSEMAPHORE wrt = 1; // Writers need exclusive access\nint readcount = 0;\n\n// Reader Process\nreader():\n while true:\n wait(mutex);\n readcount = readcount + 1;\n if readcount == 1:\n wait(wrt); // First reader locks writers out\n signal(mutex);\n \n // Reading happens here - multiple readers allowed\n read_data();\n \n wait(mutex);\n readcount = readcount - 1;\n if readcount == 0:\n signal(wrt); // Last reader releases writers\n signal(mutex);\n\n// Writer Process\nwriter():\n while true:\n wait(wrt); // Get exclusive access\n write_data(); // Only one writer at a time\n signal(wrt);",
+      "explanation": "readcount tracks number of active readers. First reader locks writer out (wait on wrt), last reader releases lock. Writers must wait until all readers finish.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

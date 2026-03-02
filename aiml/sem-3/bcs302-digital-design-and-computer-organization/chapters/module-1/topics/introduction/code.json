@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Truth Table Generator",
+      "description": "Generate truth table for a given number of input variables",
+      "code": "ALGORITHM GenerateTruthTable\nINPUT: n (number of variables)\nOUTPUT: All 2^n combinations\n\nBEGIN\n  SET numRows = 2^n\n  FOR i FROM 0 TO numRows-1 DO\n    SET binaryString = ConvertToBinary(i, n)\n    PRINT binaryString\n  END FOR\nEND\n\nFUNCTION ConvertToBinary(num, bits)\nBEGIN\n  SET result = \"\"\n  FOR j FROM bits-1 DOWNTO 0 DO\n    SET bit = (num >> j) AND 1\n    SET result = result + bit\n  END FOR\n  RETURN result\nEND",
+      "explanation": "This algorithm generates all possible input combinations for n variables by counting from 0 to 2^n-1 and converting each number to binary representation. Each row represents one input combination.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Boolean Function Evaluator",
+      "description": "Evaluate a Boolean function for all input combinations",
+      "code": "def evaluate_boolean_function(expr_vars, expr):\n    \"\"\"\n    Evaluate Boolean function for all input combinations\n    expr_vars: list of variable names ['A', 'B', 'C']\n    expr: lambda function implementing the Boolean expression\n    \"\"\"\n    n = len(expr_vars)\n    num_combinations = 2 ** n\n    \n    print(f\"Truth Table for: {expr_vars}\")\n    print(\"-\" * 30)\n    \n    for i in range(num_combinations):\n        # Create input values as dictionary\n        inputs = {}\n        for j, var in enumerate(expr_vars):\n            inputs[var] = (i >> (n - 1 - j)) & 1\n        \n        # Evaluate expression\n        result = expr(**inputs)\n        \n        # Print row\n        input_str = ' '.join(str(inputs[v]) for v in expr_vars)\n        print(f\"{input_str} | {int(result)}\")\n\n# Example: F = A AND B OR C\ndef F(A, B, C):\n    return (A and B) or C\n\nevaluate_boolean_function(['A', 'B', 'C'], F)",
+      "explanation": "This Python code generates a complete truth table by evaluating a Boolean function for all possible input combinations. It converts each row number to binary and passes values to the expression.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n) for storing results if needed"
+    },
+    {
+      "id": "code-3",
+      "language": "verilog",
+      "title": "2-to-1 Multiplexer in Verilog",
+      "description": "Behavioral and structural implementation of a 2-to-1 multiplexer in Verilog HDL",
+      "code": "// Behavioral Modeling\nmodule mux2to1_behav (input A, B, S, output Y);\n  always @ (*) begin\n    if (S == 0)\n      Y = A;\n    else\n      Y = B;\n  end\nendmodule\n\n// Structural Modeling (using basic gates)\nmodule mux2to1_struct (input A, B, S, output Y);\n  wire S_bar, T1, T2;\n  \n  // NOT gate\n  not (S_bar, S);\n  \n  // AND gates\n  and (T1, S_bar, A);\n  and (T2, S, B);\n  \n  // OR gate\n  or (Y, T1, T2);\n  \nendmodule\n\n// Testbench\nmodule tb_mux;\n  reg A, B, S;\n  wire Y;\n  \n  mux2to1_behav uut (A, B, S, Y);\n  \n  initial begin\n    $display(\"A B S | Y\");\n    $monitor(\"%b %b %b | %b\", A, B, S, Y);\n    A=0; B=0; S=0; #10;\n    A=0; B=0; S=1; #10;\n    A=0; B=1; S=0; #10;\n    A=0; B=1; S=1; #10;\n    A=1; B=0; S=0; #10;\n    A=1; B=0; S=1; #10;\n    A=1; B=1; S=0; #10;\n    A=1; B=1; S=1; #10;\n  end\nendmodule",
+      "explanation": "Verilog code shows both behavioral (using if-else) and structural (using gate primitives) modeling of a 2-to-1 multiplexer. The testbench verifies all input combinations match the expected truth table.",
+      "timeComplexity": "N/A (hardware description)",
+      "spaceComplexity": "N/A (hardware description)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Boolean Expression Simplifier",
+      "description": "Program to simplify Boolean expressions using Quine-McCluskey method",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n// Evaluate AND gate\nbool AND(bool a, bool b) {\n    return a && b;\n}\n\n// Evaluate OR gate\nbool OR(bool a, bool b) {\n    return a || b;\n}\n\n// Evaluate NOT gate\nbool NOT(bool a) {\n    return !a;\n}\n\n// Evaluate F = A.B + C using gate functions\nbool evaluateFunction(bool A, bool B, bool C) {\n    // First compute A.B (AND of A and B)\n    bool andResult = AND(A, B);\n    // Then compute (A.B) + C (OR with C)\n    bool result = OR(andResult, C);\n    return result;\n}\n\n// Generate complete truth table\nvoid generateTruthTable() {\n    printf(\"A B C | F\\n\");\n    printf(\"-----\\n\");\n    \n    for (int i = 0; i < 8; i++) {\n        bool A = (i & 4) ? true : false;\n        bool B = (i & 2) ? true : false;\n        bool C = (i & 1) ? true : false;\n        \n        bool F = evaluateFunction(A, B, C);\n        \n        printf(\"%d %d %d | %d\\n\", A, B, C, F);\n    }\n}\n\nint main() {\n    generateTruthTable();\n    return 0;\n}",
+      "explanation": "This C program implements basic logic gates as functions and evaluates a Boolean expression F = A\u00b7B + C for all 8 input combinations. It demonstrates how digital logic can be implemented in software.",
+      "timeComplexity": "O(2^n) where n=3, so O(8) = O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

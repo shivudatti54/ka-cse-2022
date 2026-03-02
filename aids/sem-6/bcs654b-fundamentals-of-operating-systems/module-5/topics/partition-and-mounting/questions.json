@@ -1,0 +1,116 @@
+{
+  "topicId": "partition-and-mounting",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between primary, extended, and logical partitions in the MBR partition scheme.",
+      "keyPoints": [
+        "Primary partition: Bootable, directly holds data, max 4 per disk",
+        "Extended partition: Cannot hold data directly, acts as container, only 1 per disk",
+        "Logical partitions: Created inside extended partition, unlimited in number",
+        "At least one partition must be primary for booting"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is mounting? Describe three types of mounting in operating systems.",
+      "keyPoints": [
+        "Mounting attaches a file system to directory tree at mount point",
+        "Manual mounting: Using 'mount' command by administrator",
+        "Automatic mounting: File systems mounted at boot via /etc/fstab",
+        "Temporary mounting: Exists only until system reboot",
+        "Network mounting: Remote file systems via NFS, SMB"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Compare MBR and GPT partition schemes on the basis of: (i) Maximum disk size supported, (ii) Number of partitions, (iii) Data redundancy.",
+      "keyPoints": [
+        "MBR: 2TB max, 4 primary partitions (or 3+1 extended), no redundancy",
+        "GPT: 8ZB max, up to 128 partitions, redundant partition table",
+        "MBR uses 32-bit LBA, GPT uses 64-bit LBA",
+        "GPT includes CRC checksums for integrity verification",
+        "GPT required for UEFI systems"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the purpose of /etc/fstab? List at least four fields in an fstab entry.",
+      "keyPoints": [
+        "/etc/fstab defines automatic mount configuration at boot",
+        "Fields: Device (UUID or /dev/sdX)",
+        "Mount point directory path",
+        "File system type (ext4, ntfs, swap)",
+        "Mount options (ro, rw, noexec, etc.)",
+        "Dump (backup flag) and Fsck (boot order)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the role of Virtual File System (VFS) in handling multiple file system types.",
+      "keyPoints": [
+        "VFS provides abstraction layer between user applications and actual file systems",
+        "Offers uniform system call interface (open, read, write, close)",
+        "Supports multiple file systems: ext4, FAT32, NTFS, NFS, ISO9660",
+        "Handles translation between generic operations and FS-specific operations",
+        "Enables mounting diverse file systems seamlessly"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "A system administrator needs to partition a new 4TB hard disk for a Linux system with dual-boot Windows. Design a partition scheme considering: boot requirements, swap space, root, home, and Windows partition. Justify your design.",
+      "keyPoints": [
+        "GPT required (MBR limited to 2TB)",
+        "UEFI boot partition: 500MB-1GB, FAT32 for UEFI compatibility",
+        "Windows partition: Primary partition, NTFS, ~500GB",
+        "Linux boot: Separate /boot, 1GB, ext4",
+        "Swap: RAM size \u00d7 1.5 if hibernation needed, else \u00d7 0.5-1",
+        "Root (/): 50-100GB, ext4",
+        "Home (/home): Remaining space, ext4",
+        "Justify: Separation improves security, recovery, and performance"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write and explain the Linux mount command to mount an ext4 partition (/dev/sdb1) to /mnt/data with read-write access, ignoring suid/guid, and no execution of binaries. Also explain how to make this mount permanent.",
+      "keyPoints": [
+        "Command: mount -t ext4 -o rw,nosuid,noexec,nodev /dev/sdb1 /mnt/data",
+        "-t specifies file system type",
+        "-o specifies options: rw (read-write), nosuid (ignore setuid), noexec (no binaries), nodev (no devices)",
+        "For permanent mount, add to /etc/fstab",
+        "Entry format: /dev/sdb1 /mnt/data ext4 defaults,nosuid,noexec,nodev 0 2",
+        "Use UUID instead of device name for reliability",
+        "Test with 'mount -a' before reboot"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "A user reports that after mounting a USB drive to /media/flash, they cannot see their original folder 'documents' that was in /media/flash. Explain what happened and how to recover access to the original folder.",
+      "keyPoints": [
+        "Original folder contents are hidden, not deleted when mount overlays directory",
+        "The mounted file system completely replaces view of directory",
+        "To recover: unmount USB drive using 'umount /media/flash'",
+        "After unmount, original contents of /media/flash become visible again",
+        "Best practice: Use empty mount points for mounting",
+        "Alternative: Mount to new directory like /mnt/usb instead of existing folder",
+        "Files are safe - hidden by mount, not removed"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "topicId": "flat-and-nested-distributed-transactions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the Two-Phase Commit protocol and its phases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Two-Phase Commit (2PC) is a distributed transaction protocol",
+        "Phase 1 (Prepare): Coordinator asks all participants to prepare to commit",
+        "Participants lock resources and vote Yes or No",
+        "Phase 2 (Commit): If all vote Yes, coordinator sends Commit; otherwise sends Abort",
+        "Participants make changes permanent or rollback"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the blocking problem in Two-Phase Commit? How does Three-Phase Commit address it?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Blocking problem occurs when coordinator fails after Prepare phase",
+        "Participants are left waiting indefinitely for Commit or Abort decision",
+        "They cannot unilaterally decide to commit or rollback",
+        "Three-Phase Commit adds PreCommit phase to avoid blocking",
+        "If coordinator fails in PreCommit, participants can safely abort"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between flat and nested distributed transactions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Flat transactions: Single level, all-or-nothing, simple structure",
+        "Nested transactions: Hierarchical with parent and child sub-transactions",
+        "Nested allows partial commits - child transactions can commit independently",
+        "Nested provides better modularity and fault isolation",
+        "In nested, parent coordinates children but failure handling is more complex"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the role of Transaction Manager and Resource Manager in distributed transactions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Transaction Manager (Coordinator) orchestrates the entire transaction",
+        "It communicates with all participants, manages commit/abort decisions",
+        "Resource Manager (RM) manages actual data resources like databases",
+        "RMs participate in commit protocol, lock resources, vote Yes/No",
+        "RMs execute commit or rollback based on coordinator's decision"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the Saga pattern in distributed transactions? When is it preferred over 2PC?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Saga uses a sequence of local transactions with compensating actions",
+        "Each transaction publishes events; if one fails, compensating transactions undo previous work",
+        "Preferred over 2PC for: long-running transactions, microservices architecture, loosely coupled services",
+        "2PC introduces tight coupling and blocking, unsuitable for distributed microservices",
+        "Saga provides better scalability and resilience for loosely coupled systems"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the CAP theorem and its relevance to distributed transactions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "CAP theorem: Distributed systems can guarantee only two of Consistency, Availability, Partition tolerance",
+        "During network partition, must choose between Consistency or Availability",
+        "For transaction systems, consistency is often prioritized over availability",
+        "CAP theorem influences design choices in distributed databases and transaction systems",
+        "No distributed system can guarantee all three properties simultaneously during partition"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the ACID properties and how are they maintained in distributed transactions?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Atomicity: All-or-nothing commit via commit protocols (2PC/3PC)",
+        "Consistency: Transaction takes DB from one valid state to another",
+        "Isolation: Concurrency control via locking mechanisms",
+        "Durability: Logging and recovery mechanisms ensure committed data persists",
+        "In distributed systems, these properties are challenging due to multiple resources and network issues"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the Two-Phase Commit protocol in detail with a diagram. Also explain the coordinator failure scenario and how it affects participants.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Two-Phase Commit has Prepare and Commit phases",
+        "Coordinator sends Prepare to all participants, participants vote",
+        "If all vote Yes, Coordinator sends Commit; otherwise Abort",
+        "Coordinator failure after Prepare causes blocking problem",
+        "Participants wait indefinitely - cannot commit or rollback unilaterally",
+        "This is a major limitation of 2PC",
+        "Solutions include using backup coordinators, timeouts with presumed commit, or using 3PC",
+        "Diagram should show message flow between coordinator and participants"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare Flat and Nested distributed transactions. Discuss the advantages of nested transactions with suitable examples.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Flat transactions: Single unit, all operations at same level, all-or-nothing",
+        "Nested transactions: Hierarchical structure with parent-child sub-transactions",
+        "Nested allows partial commits - child can commit independently",
+        "Better modularity and reusability of transaction components",
+        "Fault isolation - failure in child doesn't necessarily affect parent",
+        "Example: Bank transfer with multiple account operations as children",
+        "Compensation handling for partial failures in nested transactions",
+        "Overhead of maintaining hierarchy vs simplicity of flat transactions"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the Three-Phase Commit protocol. How does it overcome the limitations of Two-Phase Commit?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "3PC adds an extra PreCommit phase to eliminate blocking",
+        "Phase 1 (CanCommit): Coordinator asks if participants can commit",
+        "Phase 2 (PreCommit): If all Yes, coordinator sends PreCommit to prepare for final commit",
+        "Phase 3 (DoCommit): Coordinator sends DoCommit for actual commit",
+        "If coordinator fails in PreCommit, participants know others prepared - they can safely commit",
+        "If coordinator fails before PreCommit, participants can safely abort",
+        "Eliminates uncertainty state that causes blocking in 2PC",
+        "Still has limitations - does not guarantee in asynchronous systems"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What are the challenges in implementing distributed transactions? Discuss the solutions used in modern distributed systems.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Challenges: Network failures, coordinator/participant crashes, blocking, latency",
+        "2PC blocking problem - solved by 3PC or Saga pattern",
+        "Network partitions - CAP theorem trade-offs",
+        "Distributed deadlocks - detection and resolution algorithms",
+        "Message ordering and duplication handling",
+        "Solutions: Saga pattern for microservices, event-driven architecture",
+        "Compensating transactions for failure recovery",
+        "Use of distributed databases with eventual consistency",
+        "Timeout mechanisms and retry logic for reliability"
+      ]
+    }
+  ]
+}

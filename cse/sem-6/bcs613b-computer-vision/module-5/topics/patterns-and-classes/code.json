@@ -1,0 +1,35 @@
+{
+  "topicId": "patterns-and-classes",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Morphological Dilation",
+      "description": "Implementation of binary image dilation using structuring element",
+      "code": "PROCEDURE Dilate(image A, structuringElement B)\n result \u2190 zeros(size(A))\n origin \u2190 getOrigin(B)\n \n FOR each pixel (i,j) in A DO\n IF A[i,j] == 1 THEN\n FOR each pixel (k,l) in B DO\n ni \u2190 i + k - origin.x\n nj \u2190 j + l - origin.y\n IF isValid(ni, nj) THEN\n result[ni,nj] \u2190 1\n END IF\n END FOR\n END IF\n END FOR\n \n RETURN result\nEND PROCEDURE",
+      "explanation": "For each foreground pixel, place the structuring element with its origin at that pixel and mark all corresponding positions in result as foreground. This expands the object by the SE shape.",
+      "timeComplexity": "O(n\u00b2 \u00d7 m\u00b2)",
+      "spaceComplexity": "O(n\u00b2)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Hit-or-Miss Transform",
+      "description": "Pattern detection using simultaneous foreground and background matching",
+      "code": "PROCEDURE HitOrMiss(image A, fgSE B1, bgSE B2)\n result \u2190 zeros(size(A))\n origin \u2190 getOrigin(B1)\n \n // Erode with foreground SE\n fgMatch \u2190 Erode(A, B1)\n \n // Create complement image\n Acomp \u2190 1 - A\n \n // Erode complement with background SE\n bgMatch \u2190 Erode(Acomp, B2)\n \n // Hit occurs where both matches coincide\n FOR each pixel (i,j) DO\n result[i,j] \u2190 fgMatch[i,j] AND bgMatch[i,j]\n END FOR\n \n RETURN result\nEND PROCEDURE\n\n// Note: For proper operation, B1 and B2 must be disjoint\n// and their union should form a complete SE",
+      "explanation": "The hit-or-miss transform finds pixel locations where the foreground pattern (B1) matches the image AND the background pattern (B2) also matches. The two structuring elements must be non-overlapping.",
+      "timeComplexity": "O(n\u00b2 \u00d7 m\u00b2)",
+      "spaceComplexity": "O(n\u00b2)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Pattern Classification by Prototype Matching",
+      "description": "Classifies image patterns using morphological similarity to prototype templates",
+      "code": "PROCEDURE ClassifyPattern(image A, prototypeSet P, threshold T)\n classes \u2190 getUniqueClasses(P)\n scores \u2190 initialize(classes, 0)\n \n FOR each prototype p in P DO\n // Compute hit-or-miss score\n hits \u2190 CountPixels(HitOrMiss(A, p.foreground, p.background))\n total \u2190 CountPixels(p.foreground) + CountPixels(p.background)\n similarity \u2190 hits / total\n \n // Add to class score\n class \u2190 p.classLabel\n scores[class] \u2190 scores[class] + similarity\n END FOR\n \n // Assign to class with highest score\n bestClass \u2190 argmax(scores)\n \n IF scores[bestClass] >= threshold THEN\n RETURN bestClass\n ELSE\n RETURN \"Unknown\"\n END IF\nEND PROCEDURE",
+      "explanation": "Multiple prototypes per class improve classification accuracy. Each prototype generates a similarity score via hit-or-miss. Scores accumulate per class, and the pattern is assigned to the highest-scoring class if above threshold.",
+      "timeComplexity": "O(n\u00b2 \u00d7 m\u00b2 \u00d7 p) where p = number of prototypes",
+      "spaceComplexity": "O(n\u00b2)"
+    }
+  ]
+}

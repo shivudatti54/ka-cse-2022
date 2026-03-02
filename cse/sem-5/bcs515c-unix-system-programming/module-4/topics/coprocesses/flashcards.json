@@ -1,0 +1,65 @@
+{
+  "topicId": "coprocesses",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is a coprocess in Unix?",
+      "back": "A coprocess is a background process started by the shell that has its standard input and output connected to the parent shell via dedicated file descriptors, enabling bidirectional communication."
+    },
+    {
+      "id": "fc-2",
+      "front": "How does a coprocess differ from a background job (&)?",
+      "back": "Background jobs (&) only redirect stdout; they cannot receive input from the shell. Coprocesses provide full-duplex communication through both stdin and stdout file descriptors."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the syntax to create a named coprocess?",
+      "back": "coproc NAME { command; } or coproc NAME ( command ) - Creates a coprocess with the variable name NAME, storing PIDs in NAME_PID and file descriptors in NAME[0] and NAME[1]."
+    },
+    {
+      "id": "fc-4",
+      "front": "What are the default file descriptors for a coprocess?",
+      "back": "NAME[0] is the file descriptor for reading from the coprocess's stdout, and NAME[1] is for writing to the coprocess's stdin."
+    },
+    {
+      "id": "fc-5",
+      "front": "How do you read data from a coprocess?",
+      "back": "Use `read -u ${NAME[0]}` or redirect: `exec NAME[0]<&${NAME[0]}-; read line <&${NAME[0]}` to read from the coprocess's output."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the purpose of FIFOs with coprocesses?",
+      "back": "FIFOs (named pipes) provide more explicit control over the communication channel, allowing separate read/write paths and enabling communication with multiple processes."
+    },
+    {
+      "id": "fc-7",
+      "front": "What variables are automatically set when using named coprocesses?",
+      "back": "NAME_PID contains the process ID of the coprocess, and NAME is an array with NAME[0] (read end) and NAME[1] (write end) file descriptors."
+    },
+    {
+      "id": "fc-8",
+      "front": "How do you terminate a coprocess?",
+      "back": "Close the write end: `exec NAME[1]>&-; kill $NAME_PID` or use `kill -9` for forced termination. The coprocess receives EOF when stdin closes."
+    },
+    {
+      "id": "fc-9",
+      "front": "What is buffering and how does it affect coprocesses?",
+      "back": "The coprocess may use buffered I/O (stdio), causing delays. Use tools like `stdbuf` or `cat` to flush buffers, or use unbuffered I/O in programs."
+    },
+    {
+      "id": "fc-10",
+      "front": "When should coprocesses be preferred over pipes?",
+      "back": "Use coprocesses when you need bidirectional communication, need to send multiple commands over time, or need to maintain a persistent process state between interactions."
+    },
+    {
+      "id": "fc-11",
+      "front": "What happens to the coprocess when the parent shell exits?",
+      "back": "The coprocess becomes an orphan and is adopted by init (PID 1). It continues running unless explicitly killed or the terminal closes (SIGHUP)."
+    },
+    {
+      "id": "fc-12",
+      "front": "How do you handle the exit status of a coprocess?",
+      "back": "Wait for the PID: `wait $NAME_PID` returns the exit status. Without waiting, the shell may print 'Done' message; use `disown` to prevent this."
+    }
+  ]
+}

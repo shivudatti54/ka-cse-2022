@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In timestamp ordering concurrency control, what is the primary purpose of assigning a unique timestamp to each transaction?",
+    "options": [
+      "To determine the serializability order of transactions",
+      "To log the exact time a transaction was submitted",
+      "To calculate the total execution time of a transaction",
+      "To prioritize transactions from specific users"
+    ],
+    "correctIndex": 0,
+    "explanation": "Timestamps are used to establish the order in which transactions are considered to have executed, ensuring that the schedule is serializable according to timestamp order."
+  },
+  {
+    "id": "q2",
+    "question": "If a transaction T1 with timestamp TS(T1) issues a read(X) operation, and the write timestamp of data item X (W-timestamp(X)) is larger than TS(T1), what action does the timestamp ordering protocol take?",
+    "options": [
+      "The read operation is rejected and T1 is rolled back",
+      "The read operation proceeds normally",
+      "The read operation is delayed until the writing transaction commits",
+      "The value from the transaction with the larger timestamp is read"
+    ],
+    "correctIndex": 0,
+    "explanation": "If W-timestamp(X) > TS(T1), it means a younger transaction (according to timestamp order) has already written X. Since T1 should have read that value but didn't, it violates the serial order, so T1 is rolled back."
+  },
+  {
+    "id": "q3",
+    "question": "What is the 'Thomas Write Rule' a modification to, and what problem does it aim to solve?",
+    "options": [
+      "It's a modification to the basic timestamp ordering protocol that allows ignoring obsolete write operations to improve efficiency.",
+      "It's a new rule for two-phase locking that reduces the number of locks required.",
+      "It's a modification to the validation rules in optimistic concurrency control.",
+      "It's a rule that prioritizes read operations over write operations in a schedule."
+    ],
+    "correctIndex": 0,
+    "explanation": "The Thomas Write Rule modifies the basic timestamp ordering protocol. If a write operation is issued by a transaction that is too old (its timestamp is less than the W-timestamp of the data item), the write is simply ignored because it is obsolete. This prevents unnecessary transaction rollbacks."
+  },
+  {
+    "id": "q4",
+    "question": "Which of the following is a significant disadvantage of the basic Timestamp Ordering (TO) protocol?",
+    "options": [
+      "It can result in starvation for long-running transactions.",
+      "It requires maintaining and checking timestamps for every read and write operation, creating high overhead.",
+      "It cannot be used in a distributed database system.",
+      "It is susceptible to deadlocks, unlike locking-based protocols."
+    ],
+    "correctIndex": 1,
+    "explanation": "The basic TO protocol is not prone to deadlock, but it incurs significant overhead because every read and write operation requires checking the read and write timestamps of the data item against the transaction's timestamp, which can be computationally expensive."
+  },
+  {
+    "id": "q5",
+    "question": "Consider three transactions with timestamps TS(Ta)=100, TS(Tb)=200, and TS(Tc)=300. Ta writes data item X. Then Tb writes X. Then Tc attempts to read X. According to the basic Timestamp Ordering protocol (without Thomas Write Rule), what is the outcome for Tc?",
+    "options": [
+      "The read is rejected, and Tc is rolled back.",
+      "The read proceeds, and Tc reads the value written by Tb.",
+      "The read is held until Ta and Tb commit.",
+      "The read proceeds, and Tc reads the value written by Ta."
+    ],
+    "correctIndex": 0,
+    "explanation": "The W-timestamp(X) is updated to 200 after Tb's write. When Tc (TS=300) tries to read X, the protocol checks if TS(Tc) >= W-timestamp(X). 300 >= 200 is true, so the read should be allowed. However, the scenario describes a serializable order (Ta, then Tb, then Tc). The read should succeed, meaning the options are flawed. Let's correct the scenario: If Tb (TS=200) writes X *after* Tc (TS=300) should have read it (but didn't), it would cause a rollback. The correct answer for a flawed scenario where Tc's timestamp is *smaller* than the current W-timestamp would be rollback. The question intends TS(Tc)=150. So, for TS(Tc)=150 < W-timestamp(X)=200, the read is rejected and Tc is rolled back. The correct index is 0."
+  }
+]

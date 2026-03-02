@@ -1,0 +1,45 @@
+{
+  "topicId": "single-multi-level-indexing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Binary Search in Single-Level Index",
+      "description": "Algorithm to search for a key value using a dense index with binary search",
+      "code": "ALGORITHM IndexSearch(indexArray, targetKey)\nBEGIN\n  left = 0\n  right = length(indexArray) - 1\n  \n  WHILE left <= right DO\n    mid = (left + right) / 2\n    \n    IF indexArray[mid].key == targetKey THEN\n      RETURN indexArray[mid].recordPointer\n    ELSE IF indexArray[mid].key < targetKey THEN\n      left = mid + 1\n    ELSE\n      right = mid - 1\n  END WHILE\n  \n  RETURN NULL  // Key not found\nEND",
+      "explanation": "This algorithm performs binary search on a sorted dense index array. The index entries contain key values and pointers to actual data records. Time complexity is O(log n) where n is the number of index entries.",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "B+ Tree Node Structure Implementation",
+      "description": "Python implementation showing B+ tree leaf node structure with keys and data pointers",
+      "code": "class BPlusTreeLeafNode:\n    def __init__(self, order):\n        self.order = order  # Maximum keys per node\n        self.keys = []      # Sorted keys\n        self.data = []      # Data pointers\n        self.next = None    # Pointer to next leaf node\n        self.is_leaf = True\n    \n    def insert(self, key, value):\n        # Insert key-value pair maintaining sorted order\n        i = 0\n        while i < len(self.keys) and self.keys[i] < key:\n            i += 1\n        self.keys.insert(i, key)\n        self.data.insert(i, value)\n        \n        # Check for overflow\n        if len(self.keys) > self.order:\n            return self.split()\n        return None\n    \n    def split(self):\n        # Create new leaf and distribute keys\n        new_node = BPlusTreeLeafNode(self.order)\n        mid = len(self.keys) // 2\n        \n        new_node.keys = self.keys[mid:]\n        new_node.data = self.data[mid:]\n        self.keys = self.keys[:mid]\n        self.data = self.data[:mid]\n        \n        # Link the leaf nodes\n        new_node.next = self.next\n        self.next = new_node\n        \n        return (self.keys[-1], new_node)",
+      "explanation": "This code implements a B+ tree leaf node with key-data pairs and a linked list pointer to the next leaf. The split method handles node overflow during insertion, creating a new leaf and distributing entries evenly.",
+      "timeComplexity": "O(log n) average for insert",
+      "spaceComplexity": "O(1) per operation"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Multi-Level Index Search Algorithm",
+      "description": "C implementation demonstrating multi-level index search traversal through hierarchy",
+      "code": "#include <stdio.h>\n\ntypedef struct IndexEntry {\n    int key;\n    void* pointer;\n} IndexEntry;\n\ntypedef struct IndexBlock {\n    int count;\n    IndexEntry entries[100];\n} IndexBlock;\n\n// Search in multi-level index\nvoid* multiLevelSearch(IndexBlock** indexLevels, \n                        int numLevels, \n                        int targetKey) {\n    IndexBlock* currentBlock = indexLevels[0];\n    int level = 0;\n    \n    // Traverse from top level to data\n    while (level < numLevels - 1) {\n        // Binary search within current index block\n        int left = 0, right = currentBlock->count - 1;\n        \n        while (left < right) {\n            int mid = (left + right + 1) / 2;\n            if (currentBlock->entries[mid].key <= targetKey)\n                left = mid;\n            else\n                right = mid - 1;\n        }\n        \n        // Move to next level\n        currentBlock = (IndexBlock*)currentBlock->entries[left].pointer;\n        level++;\n    }\n    \n    // Search at data level (leaf index)\n    // Return pointer to actual data record\n    return currentBlock->entries[left].pointer;\n}",
+      "explanation": "This C code demonstrates multi-level index traversal. Starting from the top-level index block, it uses binary search at each level to narrow down to the next index block until reaching the leaf level that points to actual data records.",
+      "timeComplexity": "O(log\u2096(n)) where k is block size",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Index Selection Algorithm for Query Optimization",
+      "description": "Algorithm showing how DBMS optimizer decides whether to use an index based on selectivity",
+      "code": "ALGORITHM DetermineIndexUsage(query, availableIndexes)\nBEGIN\n  selectedPlan = NULL\n  minCost = INFINITY\n  \n  FOR EACH index IN availableIndexes DO\n    // Check if index can be used for WHERE clause\n    IF index.column IN query.whereColumns THEN\n      // Calculate selectivity\n      selectivity = index.distinctValues / table.rowCount\n      \n      // Estimate number of index entries to retrieve\n      indexEntries = table.rowCount * selectivity\n      \n      // Calculate I/O cost\n      indexIO = index.treeHeight\n      dataIO = indexEntries * index.clusteringFactor\n      \n      totalCost = indexIO + dataIO\n      \n      // Compare with full table scan cost\n      fullScanCost = table.rowCount * table.pageCount\n      \n      IF totalCost < fullScanCost AND totalCost < minCost THEN\n        minCost = totalCost\n        selectedPlan = CREATE_INDEX_SCAN(index, selectivity)\n      END IF\n    END IF\n  END FOR\n  \n  // If no index beneficial, use full table scan\n  IF selectedPlan == NULL THEN\n    RETURN CREATE_TABLE_SCAN()\n  END IF\n  \n  RETURN selectedPlan\nEND",
+      "explanation": "This algorithm simulates how a database query optimizer evaluates different access methods. It calculates the cost of using each available index by considering selectivity, tree height, and clustering factor, then compares with full table scan to choose the optimal execution plan.",
+      "timeComplexity": "O(m * log n) where m is number of indexes",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

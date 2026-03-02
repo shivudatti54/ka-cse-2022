@@ -1,0 +1,45 @@
+{
+  "topicId": "arrays",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "1D Array Declaration and Access",
+      "description": "Demonstrates static array declaration, initialization, and element access in C",
+      "code": "#include <stdio.h>\n\nint main() {\n    // Static array declaration\n    int arr[5] = {10, 20, 30, 40, 50};\n    \n    // Accessing elements using index\n    printf(\"Element at index 0: %d\\n\", arr[0]);\n    printf(\"Element at index 3: %d\\n\", arr[3]);\n    \n    // Array traversal\n    for(int i = 0; i < 5; i++) {\n        printf(\"arr[%d] = %d\\n\", i, arr[i]);\n    }\n    \n    // Calculate address of element\n    int base = (int)&arr[0];\n    int elemSize = sizeof(int);\n    printf(\"Address of arr[2]: %d\\n\", base + (2 * elemSize));\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates static array declaration with size 5, initialization with values, accessing elements using indices (0-based), and calculating memory addresses using the formula: address = base + (index \u00d7 element_size).",
+      "timeComplexity": "O(n) for traversal, O(1) for access by index",
+      "spaceComplexity": "O(n) where n=5 for static array"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Dynamic Array Implementation",
+      "description": "Python list demonstrating dynamic array behavior with automatic resizing",
+      "code": "# Python lists are dynamic arrays\narr = []\n\n# Appending elements (automatic resizing)\narr.append(10)\narr.append(20)\narr.append(30)\narr.append(40)\narr.append(50)\n\nprint(\"Array after appending:\", arr)\nprint(\"Length:\", len(arr))\nprint(\"Element at index 2:\", arr[2])\n\n# Insert at beginning - O(n)\narr.insert(0, 5)\nprint(\"After inserting 5 at index 0:\", arr)\n\n# Insert at end - O(1) amortized\narr.append(60)\nprint(\"After appending 60:\", arr)\n\n# Check current capacity (implementation detail)\nimport sys\nprint(\"Memory size:\", sys.getsizeof(arr), \"bytes\")",
+      "explanation": "Python lists are implemented as dynamic arrays that automatically resize. When the internal array fills up, Python allocates a new larger array (typically 1.125\u00d7 or 2\u00d7 the size) and copies elements. This provides amortized O(1) time for append operations.",
+      "timeComplexity": "O(1) amortized for append, O(n) for insert at beginning",
+      "spaceComplexity": "O(n) for n elements stored"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "2D Array Row-Major Implementation",
+      "description": "C program demonstrating 2D array storage in row-major order with address calculation",
+      "code": "#include <stdio.h>\n\n// Function to calculate address in row-major order\nint getAddress(int base, int row, int col, int ncols, int elemSize) {\n    // Address = Base + ((row * ncols) + col) * elementSize\n    return base + ((row * ncols) + col) * elemSize;\n}\n\nint main() {\n    // Declare a 3x4 matrix (3 rows, 4 columns)\n    int matrix[3][4];\n    int baseAddress = 1000;\n    int elementSize = sizeof(int);  // 4 bytes\n    \n    // Initialize matrix with values\n    int count = 1;\n    for(int i = 0; i < 3; i++) {\n        for(int j = 0; j < 4; j++) {\n            matrix[i][j] = count++;\n        }\n    }\n    \n    // Calculate address of matrix[2][3]\n    int addr = getAddress(baseAddress, 2, 3, 4, elementSize);\n    printf(\"Address of matrix[2][3]: %d\\n\", addr);\n    printf(\"Value at matrix[2][3]: %d\\n\", matrix[2][3]);\n    \n    // In row-major: index = (2 * 4) + 3 = 11\n    // Address = 1000 + (11 * 4) = 1000 + 44 = 1044\n    \n    return 0;\n}",
+      "explanation": "This code demonstrates 2D array storage in row-major order. The formula Address = Base + ((row \u00d7 number_of_columns) + column) \u00d7 element_size calculates any element's memory location. For matrix[2][3] in a 3\u00d74 matrix stored at base 1000 with 4-byte integers: index = (2\u00d74) + 3 = 11, address = 1000 + 44 = 1044.",
+      "timeComplexity": "O(1) for address calculation, O(n\u00d7m) for full matrix traversal",
+      "spaceComplexity": "O(n\u00d7m) for n\u00d7m matrix"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Polynomial Addition Using Arrays",
+      "description": "Algorithm to add two polynomials represented as arrays where index represents exponent",
+      "code": "#include <stdio.h>\n\n#define MAX_DEGREE 100\n\n// Function to add two polynomials\nvoid addPolynomials(int poly1[], int poly2[], int result[], int maxDegree) {\n    for(int i = 0; i <= maxDegree; i++) {\n        result[i] = poly1[i] + poly2[i];\n    }\n}\n\n// Function to display polynomial\nvoid displayPolynomial(int poly[], int degree) {\n    int first = 1;\n    for(int i = degree; i >= 0; i--) {\n        if(poly[i] != 0) {\n            if(!first && poly[i] > 0) printf(\" + \");\n            if(poly[i] < 0) printf(\" - \");\n            printf(\"%d\", abs(poly[i]));\n            if(i > 1) printf(\"x^%d\", i);\n            else if(i == 1) printf(\"x\");\n            first = 0;\n        }\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    // Polynomial: 3x^2 + 2x + 5\n    int poly1[MAX_DEGREE + 1] = {0};\n    poly1[0] = 5;   // constant\n    poly1[1] = 2;   // x^1\n    poly1[2] = 3;   // x^2\n    \n    // Polynomial: 2x^3 + x + 7\n    int poly2[MAX_DEGREE + 1] = {0};\n    poly2[0] = 7;   // constant\n    poly2[1] = 1;   // x^1\n    poly2[3] = 2;   // x^3\n    \n    int result[MAX_DEGREE + 1] = {0};\n    \n    printf(\"Polynomial 1: \");\n    displayPolynomial(poly1, 3);\n    \n    printf(\"Polynomial 2: \");\n    displayPolynomial(poly2, 3);\n    \n    addPolynomials(poly1, poly2, result, MAX_DEGREE);\n    \n    printf(\"Result: \");\n    displayPolynomial(result, 3);\n    // Output: 2x^3 + 3x^2 + 3x + 12\n    \n    return 0;\n}",
+      "explanation": "This code represents polynomials using arrays where the index represents the exponent and the value represents the coefficient. To add two polynomials, we simply add coefficients at each index (exponent). The time complexity is O(n) where n is the maximum degree of the polynomials.",
+      "timeComplexity": "O(n) where n is the maximum degree",
+      "spaceComplexity": "O(n) for storing the result polynomial"
+    }
+  ]
+}

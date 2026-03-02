@@ -1,0 +1,55 @@
+{
+  "topicId": "additional-list-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Find Middle Element",
+      "description": "Using slow and fast pointers to find middle of linked list",
+      "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef find_middle(head):\n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    \n    return slow.val if slow else None\n\n# Example: 1->2->3->4->5 returns 3\n# Example: 1->2->3->4 returns 3 (second middle for even)",
+      "explanation": "The slow pointer moves one node at a time while fast moves two nodes. When fast reaches the end, slow is at the middle. For even-length lists, returns the second middle element.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Detect Cycle (Floyd's Algorithm)",
+      "description": "Detect if linked list has a cycle using two pointers",
+      "code": "def detect_cycle(head):\n    if not head or not head.next:\n        return False\n    \n    slow = head\n    fast = head\n    \n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        \n        if slow == fast:\n            return True\n    \n    return False\n\ndef find_cycle_start(head):\n    slow = head\n    fast = head\n    \n    # Find meeting point\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            break\n    \n    if not fast or not fast.next:\n        return None\n    \n    # Reset slow to head, keep fast at meeting\n    slow = head\n    while slow != fast:\n        slow = slow.next\n        fast = fast.next\n    \n    return slow",
+      "explanation": "If slow and fast meet, cycle exists. To find cycle start, reset one pointer to head and move both one step at a time. They meet at cycle entry point.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Nth Node From End",
+      "description": "Find nth node from end using two pointers with gap",
+      "code": "def nth_from_end(head, n):\n    if not head or n <= 0:\n        return None\n    \n    first = head\n    second = head\n    \n    # Move first pointer n positions ahead\n    for i in range(n):\n        if not first:\n            return None\n        first = first.next\n    \n    # Move both until first reaches end\n    while first:\n        first = first.next\n        second = second.next\n    \n    return second.val",
+      "explanation": "Keep two pointers n nodes apart. When the first pointer (ahead) reaches NULL, the second pointer (behind) points to the nth node from end.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Reverse Linked List",
+      "description": "Iterative reversal of singly linked list",
+      "code": "def reverse_list(head):\n    prev = None\n    curr = head\n    \n    while curr:\n        next_node = curr.next  # Save next\n        curr.next = prev       # Reverse link\n        prev = curr            # Move prev forward\n        curr = next_node       # Move curr forward\n    \n    return prev  # New head\n\n# Example: 1->2->3->NULL becomes NULL<-1<-2<-3",
+      "explanation": "Use three pointers: prev, curr, and next. For each node, reverse its pointer to prev, then move all pointers one step forward. At end, prev becomes new head.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "python",
+      "title": "Merge Two Sorted Lists",
+      "description": "Merge two sorted linked lists into one sorted list",
+      "code": "def merge_sorted(l1, l2):\n    dummy = ListNode(0)\n    current = dummy\n    \n    while l1 and l2:\n        if l1.val <= l2.val:\n            current.next = l1\n            l1 = l1.next\n        else:\n            current.next = l2\n            l2 = l2.next\n        current = current.next\n    \n    # Attach remaining nodes\n    if l1:\n        current.next = l1\n    if l2:\n        current.next = l2\n    \n    return dummy.next",
+      "explanation": "Create a dummy node. Compare heads of both lists, attach smaller to result, advance that list's pointer. Continue until one list exhausts, then attach remaining list.",
+      "timeComplexity": "O(m + n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

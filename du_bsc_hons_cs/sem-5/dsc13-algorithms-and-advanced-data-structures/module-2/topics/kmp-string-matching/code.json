@@ -1,0 +1,45 @@
+{
+  "topicId": "kmp-string-matching",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "KMP Algorithm - LPS Computation and Search",
+      "description": "Complete implementation of KMP algorithm in C showing preprocessing and searching phases",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nvoid computeLPS(char* pattern, int m, int* lps) {\n    int len = 0;  // length of previous longest prefix suffix\n    lps[0] = 0;   // base case\n    int i = 1;\n    \n    while (i < m) {\n        if (pattern[i] == pattern[len]) {\n            len++;\n            lps[i] = len;\n            i++;\n        } else {\n            if (len != 0) {\n                len = lps[len - 1];  // try previous longest prefix\n            } else {\n                lps[i] = 0;\n                i++;\n            }\n        }\n    }\n}\n\nvoid KMPSearch(char* text, char* pattern) {\n    int n = strlen(text);\n    int m = strlen(pattern);\n    int lps[m];\n    \n    computeLPS(pattern, m, lps);  // preprocessing\n    \n    int i = 0;  // index for text\n    int j = 0;  // index for pattern\n    \n    while (i < n) {\n        if (pattern[j] == text[i]) {\n            j++;\n            i++;\n        }\n        if (j == m) {\n            printf(\"Pattern found at index %d\\n\", i - j);\n            j = lps[j - 1];  // continue searching\n        } else if (i < n && pattern[j] != text[i]) {\n            if (j != 0)\n                j = lps[j - 1];\n            else\n                i++;\n        }\n    }\n}\n\nint main() {\n    char text[] = \"ABABDABACDABABCABAB\";\n    char pattern[] = \"ABABCABAB\";\n    KMPSearch(text, pattern);\n    return 0;\n}",
+      "explanation": "This C implementation shows two main functions: computeLPS builds the LPS array in O(m) time, and KMPSearch uses it to find all occurrences in O(n) time. The algorithm never backtracks in the text.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "KMP Algorithm in Python",
+      "description": "Python implementation of KMP with detailed comments explaining each step",
+      "code": "def compute_lps(pattern):\n    \"\"\"Compute LPS (Longest Proper Prefix which is also Suffix) array\"\"\"\n    m = len(pattern)\n    lps = [0] * m\n    length = 0  # length of previous longest prefix suffix\n    i = 1\n    \n    while i < m:\n        if pattern[i] == pattern[length]:\n            length += 1\n            lps[i] = length\n            i += 1\n        else:\n            if length != 0:\n                length = lps[length - 1]  # try previous LPS\n            else:\n                lps[i] = 0\n                i += 1\n    \n    return lps\n\ndef kmp_search(text, pattern):\n    \"\"\"KMP algorithm to find all occurrences of pattern in text\"\"\"\n    n, m = len(text), len(pattern)\n    lps = compute_lps(pattern)  # preprocessing\n    \n    i = j = 0  # i for text, j for pattern\n    occurrences = []\n    \n    while i < n:\n        if pattern[j] == text[i]:\n            i += 1\n            j += 1\n        \n        if j == m:\n            occurrences.append(i - j)\n            j = lps[j - 1]  # continue searching\n        elif i < n and pattern[j] != text[i]:\n            if j != 0:\n                j = lps[j - 1]\n            else:\n                i += 1\n    \n    return occurrences\n\n# Example usage\ntext = \"ABABDABACDABABCABAB\"\npattern = \"ABABCABAB\"\nresult = kmp_search(text, pattern)\nprint(f\"Pattern found at indices: {result}\")\nprint(f\"LPS array for pattern: {compute_lps(pattern)}\")",
+      "explanation": "The Python implementation demonstrates the two-phase approach clearly. compute_lps handles preprocessing in O(m) time, while kmp_search performs the actual searching in O(n) time.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "KMP Algorithm - Pseudocode",
+      "description": "Clean pseudocode representation of KMP algorithm for educational purposes",
+      "code": "ALGORITHM ComputeLPS(P[0..m-1])\n// P is the pattern, m is its length\n// Returns LPS array\nBEGIN\n    SET LPS[0] \u2190 0\n    SET len \u2190 0\n    SET i \u2190 1\n    \n    WHILE i < m DO\n        IF P[i] = P[len] THEN\n            len \u2190 len + 1\n            LPS[i] \u2190 len\n            i \u2190 i + 1\n        ELSE\n            IF len \u2260 0 THEN\n                len \u2190 LPS[len - 1]\n            ELSE\n                LPS[i] \u2190 0\n                i \u2190 i + 1\n            END IF\n        END IF\n    END WHILE\n    \n    RETURN LPS\nEND ALGORITHM\n\nALGORITHM KMPSearch(T[0..n-1], P[0..m-1])\n// T is text, P is pattern\nBEGIN\n    SET LPS \u2190 ComputeLPS(P)\n    SET i \u2190 0  // index for text\n    SET j \u2190 0  // index for pattern\n    \n    WHILE i < n DO\n        IF P[j] = T[i] THEN\n            i \u2190 i + 1\n            j \u2190 j + 1\n        END IF\n        \n        IF j = m THEN\n            PRINT \"Pattern found at index\", i - j\n            j \u2190 LPS[j - 1]\n        ELSE IF i < n AND P[j] \u2260 T[i] THEN\n            IF j \u2260 0 THEN\n                j \u2190 LPS[j - 1]\n            ELSE\n                i \u2190 i + 1\n            END IF\n        END IF\n    END WHILE\nEND ALGORITHM",
+      "explanation": "This pseudocode clearly shows the LPS computation algorithm and the KMP search algorithm. The key insight is how LPS helps skip characters after a mismatch without backtracking in the text.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "KMP Algorithm in Java",
+      "description": "Complete Java implementation with object-oriented design",
+      "code": "public class KMPAlgorithm {\n    \n    private int[] computeLPS(String pattern) {\n        int m = pattern.length();\n        int[] lps = new int[m];\n        int len = 0;\n        int i = 1;\n        lps[0] = 0;\n        \n        while (i < m) {\n            if (pattern.charAt(i) == pattern.charAt(len)) {\n                len++;\n                lps[i] = len;\n                i++;\n            } else {\n                if (len != 0) {\n                    len = lps[len - 1];\n                } else {\n                    lps[i] = 0;\n                    i++;\n                }\n            }\n        }\n        return lps;\n    }\n    \n    public List<Integer> search(String text, String pattern) {\n        List<Integer> result = new ArrayList<>();\n        int n = text.length();\n        int m = pattern.length();\n        \n        if (m == 0) {\n            return result;\n        }\n        \n        int[] lps = computeLPS(pattern);\n        int i = 0;  // index for text\n        int j = 0;  // index for pattern\n        \n        while (i < n) {\n            if (pattern.charAt(j) == text.charAt(i)) {\n                i++;\n                j++;\n            }\n            \n            if (j == m) {\n                result.add(i - j);\n                j = lps[j - 1];\n            } else if (i < n && pattern.charAt(j) != text.charAt(i)) {\n                if (j != 0) {\n                    j = lps[j - 1];\n                } else {\n                    i++;\n                }\n            }\n        }\n        return result;\n    }\n    \n    public static void main(String[] args) {\n        KMPAlgorithm kmp = new KMPAlgorithm();\n        String text = \"ABABDABACDABABCABAB\";\n        String pattern = \"ABABCABAB\";\n        \n        List<Integer> occurrences = kmp.search(text, pattern);\n        System.out.println(\"Pattern found at: \" + occurrences);\n    }\n}",
+      "explanation": "This Java implementation provides a reusable class with search functionality. It demonstrates proper handling of edge cases and returns a list of all occurrences. The computeLPS method handles the preprocessing phase efficiently.",
+      "timeComplexity": "O(n + m)",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

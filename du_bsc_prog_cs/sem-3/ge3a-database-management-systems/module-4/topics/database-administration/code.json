@@ -1,0 +1,45 @@
+{
+  "topicId": "database-administration",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "sql",
+      "title": "User Creation and Privilege Granting",
+      "description": "Demonstrates how to create database users and assign appropriate privileges for secure access management",
+      "code": "-- Create a new database user\nCREATE USER app_user IDENTIFIED BY 'SecurePass123';\n\n-- Grant system privileges\nGRANT CREATE SESSION TO app_user;\nGRANT CREATE TABLE TO app_user;\nGRANT CREATE VIEW TO app_user;\n\n-- Grant object privileges on specific tables\nGRANT SELECT, INSERT, UPDATE ON employees TO app_user;\nGRANT SELECT ON departments TO app_user;\n\n-- Create a role and assign privileges\nCREATE ROLE analyst_role;\nGRANT SELECT ON employees TO analyst_role;\nGRANT SELECT ON salaries TO analyst_role;\nGRANT analyst_role TO app_user;\n\n-- Revoke privileges when needed\nREVOKE INSERT ON employees FROM app_user;\n\n-- Drop user (cascade removes all objects)\n-- DROP USER app_user CASCADE;",
+      "explanation": "This SQL script demonstrates user management and privilege assignment. The DBA creates users, grants both system privileges (affecting database operation) and object privileges (affecting specific data), uses roles for simplified management, and can revoke or drop users as needed.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Database Backup Manager Class",
+      "description": "Python class demonstrating backup strategy implementation with full, incremental, and restore capabilities",
+      "code": "import os\nimport shutil\nfrom datetime import datetime\nfrom pathlib import Path\n\nclass DatabaseBackupManager:\n    def __init__(self, backup_dir, db_name):\n        self.backup_dir = Path(backup_dir)\n        self.db_name = db_name\n        self.backup_dir.mkdir(parents=True, exist_ok=True)\n        self.last_full_backup = None\n        self.last_backup_time = None\n    \n    def create_full_backup(self):\n        \"\"\"Create a full database backup\"\"\"\n        timestamp = datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n        backup_name = f\"{self.db_name}_full_{timestamp}.bak\"\n        backup_path = self.backup_dir / backup_name\n        # Simulated backup operation\n        print(f\"Creating full backup: {backup_name}\")\n        print(f\"Backup location: {backup_path}\")\n        self.last_full_backup = backup_path\n        self.last_backup_time = datetime.now()\n        return backup_path\n    \n    def create_incremental_backup(self):\n        \"\"\"Create incremental backup since last backup\"\"\"\n        if not self.last_full_backup:\n            return self.create_full_backup()\n        timestamp = datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n        backup_name = f\"{self.db_name}_incr_{timestamp}.bak\"\n        backup_path = self.backup_dir / backup_name\n        print(f\"Creating incremental backup: {backup_name}\")\n        print(f\"Changes since: {self.last_backup_time}\")\n        return backup_path\n    \n    def restore_backup(self, backup_file):\n        \"\"\"Restore database from backup\"\"\"\n        backup_path = self.backup_dir / backup_file\n        if not backup_path.exists():\n            raise FileNotFoundError(f\"Backup file not found: {backup_file}\")\n        print(f\"Restoring from: {backup_file}\")\n        print(\"Step 1: Stop database services\")\n        print(\"Step 2: Restore data files\")\n        print(\"Step 3: Apply transaction logs\")\n        print(\"Step 4: Restart database services\")\n        print(\"Restore completed successfully!\")\n\n# Usage Example\nif __name__ == \"__main__\":\n    backup_mgr = DatabaseBackupManager(\"/backups\", \"production_db\")\n    backup_mgr.create_full_backup()\n    backup_mgr.create_incremental_backup()\n    backup_mgr.restore_backup(\"production_db_full_20240101_120000.bak\")",
+      "explanation": "This Python class implements a backup management system. It supports full backups (complete database copy) and incremental backups (only changes since last backup). The restore method demonstrates the recovery process steps. In production, this would connect to actual database systems using libraries like psycopg2 or pyodbc.",
+      "timeComplexity": "O(n) where n is database size for full backup",
+      "spaceComplexity": "O(n) for storing backup files"
+    },
+    {
+      "id": "code-3",
+      "language": "sql",
+      "title": "Database Recovery Procedures",
+      "description": "SQL scripts demonstrating various recovery scenarios and techniques",
+      "code": "-- Checkpoint: Force dirty pages to disk\nCHECKPOINT;\n\n-- Simple recovery: Restore to last backup\nRESTORE DATABASE production_db \nFROM DISK = 'C:\\backups\\full_backup.bak'\nWITH REPLACE, RECOVERY;\n\n-- Point-in-time recovery using transaction logs\nRESTORE DATABASE production_db \nFROM DISK = 'C:\\backups\\full_backup.bak'\nWITH NORECOVERY;\n\nRESTORE LOG production_db \nFROM DISK = 'C:\\backups\\log_backup_1.trn'\nWITH NORECOVERY;\n\nRESTORE LOG production_db \nFROM DISK = 'C:\\backups\\log_backup_2.trn'\nWITH STOPAT = '2024-01-15 14:30:00', RECOVERY;\n\n-- Verify database integrity after recovery\nDBCC CHECKDB ('production_db');\n\n-- Emergency recovery with minimal data loss\nRESTORE DATABASE production_db \nFROM DISK = 'C:\\backups\\full_backup.bak'\nWITH REPLACE, RECOVERY;\n\n-- View backup history\nSELECT \n    backup_set_id,\n    name,\n    backup_start_date,\n    backup_finish_date,\n    type,\n    backup_size\nFROM msdb.dbo.backupset \nWHERE database_name = 'production_db'\nORDER BY backup_start_date DESC;",
+      "explanation": "These SQL commands demonstrate database recovery operations. CHECKPOINT forces changes to disk. RESTORE DATABASE recovers from full backups. Point-in-time recovery uses transaction logs to restore to a specific moment. DBCC CHECKDB verifies data integrity after recovery. The final query shows backup history for auditing purposes.",
+      "timeComplexity": "O(n) dependent on backup size",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-4",
+      "language": "sql",
+      "title": "Database Performance Monitoring Queries",
+      "description": "SQL queries for monitoring database performance, identifying bottlenecks, and optimization opportunities",
+      "code": "-- Check active sessions and their status\nSELECT \n    spid, \n    login_time, \n    status, \n    hostname, \n    program_name, \n    loginame\nFROM sys.sysprocesses\nWHERE status = 'runnable';\n\n-- Find expensive queries (by CPU time)\nSELECT TOP 10 \n    qs.execution_count,\n    qs.total_worker_time / 1000 AS total_cpu_ms,\n    qs.total_elapsed_time / 1000 AS total_elapsed_ms,\n    SUBSTRING(qt.text, 1, 200) AS query_text\nFROM sys.dm_exec_query_stats qs\nCROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) qt\nORDER BY qs.total_worker_time DESC;\n\n-- Check index usage and recommendations\nSELECT \n    OBJECT_NAME(s.object_id) AS table_name,\n    i.name AS index_name,\n    s.user_seeks,\n    s.user_scans,\n    s.user_lookups,\n    s.user_updates\nFROM sys.dm_db_index_usage_stats s\nINNER JOIN sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id\nWHERE OBJECTPROPERTY(s.object_id, 'IsUserTable') = 1\nORDER BY s.user_seeks + s.user_scans DESC;\n\n-- Monitor lock contention\nSELECT \n    l.request_session_id,\n    DB_NAME(l.resource_database_id) AS database_name,\n    l.request_mode,\n    l.request_status,\n    t.text\nFROM sys.dm_tran_locks l\nCROSS APPLY sys.dm_exec_sql_text(t.sql_handle) t\nWHERE l.resource_database_id = DB_ID();\n\n-- Buffer pool memory usage\nSELECT \n    COUNT(*) * 8 / 1024 AS buffer_cache_mb,\n    (SELECT COUNT(*) FROM sys.dm_exec_sessions) AS active_sessions\nFROM sys.dm_os_buffer_descriptors;",
+      "explanation": "These queries help DBAs monitor database health. sysprocesses shows active connections. dm_exec_query_stats identifies slow queries. dm_db_index_usage_stats shows which indexes are used. dm_tran_locks detects lock contention. dm_os_buffer_descriptors shows memory usage. Regular monitoring helps proactively identify performance issues.",
+      "timeComplexity": "Varies by query, typically O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

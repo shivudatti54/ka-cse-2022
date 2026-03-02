@@ -1,0 +1,35 @@
+{
+  "topicId": "ambiguity-in-grammars-and-languages",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CYK Algorithm for Ambiguity Detection (Undecidable - Shows Why)",
+      "description": "The CYK algorithm can detect if a string has multiple parse trees by finding multiple distinct parse structures, but this doesn't solve general ambiguity since we can't test all infinitely many strings.",
+      "explanation": "For a given CFG in CNF and string w, CYK computes all possible parse trees. If more than one distinct parse tree exists for any derivation of w, the grammar is ambiguous for that string. However, we cannot conclude ambiguity of grammar from testing finitely many strings \u2013 ambiguity might only manifest for longer strings (unbounded). The algorithm correctly identifies multiple parses but cannot prove unambiguity (would require infinite testing).",
+      "timeComplexity": "O(n\u00b3 \u00d7 |P|) where n = string length, |P| = number of productions",
+      "spaceComplexity": "O(n\u00b2) for CYK table storing parse possibilities",
+      "code": "// No code"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Precedence-Based Expression Grammar Parser",
+      "description": "Unambiguous grammar parser skeleton showing precedence enforcement",
+      "code": "BEGIN\n  FUNCTION parse_expression()\n    RETURN parse_add()\n  END\n  \n  FUNCTION parse_add()\n    result \u2190 parse_mult()\n    WHILE current_token IN {'+', '-'} DO\n      op \u2190 current_token\n      current_token \u2190 next_token()\n      right \u2190 parse_mult()\n      result \u2190 Node(op, result, right)\n    ENDWHILE\n    RETURN result\n  END\n  \n  FUNCTION parse_mult()\n    result \u2190 parse_primary()\n    WHILE current_token IN {'*', '/'} DO\n      op \u2190 current_token\n      current_token \u2190 next_token()\n      right \u2190 parse_primary()\n      result \u2190 Node(op, result, right)\n    ENDWHILE\n    RETURN result\n  END\n  \n  FUNCTION parse_primary()\n    IF current_token = '(' THEN\n      current_token \u2190 next_token()\n      result \u2190 parse_expression()\n      expect(')')\n    ELSE\n      result \u2190 Node('id', value)\n    ENDIF\n    RETURN result\n  END\nEND",
+      "explanation": "This recursive descent parser implements the unambiguous grammar E\u2192E+T|T, T\u2192T*F|F, F\u2192(E)|id. Each precedence level (expression, term, factor) is handled by separate functions. The left-associativity is enforced by processing operators in a left-recursive while loop, building left-deep trees. This guarantees exactly one parse tree for each valid expression.",
+      "timeComplexity": "O(n) for parsing an expression of length n",
+      "spaceComplexity": "O(h) where h = parse tree height (O(log n) for balanced expressions)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Bottom-Up Parser Conflict Resolution",
+      "description": "LR parser skeleton showing how shift-reduce conflicts are resolved using precedence and associativity",
+      "code": "BEGIN\n  FUNCTION resolve_shift_reduce(state, token)\n    IF conflict_type = 'shift-reduce' THEN\n      IF operator_precedence(token) > top_of_stack_precedence() THEN\n        RETURN SHIFT\n      ELSEIF operator_precedence(token) < top_of_stack_precedence() THEN\n        RETURN REDUCE\n      ELSE\n        IF associativity(token) = LEFT THEN\n          RETURN REDUCE\n        ELSE\n          RETURN SHIFT\n        ENDIF\n      ENDIF\n    ENDIF\n    RETURN DEFAULT_ACTION\n  END\n  \n  FUNCTION resolve_reduce_reduce(state, token)\n    FOR each production IN conflict_reductions DO\n      IF production.precedence > best_production.precedence THEN\n        best_production \u2190 production\n      ENDIF\n    ENDFOR\n    RETURN REDUCE(best_production)\n  END\nEND",
+      "explanation": "In bottom-up parsing (LR(1), LALR), ambiguity is resolved by conflict resolution rules: (1) Shift-reduce: precedence decides; (2) Reduce-reduce: higher precedence production wins; (3) For equal precedence, associativity resolves: left-associative prefers reduce, right-associative prefers shift. This mechanical disambiguation replaces the ambiguous grammar with a deterministic parsing strategy.",
+      "timeComplexity": "O(1) per token during parsing (deterministic)",
+      "spaceComplexity": "O(parser_states) for parsing table storage"
+    }
+  ]
+}

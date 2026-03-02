@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="feature-scaling-selection">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f0f8ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8f0f8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="minmaxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ee5a5a;stop-opacity:0.6" />
+    </linearGradient>
+    <linearGradient id="stdGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ecdc4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#3dbdb5;stop-opacity:0.6" />
+    </linearGradient>
+    <linearGradient id="robustGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a29bfe;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8c7ae6;stop-opacity:0.6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes barGrow {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+    .title { animation: fadeIn 0.8s ease-out; }
+    .section-box { animation: slideInUp 0.6s ease-out backwards; }
+    .section-box:nth-child(1) { animation-delay: 0.2s; }
+    .section-box:nth-child(2) { animation-delay: 0.4s; }
+    .section-box:nth-child(3) { animation-delay: 0.6s; }
+    .section-box:nth-child(4) { animation-delay: 0.8s; }
+    .bar { animation: barGrow 0.8s ease-out backwards; transform-origin: bottom; }
+    .bar:nth-child(1) { animation-delay: 0.3s; }
+    .bar:nth-child(2) { animation-delay: 0.4s; }
+    .bar:nth-child(3) { animation-delay: 0.5s; }
+    .bar:nth-child(4) { animation-delay: 0.6s; }
+    .bar:nth-child(5) { animation-delay: 0.7s; }
+    .label-text { animation: fadeIn 1s ease-out; }
+    .highlight { animation: pulse 2s infinite; }
+    text { font-family: Arial, sans-serif; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)" rx="8"/>
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#2c3e50" class="title">Feature Scaling Selection</text>
+  <text x="210" y="50" text-anchor="middle" font-size="12" fill="#7f8c8d">Methods Comparison with Outliers</text>
+  
+  <!-- Original Data Section -->
+  <g class="section-box" data-narration="Original distribution showing data points and outliers">
+    <rect x="20" y="70" width="115" height="120" rx="6" fill="#fff" filter="url(#shadow)"/>
+    <text x="77" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#2c3e50">Original Data</text>
+    <!-- Original histogram bars -->
+    <g transform="translate(30, 105)">
+      <rect class="bar" x="0" y="30" width="12" height="25" fill="#95a5a6" rx="2"/>
+      <rect class="bar" x="16" y="10" width="12" height="45" fill="#95a5a6" rx="2"/>
+      <rect class="bar" x="32" y="0" width="12" height="55" fill="#95a5a6" rx="2"/>
+      <rect class="bar" x="48" y="15" width="12" height="40" fill="#95a5a6" rx="2"/>
+      <rect class="bar" x="64" y="25" width="12" height="30" fill="#95a5a6" rx="2"/>
+      <!-- Outlier bar -->
+      <rect class="bar" x="80" y="-30" width="12" height="55" fill="#e74c3c" rx="2"/>
+    </g>
+    <text x="77" y="178" text-anchor="middle" font-size="10" fill="#7f8c8d">With Outliers</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <path d="M140 130 L160 130" stroke="#3498db" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <polygon points="160,130 155,125 155,135" fill="#3498db"/>
+  
+  <!-- Min-Max Section -->
+  <g class="section-box" data-narration="Min-Max scaling distorts data due to outliers, compressing the main distribution">
+    <rect x="170" y="70" width="115" height="120" rx="6" fill="#fff" filter="url(#shadow)"/>
+    <text x="227" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#e74c3c">Min-Max Scaling</text>
+    <text x="227" y="102" text-anchor="middle" font-size="10" fill="#7f8c8d">X' = (X-Xmin)/(Xmax-Xmin)</text>
+    <!-- Min-Max histogram - compressed -->
+    <g transform="translate(180, 105)">
+      <rect class="bar" x="0" y="40" width="12" height="15" fill="url(#minmaxGrad)" rx="2"/>
+      <rect class="bar" x="16" y="30" width="12" height="25" fill="url(#minmaxGrad)" rx="2"/>
+      <rect class="bar" x="32" y="15" width="12" height="40" fill="url(#minmaxGrad)" rx="2"/>
+      <rect class="bar" x="48" y="35" width="12" height="20" fill="url(#minmaxGrad)" rx="2"/>
+      <rect class="bar" x="64" y="45" width="12" height="10" fill="url(#minmaxGrad)" rx="2"/>
+      <!-- Outlier at max -->
+      <rect class="bar" x="80" y="0" width="12" height="55" fill="#e74c3c" rx="2"/>
+    </g>
+    <text x="227" y="178" text-anchor="middle" font-size="10" fill="#e74c3c">❌ Distorted by outliers</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <path d="M290 130 L310 130" stroke="#3498db" stroke-width="2" fill="none"/>
+  <polygon points="310,130 305,125 305,135" fill="#3498db"/>
+  
+  <!-- Standardization Section -->
+  <g class="section-box" data-narration="Standardization uses mean and std, slightly affected by outliers">
+    <rect x="320" y="70" width="85" height="120" rx="6" fill="#fff" filter="url(#shadow)"/>
+    <text x="362" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#16a085">Standardization</text>
+    <text x="362" y="102" text-anchor="middle" font-size="9" fill="#7f8c8d">X' = (X-μ)/σ</text>
+    <!-- Standardization histogram -->
+    <g transform="translate(330, 105)">
+      <rect class="bar" x="0" y="25" width="12" height="30" fill="url(#stdGrad)" rx="2"/>
+      <rect class="bar" x="16" y="15" width="12" height="40" fill="url(#stdGrad)" rx="2"/>
+      <rect class="bar" x="32" y="5" width="12" height="50" fill="url(#stdGrad)" rx="2"/>
+      <rect class="bar" x="48" y="20" width="12" height="35" fill="url(#stdGrad)" rx="2"/>
+      <rect class="bar" x="64" y="30" width="12" height="25" fill="url(#stdGrad)" rx="2"/>
+    </g>
+    <text x="362" y="178" text-anchor="middle" font-size="10" fill="#f39c12">⚠ Slightly affected</text>
+  </g>
+  
+  <!-- Robust Scaling Section -->
+  <g class="section-box" data-narration="Robust scaling uses median and IQR, unaffected by outliers">
+    <rect x="170" y="205" width="115" height="120" rx="6" fill="#fff" filter="url(#shadow)"/>
+    <text x="227" y="223" text-anchor="middle" font-size="13" font-weight="bold" fill="#8e44ad">Robust Scaling</text>
+    <text x="227" y="237" text-anchor="middle" font-size="10" fill="#7f8c8d">X' = (X-Median)/IQR</text>
+    <!-- Robust histogram - maintains shape -->
+    <g transform="translate(180, 240)">
+      <rect class="bar" x="0" y="30" width="12" height="25" fill="url(#robustGrad)" rx="2"/>
+      <rect class="bar" x="16" y="10" width="12" height="45" fill="url(#robustGrad)" rx="2"/>
+      <rect class="bar" x="32" y="0" width="12" height="55" fill="url(#robustGrad)" rx="2"/>
+      <rect class="bar" x="48" y="15" width="12" height="40" fill="url(#robustGrad)" rx="2"/>
+      <rect class="bar" x="64" y="25" width="12" height="30" fill="url(#robustGrad)" rx="2"/>
+      <!-- Outlier now in proper position -->
+      <rect class="bar" x="80" y="30" width="12" height="25" fill="#9b59b6" rx="2"/>
+    </g>
+    <text x="227" y="313" text-anchor="middle" font-size="10" fill="#27ae60">✓ Unaffected by outliers</text>
+  </g>
+  
+  <!-- Key Concept Box -->
+  <g class="section-box" data-narration="Key takeaway: Choose Robust Scaling when data contains outliers">
+    <rect x="20" y="295" width="140" height="90" rx="6" fill="#fef9e7" filter="url(#shadow)" stroke="#f1c40f" stroke-width="1"/>
+    <text x="90" y="315" text-anchor="middle" font-size="12" font-weight="bold" fill="#d35400">When to Use?</text>
+    <text x="90" y="332" text-anchor="middle" font-size="9" fill="#2c3e50">• Min-Max: Bounded data,</text>
+    <text x="90" y="345" text-anchor="middle" font-size="9" fill="#2c3e50">  Neural Networks</text>
+    <text x="90" y="358" text-anchor="middle" font-size="9" fill="#2c3e50">• Standard: Normal distribution</text>
+    <text x="90" y="371" text-anchor="middle" font-size="9" fill="#2c3e50">• Robust: Data with outliers</text>
+  </g>
+  
+  <!-- Formula Box -->
+  <g class="section-box" data-narration="Formula comparison table">
+    <rect x="295" y="205" width="110" height="90" rx="6" fill="#e8f8f5" filter="url(#shadow)" stroke="#1abc9c" stroke-width="1"/>
+    <text x="350" y="223" text-anchor="middle" font-size="11" font-weight="bold" fill="#16a085">Formulas</text>
+    <text x="350" y="243" text-anchor="middle" font-size="8" fill="#2c3e50">Min-Max: [0,1]</text>
+    <text x="350" y="258" text-anchor="middle" font-size="8" fill="#2c3e50">Standard: μ=0, σ=1</text>
+    <text x="350" y="273" text-anchor="middle" font-size="8" fill="#2c3e50">Robust: Med=0, IQR=1</text>
+    <text x="350" y="288" text-anchor="middle" font-size="9" font-weight="bold" fill="#e74c3c">IQR = Q3 - Q1</text>
+  </g>
+  
+  <!-- Legend -->
+  <g class="section-box" data-narration="Visual legend showing data representation">
+    <rect x="295" y="305" width="110" height="80" rx="6" fill="#f5f5f5" filter="url(#shadow)"/>
+    <text x="350" y="325" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c3e50">Legend</text>
+    <circle cx="310" cy="345" r="5" fill="#95a5a6"/>
+    <text x="322" y="349" font-size="9" fill="#2c3e50">Main Data</text>
+    <circle cx="310" cy="362" r="5" fill="#e74c3c"/>
+    <text x="322" y="366" font-size="9" fill="#2c3e50">Outlier</text>
+  </g>
+  
+  <!-- Bottom info -->
+  <text x="210" y="392" text-anchor="middle" font-size="9" fill="#95a5a6">DU Machine Learning Prep • Feature Scaling</text>
+</svg>

@@ -1,0 +1,133 @@
+{
+  "topicId": "deadlocks",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Resource Allocation Graph (RAG) - Deadlock State",
+      "description": "A directed graph showing two processes P1 and P2 competing for two resource types R1 and R2, each with single instance, resulting in deadlock",
+      "elements": [
+        "Two process circles: P1 (left), P2 (right) with labels",
+        "Two resource rectangles: R1 (top), R2 (bottom) with single instance boxes inside",
+        "Assignment edges (solid arrows with arrowheads): P1→R1 (P1 holds R1), P2→R2 (P2 holds R2)",
+        "Request edges (dashed/dotted arrows): R2→P1 (P1 requests R2 held by P2), R1→P2 (P2 requests R1 held by P1)",
+        "Circular wait path: P1→R1→P2→R2→P1 forming a cycle",
+        "Color coding: Processes in red (blocked), Resources in blue, Edges clearly distinguished"
+      ],
+      "purpose": "Visualize the exact state where deadlock occurs showing circular wait with all four Coffman conditions present. Helps students identify deadlock in resource allocation graphs and understand how request/assignment edges form cycles."
+    },
+    {
+      "id": "diagram-2",
+      "title": "Process Resource Lifecycle with Prevention Points",
+      "description": "State diagram showing process states (Running, Ready, Blocked) with deadlock prevention strategies applied at each transition point",
+      "elements": [
+        "Three oval states: Running (center), Ready (left), Blocked (right)",
+        "Solid arrows for normal transitions: Ready→Running (dispatch), Running→Ready (timeout), Running→Blocked (I/O wait), Blocked→Ready (I/O complete)",
+        "Request edge: Running→Blocked when resource unavailable",
+        "Dashed boxes at transitions showing prevention methods: At Request - eliminate Hold and Wait, At Release - prevent No Preemption violation, At Acquire - Banker's Algorithm check, Circular wait prevention - resource ordering R1<R2<..."
+      ],
+      "purpose": "Shows where in the process lifecycle each deadlock prevention/avoidance strategy is applied. Connects theoretical conditions to practical implementation points in the OS."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Banker's Algorithm Flow Diagram",
+      "description": "Step-by-step flowchart showing how Banker's Algorithm determines safe/unsafe states before granting resource requests",
+      "elements": [
+        "Start diamond: New resource request arrives",
+        "Decision box: Is Request ≤ Need?",
+        "Decision box: Is Request ≤ Available?",
+        "Pretend allocation box: Available = Available - Request, Allocation = Allocation + Request, Need = Need - Request",
+        "Safety check parallelogram: Initialize Work = Available, Finish[i] = false for all processes",
+        "Loop: Find process where Finish[i] = false and Need[i] ≤ Work",
+        "Action in loop: Work = Work + Allocation[i], Finish[i] = true, repeat until all Finish true",
+        "End diamond: Safe sequence exists? (Yes→Grant request, No→Deny request)",
+        "Output: Display safe sequence or unsafe state message"
+      ],
+      "purpose": "Step-by-step visualization of Banker's Algorithm safety check mechanism. Shows the Work/Finish iteration process and how the algorithm prevents unsafe allocations."
+    },
+    {
+      "id": "diagram-4",
+      "title": "Deadlock Detection and Recovery Process Flow",
+      "description": "Complete flowchart showing system-level deadlock handling from detection to recovery",
+      "elements": [
+        "Detection trigger rectangle: Periodic checks OR timeout-based checks",
+        "Detection algorithms: Wait-for graph (for single instance), Resource Allocation Graph reduction (multiple instances)",
+        "Wait-for graph construction: Nodes = processes, Edge = P1→P2 when P1 waits for P2",
+        "Detection result diamond: Deadlock detected? (Yes/No)",
+        "If Yes - Recovery phase: Process termination box (options: abort all, abort one), Resource preemption box (select victim based on cost), Rollback box (restore to checkpoint)",
+        "Recovery decision: After recovery, return to normal operation",
+        "If No - Continue normal operation, periodic recheck"
+      ],
+      "purpose": "Complete workflow from deadlock occurrence through detection to recovery. Emphasizes that detection is always followed by recovery actions in practical systems."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Coffman Conditions - Venn Diagram",
+      "description": "Four intersecting circles representing each Coffman condition with central overlap showing where deadlock occurs",
+      "elements": [
+        "Circle 1 (top): Mutual Exclusion - label with example: Printer, tape drive",
+        "Circle 2 (right): Hold and Wait - label with example: Process holding resource while requesting another",
+        "Circle 3 (bottom): No Preemption - label with example: Cannot forcibly take printer from process",
+        "Circle 4 (left): Circular Wait - label with example: P1→R1→P2→R2→P1 chain",
+        "Central overlapping region (dark): All four conditions present = DEADLOCK",
+        "Outer regions: Partial conditions but no deadlock",
+        "Visual callout: Breaking ANY ONE condition prevents deadlock",
+        "Icons under each circle: Printer icon, holding hands icon, stop sign, circular arrows"
+      ],
+      "purpose": "Reinforces that deadlock requires all four conditions simultaneously. Visual emphasis that breaking any single condition is sufficient to prevent deadlock - key concept for exam."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "Deadlock Handling Strategies Comparison",
+      "content": "Prevention: Eliminates one Coffman condition at system design time - Low runtime overhead, restrictive; Avoidance: Banker's Algorithm maintains safe state during runtime - Moderate overhead, requires prior knowledge; Detection: Regular checking with recovery - Minimal restrictions, recovery overhead high; Strategy selection depends on: System type (batch/interactive), Resource frequency, Process importance, Number of processes",
+      "columns": ["Strategy", "Principle", "Runtime Overhead", "Restrictions", "Use Cases"],
+      "purpose": "Compare three main approaches to handle deadlocks with their trade-offs. Helps students choose appropriate strategy based on system requirements."
+    },
+    {
+      "type": "comparison",
+      "title": "Coffman Conditions with Prevention Methods",
+      "content": "Mutual Elimination: Use spooling for printers - multiple processes can submit print jobs to spool; Hold and Wait: Request all resources at once OR release before requesting - two approaches; No Preemption: If process holding resource requests another unavailable, release all held resources; Circular Wait: Impose total ordering on all resource types and require processes request resources in increasing order",
+      "columns": ["Condition", "Prevention Method", "Implementation"],
+      "purpose": "Detailed breakdown of each Coffman condition with specific OS-level prevention mechanisms. Essential for exam preparation on deadlock prevention."
+    },
+    {
+      "type": "flowchart",
+      "title": "Deadlock Recovery Decision Tree",
+      "content": "Deadlock detected → Assess recovery options → Decision criteria: Process priority (lower priority victim), Process execution time (shorter wasted), Resources held (fewer is better), Process type (interactive vs batch), Costo factors → Select victim → Recovery action: Terminate process (abort one/all) OR Preempt resource (rollback + restart) → System continues",
+      "purpose": "Systematic approach to selecting recovery strategy after deadlock detection. Covers victim selection criteria and recovery actions."
+    },
+    {
+      "type": "table",
+      "title": "Banker's Algorithm Data Structures",
+      "content": "Available: Vector of m integers showing current available resources of each type; Maximum: n×m matrix showing maximum demand of each process; Allocation: n×m matrix showing currently allocated resources; Need: n×m matrix calculated as Need = Maximum - Allocation; Request: Vector of resource requests from process; Safe Sequence: Order in which processes can complete without deadlock; Algorithm runs safety check before granting any request",
+      "purpose": "Reference table for Banker's Algorithm data structures. Essential for solving numerical problems in university exams."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Deadlock in Operating Systems",
+      "branches": [
+        "Definition: Processes blocked indefinitely, holding resources while waiting for others",
+        "System Model: Resources (R1-Rm), Instances, Request-Use-Release cycle",
+        "Coffman Conditions (4 necessary conditions): Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait",
+        "Handling Strategies: Prevention (eliminate one condition), Avoidance (Banker's safe states), Detection (find + recover)",
+        "Detection Methods: Wait-for Graph (single instance), RAG Reduction (multiple instances)",
+        "Recovery Actions: Process termination (abort one/all), Resource preemption (with rollback), Victim selection criteria",
+        "Real-world Examples: Dining Philosophers, Printer/scanner deadlock, Banker's Algorithm in banking systems"
+      ],
+      "purpose": "Complete conceptual overview connecting all deadlock-related topics. Useful for exam revision and understanding relationships between conditions, prevention, avoidance, detection, and recovery."
+    },
+    {
+      "centralConcept": "Resource Allocation Graph Analysis",
+      "branches": [
+        "Graph Elements: Processes (circles), Resources (rectangles with instances), Assignment edges (solid), Request edges (dashed)",
+        "No Cycle: No deadlock guaranteed; Cycle with single instance per type: Deadlock exists; Cycle with multiple instances: May or may not be deadlock",
+        "Wait-for Graph: Derived from RAG by removing resource nodes, keeping only process dependencies",
+        "RAG Reduction: Sequentially remove request and assignment edges for processes with all requests satisfiable",
+        "Safe State: No cycles in allocation graph; Unsafe State: Cycle exists but not necessarily deadlock yet"
+      ],
+      "purpose": "Visual guide for analyzing resource allocation graphs to detect potential or actual deadlocks. Important for university exam problem-solving."
+    }
+  ]
+}

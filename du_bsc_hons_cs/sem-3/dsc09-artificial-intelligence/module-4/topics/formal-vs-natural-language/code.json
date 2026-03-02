@@ -1,0 +1,45 @@
+{
+  "topicId": "formal-vs-natural-language",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Finite Automaton for Binary Strings Divisible by 3",
+      "description": "Implements a DFA that accepts binary strings representing numbers divisible by 3",
+      "code": "class DFA:\n    def __init__(self, states, alphabet, transition, start, accept):\n        self.states = states\n        self.alphabet = alphabet\n        self.transition = transition\n        self.start = start\n        self.accept = accept\n        \ndef accepts(self, input_string):\n        state = self.start\n        for symbol in input_string:\n            if symbol not in self.alphabet:\n                return False\n            state = self.transition.get((state, symbol))\n        return state in self.accept\n\n# States: remainder when number is divided by 3\n# 0 = divisible by 3, 1 = remainder 1, 2 = remainder 2\nstates = {0, 1, 2}\nalphabet = {'0', '1'}\ntransition = {\n    (0, '0'): 0, (0, '1'): 1,\n    (1, '0'): 2, (1, '1'): 0,\n    (2, '0'): 1, (2, '1'): 2\n}\nstart = 0\naccept = {0}\n\ndfa = DFA(states, alphabet, transition, start, accept)\nprint(dfa.accepts('110'))  # True (6 is divisible by 3)\nprint(dfa.accepts('101'))  # False (5 is not divisible by 3)",
+      "explanation": "This Python code implements a deterministic finite automaton that accepts binary strings representing numbers divisible by 3. States represent remainders (0, 1, 2) when dividing by 3. The transition function updates the remainder based on the next binary digit.",
+      "timeComplexity": "O(n) where n is the length of input string",
+      "spaceComplexity": "O(1) - constant space regardless of input size"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Recursive Descent Parser for Arithmetic Expressions",
+      "description": "Implements a simple parser using recursive descent for expressions with +,-,*,/",
+      "code": "import re\n\nclass Parser:\n    def __init__(self, tokens):\n        self.tokens = tokens\n        self.pos = 0\n    \n    def current_token(self):\n        if self.pos < len(self.tokens):\n            return self.tokens[self.pos]\n        return None\n    \n    def consume(self):\n        token = self.current_token()\n        self.pos += 1\n        return token\n    \n    # Grammar: E \u2192 T { ('+' | '-') T }\n    #         T \u2192 F { ('*' | '/') F }\n    #         F \u2192 number | '(' E ')'\n    \n    def parse_expression(self):\n        result = self.parse_term()\n        while self.current_token() in ['+', '-']:\n            op = self.consume()\n            right = self.parse_term()\n            result = ('binop', op, result, right)\n        return result\n    \n    def parse_term(self):\n        result = self.parse_factor()\n        while self.current_token() in ['*', '/']:\n            op = self.consume()\n            right = self.parse_factor()\n            result = ('binop', op, result, right)\n        return result\n    \n    def parse_factor(self):\n        token = self.current_token()\n        if token == '(':\n            self.consume()  # '('\n            result = self.parse_expression()\n            self.consume()  # ')'\n            return result\n        elif token.isdigit():\n            self.consume()\n            return ('num', int(token))\n        else:\n            raise ValueError(f\"Unexpected token: {token}\")\n\n# Example usage\ntokens = ['3', '+', '5', '*', '2']\nparser = Parser(tokens)\nast = parser.parse_expression()\nprint(ast)  # ('binop', '+', ('num', 3), ('binop', '*', ('num', 5), ('num', 2)))",
+      "explanation": "This recursive descent parser implements a context-free grammar for arithmetic expressions. It follows the operator precedence: factors (highest), then terms, then expressions (lowest). The parser builds an Abstract Syntax Tree (AST) representing the structure.",
+      "timeComplexity": "O(n) for parsing n tokens",
+      "spaceComplexity": "O(n) for recursion depth and AST storage"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Context-Free Grammar Definition for Simple Language",
+      "description": "Defines CFG for a simple programming language with variables and basic operations",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n/* \n * Context-Free Grammar for Simple Language:\n * \n * Non-terminals: PROGRAM, STMT, EXPR, TERM, FACTOR\n * Terminals: id, num, +, -, *, /, (, ), ;\n * \n * Grammar Rules (in BNF-like form):\n * PROGRAM   \u2192 STMT { ';' STMT }\n * STMT      \u2192 id '=' EXPR | EXPR\n * EXPR      \u2192 TERM { ('+' | '-') TERM }\n * TERM      \u2192 FACTOR { ('*' | '/') FACTOR }\n * FACTOR    \u2192 id | num | '(' EXPR ')'\n */\n\n// Sample derivations:\n// PROGRAM \u2192 x = 3 + 5 * 2\n// STMT    \u2192 id = EXPR\n// EXPR    \u2192 TERM \u2192 FACTOR * FACTOR \u2192 num * FACTOR\n//\n// This grammar enforces operator precedence:\n// () highest, then *,/ then +,-\n\ntypedef enum {ID, NUM, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, SEMI, EQ, END} TokenType;\n\ntypedef struct ASTNode {\n    TokenType type;\n    char value[32];\n    struct ASTNode *left, *right;\n} ASTNode;\n\n// Function to parse expression (simplified)\nASTNode* parse_expr(char **input);\n\nint main() {\n    printf(\"Grammar for simple arithmetic expressions\\n\");\n    printf(\"Supports: + - * / ( ) with proper precedence\\n\");\n    return 0;\n}",
+      "explanation": "This C code demonstrates a context-free grammar definition for a simple programming language. It shows how grammars specify the syntax rules: PROGRAM consists of statements, EXPR handles addition/subtraction, TERM handles multiplication/division, and FACTOR handles parentheses and atomic values. This CFG enforces operator precedence through its structure.",
+      "timeComplexity": "N/A - Grammar definition only",
+      "spaceComplexity": "N/A - Grammar definition only"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "General Recursive Descent Parser Algorithm",
+      "description": "General algorithm for recursive descent parsing showing the parser structure",
+      "code": "ALGORITHM RecursiveDescentParser\n// Grammar: E \u2192 T { (+|-) T }\n//         T \u2192 F { (*|/) F }\n//         F \u2192 (E) | id | number\n\nFUNCTION Parse()\nBEGIN\n    RETURN ParseExpr()\nEND\n\nFUNCTION ParseExpr()\nBEGIN\n    node \u2190 ParseTerm()\n    WHILE CurrentToken = '+' OR CurrentToken = '-' DO\n        op \u2190 CurrentToken\n        Advance()\n        right \u2190 ParseTerm()\n        node \u2190 CreateNode(op, node, right)\n    ENDWHILE\n    RETURN node\nEND\n\nFUNCTION ParseTerm()\nBEGIN\n    node \u2190 ParseFactor()\n    WHILE CurrentToken = '*' OR CurrentToken = '/' DO\n        op \u2190 CurrentToken\n        Advance()\n        right \u2190 ParseFactor()\n        node \u2190 CreateNode(op, node, right)\n    ENDWHILE\n    RETURN node\nEND\n\nFUNCTION ParseFactor()\nBEGIN\n    IF CurrentToken = '(' THEN\n        Advance()\n        node \u2190 ParseExpr()\n        IF CurrentToken \u2260 ')' THEN\n            ERROR \"Expected ')''\"\n        ENDIF\n        Advance()\n    ELSE IF CurrentToken = id OR CurrentToken = number THEN\n        node \u2190 CreateLeaf(CurrentToken)\n        Advance()\n    ELSE\n        ERROR \"Unexpected token\"\n    ENDIF\n    RETURN node\nEND\n\nFUNCTION CreateNode(op, left, right)\nBEGIN\n    node.type \u2190 'OPERATOR'\n    node.operator \u2190 op\n    node.left \u2190 left\n    node.right \u2190 right\n    RETURN node\nEND",
+      "explanation": "This pseudocode shows the general structure of a recursive descent parser. Each non-terminal in the grammar has its own function. The parser uses lookahead to decide which production to apply and builds an AST by recursively calling functions. This top-down parsing approach follows the grammar structure directly.",
+      "timeComplexity": "O(n) where n is the number of tokens in the input",
+      "spaceComplexity": "O(h) where h is the height of the parse tree (recursion depth)"
+    }
+  ]
+}

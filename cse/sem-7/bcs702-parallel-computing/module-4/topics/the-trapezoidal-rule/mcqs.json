@@ -1,0 +1,118 @@
+{
+  "topicId": "the-trapezoidal-rule",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "Which OpenMP clause is used to safely accumulate partial integrals from multiple threads in the trapezoidal rule?",
+      "options": [
+        { "key": "A", "text": "reduction(+: integral)" },
+        { "key": "B", "text": "shared(integral)" },
+        { "key": "C", "text": "private(integral)" },
+        { "key": "D", "text": "atomic(integral)" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The reduction(+: integral) clause creates private copies for each thread and automatically sums them at the end of the parallel region, safely combining partial integrals.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "What is the error order of the trapezoidal rule?",
+      "options": [
+        { "key": "A", "text": "O(h)" },
+        { "key": "B", "text": "O(h^2)" },
+        { "key": "C", "text": "O(h^3)" },
+        { "key": "D", "text": "O(h^4)" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The trapezoidal rule has an error term of O(h^2), meaning the error decreases quadratically as the step size h decreases.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq3",
+      "question": "In the OpenMP trapezoidal rule, what is the scope of the loop variable 'i' in #pragma omp parallel for?",
+      "options": [
+        { "key": "A", "text": "shared by default" },
+        { "key": "B", "text": "private by default" },
+        { "key": "C", "text": "firstprivate by default" },
+        { "key": "D", "text": "threadprivate by default" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In a parallel for construct, the loop index variable is automatically made private. Each thread gets its own copy to iterate over its assigned range.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "Why does using #pragma omp critical on every iteration of the trapezoidal rule loop result in poor performance?",
+      "options": [
+        { "key": "A", "text": "It causes compilation errors" },
+        {
+          "key": "B",
+          "text": "It serializes the accumulation, forcing one thread at a time to update the integral"
+        },
+        { "key": "C", "text": "It increases memory consumption exponentially" },
+        { "key": "D", "text": "It changes the mathematical accuracy of the result" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A critical section forces mutual exclusion, so only one thread can execute the protected code at a time. When every loop iteration requires entering the critical section, threads spend most of their time waiting, effectively serializing the computation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "Which compiler flag is required to enable OpenMP support when compiling the trapezoidal rule program with GCC?",
+      "options": [
+        { "key": "A", "text": "-fopenmp" },
+        { "key": "B", "text": "-openmp" },
+        { "key": "C", "text": "-lgomp" },
+        { "key": "D", "text": "-pthread" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The -fopenmp flag enables OpenMP support in GCC. Without it, OpenMP pragmas are ignored and the program runs sequentially on a single thread.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq6",
+      "question": "In the manual thread-based decomposition of the trapezoidal rule, how does each thread determine which iterations to process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Using omp_get_thread_num() and omp_get_num_threads() with a strided loop"
+        },
+        { "key": "B", "text": "Using MPI_Comm_rank() to determine its portion" },
+        { "key": "C", "text": "The compiler automatically assigns iterations" },
+        { "key": "D", "text": "Using the schedule(dynamic) clause" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "In manual decomposition, each thread gets its rank via omp_get_thread_num() and the total thread count via omp_get_num_threads(), then processes iterations in a cyclic/strided pattern (i = my_rank + 1; i < n; i += total_threads).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq7",
+      "question": "What happens to the accuracy of the trapezoidal rule when the number of subintervals n is doubled?",
+      "options": [
+        { "key": "A", "text": "Error decreases by a factor of 4" },
+        { "key": "B", "text": "Error decreases by a factor of 2" },
+        { "key": "C", "text": "Error increases by a factor of 2" },
+        { "key": "D", "text": "Error remains the same" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Since the error is O(h^2) and h = (b-a)/n, doubling n halves h, which reduces the error by a factor of (1/2)^2 = 1/4.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq8",
+      "question": "Which of the following best describes why the trapezoidal rule is well-suited for OpenMP parallelization?",
+      "options": [
+        { "key": "A", "text": "It requires complex inter-thread communication" },
+        {
+          "key": "B",
+          "text": "Each trapezoid area can be computed independently, making it embarrassingly parallel"
+        },
+        { "key": "C", "text": "It requires distributed memory architecture" },
+        { "key": "D", "text": "The sequential algorithm cannot produce correct results" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The trapezoidal rule is embarrassingly parallel because computing f(x_i) at each subinterval is independent of other subintervals. The only dependency is the final summation, which is handled by the reduction clause.",
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "f1",
+    "front": "What is the primary purpose of the SIGCLD signal in Unix?",
+    "back": "To notify a parent process when the status of one of its child processes has changed, typically meaning the child has terminated or stopped."
+  },
+  {
+    "id": "f2",
+    "front": "What is a key historical behavioral problem with SIGCLD in System V Unix?",
+    "back": "The signal was unreliable by default. If the signal was set to the default action (SIG_DFL) or ignored (SIG_IGN), zombie processes would not be reaped. Furthermore, the signal would reset to SIG_DFL after being caught, requiring re-installation of the handler within the handler itself."
+  },
+  {
+    "id": "f3",
+    "front": "How does the behavior of SIGCHLD differ from the traditional SIGCLD signal?",
+    "back": "SIGCHLD is the POSIX-standard name for the signal and has more reliable semantics. It is the preferred name to use in modern programs. When explicitly set to SIG_IGN, the system automatically reaps child processes, preventing them from becoming zombies."
+  },
+  {
+    "id": "f4",
+    "front": "What is the correct way to wait for all children and avoid zombies using the signal handler?",
+    "back": "The signal handler should call one of the wait functions (e.g., `wait()` or `waitpid()`) with the WNOHANG option in a loop to reap all terminated children until no more remain, preventing the handler from blocking."
+  },
+  {
+    "id": "f5",
+    "front": "What crucial function must be called within a SIGCHLD handler to avoid missing subsequent signals on some systems?",
+    "back": "The signal() function must be called to re-establish the handler, as some older Unix variants (e.g., System V) reset the signal action to default (SIG_DFL) when the handler is invoked."
+  }
+]

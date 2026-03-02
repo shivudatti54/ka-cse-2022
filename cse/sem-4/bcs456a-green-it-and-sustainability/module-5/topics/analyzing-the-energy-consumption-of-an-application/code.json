@@ -1,0 +1,45 @@
+{
+  "topicId": "analyzing-the-energy-consumption-of-an-application",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Energy-Efficient Network Request Batching",
+      "description": "Demonstrates batching multiple network requests to reduce energy consumption",
+      "code": "// Network Request Batching Algorithm\n// Reduces radio activation by grouping requests\n\nPROCEDURE BatchNetworkRequests(requests)\n BEGIN\n IF requests.length > 0 THEN\n // Create a batch of requests\n batchedRequest = CREATE_EMPTY_REQUEST()\n \n FOR each request IN requests DO\n ADD_TO_BATCH(batchedRequest, request.data)\n END FOR\n \n // Send single combined request\n response = SEND_HTTP_POST(batchedRequest.url, batchedRequest.payload)\n \n // Distribute responses\n results = PARSE_RESPONSE(response)\n RETURN results\n ELSE\n RETURN empty\n END IF\nEND PROCEDURE\n\n// Usage: Instead of 10 separate calls, make 1 call\ndataRequests = [userData, settings, notifications, feed]\nresults = BatchNetworkRequests(dataRequests)",
+      "explanation": "Batching reduces the number of times the cellular radio needs to activate, significantly saving energy. Each radio activation consumes substantial power, so combining multiple requests into one reduces overall consumption.",
+      "timeComplexity": "O(n) for processing, O(1) network calls vs O(n)",
+      "spaceComplexity": "O(n) for request buffer"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Energy-Aware Background Processing with JobScheduler",
+      "description": "Shows how to schedule energy-efficient background tasks",
+      "code": "// Android JobScheduler Implementation\n// Schedule work to run when device is optimal\n\nCLASS EnergyAwareUploader\n BEGIN\n PROCEDURE scheduleUpload(filePath)\n BEGIN\n jobInfo = JobInfo.Builder(jobId, serviceComponent)\n .setRequiredNetworkType(NetworkType.UNMETERED) // Use WiFi\n .setRequiresCharging(true) // When charging\n .setRequiresDeviceIdle(true) // When idle\n .setPeriodic(24 * 60 * 60 * 1000) // Once per day\n .build()\n \n jobScheduler.schedule(jobInfo)\n END PROCEDURE\n \n PROCEDURE onRunJob()\n BEGIN\n // Perform upload when conditions are met\n uploadData()\n RETURN RESULT_SUCCESS\n END PROCEDURE\nEND CLASS\n\n// Alternative: Use constraints for different priorities\nPROCEDURE scheduleTask(task, isUrgent)\n BEGIN\n builder = JobInfo.Builder(taskId, serviceComponent)\n \n IF isUrgent THEN\n // Urgent: Can run on any network, not necessarily charging\n builder.setRequiredNetworkType(NetworkType.CONNECTED)\n ELSE\n // Non-urgent: Wait for optimal conditions\n builder.setRequiredNetworkType(NetworkType.UNMETERED)\n builder.setRequiresCharging(true)\n END IF\n \n jobScheduler.schedule(builder.build())\nEND PROCEDURE",
+      "explanation": "JobScheduler allows the system to optimize when background work executes. By specifying constraints like 'requires charging' or 'requires idle', we ensure tasks run during optimal power conditions, reducing battery drain.",
+      "timeComplexity": "O(1) scheduling, depends on system scheduling",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Wakelock Management Pattern",
+      "description": "Proper management of wakelocks to prevent excessive battery drain",
+      "code": "// Proper Wakelock Management\n// Ensure wakelocks are acquired and released correctly\n\nCLASS WakeLockManager\n BEGIN\n PRIVATE wakeLock = null\n PRIVATE isAcquired = false\n \n PROCEDURE acquireWakeLock(context)\n BEGIN\n IF NOT isAcquired THEN\n powerManager = context.getSystemService(Context.POWER_SERVICE)\n wakeLock = powerManager.newWakeLock(\n PowerManager.PARTIAL_WAKE_LOCK,\n \"MyApp:MyWakelockTag\"\n )\n wakeLock.acquire(10 * 60 * 1000) // 10 minute timeout\n isAcquired = true\n END IF\n END PROCEDURE\n \n PROCEDURE releaseWakeLock()\n BEGIN\n IF isAcquired AND wakeLock != null THEN\n IF wakeLock.isHeld() THEN\n wakeLock.release()\n END IF\n wakeLock = null\n isAcquired = false\n END IF\n END PROCEDURE\n \n // Use try-finally to ensure release\n PROCEDURE performCriticalTask(context, task)\n BEGIN\n acquireWakeLock(context)\n TRY\n EXECUTE task\n FINALLY\n releaseWakeLock()\n END TRY\n END PROCEDURE\nEND CLASS\n\n// Also use BatteryGuard pattern\nPROCEDURE checkBeforeAcquiring(context)\n BEGIN\n batteryManager = context.getSystemService(Context.BATTERY_SERVICE)\n batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)\n \n IF batteryLevel > 20 THEN\n // Safe to acquire wakelock\n acquireWakeLock(context)\n ELSE\n // Defer task or skip\n LOG(\"Battery too low, skipping task\")\n END IF\nEND PROCEDURE",
+      "explanation": "Proper wakelock management is crucial for battery life. Always acquire with timeout, release in finally blocks, check battery level before acquiring, and prefer alternative approaches like JobScheduler when possible.",
+      "timeComplexity": "O(1) for acquire/release operations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Sensor Energy Optimization",
+      "description": "Optimizing sensor usage to reduce energy consumption",
+      "code": "// Sensor Management for Energy Efficiency\n// Register, use, and unregister sensors properly\n\nCLASS SensorManagerOptimized\n BEGIN\n PRIVATE sensorManager = null\n PRIVATE accelerometer = null\n PRIVATE lastUpdateTime = 0\n PRIVATE sensorDelay = SensorManager.SENSOR_DELAY_NORMAL\n \n PROCEDURE startSensorMonitoring(context, callback)\n BEGIN\n sensorManager = context.getSystemService(Context.SENSOR_SERVICE)\n accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)\n \n IF accelerometer != null THEN\n // Use UI-friendly delay for continuous monitoring\n sensorManager.registerListener(\n this, \n accelerometer, \n SensorManager.SENSOR_DELAY_UI\n )\n END IF\n END PROCEDURE\n \n PROCEDURE onSensorChanged(event)\n BEGIN\n currentTime = System.currentTimeMillis()\n \n // Throttle processing to reduce CPU usage\n IF (currentTime - lastUpdateTime) > 100 THEN // 10 Hz max\n processSensorData(event)\n lastUpdateTime = currentTime\n END IF\n END PROCEDURE\n \n PROCEDURE stopSensorMonitoring()\n BEGIN\n IF sensorManager != null AND accelerometer != null THEN\n sensorManager.unregisterListener(this)\n accelerometer = null\n END IF\n END PROCEDURE\n \n // Batch sensor events for even better efficiency\n PROCEDURE startBatchedSensor(context)\n BEGIN\n sensorManager = context.getSystemService(Context.SENSOR_SERVICE)\n \n // Request batched delivery - more efficient\n sensorManager.registerListener(\n this,\n accelerometer,\n SensorManager.SENSOR_DELAY_NORMAL,\n 0 // Batch period in microseconds\n )\n END PROCEDURE\nEND CLASS\n\n// Optimization tips:\n// 1. Use SENSOR_DELAY_GAME or SENSOR_DELAY_UI, avoid SENSOR_DELAY_FASTEST\n// 2. Always unregister listeners when not needed\n// 3. Batch sensor events when possible\n// 4. Throttle processing in onSensorChanged",
+      "explanation": "Sensors, especially accelerometer and GPS, consume significant power. Key optimizations include using appropriate sampling rates, batching events, throttling processing, and always unregistering when done.",
+      "timeComplexity": "O(1) per sensor event with throttling",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

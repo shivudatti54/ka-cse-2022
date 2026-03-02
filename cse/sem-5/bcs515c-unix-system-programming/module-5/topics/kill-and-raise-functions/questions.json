@@ -1,0 +1,168 @@
+{
+  "topicId": "kill-and-raise-functions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between kill() and raise() functions with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "kill() sends signal to another process or process group using PID",
+        "raise() sends signal to the calling process itself",
+        "Example: kill(1234, SIGTERM) sends SIGTERM to process 1234; raise(SIGTERM) sends SIGTERM to itself",
+        "raise(sig) is equivalent to kill(getpid(), sig)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What happens when kill() is called with signal number 0? Explain its use.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Signal 0 (null signal) performs error checking without sending any signal",
+        "Returns 0 if process exists and sender has permission",
+        "Returns -1 with ESRCH if process doesn't exist",
+        "Returns -1 with EPERM if permission denied",
+        "Used to check if a process is alive without affecting it"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between SIGTERM and SIGKILL signals.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "SIGTERM (15) is a request for termination, can be caught/handled",
+        "SIGKILL (9) forces immediate termination, cannot be caught/ignored",
+        "SIGTERM allows graceful cleanup (close files, release resources)",
+        "SIGKILL is immediate termination without cleanup",
+        "SIGKILL is used when process doesn't respond to SIGTERM"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the return values of kill() function on success and failure.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "On success, kill() returns 0",
+        "On failure, kill() returns -1",
+        "errno set to ESRCH if no such process exists",
+        "errno set to EPERM if permission denied",
+        "errno set to EINVAL if invalid signal number"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What happens when pid argument of kill() is negative? Explain with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "When pid < 0 and pid != -1, signal sent to process group |pid|",
+        "pid = -1 sends signal to all processes sender has permission to",
+        "Example: kill(-1000, SIGTERM) sends to all processes in group 1000",
+        "kill(-1, SIGTERM) sends to all except init process"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write a C program to demonstrate use of raise() function for graceful termination.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Include signal.h and stdio.h headers",
+        "Define signal handler for SIGTERM",
+        "Use raise(SIGTERM) to send signal to self",
+        "Handler performs cleanup before exit",
+        "Program demonstrates signal handling mechanism"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain signal disposition and mention the three valid actions for signal handling.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Signal disposition defines what happens when signal is delivered",
+        "SIG_DFL: default action for the signal",
+        "SIG_IGN: ignore the signal",
+        "Custom handler: user-defined function to handle signal",
+        "Each signal has a default action: terminate, stop, continue, or core dump"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the kill() system call in detail including its syntax, parameters, return values, and various use cases with different pid values.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Syntax: int kill(pid_t pid, int sig)",
+        "pid > 0: send to process with that PID",
+        "pid = 0: send to all processes in caller's process group",
+        "pid = -1: send to all processes sender has permission (except init)",
+        "pid < 0 and != -1: send to process group |pid|",
+        "sig = 0: perform error checking only (no signal sent)",
+        "Return: 0 on success, -1 on failure with errno",
+        "Use cases: process termination, inter-process communication, checking process existence"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C program where parent process sends SIGUSR1 signal to child process, and child handles it by printing a message and terminating gracefully.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use fork() to create child process",
+        "Parent uses kill() to send SIGUSR1 to child",
+        "Child sets signal handler using signal() for SIGUSR1",
+        "Handler prints message and calls exit()",
+        "Parent waits for child using wait()",
+        "Demonstrates inter-process signal communication"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain signal handling mechanism in Unix. Discuss signal(), sigaction(), and the concept of signal masks.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Signals are software interrupts for process notification",
+        "signal() sets handler for a specific signal",
+        "sigaction() is more robust alternative to signal()",
+        "Signal disposition: default, ignore, or custom handler",
+        "Signal mask: set of blocked signals using sigprocmask()",
+        "Pending signals: delivered when unblocked",
+        "Safe signal handling: only async-signal-safe functions allowed"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a detailed note on different types of signals in Unix/Linux with their default actions and common use cases.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SIGHUP(1): Hangup - terminate or reload configuration",
+        "SIGINT(2): Interrupt - generated by Ctrl+C",
+        "SIGQUIT(3): Quit - generated by Ctrl+\\, core dump",
+        "SIGKILL(9): Kill - forced termination (cannot be caught)",
+        "SIGTERM(15): Termination - graceful termination request",
+        "SIGSTOP(19): Stop - suspend execution (cannot be caught)",
+        "SIGCONT(18): Continue - resume stopped process",
+        "SIGUSR1(10) & SIGUSR2(12): User-defined signals",
+        "SIGSEGV(11): Segmentation fault - invalid memory access",
+        "SIGFPE(8): Floating point exception"
+      ]
+    }
+  ]
+}

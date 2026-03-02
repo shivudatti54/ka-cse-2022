@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of a validation set in the machine learning workflow?",
+    "options": [
+      "To train the final model with the best parameters",
+      "To provide an unbiased evaluation of a model fit on the training dataset while tuning hyperparameters",
+      "To serve as the final, held-out data used to report the model's performance to the world",
+      "To clean and preprocess the raw data before feeding it to the model"
+    ],
+    "correctIndex": 1,
+    "explanation": "The validation set is used during the model development phase to tune hyperparameters and make decisions about the model. It provides an unbiased estimate of the model's performance on unseen data *during* this process, preventing the use of the final test set for tuning, which would lead to an overly optimistic estimate."
+  },
+  {
+    "id": "q2",
+    "question": "If a model performs exceptionally well on the training data but poorly on the validation data, what is the most likely issue?",
+    "options": [
+      "Underfitting",
+      "High bias",
+      "Overfitting",
+      "A perfectly tuned model"
+    ],
+    "correctIndex": 2,
+    "explanation": "This scenario describes overfitting. The model has learned the training data too well, including its noise and random fluctuations, but has failed to generalize to the unseen validation data. It has high variance."
+  },
+  {
+    "id": "q3",
+    "question": "What is a key disadvantage of the simple hold-out validation method (e.g., a single 60/20/20 split) compared to k-fold cross-validation?",
+    "options": [
+      "It is more computationally expensive to perform.",
+      "It provides a less reliable estimate of model performance because the evaluation depends heavily on which data points end up in the validation set.",
+      "It requires a much larger overall dataset to be effective.",
+      "It cannot be used for hyperparameter tuning."
+    ],
+    "correctIndex": 1,
+    "explanation": "The performance estimate from a single validation split can have high variance. If the validation set is by chance an 'easy' or 'hard' subset of the data, the score will not be representative of true performance. K-fold cross-validation reduces this variance by averaging the performance across multiple different validation folds."
+  },
+  {
+    "id": "q4",
+    "question": "In a scenario with limited data, a practitioner uses the entire dataset for training and uses k-fold cross-validation *only* for evaluating the final model's performance. What is the critical flaw in this approach?",
+    "options": [
+      "It is computationally inefficient.",
+      "It does not provide a true measure of generalization because information from the entire dataset has potentially leaked into the model through the hyperparameter tuning process, making the cross-validation score optimistically biased.",
+      "K-fold cross-validation cannot be used for model evaluation.",
+      "There is no flaw; this is a standard and correct practice."
+    ],
+    "correctIndex": 1,
+    "explanation": "The flaw is a fundamental violation of the purpose of a validation set. If the entire dataset was used to select features, tune hyperparameters, or make any modeling decisions, then the model has already 'seen' all the data. Using the same data for evaluation via CV gives an optimistically biased performance estimate because the model was indirectly tuned to perform well on it. A true test set must be held out from the very beginning."
+  },
+  {
+    "id": "q5",
+    "question": "You are building a model for a highly imbalanced classification task (e.g., 98% class 0, 2% class 1). You split your data into training, validation, and test sets using a simple random split. Your model achieves 98% accuracy on all three sets. What is the most likely explanation, and what technique should you have used for splitting the data?",
+    "options": [
+      "The model is perfect; a random split was sufficient.",
+      "The model is simply predicting the majority class for every sample; a stratified split should have been used to preserve the class distribution in each subset.",
+      "The model is underfitting; more complex features are needed.",
+      "The data is too easy; a random split was the correct choice."
+    ],
+    "correctIndex": 1,
+    "explanation": "With a random split, it's possible (and likely, with high imbalance) that the validation and test sets have very few or even zero examples of the minority class. A naive model that always predicts the majority class would achieve ~98% accuracy, fooling the evaluation. A stratified split ensures the relative class frequencies are preserved in all subsets, providing a meaningful validation/test set for a proper evaluation."
+  }
+]

@@ -1,0 +1,79 @@
+{
+  "topicId": "real-time-data-analysis-with-storm",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "In a real-time IoT topology, which stream grouping should be used for per-sensor stateful aggregation?",
+      "options": [
+        { "key": "A", "text": "Shuffle Grouping" },
+        { "key": "B", "text": "All Grouping" },
+        { "key": "C", "text": "Fields Grouping on sensor_id" },
+        { "key": "D", "text": "Global Grouping" }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Fields Grouping on sensor_id ensures all tuples from the same sensor go to the same bolt task, enabling stateful per-sensor aggregation. Shuffle would distribute randomly, All broadcasts to all tasks, and Global sends everything to one task.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "What is a sliding window in Storm?",
+      "options": [
+        { "key": "A", "text": "Fixed-size non-overlapping windows" },
+        { "key": "B", "text": "Fixed-size overlapping windows that slide at regular intervals" },
+        { "key": "C", "text": "Dynamic-size windows based on activity" },
+        { "key": "D", "text": "Windows that never expire" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Sliding windows have a fixed size but overlap—they slide forward at regular intervals. For example, a 60-second window sliding every 10 seconds means each event appears in multiple windows, useful for moving averages.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq3",
+      "question": "Why is Kafka commonly used with Storm for IoT applications?",
+      "options": [
+        { "key": "A", "text": "Kafka processes data faster than Storm" },
+        {
+          "key": "B",
+          "text": "Kafka provides reliable message buffering, persistence, and replay capability"
+        },
+        { "key": "C", "text": "Kafka replaces the need for Storm topologies" },
+        { "key": "D", "text": "Kafka is cheaper than Storm" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kafka acts as a reliable buffer between IoT devices and Storm, providing message persistence (retention), replay capability for failure recovery, decoupling producers/consumers, and handling data spikes. Storm still does the actual real-time processing.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "In an anomaly detection bolt, what technique combines threshold-based detection with statistical analysis?",
+      "options": [
+        { "key": "A", "text": "Only check if value exceeds a fixed threshold" },
+        {
+          "key": "B",
+          "text": "Check threshold AND calculate z-score (standard deviations from mean) for statistical anomalies"
+        },
+        { "key": "C", "text": "Use only machine learning models" },
+        { "key": "D", "text": "Store all data and analyze later" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Effective anomaly detection combines threshold-based rules (value > critical_threshold) with statistical analysis (z-score > 3 sigma) to catch both known patterns and unexpected deviations. This hybrid approach reduces false positives and improves detection accuracy.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "An IoT platform monitors 50,000 sensors sending data every second. Requirements: (1) Aggregate per-sensor averages over 60-second sliding windows, (2) Detect anomalies with <100ms latency, (3) Generate instant alerts. Which topology design is optimal?",
+      "options": [
+        { "key": "A", "text": "Single bolt processing everything sequentially" },
+        {
+          "key": "B",
+          "text": "Spout(2) → Validate(4) shuffle → Anomaly(8) shuffle → Window(16) fields(sensor_id) → Alert(2) shuffle → Store(4) shuffle"
+        },
+        { "key": "C", "text": "Store all data in Hadoop and batch process hourly" },
+        { "key": "D", "text": "Use Spark Streaming with 5-minute micro-batches" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Option B provides optimal design: Spout(2) for ingestion, Validate(4) with shuffle for parallel validation, Anomaly(8) with shuffle for parallel detection meeting <100ms requirement, Window(16) with fields grouping for per-sensor stateful aggregation, Alert(2) for notifications, Store(4) for persistence. Parallelism handles 50k events/sec, shuffle enables load balancing, fields grouping ensures per-sensor state. Option A can't scale, C/D don't meet latency requirements.",
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "topicId": "cohen-sutherland-clipping",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Cohen-Sutherland Line Clipping Algorithm",
+      "description": "Complete pseudocode for Cohen-Sutherland line clipping algorithm with outcode calculation and clipping logic",
+      "code": "// Cohen-Sutherland Line Clipping Algorithm\n// Window: (xmin, ymin) to (xmax, ymax)\n// Line: from (x1, y1) to (x2, y2)\n\nCONSTANTS:\n INSIDE = 0 // 0000\n LEFT = 1 // 0001\n RIGHT = 2 // 0010\n BOTTOM = 4 // 0100\n TOP = 8 // 1000\n\nFUNCTION ComputeOutcode(x, y):\n code = INSIDE\n IF x < xmin THEN code = code | LEFT\n IF x > xmax THEN code = code | RIGHT\n IF y < ymin THEN code = code | BOTTOM\n IF y > ymax THEN code = code | TOP\n RETURN code\n\nFUNCTION CohenSutherlandClip(x1, y1, x2, y2):\n // Step 1: Compute outcodes for both endpoints\n code1 = ComputeOutcode(x1, y1)\n code2 = ComputeOutcode(x2, y2)\n \n accept = FALSE\n \n WHILE TRUE DO:\n // Step 2: Trivial acceptance\n IF (code1 OR code2) == INSIDE THEN:\n accept = TRUE\n BREAK\n \n // Step 3: Trivial rejection\n IF (code1 AND code2) != 0 THEN:\n accept = FALSE\n BREAK\n \n // Step 4: Line needs clipping\n // Choose endpoint with non-zero outcode\n IF code1 != 0 THEN code_out = code1\n ELSE code_out = code2\n \n // Step 5: Find intersection point\n IF code_out AND TOP THEN:\n // Clip against top boundary\n x = x1 + (x2 - x1) * (ymax - y1) / (y2 - y1)\n y = ymax\n ELSE IF code_out AND BOTTOM THEN:\n // Clip against bottom boundary\n x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1)\n y = ymin\n ELSE IF code_out AND RIGHT THEN:\n // Clip against right boundary\n y = y1 + (y2 - y1) * (xmax - x1) / (x2 - x1)\n x = xmax\n ELSE IF code_out AND LEFT THEN:\n // Clip against left boundary\n y = y1 + (y2 - y1) * (xmin - x1) / (x2 - x1)\n x = xmin\n \n // Step 6: Replace appropriate endpoint\n IF code_out == code1 THEN:\n x1 = x\n y1 = y\n code1 = ComputeOutcode(x1, y1)\n ELSE:\n x2 = x\n y2 = y\n code2 = ComputeOutcode(x2, y2)\n \n IF accept THEN:\n RETURN TRUE, (x1, y1), (x2, y2)\n ELSE:\n RETURN FALSE, NULL, NULL",
+      "explanation": "This pseudocode implements the complete Cohen-Sutherland algorithm. It computes 4-bit outcodes for endpoints, checks trivial acceptance (both inside) and rejection (both outside), clips against boundaries by computing intersection points, and iterates until acceptance, rejection, or maximum iterations.",
+      "timeComplexity": "O(1) per line (worst case 4 iterations)",
+      "spaceComplexity": "O(1) - only stores endpoints, outcodes, and boundary values"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Outcode Computation Function",
+      "description": "Detailed pseudocode for computing the 4-bit region code (outcode) for a point",
+      "code": "// Compute 4-bit outcode for Cohen-Sutherland algorithm\n// Bit 3 (MSB): Top - above ymax\n// Bit 2: Bottom - below ymin \n// Bit 1: Right - beyond xmax\n// Bit 0 (LSB): Left - before xmin\n\nFUNCTION ComputeOutcode(x, y):\n // Initialize to 0 (inside all regions)\n code = 0\n \n // Check Left (bit 0)\n IF x < xmin THEN:\n code = code + 1 // Set bit 0\n \n // Check Right (bit 1)\n IF x > xmax THEN:\n code = code + 2 // Set bit 1\n \n // Check Bottom (bit 2)\n IF y < ymin THEN:\n code = code + 4 // Set bit 2\n \n // Check Top (bit 3)\n IF y > ymax THEN:\n code = code + 8 // Set bit 3\n \n RETURN code\n\n// Example: Point (50, 450) with window (100,100) to (400,400)\n// x=50 < xmin=100 → Left bit set → +1\n// y=450 > ymax=400 → Top bit set → +8\n// Outcode = 9 = 1001 (binary)",
+      "explanation": "This function assigns a 4-bit code where each bit corresponds to a region outside the clipping window. The bits are checked in order: Left, Right, Bottom, Top, and added as powers of 2 (1,2,4,8) to form the final outcode.",
+      "timeComplexity": "O(1) - 4 comparisons",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

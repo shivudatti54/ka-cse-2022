@@ -1,0 +1,45 @@
+{
+  "topicId": "graph-terminology-weighted-graphs",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Dijkstra's Shortest Path Algorithm",
+      "description": "Finds shortest path from a source vertex to all other vertices in a weighted graph with non-negative weights",
+      "code": "DIJKSTRA(Graph G, Vertex source)\nBEGIN\n  FOR each vertex v IN G.V\n    d[v] \u2190 \u221e          // Initialize distances\n    parent[v] \u2190 NIL   // For path reconstruction\n  d[source] \u2190 0\n  \n  PriorityQueue Q \u2190 all vertices\n  \n  WHILE Q \u2260 \u2205 DO\n    u \u2190 EXTRACT-MIN(Q)   // Vertex with minimum distance\n    \n    FOR each neighbor v OF u\n      IF d[u] + weight(u,v) < d[v] THEN\n        d[v] \u2190 d[u] + weight(u,v)\n        parent[v] \u2190 u\n        UPDATE-QUEUE(Q, v)   // Update priority queue\n      END IF\n    END FOR\n  END WHILE\n  \n  RETURN d, parent\nEND",
+      "explanation": "The algorithm starts with source distance 0 and all others as infinity. It repeatedly extracts the vertex with minimum distance and relaxes edges to neighbors, updating shorter paths when found. Uses a priority queue for efficiency.",
+      "timeComplexity": "O((V + E) log V)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Bellman-Ford Algorithm",
+      "description": "Finds shortest paths from source to all vertices, handles negative edge weights",
+      "code": "def bellman_ford(vertices, edges, source):\n    # vertices: list of vertex names\n    # edges: list of tuples (u, v, weight)\n    # Initialize distances\n    dist = {v: float('inf') for v in vertices}\n    dist[source] = 0\n    parent = {v: None for v in vertices}\n    \n    # Relax all edges V-1 times\n    n = len(vertices)\n    for i in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    \n    # Check for negative weight cycles\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            print(\"Negative weight cycle detected!\")\n            return None, None\n    \n    return dist, parent\n\n# Example usage\nvertices = ['A', 'B', 'C', 'D', 'E']\nedges = [('A','B',4), ('A','C',2), ('B','C',1), \n         ('B','D',5), ('C','D',8), ('C','E',10), ('D','E',2)]\ndist, parent = bellman_ford(vertices, edges, 'A')",
+      "explanation": "Bellman-Ford relaxes all edges V-1 times to find shortest paths. If any edge can still be relaxed in the Vth iteration, a negative weight cycle exists. Unlike Dijkstra, it handles negative weights but has higher time complexity.",
+      "timeComplexity": "O(VE)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Kruskal's Minimum Spanning Tree",
+      "description": "Greedy algorithm to find MST by sorting edges and using Union-Find data structure",
+      "code": "KRUSKAL-MST(Graph G)\nBEGIN\n  // Sort all edges by weight in non-decreasing order\n  SORT edges by weight\n  \n  FOR each vertex v IN G.V\n    MAKE-SET(v)    // Create disjoint sets\n  \n  MST \u2190 \u2205\n  \n  FOR each edge (u,v) IN sorted_edges\n    IF FIND-SET(u) \u2260 FIND-SET(v) THEN\n      MST \u2190 MST \u222a {(u,v)}\n      UNION(u, v)   // Merge sets\n    END IF\n  \n  RETURN MST\nEND\n\n// Union-Find operations\nMAKE-SET(x)\n  parent[x] \u2190 x\n  rank[x] \u2190 0\n\nFIND-SET(x)\n  IF parent[x] \u2260 x THEN\n    parent[x] \u2190 FIND-SET(parent[x])  // Path compression\n  RETURN parent[x]\n\nUNION(x, y)\n  IF rank[x] > rank[y] THEN\n    parent[y] \u2190 x\n  ELSE\n    parent[x] \u2190 y\n    IF rank[x] = rank[y] THEN\n      rank[y] \u2190 rank[y] + 1",
+      "explanation": "Kruskal's algorithm sorts all edges and adds them one by one if they don't form a cycle. The Union-Find data structure efficiently manages disjoint sets to detect cycles. It's a greedy algorithm that produces optimal MST.",
+      "timeComplexity": "O(E log E) or O(E log V)",
+      "spaceComplexity": "O(V + E)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "BFS for Graph Traversal",
+      "description": "Breadth-First Search to explore graph level by level, useful for finding shortest path in unweighted graphs",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX 100\n\n// Queue structure\ntypedef struct {\n    int items[MAX];\n    int front, rear;\n} Queue;\n\nvoid initQueue(Queue* q) {\n    q->front = q->rear = -1;\n}\n\nint isEmpty(Queue* q) {\n    return q->front == -1;\n}\n\nvoid enqueue(Queue* q, int value) {\n    if (q->rear == MAX - 1) return;\n    if (q->front == -1) q->front = 0;\n    q->rear++;\n    q->items[q->rear] = value;\n}\n\nint dequeue(Queue* q) {\n    if (isEmpty(q)) return -1;\n    int item = q->items[q->front];\n    q->front++;\n    if (q->front > q->rear) q->front = q->rear = -1;\n    return item;\n}\n\n// BFS function using adjacency matrix\nvoid BFS(int graph[MAX][MAX], int n, int start) {\n    int visited[MAX] = {0};\n    Queue q;\n    initQueue(&q);\n    \n    visited[start] = 1;\n    enqueue(&q, start);\n    \n    printf(\"BFS from %c: \", start + 'A');\n    \n    while (!isEmpty(&q)) {\n        int v = dequeue(&q);\n        printf(\"%c \", v + 'A');\n        \n        for (int i = 0; i < n; i++) {\n            if (graph[v][i] && !visited[i]) {\n                visited[i] = 1;\n                enqueue(&q, i);\n            }\n        }\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    int n = 5;\n    int graph[MAX][MAX] = {0};\n    // Add edges: A-B, A-C, B-D, C-D, D-E\n    graph[0][1] = graph[1][0] = 1;\n    graph[0][2] = graph[2][0] = 1;\n    graph[1][3] = graph[3][1] = 1;\n    graph[2][3] = graph[3][2] = 1;\n    graph[3][4] = graph[4][3] = 1;\n    \n    BFS(graph, n, 0);  // Start from vertex A\n    return 0;\n}",
+      "explanation": "BFS explores vertices level by level using a queue. It starts from a source, marks it visited, adds neighbors to queue, and processes them in FIFO order. Guarantees shortest path in unweighted graphs.",
+      "timeComplexity": "O(V\u00b2) with adjacency matrix, O(V+E) with adjacency list",
+      "spaceComplexity": "O(V)"
+    }
+  ]
+}

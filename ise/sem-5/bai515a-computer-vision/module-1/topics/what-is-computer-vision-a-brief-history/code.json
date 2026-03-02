@@ -1,0 +1,35 @@
+{
+  "topicId": "what-is-computer-vision-a-brief-history",
+  "examples": [
+    {
+      "id": "basic-image-load-opencv",
+      "title": "Loading and Displaying Images with OpenCV",
+      "description": "Basic introduction to working with images in computer vision using OpenCV",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Load an image from file\nimage = cv2.imread('example.jpg')\n\n# Check if image loaded successfully\nif image is None:\n    print(\"Error: Could not load image\")\nelse:\n    # Get image properties\n    height, width, channels = image.shape\n    print(f\"Image size: {width}x{height}\")\n    print(f\"Number of channels: {channels}\")\n    print(f\"Data type: {image.dtype}\")\n    \n    # Display the image\n    cv2.imshow('Loaded Image', image)\n    cv2.waitKey(0)\n    cv2.destroyAllWindows()",
+      "explanation": "OpenCV is the most popular library for computer vision. cv2.imread() loads images as NumPy arrays. Images are stored as height x width x channels, with BGR color order by default.",
+      "timeComplexity": "O(width * height)",
+      "spaceComplexity": "O(width * height * channels)"
+    },
+    {
+      "id": "image-classification-demo",
+      "title": "Simple Image Classification with Pre-trained Model",
+      "description": "Using a pre-trained CNN for image classification - a fundamental CV task",
+      "language": "python",
+      "code": "import torch\nimport torchvision.transforms as transforms\nfrom torchvision import models\nfrom PIL import Image\n\n# Load pre-trained ResNet model\nmodel = models.resnet18(pretrained=True)\nmodel.eval()\n\n# Define image preprocessing\npreprocess = transforms.Compose([\n    transforms.Resize(256),\n    transforms.CenterCrop(224),\n    transforms.ToTensor(),\n    transforms.Normalize(\n        mean=[0.485, 0.456, 0.406],\n        std=[0.229, 0.224, 0.225]\n    )\n])\n\n# Load and preprocess image\nimage = Image.open('cat.jpg')\ninput_tensor = preprocess(image)\ninput_batch = input_tensor.unsqueeze(0)\n\n# Make prediction\nwith torch.no_grad():\n    output = model(input_batch)\n    \n# Get top 5 predictions\nprobabilities = torch.nn.functional.softmax(output[0], dim=0)\ntop5_prob, top5_idx = torch.topk(probabilities, 5)\n\nprint(\"Top 5 predictions:\")\nfor i, (prob, idx) in enumerate(zip(top5_prob, top5_idx)):\n    print(f\"{i+1}. Class {idx.item()}: {prob.item()*100:.2f}%\")",
+      "explanation": "This demonstrates image classification, a fundamental CV task. Pre-trained models like ResNet learn visual features from millions of images (ImageNet). The pipeline: load image -> preprocess -> feed to CNN -> get class probabilities.",
+      "timeComplexity": "O(N) where N is number of CNN parameters",
+      "spaceComplexity": "O(N) for model parameters"
+    },
+    {
+      "id": "cv-challenge-demo",
+      "title": "Demonstrating CV Challenges: Illumination Variation",
+      "description": "Shows how lighting affects image appearance - a key CV challenge",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\ndef simulate_lighting_conditions(image):\n    \"\"\"Demonstrate how the same image looks under different lighting\"\"\"\n    results = []\n    \n    # Original\n    results.append(('Original', image.copy()))\n    \n    # Bright lighting (overexposed)\n    bright = cv2.convertScaleAbs(image, alpha=1.5, beta=50)\n    results.append(('Bright', bright))\n    \n    # Dark lighting (underexposed)\n    dark = cv2.convertScaleAbs(image, alpha=0.5, beta=-30)\n    results.append(('Dark', dark))\n    \n    # High contrast\n    high_contrast = cv2.convertScaleAbs(image, alpha=2.0, beta=0)\n    results.append(('High Contrast', high_contrast))\n    \n    # Low contrast\n    low_contrast = cv2.convertScaleAbs(image, alpha=0.5, beta=50)\n    results.append(('Low Contrast', low_contrast))\n    \n    return results\n\n# Load image and demonstrate\nimage = cv2.imread('object.jpg')\nvariations = simulate_lighting_conditions(image)\n\n# Display all variations\nfor name, img in variations:\n    cv2.imshow(name, img)\n\ncv2.waitKey(0)\ncv2.destroyAllWindows()",
+      "explanation": "This demonstrates why illumination variation is challenging for CV systems. The same object under different lighting conditions produces very different pixel values, making recognition difficult without robust algorithms.",
+      "timeComplexity": "O(width * height)",
+      "spaceComplexity": "O(width * height)"
+    }
+  ]
+}

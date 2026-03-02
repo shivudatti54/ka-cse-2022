@@ -1,0 +1,45 @@
+{
+  "topicId": "algorithms-for-planning-as-state-space-search",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Forward State Space Search Algorithm",
+      "description": "Basic forward search algorithm for planning - explores state space from initial state toward goal.",
+      "code": "FUNCTION Forward-Planning-Search(problem):\n frontier = PriorityQueue with initial state\n explored = empty set\n while frontier not empty:\n state = frontier.pop()\n if Goal-Test(problem.goal, state):\n return Extract-Path(state)\n if state not in explored:\n explored.add(state)\n for each action in Applicable-Actions(state):\n nextState = Result(state, action)\n if nextState not in explored:\n frontier.push(nextState, Cost(state, action))\n return FAILURE",
+      "explanation": "Standard forward search in planning. Uses applicable actions to generate new states until goal is reached. Can use different queueing strategies (BFS, UCS, A*) for different search behaviors.",
+      "language": "pseudocode",
+      "timeComplexity": "O(b^d) where b=branching factor, d=depth",
+      "spaceComplexity": "O(b^d)"
+    },
+    {
+      "id": "code-2",
+      "title": "Backward Goal Regression Algorithm",
+      "description": "Backward search algorithm that uses goal regression to find predecessor states.",
+      "code": "FUNCTION Backward-Planning-Search(problem):\n frontier = PriorityQueue with goal state\n explored = empty set\n while frontier not empty:\n state = frontier.pop()\n if state == problem.initial:\n return Extract-Path(state)\n if state not in explored:\n explored.add(state)\n for each action in Relevant-Actions(state):\n regressedState = Goal-Regress(state, action)\n if regressedState not in explored:\n frontier.push(regressedState)\n return FAILURE\n\nFUNCTION Goal-Regress(goal, action):\n // Returns states from which action leads to goal\n return (goal - Effects(action)) ∪ Preconditions(action)",
+      "explanation": "Backward search computes goal regression. Starting from goal, finds what states could have led to it. Only considers relevant actions that could achieve parts of the goal.",
+      "language": "pseudocode",
+      "timeComplexity": "O(b^d) with smaller b than forward",
+      "spaceComplexity": "O(b^d)"
+    },
+    {
+      "id": "code-3",
+      "title": "Partial Order Planning Algorithm",
+      "description": "Constraint-based planning algorithm that maintains partial ordering of actions.",
+      "code": "FUNCTION Partial-Order-Plan(initial, goal, actions):\n plan = Create-Plan()\n Add-Start-State(plan, initial)\n Add-Finish-State(plan, goal)\n openPreconditions = goal - Facts(Start)\n while openPreconditions not empty:\n Choose(openPreconditions, p)\n Select(Action, actions, p)\n Add-Action(plan, Action)\n Add-Causal-Link(plan, Action, p, Producer(Action, p))\n Add-Ordering-Constraint(plan, Producer(Action,p)) → Action)\n openPreconditions = openPreconditions - {p}\n for each newPrecond in Preconditions(Action):\n if not satisfied in plan:\n openPreconditions = openPreconditions ∪ {newPrecond}\n return plan",
+      "explanation": "POP builds plans incrementally by selecting actions to satisfy open preconditions. Maintains causal links and ordering constraints. Returns partially ordered plan when all preconditions are supported.",
+      "language": "pseudocode",
+      "timeComplexity": "Exponential in number of actions",
+      "spaceComplexity": "O(number of constraints)"
+    },
+    {
+      "id": "code-4",
+      "title": "Delete-Relaxation Heuristic (h-add)",
+      "description": "Computes admissible heuristic by ignoring delete effects of actions.",
+      "code": "FUNCTION H-Add(state, goal):\n cost = 0\n remaining = goal - Facts(state)\n while remaining not empty:\n // Find action with cheapest add that helps remaining\n action = argmin(a in Actions(state, remaining), Cost(Add(a)))\n if no action found:\n return INFINITY\n cost = cost + Cost(action)\n remaining = remaining - Add(action)\n remaining = remaining ∪ (Preconditions(action) - Facts(state))\n return cost\n\n// Note: Returns sum of action costs ignoring deletes",
+      "explanation": "The h-add heuristic computes cost ignoring delete lists - only counts what's added. It's admissible (never overestimates) because adding more actions can only increase true cost. Used in many modern planners.",
+      "language": "pseudocode",
+      "timeComplexity": "O(|A| × |G|) per evaluation",
+      "spaceComplexity": "O(|G|)"
+    }
+  ]
+}

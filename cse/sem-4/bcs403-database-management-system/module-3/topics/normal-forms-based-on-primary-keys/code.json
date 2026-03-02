@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Algorithm to Check 2NF",
+    "description": "Procedure to determine if a relation is in Second Normal Form",
+    "code": "PROCEDURE Check2NF(Relation R, Set FDs, PrimaryKey PK)\nBEGIN\n // Check if relation is in 1NF\n IF NOT Is1NF(R) THEN\n RETURN \"Not in 1NF\"\n END IF\n\n // Check for partial dependencies\n FOR EACH FD in FDs WHERE FD.LHS is proper subset of PK DO\n // FD.LHS is part of primary key\n // Check if FD.RHS contains non-key attributes\n IF ContainsNonKeyAttributes(FD.RHS, R, PK) THEN\n RETURN \"Violates 2NF: Partial dependency \" + FD.LHS + \" \u2192 \" + FD.RHS\n END IF\n END FOR\n\n RETURN \"In 2NF\"\nEND",
+    "explanation": "The algorithm first verifies 1NF compliance, then checks if any functional dependency has a left-hand side that is only part of the composite primary key. If such a partial dependency exists with non-key attributes on the right side, it violates 2NF.",
+    "complexity": {
+      "time": "O(n \u00d7 m)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Algorithm to Find Candidate Keys",
+    "description": "Procedure to find all candidate keys using attribute closure",
+    "code": "PROCEDURE FindCandidateKeys(Attributes AttrSet, Set FDs)\nBEGIN\n candidateKeys = empty set\n superkeys = FindAllSuperKeys(AttrSet, FDs)\n\n FOR EACH superkey SK in superkeys DO\n isMinimal = TRUE\n FOR EACH attribute A in SK DO\n // Check if removing A still gives superkey\n tempSK = SK - {A}\n IF Closure(tempSK, FDs) contains all attributes THEN\n isMinimal = FALSE\n BREAK\n END IF\n END FOR\n\n IF isMinimal THEN\n add SK to candidateKeys\n END IF\n END FOR\n\n RETURN candidateKeys\nEND\n\nFUNCTION Closure(AttrSet, FDs)\nBEGIN\n result = AttrSet\n changed = TRUE\n WHILE changed DO\n changed = FALSE\n FOR EACH FD X \u2192 Y in FDs DO\n IF X is subset of result AND Y is not subset of result THEN\n result = result \u222a Y\n changed = TRUE\n END IF\n END FOR\n END WHILE\n RETURN result\nEND",
+    "explanation": "Uses attribute closure to find all superkeys, then filters to find minimal superkeys (candidate keys). An attribute set is a superkey if its closure equals all attributes.",
+    "complexity": {
+      "time": "O(2^n \u00d7 m)",
+      "space": "O(2^n)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "BCNF Decomposition Algorithm",
+    "description": "Algorithm to decompose relation into Boyce-Codd Normal Form",
+    "code": "PROCEDURE BCNFDecompose(Relation R, Set FDs)\nBEGIN\n result = {R} // Start with original relation\n decomposed = FALSE\n\n WHILE NOT decomposed DO\n decomposed = TRUE\n\n FOR EACH relation S in result DO\n // Find BCNF violation: FD X \u2192 Y where X is not a superkey\n FOR EACH FD X \u2192 Y in FDs restricted to S DO\n IF NOT IsSuperKey(X, S, FDs) THEN\n // Violation found, decompose S\n S1 = Closure(X, FDs) // Attributes functionally determined by X\n S2 = Attributes(S) - (S1 - X) // Remaining attributes\n\n Remove S from result\n Add S1 to result\n Add S2 to result\n\n decomposed = FALSE\n BREAK all loops\n END IF\n END FOR\n IF NOT decomposed THEN BREAK END IF\n END FOR\n END WHILE\n\n RETURN result\nEND",
+    "explanation": "Repeatedly finds BCNF violations (determinants that aren't superkeys) and decomposes the relation. S1 contains the functional dependency's closure plus the determinant, S2 contains remaining attributes.",
+    "complexity": {
+      "time": "O(n\u00b2)",
+      "space": "O(n)"
+    }
+  }
+]

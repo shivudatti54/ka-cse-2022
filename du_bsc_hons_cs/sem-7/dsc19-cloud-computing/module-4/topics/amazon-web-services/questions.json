@@ -1,0 +1,53 @@
+{
+  "topicId": "amazon-web-services",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "A startup needs to store 50TB of historical customer data that is infrequently accessed but must be retained for 7 years for compliance. Design an S3-based storage solution including appropriate storage class selection, lifecycle policies, and versioning strategy. Also calculate the approximate monthly cost if 10% of data is accessed monthly.",
+      "keyPoints": [
+        "S3 Intelligent-Tiering or Glacier Deep Archive for cost optimization",
+        "Lifecycle policies to transition between storage classes automatically",
+        "Enable versioning for compliance and data protection",
+        "Consider S3 Replication and Cross-Region Replication for disaster recovery"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the components of AWS VPC architecture required to deploy a 3-tier web application (Web, Application, Database) with public internet access for the web tier only. Include subnet design, route tables, NAT Gateway, and Security Group configurations with specific port requirements.",
+      "keyPoints": [
+        "Public subnets for ALB/Web servers, Private subnets for App tier, Isolated subnets for RDS",
+        "NAT Gateway in public subnet to allow outbound internet for private subnets",
+        "Security Groups: Web SG (80/443 from ALB), App SG (80/443 from Web SG), DB SG (3306 from App SG only)",
+        "Route tables: Public route via Internet Gateway, Private route via NAT Gateway"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Design a serverless image processing pipeline on AWS that: (a) accepts image uploads to S3, (b) triggers Lambda to resize images into multiple thumbnail sizes, (c) stores processed images in a separate bucket, (d) uses DynamoDB to store image metadata. Include the Lambda function code (Python), IAM role permissions, S3 event configuration, and explain the pricing model based on 1 million image uploads per month with average size of 2MB.",
+      "keyPoints": [
+        "S3 Event Notification → Lambda trigger with proper IAM role (s3:GetObject, s3:PutObject, dynamodb:PutItem)",
+        "Lambda function using Pillow/boto3 for image processing with concurrent execution and reserved concurrency",
+        "Architecture: Upload Bucket → Lambda → Processed Bucket + DynamoDB metadata",
+        "Pricing: Lambda compute (duration × memory), S3 requests, Data Transfer, DynamoDB write capacity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Compare AWS RDS (PostgreSQL), Aurora, and DynamoDB for a high-traffic e-commerce application handling 10,000 transactions per minute with requirements for: (a) ACID compliance for orders, (b) automatic scaling during flash sales, (c) multi-region read replicas, (d) point-in-time recovery. Provide a recommendation with justification and explain how to implement read replicas, backup strategies, and cost optimization using Reserved Instances vs On-Demand.",
+      "keyPoints": [
+        "RDS: Managed PostgreSQL/MySQL with Multi-AZ, read replicas, automatic backups, but limited scaling",
+        "Aurora: MySQL/Postgre compatible, auto-scaling storage, 6-way replication, serverless option, 1/10th latency vs RDS",
+        "DynamoDB: Fully managed NoSQL, on-demand/Provisioned modes, DAX caching, Global Tables for multi-region",
+        "Cost: RDS Reserved Instances (1yr/3yr), Aurora Serverless for variable workload, DynamoDB on-demand for unpredictable traffic"
+      ],
+      "marks": 10
+    }
+  ]
+}

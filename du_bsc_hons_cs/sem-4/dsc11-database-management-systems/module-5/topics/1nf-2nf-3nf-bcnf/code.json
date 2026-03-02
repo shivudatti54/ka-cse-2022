@@ -1,0 +1,45 @@
+{
+  "topicId": "1nf-2nf-3nf-bcnf",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Check 1NF Compliance",
+      "description": "Algorithm to verify if a relation satisfies First Normal Form",
+      "code": "FUNCTION isIn1NF(relation R)\nBEGIN\n    FOR EACH attribute A IN R\n    BEGIN\n        FOR EACH tuple t IN R\n        BEGIN\n            IF NOT isAtomic(t[A]) THEN\n                RETURN FALSE\n            END\n        END\n    END\n    RETURN TRUE\nEND\n\nFUNCTION isAtomic(value v)\nBEGIN\n    IF v IS NULL THEN RETURN TRUE\n    IF v IS LIST OR v IS ARRAY OR v IS SET THEN\n        RETURN FALSE\n    RETURN TRUE\nEND",
+      "explanation": "This algorithm checks each attribute value in every tuple to ensure it contains only atomic (single) values. Non-atomic values include lists, arrays, sets, or any composite data.",
+      "timeComplexity": "O(n \u00d7 m) where n is number of tuples, m is number of attributes",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Find Candidate Keys",
+      "description": "Algorithm to find all candidate keys from functional dependencies",
+      "code": "def find_candidate_keys(attributes, fds):\n    '''\n    Find all candidate keys given set of attributes and FDs\n    attributes: set of all attributes\n    fds: list of (lhs, rhs) tuples\n    '''\n    # Compute closure of a set of attributes\n    def closure(attrs, fds):\n        result = set(attrs)\n        changed = True\n        while changed:\n            changed = False\n            for lhs, rhs in fds:\n                if lhs.issubset(result) and not rhs.issubset(result):\n                    result = result.union(rhs)\n                    changed = True\n        return result\n    \n    # Check if attribute set is a superkey\n    def is_superkey(attrs):\n        return closure(attrs, fds) == attributes\n    \n    # Check if minimal (no proper subset is superkey)\n    def is_candidate_key(attrs):\n        if not is_superkey(attrs):\n            return False\n        for attr in attrs:\n            if is_superkey(attrs - {attr}):\n                return False\n        return True\n    \n    # Find all candidate keys\n    from itertools import combinations\n    candidate_keys = []\n    for size in range(1, len(attributes) + 1):\n        for combo in combinations(attributes, size):\n            if is_candidate_key(set(combo)):\n                candidate_keys.append(set(combo))\n    \n    return candidate_keys\n\n# Example usage\nattributes = {'A', 'B', 'C', 'D'}\nfds = [({'A'}, {'B'}), ({'B'}, {'C'}), ({'C'}, {'D'})]\nprint(find_candidate_keys(attributes, fds))  # Output: [{'A'}]",
+      "explanation": "This Python code finds all candidate keys by computing attribute closures for all possible attribute combinations and checking if they are minimal superkeys.",
+      "timeComplexity": "O(2^n \u00d7 n \u00d7 m) exponential in number of attributes",
+      "spaceComplexity": "O(n) for storing candidate keys"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Normalize to 3NF (Synthesis Algorithm)",
+      "description": "Algorithm to decompose a relation into 3NF using the synthesis approach",
+      "code": "ALGORITHM Synthesize3NF\nINPUT: Relation R, set of FDs F\nOUTPUT: Set of relations in 3NF\n\nBEGIN\n    // Step 1: Find minimal cover of FDs\n    F_min = MinimalCover(F)\n    \n    // Step 2: Create relation for each FD in minimal cover\n    Relations = []\n    FOR EACH FD (X \u2192 Y) IN F_min\n    BEGIN\n        R_new = X \u222a Y\n        IF NOT ContainsRelation(Relations, R_new) THEN\n            Add Relations, R_new\n    END\n    \n    // Step 3: If no relation contains a candidate key, add one\n    CK = FindCandidateKey(R, F)\n    IF NOT AnyRelationContains(Relations, CK) THEN\n        Add Relations, CK\n    \n    // Step 4: Remove relations that are subsets of others\n    Relations = RemoveRedundant(Relations)\n    \n    RETURN Relations\nEND\n\nALGORITHM MinimalCover\nINPUT: Set of FDs F\nOUTPUT: Minimal cover of F\nBEGIN\n    // Split RHS to single attributes\n    F1 = []\n    FOR EACH FD (X \u2192 {A,B,C}) IN F\n        F1.append((X, {A})); F1.append((X, {B})); F1.append((X, {C}))\n    \n    // Remove extraneous LHS attributes\n    FOR EACH FD (X \u2192 {A}) IN F1\n        FOR EACH attribute B IN X\n            IF Closure(X - {B}, F1) CONTAINS A THEN\n                X = X - {B}\n    \n    // Remove redundant FDs\n    F_min = []\n    FOR EACH FD f IN F1\n        IF NOT Closure(f.LHS, F1 - {f}) CONTAINS f.RHS THEN\n            Add F_min, f\n    \n    RETURN F_min\nEND",
+      "explanation": "The synthesis algorithm transforms a relation into 3NF by first computing the minimal cover of functional dependencies, creating relations for each FD, ensuring a candidate key is preserved, and removing redundant relations.",
+      "timeComplexity": "O(n \u00d7 m\u00b2) where n is number of FDs, m is number of attributes",
+      "spaceComplexity": "O(n \u00d7 m)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Check BCNF Violation",
+      "description": "C program to check if a relation violates BCNF and identify violating FDs",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n#include <string.h>\n\n#define MAX_ATTRS 10\n#define MAX_FDS 20\n\n// Structure to represent a set of attributes\ntypedef struct {\n    char attrs[MAX_ATTRS];\n    int count;\n} AttrSet;\n\n// Structure for Functional Dependency\ntypedef struct {\n    AttrSet lhs;\n    AttrSet rhs;\n} FD;\n\n// Check if attr is in set\nbool contains(AttrSet set, char attr) {\n    for (int i = 0; i < set.count; i++) {\n        if (set.attrs[i] == attr) return true;\n    }\n    return false;\n}\n\n// Compute closure of attribute set under given FDs\nAttrSet closure(AttrSet input, FD fds[], int fd_count, AttrSet all_attrs) {\n    AttrSet result = input;\n    bool changed = true;\n    \n    while (changed) {\n        changed = false;\n        for (int i = 0; i < fd_count; i++) {\n            // Check if LHS is subset of result\n            bool lhs_in_result = true;\n            for (int j = 0; j < fds[i].lhs.count; j++) {\n                if (!contains(result, fds[i].lhs.attrs[j])) {\n                    lhs_in_result = false;\n                    break;\n                }\n            }\n            // If LHS in result and RHS not, add RHS\n            if (lhs_in_result) {\n                for (int j = 0; j < fds[i].rhs.count; j++) {\n                    if (!contains(result, fds[i].rhs.attrs[j])) {\n                        result.attrs[result.count++] = fds[i].rhs.attrs[j];\n                        changed = true;\n                    }\n                }\n            }\n        }\n    }\n    return result;\n}\n\n// Check if set X is a superkey\nbool isSuperkey(AttrSet X, FD fds[], int fd_count, AttrSet all_attrs) {\n    AttrSet X_closure = closure(X, fds, fd_count, all_attrs);\n    return X_closure.count == all_attrs.count;\n}\n\n// Check if relation is in BCNF\nbool isInBCNF(FD fds[], int fd_count, AttrSet all_attrs) {\n    printf(\"\\nChecking BCNF compliance:\\n\");\n    for (int i = 0; i < fd_count; i++) {\n        printf(\"FD %c -> %c: \", fds[i].lhs.attrs[0], fds[i].rhs.attrs[0]);\n        if (isSuperkey(fds[i].lhs, fds, fd_count, all_attrs)) {\n            printf(\"BCNF compliant (LHS is superkey)\\n\");\n        } else {\n            printf(\"BCNF VIOLATION! (LHS is not superkey)\\n\");\n            return false;\n        }\n    }\n    return true;\n}\n\nint main() {\n    // Example: R(A,B,C) with FD B -> C\n    // This violates BCNF as B is not a superkey\n    AttrSet all_attrs = {'A', 'B', 'C'}, 3;\n    FD fds[1] = {{{'B'}, 1}, {{'C'}, 1}};\n    \n    if (isInBCNF(fds, 1, all_attrs)) {\n        printf(\"\\nRelation is in BCNF\\n\");\n    } else {\n        printf(\"\\nRelation is NOT in BCNF\\n\");\n    }\n    \n    return 0;\n}",
+      "explanation": "This C program checks if a relation violates BCNF by computing closures and verifying if each FD's left-hand side is a superkey. It demonstrates the core algorithm used in normalization tools.",
+      "timeComplexity": "O(f \u00d7 n \u00d7 a) where f is number of FDs, n is number of iterations, a is number of attributes",
+      "spaceComplexity": "O(a) for storing attribute sets"
+    }
+  ]
+}

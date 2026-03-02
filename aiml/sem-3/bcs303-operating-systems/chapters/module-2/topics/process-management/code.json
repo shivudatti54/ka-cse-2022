@@ -1,0 +1,45 @@
+{
+  "topicId": "process-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Process Creation using fork()",
+      "description": "Demonstrates creating a child process using fork() system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n    pid_t pid = fork();\n    \n    if (pid < 0) {\n        printf(\"Fork failed!\\n\");\n        return 1;\n    }\n    else if (pid == 0) {\n        // Child process\n        printf(\"Child Process: PID = %d, Parent PID = %d\\n\", \n               getpid(), getppid());\n        printf(\"Child executing...\\n\");\n        _exit(0);\n    }\n    else {\n        // Parent process\n        printf(\"Parent Process: PID = %d, Child PID = %d\\n\", \n               getpid(), pid);\n        wait(NULL); // Wait for child to complete\n        printf(\"Child completed, parent continuing\\n\");\n    }\n    return 0;\n}",
+      "explanation": "The fork() system call creates a new process. It returns 0 to the child process and the child's PID to the parent. The parent uses wait() to wait for child termination, preventing zombie process.",
+      "timeComplexity": "O(1) for fork creation",
+      "spaceComplexity": "O(n) where n is process memory size copied"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Process Scheduling Simulation - FCFS",
+      "description": "Simulates First-Come-First-Served CPU scheduling algorithm",
+      "code": "def fcfs_scheduling(processes):\n    \"\"\"\n    FCFS Scheduling Algorithm\n    processes: list of tuples (pid, arrival_time, burst_time)\n    \"\"\"\n    # Sort by arrival time\n    sorted_processes = sorted(processes, key=lambda x: x[1])\n    \n    n = len(sorted_processes)\n    waiting_time = [0] * n\n    turnaround_time = [0] * n\n    \n    # Calculate waiting time\n    current_time = 0\n    for i in range(n):\n        pid, arrival, burst = sorted_processes[i]\n        if current_time < arrival:\n            current_time = arrival\n        waiting_time[i] = current_time - arrival\n        current_time += burst\n        turnaround_time[i] = waiting_time[i] + burst\n    \n    # Calculate averages\n    avg_waiting = sum(waiting_time) / n\n    avg_turnaround = sum(turnaround_time) / n\n    \n    return waiting_time, turnaround_time, avg_waiting, avg_turnaround\n\n# Example usage\nprocesses = [(\"P1\", 0, 10), (\"P2\", 1, 5), (\"P3\", 2, 8)]\nwt, tt, avg_wt, avg_tt = fcfs_scheduling(processes)\n\nprint(\"FCFS Scheduling Results:\")\nfor i, (pid, _, _) in enumerate(processes):\n    print(f\"{pid}: Waiting Time = {wt[i]}, Turnaround Time = {tt[i]}\")\nprint(f\"Average Waiting Time: {avg_wt}\")\nprint(f\"Average Turnaround Time: {avg_tt}\")",
+      "explanation": "This FCFS simulation sorts processes by arrival time and calculates waiting and turnaround times. It demonstrates how the scheduler selects the first arrived process and runs it to completion before moving to the next.",
+      "timeComplexity": "O(n log n) due to sorting",
+      "spaceComplexity": "O(n) for storing timing arrays"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Thread Creation using Pthreads",
+      "description": "Demonstrates creating multiple threads using POSIX threads library",
+      "code": "#include <stdio.h>\n#include <pthread.h>\n#include <unistd.h>\n\n// Shared variable\nint shared_counter = 0;\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n\n// Thread function\nvoid* thread_function(void* arg) {\n    int thread_id = *(int*)arg;\n    \n    for (int i = 0; i < 5; i++) {\n        pthread_mutex_lock(&mutex); // Enter critical section\n        shared_counter++;\n        printf(\"Thread %d: Counter = %d\\n\", thread_id, shared_counter);\n        pthread_mutex_unlock(&mutex); // Exit critical section\n        usleep(100000); // Sleep 100ms\n    }\n    \n    return NULL;\n}\n\nint main() {\n    pthread_t threads[3];\n    int thread_ids[3] = {1, 2, 3};\n    \n    printf(\"Creating 3 threads...\\n\");\n    \n    // Create threads\n    for (int i = 0; i < 3; i++) {\n        pthread_create(&threads[i], NULL, thread_function, &thread_ids[i]);\n    }\n    \n    // Wait for all threads to complete\n    for (int i = 0; i < 3; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"Final counter value: %d\\n\", shared_counter);\n    printf(\"All threads completed\\n\");\n    \n    return 0;\n}",
+      "explanation": "This demonstrates thread creation using POSIX Pthreads. The mutex ensures mutual exclusion in the critical section, preventing race conditions when multiple threads access shared data. pthread_create() creates new threads, pthread_join() waits for thread completion.",
+      "timeComplexity": "O(n) where n is number of iterations per thread",
+      "spaceComplexity": "O(1) for shared variables plus stack per thread"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Shared Memory IPC Example",
+      "description": "Demonstrates inter-process communication using shared memory",
+      "code": "// WRITER PROCESS (process1.c)\n#include <stdio.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n#include <string.h>\n\nint main() {\n    key_t key = ftok(\"shmfile\", 65); // Generate unique key\n    int shmid = shmget(key, 1024, IPC_CREAT | 0666); // Create shared memory\n    char *str = (char*)shmat(shmid, (void*)0, 0); // Attach to shared memory\n    \n    printf(\"Writer: Enter message: \");\n    fgets(str, 1024, stdin);\n    \n    printf(\"Writer: Message written to shared memory\\n\");\n    shmdt(str); // Detach shared memory\n    \n    return 0;\n}\n\n// READER PROCESS (process2.c)\n#include <stdio.h>\n#include <sys/ipc.h>\n#include <sys/shm.h>\n\nint main() {\n    key_t key = ftok(\"shmfile\", 65);\n    int shmid = shmget(key, 1024, 0666); // Get existing shared memory\n    char *str = (char*)shmat(shmid, (void*)0, 0); // Attach\n    \n    printf(\"Reader: Message read from shared memory: %s\", str);\n    shmdt(str); // Detach\n    \n    // Destroy shared memory\n    shmctl(shmid, IPC_RMID, NULL);\n    \n    return 0;\n}",
+      "explanation": "This demonstrates Shared Memory IPC. The writer process creates shared memory and writes data to it. The reader process attaches to the same shared memory segment using the same key and reads the data. This is the fastest IPC method as no data copying is required.",
+      "timeComplexity": "O(n) for writing/reading n bytes",
+      "spaceComplexity": "O(n) for shared memory segment"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "flow-control",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Stop-and-Wait ARQ Sender Implementation",
+      "description": "Pseudocode for sender side of Stop-and-Wait ARQ protocol showing frame transmission and acknowledgment handling.",
+      "code": "PROCEDURE SendFrame(frame_number)\n TRANSMIT(frame_number, data)\n START_TIMER(frame_number)\n WHILE NOT ACK_received\n IF TIMEOUT\n RETRANSMIT(frame_number)\n RESET_TIMER\n END IF\n WAIT_FOR_ACK\n END WHILE\n STOP_TIMER\n CANCEL_ACK\n RETURN SUCCESS\n\nPROCEDURE ReceiveACK(ack_number)\n IF ack_number == expected_ack\n expected_frame = expected_frame + 1\n RETURN TRUE\n ELSE\n RETURN FALSE\n END IF",
+      "explanation": "The sender transmits one frame and starts a timer. It waits for acknowledgment before sending the next frame. If timeout occurs (no ACK received within expected time), the frame is retransmitted. The loop continues until successful acknowledgment is received.",
+      "timeComplexity": "O(n) where n is number of frames",
+      "spaceComplexity": "O(1) - only stores current frame number and timer state"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Sliding Window Sender Implementation",
+      "description": "Pseudocode showing how sender manages a sliding window of frames for efficient transmission.",
+      "code": "CONSTANT WINDOW_SIZE = 5\nVARIABLE send_base = 0\nVARIABLE next_seq_num = 0\nVARIABLE packet_buffer = []\n\nPROCEDURE SendData(data)\n IF next_seq_num < send_base + WINDOW_SIZE\n packet_buffer[next_seq_num] = data\n TRANSMIT(next_seq_num, data)\n IF send_base == next_seq_num\n START_TIMER(send_base)\n END IF\n next_seq_num = next_seq_num + 1\n ELSE\n WAIT_FOR_WINDOW_ADVANCE\n END IF\n\nPROCEDURE HandleACK(ack_num)\n IF ack_num > send_base\n send_base = ack_num\n IF send_base == next_seq_num\n STOP_TIMER\n ELSE\n RESET_TIMER(send_base)\n END IF\n END IF",
+      "explanation": "The sender maintains two pointers: send_base (oldest unacked frame) and next_seq_num (next frame to send). The window slides forward as ACKs are received. Multiple frames can be in flight, improving utilization. Timer is managed for the oldest unacknowledged frame.",
+      "timeComplexity": "O(1) per frame transmission, O(n) for ACK processing",
+      "spaceComplexity": "O(WINDOW_SIZE) - stores frames in current window"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "TCP Flow Control Receiver Implementation",
+      "description": "Pseudocode demonstrating receiver-side TCP flow control with window advertisement.",
+      "code": "VARIABLE recv_buffer[MAX_WINDOW]\nVARIABLE read_pointer = 0\nVARIABLE write_pointer = 0\nVARIABLE expected_seq = 0\n\nPROCEDURE ReceivePacket(seq_num, data, length)\n available_space = MAX_WINDOW - write_pointer\n \n IF seq_num == expected_seq\n STORE_IN_BUFFER(seq_num, data)\n expected_seq = expected_seq + length\n WRITE_POINTER = expected_seq MOD MAX_WINDOW\n \n WHILE data_available_in_buffer\n DELIVER_TO_APPLICATION\n READ_POINTER = (read_pointer + 1) MOD MAX_WINDOW\n END WHILE\n ELSE IF seq_num > expected_seq\n STORE_IN_BUFFER(seq_num, data) // Out-of-order\n END IF\n \n advertised_window = (MAX_WINDOW - write_pointer + read_pointer) MOD MAX_WINDOW\n SEND_ACK(expected_seq, advertised_window)\n\nPROCEDURE GetAdvertisedWindow\n RETURN (MAX_WINDOW - write_pointer + read_pointer) MOD MAX_WINDOW",
+      "explanation": "The receiver maintains a circular buffer with read and write pointers. It advertises the available buffer space (advertised window) in every ACK. When the window reaches zero, the sender must wait. Out-of-order frames may be buffered for later delivery.",
+      "timeComplexity": "O(1) for packet processing, O(n) for in-order delivery to application",
+      "spaceComplexity": "O(MAX_WINDOW) - receiver buffer size"
+    }
+  ]
+}

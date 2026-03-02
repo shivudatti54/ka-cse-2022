@@ -1,0 +1,45 @@
+{
+  "topicId": "virtual-circuits-datagrams-addressing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Virtual Circuit Data Transfer",
+      "description": "Demonstrates how data is transferred in Virtual Circuit switching using VCI",
+      "code": "// Virtual Circuit Switching - Packet Forwarding\nPROCEDURE ForwardPacket(packet, incomingInterface)\nBEGIN\n    // Get VCI from packet header\n    vci \u2190 packet.virtualCircuitIdentifier\n    \n    // Look up VCI in routing table\n    entry \u2190 VCI_Table[incomingInterface][vci]\n    \n    IF entry EXISTS THEN\n        // Replace VCI with outgoing VCI (label swapping)\n        packet.virtualCircuitIdentifier \u2190 entry.outgoingVCI\n        \n        // Forward packet on outgoing interface\n        SendToInterface(packet, entry.outgoingInterface)\n    ELSE\n        // VCI not found - drop packet\n        DropPacket(packet)\n    END IF\nEND",
+      "explanation": "In VC switching, each router maintains a VCI table. When a packet arrives, the router looks up the incoming VCI, replaces it with the outgoing VCI (label swapping), and forwards the packet.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(N) where N is number of active VCs"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Datagram Packet Forwarding",
+      "description": "Shows how each datagram packet is independently routed at each router",
+      "code": "// Datagram Switching - Independent Packet Routing\nPROCEDURE ForwardDatagram(packet)\nBEGIN\n    // Extract destination address from packet\n    destAddress \u2190 packet.destinationIP\n    \n    // Perform longest prefix match routing lookup\n    nextHop \u2190 RoutingTable.Lookup(destAddress)\n    \n    IF nextHop EXISTS THEN\n        // No connection ID - address stays the same\n        // Forward packet to next hop router\n        SendToNextHop(packet, nextHop)\n    ELSE\n        // No route to destination\n        SendICMPError(source, \"Network Unreachable\")\n    END IF\nEND\n\n// Example: Each packet makes independent decision\nPROCEDURE ProcessMultiplePackets(packets[])\nBEGIN\n    FOR EACH packet IN packets DO\n        // Each packet routed independently\n        ForwardDatagram(packet)\n    END FOR\nEND",
+      "explanation": "In datagram switching, each packet carries the full destination IP address. Each router performs an independent routing lookup for every packet. The address remains unchanged throughout the journey.",
+      "timeComplexity": "O(log R) where R is routing table entries",
+      "spaceComplexity": "O(R) for routing table storage"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "VC Connection Setup Simulation",
+      "description": "Python simulation of Virtual Circuit connection establishment",
+      "code": "class VirtualCircuit:\n    def __init__(self, vc_id, path):\n        self.vc_id = vc_id\n        self.path = path  # List of routers in the path\n        self.state = \"IDLE\"\n    \n    def establish(self):\n        \"\"\"Phase 1: Establish virtual circuit\"\"\"\n        print(f\"[VC {self.vc_id}] Initiating connection setup...\")\n        for router in self.path:\n            # Reserve resources at each router\n            router.reserve_resources(self.vc_id)\n        self.state = \"ESTABLISHED\"\n        print(f\"[VC {self.vc_id}] Connection established successfully!\")\n    \n    def transfer_data(self, data_packets):\n        \"\"\"Phase 2: Transfer data with VCI swapping\"\"\"\n        if self.state != \"ESTABLISHED\":\n            print(\"Error: VC not established!\")\n            return\n            \n        print(f\"[VC {self.vc_id}] Transferring {len(data_packets)} packets...\")\n        current_vci = 10  # Starting VCI\n        \n        for i, packet in enumerate(data_packets):\n            print(f\"  Packet {i+1}: \", end=\"\")\n            for router in self.path:\n                # VCI swapping at each router\n                next_vci = router.swap_vci(current_vci)\n                print(f\"Router{router.id}: VCI {current_vci}\u2192{next_vci} \", end=\"\")\n                current_vci = next_vci\n            print(\"\u2192 Destination\")\n    \n    def teardown(self):\n        \"\"\"Phase 3: Release resources\"\"\"\n        print(f\"[VC {self.vc_id}] Tearing down connection...\")\n        for router in self.path:\n            router.release_resources(self.vc_id)\n        self.state = \"IDLE\"\n        print(f\"[VC {self.vc_id}] Connection terminated.\")\n\n# Example usage\n# vc = VirtualCircuit(\"VC-1\", [router1, router2, router3])\n# vc.establish()\n# vc.transfer_data([\"data1\", \"data2\", \"data3\"])\n# vc.teardown()",
+      "explanation": "This Python code demonstrates the three phases of Virtual Circuit switching: establishment (resource reservation), data transfer (VCI swapping at each router), and teardown (resource release).",
+      "timeComplexity": "O(P \u00d7 R) where P = packets, R = routers in path",
+      "spaceComplexity": "O(R) for router state"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Datagram Packet Processing",
+      "description": "C code demonstrating independent packet routing in datagram networks",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\ntypedef struct {\n    unsigned int src_ip;\n    unsigned int dest_ip;\n    unsigned short src_port;\n    unsigned short dest_port;\n    unsigned char payload[1000];\n    unsigned int sequence;\n} DatagramPacket;\n\ntypedef struct {\n    unsigned int dest_network;\n    unsigned int subnet_mask;\n    unsigned int next_hop;\n    char interface[10];\n} RoutingEntry;\n\n// Simple routing table lookup (longest prefix match)\nunsigned int find_next_hop(DatagramPacket *packet, RoutingEntry *table, int table_size) {\n    unsigned int dest = packet->dest_ip;\n    unsigned int best_match = 0;\n    unsigned int next_hop = 0;\n    \n    for (int i = 0; i < table_size; i++) {\n        unsigned int network = table[i].dest_network & table[i].subnet_mask;\n        unsigned int dest_masked = dest & table[i].subnet_mask;\n        \n        if (network == dest_masked) {\n            // Check for longest prefix match\n            if (table[i].subnet_mask >= best_match) {\n                best_match = table[i].subnet_mask;\n                next_hop = table[i].next_hop;\n            }\n        }\n    }\n    return next_hop;\n}\n\n// Process each datagram independently\nvoid process_datagram(DatagramPacket *packet, RoutingEntry *routing_table, int rt_size) {\n    // Each packet requires full routing lookup\n    printf(\"Processing Packet #%u\\n\", packet->sequence);\n    printf(\"  Source IP: %u.%u.%u.%u\\n\", \n           (packet->src_ip >> 24) & 0xFF,\n           (packet->src_ip >> 16) & 0xFF,\n           (packet->src_ip >> 8) & 0xFF,\n           packet->src_ip & 0xFF);\n    printf(\"  Dest IP:   %u.%u.%u.%u\\n\",\n           (packet->dest_ip >> 24) & 0xFF,\n           (packet->dest_ip >> 16) & 0xFF,\n           (packet->dest_ip >> 8) & 0xFF,\n           packet->dest_ip & 0xFF);\n    \n    unsigned int next_hop = find_next_hop(packet, routing_table, rt_size);\n    printf(\"  Next Hop:  %u.%u.%u.%u\\n\\n\",\n           (next_hop >> 24) & 0xFF,\n           (next_hop >> 16) & 0xFF,\n           (next_hop >> 8) & 0xFF,\n           next_hop & 0xFF);\n}\n\nint main() {\n    // Example: Each packet is routed independently\n    DatagramPacket packets[3] = {\n        {0xC0A80101, 0xC0A80105, 1000, 80, \"\", 1},\n        {0xC0A80102, 0xC0A80106, 1001, 80, \"\", 2},\n        {0xC0A80103, 0xC0A80107, 1002, 80, \"\", 3}\n    };\n    \n    // Process each packet independently (no connection state)\n    for (int i = 0; i < 3; i++) {\n        process_datagram(&packets[i], NULL, 0);  // Routing table not shown\n    }\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates that in datagram switching, each packet carries the full source and destination IP addresses. Each router performs an independent routing lookup for every packet without referencing any connection state.",
+      "timeComplexity": "O(R) per packet where R = routing table entries",
+      "spaceComplexity": "O(R) for routing table"
+    }
+  ]
+}

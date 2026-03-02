@@ -1,0 +1,33 @@
+{
+  "topicId": "pattern-classification-by-prototype-matching-minim",
+  "examples": [
+    {
+      "id": "pseudocode-minimum-distance-classifier",
+      "title": "Algorithm: Minimum Distance Classifier",
+      "description": "This pseudocode demonstrates the minimum distance classifier algorithm.",
+      "language": "pseudocode",
+      "code": "ALGORITHM MinimumDistanceClassifier\nINPUT: X_train, y_train, input_image\nOUTPUT: class_label\n\nBEGIN\n // Load the dataset\n prototypes = X_train\n class_labels = y_train\n\n // Calculate the distance between the input image and each prototype\n distances = []\n FOR EACH prototype IN prototypes\n distance = EuclideanDistance(input_image, prototype)\n distances.append(distance)\n END FOR\n\n // Find the index of the minimum distance\n min_distance_index = ArgMin(distances)\n\n // Assign the class label based on the minimum distance\n class_label = class_labels[min_distance_index]\n\n RETURN class_label\nEND",
+      "explanation": "This pseudocode demonstrates the minimum distance classifier algorithm. It calculates the distance between the input image and each prototype, finds the index of the minimum distance, and assigns the class label based on the minimum distance."
+    },
+    {
+      "id": "python-minimum-distance-classifier",
+      "title": "Python: Minimum Distance Classifier",
+      "description": "This Python implementation demonstrates the minimum distance classifier algorithm using Scikit-Learn library.",
+      "language": "python",
+      "code": "from sklearn.neighbors import NearestNeighbors\nimport numpy as np\n\n# Load the dataset\nX_train = np.random.rand(100, 10) # input features\ny_train = np.random.randint(0, 3, 100) # class labels\n\n# Create a minimum distance classifier\nnn = NearestNeighbors(n_neighbors=1, algorithm='brute', metric='euclidean')\nnn.fit(X_train)\n\n# Preprocess the input image\ninput_image = np.random.rand(10)\n\n# Calculate the distance between the input image and the prototypes\n distances, indices = nn.kneighbors(input_image.reshape(1, -1))\n\n# Assign a class label based on the minimum distance\nclass_label = y_train[indices[0][0]]\nprint(class_label)",
+      "explanation": "This Python implementation demonstrates the minimum distance classifier algorithm using Scikit-Learn library. It creates a minimum distance classifier, calculates the distance between the input image and the prototypes, and assigns a class label based on the minimum distance.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-minimum-distance-classifier",
+      "title": "C: Minimum Distance Classifier",
+      "description": "This C implementation demonstrates the minimum distance classifier algorithm.",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <math.h>\n\n// Function to calculate the Euclidean distance\nfloat euclidean_distance(float *input_image, float *prototype, int n) {\n float sum = 0;\n for (int i = 0; i < n; i++) {\n sum += pow(input_image[i] - prototype[i], 2);\n }\n return sqrt(sum);\n}\n\n// Function to find the index of the minimum distance\nint arg_min(float *distances, int n) {\n int min_index = 0;\n float min_distance = distances[0];\n for (int i = 1; i < n; i++) {\n if (distances[i] < min_distance) {\n min_distance = distances[i];\n min_index = i;\n }\n }\n return min_index;\n}\n\nint main() {\n // Load the dataset\n float X_train[100][10];\n int y_train[100];\n\n // Preprocess the input image\n float input_image[10];\n\n // Calculate the distance between the input image and each prototype\n float distances[100];\n for (int i = 0; i < 100; i++) {\n distances[i] = euclidean_distance(input_image, X_train[i], 10);\n }\n\n // Find the index of the minimum distance\n int min_distance_index = arg_min(distances, 100);\n\n // Assign the class label based on the minimum distance\n int class_label = y_train[min_distance_index];\n printf(\"%d\\n\", class_label);\n return 0;\n}",
+      "explanation": "This C implementation demonstrates the minimum distance classifier algorithm. It calculates the distance between the input image and each prototype, finds the index of the minimum distance, and assigns the class label based on the minimum distance.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

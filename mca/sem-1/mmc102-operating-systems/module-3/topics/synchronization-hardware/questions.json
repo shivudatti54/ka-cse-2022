@@ -1,0 +1,143 @@
+{
+  "topicId": "synchronization-hardware",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the Test-and-Set (TSL) instruction and how it provides mutual exclusion in a uniprocessor system.",
+      "keyPoints": [
+        "TSL atomically reads a memory location and writes a non-zero value to it in a single instruction",
+        "The old value is returned; if it was 0, the process acquires the lock",
+        "If returned value is non-zero (1), the lock is already held and process retries",
+        "This solves the race condition in entering critical section"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the limitations of software-based synchronization algorithms like Peterson's solution in modern multiprocessor systems?",
+      "keyPoints": [
+        "Assumes atomic memory reads and writes which hardware does not guarantee",
+        "Assumes sequential memory access ordering which modern processors violate",
+        "Memory consistency models allow reorderings across processors",
+        "Cache coherence issues cause stale value reads on multiprocessors"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the Compare-and-Swap (CAS) instruction and explain how it can be used to implement lock-free synchronization.",
+      "keyPoints": [
+        "CAS compares memory location's current value with expected value",
+        "If match, atomically updates to new value and returns success",
+        "If no match, returns failure without modifying",
+        "Retry loop allows building atomic operations like increment, push, etc."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is busy-waiting (spinlock)? Discuss its advantages and disadvantages.",
+      "keyPoints": [
+        "Spinlock: process continuously checks lock variable in a loop while waiting",
+        "Advantages: simple to implement, no context switch overhead, good for short waits",
+        "Disadvantages: wastes CPU cycles, inefficient on uniprocessors, can cause priority inversion",
+        "Better for multi-core systems with short critical sections"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain Load-Linked and Store-Conditional operations. How do they work together to provide atomic operations?",
+      "keyPoints": [
+        "Load-Linked reads value and marks (links) the memory location",
+        "Store-Conditional succeeds only if location hasn't been modified since last LL",
+        "If successful, write completes atomically; if fails, must retry entire sequence",
+        "Enables atomic read-modify-write without lock overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a memory barrier (fence) instruction? Why is it necessary in modern multi-core systems?",
+      "keyPoints": [
+        "Memory barrier forces all pending memory operations to complete before proceeding",
+        "Ensures memory ordering consistency between different processor cores",
+        "Prevents instruction reordering that could cause race conditions",
+        "Different types: full fence, store fence, load fence"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the Swap instruction algorithm for mutual exclusion. How does it differ from TSL-based approach?",
+      "keyPoints": [
+        "Swap atomically exchanges lock variable with a register containing a value",
+        "Process sets register to 1, swaps with lock (containing 0), gets old lock value",
+        "If old value was 0, lock acquired; otherwise retry",
+        "Unlike TSL: always writes new value, no need to reset lock explicitly"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast Test-and-Set (TSL) and Compare-and-Swap (CAS) synchronization primitives. Discuss their relative advantages and typical use cases.",
+      "keyPoints": [
+        "TSL: unconditional write, always returns old value; CAS: conditional write, may fail",
+        "TSL simpler but can cause more contention; CAS more flexible for lock-free algorithms",
+        "CAS solves ABA problem that TSL cannot handle directly",
+        "TSL better for simple spinlocks; CAS better for complex atomic data structures",
+        "Both require hardware support; CAS more portable across architectures",
+        "Performance: CAS may retry multiple times under high contention"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the critical section problem and discuss how hardware-based synchronization solutions address the mutual exclusion requirement. What are the trade-offs involved?",
+      "keyPoints": [
+        "Critical section: code segment accessing shared resources requiring mutual exclusion",
+        "Hardware solutions: atomic instructions (TSL, Swap, CAS, LL/SC)",
+        "Advantages: work on multiprocessors, correct with memory consistency models, efficient for short waits",
+        "Disadvantages: busy-waiting wastes CPU, potential deadlock if not careful, no blocking/waking",
+        "Trade-off: simplicity and correctness vs CPU efficiency and blocking capability",
+        "Software solutions (semaphores) built on hardware primitives provide better abstraction"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the ABA problem in synchronization. How does it occur and what mechanisms (like CAS) help address it?",
+      "keyPoints": [
+        "ABA: value changes from A to B and back to A between check and update",
+        "Can cause lost updates in lock-free data structures",
+        "Example: stack push operation reads top as A, another thread pops A and pushes B, original thread sees A again and incorrectly thinks stack unchanged",
+        "CAS alone doesn't prevent ABA - only detects if value is still expected",
+        "Solutions: tagged pointers (add version counter), double-width CAS (CAS2)",
+        "Hardware support like Load-Linked/Store-Conditional can detect intervening modifications"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Design and explain a spinlock implementation using the Test-and-Set instruction. Also discuss scenarios where spinlocks are appropriate versus inappropriate.",
+      "keyPoints": [
+        "Implementation: while (TSL(lock) != 0); // busy wait; critical section; lock = 0;",
+        "Appropriate when: critical section is very short, lock held briefly, running on multi-core, blocking would cost more than spinning",
+        "Inappropriate when: critical section long (wastes CPU), single-core (no benefit), high contention (wasteful), real-time systems (unpredictable)",
+        "Improvements: adaptive spinlocks (spin briefly then block), exponential backoff, pause instructions"
+      ],
+      "marks": 10
+    }
+  ]
+}

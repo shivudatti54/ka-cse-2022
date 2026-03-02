@@ -1,0 +1,142 @@
+{
+  "topicId": "storage-classes",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Differentiate between auto and static storage classes with respect to storage duration and default initial value.",
+      "keyPoints": [
+        "Auto: automatic storage duration, created/destroyed with block entry/exit, initial value is garbage",
+        "Static: static storage duration, exists for entire program runtime, initialized to zero by default",
+        "Auto cannot retain value between function calls; static retains value"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of the 'register' storage class? Explain its limitations.",
+      "keyPoints": [
+        "Purpose: Request compiler to store variable in CPU register for faster access",
+        "Limitation: Cannot use address-of operator (&) on register variables",
+        "Limitation: Only applicable to automatic variables (local)",
+        "Compiler may ignore the request if insufficient registers available"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the difference between scope, storage duration, and linkage in C.",
+      "keyPoints": [
+        "Scope: Region of code where variable can be accessed (block, function, file)",
+        "Storage Duration: Time period during which variable exists in memory (automatic, static, allocated)",
+        "Linkage: Property determining whether references in different scopes refer to same entity (internal, external, none)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the role of 'extern' keyword in C? How does it differ from 'static' when used with global variables?",
+      "keyPoints": [
+        "extern declares a variable defined elsewhere, providing external linkage",
+        "static at file scope provides internal linkage - variable only visible in that file",
+        "extern variables can be shared across multiple source files",
+        "static variables restrict visibility to the defining file only"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Where are the following stored in memory: (i) Global variables (ii) Static local variables (iii) Auto local variables?",
+      "keyPoints": [
+        "Global variables: Data segment (initialized) or BSS segment (uninitialized)",
+        "Static local variables: Data segment (initialized) or BSS segment (uninitialized)",
+        "Auto local variables: Stack memory",
+        "Dynamic memory (malloc): Heap memory"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Can a variable have both internal and external linkage simultaneously? Justify your answer.",
+      "keyPoints": [
+        "No, linkage types are mutually exclusive",
+        "Internal linkage (static): identifier visible only within its source file",
+        "External linkage (extern): identifier visible across all source files",
+        "A variable can only have one type of linkage at a time"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What will be the output of the following code? Explain the behavior of static variable.\n\nvoid counter() {\n    static int count = 0;\n    count++;\n    printf(\"%d \", count);\n}\nint main() {\n    counter();\n    counter();\n    counter();\n    return 0;\n}",
+      "keyPoints": [
+        "Output will be: 1 2 3",
+        "Static variable 'count' is initialized only once (at program startup)",
+        "Each function call increments the retained value, not reinitializes it",
+        "Demonstrates static storage duration - value persists between calls"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program to demonstrate all four storage classes (auto, register, static, extern). For each storage class, explain its characteristics including storage duration, scope, and default initial value.",
+      "keyPoints": [
+        "auto: local variables, automatic duration, block scope, garbage initial value",
+        "register: local variables, automatic duration, block scope, cannot use &, garbage initial value",
+        "static (local): local scope but static duration, initialized once to zero, retains value",
+        "extern: file scope with external linkage, static duration, initialized to zero",
+        "Program should show variable modifications and persistence",
+        "Must include example of extern usage with multiple files or clear explanation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the memory layout of a C program. How do storage classes determine where variables are stored? Include a diagram showing the typical memory organization.",
+      "keyPoints": [
+        "Memory segments: Code, Data (initialized globals), BSS (uninitialized globals), Heap, Stack",
+        "Auto/register: stored in stack, allocated/deallocated with function calls",
+        "Static (local and global): stored in data/BSS segment, allocated once at program startup",
+        "Global variables: stored in data/BSS segment with external/internal linkage",
+        "Dynamic memory: heap, managed by malloc/free",
+        "Each storage class maps to appropriate memory segment based on duration and scope"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Differentiate between: (i) Declaration vs Definition (ii) Internal vs External Linkage (iii) Automatic vs Static Storage Duration. Give suitable code examples for each.",
+      "keyPoints": [
+        "Declaration: announces type, no storage allocation; Definition: allocates storage",
+        "Internal linkage: static at file scope, visible only in that file; External linkage: extern/default, visible across files",
+        "Automatic duration: created/destroyed with block (auto, register); Static duration: exists entire program (static, extern, global)",
+        "Must provide working code examples demonstrating each concept"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What will be the output of the following code? Trace the execution and explain the behavior of all variables.\n\n#include <stdio.h>\nint x = 10;  // Global variable\nvoid func() {\n    static int s = 5;\n    int a = 0;\n    a++;\n    s++;\n    x++;\n    printf(\"a=%d, s=%d, x=%d\\n\", a, s, x);\n}\nint main() {\n    func();\n    func();\n    func();\n    return 0;\n}",
+      "keyPoints": [
+        "First call output: a=1, s=6, x=11",
+        "Second call output: a=1, s=7, x=12",
+        "Third call output: a=1, s=8, x=13",
+        "'a' is auto: reinitialized to 0 each call, always prints 1",
+        "'s' is static: initialized once, incremented each call",
+        "'x' is global (extern): exists throughout, incremented each call",
+        "Demonstrates automatic vs static vs global variable behavior"
+      ],
+      "marks": 10
+    }
+  ]
+}

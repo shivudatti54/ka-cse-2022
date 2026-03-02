@@ -1,0 +1,35 @@
+{
+  "topicId": "a-model-for-network-security",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Network Security Communication Model",
+      "description": "Pseudocode demonstrating the basic model of secure message transmission including sender, encryption, channel, and receiver",
+      "explanation": "This code shows the fundamental process: sender encrypts a message using a shared key, transmits it through a potentially insecure channel, and the receiver decrypts it. The secure channel represents the protection mechanism.",
+      "code": "BEGIN\n // Network Security Model - Basic Communication\n \n FUNCTION sendSecureMessage(message, encryptionKey):\n // Step 1: Sender prepares message\n plaintext = message\n \n // Step 2: Encryption at sender side\n ciphertext = ENCRYPT(plaintext, encryptionKey)\n \n // Step 3: Transmit through channel (potentially insecure)\n transmittedData = sendThroughChannel(ciphertext)\n \n RETURN transmittedData\n \n FUNCTION receiveSecureMessage(transmittedData, decryptionKey):\n // Step 4: Receive encrypted data\n ciphertext = receiveFromChannel(transmittedData)\n \n // Step 5: Decryption at receiver side\n plaintext = DECRYPT(ciphertext, decryptionKey)\n \n RETURN plaintext\n \n // Main execution\n originalMessage = \"Sensitive Data\"\n sharedKey = generateKey()\n \n // Sender side\n encryptedData = sendSecureMessage(originalMessage, sharedKey)\n \n // Adversary tries to intercept\n interceptedData = adversaryIntercepts(encryptedData)\n \n // Receiver side\n receivedMessage = receiveSecureMessage(encryptedData, sharedKey)\n \n IF receivedMessage == originalMessage:\n PRINT \"Secure transmission successful\"\n ELSE:\n PRINT \"Transmission failed\"\nEND",
+      "timeComplexity": "O(n) where n is message length",
+      "spaceComplexity": "O(n) for storing message/ciphertext"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Attack Detection Simulation",
+      "description": "Pseudocode simulating detection of passive and active attacks on network communications",
+      "explanation": "This code simulates monitoring network traffic to detect different attack types. It checks for signs of passive attacks (unexpected observers) and active attacks (data modification, service disruption).",
+      "code": "BEGIN\n // Security Monitoring System\n \n TYPE AttackType = {NONE, PASSIVE, ACTIVE}\n \n FUNCTION monitorNetworkTraffic(packetData):\n \n // Check for passive attack indicators\n IF isUnexpectedObserverDetected():\n RETURN AttackType.PASSIVE // Eavesdropping detected\n \n IF isTrafficPatternAnomalous(packetData):\n RETURN AttackType.PASSIVE // Traffic analysis detected\n \n // Check for active attack indicators\n IF isMessageModified(packetData):\n RETURN AttackType.ACTIVE // Modification attack\n \n IF isMasqueradeDetected(packetData):\n RETURN AttackType.ACTIVE // Masquerade attack\n \n IF isReplayDetected(packetData):\n RETURN AttackType.ACTIVE // Replay attack\n \n IF isServiceDisrupted():\n RETURN AttackType.ACTIVE // DoS attack\n \n RETURN AttackType.NONE\n \n FUNCTION respondToAttack(attackType):\n IF attackType == AttackType.PASSIVE:\n PRINT \"Alert: Passive attack detected - monitoring continues\"\n // Log for analysis, enhance encryption\n \n IF attackType == AttackType.ACTIVE:\n PRINT \"Alert: Active attack detected - taking countermeasures\"\n // Block source, alert admin, terminate session\n \n // Main monitoring loop\n WHILE systemRunning:\n packet = captureNetworkPacket()\n attack = monitorNetworkTraffic(packet)\n IF attack != AttackType.NONE:\n respondToAttack(attack)\nEND",
+      "timeComplexity": "O(n) per packet analysis",
+      "spaceComplexity": "O(1) for constant storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Security Services Implementation",
+      "description": "Pseudocode demonstrating implementation of core security services: confidentiality, integrity, authentication, and non-repudiation",
+      "explanation": "This code demonstrates how multiple security services work together. Encryption provides confidentiality, hashing ensures integrity, digital signatures provide authentication and non-repudiation.",
+      "code": "BEGIN\n // Security Services Implementation\n \n RECORD SecureMessage:\n encryptedContent // For confidentiality\n hashValue // For integrity\n digitalSignature // For authentication & non-repudiation\n senderCertificate // For verifying sender identity\n \n FUNCTION provideConfidentiality(message, key):\n // Encrypt message to hide content\n encrypted = AES_ENCRYPT(message, key)\n RETURN encrypted\n \n FUNCTION provideIntegrity(message):\n // Generate hash to detect modification\n hashValue = SHA256(message)\n RETURN hashValue\n \n FUNCTION provideAuthentication(message, privateKey):\n // Sign message with sender's private key\n signature = RSA_SIGN(message, privateKey)\n RETURN signature\n \n FUNCTION provideNonRepudiation(message, signature, publicKey):\n // Verify signature to prove origin\n isValid = RSA_VERIFY(message, signature, publicKey)\n IF isValid:\n PRINT \"Sender cannot deny sending this message\"\n RETURN isValid\n \n FUNCTION sendSecureMessage(message, senderPrivateKey, receiverPublicKey):\n // Step 1: Provide confidentiality\n encryptedMsg = provideConfidentiality(message, receiverPublicKey)\n \n // Step 2: Provide integrity\n integrityHash = provideIntegrity(message)\n \n // Step 3: Provide authentication and non-repudiation\n signature = provideAuthentication(message, senderPrivateKey)\n \n // Create complete secure message\n secureMessage = SecureMessage(\n encryptedContent: encryptedMsg,\n hashValue: integrityHash,\n digitalSignature: signature,\n senderCertificate: getCertificate(senderPrivateKey)\n )\n \n RETURN secureMessage\n \n FUNCTION receiveSecureMessage(secureMessage, senderPublicKey, privateKey):\n // Step 1: Decrypt to get original message\n decryptedMsg = DECRYPT(secureMessage.encryptedContent, privateKey)\n \n // Step 2: Verify integrity\n computedHash = SHA256(decryptedMsg)\n IF computedHash != secureMessage.hashValue:\n PRINT \"Integrity check failed - message modified!\"\n RETURN null\n \n // Step 3: Verify authentication and non-repudiation\n isAuthentic = provideNonRepudiation(\n decryptedMsg, \n secureMessage.digitalSignature, \n senderPublicKey\n )\n \n IF isAuthentic:\n PRINT \"Message verified and authenticated\"\n RETURN decryptedMsg\n ELSE:\n PRINT \"Authentication failed\"\n RETURN null\nEND",
+      "timeComplexity": "O(n) for message processing, O(k) for signature verification",
+      "spaceComplexity": "O(n) for storing secure message"
+    }
+  ]
+}

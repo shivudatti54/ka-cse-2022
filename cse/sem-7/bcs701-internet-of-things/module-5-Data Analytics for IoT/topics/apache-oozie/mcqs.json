@@ -1,0 +1,124 @@
+{
+  "topicId": "apache-oozie",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "What is the primary purpose of Apache Oozie in the Hadoop ecosystem?",
+      "options": [
+        { "key": "A", "text": "To store large-scale distributed data" },
+        { "key": "B", "text": "To schedule and manage Hadoop workflow jobs" },
+        { "key": "C", "text": "To perform real-time stream processing" },
+        { "key": "D", "text": "To provide in-memory data processing" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Apache Oozie is a workflow scheduler system designed to manage and coordinate Hadoop jobs, handling job dependencies, scheduling, and monitoring.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "Which of the following are control nodes in an Oozie workflow?",
+      "options": [
+        { "key": "A", "text": "MapReduce, Pig, Hive, Sqoop" },
+        { "key": "B", "text": "start, end, kill, decision, fork, join" },
+        { "key": "C", "text": "NameNode, DataNode, ResourceManager" },
+        { "key": "D", "text": "Mapper, Reducer, Combiner, Partitioner" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Control nodes include start (entry), end (success), kill (failure), decision (branching), fork (parallel start), and join (parallel merge). Option A lists action nodes, not control nodes.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq3",
+      "question": "What is the difference between an Oozie Workflow and an Oozie Coordinator?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Workflow is for batch processing, Coordinator is for stream processing"
+        },
+        {
+          "key": "B",
+          "text": "Workflow defines a sequence of actions, Coordinator schedules workflows based on time or data availability"
+        },
+        { "key": "C", "text": "Workflow runs on a single node, Coordinator runs distributed" },
+        { "key": "D", "text": "Workflow is written in Java, Coordinator is written in Python" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A Workflow is a DAG of actions defining the sequence of operations. A Coordinator schedules and triggers workflow jobs based on time (cron-like) or data availability.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "In an Oozie workflow, fork and join nodes are used for:",
+      "options": [
+        { "key": "A", "text": "Conditional execution based on expressions" },
+        { "key": "B", "text": "Parallel execution of independent tasks" },
+        { "key": "C", "text": "Error handling and recovery" },
+        { "key": "D", "text": "Data partitioning across nodes" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Fork splits the workflow into parallel paths, and join waits for all paths to complete. This allows independent tasks to run simultaneously, reducing total processing time.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "What is an Oozie Bundle used for?",
+      "options": [
+        { "key": "A", "text": "Compressing multiple data files into one archive" },
+        { "key": "B", "text": "Grouping multiple coordinator jobs into a single manageable unit" },
+        { "key": "C", "text": "Merging the output of multiple MapReduce jobs" },
+        { "key": "D", "text": "Creating a backup of all Oozie workflows" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "An Oozie Bundle groups multiple coordinator jobs together for unified lifecycle management. This is useful for managing complex IoT data pipelines where multiple related coordinators need to start, stop, and be monitored together.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq6",
+      "question": "Which Oozie node type evaluates conditions and routes the workflow to different paths?",
+      "options": [
+        { "key": "A", "text": "fork node" },
+        { "key": "B", "text": "decision node" },
+        { "key": "C", "text": "kill node" },
+        { "key": "D", "text": "join node" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The decision node evaluates EL (Expression Language) conditions and routes the workflow to different action paths, similar to an if-else statement. Fork splits into parallel paths without conditions.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq7",
+      "question": "An IoT platform processes sensor data through stages: (1) MapReduce ingestion, (2) Parallel Pig cleaning of temperature, pressure, and humidity, (3) Hive analysis, (4) Sqoop export. The cleaning tasks are independent. Which Oozie structure is optimal?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Linear: MapReduce -> Pig(temp) -> Pig(pressure) -> Pig(humidity) -> Hive -> Sqoop"
+        },
+        {
+          "key": "B",
+          "text": "MapReduce -> Fork(3 parallel Pig actions) -> Join -> Hive -> Sqoop"
+        },
+        { "key": "C", "text": "Decision node to choose one sensor type for processing" },
+        { "key": "D", "text": "Three separate workflows running independently" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Since the three Pig cleaning tasks are independent, fork/join enables parallel execution, reducing total time. MapReduce ingests, fork splits into 3 parallel Pig jobs, join waits for all, then Hive analyzes and Sqoop exports.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq8",
+      "question": "An IoT data pipeline must run a Spark analytics job every hour, but only after all sensor data files for that hour have arrived in HDFS. Which Oozie component and trigger type is most appropriate?",
+      "options": [
+        { "key": "A", "text": "Workflow with time-based start" },
+        {
+          "key": "B",
+          "text": "Coordinator with data-availability trigger using dataset definitions"
+        },
+        { "key": "C", "text": "Bundle with all coordinators set to run hourly" },
+        { "key": "D", "text": "Workflow with a shell action that checks for files in a loop" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A data-availability Coordinator uses dataset definitions and input-events to wait until all required hourly sensor data files are present in HDFS before triggering the Spark workflow. This handles late-arriving data automatically.",
+      "difficulty": "hard"
+    }
+  ]
+}

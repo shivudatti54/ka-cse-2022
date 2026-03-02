@@ -1,0 +1,35 @@
+{
+  "topicId": "recursive-functions-linear-binary",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "Linear Search using Recursion",
+      "description": "A basic recursive implementation of linear search that finds the index of a target element in an unsorted array",
+      "code": "def linear_search_recursive(arr, target, index=0):\n    \"\"\"\n    Recursively search for target in array\n    \n    Args:\n        arr: List of elements to search\n        target: Element to find\n        index: Current position (starts at 0)\n    \n    Returns:\n        Index of target if found, -1 otherwise\n    \"\"\"\n    # Base case: element not found\n    if index >= len(arr):\n        return -1\n    \n    # Base case: element found\n    if arr[index] == target:\n        return index\n    \n    # Recursive case: check next element\n    return linear_search_recursive(arr, target, index + 1)\n\n\n# Test the function\ndata = [23, 45, 12, 67, 89, 34, 56]\ntarget = 67\n\nresult = linear_search_recursive(data, target)\nif result != -1:\n    print(f\"Element {target} found at index {result}\")\nelse:\n    print(f\"Element {target} not found\")",
+      "explanation": "1. Function starts at index 0\n2. Base case 1: If index equals array length, element not found, return -1\n3. Base case 2: If current element matches target, return its index\n4. Recursive case: Call function with next index (index + 1)\n5. Each recursive call adds a frame to the call stack",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "Binary Search using Recursion",
+      "description": "Classic recursive binary search implementation for sorted arrays with efficient O(log n) time complexity",
+      "code": "def binary_search_recursive(arr, target, low, high):\n    \"\"\"\n    Recursively search for target in sorted array using divide and conquer\n    \n    Args:\n        arr: Sorted list of elements (must be sorted)\n        target: Element to find\n        low: Starting index of search range\n        high: Ending index of search range\n    \n    Returns:\n        Index of target if found, -1 otherwise\n    \"\"\"\n    # Base case: invalid range (element not found)\n    if low > high:\n        return -1\n    \n    # Calculate middle index to avoid overflow\n    mid = low + (high - low) // 2\n    \n    # Base case: element found at mid\n    if arr[mid] == target:\n        return mid\n    \n    # Recursive case: search left half\n    elif arr[mid] > target:\n        return binary_search_recursive(arr, target, low, mid - 1)\n    \n    # Recursive case: search right half\n    else:\n        return binary_search_recursive(arr, target, mid + 1, high)\n\n\n# Test the function\nsorted_data = [11, 22, 33, 44, 55, 66, 77, 88, 99]\ntarget = 55\n\nresult = binary_search_recursive(sorted_data, target, 0, len(sorted_data) - 1)\nif result != -1:\n    print(f\"Element {target} found at index {result}\")\nelse:\n    print(f\"Element {target} not found\")",
+      "explanation": "1. Requires sorted array (prerequisite for binary search)\n2. Calculate mid point of current search range\n3. Base case: If mid element equals target, return index\n4. Recursive case 1: If target < mid, search left half (low to mid-1)\n5. Recursive case 2: If target > mid, search right half (mid+1 to high)\n6. Base case: If low > high, element not found\n7. Each recursion halves the search space",
+      "timeComplexity": "O(log n)",
+      "spaceComplexity": "O(log n)"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Find All Occurrences using Binary Search Recursion",
+      "description": "Advanced recursive implementation that finds ALL indices where target appears in a sorted array (handles duplicates)",
+      "code": "def find_all_occurrences(arr, target):\n    \"\"\"\n    Find all indices where target appears using binary search recursion\n    \n    Args:\n        arr: Sorted list (may contain duplicates)\n        target: Element to find\n    \n    Returns:\n        List of all indices where target appears\n    \"\"\"\n    def binary_search_left(arr, target, low, high):\n        \"\"\"Find first (leftmost) occurrence\"\"\"\n        if low > high:\n            return -1\n        mid = low + (high - low) // 2\n        if arr[mid] == target:\n            # Check if this is truly the leftmost\n            if mid == 0 or arr[mid - 1] < target:\n                return mid\n            return binary_search_left(arr, target, low, mid - 1)\n        elif arr[mid] > target:\n            return binary_search_left(arr, target, low, mid - 1)\n        else:\n            return binary_search_left(arr, target, mid + 1, high)\n    \n    def binary_search_right(arr, target, low, high):\n        \"\"\"Find last (rightmost) occurrence\"\"\"\n        if low > high:\n            return -1\n        mid = low + (high - low) // 2\n        if arr[mid] == target:\n            # Check if this is truly the rightmost\n            if mid == len(arr) - 1 or arr[mid + 1] > target:\n                return mid\n            return binary_search_right(arr, target, mid + 1, high)\n        elif arr[mid] > target:\n            return binary_search_right(arr, target, low, mid - 1)\n        else:\n            return binary_search_right(arr, target, mid + 1, high)\n    \n    # Find leftmost and rightmost positions\n    left = binary_search_left(arr, target, 0, len(arr) - 1)\n    if left == -1:\n        return []\n    right = binary_search_right(arr, target, 0, len(arr) - 1)\n    \n    # Return all indices in range\n    return list(range(left, right + 1))\n\n\n# Test the function - sorted array with duplicates\nsorted_with_duplicates = [5, 10, 10, 10, 15, 20, 20, 25]\ntarget = 10\n\nresult = find_all_occurrences(sorted_with_duplicates, target)\nprint(f\"Target {target} found at indices: {result}\")\nprint(f\"Total occurrences: {len(result)}\")",
+      "explanation": "1. Uses two helper functions: one finds leftmost, one finds rightmost\n2. Leftmost search: When target found at mid, check if previous element is also target; if not, this is leftmost\n3. Rightmost search: When target found at mid, check if next element is also target; if not, this is rightmost\n4. Combine results to get all occurrences\n5. Demonstrates practical handling of duplicate elements in sorted data\n6. Useful for real-world scenarios like finding all occurrences of a word in a document",
+      "timeComplexity": "O(log n + k) where k is number of occurrences",
+      "spaceComplexity": "O(log n)"
+    }
+  ]
+}

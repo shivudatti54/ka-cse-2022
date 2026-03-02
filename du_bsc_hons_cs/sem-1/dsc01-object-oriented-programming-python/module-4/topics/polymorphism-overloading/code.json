@@ -1,0 +1,45 @@
+{
+  "topicId": "polymorphism-overloading",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Polymorphism with Abstract Base Class",
+      "description": "Demonstrates runtime polymorphism using ABC and method overriding",
+      "code": "from abc import ABC, abstractmethod\nimport math\n\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        pass\n\nclass Circle(Shape):\n    def __init__(self, radius):\n        self.radius = radius\n    \n    def area(self):\n        return math.pi * self.radius ** 2\n\nclass Rectangle(Shape):\n    def __init__(self, length, breadth):\n        self.length = length\n        self.breadth = breadth\n    \n    def area(self):\n        return self.length * self.breadth\n\n# Polymorphism in action\nshapes = [Circle(5), Rectangle(4, 6), Circle(3)]\ntotal_area = sum(s.area() for s in shapes)\nprint(f\"Total Area: {total_area:.2f}\")\n# Output: Total Area: 130.54 (78.54 + 24 + 28.27)",
+      "explanation": "Shape is an ABC with abstract method area(). Circle and Rectangle override area() with their own implementations. When we iterate over shapes list and call area(), Python determines which method to call at runtime based on actual object type - this is runtime polymorphism.",
+      "timeComplexity": "O(n) where n is number of shapes",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Operator Overloading for Complex Numbers",
+      "description": "Demonstrates operator overloading using dunder methods",
+      "code": "class Complex:\n    def __init__(self, real, imag):\n        self.real = real\n        self.imag = imag\n    \n    def __add__(self, other):\n        # Overloads + operator\n        return Complex(self.real + other.real, self.imag + other.imag)\n    \n    def __sub__(self, other):\n        # Overloads - operator\n        return Complex(self.real - other.real, self.imag - other.imag)\n    \n    def __str__(self):\n        return f\"{self.real} + {self.imag}i\"\n    \n    def __repr__(self):\n        return f\"Complex({self.real}, {self.imag})\"\n\nc1 = Complex(3, 4)\nc2 = Complex(1, 2)\nc3 = c1 + c2    # Uses __add__\nc4 = c1 - c2    # Uses __sub__\nprint(c3)  # Output: 4 + 6i\nprint(c4)  # Output: 2 + 2i",
+      "explanation": "__add__ and __sub__ are dunder methods that define behavior for + and - operators. When c1 + c2 executes, Python internally calls c1.__add__(c2). This allows custom classes to use familiar operator syntax.",
+      "timeComplexity": "O(1) for each operation",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Duck Typing Polymorphism",
+      "description": "Demonstrates polymorphism without inheritance using duck typing",
+      "code": "class Circle:\n    def draw(self):\n        print(\"Drawing a Circle \ud83d\udfe2\")\n\nclass Square:\n    def draw(self):\n        print(\"Drawing a Square \ud83d\udfe6\")\n\nclass Triangle:\n    def draw(self):\n        print(\"Drawing a Triangle \ud83d\udd3a\")\n\n# Polymorphic function - duck typing\ndef draw_shape(shape):\n    shape.draw()  # Doesn't check type, just calls draw()\n\n# Works with ANY object that has draw() method\nshapes = [Circle(), Square(), Triangle()]\nfor s in shapes:\n    draw_shape(s)\n\n# Output:\n# Drawing a Circle \ud83d\udfe2\n# Drawing a Square \ud83d\udfe6\n# Drawing a Triangle \ud83d\udd3a",
+      "explanation": "draw_shape() doesn't check if argument is a specific type. It just calls draw() method. If object has draw() method, it works. This is duck typing - 'if it has draw(), treat it as drawable'. No inheritance hierarchy needed.",
+      "timeComplexity": "O(n) where n is number of shapes",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Simulating Method Overloading",
+      "description": "Demonstrates how Python simulates method overloading using default arguments",
+      "code": "class Calculator:\n    def add(self, a, b=0, c=0):\n        # Simulates method overloading\n        return a + b + c\n\ncalc = Calculator()\nprint(calc.add(5))           # Output: 5 (single arg)\nprint(calc.add(5, 3))        # Output: 8 (two args)\nprint(calc.add(5, 3, 2))    # Output: 10 (three args)\n\n# Using *args for variable arguments\nclass Calculator2:\n    def add(self, *args):\n        return sum(args)\n\ncalc2 = Calculator2()\nprint(calc2.add(1, 2))           # Output: 3\nprint(calc2.add(1, 2, 3, 4))    # Output: 10\nprint(calc2.add())               # Output: 0",
+      "explanation": "Python doesn't support traditional method overloading. We simulate it using: 1) Default parameter values (b=0, c=0), 2) Variable arguments (*args). The last defined method with same name handles all calls.",
+      "timeComplexity": "O(n) where n is number of arguments",
+      "spaceComplexity": "O(n) for storing args"
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "topicId": "deadlock-detection-and-recovery-from-deadlock",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define deadlock detection in operating systems. Why is it necessary to detect deadlocks rather than prevent them?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Think about the difference between prevention/avoidance and detection approaches",
+      "keyPoints": [
+        "Deadlock detection is the process of identifying whether a set of processes are in a deadlocked state",
+        "It is necessary because deadlocks cannot always be prevented through system design",
+        "Detection allows the system to recover and continue operation",
+        "Necessary when resources can be dynamically allocated and deadlock conditions may arise",
+        "Enables system to maintain efficiency by not imposing overly restrictive conditions"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a Wait-for Graph? Explain how it is used for deadlock detection in systems with single instance resources.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Remember: cycle in wait-for graph indicates deadlock for single instance resources",
+      "keyPoints": [
+        "Wait-for Graph is a directed graph where nodes represent processes",
+        "An edge Pi → Pj exists if process Pi is waiting for a resource held by process Pj",
+        "A deadlock exists if and only if the wait-for graph contains a cycle",
+        "It is applicable only when each resource type has a single instance",
+        "The operating system periodically checks for cycles in this graph"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "State the conditions required for invoking the deadlock detection algorithm in an operating system.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Recall the data structures needed for the detection algorithm",
+      "keyPoints": [
+        "System must have information about current allocation of resources",
+        "Request matrix showing current resource requests by each process",
+        "Allocation matrix showing currently allocated resources",
+        "Number of processes and resource types in the system",
+        "Available vector showing currently available resources"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between deadlock detection and deadlock recovery.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Think of detection as 'diagnosis' and recovery as 'treatment'",
+      "keyPoints": [
+        "Detection identifies if deadlock exists in the current state",
+        "Recovery takes action after deadlock has been detected",
+        "Detection is passive - it only identifies the problem",
+        "Recovery is active - it resolves the deadlock situation",
+        "Both are used when prevention/avoidance strategies are not implemented"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the 'Ostrich Algorithm' for handling deadlocks? Why might it be used in practice?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "This is a humorous approach named after bird behavior",
+      "keyPoints": [
+        "It is an approach to ignore deadlock problems altogether",
+        "Name comes from the ostrich putting its head in the sand",
+        "Used when deadlocks are rare and cost of prevention is too high",
+        "Practical in systems where occasional crashes are acceptable",
+        "Database systems and some operating systems use this approach"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain resource preemption as a method of deadlock recovery. What are its drawbacks?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think about what happens when you forcibly take resources from a process",
+      "keyPoints": [
+        "Resources are forcibly taken from some processes and given to others",
+        "The operating system selects a victim process and preempts its resources",
+        "Selected process may need to be rolled back to a safe state",
+        "Drawback: May cause data corruption if resources are taken unexpectedly",
+        "Drawback: Starvation is possible if same process is repeatedly selected"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the deadlock detection algorithm for systems with multiple instances of each resource type. Trace through the algorithm with a suitable example.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Use the Banker's algorithm style data structures and trace step by step",
+      "keyPoints": [
+        "Data structures: Available vector, Allocation matrix, Request matrix",
+        "Algorithm steps: 1) Initialize Work = Available, 2) Find process where Request ≤ Work",
+        "3) Mark process as finished and release resources (Work = Work + Allocation)",
+        "4) Repeat until all processes are found or no such process exists",
+        "If any process is not finished after algorithm, system is in deadlock",
+        "The unfinished processes constitute the deadlock set",
+        "Algorithm complexity is O(m × n²) where m = resource types, n = processes"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast the three methods of recovering from deadlock: (i) Process Termination, (ii) Resource Preemption, and (iii) System Restart.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Consider the pros and cons of each approach from system perspective",
+      "keyPoints": [
+        "Process Termination: Abort one or more processes to break deadlock",
+        "Two approaches: Abort all deadlocked processes or abort one at a time",
+        "Criteria for selection: Priority, execution time, resource usage, restartability",
+        "Resource Preemption: Take resources away from processes and give to others",
+        "Requires rollback mechanism to return process to safe state",
+        "System Restart: Complete system shutdown and reboot",
+        "Most drastic method, used as last resort",
+        "Trade-offs: Data loss, starvation, system downtime considerations"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Discuss the criteria for selecting a victim process during deadlock recovery. Explain the concept of rollback and checkpointing.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Think about fairness and cost considerations in victim selection",
+      "keyPoints": [
+        "Selection criteria: Process priority, execution time remaining, resources held",
+        "Number of deadlocks caused by the process historically",
+        "Cost of terminating vs cost of continuing",
+        "Rollback: Returning process to a previously saved safe state",
+        "Checkpointing: Periodically saving process state to stable storage",
+        "After rollback, process must restart from checkpointed state",
+        "Prevents data loss and allows process to continue from safe state"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design a deadlock detection algorithm for a system with multiple resource types. Include the data structures required and explain each step of the algorithm.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "This is similar to Banker's algorithm but without safety check",
+      "keyPoints": [
+        "Data structures: Available[m], Allocation[n][m], Request[n][m]",
+        "Available: Vector of available resources of each type",
+        "Allocation: Matrix showing resources allocated to each process",
+        "Request: Matrix showing current request of each process",
+        "Algorithm: Initialize work = available, find process meeting condition",
+        "Process Pi is eligible if Request[i] ≤ Work",
+        "Mark eligible process as finished, release its resources",
+        "Repeat until no more processes can finish",
+        "Deadlock exists if not all processes can finish"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Consider a system with 3 processes P0, P1, P2 and two resource types A (3 instances) and B (2 instances). Given: Allocation matrix = [[1,0], [1,1], [0,1]] and Request matrix = [[1,0], [0,1], [1,0]]. Available = [1,0]. Determine using the deadlock detection algorithm whether the system is in a deadlocked state.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Trace through the detection algorithm step by step",
+      "keyPoints": [
+        "Step 1: Work = [1,0], Initialize Finish = [false, false, false]",
+        "Step 2: Check P0: Request[0]=[1,0] ≤ Work=[1,0], so P0 can finish",
+        "Step 3: Work = [1,0] + [1,0] = [2,0], Finish[0]=true",
+        "Step 4: Check P1: Request[1]=[0,1] ≤ Work=[2,0]? NO",
+        "Step 5: Check P2: Request[2]=[1,0] ≤ Work=[2,0], so P2 can finish",
+        "Step 6: Work = [2,0] + [0,1] = [2,1], Finish[2]=true",
+        "Step 7: Check P1 again: Request[1]=[0,1] ≤ Work=[2,1], so P1 can finish",
+        "Step 8: All processes can finish, so NO DEADLOCK"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "Given the following resource allocation state: 3 processes P1, P2, P3; Resource type R with 4 instances. Allocation: P1=1, P2=1, P3=1. Request: P1=2, P2=1, P3=2. Available: 1. Using the detection algorithm, determine if there is a deadlock and identify the processes involved.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Apply the detection algorithm systematically",
+      "keyPoints": [
+        "Step 1: Work = 1, Finish = [false, false, false]",
+        "Step 2: P1: Request=2 > Work=1, cannot finish",
+        "Step 3: P2: Request=1 ≤ Work=1, P2 can finish",
+        "Step 4: Work = 1 + 1 = 2, Finish[2] = true",
+        "Step 5: P1: Request=2 ≤ Work=2, P1 can finish",
+        "Step 6: Work = 2 + 1 = 3, Finish[1] = true",
+        "Step 7: P3: Request=2 ≤ Work=3, P3 can finish",
+        "Step 8: All processes finish, NO DEADLOCK",
+        "System is in safe state"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "A system has 4 processes P0, P1, P2, P3 and 2 resource types A(2 instances), B(1 instance). Current state: Allocation: [[1,0], [0,1], [1,1], [0,0]]; Request: [[1,0], [1,0], [0,0], [1,1]]; Available: [0,0]. Determine if deadlock exists and explain with wait-for graph analysis.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Check if any process can finish with Available=[0,0]",
+      "keyPoints": [
+        "Step 1: Work = [0,0], Finish = [false, false, false, false]",
+        "Step 2: No process has Request ≤ Work (all have non-zero requests)",
+        "Step 3: Since no process can proceed, algorithm terminates",
+        "Finish = [false, false, false, false]",
+        "Deadlock exists involving all 4 processes",
+        "Wait-for graph: P0→P1 (P0 waiting for P1's A), P1→P2 (waiting for A), P2→P0 (waiting for B), P3→P0 (waiting for A)",
+        "Cycle exists in wait-for graph: P0→P1→P2→P0",
+        "Conclusion: System is in DEADLOCK"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "How frequently should deadlock detection be performed? What factors influence this decision?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think about cost-benefit analysis of detection frequency",
+      "keyPoints": [
+        "Frequency depends on how often deadlocks may occur",
+        "If deadlocks are frequent, detect more often to minimize affected processes",
+        "Detection has overhead - more frequent = more overhead",
+        "Consider number of processes in system",
+        "Consider resources available - more resources = less frequent detection needed",
+        "Trade-off between responsiveness and system performance"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "long",
+      "question": "Explain the concept of 'communication deadlock' and how it differs from resource deadlock. How can detection be performed for communication deadlocks?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Think about message passing systems vs resource allocation systems",
+      "keyPoints": [
+        "Communication deadlock occurs in distributed systems",
+        "Processes wait for messages from each other (communication channel)",
+        "Differs from resource deadlock which involves physical resources",
+        "Also called 'message passing' deadlock",
+        "Conditions: Mutual waiting for message exchange",
+        "Detection: Can use wait-for graph with message channels",
+        "Timeout-based detection: Process waits for message beyond threshold",
+        "Control message passing to detect cyclic waiting",
+        "More complex in distributed systems due to lack of global state"
+      ]
+    }
+  ]
+}

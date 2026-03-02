@@ -1,0 +1,151 @@
+{
+  "topicId": "memory-management-strategies",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between internal fragmentation and external fragmentation. Which memory management techniques suffer from each type?",
+      "keyPoints": [
+        "Internal fragmentation: wasted space within allocated memory block due to fixed-sized allocation units",
+        "External fragmentation: free memory scattered in small non-contiguous blocks",
+        "Paging suffers from internal fragmentation (unused space within pages/frames)",
+        "Contiguous allocation and segmentation suffer from external fragmentation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the steps involved in handling a page fault in a demand paging system.",
+      "keyPoints": [
+        "1. Hardware generates trap to OS",
+        "2. OS saves process state and checks page table",
+        "3. If page is valid but not in memory, determine where on disk",
+        "4. Find a free frame in physical memory",
+        "5. Issue disk I/O to read the required page into the frame",
+        "6. Update page table entry (valid bit, frame number)",
+        "7. Restore process state and restart the interrupted instruction"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is thrashing? Explain the working set model as a solution to thrashing.",
+      "keyPoints": [
+        "Thrashing: excessive paging activity causing CPU to spend more time on page I/O than execution",
+        "Caused when processes don't have enough frames for their working set",
+        "Working set: pages referenced in recent time interval \u03c4",
+        "Solution: OS ensures each process has enough frames to hold its working set",
+        "This minimizes page faults and improves CPU utilization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare FIFO and LRU page replacement algorithms. Why is LRU generally preferred over FIFO?",
+      "keyPoints": [
+        "FIFO evicts oldest page in memory regardless of usage",
+        "LRU evicts least recently used page based on temporal locality",
+        "FIFO suffers from Belady's Anomaly (increasing frames can increase faults)",
+        "LRU better approximates Optimal algorithm",
+        "LRU tracks page usage history making better replacement decisions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of virtual memory and its advantages.",
+      "keyPoints": [
+        "Virtual memory creates illusion of larger memory than physically available",
+        "Uses demand paging to load pages only when needed",
+        "Provides memory protection between processes",
+        "Enables processes larger than physical memory to execute",
+        "Simplifies programming by removing need for memory management"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is copy-on-write (COW)? How does it optimize memory usage during fork()?",
+      "keyPoints": [
+        "COW allows parent and child to share same memory pages after fork()",
+        "Initially, pages are marked read-only and shared",
+        "When either process modifies a page, a private copy is made",
+        "Reduces memory overhead when fork() is followed by exec()",
+        "Improves performance by deferring or avoiding page copying"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the structure of an inverted page table. What are its advantages over a traditional page table?",
+      "keyPoints": [
+        "Inverted page table has one entry per physical frame",
+        "Each entry stores: physical frame number, virtual page number, process ID",
+        "Advantages: reduces memory overhead for large address spaces",
+        "Disadvantages: slower translation, difficulty implementing sharing",
+        "Used in systems with large address spaces like IBM mainframes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the following page replacement algorithms with an example: FIFO, LRU, and Optimal. Also discuss Belady's Anomaly.",
+      "keyPoints": [
+        "FIFO: Evicts oldest page; simple but suffers from Belady's Anomaly",
+        "LRU: Evicts least recently used; better but requires hardware/software support",
+        "Optimal: Evicts page that will not be used longest in future; theoretical best",
+        "Belady's Anomaly: In FIFO, increasing frames can sometimes increase page faults",
+        "Example showing anomaly: with reference string 1,2,3,4,1,2,5,1,2,3,4,5 - 3 frames = 9 faults, 4 frames = 10 faults"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "A computer system has 16KB of physical memory with page size of 1KB. The logical address space of a process is 32KB. Answer the following: (i) How many bits are in a logical address? (ii) How many bits are in a physical address? (iii) How many pages per process? (iv) How many frames in physical memory? (v) How many entries in the page table assuming each entry is 2 bytes?",
+      "keyPoints": [
+        "(i) Logical: 32KB = 2^15 bytes, so 15 bits",
+        "(ii) Physical: 16KB = 2^14 bytes, so 14 bits",
+        "(iii) Pages = 32KB/1KB = 32 pages = 2^5 (5 bits for page number)",
+        "(iv) Frames = 16KB/1KB = 16 frames = 2^4 (4 bits for frame number)",
+        "(v) Page table entries = 32 (one per page), size = 32 \u00d7 2 = 64 bytes"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the various frame allocation algorithms in memory management. Compare equal allocation, proportional allocation, and priority-based allocation.",
+      "keyPoints": [
+        "Equal allocation: Each process gets same number of frames regardless of size",
+        "Proportional allocation: Frames allocated proportional to process size or priority",
+        "Priority allocation: Higher priority processes get more frames",
+        "Each has trade-offs: fairness vs efficiency vs responsiveness",
+        "Global vs local replacement affects allocation strategies"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain segmentation with paging. How does it combine the advantages of both techniques? Draw the address translation mechanism.",
+      "keyPoints": [
+        "Logical address: segment-number + offset",
+        "Segment table maps segment number to segment descriptor (base, limit, etc.)",
+        "Offset is checked against limit, then added to base to get linear address",
+        "Linear address divided into: page directory index, page table index, offset",
+        "Page table maps to physical frame number",
+        "Combines logical view of segmentation with efficiency of paging",
+        "Provides protection at segment level and eliminates external fragmentation"
+      ],
+      "marks": 10
+    }
+  ]
+}

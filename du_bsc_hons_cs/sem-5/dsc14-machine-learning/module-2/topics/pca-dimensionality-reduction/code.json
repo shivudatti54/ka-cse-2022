@@ -1,0 +1,45 @@
+{
+  "topicId": "pca-dimensionality-reduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "PCA from Scratch using NumPy",
+      "description": "Implementation of PCA algorithm without using sklearn, demonstrating eigen decomposition approach",
+      "code": "import numpy as np\n\ndef pca_from_scratch(X, n_components=None, variance_threshold=0.95):\n    # Step 1: Standardize the data\n    X_mean = np.mean(X, axis=0)\n    X_std = np.std(X, axis=0)\n    X_standardized = (X - X_mean) / X_std\n    \n    # Step 2: Compute covariance matrix\n    n_samples = X_standardized.shape[0]\n    cov_matrix = np.cov(X_standardized.T)  # Use .T for correct dimensions\n    \n    # Step 3: Eigen decomposition\n    eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)\n    \n    # Make eigenvalues real (complex can occur numerically)\n    eigenvalues = np.real(eigenvalues)\n    eigenvectors = np.real(eigenvectors)\n    \n    # Sort in descending order\n    sorted_indices = np.argsort(eigenvalues)[::-1]\n    eigenvalues = eigenvalues[sorted_indices]\n    eigenvectors = eigenvectors[:, sorted_indices]\n    \n    # Step 4: Determine number of components\n    if n_components is None:\n        total_variance = np.sum(eigenvalues)\n        explained_ratio = eigenvalues / total_variance\n        cumulative_ratio = np.cumsum(explained_ratio)\n        n_components = np.argmax(cumulative_ratio >= variance_threshold) + 1\n    \n    # Select top n_components eigenvectors\n    principal_components = eigenvectors[:, :n_components]\n    \n    # Step 5: Transform data\n    X_reduced = np.dot(X_standardized, principal_components)\n    \n    return X_reduced, principal_components, eigenvalues[:n_components]\n\n# Example usage\n# X_reduced, components, ev = pca_from_scratch(data, variance_threshold=0.95)",
+      "explanation": "This code implements PCA manually to show each step: standardization, covariance matrix computation, eigen decomposition, component selection based on variance threshold, and final transformation.",
+      "timeComplexity": "O(d\u00b2n + d\u00b3) where d=features, n=samples",
+      "spaceComplexity": "O(d\u00b2 + nd)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "PCA using Scikit-learn",
+      "description": "Standard PCA implementation using sklearn library with variance analysis",
+      "code": "from sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\n# Assume X is your data matrix (n_samples, n_features)\n\n# Step 1: Standardize the data\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Step 2: Apply PCA\n# Option A: Specify number of components\npca = PCA(n_components=0.95)  # Retain 95% variance\nX_reduced = pca.fit_transform(X_scaled)\n\n# Option B: Specify exact number of components\npca = PCA(n_components=2)  # Reduce to 2 dimensions\nX_2d = pca.fit_transform(X_scaled)\n\n# Analysis outputs\nprint(\"Explained variance ratio:\", pca.explained_variance_ratio_)\nprint(\"Cumulative variance:\", np.cumsum(pca.explained_variance_ratio_))\nprint(\"Principal components shape:\", pca.components_.shape)\n\n# Reconstruction (for visualization of information loss)\nX_reconstructed = pca.inverse_transform(X_2d)\nreconstruction_error = np.mean((X_scaled - X_reconstructed) ** 2)\n\n# Incremental PCA for large datasets\nfrom sklearn.decomposition import IncrementalPCA\nipca = IncrementalPCA(n_components=100)\nfor batch in np.array_split(X_scaled, 10):  # Process in batches\n    ipca.partial_fit(batch)\nX_reduced_large = ipca.transform(X_scaled)",
+      "explanation": "Demonstrates practical PCA usage with sklearn including variance-based component selection, reconstruction error calculation, and incremental PCA for large datasets.",
+      "timeComplexity": "O(d\u00b2n + d\u00b3) handled internally by sklearn",
+      "spaceComplexity": "O(d\u00b2 + nd)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Kernel PCA Implementation",
+      "description": "Implementation showing nonlinear dimensionality reduction using kernel trick",
+      "code": "from sklearn.decomposition import KernelPCA\nfrom sklearn.preprocessing import StandardScaler\n\n# Standardize data first\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Linear kernel (same as standard PCA)\nkpca_linear = KernelPCA(n_components=2, kernel='linear')\nX_linear = kpca_linear.fit_transform(X_scaled)\n\n# RBF (Gaussian) kernel - good for nonlinear data\nkpca_rbf = KernelPCA(n_components=2, kernel='rbf', gamma=0.1)\nX_rbf = kpca_rbf.fit_transform(X_scaled)\n\n# Polynomial kernel\nkpca_poly = KernelPCA(n_components=2, kernel='poly', degree=3, coef0=1)\nX_poly = kpca_poly.fit_transform(X_scaled)\n\n# Selecting gamma for RBF kernel\n# gamma: inverse of radius of influence of samples\n# Higher gamma = more local, lower = more global\nfrom sklearn.model_selection import GridSearchCV\nfrom sklearn.decomposition import KernelPCA\nfrom sklearn.pipeline import Pipeline\n\n# Grid search for optimal gamma\nparam_grid = {'kpca__gamma': [0.01, 0.1, 1, 10]}\npipeline = Pipeline([('kpca', KernelPCA(kernel='rbf', n_components=2))])\ngrid_search = GridSearchCV(pipeline, param_grid, cv=3)\ngrid_search.fit(X_scaled)",
+      "explanation": "Shows how Kernel PCA extends standard PCA to capture nonlinear relationships using different kernel functions: RBF (Gaussian) and polynomial.",
+      "timeComplexity": "O(n\u00b2d + n\u00b3) for RBF kernel, higher than linear PCA",
+      "spaceComplexity": "O(n\u00b2 + nd)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-4",
+      "title": "PCA for Data Visualization",
+      "description": "Complete example showing PCA-based 2D visualization of high-dimensional data",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import load_iris\n\n# Load example dataset\niris = load_iris()\nX = iris.data\ny = iris.target\nfeature_names = iris.feature_names\n\n# Standardize\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Apply PCA\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)\n\n# Create visualization\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\n# Plot 1: 2D projection\nscatter = axes[0].scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.7)\naxes[0].set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]*100:.1f}% var)')\naxes[0].set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]*100:.1f}% var)')\naxes[0].set_title('PCA: 2D Projection of Iris Dataset')\nplt.colorbar(scatter, ax=axes[0], label='Class')\n\n# Plot 2: Explained variance\ncomponents = range(1, len(pca.explained_variance_ratio_) + 1)\ncumulative = np.cumsum(pca.explained_variance_ratio_)\naxes[1].bar(components, pca.explained_variance_ratio_, alpha=0.7, label='Individual')\naxes[1].plot(components, cumulative, 'ro-', label='Cumulative')\naxes[1].axhline(y=0.95, color='g', linestyle='--', label='95% threshold')\naxes[1].set_xlabel('Principal Component')\naxes[1].set_ylabel('Explained Variance Ratio')\naxes[1].set_title('Scree Plot: Variance Explained')\naxes[1].legend()\n\nplt.tight_layout()\nplt.show()\n\n# Feature importance (component loadings)\nloadings = pd.DataFrame(\n    pca.components_.T,\n    columns=['PC1', 'PC2'],\n    index=feature_names\n)\nprint(\"Feature Loadings:\\n\", loadings)",
+      "explanation": "Complete visualization example showing 2D projection of iris dataset, scree plot, and feature loadings (how each original feature contributes to principal components).",
+      "timeComplexity": "O(d\u00b2n + d\u00b3)",
+      "spaceComplexity": "O(d\u00b2 + nd)",
+      "language": "pseudocode"
+    }
+  ]
+}

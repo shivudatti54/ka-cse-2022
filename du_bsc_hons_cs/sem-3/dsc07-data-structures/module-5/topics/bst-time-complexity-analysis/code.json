@@ -1,0 +1,45 @@
+{
+  "topicId": "bst-time-complexity-analysis",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "BST Search Operation",
+      "description": "Recursive search in Binary Search Tree",
+      "code": "class Node:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef search(root, key):\n    # Base case: root is None or key is at root\n    if root is None or root.key == key:\n        return root\n    \n    # Key is greater than root's key\n    if key > root.key:\n        return search(root.right, key)\n    \n    # Key is smaller than root's key\n    return search(root.left, key)\n\n# Time: O(h) where h is height\n# Best: O(1) if found at root\n# Worst: O(n) if skewed\n# Avg: O(log n) if balanced",
+      "explanation": "Search recursively compares target with current node and moves left or right. Each recursive call goes one level deeper, so time depends on tree height.",
+      "timeComplexity": "O(h)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "BST Insert Operation",
+      "description": "Insert a new key into BST maintaining BST properties",
+      "code": "class Node:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef insert(root, key):\n    # Base case: found empty position\n    if root is None:\n        return Node(key)\n    \n    # Duplicate values: go to right subtree\n    if key > root.key:\n        root.right = insert(root.right, key)\n    else:\n        root.left = insert(root.left, key)\n    \n    return root\n\n# Usage: root = insert(None, 50)\n#        root = insert(root, 30)\n#        root = insert(root, 70)\n\n# Time: O(h)\n# Space: O(h) for recursion stack",
+      "explanation": "Insert finds the appropriate leaf position by comparing values. Creates new node at first empty spot maintaining BST property.",
+      "timeComplexity": "O(h)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "BST Delete Operation",
+      "description": "Delete a node from BST handling all three cases",
+      "code": "class Node:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef delete(root, key):\n    # Base case: key not found\n    if root is None:\n        return None\n    \n    # Search for node to delete\n    if key > root.key:\n        root.right = delete(root.right, key)\n    elif key < root.key:\n        root.left = delete(root.left, key)\n    else:\n        # Node found - handle three cases\n        \n        # Case 1 & 2: One child or no child\n        if root.left is None:\n            return root.right\n        if root.right is None:\n            return root.left\n        \n        # Case 3: Two children\n        # Find in-order successor (minimum in right subtree)\n        successor = minValueNode(root.right)\n        root.key = successor.key\n        root.right = delete(root.right, successor.key)\n    \n    return root\n\ndef minValueNode(node):\n    current = node\n    while current.left:\n        current = current.left\n    return current\n\n# Time: O(h) for all cases\n# Space: O(h) for recursion",
+      "explanation": "Deletion handles three cases: leaf removal (simple), one child replacement (bypass), two children (find successor, replace, delete successor). Each case requires O(h) time.",
+      "timeComplexity": "O(h)",
+      "spaceComplexity": "O(h)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Check if BST is Balanced",
+      "description": "Optimized O(n) algorithm to check if tree is balanced",
+      "code": "class Node:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef isBalanced(root):\n    return checkHeight(root) != -1\n\ndef checkHeight(node):\n    # Base case: empty tree\n    if node is None:\n        return 0\n    \n    # Check left subtree height\n    leftHeight = checkHeight(node.left)\n    if leftHeight == -1:\n        return -1  # Not balanced\n    \n    # Check right subtree height\n    rightHeight = checkHeight(node.right)\n    if rightHeight == -1:\n        return -1  # Not balanced\n    \n    # Check balance at current node\n    if abs(leftHeight - rightHeight) > 1:\n        return -1\n    \n    # Return height of this node\n    return max(leftHeight, rightHeight) + 1\n\n# Time: O(n) - visits each node once\n# Space: O(h) - recursion stack",
+      "explanation": "Uses post-order traversal to compute heights while checking balance. Returns -1 if unbalanced, otherwise returns height. Optimized from O(n\u00b2) naive approach.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(h)"
+    }
+  ]
+}

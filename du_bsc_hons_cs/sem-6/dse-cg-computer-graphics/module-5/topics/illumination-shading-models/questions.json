@@ -1,0 +1,145 @@
+{
+  "topicId": "illumination-shading-models",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain Lambert's Cosine Law in the context of diffuse reflection. How does it affect the brightness of a surface?",
+      "keyPoints": [
+        "Lambert's cosine law states intensity is proportional to cos(\u03b8) where \u03b8 is angle between surface normal and light direction",
+        "Mathematical form: Id = Kd \u00d7 Il \u00d7 cos(\u03b8) = Kd \u00d7 Il \u00d7 (N\u00b7L)",
+        "Maximum intensity when surface directly faces light (\u03b8=0\u00b0)",
+        "Zero intensity when surface is perpendicular to light (\u03b8\u226590\u00b0)",
+        "This is why surfaces appear darker when light strikes at grazing angles"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between Gouraud Shading and Phong Shading. Which one produces better visual results and why?",
+      "keyPoints": [
+        "Gouraud: computes illumination at vertices, interpolates colors across polygon",
+        "Phong: interpolates normals across polygon, computes illumination per pixel",
+        "Phong produces sharper, more accurate specular highlights",
+        "Gouraud may miss or distort specular highlights due to vertex-based computation",
+        "Phong is computationally more expensive but visually superior for shiny surfaces"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List and briefly explain the three components of the Phong Reflection Model.",
+      "keyPoints": [
+        "Ambient (Ka \u00d7 Ia): simulates indirect light, provides minimum brightness in shadow areas",
+        "Diffuse (Kd \u00d7 Il \u00d7 N\u00b7L): models matte surfaces, light scattered equally in all directions",
+        "Specular (Ks \u00d7 Il \u00d7 (R\u00b7V)^n): creates shiny highlights, depends on view direction",
+        "Each component uses reflection coefficients (Ka, Kd, Ks) between 0 and 1",
+        "Shininess exponent n controls highlight sharpness"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is light attenuation? Why is it important in illumination models?",
+      "keyPoints": [
+        "Light attenuation describes how light intensity decreases with distance from source",
+        "Typical formula: Attenuation = 1 / (a0 + a1\u00d7d + a2\u00d7d\u00b2)",
+        "Simulates real-world physics where light spreads over larger area",
+        "Without attenuation, distant objects would appear as bright as nearby ones",
+        "Prevents unrealistically bright scenes and adds depth perception"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Define BRDF (Bidirectional Reflectance Distribution Function) and explain its significance in realistic rendering.",
+      "keyPoints": [
+        "BRDF is a function: fr(\u03c9i, \u03c9o) that describes surface reflectance",
+        "Takes incoming light direction (\u03c9i) and outgoing view direction (\u03c9o)",
+        "Returns ratio of reflected radiance to incoming irradiance",
+        "Encodes material properties like roughness, metalness, anisotropy",
+        "Foundation of physically-based rendering (PBR)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the three main types of light sources used in computer graphics.",
+      "keyPoints": [
+        "Point Light: emits from a single point in all directions, intensity decreases with distance",
+        "Directional Light: parallel rays from infinite distance, no attenuation (like sunlight)",
+        "Spotlight: emits light in a cone with specific angle, includes falloff within cone",
+        "Each has position/direction and color/intensity properties",
+        "Choice affects realism and computational cost"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Derive and explain the complete Phong Reflection Model equation. Discuss how each parameter affects the final rendered appearance of a surface.",
+      "keyPoints": [
+        "Complete equation: I = Ka\u00d7Ia + Kd\u00d7Il\u00d7max(0,N\u00b7L) + Ks\u00d7Il\u00d7max(0,R\u00b7V)^n",
+        "Ambient term Ka controls base illumination in shadows (0-1 range)",
+        "Diffuse term: Kd controls how much light is diffusely scattered, N\u00b7L is Lambert cosine term",
+        "Specular term: Ks controls highlight intensity, n (shininess) controls highlight sharpness",
+        "Higher n = smaller sharper highlight (polished), lower n = larger diffuse highlight (matte)",
+        "Material appearance controlled by selecting appropriate coefficients",
+        "Viewing angle affects specular term through R\u00b7V dot product"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare Flat Shading, Gouraud Shading, and Phong Shading in terms of computation method, visual quality, and computational cost. Under what circumstances would you choose each method?",
+      "keyPoints": [
+        "Flat Shading: one calculation per polygon, faceted look, fastest",
+        "Gouraud Shading: vertex calculations + color interpolation, smooth but may miss highlights",
+        "Phong Shading: normal interpolation + per-pixel calculation, best quality but expensive",
+        "Quality order: Flat < Gouraud < Phong",
+        "Cost order: Flat < Gouraud < Phong",
+        "Choose Flat for real-time with many polygons, Gouraud for animated surfaces, Phong for photo-realism",
+        "Hardware support makes Phong common in modern graphics pipelines"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the physics behind specular reflection. How does the shininess exponent (n) affect the appearance of the specular highlight? Provide examples of surfaces with different shininess values.",
+      "keyPoints": [
+        "Specular reflection occurs on shiny surfaces where light reflects primarily in one direction",
+        "Reflection vector R is computed using: R = 2(N\u00b7L)N - L",
+        "Specular intensity = Ks \u00d7 Il \u00d7 (R\u00b7V)^n",
+        "Higher n (100-200): concentrated highlight (polished metal, plastic)",
+        "Medium n (20-50): moderate highlight (wood, cloth)",
+        "Lower n (1-10): very diffuse highlight (rough surfaces)",
+        "R\u00b7V term means specular highlight only visible when view aligns with reflection",
+        "This is why you see moving highlight when rotating object"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is the Fresnel effect? How is it implemented in illumination models, and why is it important for realistic rendering?",
+      "keyPoints": [
+        "Fresnel effect: surfaces become more reflective at grazing (oblique) viewing angles",
+        "Physical basis: more light reflects off surface at shallow angles, less transmits through",
+        "Implementation: F(\u03b8) = F\u2080 + (1-F\u2080)(1-cos\u03b8)^5 or similar approximations",
+        "Where F\u2080 is reflectance at normal incidence (typically 0.02-0.05 for dielectrics)",
+        "Critical for realistic rendering of water, glass, metal surfaces",
+        "Explains why pool edges look more reflective at edges, why car paint shimmers",
+        "Combined with other lighting models for photorealistic results",
+        "Modern PBR systems incorporate Fresnel for material realism"
+      ],
+      "marks": 10
+    }
+  ]
+}

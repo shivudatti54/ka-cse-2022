@@ -1,0 +1,35 @@
+{
+  "topicId": "behavioral-modeling",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Activity Diagram Flow Simulation",
+      "description": "Pseudocode representing the flow in an activity diagram with decision points and parallel execution.",
+      "code": "BEGIN\n FUNCTION processOrder(order):\n # Activity: Validate Order\n IF NOT validateOrder(order) THEN\n REJECT order\n RETURN\n END IF\n\n # Decision: Check Inventory\n IF order.items IN inventory THEN\n # Parallel fork - process payment and reserve items\n PARALLEL\n PROCESS payment(order)\n RESERVE items(order)\n END PARALLEL\n\n # Activity: Ship Order\n SHIP order\n \n # Decision: Confirm Delivery\n IF deliveryConfirmed THEN\n # Activity: Complete Order\n COMPLETE order\n SEND notification(\"Order delivered\")\n ELSE\n # Exception handling\n INITIATE return process\n END IF\n ELSE\n # Decision: Items not available\n NOTIFY customer(\"Items out of stock\")\n PLACE backorder(order)\n END IF\nEND",
+      "explanation": "This pseudocode simulates an activity diagram flow with sequential activities, decision points (IF-ELSE), and parallel processing (PARALLEL block). It demonstrates how activity diagrams translate to implementation logic.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "State Machine Implementation Pattern",
+      "description": "Pseudocode demonstrating the State design pattern used to implement a state machine diagram behaviorally.",
+      "code": "BEGIN\n CLASS StateMachine:\n FUNCTION constructor(initialState):\n currentState = initialState\n stateTable = {\n \"IDLE\": {\n \"START\": \"PROCESSING\",\n \"RESET\": \"IDLE\"\n },\n \"PROCESSING\": {\n \"COMPLETE\": \"SUCCESS\",\n \"ERROR\": \"ERROR\",\n \"PAUSE\": \"PAUSED\"\n },\n \"PAUSED\": {\n \"RESUME\": \"PROCESSING\",\n \"ABORT\": \"IDLE\"\n },\n \"SUCCESS\": {\n \"RESET\": \"IDLE\"\n },\n \"ERROR\": {\n \"RETRY\": \"PROCESSING\",\n \"ABORT\": \"IDLE\"\n }\n }\n\n FUNCTION handleEvent(event):\n # Check if transition exists for current state and event\n IF event IN stateTable[currentState] THEN\n nextState = stateTable[currentState][event]\n \n # Execute exit action, transition, entry action\n EXIT currentState\n currentState = nextState\n ENTER currentState\n RETURN TRUE\n ELSE\n RETURN FALSE # Invalid event for current state\n END IF\n\n # Example usage\n machine = StateMachine(\"IDLE\")\n machine.handleEvent(\"START\") # Transitions to PROCESSING\n machine.handleEvent(\"PAUSE\") # Transitions to PAUSED\n machine.handleEvent(\"RESUME\") # Transitions back to PROCESSING\nEND",
+      "explanation": "This implements the State design pattern which is commonly used to implement state machine diagrams. The state table defines valid transitions, and the handleEvent method enforces state-dependent behavior.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(k) where k is number of states"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Sequence Diagram Message Handler",
+      "description": "Pseudocode representing message passing between objects as would be shown in a sequence diagram.",
+      "code": "BEGIN\n # Objects as they would appear in sequence diagram\n OBJECT User\n OBJECT OrderService\n OBJECT PaymentGateway\n OBJECT InventorySystem\n\n # Sequence: User places order\n SEQUENCE placeOrder(orderDetails):\n # Message 1: User calls OrderService\n User \u2192 OrderService: createOrder(orderDetails)\n \n # Message 2: OrderService checks inventory (synchronous)\n OrderService \u2192 InventorySystem: checkStock(productId)\n InventorySystem \u2192 OrderService: stockAvailable (RETURN)\n \n # Decision based on stock\n IF stockAvailable THEN\n # Message 3: Process payment (synchronous)\n OrderService \u2192 PaymentGateway: processPayment(amount)\n PaymentGateway \u2192 OrderService: paymentSuccess (RETURN)\n \n # Message 4: Reserve inventory (asynchronous)\n OrderService \u2192 InventorySystem: reserveItems(productId)\n \n # Message 5: Confirm order (callback to user)\n OrderService \u2192 User: orderConfirmed(orderId)\n ELSE\n # Alternative path - out of stock\n OrderService \u2192 User: orderFailed(\"Out of stock\")\n END IF\n\n # Example invocation\n placeOrder({\n productId: \"BOOK-123\",\n quantity: 2,\n amount: 49.99\n })\nEND",
+      "explanation": "This pseudocode mimics a sequence diagram showing message passing between User, OrderService, PaymentGateway, and InventorySystem. It shows both synchronous (blocking) and asynchronous (non-blocking) message patterns.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the concept of snapshot isolation in MVCC. How does it differ from read committed isolation?",
+    "expectedPoints": [
+      "Snapshot isolation provides a consistent view of data as of transaction start time",
+      "Read committed provides consistent view as of each query execution time",
+      "In snapshot isolation, reads never block writes and vice versa",
+      "Transaction sees only committed changes from before transaction start"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Describe the components required to implement MVCC in a database system.",
+    "expectedPoints": [
+      "Version chain for each data item",
+      "Transaction table to track active transactions",
+      "Timestamps (start and commit) for each transaction",
+      "Garbage collector for obsolete versions",
+      "Write-ahead logging for durability"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "What is the Thomas Write Rule in timestamp ordering? How does it improve concurrency?",
+    "expectedPoints": [
+      "Thomas Write Rule ignores obsolete writes instead of rejecting them",
+      "If transaction T writes to an item with write_timestamp < T's timestamp, the write is ignored",
+      "This allows more transactions to proceed without aborting",
+      "Improves concurrency by reducing unnecessary transaction rollbacks"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain the problem of write skew in MVCC. How can it be prevented?",
+    "expectedPoints": [
+      "Write skew occurs when two transactions read overlapping data and modify different items",
+      "Both transactions commit successfully leading to inconsistent state",
+      "It violates serializability but passes snapshot isolation tests",
+      "Prevented by using Serializable isolation or detecting conflicts at commit time (SSI)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Discuss the garbage collection mechanism in MVCC. Why is it necessary?",
+    "expectedPoints": [
+      "GC identifies and removes obsolete versions no longer needed",
+      "Versions become obsolete when all active transactions have start timestamps > version's commit timestamp",
+      "Necessary to reclaim storage space and prevent unbounded growth",
+      "Can be done via periodic cleanup or coordinated with transactions"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Compare MVCC with two-phase locking in terms of blocking behavior and implementation complexity.",
+    "expectedPoints": [
+      "MVCC: readers don't block writers, writers don't block readers",
+      "Two-phase locking: readers may block writers and vice versa due to locks",
+      "MVCC more complex due to version management and GC",
+      "Two-phase locking simpler but can cause more contention"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "Explain how timestamp ordering (T/O) algorithm ensures conflict serializability in MVCC.",
+    "expectedPoints": [
+      "Each transaction gets a unique timestamp at start",
+      "Read operations allowed if transaction timestamp > write timestamp of version",
+      "Write operations allowed if transaction timestamp > read and write timestamps",
+      "Transactions are serialized in timestamp order"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Explain the working of Multiversion Concurrency Control (MVCC) with a detailed example showing how read and write operations are performed. Include version creation, visibility rules, and transaction commit in your explanation.",
+    "expectedPoints": [
+      "Describe MVCC architecture with version chains",
+      "Explain how read operations use start timestamp to select visible version",
+      "Show how write operations create new versions without blocking readers",
+      "Discuss visibility rules: version visible if commit_timestamp < reader's start_timestamp",
+      "Include example with multiple concurrent transactions",
+      "Explain commit process and version state changes"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Discuss the advantages and disadvantages of using MVCC for concurrency control in database systems. Also explain how MVCC handles the different isolation levels.",
+    "expectedPoints": [
+      "Advantages: non-blocking reads, better concurrency, consistent snapshot reads",
+      "Disadvantages: higher storage overhead, complex garbage collection, write skew issues",
+      "Explain read uncommitted: reads latest version regardless of commit status",
+      "Explain read committed: each query sees latest committed version",
+      "Explain repeatable read and serializable implementations",
+      "Discuss trade-offs in choosing isolation levels with MVCC"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Explain the multiversion timestamp ordering algorithm. How does it handle read and write operations? What are its limitations?",
+    "expectedPoints": [
+      "Explain timestamp assignment at transaction start",
+      "Describe read rule: read version with largest write_timestamp < T's timestamp",
+      "Describe write rule: write only if no other transaction read version with timestamp < T's timestamp",
+      "Explain how Thomas Write Rule modifies write rule for better concurrency",
+      "Limitations: possibility of cascading aborts, memory overhead for versions",
+      "Compare with other concurrency control methods"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "What is serializable snapshot isolation (SSI)? Explain how it detects serialization anomalies and ensures serializable execution in MVCC systems.",
+    "expectedPoints": [
+      "SSI is an algorithm that makes snapshot isolation serializable",
+      "Detects dangerous structures in transaction dependency graph",
+      "Uses read/write sets to identify conflicts at commit time",
+      "Explains how SSI detects read-write and write-write conflicts",
+      "Shows how SSI can abort transactions to ensure serializability",
+      "Discusses performance trade-offs of SSI vs strict serializable execution"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

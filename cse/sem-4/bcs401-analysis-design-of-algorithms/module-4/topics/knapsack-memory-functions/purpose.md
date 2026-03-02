@@ -1,0 +1,3 @@
+# Knapsack Memory Functions
+
+This content provides comprehensive coverage of the Knapsack Problem variants and the Memory Function technique for students students. It establishes mathematical foundations through formal proofs of optimal substructure, derives recurrence relations rigorously, and presents three distinct algorithmic approaches: bottom-up DP, space-optimized DP, and memory functions. The inclusion of detailed numerical examples with step-by-step trace tables, edge case analysis, and hard analytical MCQs ensures students develop both theoretical understanding and problem-solving skills appropriate for the target tier.

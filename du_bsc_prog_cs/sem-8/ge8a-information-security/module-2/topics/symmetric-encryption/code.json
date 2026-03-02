@@ -1,0 +1,45 @@
+{
+  "topicId": "symmetric-encryption",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Caesar Cipher Implementation",
+      "description": "Simple implementation of Caesar cipher - a historical substitution cipher",
+      "code": "def caesar_encrypt(plaintext, shift):\n    ciphertext = \"\"\n    for char in plaintext:\n        if char.isalpha():\n            ascii_offset = 65 if char.isupper() else 97\n            encrypted = (ord(char) - ascii_offset + shift) % 26 + ascii_offset\n            ciphertext += chr(encrypted)\n        else:\n            ciphertext += char\n    return ciphertext\n\n# Example: Shift of 3\nplaintext = \"HELLO WORLD\"\nshift = 3\nencrypted = caesar_encrypt(plaintext, shift)\nprint(f\"Plaintext: {plaintext}\")\nprint(f\"Ciphertext: {encrypted}\")  # Output: KHOOR ZRUOG",
+      "explanation": "Caesar cipher shifts each letter by a fixed number of positions in the alphabet. This is a monoalphabetic substitution cipher and is easily breakable using frequency analysis.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "AES Encryption using PyCryptodome",
+      "description": "Demonstrates modern AES encryption with proper padding and IV",
+      "code": "from Crypto.Cipher import AES\nfrom Crypto.Random import get_random_bytes\nimport base64\n\ndef aes_encrypt(plaintext, key):\n    # Generate random 16-byte IV for CBC mode\n    iv = get_random_bytes(16)\n    \n    # Create cipher object\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    \n    # PKCS#7 padding (AES uses 16-byte blocks)\n    padding_length = 16 - (len(plaintext) % 16)\n    plaintext += chr(padding_length) * padding_length\n    \n    # Encrypt\n    ciphertext = cipher.encrypt(plaintext.encode())\n    \n    # Return IV + ciphertext (IV needed for decryption)\n    return base64.b64encode(iv + ciphertext).decode()\n\ndef aes_decrypt(encrypted_data, key):\n    # Decode and extract IV\n    data = base64.b64decode(encrypted_data)\n    iv = data[:16]\n    ciphertext = data[16:]\n    \n    # Create decryptor\n    cipher = AES.new(key, AES.MODE_CBC, iv)\n    \n    # Decrypt and remove padding\n    plaintext = cipher.decrypt(ciphertext)\n    padding_length = plaintext[-1]\n    return plaintext[:-padding_length].decode()\n\n# Example usage (key must be 16, 24, or 32 bytes)\nkey = get_random_bytes(32)  # 256-bit key\nmessage = \"Hello, Security!\"\nencrypted = aes_encrypt(message, key)\ndecrypted = aes_decrypt(encrypted, key)\nprint(f\"Encrypted: {encrypted}\")\nprint(f\"Decrypted: {decrypted}\")",
+      "explanation": "This code demonstrates AES-256-CBC encryption with proper IV initialization and PKCS#7 padding. The IV is prepended to ciphertext for use in decryption.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "DES Encryption Simulation",
+      "description": "Simplified conceptual DES encryption structure in C",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// DES uses 16 rounds of processing\n// Simplified structure shown - actual DES is complex\n\n#define DES_BLOCK_SIZE 64\n#define DES_KEY_SIZE 56\n\ntypedef struct {\n    unsigned char data[8];  // 64 bits\n} DESBlock;\n\n// Initial Permutation (IP) - rearranges bits\nvoid initialPermutation(DESBlock* block) {\n    // In actual DES, this rearranges the 64 bits\n    // Simplified: bit positions are permuted\n}\n\n// Final Permutation (FP) - inverse of IP\nvoid finalPermutation(DESBlock* block) {\n    // Inverse of Initial Permutation\n}\n\n// Feistel Function (f) - core of DES\nDESBlock feistelFunction(DESBlock right, unsigned char* roundKey) {\n    // Steps: Expansion, XOR with key, S-box substitution, P-box permutation\n    // This is the confusion/diffusion mechanism\n    DESBlock result;\n    // ... actual implementation ...\n    return result;\n}\n\n// One round of DES (Feistel structure)\nvoid desRound(DESBlock* left, DESBlock* right, unsigned char* key) {\n    DESBlock temp = *right;\n    DESBlock fOutput = feistelFunction(*right, key);\n    \n    // XOR left with f output, swap halves\n    // L(i+1) = R(i), R(i+1) = L(i) XOR f(R(i), K(i))\n    *right->data ^= fOutput.data;\n    *left = temp;\n}\n\nint main() {\n    printf(\"DES Structure: 16 rounds\\n\");\n    printf(\"Each round: L(i+1) = R(i), R(i+1) = L(i) XOR f(R(i),K(i))\\n\");\n    return 0;\n}",
+      "explanation": "This shows the DES Feistel structure where the block is split into left and right halves. Each round performs: L(i+1)=R(i) and R(i+1)=L(i)\u2295f(R(i),K(i)). The function f provides confusion through S-boxes and diffusion through permutations.",
+      "timeComplexity": "O(16 \u00d7 n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "XOR One-Time Pad Simulation",
+      "description": "Demonstrates the One-Time Pad encryption concept",
+      "code": "import os\nimport base64\n\ndef generate_otp_key(length):\n    \"\"\"Generate truly random key (only method for OTP security)\"\"\"\n    return os.urandom(length)\n\ndef otp_encrypt(plaintext, key):\n    \"\"\"OTP encryption: ciphertext = plaintext XOR key\"\"\"\n    # Convert string to bytes\n    plaintext_bytes = plaintext.encode('utf-8')\n    key_bytes = key\n    \n    # Ensure key is same length\n    if len(key_bytes) != len(plaintext_bytes):\n        raise ValueError(\"Key must be same length as message!\")\n    \n    # XOR each byte\n    ciphertext = bytes([p ^ k for p, k in zip(plaintext_bytes, key_bytes)])\n    return ciphertext\n\ndef otp_decrypt(ciphertext, key):\n    \"\"\"OTP decryption: plaintext = ciphertext XOR key (same operation)\"\"\"\n    plaintext_bytes = bytes([c ^ k for c, k in zip(ciphertext, key)])\n    return plaintext_bytes.decode('utf-8')\n\n# Example: Perfect secrecy demonstration\nmessage = \"SECRET\"\nkey = generate_otp_key(len(message))\nciphertext = otp_encrypt(message, key)\ndecrypted = otp_decrypt(ciphertext, key)\n\nprint(f\"Message: {message}\")\nprint(f\"Key (hex): {key.hex()}\")\nprint(f\"Ciphertext (hex): {ciphertext.hex()}\")\nprint(f\"Decrypted: {decrypted}\")\n\n# Demonstrate that different keys produce different ciphertexts\nkey2 = generate_otp_key(len(message))  # Different key\nciphertext2 = otp_encrypt(message, key2)\nprint(f\"\\nDifferent key produces different ciphertext: {ciphertext != ciphertext2}\")",
+      "explanation": "One-Time Pad uses XOR operation where encryption and decryption are identical operations. Security depends on: key must be random, used only once, and kept secret. The example shows how different keys produce completely different ciphertexts.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

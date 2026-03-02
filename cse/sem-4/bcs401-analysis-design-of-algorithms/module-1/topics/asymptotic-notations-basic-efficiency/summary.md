@@ -1,0 +1,3 @@
+# Asymptotic Notations Basic Efficiency
+
+Asymptotic notations (Big O, Omega, Theta, little o, little omega) provide mathematical frameworks for analyzing how algorithm complexity scales with input size. Big O establishes upper bounds (worst-case), Omega provides lower bounds (best-case), and Theta represents tight bounds. Key properties include transitivity, reflexivity, symmetry, and transpose symmetry. Efficiency classes range from O(1) constant time to O(n!) factorial time, with O(log n), O(n), O(n log n), O(n²), O(n³), and O(2ⁿ) in between. Understanding these notations enables rigorous algorithm comparison and informed design choices.

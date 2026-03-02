@@ -1,0 +1,147 @@
+{
+  "topicId": "multicore-gpu",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the key differences between CPU and GPU architecture in terms of optimization goals and core design.",
+      "keyPoints": [
+        "CPU optimizes for latency with complex control logic and large caches",
+        "GPU optimizes for throughput with thousands of simple cores",
+        "CPU has few cores (2-16) executing complex instructions",
+        "GPU has thousands of simple cores executing simple operations in parallel"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is Amdahl's Law? Explain why it limits the maximum speedup in parallel computing.",
+      "keyPoints": [
+        "Amdahl's Law: Speedup = 1/(S + P/N)",
+        "S is sequential fraction, P is parallel fraction, N is number of cores",
+        "Sequential portion sets upper bound on achievable speedup",
+        "Even with infinite cores, maximum speedup limited by 1/S"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the concept of 'latency hiding' in GPU architecture with an example.",
+      "keyPoints": [
+        "GPUs hide memory latency by running many concurrent warps",
+        "When some warps wait for memory, others execute",
+        "Example: 1000 warps running, 900 waiting for memory, 100 active - no idle cycles",
+        "Requires large number of threads to achieve effective hiding"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is SIMT (Single Instruction Multiple Threads) execution model used in GPUs?",
+      "keyPoints": [
+        "SIMT combines SIMD with multithreading",
+        "Threads execute same instruction but on different data",
+        "Threads can branch independently (with performance cost)",
+        "Warp = group of 32 threads executing in lockstep"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the different levels of memory hierarchy in GPUs with their access characteristics.",
+      "keyPoints": [
+        "Registers: fastest, per-thread",
+        "Shared memory: fast, per-block, on-chip (16-48KB)",
+        "Global memory: slow, off-chip, high bandwidth",
+        "Constant/Texture cache: read-only, cached access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is thread divergence in GPUs and why does it affect performance?",
+      "keyPoints": [
+        "When threads in same warp take different execution paths",
+        "GPU must execute both paths sequentially, masking inactive threads",
+        "Causes serialization of execution within warp",
+        "Should be minimized through careful algorithm design"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of heterogeneous computing and its advantages.",
+      "keyPoints": [
+        "Uses combination of CPU and GPU for different workloads",
+        "CPU handles sequential/control-intensive tasks",
+        "GPU handles parallel/data-intensive tasks",
+        "Maximizes efficiency by using right processor for right task"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast multicore processors and GPUs in terms of architecture, programming models, and suitable applications. Give examples of when each would be preferred.",
+      "keyPoints": [
+        "Architecture: CPU has few complex cores with large caches; GPU has thousands of simple cores",
+        "Memory: CPU has uniform memory; GPU has complex memory hierarchy",
+        "Programming: CPU uses threads; GPU uses thousands of threads in warps/blocks",
+        "CPU suitable for: sequential tasks, complex control flow, low-latency needs",
+        "GPU suitable for: data-parallel operations, SIMD workloads, throughput computing",
+        "Examples: CPU for OS, databases; GPU for graphics, ML training, scientific simulations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a parallel algorithm to add two large arrays of size N using CUDA. Explain the kernel design, thread organization, and calculate the time complexity. Also discuss potential bottlenecks.",
+      "keyPoints": [
+        "Each thread handles one element: index = blockIdx.x * blockDim.x + threadIdx.x",
+        "Thread blocks organize threads (e.g., 256 threads per block)",
+        "Global memory access patterns affect performance",
+        "Kernel: arrC[i] = arrA[i] + arrB[i]",
+        "Time complexity: O(N/P) where P = number of threads",
+        "Bottlenecks: memory coalescing, bank conflicts in shared memory, branch divergence",
+        "Optimization: use appropriate block size, coalesced memory access"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain CUDA programming model with concepts of kernels, threads, blocks, and grids. How does this model enable parallel execution on GPUs?",
+      "keyPoints": [
+        "Kernel: function executed in parallel by GPU threads",
+        "Grid: collection of thread blocks executing kernel",
+        "Block: group of up to 1024 threads, executes on one SM",
+        "Thread: smallest execution unit, has unique ID",
+        "Threads in block can synchronize and share shared memory",
+        "Blocks can execute in any order, enabling scalability",
+        "Hardware maps blocks to SMs, schedules warps within SMs"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "What is the importance of occupancy in GPU programming? How can you calculate and improve occupancy? Discuss factors that limit occupancy.",
+      "keyPoints": [
+        "Occupancy = active warps / max warps per SM",
+        "Higher occupancy generally means better GPU utilization",
+        "Factors limiting occupancy: block size, shared memory per block, registers per thread",
+        "Calculate: occupancy = (threads/block * blocks/SM) / max_threads/SM",
+        "Improving: reduce shared memory usage, minimize register usage, optimize block size",
+        "Trade-off: high occupancy not always best if registers/sharing increased"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between the deprecated `Thread.suspend()` method and using `wait()` and `notify()` for thread suspension and resumption.",
+    "expectedPoints": [
+      "`Thread.suspend()` is deprecated because it is inherently deadlock-prone; it suspends a thread without releasing any monitors (locks) it holds.",
+      "The `wait()` method, used in conjunction with synchronization, voluntarily releases the lock on the object it is called on, allowing other threads to acquire the lock and prevent deadlock.",
+      "A thread suspended via `wait()` can only be resumed by a call to `notify()` or `notifyAll()` from another thread, which provides a safer, coordinated mechanism for pausing and resuming execution."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe a simple, safe alternative to using the deprecated `suspend()` method for pausing a thread's operation based on a flag.",
+    "expectedPoints": [
+      "A common and safe pattern is to use a `volatile boolean` variable as a suspension flag.",
+      "The thread's `run()` method should periodically check the value of this flag within its loop.",
+      "If the flag is set (e.g., `isSuspended == true`), the thread can use `Thread.yield()` or a short `sleep()` in a loop to wait, allowing other threads to run and avoiding the need to hold locks unsafely."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "Design and explain a robust, wait/notify mechanism to suspend and resume a specific thread, ensuring it only continues when explicitly told to do so. Include the code structure for both the pausable thread and the controlling class.",
+    "expectedPoints": [
+      "The target thread must synchronize on a common lock object (e.g., `private final Object lock = new Object();`).",
+      "It must check a condition variable (e.g., `boolean isSuspended`) in a `while` loop inside a synchronized block. If suspended, it calls `lock.wait()`, releasing the lock and waiting.",
+      "The controlling method (e.g., `resumeThread()`) must synchronize on the same lock, set the condition to `false`, and call `lock.notifyAll()` to wake the waiting thread.",
+      "The solution must handle spurious wakeups by looping on the condition check.",
+      "This mechanism avoids the pitfalls of `Thread.suspend()`/`resume()` by properly managing synchronization and lock ownership, preventing deadlock."
+    ],
+    "marks": 10
+  }
+]

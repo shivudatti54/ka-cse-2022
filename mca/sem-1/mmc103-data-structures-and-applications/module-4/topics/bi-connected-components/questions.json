@@ -1,0 +1,129 @@
+{
+  "topicId": "bi-connected-components",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Prove that in a DFS tree, a non-root vertex u is an articulation point if and only if it has a child v such that low[v] >= disc[u].",
+      "keyPoints": [
+        "Define disc and low formally",
+        "Show 'if': low[v] >= disc[u] means no back edge from v-subtree to ancestor of u, so removing u disconnects v-subtree",
+        "Show 'only if': If u is AP, removing u disconnects some child subtree; no path from that subtree to ancestors of u without going through u, so low[child] >= disc[u]"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "For the graph below, find all articulation points and biconnected components:\nVertices: {1,2,3,4,5,6}\nEdges: {1-2, 2-3, 3-1, 3-4, 4-5, 5-6, 4-6}",
+      "keyPoints": [
+        "Perform DFS from vertex 1",
+        "Calculate disc and low values for all vertices",
+        "Apply articulation point conditions",
+        "Identify biconnected components from edge stack or articulation point separations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain why the root of a DFS tree requires special treatment for articulation point detection. When is the root an articulation point?",
+      "keyPoints": [
+        "Root has no ancestors, so low comparison doesn't apply",
+        "Root's low value equals disc[root]",
+        "Root disconnects graph if it has 2+ DFS children (multiple subtrees)",
+        "Example: star graph root has n-1 children"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Derive the time and space complexity of Tarjan's algorithm for finding biconnected components.",
+      "keyPoints": [
+        "Single DFS traversal: O(V+E) time",
+        "Each vertex visited once, each edge examined twice (undirected)",
+        "Stack operations O(1) each",
+        "Space: O(V) for arrays + O(E) for edge stack worst case",
+        "Total O(V+E) space"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Prove that any two distinct biconnected components of a graph intersect in at most one vertex.",
+      "keyPoints": [
+        "Assume two components share 2+ vertices",
+        "Show those vertices with edges form a cycle",
+        "Cycle makes union biconnected, contradicting maximality",
+        "Therefore intersection \u2264 1 vertex"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between bridges and articulation points. Can a graph have bridges but no articulation points? Justify.",
+      "keyPoints": [
+        "Bridge: edge whose removal disconnects graph",
+        "Articulation point: vertex whose removal disconnects graph",
+        "Yes - a cycle has bridges but no APs (no single edge disconnects a cycle)",
+        "Tree has both bridges and APs (except leaves)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Given disc times from DFS: A=1, B=2, C=3, D=4, E=5, F=6 and low values: low[A]=1, low[B]=1, low[C]=3, low[D]=1, low[E]=5, low[F]=6. Identify all articulation points and bridges.",
+      "keyPoints": [
+        "Non-root AP: check low[child] >= disc[parent]",
+        "For A (root): has multiple children? Check DFS tree structure",
+        "Bridge condition: low[child] > disc[parent]",
+        "A is root - need to know children from actual DFS tree structure"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Trace through Tarjan's algorithm step-by-step for the graph: vertices {A,B,C,D,E,F,G} with edges {A-B, B-C, C-A, C-D, D-E, E-F, F-D, D-G}. Show the DFS tree, disc times, low values, identify articulation points, bridges, and all biconnected components.",
+      "keyPoints": [
+        "Perform DFS from A, show discovery order",
+        "Calculate low values bottom-up",
+        "Apply AP conditions for each vertex",
+        "Use edge stack to extract biconnected components",
+        "Show final components explicitly"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a recursive algorithm to find all articulation points in a graph using DFS. Prove its correctness and analyze its complexity.",
+      "keyPoints": [
+        "Algorithm: initialize time=0, for each unvisited vertex call DFS(u, parent)",
+        "In DFS: disc[u]=low[u]=++time, count children",
+        "For each child v: if not visited, recursively call DFS, update low[u]=min(low[u], low[v]), check AP condition",
+        "If parent is null and children > 1, u is AP",
+        "Proof: based on articulation point theorem",
+        "Complexity: O(V+E) time, O(V) recursion stack"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design an algorithm to find all biconnected components (blocks) of a graph. Your algorithm should use a stack to collect edges and output each component. Explain with an example graph containing at least 5 vertices and multiple biconnected components.",
+      "keyPoints": [
+        "Use DFS with edge stack",
+        "Push edge (u,v) when traversing",
+        "When low[v] >= disc[u], pop edges to form component",
+        "Special handling for root",
+        "Example: graph with cycle + bridge + another cycle"
+      ],
+      "marks": 10
+    }
+  ]
+}

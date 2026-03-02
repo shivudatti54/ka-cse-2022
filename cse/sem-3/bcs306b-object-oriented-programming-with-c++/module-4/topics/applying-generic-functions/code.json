@@ -1,0 +1,55 @@
+{
+  "topicId": "applying-generic-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Generic Swap Function",
+      "description": "A function template to swap two values of any type",
+      "code": "// Function Template for Swap\nTEMPLATE<typename T>\nVOID swap(T& a, T& b)\nBEGIN\n T temp = a\n a = b\n b = temp\nEND\n\n// Usage\nINT x = 5, y = 10\nswap(x, y) // T deduced as int\n\nDOUBLE p = 3.14, q = 2.71\nswap(p, q) // T deduced as double\n\nSTRING s1 = \"Hello\", s2 = \"World\"\nswap(s1, s2) // T deduced as string",
+      "explanation": "The template parameter T is replaced with the actual type at compile time. Both reference parameters ensure actual values are swapped, not copies.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Generic Array Maximum Finder",
+      "description": "Function template to find maximum element in an array",
+      "code": "// Function Template for Finding Maximum\nTEMPLATE<typename T, std::size_t N>\nT findMax(T arr[N])\nBEGIN\n T maxVal = arr[0]\n FOR i FROM 1 TO N-1\n BEGIN\n IF arr[i] > maxVal THEN\n maxVal = arr[i]\n END\n END\n RETURN maxVal\nEND\n\n// Usage with Different Types\nINT numbers[5] = {3, 7, 2, 9, 1}\nINT maxInt = findMax(numbers) // Returns 9\n\nDOUBLE decimals[4] = {1.5, 3.2, 0.8, 2.9}\nDOUBLE maxDouble = findMax(decimals) // Returns 3.2",
+      "explanation": "Uses both type parameter T and non-type parameter N for array size. Works with any type that supports comparison operator >.",
+      "timeComplexity": "O(N)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Template Specialization Example",
+      "description": "Primary template and specialized version for character pointers",
+      "code": "// Primary Template\nTEMPLATE<typename T>\nT absoluteValue(T value)\nBEGIN\n IF value < 0 THEN\n RETURN -value\n END\n RETURN value\nEND\n\n// Full Specialization for char*\nTEMPLATE<>\nCHAR* absoluteValue<CHAR*>(CHAR* value)\nBEGIN\n RETURN value // For strings, just return as-is\nEND\n\n// Usage\nINT i = -5\nINT absInt = absoluteValue(i) // Calls primary, returns 5\n\nDOUBLE d = -3.14\nDOUBLE absDouble = absoluteValue(d) // Calls primary, returns 3.14\n\nCHAR* str = \"hello\"\nCHAR* absStr = absoluteValue(str) // Calls specialized version",
+      "explanation": "Specialization allows providing custom implementation for specific types while using the general template for all other types.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Variadic Template for Sum",
+      "description": "Variable number of arguments sum using recursive template",
+      "code": "// Base case: empty parameter pack\nTEMPLATE<typename T>\nT sum(T value)\nBEGIN\n RETURN value\nEND\n\n// Recursive case: process first arg, recurse on rest\nTEMPLATE<typename T, typename... Args>\nT sum(T first, Args... args)\nBEGIN\n RETURN first + sum(args...)\nEND\n\n// Usage\nINT result1 = sum(1, 2, 3, 4, 5) // Returns 15\nDOUBLE result2 = sum(1.5, 2.5, 3.0) // Returns 7.0\nMIXED result3 = sum(1, 2.5, 3) // Returns 6.5",
+      "explanation": "Variadic templates use parameter packs (...) to handle any number of arguments. Recursion processes one argument at a time until base case handles the last one.",
+      "timeComplexity": "O(n) where n is number of arguments",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Default Template Arguments",
+      "description": "Function template with default type parameter",
+      "code": "// Template with default type\nTEMPLATE<typename T = INT>\nT multiply(T a, T b = T(1))\nBEGIN\n RETURN a * b\nEND\n\n// Usage\nINT m1 = multiply(5, 3) // Both args specified, returns 15\nINT m2 = multiply(5) // Uses default b=1, returns 5\nDOUBLE m3 = multiply(2.5, 3.0) // Uses double, returns 7.5\nDOUBLE m4 = multiply<double>(5, 2) // Explicit double, returns 10",
+      "explanation": "Default template arguments provide fallback types when not specified. Function default arguments work with template arguments for flexible calling.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

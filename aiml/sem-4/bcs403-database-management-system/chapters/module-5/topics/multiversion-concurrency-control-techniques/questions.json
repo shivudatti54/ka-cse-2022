@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the fundamental principle behind Multiversion Concurrency Control (MVCC), and how does it differ from traditional locking mechanisms?",
+    "expectedPoints": [
+      "MVCC avoids read-write and write-write conflicts by maintaining multiple versions of a data item.",
+      "Readers can access a consistent older version of data without being blocked by a writer, and writers create a new version.",
+      "This contrasts with locking, where readers can be blocked by writers holding exclusive locks, potentially leading to decreased concurrency."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain how a database system using MVCC determines which version of a data item a specific transaction is permitted to read.",
+    "expectedPoints": [
+      "Each transaction is assigned a unique, monotonically increasing timestamp (or Transaction ID) when it begins.",
+      "Each data version is tagged with both a creation timestamp (start time of the transaction that created it) and a deletion timestamp (commit time of the transaction that deleted/replaced it).",
+      "A transaction with timestamp T can read the most recent version of a data item that was created by a transaction that committed before T started and was not deleted until after T started (i.e., the version that was 'current' at the start of T)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Describe the process of a write operation (update) within an MVCC system, including how it ensures serializability and handles transaction rollbacks. Also, discuss a key challenge this approach introduces.",
+    "expectedPoints": [
+      "When a transaction T wants to update a data item, it does not overwrite the current version but creates a new version tagged with T's timestamp.",
+      "To ensure serializability, the system must check for write-write conflicts using a technique like timestamp ordering or optimistic concurrency control (e.g., checking if the version it read is still the current version before committing).",
+      "Transaction rollback is simplified as it only requires discarding the new versions created by T, leaving the previous versions untouched and still available to other transactions.",
+      "A key challenge introduced is 'version storage overhead,' as the system must maintain multiple versions, necessitating a vacuum process (like PostgreSQL's VACUUM) to reclaim storage from obsolete versions."
+    ],
+    "marks": 10
+  }
+]

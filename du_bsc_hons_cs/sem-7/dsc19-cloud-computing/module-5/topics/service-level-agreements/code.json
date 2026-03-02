@@ -1,0 +1,45 @@
+{
+  "topicId": "service-level-agreements",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "SLA Availability Calculator",
+      "language": "python",
+      "description": "Program to calculate downtime and service credits based on SLA target",
+      "code": "def calculate_downtime(availability_percentage, period_hours=8760):\n    downtime_hours = period_hours * (100 - availability_percentage) / 100\n    return downtime_hours\n\ndef calculate_service_credits(actual_availability, monthly_fee, sla_target=99.9):\n    # Calculate downtime\n    downtime = calculate_downtime(actual_availability)\n    \n    # Determine credit percentage based on SLA shortfall\n    if actual_availability >= sla_target:\n        return 0, \"No violation - SLA met\"\n    elif actual_availability >= 99.0:\n        credit_percent = 10\n    elif actual_availability >= 95.0:\n        credit_percent = 25\n    else:\n        credit_percent = 50\n    \n    credit_amount = monthly_fee * credit_percent / 100\n    return credit_amount, f\"{credit_percent}% credit for {downtime:.2f}hrs downtime\"\n\n# Example usage\nmonthly_fee = 10000\nactual_availability = 98.5  # Achieved 98.5% availability\n\ncredits, message = calculate_service_credits(actual_availability, monthly_fee)\nprint(f\"SLA Analysis: {message}\")\nprint(f\"Service credits due: ${credits:.2f}\")",
+      "explanation": "This Python code calculates downtime based on availability percentage and determines service credits according to typical SLA penalty tiers. It demonstrates how to quantify SLA violations financially.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "title": "SLA Compliance Monitor Pseudocode",
+      "language": "pseudocode",
+      "description": "Pseudocode for monitoring SLA metrics and detecting violations",
+      "code": "MONITOR SLA_Compliance(metrics, SLA_Targets)\nBEGIN\n    WHILE monitoring_active DO\n        current_metrics = FETCH_Current_Metrics()\n        \n        FOR EACH metric IN current_metrics DO\n            target = SLA_Targets[metric.name]\n            \n            IF metric.value < target.threshold THEN\n                violation_record = CREATE_Record(\n                    metric_name: metric.name,\n                    target_value: target.threshold,\n                    actual_value: metric.value,\n                    timestamp: CURRENT_TIME()\n                )\n                \n                ADD_TO_LOG(violation_record)\n                \n                IF violation_count >= target.escalation_threshold THEN\n                    ESCALATE_TO_SUPPORT(metric, violation_record)\n                END IF\n                \n                IF monthly_violations >= target.credit_trigger THEN\n                    CALCULATE_SERVICE_CREDIT(metric, target)\n                    NOTIFY_CUSTOMER(service_credit_amount)\n                END IF\n            END IF\n        END FOR\n        \n        GENERATE_MONTHLY_REPORT()\n        SLEEP(monitoring_interval)\n    END WHILE\nEND",
+      "explanation": "This pseudocode demonstrates the logic for continuous SLA monitoring, including violation tracking, escalation procedures, and service credit calculation when thresholds are breached.",
+      "timeComplexity": "O(n) per monitoring cycle where n is number of metrics",
+      "spaceComplexity": "O(m) where m is violation history storage"
+    },
+    {
+      "id": "code-3",
+      "title": "RTO/RPO Calculator in C",
+      "language": "c",
+      "description": "C program to calculate RTO and RPO requirements and recommend backup strategy",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    float rto_hours;      // Recovery Time Objective\n    float rpo_hours;     // Recovery Point Objective\n    float data_change_rate;  // GB changed per hour\n    int criticality;     // 1=low, 2=medium, 3=high\n} BusinessRequirements;\n\ntypedef struct {\n    char strategy[50];\n    float cost_per_month;\n    float rto_achieved;\n    float rpo_achieved;\n} BackupStrategy;\n\nvoid recommendStrategy(BusinessRequirements req) {\n    BackupStrategy strategies[] = {\n        {\"Daily Backup\", 100, 24, 24},\n        {\"Hourly Backup\", 300, 4, 1},\n        {\"Real-time Replication\", 2000, 0.5, 0.01}\n    };\n    \n    printf(\"Business Requirements:\\n\");\n    printf(\"  RTO: %.1f hours, RPO: %.1f hours\\n\", req.rto_hours, req.rpo_hours);\n    printf(\"  Data change rate: %.1f GB/hour\\n\\n\", req.data_change_rate);\n    \n    printf(\"Recommended Strategy:\\n\");\n    for(int i = 0; i < 3; i++) {\n        if(strategies[i].rto_achieved <= req.rto_hours && \n           strategies[i].rpo_achieved <= req.rpo_hours) {\n            printf(\"  %s - $%.0f/month\\n\", \n                   strategies[i].strategy, strategies[i].cost_per_month);\n            printf(\"  Achieves RTO: %.1f hrs, RPO: %.2f hrs\\n\",\n                   strategies[i].rto_achieved, strategies[i].rpo_achieved);\n            break;\n        }\n    }\n}\n\nint main() {\n    BusinessRequirements req = {4.0, 1.0, 10.0, 3};\n    recommendStrategy(req);\n    return 0;\n}",
+      "explanation": "This C program helps organizations select appropriate backup and disaster recovery strategies based on their RTO and RPO requirements. It recommends solutions that meet business recovery objectives within budget constraints.",
+      "timeComplexity": "O(n) where n is number of strategies evaluated",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "title": "Java SLA Metrics Collector",
+      "language": "java",
+      "description": "Java class for collecting and analyzing cloud SLA performance metrics",
+      "code": "import java.time.LocalDateTime;\nimport java.util.*;\n\npublic class SLAMetricsCollector {\n    private Map<String, List<Double>> metricHistory = new HashMap<>();\n    private Map<String, Double> slaTargets = new HashMap<>();\n    \n    public void setSLATarget(String metricName, double target) {\n        slaTargets.put(metricName, target);\n        metricHistory.put(metricName, new ArrayList<>());\n    }\n    \n    public void recordMetric(String metricName, double value) {\n        metricHistory.get(metricName).add(value);\n    }\n    \n    public Map<String, Boolean> checkCompliance() {\n        Map<String, Boolean> results = new HashMap<>();\n        \n        for (String metric : metricHistory.keySet()) {\n            List<Double> values = metricHistory.get(metric);\n            double average = values.stream()\n                .mapToDouble(Double::doubleValue)\n                .average()\n                .orElse(0.0);\n            \n            double target = slaTargets.get(metric);\n            boolean compliant = average >= target;\n            results.put(metric, compliant);\n            \n            if (!compliant) {\n                logViolation(metric, average, target);\n            }\n        }\n        return results;\n    }\n    \n    private void logViolation(String metric, double actual, double target) {\n        System.out.println(\"[\" + LocalDateTime.now() + \"] \" +\n            \"SLA VIOLATION: \" + metric + \" | \" +\n            \"Target: \" + target + \" | \" +\n            \"Actual: \" + String.format(\"%.2f\", actual));\n    }\n    \n    public static void main(String[] args) {\n        SLAMetricsCollector collector = new SLAMetricsCollector();\n        \n        // Set SLA targets\n        collector.setSLATarget(\"availability\", 99.9);\n        collector.setSLATarget(\"response_time_ms\", 200.0);\n        collector.setSLATarget(\"error_rate\", 0.1);\n        \n        // Record sample metrics\n        collector.recordMetric(\"availability\", 99.8);\n        collector.recordMetric(\"response_time_ms\", 180.0);\n        collector.recordMetric(\"error_rate\", 0.05);\n        \n        // Check compliance\n        Map<String, Boolean> results = collector.checkCompliance();\n        results.forEach((k, v) -> \n            System.out.println(k + \": \" + (v ? \"COMPLIANT\" : \"VIOLATION\")));\n    }\n}",
+      "explanation": "This Java class implements an SLA metrics collection system that records performance data, calculates averages, and identifies violations against predefined SLA targets. Useful for cloud monitoring dashboards.",
+      "timeComplexity": "O(n) where n is number of metric recordings",
+      "spaceComplexity": "O(m) where m is stored metric history"
+    }
+  ]
+}

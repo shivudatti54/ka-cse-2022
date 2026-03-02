@@ -1,0 +1,45 @@
+{
+  "topicId": "operating-system-services",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Process Creation Service",
+      "description": "Demonstrates how OS creates a new process using fork() system call",
+      "code": "FUNCTION CreateProcess(programName)\n  BEGIN\n    // Allocate Process Control Block (PCB)\n    pcb = AllocatePCB()\n    \n    // Initialize PCB fields\n    pcb.processID = GenerateUniqueID()\n    pcb.processState = NEW\n    pcb.programCounter = 0\n    pcb.registers = InitializeRegisters()\n    pcb.memoryMap = AllocateMemory(programSize)\n    pcb.openFiles = InitializeFileTable()\n    pcb.parentProcess = CurrentProcess()\n    \n    // Load program into memory\n    LoadProgram(programName, pcb.memoryMap)\n    \n    // Add to process scheduling queue\n    AddToReadyQueue(pcb)\n    \n    // Set process state to ready\n    pcb.processState = READY\n    \n    RETURN pcb.processID\n  END",
+      "explanation": "This pseudocode shows the Process Management service creating a new process. The OS allocates a Process Control Block (PCB), initializes all necessary fields, loads the program into memory, and adds the process to the ready queue for CPU scheduling.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1) per process (PCB size)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Memory Allocation Service",
+      "description": "Demonstrates dynamic memory allocation using malloc()",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    // Request memory from Memory Management service\n    int *ptr1 = (int*)malloc(sizeof(int) * 10);\n    int *ptr2 = (int*)malloc(sizeof(int) * 20);\n    \n    if (ptr1 == NULL || ptr2 == NULL) {\n        printf(\"Memory allocation failed!\\n\");\n        return 1;\n    }\n    \n    // Use the allocated memory\n    for (int i = 0; i < 10; i++) {\n        ptr1[i] = i * 2;\n    }\n    \n    printf(\"Memory allocated successfully\\n\");\n    \n    // Release memory back to system\n    free(ptr1);\n    free(ptr2);\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates the Memory Management service in action. The malloc() function requests memory from the OS, which tracks allocation through its memory management subsystem. The free() function releases memory back to the system for reuse.",
+      "timeComplexity": "O(1) for allocation/deallocation",
+      "spaceComplexity": "O(n) where n is requested size"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "File Management Service",
+      "description": "Demonstrates file operations provided by OS file management service",
+      "code": "import os\n\n# File Management Service Operations\n\n# 1. Create a new file\nfile = open(\"data.txt\", \"w\")\nfile.write(\"Operating System Services Demo\\n\")\nfile.close()\n\n# 2. Open and read file\nfile = open(\"data.txt\", \"r\")\ncontent = file.read()\nprint(content)\nfile.close()\n\n# 3. Append to file\nfile = open(\"data.txt\", \"a\")\nfile.write(\"Appended content\\n\")\nfile.close()\n\n# 4. Get file information\nstats = os.stat(\"data.txt\")\nprint(f\"File size: {stats.st_size} bytes\")\nprint(f\"Last modified: {stats.st_mtime}\")\n\n# 5. Delete file\nos.remove(\"data.txt\")\nprint(\"File deleted successfully\")",
+      "explanation": "This Python code demonstrates File Management service. The OS provides file operations (create, open, read, write, delete) through system calls. It maintains file metadata (size, permissions, timestamps) and manages the file system structure.",
+      "timeComplexity": "O(1) for metadata, O(n) for read/write",
+      "spaceComplexity": "O(1) for file operations"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Inter-Process Communication - Message Passing",
+      "description": "Demonstrates communication service using message passing between processes",
+      "code": "// Message Passing IPC Mechanism\n\n// Process A sends message to Process B\nFUNCTION SendMessage(receiverPID, message)\n  BEGIN\n    // Create message envelope\n    msgEnvelope = CreateMessageEnvelope()\n    msgEnvelope.sender = GetCurrentProcessID()\n    msgEnvelope.receiver = receiverPID\n    msgEnvelope.content = message\n    msgEnvelope.timestamp = GetSystemTime()\n    \n    // Validate receiver exists\n    IF NOT ProcessExists(receiverPID) THEN\n      RETURN ERROR_INVALID_RECEIVER\n    END IF\n    \n    // Add to receiver's message queue (through kernel)\n    EnqueueMessage(receiverPID, msgEnvelope)\n    \n    // Notify receiver process\n    SignalProcess(receiverPID, MESSAGE_ARRIVED)\n    \n    RETURN SUCCESS\n  END\n\n// Process B receives message\nFUNCTION ReceiveMessage()\n  BEGIN\n    pid = GetCurrentProcessID()\n    \n    // Check message queue\n    IF MessageQueueEmpty(pid) THEN\n      // Block until message arrives\n      WaitForSignal(MESSAGE_ARRIVED)\n    END IF\n    \n    // Dequeue first message\n    message = DequeueMessage(pid)\n    \n    RETURN message.content\n  END",
+      "explanation": "This pseudocode demonstrates the Communication service using message passing. The OS kernel acts as an intermediary, copying messages between address spaces of sender and receiver processes. This provides process isolation and safe communication.",
+      "timeComplexity": "O(1) for send/receive operations",
+      "spaceComplexity": "O(m) where m is message size"
+    }
+  ]
+}

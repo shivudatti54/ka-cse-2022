@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "python-pseudocode",
+    "title": "PCA Implementation Steps",
+    "description": "Step-by-step PCA algorithm demonstrating core computations",
+    "code": "# Step 1: Import libraries\nimport numpy as np\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\n# Step 2: Load data\nX = np.array([[x1, x2, x3, ...], [...], ...])\n\n# Step 3: Standardize data\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Step 4: Compute PCA with k components\npca = PCA(n_components=0.95) # retain 95% variance\nX_pca = pca.fit_transform(X_scaled)\n\n# Output: transformed data and variance info\nprint(\"Explained variance ratio:\", pca.explained_variance_ratio_)\nprint(\"Cumulative variance:\", np.cumsum(pca.explained_variance_ratio_))",
+    "explanation": "Standard sklearn implementation showing data standardization, PCA transformation with variance threshold, and accessing variance information.",
+    "complexity": {
+      "time": "O(nd\u00b2 + d\u00b3)",
+      "space": "O(nd)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "python-pseudocode",
+    "title": "Manual PCA Computation",
+    "description": "Manual implementation showing covariance matrix and eigen decomposition",
+    "code": "# Manual PCA Implementation\nimport numpy as np\n\ndef manual_pca(X, n_components):\n # Step 1: Standardize\n X_centered = X - X.mean(axis=0)\n X_std = X_centered / X.std(axis=0)\n \n # Step 2: Covariance matrix\n cov_matrix = np.cov(X_std, rowvar=False)\n \n # Step 3: Eigen decomposition\n eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)\n \n # Step 4: Sort in descending order\n idx = eigenvalues.argsort()[::-1]\n eigenvalues = eigenvalues[idx]\n eigenvectors = eigenvectors[:, idx]\n \n # Step 5: Select top n components\n eigenvectors_subset = eigenvectors[:, :n_components]\n \n # Step 6: Transform data\n X_pca = X_std @ eigenvectors_subset\n \n return X_pca, eigenvalues, eigenvectors",
+    "explanation": "Demonstrates the mathematical operations behind PCA: centering, covariance computation, eigen decomposition, and transformation.",
+    "complexity": {
+      "time": "O(nd\u00b2 + d\u00b3)",
+      "space": "O(d\u00b2)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "python-pseudocode",
+    "title": "Scree Plot Generation",
+    "description": "Code to generate scree plot for component selection",
+    "code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom sklearn.decomposition import PCA\n\ndef plot_scree(X, threshold=0.8):\n pca = PCA()\n pca.fit(X)\n \n eigenvalues = pca.explained_variance_\n variance_ratio = pca.explained_variance_ratio_\n cumsum = np.cumsum(variance_ratio)\n \n # Plot scree\n plt.figure(figsize=(10, 5))\n plt.subplot(1, 2, 1)\n plt.plot(range(1, len(eigenvalues)+1), eigenvalues, 'bo-')\n plt.xlabel('Principal Component')\n plt.ylabel('Eigenvalue')\n plt.title('Scree Plot')\n \n # Plot cumulative variance\n plt.subplot(1, 2, 2)\n plt.plot(range(1, len(cumsum)+1), cumsum, 'ro-')\n plt.axhline(y=threshold, color='g', linestyle='--')\n plt.xlabel('Number of Components')\n plt.ylabel('Cumulative Variance Explained')\n plt.title('Cumulative Variance')\n \n plt.tight_layout()\n plt.show()\n \n # Find optimal components\n n_components = np.argmax(cumsum >= threshold) + 1\n return n_components",
+    "explanation": "Generates both scree plot and cumulative variance plot to help determine optimal number of components.",
+    "complexity": {
+      "time": "O(d\u00b3)",
+      "space": "O(d\u00b2)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "python-pseudocode",
+    "title": "t-SNE Visualization",
+    "description": "Non-linear dimensionality reduction for visualization",
+    "code": "from sklearn.manifold import TSNE\nimport matplotlib.pyplot as plt\n\n# Apply t-SNE for 2D visualization\ntsne = TSNE(n_components=2, perplexity=30, n_iter=1000)\nX_tsne = tsne.fit_transform(X_scaled)\n\n# Plot results\nplt.figure(figsize=(10, 8))\nplt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=labels, cmap='viridis')\nplt.title('t-SNE Visualization of High-Dimensional Data')\nplt.xlabel('t-SNE Dimension 1')\nplt.ylabel('t-SNE Dimension 2')\nplt.colorbar()\nplt.show()",
+    "explanation": "Uses t-SNE for non-linear reduction to 2D, preserving local structure for cluster visualization.",
+    "complexity": {
+      "time": "O(n\u00b2 log n)",
+      "space": "O(nd)"
+    }
+  }
+]

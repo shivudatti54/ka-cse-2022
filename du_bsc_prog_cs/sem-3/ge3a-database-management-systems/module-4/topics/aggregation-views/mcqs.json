@@ -1,0 +1,205 @@
+{
+  "topicId": "aggregation-views",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the fundamental difference between a materialized view and a regular (virtual) view in a DBMS?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Materialized views store data physically while regular views execute the query each time they are accessed"
+        },
+        {
+          "key": "B",
+          "text": "Materialized views can only contain SELECT statements without aggregate functions"
+        },
+        {
+          "key": "C",
+          "text": "Regular views always provide better performance than materialized views"
+        },
+        {
+          "key": "D",
+          "text": "Materialized views cannot be updated automatically"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Materialized views store the actual result of the query on disk, acting like a snapshot, while regular views execute the underlying query each time they are accessed.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Consider a view defined as: CREATE VIEW sales_summary AS SELECT region, SUM(amount) as total_sales FROM sales GROUP BY region; What happens when you execute UPDATE sales_summary SET total_sales = 5000 WHERE region = 'North'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The update succeeds and modifies the base table sales"
+        },
+        {
+          "key": "B",
+          "text": "The update fails because aggregate views are not updatable"
+        },
+        {
+          "key": "C",
+          "text": "The update creates a new row in the sales table"
+        },
+        {
+          "key": "D",
+          "text": "The update automatically creates a trigger to modify sales"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Views containing GROUP BY, aggregate functions, or DISTINCT are inherently non-updatable because there's no one-to-one mapping between rows in the view and the base table.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In Oracle DBMS, which refresh method for a materialized view ensures data consistency with the base table at the time of commit?",
+      "options": [
+        {
+          "key": "A",
+          "text": "REFRESH FORCE"
+        },
+        {
+          "key": "B",
+          "text": "REFRESH COMPLETE"
+        },
+        {
+          "key": "C",
+          "text": "REFRESH ON COMMIT"
+        },
+        {
+          "key": "D",
+          "text": "REFRESH FAST"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "REFRESH ON COMMIT causes the materialized view to be automatically refreshed whenever a transaction commits changes to the base table, ensuring strong consistency.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "A data warehouse frequently runs queries calculating monthly sales totals. Which optimization technique would provide the BEST performance?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Creating a regular view with GROUP BY on the fact table"
+        },
+        {
+          "key": "B",
+          "text": "Creating a materialized view with monthly aggregation and enabling query rewrite"
+        },
+        {
+          "key": "C",
+          "text": "Creating an index on the date column of the fact table"
+        },
+        {
+          "key": "D",
+          "text": "Using a stored procedure to compute totals on-the-fly"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A materialized view pre-computes and stores aggregated results; query rewrite allows the optimizer to automatically redirect queries to use the materialized view, eliminating redundant computation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the main disadvantage of using FAST refresh for materialized views?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It requires more disk space than complete refresh"
+        },
+        {
+          "key": "B",
+          "text": "It requires a materialized view log on the base table and may fail if logs are insufficient"
+        },
+        {
+          "key": "C",
+          "text": "It cannot be used with aggregate functions"
+        },
+        {
+          "key": "D",
+          "text": "It always takes longer than complete refresh"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "FAST refresh uses a materialized view log to track changes to base tables; without proper logging infrastructure, fast refresh is not possible and the refresh will fail.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "In PostgreSQL, which feature provides functionality similar to materialized views with automatic refresh capabilities?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Auto-views"
+        },
+        {
+          "key": "B",
+          "text": "Refreshable materialized views using REFRESH CONCURRENTLY"
+        },
+        {
+          "key": "C",
+          "text": "Eager materialized views"
+        },
+        {
+          "key": "D",
+          "text": "System-managed views"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "PostgreSQL supports REFRESH CONCURRENTLY which allows refreshing materialized views without locking reads, though a unique index is required for this feature.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Given base tables orders(order_id, customer_id, order_date, amount) and order_items(order_id, product_id, quantity, unit_price), a materialized view mv_customer_sales is created to aggregate total sales per customer. If a new order with 5 line items is inserted, which sequence correctly describes the refresh impact?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Fast refresh updates only the affected customer row; complete refresh recomputes all rows"
+        },
+        {
+          "key": "B",
+          "text": "Both fast and complete refresh update only the specific customer row in the MV"
+        },
+        {
+          "key": "C",
+          "text": "Fast refresh requires re-computation because multiple base tables are involved"
+        },
+        {
+          "key": "D",
+          "text": "Complete refresh is the only option for joins involving more than one base table"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Fast refresh updates only the changed aggregate (the customer whose order was inserted), while complete refresh recomputes all customer aggregates from scratch, making it slower but more reliable.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "A materialized view mv_monthly_revenue is defined with REFRESH FAST ON DEMAND. The application requires near-real-time revenue figures but experiences performance degradation during refreshes. Which strategy would BEST address this conflict in an Oracle environment?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Change to REFRESH COMPLETE ON COMMIT for real-time updates"
+        },
+        {
+          "key": "B",
+          "text": "Implement refresh on a schedule using DBMS_SCHEDULER during off-peak hours and use stale tolerance"
+        },
+        {
+          "key": "C",
+          "text": "Drop the materialized view and use regular views with indexes"
+        },
+        {
+          "key": "D",
+          "text": "Use REFRESH FORCE with minimal logging"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Scheduling refreshes during off-peak hours balances performance with freshness; stale tolerance allows queries to use the MV even if slightly outdated, reducing refresh frequency while maintaining acceptable data currency.",
+      "difficulty": "hard"
+    }
+  ]
+}

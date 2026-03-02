@@ -1,0 +1,65 @@
+{
+  "topicId": "coding-rules",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "Why are only async-signal-safe functions allowed inside a signal handler?",
+      "back": "Signal handlers can interrupt the program at any point, potentially interrupting another function call. Calling non-async-signal-safe functions can lead to undefined behavior, deadlocks, or corruption because these functions may use static buffers or locks that could be in an inconsistent state when the signal arrives."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the purpose of the `sig_atomic_t` data type?",
+      "back": "`sig_atomic_t` is a type guaranteed by C standard to be read/written atomically without interruption. It is used for global variables that are modified by both the main program and signal handlers to prevent race conditions."
+    },
+    {
+      "id": "fc-3",
+      "front": "List three functions that ARE safe to call from within a signal handler.",
+      "back": "1. `_exit()` - terminates process\n2. `signal()` - reinstalls signal handler\n3. `atomic` operations on `sig_atomic_t` variables\n4. `fflush()` - flushes stdio buffers\nNote: `printf()`, `malloc()`, `free()` are NOT safe."
+    },
+    {
+      "id": "fc-4",
+      "front": "Why should you avoid storing errno in a signal handler?",
+      "back": "When a signal arrives, errno may already be set by an interrupted system call. Overwriting errno inside the signal handler will lose this valuable error information. If you must save errno, save it at the beginning and restore it before returning."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the 'self-pipe' trick and why is it used?",
+      "back": "The self-pipe trick involves creating a pipe and having the signal handler write a byte to the pipe when a signal is received. The main program then selects() on the pipe. This allows signal notification to be integrated with I/O multiplexing and is an async-signal-safe technique."
+    },
+    {
+      "id": "fc-6",
+      "front": "What are the coding rules for accessing shared variables between main program and signal handlers?",
+      "back": "1. Use `sig_atomic_t` type for variables accessed atomically\n2. Use `volatile` qualifier to prevent compiler optimization\n3. Combine both: `volatile sig_atomic_t flag`\n4. Avoid complex data structures - use simple flags or integers"
+    },
+    {
+      "id": "fc-7",
+      "front": "Why can't standard I/O functions like printf() be safely used in signal handlers?",
+      "back": "printf() uses internal locks and buffers that may already be in use when the signal arrives. This can cause deadlocks (if the handler interrupts a printf in the main code) or buffer corruption. Additionally, printf is not async-signal-safe."
+    },
+    {
+      "id": "fc-8",
+      "front": "What is the recommended way to handle complex operations in response to signals?",
+      "back": "The recommended approach is to use signal handlers only to set a flag (using sig_atomic_t) and then perform the actual work in the main program flow (typically in a loop that checks the flag, or via self-pipe trick with select()). This keeps the handler simple and async-signal-safe."
+    },
+    {
+      "id": "fc-9",
+      "front": "What happens if a signal handler calls a function that is not async-signal-safe?",
+      "back": "Calling non-async-signal-safe functions from a signal handler results in undefined behavior according to POSIX. This can cause: data corruption, deadlocks, crashes, or unpredictable program behavior. The program may appear to work but fail intermittently."
+    },
+    {
+      "id": "fc-10",
+      "front": "Explain the relationship between signal handlers and longjmp/siglongjmp.",
+      "back": "If `longjmp()` is used to exit a signal handler, the signal mask may or may not be restored depending on whether `sigsetjmp()`/ `siglongjmp()` was used. With `sigsetjmp(sigbuf, 1)`, the signal mask is saved and can be restored with `siglongjmp()`. Regular `setjmp`/`longjmp` does not handle signal masks."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is re-entrancy and why does it matter for signal handlers?",
+      "back": "A function is re-entrant if it can be safely called simultaneously from multiple execution contexts (like a signal handler interrupting the main program). Non-reentrant functions use static/global data or locks, making them unsafe in signal handlers. Examples: malloc(), printf(), strtok()."
+    },
+    {
+      "id": "fc-12",
+      "front": "How should you handle system call interruptions (EINTR) in signal-aware programs?",
+      "back": "When a system call is interrupted by a signal, it returns -1 with errno set to EINTR. For reliable operation, you should either: (1) handle EINTR by restarting the call in a loop, or (2) use SA_RESTART flag in sigaction() to automatically restart interrupted system calls."
+    }
+  ]
+}

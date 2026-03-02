@@ -1,0 +1,45 @@
+{
+  "topicId": "normalization-1nf-2nf-3nf-bcnf",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Check 1NF Compliance",
+      "description": "Algorithm to check if a relation is in First Normal Form",
+      "code": "ALGORITHM Check1NF(Relation R)\nBEGIN\n  FOR EACH attribute A IN R DO\n    FOR EACH tuple t IN R DO\n      IF value(t.A) is atomic THEN\n        CONTINUE\n      ELSE\n        RETURN FALSE, \"Attribute \" + A + \" has non-atomic values\"\n      END IF\n    END FOR\n  END FOR\n  RETURN TRUE, \"Relation is in 1NF\"\nEND",
+      "explanation": "This algorithm checks each attribute in every tuple to ensure all values are atomic (single, indivisible values). If any attribute contains composite or multi-valued data (like arrays, sets, or comma-separated values), it violates 1NF.",
+      "timeComplexity": "O(n \u00d7 m) where n = tuples, m = attributes",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Find Candidate Keys",
+      "description": "Algorithm to find all candidate keys from functional dependencies",
+      "code": "ALGORITHM FindCandidateKeys(Attributes set A, FDs set F)\nBEGIN\n  // Compute closure of single attributes\n  candidateKeys = []\n  FOR EACH attr x IN A DO\n    closure = ComputeClosure(x, F)\n    IF closure == A THEN\n      candidateKeys.append(x)\n    END IF\n  END FOR\n  \n  // If no single key, try combinations\n  IF candidateKeys is empty THEN\n    FOR size = 2 TO |A| DO\n      FOR EACH combination combo of size FROM A DO\n        closure = ComputeClosure(combo, F)\n        IF closure == A AND NOT isRedundant(combo, candidateKeys) THEN\n          candidateKeys.append(combo)\n        END IF\n      END FOR\n    END FOR\n  END IF\n  \n  RETURN candidateKeys\nEND\n\nALGORITHM ComputeClosure(X, FDs)\nBEGIN\n  result = X\n  REPEAT\n    changed = FALSE\n    FOR EACH FD Y\u2192Z IN FDs DO\n      IF Y \u2286 result AND Z \u2284 result THEN\n        result = result \u222a Z\n        changed = TRUE\n      END IF\n    END FOR\n  UNTIL changed == FALSE\n  RETURN result\nEND",
+      "explanation": "This algorithm finds all candidate keys by first checking if single attributes can determine all others, then checking combinations of attributes. The closure computation is key - an attribute set is a candidate key if its closure equals the entire attribute set and it is minimal (no subset is a key).",
+      "timeComplexity": "O(2^n \u00d7 m) exponential in number of attributes",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Normalize to 2NF - Remove Partial Dependencies",
+      "description": "Python implementation showing decomposition to 2NF",
+      "code": "def normalize_to_2nf(relation_name, attributes, fds, candidate_keys):\n    '''\n    Decompose relation to 2NF by removing partial dependencies\n    '''\n    # Step 1: Identify partial dependencies\n    # A partial dependency exists when non-prime attribute \n    # depends on part of a composite candidate key\n    \n    prime_attributes = set()\n    for key in candidate_keys:\n        prime_attributes.update(key)\n    \n    non_prime_attributes = set(attributes) - prime_attributes\n    \n    # Find FDs that are partial (determinant is part of candidate key)\n    partial_dependencies = []\n    full_dependencies = []\n    \n    for determinant, dependent in fds:\n        if set(determinant).issubset(prime_attributes):\n            if not set(dependent).issubset(prime_attributes):\n                partial_dependencies.append((determinant, dependent))\n        else:\n            full_dependencies.append((determinant, dependent))\n    \n    # Step 2: Create new relations for partial dependencies\n    decomposed_relations = []\n    \n    for det, dep in partial_dependencies:\n        new_attrs = set(det) | set(dep)\n        decomposed_relations.append({\n            'name': f\"{relation_name}_{det[0]}\",\n            'attributes': new_attrs,\n            'primary_key': det,\n            'fds': [(det, dep)]\n        })\n    \n    # Step 3: Create relation for remaining attributes\n    remaining_attrs = set(attributes)\n    for det, dep in partial_dependencies:\n        remaining_attrs -= set(dep)\n    \n    if remaining_attrs:\n        decomposed_relations.append({\n            'name': relation_name,\n            'attributes': remaining_attrs,\n            'primary_key': candidate_keys[0],  # original key\n            'fds': full_dependencies\n        })\n    \n    return decomposed_relations\n\n# Example usage:\n# Relation: R(A, B, C, D)\n# FDs: AB\u2192CD, B\u2192C\n# Candidate key: AB\n# This has partial dependency B\u2192C (B is part of key AB)\n# Result: R1(B, C) and R2(A, B, D)",
+      "explanation": "This code demonstrates decomposition to 2NF. It identifies partial dependencies where a non-prime attribute depends only on part of a candidate key. The algorithm creates separate relations for each partial dependency, preserving the full functional dependencies in the remaining relation.",
+      "timeComplexity": "O(n \u00d7 m) where n = number of FDs, m = number of attributes",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Check BCNF Compliance",
+      "description": "C program to check if relation satisfies BCNF",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n#include <string.h>\n\n#define MAX_ATTRS 10\n#define MAX_FDS 20\n\ntypedef struct {\n    char attributes[MAX_ATTRS][20];\n    int count;\n} AttributeSet;\n\ntypedef struct {\n    AttributeSet determinant;  // X in X->Y\n    AttributeSet dependent;    // Y in X->Y\n} FunctionalDependency;\n\n// Check if set A is subset of set B\nbool isSubset(AttributeSet A, AttributeSet B) {\n    for (int i = 0; i < A.count; i++) {\n        bool found = false;\n        for (int j = 0; j < B.count; j++) {\n            if (strcmp(A.attributes[i], B.attributes[j]) == 0) {\n                found = true;\n                break;\n            }\n        }\n        if (!found) return false;\n    }\n    return true;\n}\n\n// Check if relation is in BCNF\nbool isInBCNF(AttributeSet allAttrs, FunctionalDependency fds[], int fdCount) {\n    for (int i = 0; i < fdCount; i++) {\n        // For BCNF: determinant must be a superkey\n        // Check if determinant can determine all attributes\n        AttributeSet closure = fds[i].determinant;\n        \n        // Simplified: check if determinant == all attributes\n        // (In practice, compute closure using all FDs)\n        if (!isSubset(allAttrs, fds[i].determinant) && \n            fds[i].determinant.count != allAttrs.count) {\n            printf(\"Violates BCNF: \");\n            for (int j = 0; j < fds[i].determinant.count; j++)\n                printf(\"%s \", fds[i].determinant.attributes[j]);\n            printf(\"-> \");\n            for (int j = 0; j < fds[i].dependent.count; j++)\n                printf(\"%s \", fds[i].dependent.attributes[j]);\n            printf(\" is not a superkey\\n\");\n            return false;\n        }\n    }\n    return true;\n}\n\nint main() {\n    // Example: R(A, B, C) with FD: B -> C\n    // B is not a superkey (key is AB)\n    // This violates BCNF\n    \n    AttributeSet allAttrs = {{\"A\", \"B\", \"C\"}, 3};\n    FunctionalDependency fds[1];\n    fds[0].determinant = {{\"B\"}, 1};\n    fds[0].dependent = {{\"C\"}, 1};\n    \n    if (isInBCNF(allAttrs, fds, 1))\n        printf(\"Relation is in BCNF\\n\");\n    else\n        printf(\"Relation is NOT in BCNF\\n\");\n    \n    return 0;\n}",
+      "explanation": "This C program checks if a relation satisfies BCNF by verifying that every functional dependency's determinant is a superkey. In the example, B\u2192C violates BCNF because B alone is not a candidate key (the key is AB). The algorithm compares each determinant against the full attribute set to determine if it can uniquely identify all tuples.",
+      "timeComplexity": "O(n \u00d7 m) where n = number of FDs, m = total attributes",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

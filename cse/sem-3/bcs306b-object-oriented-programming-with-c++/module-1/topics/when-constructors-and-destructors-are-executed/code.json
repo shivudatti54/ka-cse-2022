@@ -1,0 +1,55 @@
+{
+  "topicId": "when-constructors-and-destructors-are-executed",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Demonstrating Constructor/Destructor Order in Inheritance",
+      "description": "Shows construction from base to derived and destruction from derived to base",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n Base() { cout << \"Base Constructor\\n\"; }\n ~Base() { cout << \"Base Destructor\\n\"; }\n};\n\nclass Derived : public Base {\npublic:\n Derived() { cout << \"Derived Constructor\\n\"; }\n ~Derived() { cout << \"Derived Destructor\\n\"; }\n};\n\nint main() {\n Derived obj;\n // Output:\n // Base Constructor\n // Derived Constructor\n // Derived Destructor\n // Base Destructor\n return 0;\n}",
+      "explanation": "Constructors execute in order: Base → Derived. Destructors execute in reverse: Derived → Base. This ensures base class portion is valid before derived part uses it, and derived resources are cleaned before base.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Virtual Destructor Demonstration",
+      "description": "Shows why virtual destructor is essential for polymorphic deletion",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Animal {\npublic:\n Animal() { cout << \"Animal Constructor\\n\"; }\n virtual ~Animal() { cout << \"Animal Destructor\\n\"; } // Virtual!\n};\n\nclass Dog : public Animal {\npublic:\n Dog() { cout << \"Dog Constructor\\n\"; }\n ~Dog() { cout << \"Dog Destructor\\n\"; }\n};\n\nint main() {\n Animal* ptr = new Dog();\n cout << \"---\\n\";\n delete ptr;\n /* Output:\n Animal Constructor\n Dog Constructor\n ---\n Dog Destructor\n Animal Destructor\n */\n return 0;\n}",
+      "explanation": "Without virtual ~Animal(), only Animal destructor would be called when delete ptr executes, causing Dog-specific resources to leak. Virtual ensures proper cleanup of derived class first.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Copy Constructor Invocation Scenarios",
+      "description": "Demonstrates three common scenarios where copy constructor is called",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Sample {\n int id;\npublic:\n Sample(int i) : id(i) { \n cout << \"Constructor: \" << id << endl; \n }\n Sample(const Sample& s) : id(s.id) { \n cout << \"Copy Constructor: \" << id << endl; \n }\n ~Sample() { \n cout << \"Destructor: \" << id << endl; \n }\n};\n\nvoid funcByValue(Sample s) { // Scenario 1: pass by value\n cout << \"Inside funcByValue\\n\";\n}\n\nSample funcReturn() { // Scenario 2: return by value\n Sample s(2);\n return s;\n}\n\nint main() {\n // Scenario 1: Passing to function\n cout << \"=== Pass by value ===\\n\";\n Sample s1(1);\n funcByValue(s1);\n \n // Scenario 2: Returning from function\n cout << \"\\n=== Return by value ===\\n\";\n Sample s3 = funcReturn();\n \n // Scenario 3: Explicit initialization\n cout << \"\\n=== Explicit init ===\\n\";\n Sample s4 = s1;\n \n cout << \"\\n=== End of main ===\\n\";\n return 0;\n}",
+      "explanation": "Three scenarios shown: (1) Passing object to function by value triggers copy constructor, (2) Returning object by value triggers copy constructor for return value, (3) Initializing new object with existing object triggers copy constructor. Destructors called in reverse order of construction.",
+      "timeComplexity": "O(n) for n function calls",
+      "spaceComplexity": "O(n) for n objects"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Global vs Static vs Local Object Lifecycle",
+      "description": "Demonstrates timing differences between different storage class objects",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Tracker {\n string name;\n static int count;\npublic:\n Tracker(string n) : name(n) {\n count++;\n cout << \"Constructed: \" << name << \" (#\" << count << \")\\n\";\n }\n ~Tracker() {\n cout << \"Destructed: \" << name << \"\\n\";\n }\n};\n\nint Tracker::count = 0;\n\nTracker globalObj(\"Global\"); // Before main()\n\nvoid testFunction() {\n static Tracker staticLocal(\"StaticLocal\");\n Tracker local(\"Local\");\n}\n\nint main() {\n cout << \"=== main starts ===\\n\";\n testFunction();\n cout << \"=== testFunction called again ===\\n\";\n testFunction();\n cout << \"=== main ends ===\\n\";\n return 0;\n}",
+      "explanation": "Shows that: (1) Global object constructed before main() and destroyed after main() ends, (2) Static local constructed on first function call only, (3) Local constructed and destroyed each time function is called. Static local is never constructed again on subsequent calls.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-5",
+      "language": "cpp",
+      "title": "Member Object Construction Order",
+      "description": "Demonstrates that member objects are constructed in declaration order, not initializer list order",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass MemberA {\npublic:\n MemberA() { cout << \"MemberA constructed\\n\"; }\n ~MemberA() { cout << \"MemberA destroyed\\n\"; }\n};\n\nclass MemberB {\npublic:\n MemberB() { cout << \"MemberB constructed\\n\"; }\n ~MemberB() { cout << \"MemberB destroyed\\n\"; }\n};\n\nclass Container {\n MemberB b; // Declared second\n MemberA a; // Declared first\npublic:\n Container() { cout << \"Container constructor\\n\"; }\n ~Container() { cout << \"Container destructor\\n\"; }\n};\n\nint main() {\n Container obj;\n /* Output:\n MemberA constructed (because declared first!)\n MemberB constructed\n Container constructor\n Container destructor\n MemberB destroyed\n MemberA destroyed\n */\n return 0;\n}",
+      "explanation": "Members are constructed in declaration order (a then b), NOT initializer list order. Destructors run in reverse: Container→B→A. Even if you try to initialize b before a in initializer list, a is still constructed first.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

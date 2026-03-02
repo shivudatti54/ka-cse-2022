@@ -1,0 +1,35 @@
+{
+  "topicId": "signal-concepts",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Convolution Computation Algorithm",
+      "description": "Algorithm to compute convolution of two discrete-time signals",
+      "code": "// Discrete-time convolution: y[n] = x[n] * h[n]\n// y[n] = Σ(k=-∞ to ∞) x[k] · h[n-k]\n\nFUNCTION convolution(x[], h[], N, M):\n // x has N samples, h has M samples\n resultLength = N + M - 1\n y = ARRAY[resultLength] initialized to 0\n \n FOR n FROM 0 TO resultLength - 1:\n FOR k FROM 0 TO N-1:\n IF (n - k >= 0 AND n - k < M) THEN\n y[n] = y[n] + x[k] * h[n - k]\n END IF\n END FOR\n END FOR\n \n RETURN y\n\n// Example usage:\nx = [1, 2, 1] // Input signal\nu = [1, 1, 1] // Unit step of length 3\ny = convolution(x, u, 3, 3) // Result: [1, 3, 4, 3, 1]",
+      "explanation": "This algorithm implements linear convolution for discrete-time signals. It slides one signal (flipped) across the other, multiplies overlapping samples, and sums the products. Time complexity is O(N×M) where N and M are lengths of input signals.",
+      "timeComplexity": "O(N × M)",
+      "spaceComplexity": "O(N + M)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Signal Operations Implementation",
+      "description": "Implementation of basic signal operations: shifting, scaling, and reversal",
+      "code": "// Signal Operations for discrete-time signals\n\n// Time Shifting: y[n] = x[n-n0]\nFUNCTION timeShift(x[], n0):\n // Right shift if n0 > 0, left if n0 < 0\n // For right shift, samples move to higher indices\n y = []\n IF n0 > 0: // Delay (right shift)\n y[0 to n0-1] = 0 // Zero padding at start\n y[n0 to end] = x[0 to end-n0]\n ELSE: // Advance (left shift)\n y = x[-n0 to end] // Remove first -n0 samples\n RETURN y\n\n// Time Scaling: y[n] = x[n*L] or y[n] = x[n/L]\nFUNCTION timeScale(x[], L, decimation):\n y = []\n IF decimation == TRUE: // y[n] = x[nL] (take every Lth sample)\n FOR n FROM 0 TO length(x)/L:\n y[n] = x[n * L]\n ELSE: // Expansion (zero insertion)\n FOR n FROM 0 TO length(x)-1:\n y[n*L] = x[n]\n // y[n*L+1] to y[n*L+L-1] = 0\n RETURN y\n\n// Time Reversal: y[n] = x[-n]\nFUNCTION timeReverse(x):\n y = REVERSE(x) // Flip the array\n RETURN y",
+      "explanation": "These are fundamental signal manipulation operations. Time shifting delays or advances a signal. Time scaling compresses (decimation) or expands (interpolation) the signal. Time reversal reflects the signal about the origin.",
+      "timeComplexity": "O(N)",
+      "spaceComplexity": "O(N)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Energy and Power Calculation",
+      "description": "Compute total energy and average power of discrete-time signals",
+      "code": "// Energy: E = Σ|x[n]|²\n// Power: P = lim(N→∞) (1/(2N+1)) Σ|x[n]|² from -N to N\n\nFUNCTION calculateEnergy(x[]):\n energy = 0\n FOR n FROM 0 TO length(x)-1:\n energy = energy + x[n] * x[n] // x[n]²\n RETURN energy\n\nFUNCTION calculatePower(x[], N):\n // For finite-length signal of length 2N+1\n sumSquares = 0\n FOR n FROM 0 TO 2*N:\n sumSquares = sumSquares + x[n] * x[n]\n power = sumSquares / (2*N + 1)\n RETURN power\n\n// Determine signal type\nFUNCTION classifySignal(x[]):\n E = calculateEnergy(x)\n P = calculatePower(x, length(x)/2)\n \n IF E > 0 AND P == 0:\n RETURN \"Energy Signal\"\n ELSE IF P > 0 AND E == INFINITY:\n RETURN \"Power Signal\"\n ELSE IF E == 0 AND P == 0:\n RETURN \"Neither Energy nor Power\"\n ELSE:\n RETURN \"Invalid (cannot be both)\"",
+      "explanation": "Energy signals have finite total energy (E > 0, P = 0). Power signals have infinite energy but finite non-zero power (E = ∞, P > 0). This code helps classify signals based on these criteria.",
+      "timeComplexity": "O(N)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

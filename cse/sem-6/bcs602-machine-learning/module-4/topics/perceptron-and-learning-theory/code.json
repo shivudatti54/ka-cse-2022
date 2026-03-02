@@ -1,0 +1,33 @@
+{
+  "topicId": "perceptron-and-learning-theory",
+  "examples": [
+    {
+      "id": "pseudocode-perceptron-learning-algorithm",
+      "title": "Algorithm: Perceptron Learning",
+      "description": "Perceptron learning algorithm pseudocode",
+      "language": "pseudocode",
+      "code": "ALGORITHM PerceptronLearning\nINPUT: training data, learning rate η\nOUTPUT: weights w, bias b\n\nBEGIN\n INITIALIZE weights w, bias b to small random values or zeros\n FOR EACH training example (x, desired_output)\n COMPUTE output: y = f(w·x + b)\n IF prediction is incorrect\n UPDATE weights: w = w + η*y*x\n UPDATE bias: b = b + η*y\n REPEAT until all examples are correctly classified or maximum iterations reached\nEND",
+      "explanation": "The perceptron learning algorithm iteratively updates weights to minimize classification errors."
+    },
+    {
+      "id": "python-perceptron-implementation",
+      "title": "Python: Perceptron Implementation",
+      "description": "Perceptron implementation in Python",
+      "language": "python",
+      "code": "import numpy as np\n\nclass Perceptron:\n def __init__(self, learning_rate=0.1, max_iterations=1000):\n self.learning_rate = learning_rate\n self.max_iterations = max_iterations\n self.weights = None\n self.bias = None\n\n def fit(self, X, y):\n num_samples, num_features = X.shape\n self.weights = np.zeros(num_features)\n self.bias = 0\n\n for _ in range(self.max_iterations):\n for idx, x_i in enumerate(X):\n linear_output = np.dot(x_i, self.weights) + self.bias\n y_predicted = np.where(linear_output >= 0, 1, -1)\n\n if y_predicted != y[idx]:\n update = self.learning_rate * y[idx]\n self.weights += update * x_i\n self.bias += update\n\n def predict(self, X):\n linear_output = np.dot(X, self.weights) + self.bias\n y_predicted = np.where(linear_output >= 0, 1, -1)\n return y_predicted",
+      "explanation": "This Python implementation includes the Perceptron class with fit and predict methods.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "c-perceptron-implementation",
+      "title": "C: Perceptron Implementation",
+      "description": "Perceptron implementation in C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <time.h>\n\n#define MAX_ITERATIONS 1000\n#define LEARNING_RATE 0.1\n\nint* perceptron_train(double** X, int* y, int num_samples, int num_features) {\n int* weights = (int*)malloc(num_features * sizeof(int));\n int bias = 0;\n\n for (int i = 0; i < num_features; i++) {\n weights[i] = 0;\n }\n\n for (int iter = 0; iter < MAX_ITERATIONS; iter++) {\n for (int i = 0; i < num_samples; i++) {\n double linear_output = 0;\n for (int j = 0; j < num_features; j++) {\n linear_output += X[i][j] * weights[j];\n }\n linear_output += bias;\n\n int y_predicted = (linear_output >= 0) ? 1 : -1;\n\n if (y_predicted != y[i]) {\n int update = LEARNING_RATE * y[i];\n for (int j = 0; j < num_features; j++) {\n weights[j] += update * X[i][j];\n }\n bias += update;\n }\n }\n }\n\n return weights;\n}",
+      "explanation": "This C implementation includes the perceptron_train function for training the model.",
+      "timeComplexity": "O(n*m)",
+      "spaceComplexity": "O(m)"
+    }
+  ]
+}

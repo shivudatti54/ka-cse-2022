@@ -1,0 +1,139 @@
+{
+  "topicId": "bellman-ford-algorithm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of edge relaxation in Bellman-Ford algorithm with an example.",
+      "keyPoints": [
+        "Edge relaxation checks if going through vertex u improves the path to v",
+        "If distance[u] + weight(u,v) < distance[v], update distance[v]",
+        "This is repeated V-1 times for all edges",
+        "Example: If dist[A]=0, dist[B]=5, and weight(A,B)=-2, then dist[B] becomes -2"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Why does Bellman-Ford algorithm require V-1 iterations? Derive the reasoning.",
+      "keyPoints": [
+        "A simple path (without cycles) has at most V-1 edges",
+        "In iteration k, shortest paths using at most k edges are found",
+        "After V-1 iterations, shortest paths with at most V-1 edges are found",
+        "Any simple path in V vertices has at most V-1 edges, so V-1 iterations are sufficient"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "How does Bellman-Ford algorithm detect negative weight cycles? Explain the procedure.",
+      "keyPoints": [
+        "Perform one extra iteration (V-th) after V-1 relaxations",
+        "Check if any edge can still be relaxed: distance[u] + w(u,v) < distance[v]",
+        "If relaxation is possible, negative weight cycle exists",
+        "This makes shortest path undefined (can be made arbitrarily small)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Compare Bellman-Ford algorithm with Dijkstra's algorithm. List at least 5 points of comparison.",
+      "keyPoints": [
+        "Dijkstra cannot handle negative weights; Bellman-Ford can",
+        "Dijkstra: O(E + V log V), Bellman-Ford: O(VE)",
+        "Dijkstra is greedy; Bellman-Ford uses dynamic programming",
+        "Dijkstra uses priority queue; Bellman-Ford uses simple arrays",
+        "Bellman-Ford can detect negative cycles; Dijkstra cannot"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the advantages and disadvantages of Bellman-Ford algorithm?",
+      "keyPoints": [
+        "Advantage: Handles negative edge weights",
+        "Advantage: Can detect negative weight cycles",
+        "Disadvantage: Slower time complexity O(VE)",
+        "Disadvantage: Not suitable for large dense graphs",
+        "Application: Used in distance-vector routing protocols like RIP"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write the initialization steps for Bellman-Ford algorithm and explain why this initialization is necessary.",
+      "keyPoints": [
+        "distance[source] = 0, all other distances = infinity",
+        "predecessor of all vertices = NULL",
+        "Source distance is 0 because shortest path from source to itself is 0",
+        "Infinity represents unknown/very large distance initially",
+        "Predecessor NULL indicates no path found yet"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Trace the Bellman-Ford algorithm step by step for the following graph with source vertex A: A\u2192B(4), A\u2192C(2), B\u2192C(3), B\u2192D(2), C\u2192D(5). Show distance values after each iteration and identify if negative cycle exists.",
+      "keyPoints": [
+        "Initialize: dist[A]=0, dist[B]=\u221e, dist[C]=\u221e, dist[D]=\u221e",
+        "Iteration 1: Relax A\u2192B(4), A\u2192C(2), B\u2192C(3), B\u2192D(2), C\u2192D(5)",
+        "After iter 1: dist[A]=0, dist[B]=4, dist[C]=2, dist[D]=6",
+        "Iteration 2: Check all edges again",
+        "Iteration 3: Distances unchanged, no negative cycle detected",
+        "Final: A\u2192B=4, A\u2192C=2, A\u2192D=6 via B"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Bellman-Ford algorithm with pseudocode. Discuss its time and space complexity, and explain why it is considered a dynamic programming approach.",
+      "keyPoints": [
+        "Algorithm: Initialize distances, iterate V-1 times relaxing all edges",
+        "Pseudo code with nested loops for vertices and edges",
+        "Time Complexity: O(VE) - V-1 iterations \u00d7 E edges",
+        "Space Complexity: O(V) - distance and predecessor arrays",
+        "Dynamic programming: Builds solution using previously computed subproblems",
+        "Optimal substructure: Shortest path to v uses shortest path to u plus edge weight"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "A courier company wants to find the cheapest delivery routes from their central warehouse to various cities. The routes may have negative weights representing discounts for certain paths. How would you apply Bellman-Ford to solve this problem? What precautions would you take?",
+      "keyPoints": [
+        "Model cities as vertices, routes as directed edges with weights",
+        "Edge weights can be positive (cost) or negative (discounts)",
+        "Run Bellman-Ford from warehouse as source",
+        "Check for negative cycles - if exist, warn about unlimited discounts",
+        "Reconstruct paths using predecessor array",
+        "Caution: Ensure no negative cycles in reachable paths",
+        "If negative cycle exists, inform company about arbitrage opportunity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Prove that if Bellman-Ford terminates after V-1 iterations without changes, then all shortest paths have been found. Also explain what it means if changes occur in the V-th iteration.",
+      "keyPoints": [
+        "Proof by induction on path length: After k iterations, shortest paths with \u2264k edges found",
+        "Base case: k=1, source's neighbors have correct distances",
+        "Inductive step: Assuming true for k-1, after k iterations paths with \u2264k edges are correct",
+        "Since simple path has \u2264V-1 edges, V-1 iterations guarantee correctness",
+        "V-th iteration: If edge still relaxable, there exists a path with V edges",
+        "A path with V edges must contain a cycle (by pigeonhole principle)",
+        "If that cycle is negative, distances can decrease indefinitely",
+        "Thus V-th iteration relaxation indicates negative weight cycle reachable from source"
+      ],
+      "marks": 10
+    }
+  ]
+}

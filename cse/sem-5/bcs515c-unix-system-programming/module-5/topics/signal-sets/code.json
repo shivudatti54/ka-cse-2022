@@ -1,0 +1,45 @@
+{
+  "topicId": "signal-sets",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Signal Set Generation - M-ary PSK",
+      "description": "Generate M-ary PSK signal constellation points",
+      "code": "// M-ary PSK Signal Constellation Generation\n// M = number of signal points\n// E = signal energy per symbol\n\nFUNCTION generatePSKConstellation(M, E):\n constellation = []\n amplitude = √E\n \n FOR i FROM 0 TO M-1:\n phase = (2 * π * i) / M\n I = amplitude * cos(phase)\n Q = amplitude * sin(phase)\n constellation.append(Complex(I, Q))\n \n RETURN constellation",
+      "explanation": "Generates M-PSK constellation by placing M points equally spaced on circle of radius √E",
+      "timeComplexity": "O(M)",
+      "spaceComplexity": "O(M)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Euclidean Distance Calculation",
+      "description": "Calculate Euclidean distance between two signal points",
+      "code": "// Euclidean Distance between two signal vectors\n// s1, s2 are N-dimensional signal vectors\n\nFUNCTION euclideanDistance(s1, s2):\n sum = 0\n FOR i FROM 0 TO length(s1)-1:\n diff = s1[i] - s2[i]\n sum = sum + diff^2\n RETURN √sum\n\n// Calculate minimum distance in signal set\nFUNCTION calculateDmin(signalSet):\n dmin = ∞\n FOR i FROM 0 TO signalSet.length-1:\n FOR j FROM i+1 TO signalSet.length-1:\n d = euclideanDistance(signalSet[i], signalSet[j])\n IF d < dmin:\n dmin = d\n RETURN dmin",
+      "explanation": "Finds minimum Euclidean distance between any pair of signals in set",
+      "timeComplexity": "O(M²)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Maximum Likelihood Detection",
+      "description": "Optimal detection in AWGN channel",
+      "code": "// ML Detector for signal detection\n// r = received signal vector\n// constellation = set of M possible transmitted signals\n\nFUNCTION MLDetector(r, constellation):\n minDistance = ∞\n detectedIndex = -1\n \n FOR i FROM 0 TO constellation.length-1:\n d = euclideanDistance(r, constellation[i])\n IF d < minDistance:\n minDistance = d\n detectedIndex = i\n \n RETURN detectedIndex\n\n// Decision regions are defined by Voronoi regions\n// Each signal point 'owns' region closer to it than any other",
+      "explanation": "ML detector chooses signal closest to received vector - optimal for AWGN",
+      "timeComplexity": "O(M)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Gray Code Generation for QPSK/PSK",
+      "description": "Generate Gray code sequence for constellation mapping",
+      "code": "// Binary to Gray code conversion\nFUNCTION binaryToGray(binary):\n gray = binary\n shiftRight = binary >> 1\n gray = gray XOR shiftRight\n RETURN gray\n\n// Generate Gray-coded constellation indices\nFUNCTION generateGrayIndices(M):\n indices = []\n FOR i FROM 0 TO M-1:\n indices.append(binaryToGray(i))\n RETURN indices\n\n// For M=4 (QPSK): indices = [0, 1, 3, 2]\n// Binary: 00, 01, 10, 11\n// Gray: 00, 01, 11, 10 (adjacent differ by 1 bit)",
+      "explanation": "Gray coding ensures adjacent constellation points differ by only 1 bit",
+      "timeComplexity": "O(M)",
+      "spaceComplexity": "O(M)"
+    }
+  ]
+}

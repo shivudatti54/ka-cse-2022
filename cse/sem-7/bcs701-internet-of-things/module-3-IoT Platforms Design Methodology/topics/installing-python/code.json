@@ -1,0 +1,35 @@
+{
+  "topicId": "installing-python",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Verify Python Installation",
+      "description": "Basic verification script to confirm Python and pip are correctly installed with required version",
+      "code": "BEGIN\n IMPORT sys, subprocess\n \n // Check Python version\n PRINT \"Python Version: \" + sys.version\n \n // Verify minimum version (Python 3.6+ required for modern IoT)\n IF sys.version_info.major >= 3 AND sys.version_info.minor >= 6 THEN\n PRINT \"\u2713 Python version is compatible for IoT development\"\n ELSE\n PRINT \"\u2717 Please upgrade to Python 3.6 or higher\"\n ENDIF\n \n // Check pip availability\n TRY\n pip_version = subprocess.run([sys.executable, \"-m\", \"pip\", \"--version\"], \n capture_output=True, text=True)\n PRINT \"Pip Version: \" + pip_version.stdout\n PRINT \"\u2713 Pip is available\"\n EXCEPT\n PRINT \"\u2717 Pip not found - reinstall Python with pip\"\n ENDTRY\n \n // List installed IoT-relevant packages\n PRINT \"\\nInstalled packages:\"\n list_packages = subprocess.run([sys.executable, \"-m\", \"pip\", \"list\"], \n capture_output=True, text=True)\n PRINT list_packages.stdout\nEND",
+      "explanation": "This verification script checks that Python 3.6+ is installed (required for modern IoT libraries), pip is available, and displays all installed packages - essential first step after installation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Setup IoT Virtual Environment",
+      "description": "Script to create and configure a virtual environment for IoT projects with all necessary packages",
+      "code": "BEGIN\n IMPORT os, subprocess, sys\n \n // Step 1: Create virtual environment\n project_name = \"IoT_Weather_Project\"\n venv_path = \"./\" + project_name + \"_env\"\n \n PRINT \"Creating virtual environment: \" + venv_path\n subprocess.run([sys.executable, \"-m\", \"venv\", venv_path])\n \n // Step 2: Determine activate script path (OS-dependent)\n IF os.name == \"nt\" THEN\n activate_path = venv_path + \"\\\\Scripts\\\\activate\"\n ELSE\n activate_path = venv_path + \"/bin/activate\"\n ENDIF\n \n // Step 3: Install required IoT packages\n iot_packages = [\n \"RPi.GPIO\", // GPIO control for Raspberry Pi\n \"Adafruit_DHT\", // Temperature/humidity sensors\n \"spidev\", // SPI communication\n \"requests\", // HTTP for API calls\n \"flask\" // Web framework for IoT dashboard\n ]\n \n PRINT \"Installing IoT packages...\"\n FOR package IN iot_packages DO\n subprocess.run([sys.executable, \"-m\", \"pip\", \"install\", package])\n PRINT \"\u2713 Installed: \" + package\n ENDFOR\n \n // Step 4: Generate requirements.txt\n freeze_output = subprocess.run([sys.executable, \"-m\", \"pip\", \"freeze\"],\n capture_output=True, text=True)\n \n file = OPEN(\"requirements.txt\", \"w\")\n WRITE(file, freeze_output.stdout)\n CLOSE(file)\n \n PRINT \"\u2713 Virtual environment ready!\"\n PRINT \"\u2713 Requirements saved to requirements.txt\"\n PRINT \"To activate: source \" + activate_path\nEND",
+      "explanation": "Automates the creation of an isolated Python environment with essential IoT packages, ensuring reproducible project setups across different machines.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Check and Install IoT Dependencies",
+      "description": "Script to check if required IoT packages are installed and install missing ones",
+      "code": "BEGIN\n IMPORT subprocess, sys\n \n // Required packages for IoT project\n REQUIRED_PACKAGES = [\n \"RPi.GPIO\", \n \"Adafruit_DHT\", \n \"requests\", \n \"spidev\"\n ]\n \n // Function to check if package is installed\n FUNCTION is_installed(package_name)\n result = subprocess.run([sys.executable, \"-m\", \"pip\", \"show\", package_name],\n capture_output=True, text=True)\n RETURN result.returncode == 0\n ENDFUNCTION\n \n // Main execution\n PRINT \"Checking IoT dependencies...\"\n missing_packages = []\n \n FOR package IN REQUIRED_PACKAGES DO\n IF is_installed(package) THEN\n PRINT \"\u2713 \" + package + \" is installed\"\n ELSE\n PRINT \"\u2717 \" + package + \" is missing\"\n ADD package TO missing_packages\n ENDIF\n ENDFOR\n \n // Install missing packages\n IF LENGTH(missing_packages) > 0 THEN\n PRINT \"\\nInstalling missing packages...\"\n FOR package IN missing_packages DO\n subprocess.run([sys.executable, \"-m\", \"pip\", \"install\", package])\n PRINT \"\u2713 Installed: \" + package\n ENDFOR\n ELSE\n PRINT \"\\n\u2713 All IoT dependencies are satisfied!\"\n ENDIF\n \n // Try importing IoT modules\n PRINT \"\\nVerifying imports...\"\n TRY\n IMPORT RPi.GPIO\n PRINT \"\u2713 RPi.GPIO imported successfully\"\n EXCEPT ImportError\n PRINT \"\u2717 RPi.GPIO import failed (not on Raspberry Pi?)\"\n ENDTRY\nEND",
+      "explanation": "Ensures all required IoT packages are present before running an IoT project. Handles both installation and graceful handling when running on non-Raspberry Pi systems.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

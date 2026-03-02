@@ -1,0 +1,35 @@
+{
+  "topicId": "one-time-pad",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "One-Time Pad Encryption/Decryption",
+      "description": "Implementation of OTP encryption and decryption using XOR operation on binary data.",
+      "code": "// OTP Encryption Function\nFUNCTION OTPEncrypt(plaintext[], key[]):\n    IF LENGTH(plaintext) != LENGTH(key):\n        RETURN ERROR(\"Key must equal plaintext length\")\n    \n    ciphertext[] = new Array(LENGTH(plaintext))\n    \n    FOR i FROM 0 TO LENGTH(plaintext) - 1:\n        // XOR each bit: 0\u22950=0, 0\u22951=1, 1\u22950=1, 1\u22951=0\n        ciphertext[i] = plaintext[i] XOR key[i]\n    \n    RETURN ciphertext\n\n// OTP Decryption Function (Identical to encryption)\nFUNCTION OTPDecrypt(ciphertext[], key[]):\n    // Due to XOR self-inverse property: P = C\u2295K\n    RETURN OTPEncrypt(ciphertext, key)\n\n// Example Usage:\nplaintext = [0,1,1,0,1,0,0,1]  // 'm' in binary\nkey       = [1,0,1,1,0,1,1,0]  // Random 8-bit key\n\nciphertext = OTPEncrypt(plaintext, key)\n// Result: [1,1,0,1,1,1,1,1]\n\nrecovered = OTPDecrypt(ciphertext, key)\n// Result: [0,1,1,0,1,0,0,1] = original plaintext",
+      "explanation": "This code demonstrates the core OTP principle: encryption and decryption use the same XOR operation because XOR is self-inverse (A\u2295A=0 and A\u22950=A). The key requirement checks ensure the fundamental OTP condition is met.",
+      "timeComplexity": "O(n) where n is the length of the plaintext",
+      "spaceComplexity": "O(n) for storing ciphertext array"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "OTP Key Generation with True Randomness",
+      "description": "Implementation of secure key generation for OTP using true random number generator.",
+      "code": "// OTP Key Generation - MUST use True Random Number Generator\nFUNCTION GenerateOTPKey(length):\n    key[] = new Array(length)\n    \n    // Option 1: Hardware TRNG (preferred)\n    IF hardware_TRNG_available():\n        FOR i FROM 0 TO length - 1:\n            key[i] = hardware_random_bit()\n    \n    // Option 2: Cryptographically Secure PRNG (less ideal)\n    // WARNING: Only provides computational security, not perfect secrecy\n    ELSE:\n        seed = system_entropy_source()\n        rng_state = CSPRNG_Init(seed)\n        FOR i FROM 0 TO length - 1:\n            key[i] = CSPRNG_NextBit(rng_state)\n    \n    RETURN key\n\n// Key Validation Function\nFUNCTION ValidateOTPKey(key[]):\n    // Check 1: Length equals message length\n    // Check 2: All bits appear random (NIST tests)\n    // Check 3: No predictable patterns\n    // Check 4: Key never used before (tracking required)\n    \n    FOR EACH previous_key IN used_keys:\n        IF key == previous_key:\n            RETURN FALSE // Key reuse detected!\n    \n    RETURN TRUE\n\n// Secure Key Storage (after use)\nFUNCTION SecurelyDelete(key[]):\n    // Overwrite key memory with zeros multiple times\n    FOR overwrite_count FROM 0 TO 3:\n        Fill(key, random_pattern())\n    Fill(key, zeros()) // Final overwrite",
+      "explanation": "This code emphasizes the critical requirement of true randomness. Hardware TRNG sources include thermal noise, radioisotope decay, or quantum effects. Using deterministic PRNGs breaks perfect secrecy because an attacker who knows the seed can regenerate the key.",
+      "timeComplexity": "O(n) for key generation",
+      "spaceComplexity": "O(n) for key storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Two-Time Pad Attack Detection and Analysis",
+      "description": "Demonstration of how to detect key reuse and the attack methodology when reuse occurs.",
+      "code": "// Attack Function: Two-Time Pad Analysis\nFUNCTION DetectKeyReuse(ciphertext1[], ciphertext2[]):\n    IF LENGTH(ciphertext1) != LENGTH(ciphertext2):\n        RETURN \"Different lengths - cannot confirm reuse\"\n    \n    // Compute XOR of ciphertexts\n    xor_result[] = new Array(LENGTH(ciphertext1))\n    FOR i FROM 0 TO LENGTH(ciphertext1) - 1:\n        xor_result[i] = ciphertext1[i] XOR ciphertext2[i]\n    \n    // xor_result = P1 \u2295 P2 (key cancels out!)\n    RETURN xor_result\n\n// Crib-Dragging Attack on Exposed Plaintext Relationship\nFUNCTION CribDrag(xor_result[], known_plaintext):\n    // Try shifting known phrase through XOR result\n    results[] = []\n    \n    FOR shift FROM 0 TO LENGTH(xor_result) - LENGTH(known_plaintext):\n        test_plaintext[] = new Array(LENGTH(known_plaintext))\n        \n        FOR i FROM 0 TO LENGTH(known_plaintext) - 1:\n            // P2 = (P1 \u2295 P2) \u2295 P1\n            test_plaintext[i] = xor_result[shift + i] XOR known_plaintext[i]\n        \n        IF IsEnglishText(test_plaintext):\n            results.Add((shift, test_plaintext))\n    \n    RETURN results\n\n// Example Attack Scenario:\n// C1 = 10110011, C2 = 10011001 (same key used)\n// C1 \u2295 C2 = 00101010 = P1 \u2295 P2\n// If attacker guesses P1 = \"Hello\", can compute P2",
+      "explanation": "This code demonstrates the devastating effect of key reuse. When the same key encrypts two messages, XORing the ciphertexts eliminates the key completely. The attacker then uses linguistic patterns ('cribs') to recover plaintexts, a technique famously used to decrypt Soviet spy messages.",
+      "timeComplexity": "O(n\u00d7m) where n=ciphertext length, m=crib length (crib-dragging)",
+      "spaceComplexity": "O(n) for storing intermediate XOR results"
+    }
+  ]
+}

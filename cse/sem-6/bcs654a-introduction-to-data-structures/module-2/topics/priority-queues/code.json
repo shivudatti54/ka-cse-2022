@@ -1,0 +1,32 @@
+{
+  "topicId": "priority-queues",
+  "examples": [
+    {
+      "id": "priority-queue-c",
+      "title": "C: Priority Queue Using Heap",
+      "description": "Priority queue applications: top K, merge lists, running median",
+      "language": "c",
+      "code": "// Priority Queue wrapper around heap\ntypedef struct {\n int* data;\n int* priorities;\n int size;\n int capacity;\n} PriorityQueue;\n\n// See heap implementation for core operations\n// Priority queue just adds priority tracking",
+      "timeComplexity": "O(log n) for insert/extract",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "priority-queue-python",
+      "title": "Python: Priority Queue Using Heap",
+      "description": "Priority queue applications: top K, merge lists, running median",
+      "language": "python",
+      "code": "import heapq\n\n# Python's heapq is a MIN-heap\n# For MAX behavior, negate values\n\nclass PriorityQueue:\n \"\"\"Min-priority queue using heapq\"\"\"\n def __init__(self):\n self.heap = []\n \n def push(self, item, priority):\n heapq.heappush(self.heap, (priority, item))\n \n def pop(self):\n if self.heap:\n return heapq.heappop(self.heap)[1]\n raise IndexError(\"Empty queue\")\n \n def peek(self):\n return self.heap[0][1] if self.heap else None\n \n def __len__(self):\n return len(self.heap)\n\n# Top K Largest Elements\ndef top_k_largest(nums, k):\n return heapq.nlargest(k, nums)\n\n# Top K Smallest Elements \ndef top_k_smallest(nums, k):\n return heapq.nsmallest(k, nums)\n\n# Merge K Sorted Lists\ndef merge_k_sorted(lists):\n heap = []\n for i, lst in enumerate(lists):\n if lst:\n heapq.heappush(heap, (lst[0], i, 0))\n \n result = []\n while heap:\n val, list_idx, elem_idx = heapq.heappop(heap)\n result.append(val)\n if elem_idx + 1 < len(lists[list_idx]):\n next_val = lists[list_idx][elem_idx + 1]\n heapq.heappush(heap, (next_val, list_idx, elem_idx + 1))\n return result\n\n# Running Median\nclass MedianFinder:\n def __init__(self):\n self.small = [] # max-heap (negate values)\n self.large = [] # min-heap\n \n def add_num(self, num):\n heapq.heappush(self.small, -num)\n heapq.heappush(self.large, -heapq.heappop(self.small))\n if len(self.large) > len(self.small):\n heapq.heappush(self.small, -heapq.heappop(self.large))\n \n def find_median(self):\n if len(self.small) > len(self.large):\n return -self.small[0]\n return (-self.small[0] + self.large[0]) / 2\n\n# Demo\nprint(\"Top 3 largest:\", top_k_largest([3,1,4,1,5,9,2,6], 3))\nprint(\"Merge sorted:\", merge_k_sorted([[1,4,5], [1,3,4], [2,6]]))",
+      "timeComplexity": "O(log n) per operation",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "priority-queue-java",
+      "title": "Java: Priority Queue Using Heap",
+      "description": "Priority queue applications: top K, merge lists, running median",
+      "language": "java",
+      "code": "import java.util.*;\n\nclass PriorityQueueExamples {\n // Java PriorityQueue is MIN-heap by default\n \n // Min Priority Queue\n public static void minPQDemo() {\n PriorityQueue<Integer> minPQ = new PriorityQueue<>();\n minPQ.offer(5);\n minPQ.offer(1);\n minPQ.offer(3);\n System.out.println(\"Min: \" + minPQ.poll()); // 1\n }\n \n // Max Priority Queue\n public static void maxPQDemo() {\n PriorityQueue<Integer> maxPQ = new PriorityQueue<>(Collections.reverseOrder());\n maxPQ.offer(5);\n maxPQ.offer(1);\n maxPQ.offer(3);\n System.out.println(\"Max: \" + maxPQ.poll()); // 5\n }\n \n // Top K Largest\n public static int[] topK(int[] nums, int k) {\n PriorityQueue<Integer> minHeap = new PriorityQueue<>();\n for (int num : nums) {\n minHeap.offer(num);\n if (minHeap.size() > k) minHeap.poll();\n }\n return minHeap.stream().mapToInt(i -> i).toArray();\n }\n \n public static void main(String[] args) {\n minPQDemo();\n maxPQDemo();\n }\n}",
+      "timeComplexity": "O(log n) per operation",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

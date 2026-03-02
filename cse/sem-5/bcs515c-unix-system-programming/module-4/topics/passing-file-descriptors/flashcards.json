@@ -1,0 +1,80 @@
+{
+  "topicId": "passing-file-descriptors",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is a file descriptor in Unix/Linux?",
+      "back": "An integer handle (non-negative integer) that processes use to access files, pipes, sockets, and other I/O resources. It is an index into the process's file descriptor table."
+    },
+    {
+      "id": "fc-2",
+      "front": "What system calls are used to pass file descriptors between processes?",
+      "back": "sendmsg() and recvmsg() with Unix domain sockets. The sender uses sendmsg() to transmit the file descriptor, and the receiver uses recvmsg() to receive it."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is SCM_RIGHTS in file descriptor passing?",
+      "back": "SCM_RIGHTS is a control message type used to transfer file descriptors. It is passed as part of the cmsghdr structure in the ancillary data of sendmsg()/recvmsg()."
+    },
+    {
+      "id": "fc-4",
+      "front": "What structure is used to pass file descriptors in control messages?",
+      "back": "The cmsghdr structure (control message header). It contains cmsg_len, cmsg_level, cmsg_type, and the actual file descriptor data."
+    },
+    {
+      "id": "fc-5",
+      "front": "How are file descriptors typically inherited in Unix?",
+      "back": "When a process calls fork(), the child inherits a copy of the parent's file descriptor table. All file descriptors with FD_CLOEXEC flag NOT set are duplicated to the child."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the purpose of FD_CLOEXEC flag?",
+      "back": "FD_CLOEXEC closes the file descriptor automatically when the process executes a new program (via exec family). It prevents file descriptors from being leaked to executed programs."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is a Unix domain socket?",
+      "back": "A communication endpoint for local inter-process communication. It uses the AF_UNIX address family and provides a reliable, byte-stream or packet-oriented communication channel."
+    },
+    {
+      "id": "fc-8",
+      "front": "Why is passing file descriptors useful in IPC?",
+      "back": "It allows one process to give another process access to an already-open file descriptor without the overhead of re-opening the file. Useful for privilege delegation, implementing servers, and custom IPC mechanisms."
+    },
+    {
+      "id": "fc-9",
+      "front": "What happens to the reference count when a file descriptor is passed?",
+      "back": "The file descriptor count is incremented in the kernel. Both sender and receiver have independent file descriptors pointing to the same open file description."
+    },
+    {
+      "id": "fc-10",
+      "front": "Should the sender close the file descriptor after passing it?",
+      "back": "Yes, typically the sender should close its copy after successful transfer, otherwise the file remains open and resources are wasted. The receiver gets its own independent descriptor."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is msg_control and msg_controllen in sendmsg()?",
+      "back": "msg_control points to ancillary data (control messages like SCM_RIGHTS), and msg_controllen specifies the length of this control data buffer."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is CMSG_FIRSTHDR and CMSG_DATA used for?",
+      "back": "CMSG_FIRSTHDR gets the first control message header from msghdr. CMSG_DATA returns a pointer to the data associated with a cmsg header (where the file descriptor is stored)."
+    },
+    {
+      "id": "fc-13",
+      "front": "What is the difference between send() and sendmsg()?",
+      "back": "send() sends data to a socket with simple parameters. sendmsg() allows sending ancillary data including control messages, which is required for passing file descriptors."
+    },
+    {
+      "id": "fc-14",
+      "front": "What is an example use case of passing file descriptors?",
+      "back": "A privilege-separation server where a parent with root privileges accepts connections but passes the connection socket to an unprivileged child process to handle the actual request."
+    },
+    {
+      "id": "fc-15",
+      "front": "What is the struct msghdr used for?",
+      "back": "It is a structure that describes a message to be sent or received via sendmsg()/recvmsg(). It contains msg_name, msg_namelen, msg_iov, msg_iovlen, msg_control, and msg_controllen."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "topicId": "cuda-trapezoidal-rule-ii-improving-performance",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain why atomicAdd creates a performance bottleneck in the basic CUDA trapezoidal rule and describe how shared memory reduction eliminates this bottleneck.",
+      "type": "short",
+      "marks": 5,
+      "keyPoints": [
+        "atomicAdd serializes concurrent writes: only one thread can update the global memory location at a time, making accumulation O(N)",
+        "Global memory latency is 400-800 cycles per atomic operation, and contention worsens as thread count increases",
+        "Shared memory reduction replaces this with a tree-structured approach within each block using fast on-chip shared memory (~5 cycle latency)",
+        "The reduction takes log2(blockDim.x) steps with __syncthreads() barriers between each step",
+        "Only thread 0 writes one value to global memory per block, replacing blockDim.x atomic operations with a single store"
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Write the complete improved CUDA trapezoidal rule kernel using shared memory tree-structured reduction. Trace the reduction steps for a block of 8 threads with values [v0, v1, v2, v3, v4, v5, v6, v7]. Explain the role of __syncthreads() and compare performance with the atomicAdd version.",
+      "type": "long",
+      "marks": 10,
+      "keyPoints": [
+        "Kernel declares extern __shared__ double sdata[], computes global index i = threadIdx.x + blockIdx.x * blockDim.x",
+        "Each thread computes f(a + i*h) with half-weight for boundary points (i==0 or i==n) and loads into sdata[tid]",
+        "Reduction loop: for (s = blockDim.x/2; s > 0; s >>= 1) { if (tid < s) sdata[tid] += sdata[tid+s]; __syncthreads(); }",
+        "Trace for 8 threads: Step 1 (s=4): sdata[0..3] += sdata[4..7]; Step 2 (s=2): sdata[0..1] += sdata[2..3]; Step 3 (s=1): sdata[0] += sdata[1]; final sum in sdata[0]",
+        "__syncthreads() ensures all threads complete the current step before any thread reads values for the next step; must be reached by all threads (placed outside the if-block)",
+        "Thread 0 writes sdata[0] to blockSums[blockIdx.x]; host sums numBlocks values and multiplies by h",
+        "Performance: atomicAdd is O(N) with global memory latency; shared memory reduction is O(log(blockDim)) per block with ~5 cycle shared memory latency; typical 10x-50x speedup for large N"
+      ]
+    }
+  ]
+}

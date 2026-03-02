@@ -1,0 +1,25 @@
+{
+  "topicId": "nfa-to-dfa-conversion",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Subset Construction Algorithm",
+      "description": "A pseudocode implementation of the subset construction algorithm.",
+      "code": "FUNCTION subsetConstruction(NFA)\n  CREATE DFA\n  FOR EACH state IN NFA\n    CREATE NEW STATE IN DFA\n  FOR EACH transition IN NFA\n    CREATE NEW TRANSITION IN DFA\n  FOR EACH acceptingState IN NFA\n    CREATE NEW ACCEPTING STATE IN DFA\n  RETURN DFA\nEND FUNCTION",
+      "explanation": "This pseudocode implementation of the subset construction algorithm creates a new DFA from a given NFA.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n)"
+    },
+    {
+      "id": "code-2",
+      "language": "C",
+      "title": "Subset Construction Algorithm",
+      "description": "A C implementation of the subset construction algorithm.",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Structure to represent a state in the NFA\ntypedef struct State {\n  int id;\n  int *transitions;\n  int accepting;\n} State;\n\n// Structure to represent the NFA\ntypedef struct NFA {\n  int numStates;\n  State *states;\n} NFA;\n\n// Structure to represent the DFA\ntypedef struct DFA {\n  int numStates;\n  State *states;\n} DFA;\n\n// Function to create a new DFA from a given NFA\nDFA *subsetConstruction(NFA *nfa) {\n  DFA *dfa = (DFA *)malloc(sizeof(DFA));\n  dfa->numStates = 1 << nfa->numStates;\n  dfa->states = (State *)malloc(dfa->numStates * sizeof(State));\n\n  // Create new states in the DFA\n  for (int i = 0; i < nfa->numStates; i++) {\n    dfa->states[i].id = i;\n    dfa->states[i].transitions = (int *)malloc(nfa->numStates * sizeof(int));\n    dfa->states[i].accepting = nfa->states[i].accepting;\n  }\n\n  // Create new transitions in the DFA\n  for (int i = 0; i < nfa->numStates; i++) {\n    for (int j = 0; j < nfa->numStates; j++) {\n      dfa->states[i].transitions[j] = nfa->states[i].transitions[j];\n    }\n  }\n\n  return dfa;\n}\n\nint main() {\n  NFA *nfa = (NFA *)malloc(sizeof(NFA));\n  nfa->numStates = 2;\n  nfa->states = (State *)malloc(nfa->numStates * sizeof(State));\n\n  // Create states in the NFA\n  nfa->states[0].id = 0;\n  nfa->states[0].transitions = (int *)malloc(nfa->numStates * sizeof(int));\n  nfa->states[0].accepting = 0;\n  nfa->states[1].id = 1;\n  nfa->states[1].transitions = (int *)malloc(nfa->numStates * sizeof(int));\n  nfa->states[1].accepting = 1;\n\n  // Create transitions in the NFA\n  nfa->states[0].transitions[0] = 1;\n  nfa->states[0].transitions[1] = 0;\n  nfa->states[1].transitions[0] = 0;\n  nfa->states[1].transitions[1] = 1;\n\n  // Create DFA from NFA\n  DFA *dfa = subsetConstruction(nfa);\n\n  // Print DFA\n  printf(\"DFA:\\n\");\n  for (int i = 0; i < dfa->numStates; i++) {\n    printf(\"State %d: \", dfa->states[i].id);\n    for (int j = 0; j < dfa->numStates; j++) {\n      printf(\"%d \", dfa->states[i].transitions[j]);\n    }\n    printf(\"\\n\");\n  }\n\n  return 0;\n}",
+      "explanation": "This C implementation of the subset construction algorithm creates a new DFA from a given NFA.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "point-to-point-protocol",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "LCP Configure-Request Processing",
+      "description": "Algorithm showing how LCP handles configuration requests in PPP",
+      "code": "PROCEDURE LCP_Handle_Configure_Request(packet)\nBEGIN\n IF packet.options IS acceptable THEN\n SEND Configure-Ack(packet.options)\n state ← Opened\n ELSE IF packet.options CAN be negotiated THEN\n SEND Configure-Nak(packet.acceptable_options)\n ELSE\n SEND Configure-Reject(packet.unacceptable_options)\n ENDIF\nEND",
+      "explanation": "When PPP receives a configure-request from peer, it either acknowledges acceptable options, suggests alternatives via Nak, or rejects unsupported options. This is the core of link negotiation.",
+      "timeComplexity": "O(n) where n is number of options",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "CHAP Authentication Algorithm",
+      "description": "Three-way handshake authentication process in CHAP",
+      "code": "// SERVER SIDE\nPROCEDURE CHAP_Challenge()\nBEGIN\n challenge_id ← generate_random()\n challenge_value ← generate_random_bytes(16)\n SEND Challenge(challenge_id, challenge_value)\n STORE challenge_id, challenge_value, peer_name\nEND\n\n// CLIENT SIDE\nPROCEDURE CHAP_Response(challenge_id, challenge_value)\nBEGIN\n hash ← MD5(challenge_value + password)\n SEND Response(challenge_id, hash, client_name)\nEND\n\n// SERVER VERIFICATION\nPROCEDURE CHAP_Verify(response)\nBEGIN\n expected_hash ← MD5(stored_challenge + stored_password)\n IF response.hash == expected_hash THEN\n SEND Success(response.id)\n ELSE\n SEND Failure(response.id)\n ENDIF\nEND",
+      "explanation": "CHAP uses a three-way handshake: Server sends random challenge, Client responds with MD5 hash of challenge+password, Server verifies and responds. The password is never sent over the link.",
+      "timeComplexity": "O(1) per authentication",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "PPP Frame Flag Detection and Escaping",
+      "description": "Algorithm for detecting and escaping special characters in PPP",
+      "code": "PROCEDURE PPP_Transmit_Byte(byte)\nBEGIN\n IF byte == FLAG (0x7E) THEN\n OUTPUT ESCAPE (0x7D)\n OUTPUT byte XOR 0x20 // becomes 0x5E\n ELSE IF byte == ESCAPE (0x7D) THEN\n OUTPUT ESCAPE (0x7D)\n OUTPUT byte XOR 0x20 // becomes 0x5D\n ELSE IF byte < 0x20 THEN\n OUTPUT ESCAPE (0x7D)\n OUTPUT byte XOR 0x20\n ELSE\n OUTPUT byte\n ENDIF\nEND\n\nPROCEDURE PPP_Receive_Byte(byte)\nBEGIN\n IF byte == ESCAPE (0x7D) THEN\n next_byte ← READ_NEXT()\n restored_byte ← next_byte XOR 0x20\n OUTPUT restored_byte\n ELSE\n OUTPUT byte\n ENDIF\nEND",
+      "explanation": "PPP uses character escaping for async links to ensure the flag sequence (0x7E) never appears inside the frame data. All special characters are escaped with 0x7D and XORed with 0x20.",
+      "timeComplexity": "O(1) per byte",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

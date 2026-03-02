@@ -1,0 +1,26 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Precedence Graph Construction Algorithm",
+    "description": "Algorithm to construct precedence graph from a given schedule and check for cycles",
+    "code": "// Input: List of transactions with operations\n// Output: Precedence graph and serializability status\n\nFUNCTION buildPrecedenceGraph(schedule):\n graph = empty adjacency list\n lastWrite = {} // tracks last transaction to write each data item\n \n FOR each operation op in schedule:\n dataItem = op.dataItem\n transaction = op.transaction\n operationType = op.type // READ or WRITE\n \n IF operationType == WRITE:\n // Check for conflicts with previous operations\n IF dataItem in lastWrite:\n prevTx = lastWrite[dataItem]\n IF prevTx != transaction:\n ADD edge from prevTx to transaction in graph\n lastWrite[dataItem] = transaction\n \n ELSE IF operationType == READ:\n // Check write-read conflict\n IF dataItem in lastWrite:\n prevTx = lastWrite[dataItem]\n IF prevTx != transaction:\n ADD edge from prevTx to transaction in graph\n\n RETURN graph\n\nFUNCTION isAcyclic(graph):\n visited = set()\n recStack = set()\n FOR each node in graph:\n IF hasCycle(node, visited, recStack):\n RETURN FALSE\n RETURN TRUE\n\nFUNCTION hasCycle(node, visited, recStack):\n visited.add(node)\n recStack.add(node)\n \n FOR neighbor in graph[node]:\n IF neighbor not in visited:\n IF hasCycle(neighbor, visited, recStack):\n RETURN TRUE\n ELSE IF neighbor in recStack:\n RETURN TRUE\n \n recStack.remove(node)\n RETURN FALSE",
+    "explanation": "This algorithm constructs a precedence graph by analyzing all operations in the schedule. For each write operation, it tracks which transaction last wrote each data item. For read and write operations, it creates edges from the transaction that last wrote the data item to the current transaction. Finally, it uses DFS to detect cycles - if no cycles exist, the schedule is conflict serializable.",
+    "complexity": {
+      "time": "O(n\u00b2)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Testing Schedule Properties",
+    "description": "Algorithm to check if a schedule is recoverable, cascadeless, and strict",
+    "code": "// Input: Schedule with operations and commit/abort information\n// Output: Schedule property classification\n\nFUNCTION classifySchedule(schedule):\n isRecoverable = TRUE\n isCascadeless = TRUE\n isStrict = TRUE\n \n // Track committed and aborted transactions\n uncommittedWrites = {} // dataItem -> transaction\n committed = set()\n \n FOR each operation op in schedule IN ORDER:\n tx = op.transaction\n dataItem = op.dataItem\n \n IF op.type == WRITE:\n uncommittedWrites[dataItem] = tx\n \n ELSE IF op.type == READ:\n writer = uncommittedWrites.get(dataItem)\n \n // Check strictness: reading uncommitted write?\n IF writer != None AND writer != tx:\n isStrict = FALSE\n \n // Check cascadeless: reading uncommitted data?\n IF writer != None AND writer not in committed:\n isCascadeless = FALSE\n isRecoverable = FALSE\n // But continue checking for stricter properties\n \n ELSE IF op.type == COMMIT:\n committed.add(tx)\n // After commit, remove from uncommitted writes\n FOR each item, writer in uncommittedWrites:\n IF writer == tx:\n DELETE uncommittedWrites[item]\n \n ELSE IF op.type == ABORT:\n // Check recoverability\n // Any transaction that read this aborted transaction's data?\n isRecoverable = FALSE\n // In practice, need cascading rollback\n \n RETURN {\n \"recoverable\": isRecoverable,\n \"cascadeless\": isCascadeless, \n \"strict\": isStrict,\n \"serializable\": isConflictSerializable(schedule)\n }",
+    "explanation": "This algorithm classifies a schedule by checking three properties in order of restrictiveness. It tracks uncommitted writes and checks each read operation against the writer's commit status. If a transaction reads data written by an uncommitted transaction, it violates cascadelessness and possibly recoverability. For strictness, it also checks if writes wait for commits.",
+    "complexity": {
+      "time": "O(n)",
+      "space": "O(n)"
+    }
+  }
+]

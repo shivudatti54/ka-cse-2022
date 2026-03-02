@@ -1,0 +1,168 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" data-topic-id="recognition-of-tokens">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388e3c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2" />
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c" />
+    </marker>
+  </defs>
+
+  <!-- Step 1: Recognition Pipeline -->
+  <g id="step1" class="step" data-narration="Token recognition follows a systematic pipeline. Regular expressions define patterns, which convert to nondeterministic finite automata, then to deterministic automata, minimized for efficiency, and finally simulated for recognition.">
+    <circle cx="120" cy="140" r="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="120" y="140" font-size="11" fill="#1976d2" text-anchor="middle">Regular</text>
+    <text x="120" y="153" font-size="11" fill="#1976d2" text-anchor="middle">Expr</text>
+    <line x1="155" y1="140" x2="200" y2="140" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+    <circle cx="235" cy="140" r="35" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="235" y="145" font-size="11" fill="#388e3c" text-anchor="middle">NFA</text>
+    <line x1="270" y1="140" x2="315" y2="140" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+    <circle cx="350" cy="140" r="35" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="350" y="145" font-size="11" fill="#ff9800" text-anchor="middle">DFA</text>
+    <line x1="385" y1="140" x2="430" y2="140" stroke="#ff9800" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+    <circle cx="465" cy="140" r="35" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="465" y="140" font-size="11" fill="#9c27b0" text-anchor="middle">Minimize</text>
+    <text x="465" y="153" font-size="11" fill="#9c27b0" text-anchor="middle">DFA</text>
+    <line x1="500" y1="140" x2="545" y2="140" stroke="#9c27b0" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+    <circle cx="580" cy="140" r="35" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="580" y="140" font-size="11" fill="#f44336" text-anchor="middle">Simulate</text>
+    <text x="580" y="153" font-size="11" fill="#f44336" text-anchor="middle">DFA</text>
+  </g>
+
+  <!-- Step 2: DFA for Identifier -->
+  <g id="step2" class="step" data-narration="A deterministic finite automaton for identifiers has two states. From the start state, a letter transitions to the accepting state. The accepting state loops on letters and digits until a non-matching character.">
+    <text x="400" y="80" font-size="15" font-weight="bold" fill="#1976d2" text-anchor="middle">DFA for Identifier Recognition</text>
+
+    <circle cx="250" cy="150" r="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="250" y="145" font-size="12" font-weight="bold" fill="#1976d2" text-anchor="middle">Start</text>
+    <text x="250" y="162" font-size="10" fill="#0d47a1" text-anchor="middle">State 0</text>
+
+    <line x1="290" y1="150" x2="410" y2="150" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <text x="350" y="140" font-size="11" fill="#1976d2" text-anchor="middle">letter</text>
+
+    <circle cx="450" cy="150" r="40" fill="#e8f5e9" stroke="#388e3c" stroke-width="3"/>
+    <circle cx="450" cy="150" r="34" fill="none" stroke="#388e3c" stroke-width="2"/>
+    <text x="450" y="145" font-size="12" font-weight="bold" fill="#388e3c" text-anchor="middle">Accept</text>
+    <text x="450" y="162" font-size="10" fill="#2e7d32" text-anchor="middle">State 1</text>
+
+    <path d="M 480 120 Q 520 100 490 110" stroke="#388e3c" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+    <text x="530" y="100" font-size="10" fill="#388e3c">letter | digit</text>
+  </g>
+
+  <!-- Step 3: DFA for Integer -->
+  <g id="step3" class="step" data-narration="Integer recognition uses a similar automaton. The start state transitions on any digit to an accepting state which loops on digits. This recognizes sequences like forty-two or one thousand.">
+    <text x="400" y="80" font-size="15" font-weight="bold" fill="#ff9800" text-anchor="middle">DFA for Integer Recognition</text>
+
+    <circle cx="280" cy="160" r="38" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="280" y="165" font-size="11" font-weight="bold" fill="#ff9800" text-anchor="middle">Start</text>
+
+    <line x1="318" y1="160" x2="402" y2="160" stroke="#ff9800" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <text x="360" y="150" font-size="11" fill="#ff9800" text-anchor="middle">digit</text>
+
+    <circle cx="440" cy="160" r="38" fill="#e8f5e9" stroke="#388e3c" stroke-width="3"/>
+    <circle cx="440" cy="160" r="32" fill="none" stroke="#388e3c" stroke-width="2"/>
+    <text x="440" y="165" font-size="11" font-weight="bold" fill="#388e3c" text-anchor="middle">Accept</text>
+
+    <path d="M 468 135 Q 500 115 475 125" stroke="#388e3c" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+    <text x="510" y="115" font-size="10" fill="#388e3c">digit</text>
+  </g>
+
+  <!-- Step 4: Transition Table -->
+  <g id="step4" class="step" data-narration="The transition table implements the finite automaton. Each row represents a state, columns represent input symbols. Table entries specify the next state for each input, enabling efficient linear-time simulation.">
+    <rect x="200" y="80" width="400" height="180" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="400" y="110" font-size="15" font-weight="bold" fill="#9c27b0" text-anchor="middle">DFA Transition Table</text>
+
+    <rect x="230" y="130" width="340" height="30" fill="#fce4ec" stroke="#9c27b0" stroke-width="1"/>
+    <text x="270" y="150" font-size="12" font-weight="bold" fill="#6a1b9a">State</text>
+    <text x="370" y="150" font-size="12" font-weight="bold" fill="#6a1b9a">letter</text>
+    <text x="480" y="150" font-size="12" font-weight="bold" fill="#6a1b9a">digit</text>
+
+    <rect x="230" y="160" width="340" height="30" fill="#fff" stroke="#9c27b0" stroke-width="1"/>
+    <text x="270" y="180" font-size="11" fill="#6a1b9a">0</text>
+    <text x="370" y="180" font-size="11" fill="#6a1b9a">1</text>
+    <text x="480" y="180" font-size="11" fill="#6a1b9a">-</text>
+
+    <rect x="230" y="190" width="340" height="30" fill="#fff" stroke="#9c27b0" stroke-width="1"/>
+    <text x="270" y="210" font-size="11" fill="#6a1b9a">1 (F)</text>
+    <text x="370" y="210" font-size="11" fill="#6a1b9a">1</text>
+    <text x="480" y="210" font-size="11" fill="#6a1b9a">1</text>
+  </g>
+
+  <!-- Step 5: Recognition Example -->
+  <g id="step5" class="step" data-narration="Recognizing the identifier 'count' step-by-step. Start at state zero, read 'c' transition to state one, read 'o' stay in one, 'u' stay, 'n' stay, 't' stay. Next character is non-alphanumeric, accept token.">
+    <rect x="150" y="90" width="500" height="160" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="120" font-size="15" font-weight="bold" fill="#1976d2" text-anchor="middle">Step-by-Step Recognition: "count"</text>
+
+    <text x="180" y="150" font-size="12" fill="#0d47a1">State 0 + 'c' (letter) → State 1</text>
+    <text x="180" y="175" font-size="12" fill="#0d47a1">State 1 + 'o' (letter) → State 1</text>
+    <text x="180" y="200" font-size="12" fill="#0d47a1">State 1 + 'u' (letter) → State 1</text>
+    <text x="180" y="225" font-size="12" fill="#0d47a1">State 1 + 'n' (letter) → State 1</text>
+
+    <text x="480" y="150" font-size="12" fill="#0d47a1">State 1 + 't' (letter) → State 1</text>
+    <text x="480" y="175" font-size="12" fill="#0d47a1">State 1 + ' ' (other) → ACCEPT</text>
+    <text x="480" y="210" font-size="13" font-weight="bold" fill="#388e3c">Token: &lt;id, "count"&gt;</text>
+  </g>
+
+  <!-- Step 6: NFA to DFA Conversion -->
+  <g id="step6" class="step" data-narration="Subset construction converts nondeterministic automata to deterministic. Each DFA state corresponds to a set of NFA states. This eliminates epsilon transitions and multiple next-states, enabling efficient recognition.">
+    <rect x="100" y="90" width="280" height="140" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="240" y="120" font-size="14" font-weight="bold" fill="#388e3c" text-anchor="middle">NFA Properties</text>
+    <text x="120" y="150" font-size="11" fill="#2e7d32">• Multiple transitions</text>
+    <text x="120" y="170" font-size="11" fill="#2e7d32">• Epsilon transitions</text>
+    <text x="120" y="190" font-size="11" fill="#2e7d32">• Nondeterministic</text>
+    <text x="120" y="210" font-size="11" fill="#2e7d32">• Easy to construct</text>
+
+    <text x="400" y="160" font-size="18" font-weight="bold" fill="#1976d2">→</text>
+
+    <rect x="420" y="90" width="280" height="140" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="560" y="120" font-size="14" font-weight="bold" fill="#ff9800" text-anchor="middle">DFA Properties</text>
+    <text x="440" y="150" font-size="11" fill="#e65100">• Single transition</text>
+    <text x="440" y="170" font-size="11" fill="#e65100">• No epsilon moves</text>
+    <text x="440" y="190" font-size="11" fill="#e65100">• Deterministic</text>
+    <text x="440" y="210" font-size="11" fill="#e65100">• Efficient simulation</text>
+  </g>
+
+  <!-- Step 7: Lookahead and Retraction -->
+  <g id="step7" class="step" data-narration="Token boundaries require lookahead. The forward pointer scans ahead to determine token end. For operators like less-than versus less-equals, reading one character ahead resolves ambiguity. Retraction backs up if needed.">
+    <rect x="180" y="100" width="440" height="140" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="400" y="130" font-size="15" font-weight="bold" fill="#9c27b0" text-anchor="middle">Lookahead for Operators</text>
+
+    <text x="210" y="165" font-size="12" fill="#6a1b9a">Input: "a &lt;= b"</text>
+    <text x="210" y="190" font-size="12" fill="#6a1b9a">Read '&lt;' → might be &lt; or &lt;=</text>
+    <text x="210" y="215" font-size="12" fill="#6a1b9a">Read '=' → Token is &lt;=, no retract</text>
+  </g>
+
+  <!-- Step 8: Error Detection -->
+  <g id="step8" class="step" data-narration="Lexical errors occur when no pattern matches. Common errors include illegal characters, malformed numbers, and unterminated strings. Recovery strategies skip invalid characters until a valid token pattern appears.">
+    <rect x="150" y="90" width="500" height="150" rx="10" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="400" y="120" font-size="15" font-weight="bold" fill="#f44336" text-anchor="middle">Error Detection and Recovery</text>
+
+    <circle cx="250" cy="175" r="32" fill="#ffcdd2" stroke="#f44336" stroke-width="2"/>
+    <text x="250" y="180" font-size="10" fill="#c62828" text-anchor="middle">Illegal</text>
+    <text x="250" y="193" font-size="10" fill="#c62828" text-anchor="middle">char @</text>
+
+    <circle cx="400" cy="175" r="32" fill="#ffcdd2" stroke="#f44336" stroke-width="2"/>
+    <text x="400" y="180" font-size="10" fill="#c62828" text-anchor="middle">Malformed</text>
+    <text x="400" y="193" font-size="10" fill="#c62828" text-anchor="middle">123.45.6</text>
+
+    <circle cx="550" cy="175" r="32" fill="#ffcdd2" stroke="#f44336" stroke-width="2"/>
+    <text x="550" y="180" font-size="10" fill="#c62828" text-anchor="middle">Unclosed</text>
+    <text x="550" y="193" font-size="10" fill="#c62828" text-anchor="middle">"hello</text>
+  </g>
+</svg>

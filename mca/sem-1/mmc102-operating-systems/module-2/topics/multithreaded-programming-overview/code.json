@@ -1,0 +1,45 @@
+{
+  "topicId": "multithreaded-programming-overview",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic Thread Creation and Join",
+      "description": "Demonstrates creating a new thread and waiting for it to complete using pseudocode",
+      "code": "FUNCTION main()\n  threadHandle = CREATE_THREAD(workerFunction, arg)\n  PRINT \"Main thread continuing...\"\n  JOIN_THREAD(threadHandle)  // Wait for thread to finish\n  PRINT \"Thread completed\"\nEND FUNCTION\n\nFUNCTION workerFunction(arg)\n  PRINT \"Worker thread executing with arg: \" + arg\n  FOR i = 1 TO 5\n    PRINT \"Worker: \" + i\n  END FOR\n  RETURN 0\nEND FUNCTION",
+      "explanation": "This pseudocode shows the basic pattern of thread creation using pthread_create() equivalent. The main thread creates a worker thread that executes independently, while the main thread continues. JOIN_THREAD blocks until the worker thread completes.",
+      "timeComplexity": "O(1) for creation, O(n) for worker execution",
+      "spaceComplexity": "O(stack_size) for new thread stack"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "POSIX Thread Creation Example",
+      "description": "C program demonstrating pthread creation, passing arguments, and joining threads",
+      "code": "#include <pthread.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nvoid* threadFunction(void* arg) {\n    int* num = (int*)arg;\n    printf(\"Thread %d started\\n\", *num);\n    for(int i = 0; i < 5; i++) {\n        printf(\"Thread %d: iteration %d\\n\", *num, i);\n    }\n    printf(\"Thread %d finished\\n\", *num);\n    return NULL;\n}\n\nint main() {\n    pthread_t threads[3];\n    int threadArgs[3] = {1, 2, 3};\n    \n    // Create 3 threads\n    for(int i = 0; i < 3; i++) {\n        pthread_create(&threads[i], NULL, threadFunction, &threadArgs[i]);\n    }\n    \n    // Wait for all threads to complete\n    for(int i = 0; i < 3; i++) {\n        pthread_join(threads[i], NULL);\n    }\n    \n    printf(\"All threads completed\\n\");\n    return 0;\n}",
+      "explanation": "This C code demonstrates POSIX threads (pthread). pthread_create() creates a new thread executing threadFunction. Each thread receives a unique argument. pthread_join() makes the main thread wait for each thread to complete. The threads execute concurrently, with output interleaved based on OS scheduling.",
+      "timeComplexity": "O(n) for thread execution where n is iteration count",
+      "spaceComplexity": "O(stack_size) per thread + O(1) for thread handles"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Python Threading with Thread Class",
+      "description": "Python program showing thread creation using the threading module with synchronization",
+      "code": "import threading\nimport time\n\nshared_counter = 0\nlock = threading.Lock()\n\ndef worker(thread_id, iterations):\n    global shared_counter\n    for i in range(iterations):\n        with lock:  # Acquire lock before modifying shared data\n            current = shared_counter\n            time.sleep(0.001)  # Simulate some work\n            shared_counter = current + 1\n        time.sleep(0.001)\n    print(f\"Thread {thread_id} finished\")\n\n# Create and start threads\nthreads = []\nfor i in range(4):\n    t = threading.Thread(target=worker, args=(i, 10))\n    threads.append(t)\n    t.start()\n\n# Wait for all threads to complete\nfor t in threads:\n    t.join()\n\nprint(f\"Final counter value: {shared_counter} (expected: 40)\")",
+      "explanation": "This Python code demonstrates threading with synchronization. The lock ensures mutual exclusion when modifying shared_counter. Without the lock, race conditions would cause lost updates. Thread.start() begins execution, and Thread.join() waits for completion. This demonstrates why synchronization is critical in multithreaded programs.",
+      "timeComplexity": "O(n * iterations) where n is number of threads",
+      "spaceComplexity": "O(n) for thread objects + O(1) for shared data"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Thread Pool Implementation",
+      "description": "Pseudocode showing how a thread pool works with a task queue",
+      "code": "CLASS ThreadPool\n  queue taskQueue\n  list workerThreads\n  int poolSize\n  boolean shutdownFlag\n  \n  CONSTRUCTOR ThreadPool(size)\n    poolSize = size\n    FOR i = 1 TO size\n      workerThreads.add(CREATE_THREAD(workerFunction, this))\n    END FOR\n  END CONSTRUCTOR\n  \n  METHOD submitTask(task)\n    taskQueue.enqueue(task)\n  END METHOD\n  \n  FUNCTION workerFunction(pool)\n    WHILE NOT pool.shutdownFlag\n      task = pool.taskQueue.dequeue(TIMEOUT)  // Wait for task\n      IF task != NULL THEN\n        task.execute()\n      END IF\n    END WHILE\n  END FUNCTION\n  \n  METHOD shutdown()\n    shutdownFlag = TRUE\n    FOR EACH thread IN workerThreads\n      JOIN_THREAD(thread)\n    END FOR\n  END METHOD\nEND CLASS",
+      "explanation": "This pseudocode shows a thread pool implementation. Instead of creating a new thread for each task, a fixed pool of worker threads wait on a task queue. When tasks are submitted, idle workers pick them up. This reduces thread creation overhead and limits resource usage. The shutdown method gracefully terminates all workers.",
+      "timeComplexity": "O(1) for task submission, O(task_time) for execution",
+      "spaceComplexity": "O(pool_size) for worker threads + O(queue_size) for tasks"
+    }
+  ]
+}

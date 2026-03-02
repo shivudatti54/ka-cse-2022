@@ -1,0 +1,99 @@
+{
+  "topicId": "fchdir-and-getcwd-functions-device-special-files",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between chdir() and fchdir() system calls.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "chdir() takes a pathname as argument",
+        "fchdir() takes a file descriptor as argument",
+        "fchdir() is more efficient when directory is already open",
+        "fchdir() avoids pathname resolution"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are device special files in Unix? Differentiate between character and block devices.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Device special files provide access to hardware devices",
+        "Character devices transfer data character by character (unbuffered)",
+        "Block devices transfer data in fixed-size blocks (buffered)",
+        "Examples: terminals, keyboards (character); disks, CDs (block)"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the purpose of major and minor device numbers.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Major number identifies the device driver",
+        "Minor number identifies the specific device instance",
+        "Together they uniquely identify a device",
+        "Used in mknod() and stored in stat structure (st_dev, st_rdev)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Write the syntax and return values for getcwd() function.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Syntax: char *getcwd(char *buf, size_t size)",
+        "Returns pointer to buffer on success",
+        "Returns NULL on failure with errno set",
+        "Common error: ERANGE when buffer is too small"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "How does mknod() system call work? Explain its parameters.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "mknod() creates a special file (device file, FIFO, or socket)",
+        "Parameters: path (filename), mode (file type + permissions), dev (device numbers)",
+        "Returns 0 on success, -1 on failure",
+        "Only privileged users can create device files (except FIFOs)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Explain fchdir() system call in detail with its syntax, parameters, return values, and error conditions.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Syntax: int fchdir(int fd)",
+        "fd must refer to an open directory",
+        "Returns 0 on success, -1 on failure",
+        "Error conditions: EBADF (invalid fd), ENOTDIR (not a directory), EINVAL (unsupported)",
+        "Advantages over chdir() - works with O_CLOEXEC directories, avoids path resolution"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain how device special files are represented in Unix/Linux. Discuss the stat structure fields for devices and how to create device files.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Device files are in /dev directory",
+        "Two types: character special and block special files",
+        "stat structure: st_dev (device ID), st_rdev (real device for specials)",
+        "makedev(major, minor) creates device number",
+        "mknod() creates device files: mknod(path, S_IFBLK|S_IRWXU|major|minor, makedev(major,minor))",
+        "Access through open(), read(), write() system calls"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "topicId": "encapsulating-security-payload",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the purpose and function of Encapsulating Security Payload (ESP) in IPSec.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Focus on confidentiality, integrity, and authentication functions",
+      "keyPoints": [
+        "ESP provides confidentiality through encryption",
+        "ESP provides integrity and authentication via ICV",
+        "ESP operates at the IP layer as part of IPSec suite",
+        "It protects the payload of IP packets",
+        "It can optionally provide anti-replay protection using sequence numbers"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the fields in the ESP header format.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "List all fields in the ESP header with their sizes and purposes",
+      "keyPoints": [
+        "Security Parameters Index (SPI) - 32-bit field identifying SA",
+        "Sequence Number - 32-bit monotonically increasing counter",
+        "Payload Data - encrypted data",
+        "Padding - for block alignment",
+        "Pad Length - indicates padding length",
+        "Next Header - type of next header",
+        "Authentication Data - optional ICV for integrity"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between ESP transport mode and ESP tunnel mode?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Compare the scope of encryption in both modes",
+      "keyPoints": [
+        "Transport mode encrypts only the payload, keeping IP header visible",
+        "Tunnel mode encrypts the entire original IP packet including header",
+        "Transport mode used for host-to-host communication",
+        "Tunnel mode used for gateway-to-gateway or gateway-to-host",
+        "Tunnel mode creates new IP header for encrypted packet"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the role of Security Parameters Index (SPI) in ESP.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Think of SPI as a pointer to the SA database entry",
+      "keyPoints": [
+        "SPI is a 32-bit identifier",
+        "It uniquely identifies the Security Association (SA)",
+        "SPI is combined with destination IP address and protocol number",
+        "It helps receiver select correct SA for packet processing",
+        "SPI is present in both ESP header and used for lookup"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Why is padding required in ESP?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Consider block cipher requirements and traffic analysis protection",
+      "keyPoints": [
+        "Encryption algorithms require input as multiple of block size",
+        "Padding ensures payload aligns to algorithm's block size",
+        "Padding also helps hide actual length of plaintext",
+        "Pad Length field indicates number of padding bytes",
+        "Common block sizes: 64-bit (DES), 128-bit (AES)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Explain the ESP packet processing steps at the sender and receiver ends.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Break down into sender and receiver processing with proper sequence",
+      "keyPoints": [
+        "Sender: Select appropriate SA based on destination",
+        "Sender: Add SPI and sequence number to header",
+        "Sender: Apply padding if required for encryption",
+        "Sender: Encrypt payload using chosen algorithm",
+        "Sender: Calculate and append authentication data (if confidentiality + auth selected)",
+        "Receiver: Extract SPI and locate SA",
+        "Receiver: Verify sequence number for anti-replay",
+        "Receiver: Verify authentication data first",
+        "Receiver: Decrypt payload and remove padding",
+        "Receiver: Pass decrypted packet to upper layer"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare ESP with AH (Authentication Header) protocol in terms of security services provided.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "List security services provided by each protocol",
+      "keyPoints": [
+        "AH provides only authentication and integrity, no confidentiality",
+        "ESP provides confidentiality (encryption) plus optional authentication",
+        "AH protects IP header fields that don't change in transit",
+        "ESP protects only the payload data",
+        "AH uses ICV calculation covering entire packet including immutable fields",
+        "ESP can use NULL encryption for authentication only",
+        "Both provide anti-replay protection via sequence numbers",
+        "ESP is more widely used due to confidentiality feature"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the encryption algorithms supported by ESP with their key sizes.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "List major algorithms with their key sizes",
+      "keyPoints": [
+        "DES (Data Encryption Standard) - 56-bit key",
+        "3DES (Triple DES) - 168-bit key (three 56-bit keys)",
+        "AES (Advanced Encryption Standard) - 128, 192, or 256-bit keys",
+        "NULL algorithm - no encryption (for authentication only mode)",
+        "RC5, IDEA, CAST are other optional algorithms",
+        "AES-GCM provides authenticated encryption",
+        "Choice affects security level and performance"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the ESP trailer format and explain the Next Header field.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Structure your answer covering all trailer fields",
+      "keyPoints": [
+        "ESP trailer contains: Padding, Pad Length, Next Header",
+        "Padding: 0-255 bytes for block alignment",
+        "Pad Length: 8-bit field indicating padding length",
+        "Next Header: 8-bit field identifies protocol of encrypted payload",
+        "Values: 4 (IP), 6 (TCP), 17 (UDP), 50 (ESP)",
+        "Authentication trailer follows if auth is selected"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain how ESP provides anti-replay protection using sequence numbers.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Focus on the sliding window mechanism at receiver",
+      "keyPoints": [
+        "Each ESP packet has a unique 32-bit sequence number",
+        "Sequence number starts at 1 and increments for each packet",
+        "Sender increments sequence number for every packet sent",
+        "Receiver maintains a sliding window for accepted sequence numbers",
+        "Packets with reused sequence numbers are rejected",
+        "This prevents attackers from capturing and replaying packets",
+        "Window size is configurable, typically 64 packets"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Calculate the padding required for an ESP packet with a TCP payload of 300 bytes using AES-128 encryption (128-bit = 16 bytes block size).",
+      "marks": 5,
+      "difficulty": "hard",
+      "hint": "Account for Next Header byte in the calculation",
+      "keyPoints": [
+        "TCP payload = 300 bytes",
+        "Add Next Header field (1 byte) = 301 bytes",
+        "Block size for AES = 16 bytes",
+        "Find remainder: 301 mod 16 = 13",
+        "Padding needed = 16 - 13 = 3 bytes minimum",
+        "However, if result is 0, still add full block of 16 for plaintext length ambiguity",
+        "Total padded data = 301 + 3 = 304 bytes (divisible by 16)"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "In an ESP tunnel mode operation, if the original IP packet is 1500 bytes and a new IP header of 20 bytes is added, calculate the total overhead. Given: SPI (4 bytes) + Sequence Number (4 bytes) + Authentication Tag (12 bytes) + AES block padding.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Consider original IP header is also encrypted in tunnel mode",
+      "keyPoints": [
+        "Original packet = 1500 bytes",
+        "New IP header = 20 bytes (outer header)",
+        "ESP header = SPI + Seq No = 4 + 4 = 8 bytes",
+        "Authentication tag = 12 bytes",
+        "For AES-128: block size = 16 bytes",
+        "Payload = 1500 + 20 (original IP header) + Next Header (1) = 1521 bytes",
+        "Padding: 1521 mod 16 = 1, so need 15 bytes padding",
+        "Pad Length field = 1 byte",
+        "Total overhead = 20 + 8 + 15 + 1 + 12 = 56 bytes"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "Design an ESP Security Association (SA) entry with following specifications: AES-256 for encryption, HMAC-SHA-256 for authentication, Transport mode, and anti-replay window of 64 packets. List all fields that would be in this SA database entry.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Include both security parameters and operational parameters",
+      "keyPoints": [
+        "Destination IP Address",
+        "SPI (Security Parameters Index) - unique 32-bit value",
+        "Encryption Algorithm: AES-256",
+        "Encryption Key: 256-bit (32 bytes) key material",
+        "Authentication Algorithm: HMAC-SHA-256",
+        "Authentication Key: 256-bit key material",
+        "Mode: Transport",
+        "Sequence Number Counter: Initial value (typically 1)",
+        "Anti-replay Window: 64 packets (bitmap of 64 bits)",
+        "Lifetime: Expiry time or byte count",
+        "IPSec Protocol: ESP (protocol number 50)"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "What is the purpose of the Next Header field in ESP?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Similar to Protocol field in IP header",
+      "keyPoints": [
+        "It indicates the protocol type of the encapsulated payload",
+        "Values follow Internet Protocol numbers",
+        "Value 6 indicates TCP",
+        "Value 17 indicates UDP",
+        "Value 4 indicates IP (for nested tunnel)",
+        "Value 50 indicates ESP itself",
+        "Helps demultiplex at receiver to pass to correct protocol handler"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "short",
+      "question": "Explain the concept of ESP combined mode and its advantages.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Consider algorithms like AES-GCM that provide AEAD",
+      "keyPoints": [
+        "Combined mode uses algorithms that provide both encryption and authentication",
+        "Examples: AES-GCM, AES-CCM",
+        "Single algorithm performs both functions efficiently",
+        "Advantages: Reduced computational overhead",
+        "Advantages: Smaller packet overhead (single pass processing)",
+        "Advantages: Better security through integrated design",
+        "Authentication covers encrypted data (Encrypt-then-MAC)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "bus-structure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Centralized Bus Arbitration Algorithm",
+      "description": "Demonstrates how a central arbiter grants bus access to devices based on priority",
+      "code": "ALGORITHM CentralizedArbitration\nBEGIN\n  REPEAT\n    FOR each device IN active_devices DO\n      IF device.request = TRUE THEN\n        arbiter.evaluate_priority(device.id)\n      END IF\n    END FOR\n    \n    selected_device \u2190 get_highest_priority_device()\n    \n    FOR each device IN active_devices DO\n      IF device.id = selected_device.id THEN\n        device.grant \u2190 TRUE\n        bus_master \u2190 device\n      ELSE\n        device.grant \u2190 FALSE\n      END IF\n    END FOR\n    \n    WAIT UNTIL bus_release_signal\n    bus_master \u2190 NULL\n  UNTIL system_shutdown\nEND",
+      "explanation": "The algorithm shows a central arbiter collecting requests from all devices, evaluating their priorities, and granting bus access to the highest priority device. Other devices must wait until the current master releases the bus.",
+      "timeComplexity": "O(n) where n is number of devices",
+      "spaceComplexity": "O(n) for storing device states"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Bus Bandwidth Calculation",
+      "description": "Python program to calculate bus bandwidth",
+      "code": "def calculate_bandwidth(bus_width_bits, clock_rate_mhz):\n    \"\"\"\n    Calculate bus bandwidth in MB/s\n    \n    Args:\n        bus_width_bits: Width of bus in bits (e.g., 32, 64)\n        clock_rate_mhz: Clock rate in MHz\n    \n    Returns:\n        Bandwidth in MB/s\n    \"\"\"\n    # Bandwidth = (Width in bits \u00d7 Clock rate) / 8 (for bytes)\n    bandwidth_bytes_per_sec = (bus_width_bits * clock_rate_mhz * 1_000_000) / 8\n    bandwidth_mb_per_sec = bandwidth_bytes_per_sec / (1024 * 1024)\n    \n    return bandwidth_mb_per_sec\n\n# Example calculations\nif __name__ == \"__main__\":\n    # Example 1: 32-bit bus at 100 MHz\n    bw1 = calculate_bandwidth(32, 100)\n    print(f\"32-bit bus at 100 MHz: {bw1:.2f} MB/s\")\n    \n    # Example 2: 64-bit bus at 200 MHz\n    bw2 = calculate_bandwidth(64, 200)\n    print(f\"64-bit bus at 200 MHz: {bw2:.2f} MB/s\")\n    \n    # Example 3: PCIe x16 (16 lanes, each lane ~1 GB/s)\n    pcie_bandwidth = 16 * 1  # GB/s\n    print(f\"PCIe x16: {pcie_bandwidth} GB/s = {pcie_bandwidth * 1000:.0f} MB/s\")",
+      "explanation": "This program calculates theoretical bus bandwidth using the formula: Bandwidth = (Bus Width \u00d7 Clock Rate) / 8 bytes per second. It demonstrates how wider buses and higher clock rates increase bandwidth.",
+      "timeComplexity": "O(1) constant time",
+      "spaceComplexity": "O(1) constant space"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Memory Read Operation via Bus",
+      "description": "C program demonstrating memory read operation across the system bus",
+      "code": "#include <stdio.h>\n#include <stdint.h>\n\n// Simulated memory array\nuint8_t memory[65536];\n\n// Bus control register simulation\nvolatile uint32_t *addr_reg = (uint32_t *)0x1000;\nvolatile uint32_t *data_reg = (uint32_t *)0x2000;\nvolatile uint32_t *control_reg = (uint32_t *)0x3000;\n\n// Control bits\n#define CTRL_READ  0x01\n#define CTRL_WRITE 0x02\n#define CTRL_READY 0x04\n\n// Function to read from memory via bus\nuint8_t memory_read(uint16_t address) {\n    // Step 1: Place address on address bus\n    *addr_reg = address;\n    \n    // Step 2: Set READ control signal\n    *control_reg = CTRL_READ;\n    \n    // Step 3: Wait for memory response (with timeout)\n    int wait_cycles = 0;\n    while (!(*control_reg & CTRL_READY) && wait_cycles < 100) {\n        wait_cycles++;\n    }\n    \n    // Step 4: Read data from data bus\n    uint8_t data = (uint8_t)*data_reg;\n    \n    // Step 5: Clear control signals\n    *control_reg = 0;\n    \n    return data;\n}\n\nint main() {\n    // Initialize some memory\n    memory[0x0100] = 0xAA;\n    memory[0x0101] = 0xBB;\n    \n    // Read data from memory\n    uint8_t value = memory_read(0x0100);\n    printf(\"Read value: 0x%02X\\n\", value);\n    \n    return 0;\n}",
+      "explanation": "This C program simulates how a CPU reads data from memory using the system bus. It demonstrates the five steps: address placement, read signal assertion, wait for memory response, data retrieval, and signal cleanup.",
+      "timeComplexity": "O(w) where w is wait states inserted",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Daisy-Chain Bus Arbitration Protocol",
+      "description": "Shows how daisy-chain arbitration grants bus access based on device position",
+      "code": "ALGORITHM DaisyChainArbitration\nBEGIN\n  // Device 0 has highest priority, Device N has lowest\n  \n  PROCEDURE GrantBus(device_id)\n    IF device_id = 0 THEN\n      IF device[0].request = TRUE THEN\n        device[0].grant \u2190 TRUE\n        bus_master \u2190 device[0]\n        RETURN\n      ELSE\n        // Pass grant to next device\n        GrantBus(1)\n      END IF\n    ELSE IF device_id < MAX_DEVICES THEN\n      IF device[device_id].request = TRUE THEN\n        device[device_id].grant \u2190 TRUE\n        bus_master \u2190 device[device_id]\n      ELSE\n        // Pass grant to next device in chain\n        GrantBus(device_id + 1)\n      END IF\n    ELSE\n      // No device requested bus\n      bus_master \u2190 NULL\n    END IF\n  END PROCEDURE\n  \n  // Main arbitration loop\n  WHILE system_running DO\n    // Collect all requests\n    FOR i = 0 TO MAX_DEVICES-1 DO\n      device[i].request \u2190 read_request_line(i)\n    END FOR\n    \n    // Start daisy-chain grant process\n    GrantBus(0)\n    \n    // Wait for bus release\n    WAIT UNTIL bus_master.release = TRUE\n    bus_master \u2190 NULL\n  END WHILE\nEND",
+      "explanation": "In daisy-chain arbitration, devices are connected in series with grant signals passed from one to the next. The device closest to the arbiter (Device 0) gets first chance; if it doesn't request, the grant passes to Device 1, and so on.",
+      "timeComplexity": "O(n) in worst case where n is number of devices",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "cpp-streams",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "File Reading with Error Checking",
+      "description": "Demonstrates proper file opening with error handling",
+      "code": "#include <fstream>\n#include <iostream>\nusing namespace std;\n\nint main() {\n ifstream file(\"data.txt\");\n \n // Check if file opened successfully\n if (!file.is_open()) {\n cout << \"Error: Could not open file\" << endl;\n return 1;\n }\n \n string line;\n while (getline(file, line)) {\n cout << line << endl;\n }\n \n // Check why loop ended\n if (file.eof()) {\n cout << \"End of file reached\" << endl;\n } else if (file.fail()) {\n cout << \"Read error occurred\" << endl;\n }\n \n file.close();\n return 0;\n}",
+      "explanation": "Shows proper file opening with is_open() check, reading lines with getline(), and checking stream state with eof() and fail() to determine why reading stopped.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Stringstream Conversion Example",
+      "description": "Converts between strings and numbers using stringstream",
+      "code": "#include <sstream>\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n // Number to String\n int num = 42;\n double pi = 3.14159;\n stringstream ss;\n ss << num << \" \" << pi;\n string str = ss.str();\n cout << \"As string: \" << str << endl;\n \n // String to Number\n string input = \"100 2.5\";\n stringstream ss2(input);\n int a; double b;\n ss2 >> a >> b;\n cout << \"Parsed: \" << a << \" and \" << b << endl;\n \n // Tokenizing\n string data = \"apple,banana,cherry\";\n stringstream ss3(data);\n string token;\n while (getline(ss3, token, ',')) {\n cout << token << endl;\n }\n \n return 0;\n}",
+      "explanation": "Demonstrates three uses: converting numbers to formatted strings, parsing strings into numbers, and tokenizing strings using custom delimiters.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Random Access in Binary File",
+      "description": "Shows random access reading and writing using seek functions",
+      "code": "#include <fstream>\n#include <iostream>\nusing namespace std;\n\nstruct Student {\n int rollno;\n char name[20];\n float marks;\n};\n\nint main() {\n // Write records\n ofstream outFile(\"students.dat\", ios::binary);\n Student s1 = {1, \"Alice\", 95.5};\n Student s2 = {2, \"Bob\", 87.0};\n outFile.write((char*)&s1, sizeof(Student));\n outFile.write((char*)&s2, sizeof(Student));\n outFile.close();\n \n // Read specific record (2nd record)\n ifstream inFile(\"students.dat\", ios::binary);\n inFile.seekg(sizeof(Student), ios::beg); // Skip 1st record\n Student s;\n inFile.read((char*)&s, sizeof(Student));\n cout << \"Second student: \" << s.name << endl;\n \n // Get current position\n streampos pos = inFile.tellg();\n cout << \"Current position: \" << pos << endl;\n \n inFile.close();\n return 0;\n}",
+      "explanation": "Demonstrates binary file I/O with seekp/seekg for random access. Uses sizeof(Student) to calculate record positions for direct access to any record.",
+      "timeComplexity": "O(1) per record",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Using Stream Manipulators",
+      "description": "Demonstrates various formatting manipulators",
+      "code": "#include <iostream>\n#include <iomanip>\nusing namespace std;\n\nint main() {\n // Width and alignment\n cout << left << setw(10) << \"Hello\" << \"|\" << endl;\n cout << right << setw(10) << \"World\" << \"|\" << endl;\n \n // Fill character\n cout << setfill('*') << setw(10) << \"Test\" << endl;\n \n // Precision\n double pi = 3.14159265;\n cout << \"Default: \" << pi << endl;\n cout << \"Fixed: \" << fixed << setprecision(2) << pi << endl;\n cout << \"Scientific: \" << scientific << pi << endl;\n \n // Number base\n int num = 255;\n cout << \"Decimal: \" << dec << num << endl;\n cout << \"Hex: \" << hex << num << endl;\n cout << \"Octal: \" << oct << num << endl;\n \n // Boolean alpha\n cout << boolalpha << true << \" \" << false << endl;\n \n return 0;\n}",
+      "explanation": "Shows common manipulators: setw for width, left/right for alignment, setfill for fill character, fixed/scientific for floating-point notation, hex/dec/oct for base, boolalpha for boolean display.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

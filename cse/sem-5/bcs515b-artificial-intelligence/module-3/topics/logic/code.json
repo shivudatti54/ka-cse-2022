@@ -1,0 +1,45 @@
+{
+  "topicId": "logic",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Truth Table Generator for Compound Proposition",
+      "description": "Algorithm to generate truth table for any compound proposition with n propositions",
+      "code": "ALGORITHM TruthTable(n)\n// n = number of propositions\nBEGIN\n rows ← 2^n\n FOR i FROM 0 to rows-1 DO\n // Convert i to binary to get truth values\n FOR j FROM 0 to n-1 DO\n prop[j] ← (i >> (n-1-j)) % 2 // 0=FALSE, 1=TRUE\n END FOR\n // Evaluate compound proposition for this row\n result ← EvaluateProposition(prop)\n OUTPUT prop[], result\n END FOR\nEND\n\nFUNCTION EvaluateProposition(prop)\nBEGIN\n // Example: Evaluate p AND (p OR q)\n // p = prop[0], q = prop[1]\n result ← prop[0] AND (prop[0] OR prop[1])\n RETURN result\nEND",
+      "explanation": "This pseudocode generates all 2^n rows for n propositions. Each row represents a unique combination of truth values. The EvaluateProposition function computes the truth value of the compound proposition for each row.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Check for Tautology",
+      "description": "Algorithm to determine if a compound proposition is a tautology",
+      "code": "ALGORITHM CheckTautology(propList, n)\n// propList = list of propositions\n// n = number of propositions\nBEGIN\n rows ← 2^n\n FOR i FROM 0 to rows-1 DO\n truthValues ← GetTruthValues(i, n)\n result ← Evaluate(truthValues)\n IF result = FALSE THEN\n RETURN FALSE // Not a tautology\n END IF\n END FOR\n RETURN TRUE // All rows resulted in TRUE\nEND\n\nFUNCTION GetTruthValues(num, n)\nBEGIN\n values ← []\n FOR k FROM 0 to n-1 DO\n bit ← (num >> (n-1-k)) % 2\n values.append(bit == 1)\n END FOR\n RETURN values\nEND",
+      "explanation": "To check if a proposition is a tautology, we evaluate it for ALL possible truth assignments. If the result is TRUE for every row, it is a tautology. If any row is FALSE, it is not a tautology (could be contradiction or contingency).",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Evaluate Predicate Logic Formula",
+      "description": "Algorithm to evaluate a universally quantified predicate formula",
+      "code": "ALGORITHM EvaluateUniversal(domain, predicate)\n// domain = set of elements to check\n// predicate = function that returns TRUE/FALSE for each element\nBEGIN\n FOR EACH element IN domain DO\n IF predicate(element) = FALSE THEN\n RETURN FALSE // Found element that fails\n END IF\n END FOR\n RETURN TRUE // All elements satisfied the predicate\nEND\n\nALGORITHM EvaluateExistential(domain, predicate)\nBEGIN\n FOR EACH element IN domain DO\n IF predicate(element) = TRUE THEN\n RETURN TRUE // Found at least one satisfying element\n END IF\n END FOR\n RETURN FALSE // No element satisfied the predicate\nEND\n\n// Example usage:\n// Domain: {1,2,3,4,5}\n// Predicate: IsPrime(x)\n// EvaluateUniversal: checks if ALL elements are prime → FALSE\n// EvaluateExistential: checks if ANY element is prime → TRUE (2,3,5)",
+      "explanation": "These algorithms simulate quantifier evaluation. ∀ (universal) checks every element - returns TRUE only if ALL satisfy the predicate. ∃ (existential) returns TRUE if AT LEAST ONE satisfies the predicate.",
+      "timeComplexity": "O(m) for domain of size m",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Modus Ponens Inference Engine",
+      "description": "Simple inference system implementing Modus Ponens to derive conclusions",
+      "code": "ALGORITHM ModusPonens(premises, query)\n// premises = list of (antecedent, consequent) pairs\n// query = proposition to prove\nBEGIN\n FOR EACH premise IN premises DO\n antecedent ← premise.antecedent\n consequent ← premise.consequent\n \n // If we know antecedent is true\n IF antecedent = TRUE OR CanProve(antecedent, premises) THEN\n // Then consequent must be true by Modus Ponens\n IF consequent = query THEN\n RETURN TRUE // Successfully derived query\n END IF\n END IF\n END FOR\n RETURN FALSE\nEND\n\n// Example:\n// Premises: [(Rains, Wet), (Studies, Passes)]\n// Query: Wet\n// Since Rains is TRUE, by Modus Ponens, Wet is TRUE\n// Output: TRUE",
+      "explanation": "This algorithm implements automated reasoning using Modus Ponens. Given known implications and confirmed antecedents, it derives the consequent as a new fact. This is fundamental to expert systems and logic programming.",
+      "timeComplexity": "O(n×m) where n=premises, m=proof depth",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

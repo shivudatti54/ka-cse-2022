@@ -1,0 +1,170 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the difference between DROP TABLE and TRUNCATE TABLE commands with an example.",
+    "expectedPoints": [
+      "DROP TABLE removes both table structure and all data permanently",
+      "TRUNCATE TABLE removes only all rows but preserves the table structure",
+      "DROP is a DDL command that auto-commits, TRUNCATE is also DDL but deallocates pages",
+      "Example: DROP TABLE Employees; vs TRUNCATE TABLE Employees;",
+      "DROP cannot be rolled back easily, TRUNCATE is faster due to minimal logging"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "Write SQL commands to: (a) Add a new column 'email' to Employees table (b) Rename 'Employees' table to 'Staff' (c) Add NOT NULL constraint to 'name' column.",
+    "expectedPoints": [
+      "(a) ALTER TABLE Employees ADD email VARCHAR(100);",
+      "(b) ALTER TABLE Employees RENAME TO Staff; or RENAME TABLE Employees TO Staff;",
+      "(c) ALTER TABLE Staff MODIFY name VARCHAR(100) NOT NULL; (MySQL) or ALTER TABLE Staff ALTER COLUMN name SET NOT NULL; (PostgreSQL)",
+      "Include appropriate data types in answers",
+      "Show correct syntax for each operation"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "What is the purpose of the IF EXISTS clause in DROP statements? Give an example.",
+    "expectedPoints": [
+      "IF EXISTS prevents errors when trying to drop a non-existent object",
+      "It checks if the object exists before attempting to drop it",
+      "Without IF EXISTS, dropping a non-existent table causes an error",
+      "Example: DROP TABLE IF EXISTS temp_table;",
+      "Useful in scripts that may run multiple times"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain how to add a foreign key constraint to an existing table using ALTER TABLE.",
+    "expectedPoints": [
+      "Use ALTER TABLE ADD CONSTRAINT to add foreign key",
+      "Syntax: ALTER TABLE child_table ADD CONSTRAINT fk_name FOREIGN KEY (col) REFERENCES parent_table(col);",
+      "The referenced column must be a primary key or unique in parent table",
+      "Existing data in child table must match parent table values",
+      "Can use ON DELETE CASCADE or ON UPDATE CASCADE options"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "Describe the steps to modify a column's data type from VARCHAR(50) to VARCHAR(100).",
+    "expectedPoints": [
+      "Use ALTER TABLE with MODIFY or ALTER COLUMN syntax",
+      "MySQL syntax: ALTER TABLE table_name MODIFY column_name VARCHAR(100);",
+      "PostgreSQL syntax: ALTER TABLE table_name ALTER COLUMN column_name TYPE VARCHAR(100);",
+      "Existing data must be compatible with new type",
+      "If data cannot be converted, the operation will fail"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "What are the precautions needed before dropping a column that is part of a foreign key relationship?",
+    "expectedPoints": [
+      "Check if the column is referenced by any foreign key constraints",
+      "Drop all foreign key constraints that reference the column first",
+      "Drop any views or triggers that depend on the column",
+      "Check for indexes on the column",
+      "Use CASCADE option if supported to automatically drop dependent objects"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "Explain the difference between DELETE and TRUNCATE commands in SQL.",
+    "expectedPoints": [
+      "DELETE is DML, TRUNCATE is DDL",
+      "DELETE removes rows one by one with transaction logging, TRUNCATE deallocates pages",
+      "DELETE can use WHERE clause, TRUNCATE removes all rows",
+      "DELETE can be rolled back within a transaction, TRUNCATE cannot",
+      "TRUNCATE is faster than DELETE for large datasets",
+      "TRUNCATE resets identity counters, DELETE does not"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Consider a database with tables 'Students' (StudentID PK, Name, Email, CourseID) and 'Courses' (CourseID PK, CourseName). Write SQL statements to: (a) Add a new column 'Fees' to Courses table (b) Add a foreign key in Students table referencing Courses (c) Rename Students table to 'Learners' (d) Add UNIQUE constraint on Email column (e) Drop the foreign key constraint.",
+    "expectedPoints": [
+      "(a) ALTER TABLE Courses ADD Fees DECIMAL(10,2);",
+      "(b) ALTER TABLE Students ADD CONSTRAINT fk_course FOREIGN KEY (CourseID) REFERENCES Courses(CourseID);",
+      "(c) ALTER TABLE Students RENAME TO Learners;",
+      "(d) ALTER TABLE Learners ADD CONSTRAINT uq_email UNIQUE (Email); or ALTER TABLE Learners MODIFY Email VARCHAR(100) UNIQUE;",
+      "(e) ALTER TABLE Learners DROP FOREIGN KEY constraint_name;",
+      "Use proper constraint naming conventions",
+      "Include appropriate data types"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Discuss the various schema change operations that can be performed using ALTER TABLE statement with examples for each.",
+    "expectedPoints": [
+      "ADD COLUMN: ALTER TABLE emp ADD dept_id INT;",
+      "MODIFY/CHANGE COLUMN: ALTER TABLE emp MODIFY name VARCHAR(100);",
+      "DROP COLUMN: ALTER TABLE emp DROP COLUMN dept_id;",
+      "RENAME COLUMN: ALTER TABLE emp RENAME COLUMN name TO emp_name;",
+      "ADD CONSTRAINTS: PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK, NOT NULL",
+      "DROP CONSTRAINTS: ALTER TABLE emp DROP PRIMARY KEY;",
+      "SET DEFAULT: ALTER TABLE emp ALTER COLUMN salary SET DEFAULT 0;",
+      "RENAME TABLE: ALTER TABLE emp RENAME TO employees;",
+      "Explain when each operation is used"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "A company wants to restructure their 'Products' table. Currently it has ProductID, ProductName, Price. They want to add 'Category' column, change Price to include tax, add a default value for Category, and ensure ProductName is unique. Write the complete SQL script and explain each step.",
+    "expectedPoints": [
+      "ALTER TABLE Products ADD Category VARCHAR(50); - add new column",
+      "ALTER TABLE Products MODIFY Price DECIMAL(10,2); - ensure proper decimal type",
+      "ALTER TABLE Products ALTER Category SET DEFAULT 'General'; - add default value",
+      "ALTER TABLE Products ADD CONSTRAINT uq_name UNIQUE (ProductName); - add unique constraint",
+      "Explain why each modification is done in order",
+      "Mention data type considerations for Price",
+      "Note that unique constraint requires no duplicate values in existing data",
+      "Include transaction considerations for multiple changes"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Explain the concept of constraints in schema changes. How do you add, drop, and modify constraints using ALTER TABLE? Provide examples for NOT NULL, PRIMARY KEY, FOREIGN KEY, and UNIQUE constraints.",
+    "expectedPoints": [
+      "Constraints enforce rules on table data",
+      "ADD NOT NULL: ALTER TABLE t MODIFY col TYPE NOT NULL; or ALTER TABLE t ALTER COLUMN col SET NOT NULL;",
+      "ADD PRIMARY KEY: ALTER TABLE t ADD CONSTRAINT pk PRIMARY KEY (col);",
+      "ADD FOREIGN KEY: ALTER TABLE t ADD CONSTRAINT fk FOREIGN KEY (col) REFERENCES parent(p);",
+      "ADD UNIQUE: ALTER TABLE t ADD CONSTRAINT uq UNIQUE (col);",
+      "DROP CONSTRAINT: ALTER TABLE t DROP CONSTRAINT constraint_name;",
+      "DROP PRIMARY KEY: ALTER TABLE t DROP PRIMARY KEY;",
+      "Explain dependency issues with foreign keys",
+      "Mention naming constraints for easier management"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

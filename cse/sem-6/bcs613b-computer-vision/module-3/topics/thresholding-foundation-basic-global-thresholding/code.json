@@ -1,0 +1,33 @@
+{
+  "topicId": "thresholding-foundation-basic-global-thresholding",
+  "examples": [
+    {
+      "id": "pseudocode-global-thresholding",
+      "title": "Algorithm: Basic Global Thresholding",
+      "description": "Pseudocode for the basic global thresholding algorithm",
+      "language": "pseudocode",
+      "code": "ALGORITHM GlobalThresholding\nINPUT: Grayscale image f(x, y), initial threshold T\nOUTPUT: Binary image g(x, y), optimal threshold T\n\nBEGIN\n WHILE convergence criterion not met DO\n Segment image f(x, y) using current threshold T\n Compute mean intensities m1 and m2 for pixel groups G1 and G2\n Compute new threshold T = (m1 + m2) / 2\n END WHILE\n RETURN binary image g(x, y) and optimal threshold T\nEND",
+      "explanation": "This pseudocode describes the basic global thresholding algorithm, which iteratively updates the threshold value until convergence."
+    },
+    {
+      "id": "python-global-thresholding",
+      "title": "Python: Basic Global Thresholding",
+      "description": "Python implementation of the basic global thresholding algorithm",
+      "language": "python",
+      "code": "import numpy as np\nfrom PIL import Image\n\ndef global_thresholding(image, initial_threshold):\n # Initialize threshold and convergence criterion\n T = initial_threshold\n delta = 0.5\n\n while True:\n # Segment image using current threshold\n binary_image = np.where(image > T, 1, 0)\n\n # Compute mean intensities for pixel groups\n G1 = image[binary_image == 1]\n G2 = image[binary_image == 0]\n m1 = np.mean(G1)\n m2 = np.mean(G2)\n\n # Compute new threshold\n new_T = (m1 + m2) / 2\n\n # Check for convergence\n if abs(new_T - T) < delta:\n break\n\n # Update threshold\n T = new_T\n\n return binary_image, T\n\n# Load grayscale image\nimage = np.array(Image.open('image.jpg').convert('L'))\n\n# Apply global thresholding\nbinary_image, optimal_threshold = global_thresholding(image, 128)\n\n# Save binary image\nImage.fromarray(binary_image.astype(np.uint8) * 255).save('binary_image.jpg')",
+      "explanation": "This Python code implements the basic global thresholding algorithm using NumPy and PIL libraries.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-global-thresholding",
+      "title": "C: Basic Global Thresholding",
+      "description": "C implementation of the basic global thresholding algorithm",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid global_thresholding(int *image, int width, int height, int initial_threshold) {\n // Initialize threshold and convergence criterion\n float T = initial_threshold;\n float delta = 0.5;\n\n while (1) {\n // Segment image using current threshold\n int *binary_image = (int *)malloc(width * height * sizeof(int));\n for (int i = 0; i < width * height; i++) {\n binary_image[i] = (image[i] > T) ? 1 : 0;\n }\n\n // Compute mean intensities for pixel groups\n float m1 = 0, m2 = 0;\n int count1 = 0, count2 = 0;\n for (int i = 0; i < width * height; i++) {\n if (binary_image[i] == 1) {\n m1 += image[i];\n count1++;\n } else {\n m2 += image[i];\n count2++;\n }\n }\n m1 /= count1;\n m2 /= count2;\n\n // Compute new threshold\n float new_T = (m1 + m2) / 2;\n\n // Check for convergence\n if (abs(new_T - T) < delta) {\n break;\n }\n\n // Update threshold\n T = new_T;\n\n free(binary_image);\n }\n}\n\nint main() {\n // Load grayscale image\n int width = 512, height = 512;\n int *image = (int *)malloc(width * height * sizeof(int));\n // ... load image data ...\n\n // Apply global thresholding\n global_thresholding(image, width, height, 128);\n\n free(image);\n return 0;\n}",
+      "explanation": "This C code implements the basic global thresholding algorithm using dynamic memory allocation.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

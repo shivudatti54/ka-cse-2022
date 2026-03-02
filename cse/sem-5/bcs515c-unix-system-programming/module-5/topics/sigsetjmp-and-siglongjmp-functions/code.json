@@ -1,0 +1,45 @@
+{
+  "topicId": "sigsetjmp-and-siglongjmp-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic sigsetjmp/siglongjmp Example",
+      "description": "Demonstrates basic usage of sigsetjmp and siglongjmp for error recovery",
+      "code": "#include <stdio.h>\n#include <setjmp.h>\n#include <signal.h>\n#include <stdlib.h>\n\nsigjmp_buf jump_buffer;\nvolatile sig_atomic_t jump_required = 0;\n\nvoid signal_handler(int signum) {\n jump_required = 1;\n siglongjmp(jump_buffer, 1); // Jump back with value 1\n}\n\nint main() {\n struct sigaction sa;\n sa.sa_handler = signal_handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0;\n sigaction(SIGSEGV, &sa, NULL);\n \n int ret = sigsetjmp(jump_buffer, 1); // Save signal mask\n \n if (ret == 0) {\n printf(\"Initial setup - continuing execution\\n\");\n // Simulate some work\n // Raise signal to test recovery\n raise(SIGSEGV);\n } else {\n printf(\"Recovered from signal! Return value: %d\\n\", ret);\n }\n \n return 0;\n}",
+      "explanation": "This example shows: sigsetjmp with savemask=1 saves signal mask, returns 0 initially. When signal handler calls siglongjmp with value 1, sigsetjmp returns 1, allowing recovery code to execute. The volatile sig_atomic_t ensures the flag is handled correctly.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Error Recovery Pattern",
+      "description": "Shows a practical error recovery pattern using sigsetjmp/siglongjmp",
+      "code": "#include <setjmp.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nsigjmp_buf error_buffer;\n\nvoid risky_function(void) {\n // Simulate error condition\n siglongjmp(error_buffer, 99);\n}\n\nint main(void) {\n // Try block equivalent\n int val = sigsetjmp(error_buffer, 1);\n \n if (val == 0) {\n printf(\"Starting risky operation\\n\");\n risky_function();\n printf(\"This won't print\\n\");\n } else {\n // Catch block equivalent\n printf(\"Error caught! Error code: %d\\n\", val);\n // Perform cleanup\n }\n \n printf(\"Program continues normally\\n\");\n return 0;\n}",
+      "explanation": "This demonstrates a try/catch-like pattern using sigsetjmp/siglongjmp. sigsetjmp returns 0 on first call, then returns the value (99) passed to siglongjmp when jumped back. This allows structured error recovery without exceptions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Comparison: savemask=0 vs savemask=1",
+      "description": "Demonstrates the difference between saving and not saving signal mask",
+      "code": "#include <setjmp.h>\n#include <signal.h>\n#include <stdio.h>\n\nsigjmp_buf buf_no_mask; // For savemask=0\nsigjmp_buf buf_mask; // For savemask=1\n\nvoid handler_no_mask(int sig) {\n siglongjmp(buf_no_mask, 1);\n}\n\nvoid handler_with_mask(int sig) {\n siglongjmp(buf_mask, 1);\n}\n\nint main() {\n // Install signal handlers (code omitted for brevity)\n \n // savemask = 0: signal mask NOT saved\n if (sigsetjmp(buf_no_mask, 0) == 0) {\n printf(\"First call with savemask=0\\n\");\n raise(SIGINT);\n } else {\n printf(\"Returned via siglongjmp, savemask was NOT saved\\n\");\n }\n \n // savemask = 1: signal mask IS saved\n if (sigsetjmp(buf_mask, 1) == 0) {\n printf(\"First call with savemask=1\\n\");\n raise(SIGINT);\n } else {\n printf(\"Returned via siglongjmp, savemask WAS restored\\n\");\n }\n \n return 0;\n}",
+      "explanation": "When savemask=0, siglongjmp doesn't restore any signal mask (behaves like longjmp). When savemask=1, the signal mask at the time of sigsetjmp is restored by siglongjmp. This is critical for proper signal handling.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Volatile Variable Usage",
+      "description": "Shows why volatile is important with siglongjmp",
+      "code": "#include <setjmp.h>\n#include <stdio.h>\n\nsigjmp_buf jump_buffer;\n\n// WITHOUT volatile - may have issues\nint counter; // Problematic\n\n// WITH volatile - safe\nvolatile int safe_counter;\n\nvoid trigger_jump(void) {\n siglongjmp(jump_buffer, 1);\n}\n\nint main(void) {\n if (sigsetjmp(jump_buffer, 0) == 0) {\n counter = 10;\n safe_counter = 10;\n trigger_jump();\n } else {\n // After longjmp, 'counter' may have\n // indeterminate value due to optimization\n // 'safe_counter' will reliably be 10\n printf(\"counter = %d (may be wrong!)\\n\", counter);\n printf(\"safe_counter = %d (correct)\\n\", safe_counter);\n }\n return 0;\n}",
+      "explanation": "The compiler may optimize 'counter' since it appears unchanged after the siglongjmp call site. volatile forces the compiler to read/write the variable each time, ensuring correct behavior after the jump.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "topicId": "sigprocmask-function",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the purpose of sigprocmask() function in UNIX/Linux system programming.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "sigprocmask() examines and modifies the signal mask",
+        "The signal mask determines which signals are blocked from delivery",
+        "It takes three parameters: how (operation type), set (new mask), oldset (previous mask)",
+        "Returns 0 on success, -1 on failure"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between SIG_BLOCK, SIG_UNBLOCK, and SIG_SETMASK operations in sigprocmask().",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "SIG_BLOCK: Adds signals to current mask (OR operation)",
+        "SIG_UNBLOCK: Removes signals from current mask",
+        "SIG_SETMASK: Replaces entire mask with new set",
+        "SIG_BLOCK preserves existing blocked signals; SIG_SETMASK replaces them completely"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write the steps to block a specific signal (e.g., SIGINT) using sigprocmask().",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Declare sigset_t variable for new set and old set",
+        "Initialize empty set using sigemptyset()",
+        "Add desired signal using sigaddset() (e.g., sigaddset(&newset, SIGINT))",
+        "Call sigprocmask(SIG_BLOCK, &newset, &oldset) to block the signal",
+        "Check return value for errors"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is signal masking? Explain its significance in concurrent programming.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Signal masking is blocking certain signals from delivery",
+        "When masked, signals become pending instead of being delivered",
+        "Allows atomic execution of critical code sections",
+        "Prevents race conditions between signal handlers and main program flow",
+        "Critical for writing robust multi-threaded and event-driven programs"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the relationship between sigprocmask(), signal handlers, and pending signals.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Signal handlers execute only when signals are not masked",
+        "Blocked signals remain pending in kernel's pending signal queue",
+        "When unmasked, pending signals are delivered immediately",
+        "sigprocmask() can protect code sections from signal interruption",
+        "Multiple occurrences of same signal may be merged to one pending signal"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the functions used to manipulate signal sets? Explain any two.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "sigemptyset(): Initializes set to contain no signals",
+        "sigfillset(): Initializes set to contain all signals",
+        "sigaddset(): Adds a signal to set",
+        "sigdelset(): Removes a signal from set",
+        "sigismember(): Tests if signal is member of set"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a C program that demonstrates the use of sigprocmask() to block and unblock SIGUSR1 signal. Include proper error handling and explain the behavior of pending signals.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Define signal handler for SIGUSR1",
+        "Create sigset_t variables and initialize empty set",
+        "Block SIGUSR1 using sigprocmask(SIG_BLOCK)",
+        "Fork a child process or use alarm to send signal while blocked",
+        "Show signal remains pending",
+        "Unblock using sigprocmask(SIG_UNBLOCK)",
+        "Handler executes after unblocking",
+        "Include error checking for all function calls",
+        "Explain output demonstrating pending signal behavior"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the concept of signal mask inheritance across fork() and exec() system calls. How does sigprocmask() behave in child processes?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "After fork(), child inherits parent's signal mask",
+        "Blocked signals remain blocked in child process",
+        "Pending signals are cleared in child (only pending in parent)",
+        "After exec(), signal dispositions are reset to default",
+        "New program's signal handlers may differ",
+        "exec() preserves signal mask (blocked signals remain blocked)",
+        "sigprocmask() can modify mask in child independently",
+        "Explain practical implications for daemon processes"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a critical section protection mechanism using sigprocmask() for a multi-threaded application. Explain with code structure and discuss potential issues.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use sigprocmask(SIG_BLOCK) at start of critical section",
+        "Block relevant signals before entering critical code",
+        "Use sigprocmask(SIG_SETMASK) or SIG_UNBLOCK to restore",
+        "Alternative: use pthread_sigmask() for thread-specific masking",
+        "Issue: nested critical sections can cause problems",
+        "Issue: must ensure proper restoration to avoid signal loss",
+        "Use sigaction() with SA_RESTART for reliable handler behavior",
+        "Discuss trade-offs between coarse and fine-grained signal blocking"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare sigprocmask() with pthread_sigmask(). Explain when and why you would use each in multi-threaded programs.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "pthread_sigmask() works at thread level, affects calling thread only",
+        "sigprocmask() works at process level, affects all threads",
+        "pthread_sigmask() is preferred in multi-threaded programs",
+        "sigprocmask() affects entire process and all threads",
+        "Both have same interface (how, set, oldset)",
+        "Thread-specific blocking allows finer control",
+        "Process-level blocking useful for signal handling threads",
+        "Explain scenarios: dedicated signal handler thread vs. main thread handling"
+      ]
+    }
+  ]
+}

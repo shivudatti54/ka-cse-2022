@@ -1,0 +1,35 @@
+{
+  "topicId": "warshalls-and-floyds-algorithms",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Warshall's Algorithm",
+      "description": "Algorithm to compute transitive closure of a directed graph",
+      "code": "WARSHALL(G)\n// G is adjacency matrix with n vertices\nBEGIN\n R ← G // Initialize reachability matrix\n \n FOR k ← 1 TO n DO\n FOR i ← 1 TO n DO\n FOR j ← 1 TO n DO\n R[i][j] ← R[i][j] OR (R[i][k] AND R[k][j])\n END FOR\n END FOR\n END FOR\n \n RETURN R // Transitive closure matrix\nEND",
+      "explanation": "The algorithm starts with the adjacency matrix. For each intermediate vertex k, it checks if a path exists from i to j through k. If yes, it marks R[i][j] as 1 (true). The OR operation keeps existing paths, AND checks new paths through k.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Floyd's Algorithm",
+      "description": "Algorithm to compute all-pairs shortest paths in a weighted graph",
+      "code": "FLOYD(G)\n// G is adjacency matrix with edge weights, n vertices\nBEGIN\n // Initialize distance matrix D\n FOR i ← 1 TO n DO\n FOR j ← 1 TO n DO\n IF i = j THEN\n D[i][j] ← 0\n ELSE IF edge exists i→j THEN\n D[i][j] ← weight(i,j)\n ELSE\n D[i][j] ← ∞\n END IF\n END FOR\n END FOR\n \n // Main algorithm - consider each vertex as intermediate\n FOR k ← 1 TO n DO\n FOR i ← 1 TO n DO\n FOR j ← 1 TO n DO\n D[i][j] ← MIN(D[i][j], D[i][k] + D[k][j])\n END FOR\n END FOR\n END FOR\n \n RETURN D // Shortest path distances matrix\nEND",
+      "explanation": "First initializes the distance matrix with direct edge weights. Then iteratively considers each vertex k as a potential intermediate point and updates distances if going through k gives a shorter path. The MIN function chooses the shorter of direct path or path via k.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Floyd's Algorithm with Path Reconstruction",
+      "description": "Extended Floyd's algorithm to reconstruct shortest paths",
+      "code": "FLOYD_WITH_PATH(G)\nBEGIN\n // Initialize D and P (predecessor matrix)\n FOR i ← 1 TO n DO\n FOR j ← 1 TO n DO\n D[i][j] ← weight(i,j) or ∞\n P[i][j] ← NIL\n END FOR\n END FOR\n \n FOR k ← 1 TO n DO\n FOR i ← 1 TO n DO\n FOR j ← 1 TO n DO\n IF D[i][k] + D[k][j] < D[i][j] THEN\n D[i][j] ← D[i][k] + D[k][j]\n P[i][j] ← P[k][j] // Store predecessor\n END IF\n END FOR\n END FOR\n END FOR\n \n RETURN D, P\nEND\n\nPATH(i, j, P)\nBEGIN\n IF P[i][j] = NIL THEN\n RETURN []\n ELSE\n RETURN PATH(i, P[i][j], P) + [j]\n END IF\nEND",
+      "explanation": "The predecessor matrix P stores the intermediate vertex on the shortest path. When a shorter path is found through k, we update both distance and predecessor. PATH function recursively reconstructs the complete path.",
+      "timeComplexity": "O(n³)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Client-Server Communication",
+      "description": "Basic pseudocode demonstrating client-server communication using sockets",
+      "code": "// SERVER CODE\nBEGIN\n CREATE socket serverSocket\n BIND serverSocket to port 8080\n LISTEN for connections\n \n WHILE true DO\n clientSocket = ACCEPT connection\n REQUEST = RECEIVE from clientSocket\n RESPONSE = PROCESS REQUEST\n SEND RESPONSE to clientSocket\n CLOSE clientSocket\n END WHILE\nEND\n\n// CLIENT CODE\nBEGIN\n CREATE socket clientSocket\n CONNECT clientSocket to server:8080\n REQUEST = \"Get Data\"\n SEND REQUEST to server\n RESPONSE = RECEIVE from server\n DISPLAY RESPONSE\n CLOSE clientSocket\nEND",
+      "explanation": "This demonstrates the basic client-server model where server waits for connections, processes requests, and returns responses. The socket abstraction hides network details.",
+      "timeComplexity": "O(n) per request where n is request size",
+      "spaceComplexity": "O(k) where k is number of concurrent connections"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Heartbeat-based Failure Detection",
+      "description": "Algorithm used to detect node failures in distributed systems using periodic heartbeat messages",
+      "code": "// NODE MONITOR PROCESS\nBEGIN\n SET nodes = [Node1, Node2, Node3, Node4, Node5]\n SET heartbeatTimeout = 5 seconds\n SET heartbeatInterval = 1 second\n SET nodeStatus = {} // Map of node to status\n \n FOR EACH node IN nodes DO\n nodeStatus[node] = \"alive\"\n END FOR\n \n // Main monitoring loop\n WHILE true DO\n FOR EACH node IN nodes DO\n IF node.lastHeartbeat + heartbeatTimeout < currentTime THEN\n nodeStatus[node] = \"failed\"\n TRIGGER failoverProcedure(node)\n LOG \"Node \" + node + \" marked as failed\"\n END IF\n END FOR\n WAIT heartbeatInterval\n END WHILE\nEND\n\n// HEARTBEAT SENDER (on each node)\nBEGIN\n WHILE true DO\n SEND heartbeat to monitor\n WAIT heartbeatInterval\n END WHILE\nEND",
+      "explanation": "Failure detection is crucial for fault tolerance. This algorithm uses heartbeats - if a node doesn't send a heartbeat within the timeout, it's considered failed and failover procedures are triggered.",
+      "timeComplexity": "O(n) where n is number of monitored nodes",
+      "spaceComplexity": "O(n) for storing node status"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Load Balancer Request Distribution",
+      "description": "Algorithm for distributing client requests across multiple server instances",
+      "code": "// LOAD BALANCER\nBEGIN\n SET servers = [Server1, Server2, Server3]\n SET currentIndex = 0\n SET serverWeights = {Server1: 1, Server2: 2, Server3: 1} // weighted round-robin\n \n FUNCTION getNextServer()\n // Round-robin with weights\n count = 0\n FOR i = 1 TO sum(serverWeights) DO\n count = count + 1\n IF count <= serverWeights[servers[currentIndex]] THEN\n RETURN servers[currentIndex]\n END IF\n currentIndex = (currentIndex + 1) % length(servers)\n END FOR\n END FUNCTION\n \n // Handle incoming request\n WHILE true DO\n clientRequest = ACCEPT()\n targetServer = getNextServer()\n FORWARD clientRequest to targetServer\n response = RECEIVE from targetServer\n SEND response to client\n END WHILE\nEND",
+      "explanation": "Load balancers distribute incoming traffic across multiple servers to ensure no single server is overwhelmed. This implements weighted round-robin for better resource utilization.",
+      "timeComplexity": "O(1) for server selection, O(m) for forwarding where m is message size",
+      "spaceComplexity": "O(s) where s is number of servers"
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "topicId": "single-multi-level-indexing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between dense index and sparse index with appropriate examples.",
+      "keyPoints": [
+        "Dense index has entry for every record; sparse index has entries for some records",
+        "Dense index provides faster lookup; sparse index uses less storage",
+        "Example: Sparse index typically stores first record of each data block",
+        "Dense index suitable for small tables; sparse index for large tables with sequential access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the advantages and disadvantages of indexing in DBMS?",
+      "keyPoints": [
+        "Advantages: Faster data retrieval, reduced I/O operations, efficient WHERE clause processing",
+        "Disadvantages: Slower write operations, increased storage space, index maintenance overhead",
+        "Trade-off between read performance and write performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain B+ tree index structure and why it is preferred over B-tree for database indexing.",
+      "keyPoints": [
+        "B+ tree has all data pointers at leaf nodes only",
+        "Leaf nodes are linked for efficient range queries",
+        "Internal nodes store only keys, allowing more fan-out",
+        "More predictable performance as all accesses go to same depth",
+        "Better for disk-based storage due to higher fan-out"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Describe the concept of multi-level indexing and its benefits.",
+      "keyPoints": [
+        "Multi-level indexing creates hierarchy of indexes (2-3 levels)",
+        "First level is dense index pointing to data",
+        "Higher levels are sparse indexes pointing to lower levels",
+        "Reduces I/O operations by narrowing search at each level",
+        "Minimizes disk accesses needed to reach data records"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is a clustering index? How does it differ from a non-clustering index?",
+      "keyPoints": [
+        "Clustering index organizes actual data records based on indexed column values",
+        "Only one clustering index per table as data is physically ordered",
+        "Non-clustering index creates separate structure with pointers to data",
+        "Multiple non-clustering indexes possible per table",
+        "Non-clustering requires additional lookup after finding index entry"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of index selectivity. Why is it important for query optimization?",
+      "keyPoints": [
+        "Index selectivity = (Number of distinct values / Total records)",
+        "High selectivity (close to 1) means more unique values - index is efficient",
+        "Low selectivity means many duplicate values - index provides little benefit",
+        "Optimizer chooses to use index only if selectivity is above threshold",
+        "Low selectivity indexes may lead to full table scan instead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Discuss the factors that should be considered before creating an index on a database table.",
+      "keyPoints": [
+        "Column usage in WHERE clauses and JOIN conditions",
+        "Column cardinality (number of unique values)",
+        "Table size and query frequency",
+        "Write vs Read ratio of the table",
+        "Storage overhead and maintenance cost"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast primary index, secondary index, clustering index, and non-clustering index with examples.",
+      "keyPoints": [
+        "Primary index: created on primary key, dense, one per table, determines physical order",
+        "Clustering index: created on non-key attributes, defines physical grouping of records",
+        "Secondary index: created on any other column, provides alternative access paths, can be multiple",
+        "Non-clustering index: same as secondary, separate from physical data storage",
+        "Key differences: number per table, effect on physical storage, density (dense/sparse)",
+        "Examples: Employee table - primary on EMP_ID, clustering on DEPT_NO, secondary on EMAIL"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the structure and operations of B+ tree with a diagram. How does it support efficient search, insertion, and deletion operations?",
+      "keyPoints": [
+        "Structure: Root, internal nodes, leaf nodes all at same depth",
+        "Internal nodes contain key values and child pointers only",
+        "Leaf nodes contain data pointers and are linked horizontally",
+        "Search: Traverse from root to leaf using key comparisons",
+        "Insert: Find leaf, insert key; split if node overflows, propagate up",
+        "Delete: Remove key from leaf; merge or borrow if underflow",
+        "All leaf nodes at same level ensures O(log n) for all operations",
+        "Linked leaves enable efficient range queries"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the process of query execution using an index. What are the steps involved when the database optimizer decides to use an index?",
+      "keyPoints": [
+        "Optimizer analyzes query and checks WHERE clause conditions",
+        "Evaluates index selectivity and cost of different access paths",
+        "Chooses between index scan and full table scan based on cost",
+        "If index chosen: traverse index tree to find matching entries",
+        "Retrieve data records using pointers from index entries",
+        "For non-clustering index: additional I/O for each record ( Bookmark lookup )",
+        "For clustering index: records already ordered, fewer I/O needed",
+        "Cost factors: index height, number of matching records, I/O cost per page"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain composite indexing in databases. How does column order affect the usage of composite indexes? Illustrate with an example.",
+      "keyPoints": [
+        "Composite index created on two or more columns",
+        "Index entries sorted first by first column, then second, etc.",
+        "Column order matters for query optimization",
+        "Query can use index if it includes leading columns in WHERE clause",
+        "Example: Index on (DEPT, SALARY) can be used for WHERE DEPT='IT' or WHERE DEPT='IT' AND SALARY>50000",
+        "Cannot efficiently use for WHERE SALARY>50000 alone",
+        "Explain concept of equality and range queries on composite indexes",
+        "Discuss index covering and include columns for optimization"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "line-segment-clipping",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Cohen-Sutherland Region Code Assignment",
+      "description": "Algorithm to assign 4-bit region codes to endpoints",
+      "code": "FUNCTION AssignRegionCode(x, y, xmin, xmax, ymin, ymax):\n code = 0000\n IF y > ymax THEN code = code | 8 // 1000 - TOP\n IF y < ymin THEN code = code | 4 // 0100 - BOTTOM\n IF x > xmax THEN code = code | 2 // 0010 - RIGHT\n IF x < xmin THEN code = code | 1 // 0001 - LEFT\n RETURN code",
+      "explanation": "Each bit corresponds to a boundary. If point is beyond that boundary, the corresponding bit is set to 1. Bitwise OR accumulates multiple boundary violations.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "title": "Cohen-Sutherland Line Clipping Main Algorithm",
+      "description": "Complete algorithm with trivial accept/reject and clipping logic",
+      "code": "FUNCTION CohenSutherlandClip(x1, y1, x2, y2, xmin, xmax, ymin, ymax):\n WHILE true DO:\n code1 = AssignRegionCode(x1, y1, xmin, xmax, ymin, ymax)\n code2 = AssignRegionCode(x2, y2, xmin, xmax, ymin, ymax)\n \n // Trivial Accept: both inside\n IF code1 = 0 AND code2 = 0 THEN\n RETURN (x1, y1, x2, y2) // Entire line visible\n \n // Trivial Reject: AND ≠ 0\n IF (code1 AND code2) ≠ 0 THEN\n RETURN NULL // Line completely outside\n \n // Need to clip: find intersection with boundary\n IF code1 = 0 THEN\n SWAP(x1, x2); SWAP(y1, y2); SWAP(code1, code2)\n \n // Calculate intersection with each edge\n IF code1 & 8 THEN // Above top\n x = x1 + (x2-x1)*(ymax-y1)/(y2-y1)\n y = ymax\n ELSE IF code1 & 4 THEN // Below bottom\n x = x1 + (x2-x1)*(ymin-y1)/(y2-y1)\n y = ymin\n ELSE IF code1 & 2 THEN // Right of right edge\n y = y1 + (y2-y1)*(xmax-x1)/(x2-x1)\n x = xmax\n ELSE // Left of left edge\n y = y1 + (y2-y1)*(xmin-x1)/(x2-x1)\n x = xmin\n \n // Update endpoint to intersection point\n x1 = x; y1 = y\n END WHILE",
+      "explanation": "The algorithm iteratively clips the line until it either becomes fully visible (trivial accept) or is determined to be outside (trivial reject). At each iteration, one endpoint is guaranteed to be outside, and the intersection with the appropriate boundary is computed.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) worst case",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "title": "Liang-Barsky Line Clipping Algorithm",
+      "description": "Parametric approach for efficient rectangular line clipping",
+      "code": "FUNCTION LiangBarskyClip(x1, y1, x2, y2, xmin, xmax, ymin, ymax):\n dx = x2 - x1\n dy = y2 - y1\n \n p1 = -dx; q1 = x1 - xmin // Left edge\n p2 = dx; q2 = xmax - x1 // Right edge\n p3 = -dy; q3 = y1 - ymin // Bottom edge\n p4 = dy; q4 = ymax - y1 // Top edge\n \n p = [p1, p2, p3, p4]\n q = [q1, q2, q3, q4]\n \n t0 = 0.0; t1 = 1.0\n \n FOR i = 0 TO 3 DO:\n IF p[i] = 0 THEN:\n IF q[i] < 0 THEN RETURN NULL // Parallel and outside\n ELSE:\n r = q[i] / p[i]\n IF p[i] < 0 THEN:\n IF r > t1 THEN RETURN NULL\n t0 = MAX(t0, r)\n ELSE: // p[i] > 0\n IF r < t0 THEN RETURN NULL\n t1 = MIN(t1, r)\n \n // Calculate clipped endpoints\n IF t0 > t1 THEN RETURN NULL // No visible portion\n \n xc1 = x1 + t0 * dx\n yc1 = y1 + t0 * dy\n xc2 = x1 + t1 * dx\n yc2 = y1 + t1 * dy\n \n RETURN (xc1, yc1, xc2, yc2)",
+      "explanation": "The algorithm uses parametric form. For each edge, it computes t values where the line enters (t0) and exits (t1) the clip window. If after processing all edges t0 > t1, the line is invisible. Otherwise, the clipped coordinates are computed using the final t0 and t1 values.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) per line",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "title": "Intersection Point Calculation",
+      "description": "Helper function to find intersection of line with vertical or horizontal boundary",
+      "code": "FUNCTION GetIntersection(x1, y1, x2, y2, edge, boundary):\n // edge: 'left', 'right', 'top', 'bottom'\n // boundary: xmin, xmax, ymax, ymin value\n \n dx = x2 - x1\n dy = y2 - y1\n \n IF edge = 'left' OR edge = 'right' THEN:\n IF dy = 0 THEN RETURN NULL // Horizontal line parallel\n t = (boundary - x1) / dx\n y = y1 + t * dy\n RETURN (boundary, y)\n \n IF edge = 'top' OR edge = 'bottom' THEN:\n IF dx = 0 THEN RETURN NULL // Vertical line parallel\n t = (boundary - y1) / dy\n x = x1 + t * dx\n RETURN (x, boundary)",
+      "explanation": "This helper calculates where a line segment crosses a specific boundary. Uses the line equation in parametric form. Returns the intersection point coordinates or NULL if line is parallel to the boundary.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

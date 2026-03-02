@@ -1,0 +1,45 @@
+{
+  "topicId": "uninformed-search-strategies",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Breadth-First Search (BFS)",
+      "description": "Standard BFS algorithm for tree and graph search",
+      "code": "FUNCTION BFS(problem):\n node ← MAKE-NODE(problem.INITIAL)\n if GOAL-TEST(problem, node.STATE) return node\n frontier ← QUEUE([node]) // FIFO queue\n explored ← SET()\n \n while frontier is not empty:\n node ← POP(frontier) // FIFO - shallowest first\n explored.add(node.STATE)\n \n for each action in problem.ACTIONS(node.STATE):\n child ← CHILD-NODE(problem, node, action)\n if child.STATE not in explored and not in frontier:\n if GOAL-TEST(problem, child.STATE):\n return child\n frontier.push(child)\n return failure",
+      "explanation": "Uses FIFO queue to ensure level-by-level expansion. Maintains explored set to avoid revisiting states. Returns first goal found which is optimal when costs are equal.",
+      "timeComplexity": "O(b^d)",
+      "spaceComplexity": "O(b^d)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Depth-First Search (DFS)",
+      "description": "Standard recursive DFS with cycle checking",
+      "code": "FUNCTION DFS(problem):\n return RECURSIVE-DFS(MAKE-NODE(problem.INITIAL), SET())\n\nFUNCTION RECURSIVE-DFS(node, explored):\n if GOAL-TEST(problem, node.STATE): return node\n explored.add(node.STATE)\n \n for each action in problem.ACTIONS(node.STATE):\n child ← CHILD-NODE(problem, node, action)\n if child.STATE not in explored:\n result ← RECURSIVE-DFS(child, explored)\n if result ≠ failure: return result\n return failure",
+      "explanation": "Uses recursion (stack) to go deep before backtracking. The explored set prevents cycles. Memory efficient but not complete in infinite spaces.",
+      "timeComplexity": "O(b^m)",
+      "spaceComplexity": "O(bm)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Uniform-Cost Search (UCS)",
+      "description": "Priority queue based search by path cost",
+      "code": "FUNCTION UCS(problem):\n node ← MAKE-NODE(problem.INITIAL)\n node.path-cost ← 0\n frontier ← PRIORITYQUEUE([node]) // Min-heap by path-cost\n explored ← SET()\n \n while frontier is not empty:\n node ← POP(frontier) // Lowest cost first\n \n if GOAL-TEST(problem, node.STATE): return node\n explored.add(node.STATE)\n \n for each action in problem.ACTIONS(node.STATE):\n child ← CHILD-NODE(problem, node, action)\n child.path-cost ← node.path-cost + action.cost\n \n if child.STATE not in explored:\n frontier.push-or-update(child)\n return failure",
+      "explanation": "Like Dijkstra's algorithm. Always expands node with lowest path cost. Finds optimal solution with positive costs. May explore many nodes if goal is deep.",
+      "timeComplexity": "O(b^(C*/ε))",
+      "spaceComplexity": "O(b^(C*/ε))"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Iterative Deepening Search (IDS)",
+      "description": "Repeated DFS with increasing depth limits",
+      "code": "FUNCTION IDS(problem):\n for depth = 0 to ∞:\n result ← DEPTH-LIMITED-SEARCH(problem, depth)\n if result ≠ cutoff: return result\n\nFUNCTION DEPTH-LIMITED-SEARCH(problem, limit):\n return RECURSIVE-DLS(MAKE-NODE(problem.INITIAL), limit, SET())\n\nFUNCTION RECURSIVE-DLS(node, limit, explored):\n if GOAL-TEST(problem, node.STATE): return node\n if limit = 0: return cutoff\n cutoff-occurred ← false\n explored.add(node.STATE)\n \n for each action in problem.ACTIONS(node.STATE):\n child ← CHILD-NODE(problem, node, action)\n if child.STATE not in explored:\n result ← RECURSIVE-DLS(child, limit-1, explored)\n if result = cutoff: cutoff-occurred ← true\n else if result ≠ failure: return result\n \n if cutoff-occurred: return cutoff\n else: return failure",
+      "explanation": "Combines BFS completeness with DFS memory efficiency. Each iteration is a complete DFS up to depth limit. Optimal when edge costs are equal.",
+      "timeComplexity": "O(b^d)",
+      "spaceComplexity": "O(bd)"
+    }
+  ]
+}

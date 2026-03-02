@@ -1,0 +1,35 @@
+{
+  "topicId": "ford-fulkerson-max-flow",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Ford-Fulkerson Pseudocode",
+      "description": "Basic Ford-Fulkerson algorithm using DFS to find augmenting paths",
+      "code": "ALGORITHM FordFulkerson(G, s, t)\nBEGIN\n  // Initialize flow to 0 on all edges\n  FOR each edge (u,v) in G.E DO\n    f[u,v] \u2190 0\n  END FOR\n\n  // While there exists an augmenting path\n  WHILE (PathExists(Gf, s, t)) DO\n    // Find the path using DFS/BFS\n    path \u2190 FindPath(Gf, s, t)\n\n    // Find bottleneck (minimum residual capacity)\n    bottleneck \u2190 \u221e\n    FOR each edge (u,v) in path DO\n      bottleneck \u2190 min(bottleneck, Cf[u,v])\n    END FOR\n\n    // Augment flow along the path\n    FOR each edge (u,v) in path DO\n      IF (u,v) is forward edge THEN\n        f[u,v] \u2190 f[u,v] + bottleneck\n      ELSE  // backward edge\n        f[v,u] \u2190 f[v,u] - bottleneck\n      END IF\n    END FOR\n\n    // Update residual graph Gf\n    UpdateResidualGraph(G, f)\n  END WHILE\n\n  RETURN f\nEND",
+      "explanation": "The algorithm repeatedly finds an augmenting path in the residual graph and increases flow by the bottleneck value until no augmenting path exists. Each iteration updates both forward and backward residual capacities.",
+      "timeComplexity": "O(E \u00d7 max_flow)",
+      "spaceComplexity": "O(V + E)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Edmonds-Karp Algorithm (BFS-based)",
+      "description": "Edmonds-Karp implementation using BFS to find shortest augmenting paths",
+      "code": "ALGORITHM EdmondsKarp(G, s, t)\nBEGIN\n  // Initialize flow to 0\n  FOR each edge (u,v) in G.E DO\n    f[u,v] \u2190 0\n  END FOR\n\n  // While augmenting path exists\n  WHILE (TRUE) DO\n    // Use BFS to find shortest path (in terms of edges)\n    parent \u2190 BFS(G, s, t)\n\n    // If no path found, we're done\n    IF (parent[t] = NIL) THEN\n      BREAK\n    END IF\n\n    // Calculate bottleneck\n    bottleneck \u2190 \u221e\n    v \u2190 t\n    WHILE (v \u2260 s) DO\n      u \u2190 parent[v]\n      bottleneck \u2190 min(bottleneck, Cf[u,v])\n      v \u2190 u\n    END WHILE\n\n    // Augment flow\n    v \u2190 t\n    WHILE (v \u2260 s) DO\n      u \u2190 parent[v]\n      IF (u,v) is forward edge THEN\n        f[u,v] \u2190 f[u,v] + bottleneck\n      ELSE\n        f[v,u] \u2190 f[v,u] - bottleneck\n      END IF\n      v \u2190 u\n    END WHILE\n  END WHILE\n\n  RETURN f\nEND\n\nALGORITHM BFS(G, s, t)\nBEGIN\n  Initialize queue with s\n  visited[s] \u2190 TRUE\n  parent[v] \u2190 NIL for all v\n\n  WHILE queue not empty DO\n    u \u2190 dequeue()\n    FOR each neighbor v of u IN Gf DO\n      IF NOT visited[v] AND Cf[u,v] > 0 THEN\n        visited[v] \u2190 TRUE\n        parent[v] \u2190 u\n        IF v = t THEN RETURN parent\n        enqueue(v)\n      END IF\n    END FOR\n  END WHILE\n\n  RETURN parent\nEND",
+      "explanation": "Edmonds-Karp is Ford-Fulkerson using BFS to always find the shortest augmenting path (fewest edges). This guarantees polynomial time complexity O(VE\u00b2) as opposed to potentially exponential time of basic Ford-Fulkerson.",
+      "timeComplexity": "O(VE\u00b2)",
+      "spaceComplexity": "O(V + E)",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Python Implementation of Ford-Fulkerson",
+      "description": "Complete Python implementation with BFS for finding augmenting paths",
+      "code": "from collections import deque\n\ndef ford_fulkerson(graph, source, sink):\n    \"\"\"\n    Ford-Fulkerson algorithm using BFS (Edmonds-Karp)\n    graph: adjacency matrix or dict of dict\n    source: source vertex\n    sink: sink vertex\n    \"\"\"\n    # Create residual graph\n    residual = {u: {v: graph[u].get(v, 0) for v in graph} for u in graph}\n    n = len(graph)\n    max_flow = 0\n\n    while True:\n        # BFS to find augmenting path\n        parent = {u: None for u in graph}\n        parent[source] = source\n        queue = deque([source])\n\n        while queue and parent[sink] is None:\n            u = queue.popleft()\n            for v in graph[u]:\n                if parent[v] is None and residual[u][v] > 0:\n                    parent[v] = u\n                    queue.append(v)\n                    if v == sink:\n                        break\n\n        # If no augmenting path exists\n        if parent[sink] is None:\n            break\n\n        # Find bottleneck value\n        bottleneck = float('inf')\n        v = sink\n        while v != source:\n            u = parent[v]\n            bottleneck = min(bottleneck, residual[u][v])\n            v = u\n\n        # Update residual capacities\n        v = sink\n        while v != source:\n            u = parent[v]\n            residual[u][v] -= bottleneck\n            residual[v][u] += bottleneck\n            v = u\n\n        max_flow += bottleneck\n\n    return max_flow\n\n# Example usage\ngraph = {\n    's': {'a': 10, 'b': 5},\n    'a': {'t': 8, 'b': 3},\n    'b': {'t': 4},\n    't': {}\n}\nprint(f\"Maximum flow: {ford_fulkerson(graph, 's', 't')}\")",
+      "explanation": "This Python implementation uses BFS (Edmonds-Karp) to find augmenting paths. It maintains a residual graph and updates capacities in both forward and backward directions. The algorithm returns the maximum flow value.",
+      "timeComplexity": "O(VE\u00b2) for Edmonds-Karp",
+      "spaceComplexity": "O(V\u00b2) for adjacency matrix representation",
+      "language": "pseudocode"
+    }
+  ]
+}

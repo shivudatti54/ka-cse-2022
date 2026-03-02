@@ -1,0 +1,45 @@
+{
+  "topicId": "fifos",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Creating a FIFO",
+      "description": "Program to create a FIFO using mkfifo()",
+      "code": "#include <stdio.h>\n#include <sys/types.h>\n#include <sys/stat.h>\n\nint main() {\n const char *fifo_path = \"/tmp/myfifo\";\n mode_t mode = 0666; // Read/write for all\n \n // Create FIFO with permissions\n if (mkfifo(fifo_path, mode) == -1) {\n perror(\"mkfifo failed\");\n return 1;\n }\n \n printf(\"FIFO created successfully at %s\\n\", fifo_path);\n return 0;\n}",
+      "explanation": "Creates a FIFO at /tmp/myfifo with read/write permissions for all users. Returns -1 if FIFO already exists or creation fails.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "FIFO Writer Process",
+      "description": "Writing data to a FIFO",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <fcntl.h>\n#include <string.h>\n\nint main() {\n const char *fifo_path = \"/tmp/myfifo\";\n int fd;\n char message[] = \"Hello from writer!\\n\";\n \n // Open FIFO for writing (blocks until reader opens)\n fd = open(fifo_path, O_WRONLY);\n if (fd == -1) {\n perror(\"open failed\");\n return 1;\n }\n \n // Write to FIFO\n write(fd, message, strlen(message));\n printf(\"Message written to FIFO\\n\");\n \n close(fd);\n return 0;\n}",
+      "explanation": "Opens FIFO in write-only mode (blocks until reader opens), writes a message, then closes the file descriptor.",
+      "timeComplexity": "O(n) where n is message length",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "FIFO Reader Process",
+      "description": "Reading data from a FIFO",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <fcntl.h>\n\nint main() {\n const char *fifo_path = \"/tmp/myfifo\";\n int fd;\n char buffer[1024];\n ssize_t bytes_read;\n \n // Open FIFO for reading (blocks until writer opens)\n fd = open(fifo_path, O_RDONLY);\n if (fd == -1) {\n perror(\"open failed\");\n return 1;\n }\n \n // Read from FIFO\n bytes_read = read(fd, buffer, sizeof(buffer) - 1);\n if (bytes_read > 0) {\n buffer[bytes_read] = '\\0';\n printf(\"Received: %s\", buffer);\n }\n \n close(fd);\n return 0;\n}",
+      "explanation": "Opens FIFO in read-only mode (blocks until writer opens), reads available data into buffer, prints received message.",
+      "timeComplexity": "O(n) where n is bytes read",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Non-blocking FIFO Operations",
+      "description": "Using O_NONBLOCK flag for non-blocking FIFO operations",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <fcntl.h>\n#include <errno.h>\n\nint main() {\n const char *fifo_path = \"/tmp/myfifo\";\n int fd;\n char buffer[1024];\n \n // Open FIFO non-blocking for reading\n fd = open(fifo_path, O_RDONLY | O_NONBLOCK);\n if (fd == -1) {\n perror(\"open failed\");\n return 1;\n }\n \n // Try to read (won't block)\n ssize_t bytes_read = read(fd, buffer, sizeof(buffer));\n \n if (bytes_read == -1) {\n if (errno == EAGAIN) {\n printf(\"No data available (EAGAIN)\\n\");\n } else {\n perror(\"read failed\");\n }\n } else if (bytes_read == 0) {\n printf(\"Writer closed FIFO\\n\");\n } else {\n buffer[bytes_read] = '\\0';\n printf(\"Read: %s\\n\", buffer);\n }\n \n close(fd);\n return 0;\n}",
+      "explanation": "Opens FIFO with O_NONBLOCK flag. read() returns immediately with EAGAIN if no data, 0 if writer closed, or actual data if available.",
+      "timeComplexity": "O(1) or O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

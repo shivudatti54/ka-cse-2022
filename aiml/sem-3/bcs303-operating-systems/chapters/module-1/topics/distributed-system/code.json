@@ -1,0 +1,45 @@
+{
+  "topicId": "distributed-system",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple RPC Mechanism",
+      "description": "Demonstrates how Remote Procedure Call works in a distributed system",
+      "code": "PROCEDURE clientExecuteRemote(parameter)\nBEGIN\n  message = MARSHAL(parameter)\n  // Convert parameter to network format\n  SEND message TO serverStub\n  // Send to remote server\n  response = RECEIVE()\n  // Wait for response\n  result = UNMARSHAL(response)\n  // Convert from network format\n  RETURN result\nEND\n\nPROCEDURE serverProcedure(parameter)\nBEGIN\n  // Actual computation happens here\n  result = process(parameter)\n  RETURN result\nEND",
+      "explanation": "RPC works by marshaling parameters on client side, sending to server, server executes procedure, returns result. Stubs hide network complexity from programmers.",
+      "timeComplexity": "Depends on network latency + computation",
+      "spaceComplexity": "O(n) for message buffers"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Client-Server Communication",
+      "description": "Basic socket programming example showing distributed communication",
+      "code": "import socket\n\ndef start_server(host='localhost', port=5000):\n    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    server_socket.bind((host, port))\n    server_socket.listen(1)\n    print(f\"Server listening on {host}:{port}\")\n    \n    while True:\n        client_socket, address = server_socket.accept()\n        print(f\"Connection from {address}\")\n        \n        data = client_socket.recv(1024).decode()\n        response = f\"Server received: {data}\"\n        client_socket.send(response.encode())\n        client_socket.close()\n\ndef start_client(message, host='localhost', port=5000):\n    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    client_socket.connect((host, port))\n    client_socket.send(message.encode())\n    \n    response = client_socket.recv(1024).decode()\n    print(f\"Server response: {response}\")\n    client_socket.close()\n\n# Usage: start_server() in one terminal\n# start_client(\"Hello\") in another terminal",
+      "explanation": "This demonstrates basic client-server communication using sockets. Server listens for connections, processes requests, and sends responses - fundamental to distributed systems.",
+      "timeComplexity": "O(1) per connection after establishment",
+      "spaceComplexity": "O(n) for buffer sizes"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Distributed Mutual Exclusion Algorithm",
+      "description": "Ricart-Agrawala algorithm for distributed mutual exclusion",
+      "code": "ALGORITHM DistributedMutex\nSHARED VARIABLES:\n  requestQueue\n  logicalClock\n  deferredReply[]\n\nPROCEDURE requestCS()\nBEGIN\n  logicalClock = logicalClock + 1\n  request = (logicalClock, myID)\n  SEND request TO all other processes\n  WAIT until received replies from all\n  ENTER critical section\n  AFTER exiting critical section:\n    FOR each deferred reply:\n      SEND reply TO deferred process\nEND\n\nPROCEDURE uponReceiveRequest(sender, timestamp)\nBEGIN\n  IF I am not requesting OR (timestamp, myID) < (myTimestamp, myID) THEN\n    SEND reply TO sender\n  ELSE\n    ADD sender TO deferredReply[]\n  END IF\nEND",
+      "explanation": "This algorithm ensures only one process can enter critical section at a time across distributed nodes. Uses timestamps for ordering requests and handles message passing for synchronization.",
+      "timeComplexity": "O(n) messages where n = number of nodes",
+      "spaceComplexity": "O(n) for storing deferred replies"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Simple P2P Node Implementation",
+      "description": "Demonstrates basic peer-to-peer node that acts as both client and server",
+      "code": "import java.io.*;\nimport java.net.*;\n\npublic class P2PNode {\n    private int port;\n    private ServerSocket serverSocket;\n    \n    public P2PNode(int port) {\n        this.port = port;\n    }\n    \n    public void start() throws IOException {\n        // Act as server: listen for incoming requests\n        serverSocket = new ServerSocket(port);\n        System.out.println(\"P2P Node listening on port \" + port);\n        \n        while (true) {\n            Socket clientSocket = serverSocket.accept();\n            handleRequest(clientSocket);\n        }\n    }\n    \n    // Act as client: send request to another peer\n    public void sendRequest(String host, int remotePort, String message) \n        throws IOException {\n        Socket socket = new Socket(host, remotePort);\n        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);\n        BufferedReader in = new BufferedReader(\n            new InputStreamReader(socket.getInputStream()));\n        \n        out.println(message);\n        String response = in.readLine();\n        System.out.println(\"Response: \" + response);\n        \n        socket.close();\n    }\n    \n    private void handleRequest(Socket clientSocket) throws IOException {\n        // Process request and send response\n        BufferedReader in = new BufferedReader(\n            new InputStreamReader(clientSocket.getInputStream()));\n        PrintWriter out = new PrintWriter(\n            clientSocket.getOutputStream(), true);\n        \n        String request = in.readLine();\n        String response = \"Processed: \" + request;\n        out.println(response);\n        \n        clientSocket.close();\n    }\n    \n    public static void main(String[] args) throws IOException {\n        P2PNode node = new P2PNode(6000);\n        node.start();\n    }\n}",
+      "explanation": "This shows a P2P node that listens for requests (server role) and can also send requests to other peers (client role). Each node is autonomous and can directly communicate with other nodes.",
+      "timeComplexity": "O(1) per request handling",
+      "spaceComplexity": "O(1) per connection"
+    }
+  ]
+}

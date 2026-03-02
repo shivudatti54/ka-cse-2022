@@ -1,0 +1,406 @@
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd"/>
+      <stop offset="100%" style="stop-color:#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0"/>
+      <stop offset="100%" style="stop-color:#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5"/>
+      <stop offset="100%" style="stop-color:#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee"/>
+      <stop offset="100%" style="stop-color:#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1565c0"/>
+      <stop offset="100%" style="stop-color:#1976d2"/>
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff9800"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 500; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fillBar {
+      from { width: 0; }
+      to { width: var(--bar-width); }
+    }
+    
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    
+    .signal-line {
+      stroke-dasharray: 500;
+      animation: drawLine 1s ease-out forwards;
+    }
+    .highlight {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .cpu-box { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; }
+    .dmac-box { fill: #f3e5f5; stroke: #9c27b0; stroke-width: 2; }
+    .io-box { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; }
+    .mem-box { fill: #e8f5e9; stroke: #388e3c; stroke-width: 2; }
+    .signal { stroke: #f44336; stroke-width: 2; fill: none; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#f8f9fa"/>
+  
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to Direct Memory Access. This topic explains how computers efficiently transfer bulk data without CPU involvement.">
+    <rect x="0" y="0" width="800" height="50" fill="url(#titleGrad)"/>
+    <text x="400" y="32" text-anchor="middle" font-size="22" font-weight="bold" fill="white">Direct Memory Access (DMA)</text>
+  </g>
+  
+  <!-- Step 1: Programmed I/O Problem -->
+  <g class="step" id="step1" data-narration="Traditional programmed I/O requires CPU to continuously poll devices, reading one word at a time, wasting processor cycles.">
+    <rect x="20" y="60" width="760" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="85" font-size="13" font-weight="bold" fill="#c62828">Problem: Programmed I/O Inefficiency</text>
+    <text x="40" y="105" font-size="10" fill="#333">CPU continuously polls I/O device, reads ONE word, stores to memory,</text>
+    <text x="40" y="120" font-size="10" fill="#333">then REPEATS for every word. High CPU overhead!</text>
+    
+    <!-- Visual: CPU polling animation -->
+    <rect x="550" y="75" width="50" height="35" rx="4" class="cpu-box"/>
+    <text x="575" y="92" text-anchor="middle" font-size="8" font-weight="bold" fill="#1976d2">CPU</text>
+    
+    <!-- Polling arrows -->
+    <path d="M500 82 L545 82" stroke="#c62828" stroke-width="2" marker-end="url(#arrowOrange)" stroke-dasharray="100" class="signal-line">
+      <animate attributeName="stroke-dashoffset" from="100" to="0" dur="1s" fill="freeze"/>
+    </path>
+    
+    <circle cx="620" cy="92" r="12" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="620" y="96" text-anchor="middle" font-size="10" fill="#e65100">I/O</text>
+    
+    <!-- Repeated pattern indicator -->
+    <text x="640" y="92" font-size="10" fill="#c62828">× N times</text>
+  </g>
+  
+  <!-- Step 2: DMA Solution Overview -->
+  <g class="step" id="step2" data-narration="DMA solves this by using a specialized controller to transfer data directly between I/O and memory, freeing the CPU.">
+    <rect x="20" y="155" width="760" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="180" font-size="13" font-weight="bold" fill="#2e7d32">Solution: Direct Memory Access (DMA)</text>
+    <text x="40" y="200" font-size="10" fill="#333">DMA allows I/O devices to transfer data directly to/from memory</text>
+    <text x="40" y="215" font-size="10" fill="#333">without CPU involvement. CPU only sets up transfer, then continues working!</text>
+    
+    <!-- Visual: DMA transfer -->
+    <rect x="450" y="165" width="55" height="35" rx="4" class="dmac-box"/>
+    <text x="477" y="180" text-anchor="middle" font-size="7" font-weight="bold" fill="#7b1fa2">DMAC</text>
+    
+    <path d="M510 182 L560 182" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dashoffset" from="50" to="0" dur="0.8s" fill="freeze"/>
+    </path>
+    
+    <rect x="565" y="165" width="50" height="35" rx="4" class="io-box"/>
+    <text x="590" y="180" text-anchor="middle" font-size="8" fill="#e65100">I/O</text>
+    
+    <path d="M400 182 L445 182" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dashoffset" from="50" to="0" dur="0.8s" fill="freeze"/>
+    </path>
+    
+    <rect x="340" y="165" width="55" height="35" rx="4" class="mem-box"/>
+    <text x="367" y="180" text-anchor="middle" font-size="8" fill="#2e7d32">Memory</text>
+    
+    <text x="640" y="182" font-size="9" fill="#388e3c" font-weight="bold">0 CPU cycles!</text>
+  </g>
+  
+  <!-- Step 3: DMAC Internal Registers -->
+  <g class="step" id="step3" data-narration="The DMA Controller has three key registers: Address (source/dest), Count (bytes to transfer), and Control (transfer parameters).">
+    <rect x="20" y="250" width="760" height="95" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="275" font-size="13" font-weight="bold" fill="#6a1b9a">DMA Controller Internal Registers</text>
+    
+    <!-- Register boxes -->
+    <rect x="40" y="290" width="180" height="45" rx="6" fill="white" stroke="#9c27b0" stroke-width="2"/>
+    <text x="130" y="308" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Address Register (MAR)</text>
+    <text x="130" y="322" text-anchor="middle" font-size="8" fill="#555">Starting memory address</text>
+    <text x="130" y="332" text-anchor="middle" font-size="8" fill="#555">Auto-incremented after each transfer</text>
+    
+    <rect x="240" y="290" width="180" height="45" rx="6" fill="white" stroke="#9c27b0" stroke-width="2"/>
+    <text x="330" y="308" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Count Register (WC)</text>
+    <text x="330" y="322" text-anchor="middle" font-size="8" fill="#555">Bytes/words to transfer</text>
+    <text x="330" y="332" text-anchor="middle" font-size="8" fill="#555">Auto-decremented to zero</text>
+    
+    <rect x="440" y="290" width="180" height="45" rx="6" fill="white" stroke="#9c27b0" stroke-width="2"/>
+    <text x="530" y="308" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Control Register (CR)</text>
+    <text x="530" y="322" text-anchor="middle" font-size="8" fill="#555">Direction, mode, priority</text>
+    <text x="530" y="332" text-anchor="middle" font-size="8" fill="#555">Transfer mode settings</text>
+    
+    <!-- Status register -->
+    <rect x="640" y="290" width="130" height="45" rx="6" fill="white" stroke="#9c27b0" stroke-width="2"/>
+    <text x="705" y="308" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Status Register</text>
+    <text x="705" y="322" text-anchor="middle" font-size="8" fill="#555">Current state</text>
+    <text x="705" y="332" text-anchor="middle" font-size="8" fill="#555">Error flags</text>
+  </g>
+  
+  <!-- Step 4: DMA Transfer Sequence - Step 1 -->
+  <g class="step" id="step4" data-narration="The DMA transfer begins when the I/O device sends a DMA Request (DREQ) signal to the DMAC, requesting data transfer.">
+    <rect x="20" y="355" width="760" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="380" font-size="13" font-weight="bold" fill="#1565c0">Step 1: DMA Request (DREQ)</text>
+    <text x="40" y="400" font-size="10" fill="#333">I/O device signals DMAC using DREQ line to request data transfer.</text>
+    <text x="40" y="415" font-size="10" fill="#333">CPU programs DMAC registers: source/dest address, byte count, control settings.</text>
+    
+    <!-- Animation: DREQ signal -->
+    <rect x="450" y="375" width="50" height="35" rx="4" class="io-box"/>
+    <text x="475" y="390" text-anchor="middle" font-size="9" fill="#e65100">I/O</text>
+    
+    <path d="M505 392 L560 392" stroke="#f44336" stroke-width="2" marker-end="url(#arrowOrange)">
+      <animate attributeName="stroke-dashoffset" from="60" to="0" dur="0.6s" fill="freeze"/>
+    </path>
+    
+    <rect x="565" y="375" width="55" height="35" rx="4" class="dmac-box"/>
+    <text x="592" y="390" text-anchor="middle" font-size="8" fill="#7b1fa2">DMAC</text>
+    
+    <rect x="640" y="375" width="50" height="35" rx="4" class="cpu-box"/>
+    <text x="665" y="390" text-anchor="middle" font-size="8" fill="#1976d2">CPU</text>
+    
+    <path d="M695 392 L730 392" stroke="#1565c0" stroke-width="1.5" marker-end="url(#arrowBlue)">
+      <animate attributeName="stroke-dashoffset" from="40" to="0" dur="0.5s" fill="freeze" begin="0.6s"/>
+    </path>
+    
+    <text x="750" y="395" font-size="8" fill="#1565c0">Program</text>
+  </g>
+  
+  <!-- Step 5: DMA Transfer Sequence - Bus Request/Grant -->
+  <g class="step" id="step5" data-narration="The DMAC sends a Bus Request (BR) to CPU. The CPU completes its cycle and acknowledges with Bus Grant (BG).">
+    <rect x="20" y="450" width="760" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="475" font-size="13" font-weight="bold" fill="#e65100">Step 2: Bus Request and Grant</text>
+    <text x="40" y="495" font-size="10" fill="#333">DMAC sends Bus Request (BR) to CPU. CPU finishes current cycle,</text>
+    <text x="40" y="510" font-size="10" fill="#333">then sends Bus Grant (BG/HLDA) signal and releases bus control.</text>
+    
+    <!-- Animation: BR/BG handshake -->
+    <rect x="420" y="470" width="55" height="35" rx="4" class="dmac-box"/>
+    <text x="447" y="485" text-anchor="middle" font-size="8" fill="#7b1fa2">DMAC</text>
+    
+    <path d="M480 487 L540 487" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)">
+      <animate attributeName="stroke-dashoffset" from="65" to="0" dur="0.6s" fill="freeze"/>
+    </path>
+    
+    <rect x="545" y="470" width="50" height="35" rx="4" class="cpu-box"/>
+    <text x="570" y="485" text-anchor="middle" font-size="8" fill="#1976d2">CPU</text>
+    
+    <text x="600" y="487" font-size="8" fill="#333">BR</text>
+    
+    <path d="M540 502 L480 502" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)" stroke-dasharray="65" class="signal-line">
+      <animate attributeName="stroke-dashoffset" from="65" to="0" dur="0.6s" fill="freeze" begin="0.6s"/>
+    </path>
+    
+    <text x="600" y="505" font-size="8" fill="#2e7d32">BG/HLDA</text>
+    
+    <!-- Bus release indicator -->
+    <rect x="300" y="480" width="80" height="20" rx="3" fill="#ffcdd2" stroke="#c62828" stroke-width="1"/>
+    <text x="340" y="494" text-anchor="middle" font-size="8" fill="#c62828">Bus Released!</text>
+  </g>
+  
+  <!-- Step 6: DMA Transfer Sequence - Data Transfer -->
+  <g class="step" id="step6" data-narration="With the bus, DMAC sends DMA Acknowledge (DACK) to I/O, places address on bus, and transfers data directly between I/O and memory.">
+    <rect x="20" y="545" width="760" height="95" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="570" font-size="13" font-weight="bold" fill="#2e7d32">Step 3: Direct Data Transfer</text>
+    <text x="40" y="590" font-size="10" fill="#333">DMAC takes control: sends DACK to I/O device, places memory address</text>
+    <text x="40" y="605" font-size="10" fill="#333">on address bus, transfers data directly between I/O and memory.</text>
+    
+    <!-- Animation: Data transfer -->
+    <rect x="100" y="615" width="50" height="35" rx="4" class="io-box"/>
+    <text x="125" y="630" text-anchor="middle" font-size="9" fill="#e65100">I/O</text>
+    
+    <path d="M155 632 L230 632" stroke="#ff9800" stroke-width="2">
+      <animate attributeName="stroke-dashoffset" from="80" to="0" dur="0.5s" fill="freeze"/>
+    </path>
+    
+    <rect x="235" y="615" width="55" height="35" rx="4" class="dmac-box"/>
+    <text x="262" y="630" text-anchor="middle" font-size="8" fill="#7b1fa2">DMAC</text>
+    
+    <!-- Address bus -->
+    <path d="M295 625 L400 625" stroke="#1565c0" stroke-width="2" marker-end="url(#arrowBlue)">
+      <animate attributeName="stroke-dashoffset" from="110" to="0" dur="0.5s" fill="freeze" begin="0.5s"/>
+    </path>
+    <text x="350" y="618" font-size="7" fill="#1565c0">Addr</text>
+    
+    <!-- Data bus -->
+    <path d="M400 645 L295 645" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dashoffset" from="110" to="0" dur="0.5s" fill="freeze" begin="0.7s"/>
+    </path>
+    <text x="350" y="655" font-size="7" fill="#2e7d32">Data</text>
+    
+    <rect x="405" y="615" width="55" height="35" rx="4" class="mem-box"/>
+    <text x="432" y="630" text-anchor="middle" font-size="8" fill="#2e7d32">Memory</text>
+    
+    <!-- Counter animation -->
+    <rect x="500" y="620" width="120" height="30" rx="4" fill="white" stroke="#9c27b0"/>
+    <text x="560" y="638" text-anchor="middle" font-size="9" fill="#7b1fa2">Count: N→N-1→...→0</text>
+  </g>
+  
+  <!-- Step 7: DMA Transfer Sequence - Termination -->
+  <g class="step" id="step7" data-narration="When count register reaches zero, DMAC releases bus and sends interrupt to CPU, signaling transfer completion.">
+    <rect x="20" y="650" width="760" height="75" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="675" font-size="13" font-weight="bold" fill="#c62828">Step 4: Transfer Termination</text>
+    <text x="40" y="695" font-size="10" fill="#333">When count register reaches zero, DMAC releases bus control, CPU regains access,</text>
+    <text x="40" y="710" font-size="10" fill="#333">DMAC sends interrupt to CPU notifying transfer completion.</text>
+    
+    <!-- Animation: Interrupt -->
+    <rect x="420" y="680" width="55" height="35" rx="4" class="dmac-box"/>
+    <text x="447" y="695" text-anchor="middle" font-size="8" fill="#7b1fa2">DMAC</text>
+    
+    <path d="M480 697 L540 697" stroke="#c62828" stroke-width="2" marker-end="url(#arrowOrange)">
+      <animate attributeName="stroke-dashoffset" from="65" to="0" dur="0.5s" fill="freeze"/>
+    </path>
+    
+    <rect x="545" y="680" width="50" height="35" rx="4" class="cpu-box"/>
+    <text x="570" y="695" text-anchor="middle" font-size="8" fill="#1976d2">CPU</text>
+    
+    <text x="600" y="697" font-size="8" fill="#c62828" font-weight="bold">Interrupt!</text>
+    
+    <!-- Bus return -->
+    <path d="M480 715 L540 715" stroke="#1565c0" stroke-width="2" marker-end="url(#arrowBlue)" stroke-dasharray="65" class="signal-line">
+      <animate attributeName="stroke-dashoffset" from="65" to="0" dur="0.5s" fill="freeze" begin="0.5s"/>
+    </path>
+    <text x="600" y="718" font-size="8" fill="#1565c0">Bus Return</text>
+  </g>
+  
+  <!-- Step 8: DMA Transfer Modes -->
+  <g class="step" id="step8" data-narration="DMA operates in three modes: Burst transfers entire block at once, Cycle Stealing transfers one word at a time, Transparent only transfers when CPU is idle.">
+    <rect x="20" y="735" width="760" height="105" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="760" font-size="13" font-weight="bold" fill="#1565c0">DMA Transfer Modes</text>
+    
+    <!-- Burst Mode -->
+    <rect x="40" y="775" width="230" height="55" rx="6" fill="white" stroke="#1976d2" stroke-width="1.5"/>
+    <text x="155" y="790" text-anchor="middle" font-size="10" font-weight="bold" fill="#1565c0">Burst Mode</text>
+    <text x="155" y="805" text-anchor="middle" font-size="8" fill="#333">Full block transferred at once</text>
+    <text x="155" y="818" text-anchor="middle" font-size="7" fill="#c62828">CPU halted entirely</text>
+    
+    <!-- Cycle Stealing Mode -->
+    <rect x="285" y="775" width="230" height="55" rx="6" fill="white" stroke="#388e3c" stroke-width="1.5"/>
+    <text x="400" y="790" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Cycle Stealing Mode</text>
+    <text x="400" y="805" text-anchor="middle" font-size="8" fill="#333">One word at a time</text>
+    <text x="400" y="818" text-anchor="middle" font-size="7" fill="#2e7d32">CPU paused briefly each cycle</text>
+    
+    <!-- Transparent Mode -->
+    <rect x="530" y="775" width="230" height="55" rx="6" fill="white" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="645" y="790" text-anchor="middle" font-size="10" font-weight="bold" fill="#7b1fa2">Transparent Mode</text>
+    <text x="645" y="805" text-anchor="middle" font-size="8" fill="#333">Only when CPU is idle</text>
+    <text x="645" y="818" text-anchor="middle" font-size="7" fill="#7b1fa2">Slowest but zero CPU impact</text>
+  </g>
+  
+  <!-- Step 9: DMA vs Interrupt-Driven I/O Comparison -->
+  <g class="step" id="step9" data-narration="Compare DMA to interrupt-driven I/O: DMA needs only one setup interrupt vs many per word, but requires additional hardware.">
+    <rect x="20" y="850" width="760" height="95" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="875" font-size="13" font-weight="bold" fill="#e65100">DMA vs Interrupt-Driven I/O</text>
+    
+    <!-- Comparison table header -->
+    <rect x="40" y="890" width="150" height="20" fill="#e3f2fd"/>
+    <text x="115" y="904" text-anchor="middle" font-size="9" font-weight="bold" fill="#1565c0">Feature</text>
+    
+    <rect x="190" y="890" width="270" height="20" fill="#fff3e0"/>
+    <text x="325" y="904" text-anchor="middle" font-size="9" font-weight="bold" fill="#e65100">Interrupt-Driven</text>
+    
+    <rect x="460" y="890" width="320" height="20" fill="#e8f5e9"/>
+    <text x="620" y="904" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">DMA</text>
+    
+    <!-- Row 1: CPU Role -->
+    <rect x="40" y="910" width="150" height="22" fill="#e3f2fd"/>
+    <text x="115" y="925" text-anchor="middle" font-size="8" fill="#333">CPU Role</text>
+    <rect x="190" y="910" width="270" height="22" fill="#fff3e0"/>
+    <text x="325" y="925" text-anchor="middle" font-size="8" fill="#333">Involved in every word</text>
+    <rect x="460" y="910" width="320" height="22" fill="#e8f5e9"/>
+    <text x="620" y="925" text-anchor="middle" font-size="8" fill="#333">Setup + completion only</text>
+    
+    <!-- Row 2: Interrupts -->
+    <rect x="40" y="932" width="150" height="22" fill="#e3f2fd"/>
+    <text x="115" y="947" text-anchor="middle" font-size="8" fill="#333">Interrupts</text>
+    <rect x="190" y="932" width="270" height="22" fill="#fff3e0"/>
+    <text x="325" y="947" text-anchor="middle" font-size="8" fill="#333">One per word</text>
+    <rect x="460" y="932" width="320" height="22" fill="#e8f5e9"/>
+    <text x="620" y="947" text-anchor="middle" font-size="8" fill="#333">One per block</text>
+  </g>
+  
+  <!-- Step 10: Advantages and Disadvantages -->
+  <g class="step" id="step10" data-narration="DMA offers increased CPU efficiency and faster transfers, but adds hardware complexity and potential cache coherency and security issues.">
+    <rect x="20" y="955" width="760" height="95" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="980" font-size="13" font-weight="bold" fill="#6a1b9a">Advantages and Disadvantages</text>
+    
+    <!-- Advantages -->
+    <rect x="40" y="995" width="350" height="45" rx="6" fill="#e8f5e9" stroke="#388e3c"/>
+    <text x="215" y="1010" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">✓ Advantages</text>
+    <text x="215" y="1025" text-anchor="middle" font-size="8" fill="#333">↑ CPU Efficiency | ↑ Transfer Speed | ↓ Response Latency</text>
+    
+    <!-- Disadvantages -->
+    <rect x="410" y="995" width="350" height="45" rx="6" fill="#ffebee" stroke="#f44336"/>
+    <text x="585" y="1010" text-anchor="middle" font-size="10" font-weight="bold" fill="#c62828">✗ Disadvantages</text>
+    <text x="585" y="1025" text-anchor="middle" font-size="8" fill="#333">↑ Hardware Cost | Cache Coherency | Security Risk (IOMMU helps)</text>
+  </g>
+  
+  <!-- Step 11: Real-World Applications -->
+  <g class="step" id="step11" data-narration="DMA is used in disk drives, network cards, graphics cards, and sound cards for high-speed bulk data transfers.">
+    <rect x="20" y="1060" width="760" height="75" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1085" font-size="13" font-weight="bold" fill="#2e7d32">Real-World Applications of DMA</text>
+    
+    <!-- Application icons -->
+    <rect x="40" y="1100" width="110" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="95" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">Disk Drives</text>
+    
+    <rect x="160" y="1100" width="130" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="225" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">Network Cards</text>
+    
+    <rect x="300" y="1100" width="110" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="355" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">Graphics</text>
+    
+    <rect x="420" y="1100" width="90" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="465" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">Sound</text>
+    
+    <rect x="520" y="1100" width="130" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="585" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">Memory Copies</text>
+    
+    <rect x="660" y="1100" width="110" height="25" rx="4" fill="white" stroke="#388e3c"/>
+    <text x="715" y="1117" text-anchor="middle" font-size="9" fill="#2e7d32">USB Ctrl</text>
+  </g>
+</svg>

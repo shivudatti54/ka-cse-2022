@@ -1,0 +1,45 @@
+{
+  "topicId": "elections",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Bully Algorithm - Election Initiation",
+      "description": "Process initiates election when it detects coordinator failure",
+      "code": "PROCEDURE initiate_election()\n current_process = self.id\n FOR each process with id > current_process\n SEND election_message TO process\n END FOR\n \n wait_time = TIMEOUT\n received_ok = FALSE\n \n WHILE wait_time > 0\n IF received OK message FROM any higher_id_process THEN\n // Higher process will handle election\n RETURN\n END IF\n wait_time = wait_time - 1\n END WHILE\n \n // No response - become coordinator\n become_coordinator()\nEND PROCEDURE",
+      "explanation": "When a process detects coordinator failure, it sends election messages to all processes with higher IDs. If no response is received within timeout, the process becomes the new coordinator.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Ring Algorithm - Token Passing Election",
+      "description": "Election using logical ring with token passing",
+      "code": "PROCEDURE start_ring_election()\n election_list = [self.id]\n current = self.next_process\n \n // Collect all IDs in the ring\n WHILE current != self\n IF current.is_active THEN\n election_list.append(current.id)\n END IF\n current = current.next\n END WHILE\n \n // Find maximum ID\n max_id = MAX(election_list)\n leader = PROCESS_WITH_ID(max_id)\n \n // Announce leader\n BROADCAST coordinator_message(leader)\nEND PROCEDURE",
+      "explanation": "The ring algorithm collects process IDs as a token circulates through the ring. Once the token returns to the initiator, the highest ID is identified as the new leader and announced to all processes.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Coordinator Announcement",
+      "description": "Broadcasting the newly elected coordinator to all processes",
+      "code": "PROCEDURE become_coordinator()\n FOR each process in system\n SEND coordinator_message(self.id) TO process\n END FOR\n \n // Start sending heartbeats\n START heartbeat_timer()\n WHILE system_running\n BROADCAST heartbeat(self.id)\n WAIT heartbeat_interval\n END WHILE\nEND PROCEDURE",
+      "explanation": "After being elected, the new coordinator announces its leadership to all processes and begins sending periodic heartbeats to maintain its authority and allow failure detection.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Failure Detection and Election Trigger",
+      "description": "Monitoring for coordinator failure and triggering election",
+      "code": "PROCEDURE monitor_coordinator()\n last_heartbeat = current_time()\n \n WHILE system_running\n IF received heartbeat FROM coordinator THEN\n last_heartbeat = current_time()\n END IF\n \n IF (current_time() - last_heartbeat) > timeout THEN\n // Coordinator failed\n LOG(\"Coordinator failure detected\")\n initiate_election()\n RETURN\n END IF\n \n WAIT monitoring_interval\n END WHILE\nEND PROCEDURE",
+      "explanation": "Each process monitors the coordinator by tracking heartbeats. If no heartbeat is received within the timeout period, the process detects failure and initiates a new election.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

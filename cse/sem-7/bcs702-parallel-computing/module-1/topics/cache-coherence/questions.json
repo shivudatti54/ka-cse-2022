@@ -1,0 +1,50 @@
+{
+  "topicId": "cache-coherence",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain the difference between write-invalidate and write-update cache coherence protocols. State one advantage of each. (3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "Write-invalidate: on a write, all other cached copies are marked Invalid. Other processors must re-fetch on next read. Advantage: lower bus traffic when there are multiple writes before a read.",
+        "Write-update: on a write, the new value is broadcast to update all cached copies immediately. Advantage: lower read latency after a write since all copies are already updated.",
+        "Most real systems use write-invalidate because it generates less bus traffic in typical workloads."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "What is false sharing and how can it be prevented? Give a concrete example. (3 marks)",
+      "type": "short",
+      "keyPoints": [
+        "False sharing occurs when different processors write to different variables that happen to be on the same cache line, causing unnecessary invalidations and coherence traffic.",
+        "Example: Thread 0 writes to array[0] and Thread 1 writes to array[1]. If both elements are on the same cache line, each write invalidates the other's cache, even though they are accessing different data.",
+        "Prevention: pad data structures so per-thread variables are on separate cache lines. Align data to cache line boundaries (typically 64 bytes)."
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "Describe the MESI protocol with all four states. Walk through a complete example showing state transitions when two processors (P0 and P1) read and write to the same memory location X. (8 marks)",
+      "type": "long",
+      "keyPoints": [
+        "Modified (M): cache has sole copy, data differs from main memory (dirty). Must write back before another cache can read.",
+        "Exclusive (E): cache has sole copy, data matches main memory (clean). Can silently transition to M on write.",
+        "Shared (S): multiple caches hold the line, all match main memory (clean). Must invalidate others before writing.",
+        "Invalid (I): cache line is not valid (stale or empty).",
+        "Example: Initially X is in no cache. P0 reads X -> P0 gets Exclusive (only copy, clean). P1 reads X -> P0 transitions to Shared, P1 gets Shared (both have clean copies). P0 writes to X -> P0 goes to Modified, P1 goes to Invalid (invalidated). P1 reads X -> P0 writes back to memory, both become Shared.",
+        "Key insight: Exclusive state allows P0 to write without bus traffic (silent E->M), which is MESI's advantage over MSI."
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Compare snooping-based and directory-based cache coherence protocols. Discuss their mechanisms, advantages, disadvantages, and appropriate system sizes. (5 marks)",
+      "type": "long",
+      "keyPoints": [
+        "Snooping: all caches monitor the shared bus for memory transactions. On a bus event, each cache checks if it holds the relevant line and takes action (invalidate, supply data, etc.).",
+        "Directory: a centralized directory maintains a record of which caches hold each memory line. Coherence messages are sent only to relevant caches, not broadcast.",
+        "Snooping advantage: simpler hardware, lower latency for small systems. Snooping disadvantage: does not scale well because every transaction is broadcast on the bus.",
+        "Directory advantage: scales to large systems (hundreds/thousands of processors) because messages are targeted, not broadcast. Directory disadvantage: higher complexity, directory storage overhead, slightly higher latency.",
+        "Snooping is used in small-scale shared-memory systems (multi-core CPUs). Directory-based is used in large NUMA systems and ccNUMA architectures."
+      ]
+    }
+  ]
+}

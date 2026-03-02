@@ -1,0 +1,45 @@
+{
+  "topicId": "multiplicative-group-of-integers-modulo-p-and-permutation-groups",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Check if Element is Generator in Zp*",
+      "description": "Algorithm to verify if g is a primitive root modulo p",
+      "code": "def is_generator(g, p):\n # Check if g generates Zp*\n # Order should be p-1\n if pow(g, p-1, p) != 1:\n return False\n # Check no smaller exponent gives 1\n factors = prime_factors(p-1)\n for factor in factors:\n if pow(g, (p-1)//factor, p) == 1:\n return False\n return True\n\n# Example: Find generators of Z11*\nprime = 11\nfor g in range(2, prime):\n if is_generator(g, prime):\n print(f\"{g} is a generator of Z{prime}*\")",
+      "explanation": "A generator g must have order p-1. We check if g^(p-1) ≡ 1 (mod p) and no smaller exponent gives 1 by testing divisors of p-1.",
+      "timeComplexity": "O(√p × log p)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Permutation Composition and Order",
+      "description": "Functions to compute permutation composition and order",
+      "code": "def compose(p, q):\n # Compute p ○ q (apply q first, then p)\n return [0] + [p[q[i]] for i in range(1, len(p))]\n\ndef permutation_order(perm):\n # Find order by finding LCM of cycle lengths\n visited = [False] * len(perm)\n cycle_lengths = []\n \n for i in range(1, len(perm)):\n if not visited[i]:\n length = 0\n j = i\n while not visited[j]:\n visited[j] = True\n j = perm[j]\n length += 1\n if length > 0:\n cycle_lengths.append(length)\n \n # Compute LCM\n from math import gcd\n order = 1\n for length in cycle_lengths:\n order = order * length // gcd(order, length)\n return order\n\n# Example: σ = (1 2 3)(4 5) represented as list\nsigma = [0, 2, 3, 1, 5, 4] # index 0 unused\nprint(\"Order of σ:\", permutation_order(sigma)) # Output: 6",
+      "explanation": "Compose permutations by function composition. Find order by decomposing into cycles and computing LCM of cycle lengths.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Compute Euler's Totient Function",
+      "description": "Calculate φ(n) for any n",
+      "code": "def euler_totient(n):\n result = n\n p = 2\n while p * p <= n:\n if n % p == 0:\n while n % p == 0:\n n //= p\n result -= result // p\n p += 1\n if n > 1:\n result -= result // n\n return result\n\n# Examples\nprint(\"φ(7) =\", euler_totient(7)) # 6 (prime)\nprint(\"φ(12) =\", euler_totient(12)) # 4\nprint(\"φ(17) =\", euler_totient(17)) # 16",
+      "explanation": "Uses prime factorization. φ(n) = n × Π(1 - 1/p) for distinct prime factors p of n.",
+      "timeComplexity": "O(√n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Find Multiplicative Inverse modulo p",
+      "description": "Find x such that a*x ≡ 1 (mod p) using extended Euclidean algorithm",
+      "code": "def mod_inverse(a, p):\n # Returns inverse of a modulo p using extended Euclidean algorithm\n # Assumes p is prime (or a and p are coprime)\n \ndef egcd(a, b):\n if a == 0:\n return b, 0, 1\n gcd, x1, y1 = egcd(b % a, a)\n x = y1 - (b // a) * x1\n y = x1\n return gcd, x, y\n \n gcd, x, y = egcd(a, p)\n if gcd != 1:\n return None # No inverse exists\n else:\n return x % p\n\n# Example: Find inverse of 5 modulo 17\ninv = mod_inverse(5, 17)\nprint(f\"5^(-1) mod 17 = {inv}\") # 7 (since 5*7=35≡1)\n\n# Verify using Fermat's Little Theorem\nprint(pow(5, 15, 17)) # Also gives 7",
+      "explanation": "Uses extended Euclidean algorithm to find x,y such that ax + py = gcd(a,p) = 1. Then x is the inverse modulo p.",
+      "timeComplexity": "O(log p)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

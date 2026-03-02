@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "Briefly explain the purpose of framing in the data link layer and name two common methods used to achieve it.",
+    "expectedPoints": [
+      "Framing is the process of encapsulating a network layer packet with a header and trailer to create a frame for transmission over the physical medium.",
+      "It allows the receiver to delineate the start and end of a frame from the continuous bit stream.",
+      "Two common methods are: 1) Character-oriented (or byte-count) framing, and 2) Bit-oriented framing (e.g., with flag bytes and bit stuffing)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Compare and contrast byte-oriented (character-stuffing) and bit-oriented framing techniques. Discuss the key challenges each method aims to solve and a primary advantage of the bit-oriented approach.",
+    "expectedPoints": [
+      "Byte-oriented framing uses specific byte patterns (like SYN or DLE) to mark the start and end of a frame. A challenge is that if the data contains the same flag byte, it must be 'stuffed' (escaped) to avoid being mistaken for a frame boundary, which can be inefficient.",
+      "Bit-oriented framing (e.g., HDLC) uses a unique bit pattern, '01111110', as the flag. The challenge of data emulating the flag is solved by bit stuffing: a '0' is inserted after every five consecutive '1's in the data stream to prevent the flag pattern from appearing.",
+      "A primary advantage of bit-oriented framing is its efficiency and transparency. It is not tied to any specific character set (like ASCII) and can handle any type of data, making it more versatile and widely used in modern networks."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A common method for framing is the use of flags with bit stuffing. Describe the entire process, including how a frame is constructed, transmitted, and interpreted by the receiver. Furthermore, explain the core problem that physical layer transparency solves and how bit stuffing achieves it. Use a concrete example to illustrate the process.",
+    "expectedPoints": [
+      "Process: The sender encapsulates the data with a starting flag (01111110). Before transmission, it scans the data for any sequence of five consecutive '1's. After every five '1's, it inserts (stuffs) a '0' to prevent the data from containing the flag sequence. An ending flag is appended to complete the frame.",
+      "The receiver detects the starting flag. It then monitors the incoming bit stream, destuffing any '0' that immediately follows five '1's. This reconstructs the original data. The frame ends when the ending flag is detected.",
+      "Core Problem & Solution: The physical layer must be transparent and able to transmit any bit pattern. The problem is that the data payload itself might contain the flag bit pattern, causing the receiver to incorrectly detect a frame boundary. Bit stuffing solves this by making the forbidden flag pattern impossible to appear in the transmitted data stream between the flags.",
+      "Example: Original Data: 01101111101111101. After bit stuffing (inserting 0 after five 1's): 0110111110**0**10111110**0**1. The receiver destuffs the bolded '0's to recover the original data, ensuring the unflagged data is processed correctly."
+    ],
+    "marks": 10
+  }
+]

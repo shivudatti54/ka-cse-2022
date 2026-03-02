@@ -1,0 +1,141 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Explain the difference between IN and EXISTS operators with an example.",
+    "expectedPoints": [
+      "IN checks membership in a list/subquery result",
+      "EXISTS checks if subquery returns any rows",
+      "IN evaluates entire subquery first; EXISTS stops at first match",
+      "EXAMPLES: IN: WHERE deptno IN (10,20,30); EXISTS: WHERE EXISTS (subquery)"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "What is a correlated subquery? How does it differ from a non-correlated subquery?",
+    "expectedPoints": [
+      "Correlated subquery references outer query columns",
+      "Executes once for each row of outer query",
+      "Non-correlated executes once, result cached for outer query",
+      "Correlated is slower as it depends on outer values"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Describe the set operations UNION, INTERSECT, and EXCEPT with their purposes.",
+    "expectedPoints": [
+      "UNION: Combines results, removes duplicates",
+      "INTERSECT: Returns only common rows",
+      "EXCEPT: Returns rows from first query not in second",
+      "All require compatible column lists"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain the difference between WHERE and HAVING clauses in SQL.",
+    "expectedPoints": [
+      "WHERE filters rows before grouping",
+      "HAVING filters groups after GROUP BY",
+      "WHERE cannot use aggregate functions",
+      "HAVING can use aggregate functions with GROUP BY"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "What is a Common Table Expression (CTE)? Write a query using CTE.",
+    "expectedPoints": [
+      "CTE is a temporary named result set",
+      "Improves query readability",
+      "Supports recursive queries",
+      "WITH clause defines CTE"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "Explain LEFT OUTER JOIN and RIGHT OUTER JOIN with examples.",
+    "expectedPoints": [
+      "LEFT JOIN returns all left table rows + matched right rows (NULL for non-matches)",
+      "RIGHT JOIN returns all right table rows + matched left rows",
+      "Both are outer joins preserving non-matching data",
+      "Example: SELECT * FROM emp LEFT JOIN dept ON emp.deptno=dept.deptno"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "What is a self-join? When is it used? Give an example.",
+    "expectedPoints": [
+      "Self-join joins a table to itself using aliases",
+      "Used for hierarchical data, comparing rows in same table",
+      "Common example: employee-manager relationship",
+      "Example: SELECT e.ename, m.ename FROM emp e, emp m WHERE e.mgr=m.empno"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Write SQL queries for the following on a student database (Student(sno, sname, city, dob), Enroll(sno, cno, marks), Course(cno, cname, credits)):\n(a) Find students who scored above average in course 'CS101'\n(b) Find courses enrolled by students from 'Delhi' only\n(c) Find students who have enrolled in all courses",
+    "expectedPoints": [
+      "(a) Use subquery with AVG(marks): SELECT sname FROM Student s, Enroll e WHERE s.sno=e.sno AND cno='CS101' AND marks > (SELECT AVG(marks) FROM Enroll WHERE cno='CS101')",
+      "(b) Use NOT EXISTS or INTERSECT to find courses only by Delhi students",
+      "(c) Use division: SELECT sname FROM Student WHERE sno IN (SELECT sno FROM Enroll GROUP BY sno HAVING COUNT(DISTINCT cno) = (SELECT COUNT(*) FROM Course))"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Consider tables: Employee(emp_id, name, salary, dept_id), Department(dept_id, dept_name, manager_id). Write SQL queries to:\n(a) Find employees earning more than their department's average\n(b) Find departments with total salary > 50000\n(c) Find employees who are managers (using subquery)",
+    "expectedPoints": [
+      "(a) Correlated subquery: SELECT name FROM Employee e WHERE salary > (SELECT AVG(salary) FROM Employee WHERE dept_id=e.dept_id)",
+      "(b) GROUP BY with HAVING: SELECT dept_name FROM Department d, Employee e WHERE d.dept_id=e.dept_id GROUP BY d.dept_id HAVING SUM(salary)>50000",
+      "(c) Use IN with subquery: SELECT name FROM Employee WHERE emp_id IN (SELECT manager_id FROM Department WHERE manager_id IS NOT NULL)"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Explain the following with syntax and examples:\n(a) ANY and ALL operators in subqueries\n(b) CASE expression for conditional data retrieval\n(c) CROSS JOIN and its practical use",
+    "expectedPoints": [
+      "(a) ANY: TRUE if any value satisfies condition; ALL: TRUE if all values satisfy. Syntax: column > ANY(subquery), column > ALL(subquery)",
+      "(b) CASE provides IF-THEN-ELSE. Syntax: CASE WHEN condition THEN result ELSE default END",
+      "(c) CROSS JOIN produces Cartesian product. Use: generating all combinations, date ranges, testing. Syntax: FROM table1 CROSS JOIN table2"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Write comprehensive SQL queries for:\n(a) Find the 3rd highest salary from Employee table using subquery\n(b) Find duplicate names in Employee table\n(c) Update salaries of employees in 'IT' department by 10% using subquery",
+    "expectedPoints": [
+      "(a) Use nested subquery with DISTINCT and LIMIT/TOP or ROW_NUMBER()",
+      "(b) Use GROUP BY with HAVING COUNT(*) > 1",
+      "(c) UPDATE with subquery: UPDATE Employee SET salary = salary * 1.10 WHERE dept_id = (SELECT dept_id FROM Department WHERE dept_name='IT')"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  }
+]

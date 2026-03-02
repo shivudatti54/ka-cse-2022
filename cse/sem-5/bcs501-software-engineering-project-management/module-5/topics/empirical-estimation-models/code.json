@@ -1,0 +1,45 @@
+{
+  "topicId": "empirical-estimation-models",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Basic COCOMO Effort Calculation",
+      "description": "Algorithm to calculate effort using Basic COCOMO model",
+      "code": "FUNCTION CalculateBasicCOCOMO(kloc, mode)\n // mode: 1=Organic, 2=Semi-detached, 3=Embedded\n \n IF mode = 1 THEN // Organic\n a = 2.4\n b = 1.05\n ELSE IF mode = 2 THEN // Semi-detached\n a = 3.0\n b = 1.12\n ELSE // Embedded\n a = 3.6\n b = 1.20\n END IF\n \n // Calculate effort in person-months\n effort = a * (kloc ^ b)\n \n RETURN effort\nEND FUNCTION",
+      "explanation": "Basic COCOMO uses simple formula: Effort = a × (KLOC)^b, where a and b vary by project mode. Result is in person-months (PM).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Function Point Analysis Algorithm",
+      "description": "Step-by-step FP counting and adjustment calculation",
+      "code": "FUNCTION CalculateFunctionPoints(ei, eo, eq, ilf, eif, gscSum)\n // Complexity weights: [Simple, Average, Complex]\n weights = {\n ei: [3, 4, 6],\n eo: [4, 5, 7],\n eq: [3, 4, 6],\n ilf: [7, 10, 15],\n eif: [5, 7, 10]\n }\n \n // Calculate unadjusted FP\n ufp = (ei.simple*weights.ei[0]) + (ei.average*weights.ei[1]) + (ei.complex*weights.ei[2])\n ufp = ufp + (eo.simple*weights.eo[0]) + (eo.average*weights.eo[1]) + (eo.complex*weights.eo[2])\n ufp = ufp + (eq.simple*weights.eq[0]) + (eq.average*weights.eq[1]) + (eq.complex*weights.eq[2])\n ufp = ufp + (ilf.simple*weights.ilf[0]) + (ilf.average*weights.ilf[1]) + (ilf.complex*weights.ilf[2])\n ufp = ufp + (eif.simple*weights.eif[0]) + (eif.average*weights.eif[1]) + (eif.complex*weights.eif[2])\n \n // Calculate Complexity Adjustment Factor\n caf = 0.65 + (0.01 * gscSum)\n \n // Calculate Adjusted Function Points\n afp = ufp * caf\n \n RETURN {ufp, caf, afp}\nEND FUNCTION",
+      "explanation": "FP analysis counts user-functional requirements, assigns complexity weights, then adjusts using 14 General System Characteristics to get final FP count.",
+      "timeComplexity": "O(n) where n=number of components",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Intermediate COCOMO with Cost Drivers",
+      "description": "Effort estimation with 15 cost drivers",
+      "code": "FUNCTION CalculateIntermediateCOCOMO(kloc, mode, costDrivers)\n // Step 1: Calculate base effort\n baseEffort = CalculateBasicCOCOMO(kloc, mode)\n \n // Step 2: Calculate Effort Multiplier from cost drivers\n effortMultiplier = 1.0\n FOR each driver IN costDrivers\n effortMultiplier = effortMultiplier * driver.multiplier\n END FOR\n \n // Common cost driver multipliers (rating 1=nominal):\n // RELY: [0.75, 0.88, 1.00, 1.15, 1.24, 1.40]\n // CPLX: [0.70, 0.85, 1.00, 1.15, 1.30, 1.65]\n // ACAP: [1.46, 1.19, 1.00, 0.86, 0.71]\n // ... (15 drivers total)\n \n // Step 3: Calculate adjusted effort\n adjustedEffort = baseEffort * effortMultiplier\n \n // Step 4: Calculate development time\n c = [2.5, 2.5, 2.5] // for modes 1,2,3\n d = [0.38, 0.35, 0.32]\n devTime = c[mode] * (adjustedEffort ^ d[mode])\n \n RETURN {effort: adjustedEffort, time: devTime}\nEND FUNCTION",
+      "explanation": "Intermediate COCOMO multiplies base effort by product of all cost driver multipliers, providing more accurate estimates than Basic model.",
+      "timeComplexity": "O(n) where n=number of cost drivers",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Use Case Points Estimation",
+      "description": "UCP calculation with technical and environmental factors",
+      "code": "FUNCTION CalculateUCPEffort(actors, useCases, tcfFactors, ecfFactors)\n // Step 1: Count Unadjusted Use Case Points\n actorWeight = {\n Simple: 1, // Other application or DB\n Average: 2, // Interactive, API\n Complex: 3 // GUI-based interaction\n }\n ucWeight = {\n Simple: 5, // <4 transactions\n Average: 10, // 4-7 transactions\n Complex: 15 // >7 transactions\n }\n \n uucp = 0\n FOR each actor IN actors\n uucp = uucp + actorWeight[actor.type]\n END FOR\n \n FOR each uc IN useCases\n uucp = uucp + ucWeight[uc.type]\n END FOR\n \n // Step 2: Calculate Technical Complexity Factor\n tcf = 0.8 + (0.01 * sum(tcfFactors)) // 13 factors, 0-5 each\n \n // Step 3: Calculate Environmental Complexity Factor\n ecf = 1.4 + (-0.03 * sum(ecfFactors)) // 8 factors, 0-5 each\n \n // Step 4: Calculate Use Case Points\n ucp = uucp * tcf * ecf\n \n // Step 5: Estimate effort (typically 16-30 hours per UCP)\n avgHoursPerUCP = 20 // Can be calibrated\n totalEffortHours = ucp * avgHoursPerUCP\n \n RETURN {uucp: uucp, tcf: tcf, ecf: ecf, ucp: ucp, hours: totalEffortHours}\nEND FUNCTION",
+      "explanation": "UCP estimates effort based on use case analysis - counts actors and use cases with complexity, then applies TCF and ECF to get final UCP for effort calculation.",
+      "timeComplexity": "O(n+m) where n=actors, m=use cases",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

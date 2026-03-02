@@ -1,0 +1,43 @@
+{
+  "topicId": "display-lists",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Creating and Executing a Display List",
+      "description": "Demonstrates basic display list creation and usage in OpenGL-like syntax",
+      "code": "// Creating a Display List\nDISPLAY_LIST squareList;\nsquareList = glGenLists(1);\n\n// Begin defining the display list\nglNewList(squareList, GL_COMPILE);\n glColor3f(1.0, 0.0, 0.0); // Red color\n glBegin(GL_POLYGON);\n glVertex2f(-1.0, -1.0);\n glVertex2f(1.0, -1.0);\n glVertex2f(1.0, 1.0);\n glVertex2f(-1.0, 1.0);\n glEnd();\nglEndList();\n\n// Executing the Display List\nglCallList(squareList);",
+      "explanation": "This code shows how to create a display list that stores graphics commands (defining a red square) and then execute it using glCallList(). The commands are compiled and stored in the display list, then rendered when called.",
+      "timeComplexity": "O(n) for creation, O(1) for execution",
+      "spaceComplexity": "O(n) where n is number of primitives"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Hierarchical Display List Example",
+      "description": "Demonstrates hierarchical display list with transformations",
+      "code": "// Create hierarchical display lists for a robotic arm\nDISPLAY_LIST base, arm1, arm2, gripper;\n\n// Define base (stationary)\nglNewList(base, GL_COMPILE);\n drawCylinder(0, 0, 0, 2.0, 1.0);\nglEndList();\n\n// Define arm1 (attached to base)\nglNewList(arm1, GL_COMPILE);\n glTranslatef(0, 1.0, 0);\n drawRectangle(0.5, 2.0);\nglEndList();\n\n// Define arm2 (attached to arm1)\nglNewList(arm2, GL_COMPILE);\n glTranslatef(0, 2.0, 0);\n drawRectangle(0.4, 1.5);\nglEndList();\n\n// Hierarchical rendering\nglCallList(base); // Draw base\nglPushMatrix();\n glRotatef(angle1, 0, 1, 0);\n glCallList(arm1); // Draw arm1 with rotation\n glPushMatrix();\n glTranslatef(0, 2.0, 0);\n glRotatef(angle2, 0, 1, 0);\n glCallList(arm2); // Draw arm2 with nested transform\n glPopMatrix();\nglPopMatrix();",
+      "explanation": "This demonstrates hierarchical display lists where transformations cascade. Each arm segment is defined in its own display list, and when rendered, the transformations are applied hierarchically, so rotating arm1 moves the entire arm2 and gripper.",
+      "timeComplexity": "O(n) where n is number of segments",
+      "spaceComplexity": "O(n) for storing all segments"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Display List for Repeated Object Rendering",
+      "description": "Shows efficiency of display lists for objects rendered multiple times",
+      "code": "// Create display list for complex object (e.g., a tree)\nDISPLAY_LIST tree;\ntree = glGenLists(1);\n\nglNewList(tree, GL_COMPILE);\n // Draw tree trunk\n glColor3f(0.55, 0.27, 0.07);\n drawRectangle(0.3, 2.0);\n \n // Draw tree foliage (complex shape)\n glColor3f(0.0, 0.5, 0.0);\n drawTriangle(-1.5, 2.0, 1.5, 4.0);\n drawTriangle(-1.2, 3.5, 1.2, 5.0);\n drawTriangle(-0.8, 4.5, 0.8, 6.0);\nglEndList();\n\n// Render the same tree multiple times at different positions\nprocedure drawForest()\n FOR i = 1 TO 100 DO\n glPushMatrix();\n glTranslatef(randomX[i], 0, randomZ[i]);\n glScalef(randomScale[i], randomScale[i], randomScale[i]);\n glCallList(tree); // Single call to render entire tree\n glPopMatrix();\n END FOR\nEND PROCEDURE",
+      "explanation": "This shows the efficiency gain - instead of re-specifying all tree geometry 100 times, we create the tree once in a display list and call it repeatedly. Each glCallList is much faster than re-executing all the primitive commands.",
+      "timeComplexity": "O(1) per tree after initial compilation",
+      "spaceComplexity": "O(1) tree definition reused 100 times"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Display List with State Changes",
+      "description": "Demonstrates storing state-changing commands in display lists",
+      "code": "// Display list that includes state changes\nDISPLAY_LIST coloredSquare;\ncoloredSquare = glGenLists(1);\n\nglNewList(coloredSquare, GL_COMPILE);\n // State changes are also stored in the list\n glColor3f(1.0, 0.0, 0.0); // Red\n glBegin(GL_QUADS);\n glVertex2f(-0.5, -0.5);\n glVertex2f(0.5, -0.5);\n glVertex2f(0.5, 0.5);\n glVertex2f(-0.5, 0.5);\n glEnd();\nglEndList();\n\n// Executing with different preceding state\nglColor3f(0.0, 0.0, 1.0); // Blue before call\nglCallList(coloredSquare); // Draws red square (list overrides blue)\n\nglColor3f(0.0, 1.0, 0.0); // Green before call\nglCallList(coloredSquare); // Still draws red square (stored in list)",
+      "explanation": "This demonstrates that display lists store not just geometry but also state-changing commands like glColor3f. When executed, the display list's stored state (red color) overrides the current state, ensuring consistent appearance regardless of preceding state."
+    }
+  ]
+}

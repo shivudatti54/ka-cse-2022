@@ -1,0 +1,51 @@
+{
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "Signal Handler Coding Rules Flowchart",
+      "description": "Flowchart showing correct signal handler implementation pattern",
+      "elements": [
+        "Signal arrives",
+        "Handler: Set volatile sig_atomic_t flag (ONLY this!)",
+        "Handler returns immediately",
+        "Main program: Check flag in loop",
+        "Main program: Perform complex cleanup/actions",
+        "End program gracefully"
+      ],
+      "purpose": "Visualize the recommended pattern: minimal handler, main program does work"
+    }
+  ],
+  "code": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Correct Signal Handler Pattern",
+      "description": "Example of safe signal handling with volatile sig_atomic_t flag",
+      "code": "#include <signal.h>\n#include <stdio.h>\n\n// Shared flag between handler and main - CORRECT declaration\nvolatile sig_atomic_t shutdown_requested = 0;\n\n// Simple signal handler - only sets flag\nvoid handle_shutdown(int sig) {\n shutdown_requested = 1;\n}\n\nint main() {\n struct sigaction sa;\n sa.sa_handler = handle_shutdown;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0; // No SA_RESTART so we can interrupt blocking calls\n \n if (sigaction(SIGINT, &sa, NULL) == -1) {\n perror(\"sigaction\");\n return 1;\n }\n \n // Main loop - does actual work after signal\n while (!shutdown_requested) {\n // ... perform main work here ...\n }\n \n // Cleanup AFTER handler returns - safe to use any function here\n printf(\"\\nCleaning up...\\n\");\n fflush(stdout);\n // ... close files, free memory, etc. ...\n \n return 0;\n}",
+      "explanation": "This demonstrates the recommended pattern: handler only sets a flag (async-signal-safe), actual cleanup happens in main program where any function can be safely used.",
+      "timeComplexity": "O(n) for main loop",
+      "spaceComplexity": "O(1) for flag storage"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Self-Pipe Trick Implementation",
+      "description": "Using self-pipe trick for reliable signal-to-select communication",
+      "code": "#include <signal.h>\n#include <stdio.h>\n#include <unistd.h>\n#include <sys/select.h>\n\nint signal_pipe[2];\nvolatile sig_atomic_t got_signal = 0;\n\nvoid signal_handler(int sig) {\n // Write to pipe - write() IS async-signal-safe\n got_signal = 1;\n char a = 1;\n write(signal_pipe[1], &a, 1);\n}\n\nint main() {\n // Create pipe before setting up signal handler\n if (pipe(signal_pipe) == -1) {\n perror(\"pipe\");\n return 1;\n }\n \n struct sigaction sa;\n sa.sa_handler = signal_handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0;\n sigaction(SIGTERM, &sa, NULL);\n \n // Main event loop using select()\n while (1) {\n fd_set readfds;\n FD_ZERO(&readfds);\n FD_SET(signal_pipe[0], &readfds); // Monitor pipe\n \n int ready = select(signal_pipe[0] + 1, &readfds, NULL, NULL, NULL);\n \n if (ready > 0 && FD_ISSET(signal_pipe[0], &readfds)) {\n // Drain the pipe\n char buf[10];\n read(signal_pipe[0], buf, sizeof(buf));\n got_signal = 0;\n \n // Handle signal - now safe to do complex operations\n printf(\"Signal received, performing cleanup...\\n\");\n break;\n }\n }\n \n close(signal_pipe[0]);\n close(signal_pipe[1]);\n return 0;\n}",
+      "explanation": "The self-pipe trick converts async signal delivery into synchronous I/O event. The handler only does async-signal-safe write(), while main program uses select() to wait for the signal and can then perform any operations safely.",
+      "timeComplexity": "O(n) - select() blocks until signal or timeout",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Handling EINTR in System Calls",
+      "description": "Robust system call wrapper that handles EINTR",
+      "code": "#include <unistd.h>\n#include <errno.h>\n#include <signal.h>\n\n// Wrapper for read() that handles EINTR\nssize_t safe_read(int fd, void *buf, size_t count) {\n ssize_t n;\n \n do {\n n = read(fd, buf, count);\n } while (n == -1 && errno == EINTR);\n \n return n; // Returns -1 on actual error (not EINTR)\n}\n\n// Wrapper using SA_RESTART approach\nssize_t safe_read_restart(int fd, void *buf, size_t count) {\n struct sigaction sa, old_sa;\n \n // Set up handler with SA_RESTART\n sa.sa_handler = SIG_IGN;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = SA_RESTART;\n sigaction(SIGALRM, &sa, &old_sa);\n \n ssize_t n = read(fd, buf, count);\n \n // Restore previous handler\n sigaction(SIGALRM, &old_sa, NULL);\n \n return n;\n}\n\n// Example usage in main\nint main() {\n char buffer[1024];\n \n // Method 1: Manual retry loop\n ssize_t n = safe_read(STDIN_FILENO, buffer, sizeof(buffer));\n if (n < 0) perror(\"read\");\n \n return 0;\n}",
+      "explanation": "Demonstrates two approaches for handling EINTR: (1) manually retry in a loop when errno==EINTR, or (2) use SA_RESTART flag to let kernel automatically restart interrupted system calls. The manual approach gives more control.",
+      "timeComplexity": "O(n) worst case with multiple interrupts",
+      "spaceComplexity": "O(1)"
+    }
+  ],
+  "topicId": "coding-rules"
+}

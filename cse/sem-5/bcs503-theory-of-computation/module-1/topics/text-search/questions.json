@@ -1,0 +1,106 @@
+{
+  "topicId": "text-search",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "For pattern P = 'aba' over alphabet \u03a3 = {a,b}, construct the NFA using the standard pattern-to-NFA construction and explain each component.",
+      "keyPoints": [
+        "NFA has states q\u2080, q\u2081, q\u2082, q\u2083 (m+1 = 4 states for pattern length m=3)",
+        "Transition \u03b4(q\u2080, a) = q\u2081",
+        "Transition \u03b4(q\u2081, b) = q\u2082",
+        "Transition \u03b4(q\u2082, a) = q\u2083",
+        "q\u2083 is the only accepting state",
+        "Explain that this NFA processes text left-to-right, accepting when pattern is found as suffix"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Define the language L recognized by a finite automaton that performs text search for pattern P = '01'. Show that L is a regular language and give its regular expression.",
+      "keyPoints": [
+        "L = {w \u2208 {0,1}* | '01' is a substring of w}",
+        "Regular expression: \u03a3*01\u03a3* where \u03a3 = {0,1}",
+        "Since L can be expressed as regular expression, by Kleene's Theorem L is regular",
+        "A DFA can be constructed for this language with 3 states (0, 1, 2)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the relationship between the KMP algorithm's failure function and finite automata. How does KMP achieve O(n) time complexity using automata concepts?",
+      "keyPoints": [
+        "KMP's failure function computes the automaton's transition function",
+        "Preprocessing phase builds transition table in O(m) time",
+        "Scanning phase simulates DFA: each character causes exactly one state transition",
+        "No backtracking in text, hence O(n) time",
+        "The failure function gives the longest proper prefix that's also suffix - this is the state transition"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Using Myhill-Nerode theorem, prove that any DFA recognizing strings containing pattern 'ab' must have at least 3 states.",
+      "keyPoints": [
+        "Consider strings: \u03b5, 'a', 'ab'",
+        "Show \u03b5 and 'a' are distinguishable (\u03b5 leads to non-accept, 'a' leads to non-accept but different future)",
+        "Show \u03b5 and 'ab' are distinguishable",
+        "Show 'a' and 'ab' are distinguishable",
+        "These give 3 distinct equivalence classes \u2192 at least 3 states required",
+        "The minimal DFA has exactly 3 states (q\u2080, q\u2081, q\u2082)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Given pattern P = '101' and text T = '110101', show step-by-step how the DFA processes the text and identify where matches occur.",
+      "keyPoints": [
+        "Initialize at state 0",
+        "Process '1': from state 0 on '1', transition to state 1",
+        "Process '1': from state 1 on '1', no match, stay at state 1 (or fallback)",
+        "Process '0': transition to state 2",
+        "Process '1': transition to state 3 (pattern found!)",
+        "Continue processing remaining '0','1'",
+        "Show that match ends at position 4 (index 3 in 0-based)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Construct the complete deterministic finite automaton (DFA) for pattern P = 'ab' over alphabet \u03a3 = {a,b}. Show all states, transitions, and explain why this DFA has exactly 3 states using Myhill-Nerode theorem.",
+      "keyPoints": [
+        "States: q\u2080 (no match), q\u2081 (matched 'a'), q\u2082 (matched 'ab' - accepting)",
+        "Transitions from q\u2080: \u03b4(q\u2080,a)=q\u2081, \u03b4(q\u2080,b)=q\u2080",
+        "Transitions from q\u2081: \u03b4(q\u2081,a)=q\u2081, \u03b4(q\u2081,b)=q\u2082",
+        "Transitions from q\u2082: \u03b4(q\u2082,a)=q\u2081, \u03b4(q\u2082,b)=q\u2080",
+        "By Myhill-Nerode: 3 distinct right-equivalence classes for language {w|ab\u2208substr(w)}",
+        "Class 1: strings ending in no 'a' suffix",
+        "Class 2: strings ending in 'a' but not 'ab'",
+        "Class 3: strings ending in 'ab' (accepting)",
+        "Therefore minimal DFA has exactly 3 states"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare NFA-based and DFA-based pattern matching in terms of preprocessing time, search time, and space. For a pattern of length m over alphabet \u03a3, derive the complexities for both approaches.",
+      "keyPoints": [
+        "NFA Construction: O(m) - simple linear chain",
+        "DFA Construction via subset construction: O(m|\u03a3|) - need all transitions",
+        "NFA Simulation: O(mn) worst case - can have O(m) active states",
+        "DFA Simulation: O(n) - single state transition per character",
+        "NFA Space: O(m) - just m+1 states and transitions",
+        "DFA Space: O(m|\u03a3|) - transition table of size (m+1)\u00d7|\u03a3|",
+        "Trade-off: DFA faster at runtime but more preprocessing and space",
+        "NFA useful when building from regex (regex \u2192 NFA \u2192 DFA)"
+      ],
+      "marks": 10
+    }
+  ]
+}

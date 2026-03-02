@@ -1,0 +1,45 @@
+{
+  "topicId": "display-lists-and-modeling",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Creating and Using Display List",
+      "description": "Complete example of creating a display list for a square and executing it",
+      "code": "// Define display list\nglNewList(1, GL_COMPILE);\n glColor3f(1.0, 0.0, 0.0); // Red color\n glBegin(GL_QUADS);\n glVertex2f(-1.0, -1.0);\n glVertex2f(1.0, -1.0);\n glVertex2f(1.0, 1.0);\n glVertex2f(-1.0, 1.0);\n glEnd();\nglEndList();\n\n// Execute display list multiple times\nglCallList(1); // First instance\n\n// Translate and draw again\nglTranslatef(3.0, 0.0, 0.0);\nglCallList(1); // Second instance",
+      "explanation": "Creates display list ID 1 with a red square. The list is compiled once but can be executed multiple times with different transformations applied before each call.",
+      "timeComplexity": "O(1) per call after compilation",
+      "spaceComplexity": "O(n) where n is number of vertices in list"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Hierarchical Robot Arm",
+      "description": "Demonstrates hierarchical modeling using matrix stack for a simple robot arm",
+      "code": "// Draw robot arm with hierarchical structure\nvoid drawArm() {\n // Base\n glPushMatrix();\n glTranslatef(0.0, -2.0, 0.0);\n drawCylinder();\n \n // Upper arm\n glPushMatrix();\n glTranslatef(0.0, 1.0, 0.0);\n glRotatef(armAngle, 0.0, 0.0, 1.0);\n drawBox(0.3, 2.0, 0.3);\n \n // Forearm\n glPushMatrix();\n glTranslatef(0.0, 1.0, 0.0);\n glRotatef(forearmAngle, 0.0, 0.0, 1.0);\n drawBox(0.2, 1.5, 0.2);\n \n // Hand\n glPushMatrix();\n glTranslatef(0.0, 0.75, 0.0);\n drawSphere(0.3);\n glPopMatrix();\n glPopMatrix();\n glPopMatrix();\n glPopMatrix();\n}",
+      "explanation": "Uses glPushMatrix/glPopMatrix to maintain hierarchy. Each joint transformation is applied relative to its parent. Moving the shoulder moves the entire arm, while moving the hand only affects the hand.",
+      "timeComplexity": "O(1) per render",
+      "spaceComplexity": "O(h) where h is depth of hierarchy"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Transformation Examples",
+      "description": "Demonstrates all three basic transformations",
+      "code": "// Example 1: Translation\nglLoadIdentity();\nglTranslatef(2.0, 1.0, 0.0); // Move 2 units right, 1 up\ndrawObject();\n\n// Example 2: Rotation\nglLoadIdentity();\nglRotatef(45.0, 0.0, 0.0, 1.0); // 45° around Z-axis\ndrawObject();\n\n// Example 3: Scaling\nglLoadIdentity();\nglScalef(2.0, 0.5, 1.0); // 2x width, 0.5x height\ndrawObject();\n\n// Example 4: Combined (T then R then S)\nglLoadIdentity();\nglTranslatef(1.0, 0.0, 0.0); // Apply 3rd\nglRotatef(45.0, 0.0, 0.0, 1.0); // Apply 2nd\nglScalef(2.0, 1.0, 1.0); // Apply 1st (closest to object)\ndrawObject();",
+      "explanation": "Shows individual and combined transformations. Remember that in OpenGL, transformations are applied in reverse order of specification, so the code specifies scale→rotate→translate but the actual order of application is translate→rotate→scale.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Multiple Display Lists with glCallLists",
+      "description": "Shows how to manage and call multiple display lists efficiently",
+      "code": "// Create multiple display lists for different shapes\nvoid createShapeLists() {\n // List 1: Triangle\n glNewList(1, GL_COMPILE);\n glBegin(GL_TRIANGLES);\n glVertex2f(0.0, 1.0);\n glVertex2f(-1.0, -1.0);\n glVertex2f(1.0, -1.0);\n glEnd();\n glEndList();\n \n // List 2: Square\n glNewList(2, GL_COMPILE);\n glBegin(GL_QUADS);\n glVertex2f(-1.0, 1.0);\n glVertex2f(1.0, 1.0);\n glVertex2f(1.0, -1.0);\n glVertex2f(-1.0, -1.0);\n glEnd();\n glEndList();\n \n // List 3: Pentagon\n glNewList(3, GL_COMPILE);\n // Pentagon vertices...\n glEndList();\n}\n\n// Call multiple lists\nGLuint listIDs[] = {1, 2, 3, 1, 2};\nglCallLists(5, GL_UNSIGNED_INT, listIDs);",
+      "explanation": "Demonstrates creating multiple display lists and using glCallLists to execute several in sequence. This is useful for batch rendering of multiple objects.",
+      "timeComplexity": "O(n) where n is number of lists called",
+      "spaceComplexity": "O(k) where k is total storage for all lists"
+    }
+  ]
+}

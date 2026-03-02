@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of a message call transaction in Ethereum?",
+    "options": [
+      "To transfer ETH from one account to another",
+      "To execute code in a smart contract's function",
+      "To create a new smart contract on the blockchain",
+      "To query the current state of the blockchain"
+    ],
+    "correctIndex": 1,
+    "explanation": "A message call transaction is used to invoke and execute a function within an already deployed smart contract, potentially changing the contract's state."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following fields is NOT a required component of a standard message call transaction?",
+    "options": [
+      "`to` (recipient address)",
+      "`data` (call data)",
+      "`value` (amount of Wei to transfer)",
+      "`gasLimit` (maximum gas to be consumed)"
+    ],
+    "correctIndex": 2,
+    "explanation": "The `value` field, which specifies an amount of ETH to send, is optional. A message call can simply invoke a contract function without transferring any native currency."
+  },
+  {
+    "id": "q3",
+    "question": "How is the `data` payload of a message call transaction typically formatted to specify which function to call?",
+    "options": [
+      "As a human-readable function name and arguments",
+      "As the first 4 bytes of the keccak256 hash of the function signature",
+      "As the entire bytecode of the function to be executed",
+      "As a JSON object describing the function call"
+    ],
+    "correctIndex": 1,
+    "explanation": "The `data` field starts with the function selector, which is the first 4 bytes of the hash of the function's name and argument types. The encoded arguments follow this selector."
+  },
+  {
+    "id": "q4",
+    "question": "What is a key difference between the `gasLimit` set by the sender and the `gas` actually used in a message call?",
+    "options": [
+      "The `gasLimit` is a suggestion, and the network can use more if needed.",
+      "The `gasUsed` can never exceed the `gasLimit`; if it does, the transaction reverts and gas is forfeited.",
+      "The `gasUsed` is always exactly half of the `gasLimit` for message calls.",
+      "The `gasLimit` is only for the first operation; the contract call can consume unlimited gas afterwards."
+    ],
+    "correctIndex": 1,
+    "explanation": "The `gasLimit` is a strict upper bound. If execution requires more gas than the limit provided, it will trigger an 'out of gas' exception, causing the transaction to revert. All gas up to the limit is consumed and paid for, but state changes are reverted."
+  },
+  {
+    "id": "q5",
+    "question": "Consider a message call that fails and reverts. Which of the following statements is TRUE?",
+    "options": [
+      "All gas allocated (`gasLimit`) is consumed and paid to the miner.",
+      "No gas is consumed, and the transaction fee is returned to the sender.",
+      "Only the gas used up to the point of failure is consumed; the rest is refunded.",
+      "The transaction is not included in a block, so no fees are incurred."
+    ],
+    "correctIndex": 2,
+    "explanation": "When a transaction reverts, it has still executed operations on the Ethereum Virtual Machine (EVM) up to the point of failure. The sender is charged for the gas used for these operations. Any unused gas from the original `gasLimit` is refunded to the sender."
+  }
+]

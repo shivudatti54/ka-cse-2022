@@ -1,0 +1,377 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1460">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+    
+    <!-- Filter for shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 500; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes growUp {
+      from { transform: scaleY(0); transform-origin: bottom; }
+      to { transform: scaleY(1); transform-origin: bottom; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .formula-anim { animation: fadeIn 0.5s ease-out backwards; }
+    .draw-path {
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+      animation: drawLine 1.5s ease-out forwards;
+    }
+    .bar-grow {
+      transform: scaleY(0);
+      transform-origin: bottom;
+      animation: growUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+  </style>
+  
+  <!-- Background -->
+  <rect width="800" height="1460" fill="#f8f9fa"/>
+  
+  <!-- STEP 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to this lecture on Student's t-Distribution, a fundamental tool for statistical inference with small samples.">
+    <rect x="20" y="10" width="760" height="45" rx="10" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="42" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#4a148c" text-anchor="middle">Student's t-Distribution</text>
+  </g>
+  
+  <!-- STEP 1: The Problem -->
+  <g class="step" id="step1" data-narration="When estimating population mean, we often don't know the true standard deviation, forcing us to estimate it from sample data.">
+    <rect x="20" y="65" width="760" height="85" rx="10" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="85" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c62828">THE PROBLEM</text>
+    <text x="40" y="105" font-family="Arial, sans-serif" font-size="10" fill="#333">We want to estimate population mean μ but σ is unknown!</text>
+    <text x="40" y="125" font-family="Arial, sans-serif" font-size="10" fill="#333">Normal formula uses: Z = (x̄ - μ) / (σ/√n)</text>
+    <text x="40" y="142" font-family="Arial, sans-serif" font-size="10" fill="#c62828" font-weight="bold">But σ is rarely known in practice!</text>
+    
+    <!-- Animation: Draw question mark -->
+    <circle cx="700" cy="105" r="25" fill="#ffcdd2" stroke="#c62828" stroke-width="2">
+      <animate attributeName="r" from="0" to="25" dur="0.5s" fill="freeze"/>
+    </circle>
+    <text x="700" y="112" font-family="Arial" font-size="28" font-weight="bold" fill="#c62828" text-anchor="middle">
+      <animate attributeName="opacity" from="0" to="1" dur="0.5s" fill="freeze"/>
+      ?
+    </text>
+  </g>
+  
+  <!-- STEP 2: The Solution -->
+  <g class="step" id="step2" data-narration="William Gosset developed the t-distribution to handle this exact problem, using sample standard deviation instead of population sigma.">
+    <rect x="20" y="160" width="760" height="85" rx="10" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="180" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565c0">THE SOLUTION: t-Distribution</text>
+    <text x="40" y="200" font-family="Arial, sans-serif" font-size="10" fill="#333">William Sealy Gosset (1908) developed it under pseudonym "Student"</text>
+    <text x="40" y="220" font-family="Arial, sans-serif" font-size="10" fill="#333">Substitute sample std dev s for unknown σ:</text>
+    <text x="300" y="220" font-family="Courier New, monospace" font-size="14" font-weight="bold" fill="#1565c0">t = (x̄ - μ) / (s/√n)</text>
+    <text x="40" y="238" font-family="Arial, sans-serif" font-size="10" fill="#333">This new statistic follows Student's t-distribution!</text>
+    
+    <!-- Arrow animation -->
+    <path d="M 550 180 Q 600 180 650 160" stroke="#1565c0" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" from="20" to="0" dur="1s" fill="freeze"/>
+    </path>
+  </g>
+  
+  <!-- STEP 3: Degrees of Freedom -->
+  <g class="step" id="step3" data-narration="The t-distribution shape depends on degrees of freedom, calculated as n-1, which accounts for the extra uncertainty from estimation.">
+    <rect x="20" y="255" width="760" height="90" rx="10" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="275" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">KEY CONCEPT: Degrees of Freedom (ν)</text>
+    <text x="40" y="295" font-family="Arial, sans-serif" font-size="10" fill="#333">Shape is determined by: ν = n - 1</text>
+    
+    <!-- Visual boxes showing formula -->
+    <rect x="40" y="310" width="100" height="25" rx="5" fill="#c8e6c9" stroke="#2e7d32"/>
+    <text x="90" y="327" font-family="Arial, sans-serif" font-size="11" fill="#2e7d32" text-anchor="middle">ν = n - 1</text>
+    
+    <text x="160" y="295" font-family="Arial, sans-serif" font-size="10" fill="#333">where n = sample size</text>
+    
+    <!-- Show examples -->
+    <text x="40" y="335" font-family="Arial, sans-serif" font-size="10" fill="#333">Examples:</text>
+    <text x="100" y="335" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32">n=5 → ν=4</text>
+    <text x="180" y="335" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32">n=10 → ν=9</text>
+    <text x="270" y="335" font-family="Arial, sans-serif" font-size="10" fill="#2e7d32">n=30 → ν=29</text>
+    
+    <!-- Animation: show bars -->
+    <rect x="380" y="300" width="30" height="40" fill="#81c784" rx="3" class="bar-grow" style="animation-delay: 0.3s"/>
+    <rect x="420" y="310" width="30" height="30" fill="#81c784" rx="3" class="bar-grow" style="animation-delay: 0.5s"/>
+    <rect x="460" y="315" width="30" height="25" fill="#81c784" rx="3" class="bar-grow" style="animation-delay: 0.7s"/>
+    <text x="395" y="350" font-family="Arial, sans-serif" font-size="8" fill="#333" text-anchor="middle">df=4</text>
+    <text x="435" y="350" font-family="Arial, sans-serif" font-size="8" fill="#333" text-anchor="middle">df=9</text>
+    <text x="475" y="350" font-family="Arial, sans-serif" font-size="8" fill="#333" text-anchor="middle">df→∞</text>
+  </g>
+  
+  <!-- STEP 4: Properties -->
+  <g class="step" id="step4" data-narration="The t-distribution is symmetric and bell-shaped like normal, but has heavier tails accounting for extra variability in small samples.">
+    <rect x="20" y="355" width="760" height="90" rx="10" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="375" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">PROPERTIES OF t-Distribution</text>
+    
+    <!-- Property 1 -->
+    <rect x="40" y="390" width="220" height="45" rx="5" fill="#fff8e1"/>
+    <text x="50" y="405" font-family="Arial, sans-serif" font-size="10" fill="#333">• Bell-shaped, symmetric</text>
+    <text x="50" y="420" font-family="Arial, sans-serif" font-size="10" fill="#333">  about zero</text>
+    <text x="50" y="435" font-family="Arial, sans-serif" font-size="10" fill="#333">• Mean = 0</text>
+    
+    <!-- Property 2 -->
+    <rect x="270" y="390" width="220" height="45" rx="5" fill="#fff8e1"/>
+    <text x="280" y="405" font-family="Arial, sans-serif" font-size="10" fill="#333">• Heavier tails than normal</text>
+    <text x="280" y="420" font-family="Arial, sans-serif" font-size="10" fill="#e65100" font-weight="bold">  More probability for</text>
+    <text x="280" y="435" font-family="Arial, sans-serif" font-size="10" fill="#e65100" font-weight="bold">  extreme values!</text>
+    
+    <!-- Property 3 -->
+    <rect x="500" y="390" width="220" height="45" rx="5" fill="#fff8e1"/>
+    <text x="510" y="405" font-family="Arial, sans-serif" font-size="10" fill="#333">• Converges to Z as n→∞</text>
+    <text x="510" y="420" font-family="Arial, sans-serif" font-size="10" fill="#333">  For n &gt; 30, very close to</text>
+    <text x="510" y="435" font-family="Arial, sans-serif" font-size="10" fill="#333">  standard normal</text>
+    
+    <!-- Visual: tail comparison -->
+    <path d="M 620 300 Q 700 320 740 380" stroke="#e65100" stroke-width="3" fill="none" class="draw-path" style="animation-delay: 0.5s"/>
+    <path d="M 620 300 Q 700 310 740 330" stroke="#1565c0" stroke-width="2" fill="none" stroke-dasharray="5,5" class="draw-path" style="animation-delay: 0.8s"/>
+  </g>
+  
+  <!-- STEP 5: Formula -->
+  <g class="step" id="step5" data-narration="The t-statistic formula calculates how many standard errors the sample mean deviates from the hypothesized population mean.">
+    <rect x="20" y="455" width="760" height="90" rx="10" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="475" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#4a148c">t-STATISTIC FORMULA</text>
+    
+    <!-- Main formula -->
+    <text x="400" y="510" font-family="Courier New, monospace" font-size="22" font-weight="bold" fill="#4a148c" text-anchor="middle" class="formula-anim" style="animation-delay: 0.2s">t = (x̄ - μ) / (s/√n)</text>
+    
+    <!-- Label boxes -->
+    <rect x="80" y="530" width="120" height="35" rx="5" fill="#e1bee7"/>
+    <text x="140" y="545" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">x̄ = sample mean</text>
+    <text x="140" y="558" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">μ = population mean</text>
+    
+    <rect x="220" y="530" width="120" height="35" rx="5" fill="#e1bee7"/>
+    <text x="280" y="545" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">s = sample std dev</text>
+    <text x="280" y="558" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">n = sample size</text>
+    
+    <rect x="360" y="530" width="140" height="35" rx="5" fill="#e1bee7"/>
+    <text x="430" y="545" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">s/√n = standard error</text>
+    <text x="430" y="558" font-family="Arial, sans-serif" font-size="9" fill="#4a148c" text-anchor="middle">of the mean</text>
+  </g>
+  
+  <!-- STEP 6: Visual Comparison -->
+  <g class="step" id="step6" data-narration="Watch how the t-distribution with low degrees of freedom has much fatter tails compared to the standard normal curve.">
+    <rect x="20" y="555" width="760" height="95" rx="10" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="575" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565c0">VISUAL COMPARISON: t vs Normal</text>
+    
+    <!-- Graph: t-distribution vs Z -->
+    <rect x="50" y="590" width="450" height="50" fill="#fff" stroke="#1976d2" stroke-width="1" rx="3"/>
+    
+    <!-- Normal curve (Z) -->
+    <path d="M 80 620 Q 180 580 275 620 Q 370 580 470 620" stroke="#1565c0" stroke-width="2" fill="none" class="draw-path"/>
+    <text x="500" y="600" font-family="Arial, sans-serif" font-size="9" fill="#1565c0">Z (n→∞)</text>
+    
+    <!-- t-distribution curve -->
+    <path d="M 80 620 Q 180 600 275 620 Q 370 600 470 620" stroke="#e65100" stroke-width="2" fill="none" class="draw-path" style="animation-delay: 0.3s"/>
+    <text x="500" y="615" font-family="Arial, sans-serif" font-size="9" fill="#e65100">t (df=3)</text>
+    
+    <!-- Arrow showing tail region -->
+    <path d="M 420 605 L 450 605" stroke="#c62828" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="440" y="598" font-family="Arial, sans-serif" font-size="8" fill="#c62828">heavier tail</text>
+    
+    <!-- Key insight -->
+    <rect x="520" y="590" width="230" height="50" rx="5" fill="#e3f2fd"/>
+    <text x="530" y="610" font-family="Arial, sans-serif" font-size="10" fill="#333">Lower df = More uncertainty</text>
+    <text x="530" y="625" font-family="Arial, sans-serif" font-size="10" fill="#333">= Fatter tails</text>
+    <text x="530" y="640" font-family="Arial, sans-serif" font-size="10" fill="#1565c0">→ Need larger critical values!</text>
+  </g>
+  
+  <!-- STEP 7: Confidence Intervals -->
+  <g class="step" id="step7" data-narration="We use t-distribution to construct confidence intervals for population mean when sigma is unknown, using the t-critical value.">
+    <rect x="20" y="660" width="760" height="90" rx="10" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="680" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">CONFIDENCE INTERVALS</text>
+    <text x="40" y="700" font-family="Arial, sans-serif" font-size="10" fill="#333">When σ is unknown, CI for μ is:</text>
+    
+    <!-- Formula -->
+    <text x="300" y="725" font-family="Courier New, monospace" font-size="18" font-weight="bold" fill="#2e7d32" text-anchor="middle">x̄ ± t<sub>α/2,ν</sub> × (s/√n)</text>
+    
+    <!-- Components -->
+    <rect x="500" y="690" width="250" height="50" rx="5" fill="#c8e6c9"/>
+    <text x="510" y="705" font-family="Arial, sans-serif" font-size="9" fill="#333">t<sub>α/2,ν</sub> = critical t-value</text>
+    <text x="510" y="720" font-family="Arial, sans-serif" font-size="9" fill="#333">from t-table (α = significance)</text>
+    <text x="510" y="735" font-family="Arial, sans-serif" font-size="9" fill="#333">ν = n-1 degrees of freedom</text>
+  </g>
+  
+  <!-- STEP 8: Example Problem -->
+  <g class="step" id="step8" data-narration="Let's work through a real example: measuring algorithm runtime across 16 datasets to estimate true mean performance.">
+    <rect x="20" y="760" width="760" height="95" rx="10" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="780" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">EXAMPLE: Algorithm Runtime</text>
+    <text x="40" y="800" font-family="Arial, sans-serif" font-size="10" fill="#333">Problem: Measure sorting algorithm runtime on 16 datasets.</text>
+    <text x="40" y="820" font-family="Arial, sans-serif" font-size="10" fill="#333">Find 95% CI for true mean runtime μ.</text>
+    
+    <!-- Given data -->
+    <rect x="40" y="835" width="350" height="40" rx="5" fill="#fff8e1"/>
+    <text x="50" y="850" font-family="Arial, sans-serif" font-size="10" fill="#333">Given: n = 16</text>
+    <text x="130" y="850" font-family="Arial, sans-serif" font-size="10" fill="#333">x̄ = 52 ms</text>
+    <text x="210" y="850" font-family="Arial, sans-serif" font-size="10" fill="#333">s = 5 ms</text>
+    <text x="290" y="850" font-family="Arial, sans-serif" font-size="10" fill="#333">Confidence = 95%</text>
+    
+    <!-- Visual representation -->
+    <rect x="420" y="835" width="100" height="40" rx="5" fill="#ffe0b2"/>
+    <text x="470" y="850" font-family="Arial, sans-serif" font-size="9" fill="#e65100" text-anchor="middle">16 samples</text>
+    <text x="470" y="865" font-family="Arial, sans-serif" font-size="9" fill="#e65100" text-anchor="middle">→ 52 ± ? ms</text>
+  </g>
+  
+  <!-- STEP 9: Calculations -->
+  <g class="step" id="step9" data-narration="First we calculate degrees of freedom (n-1=15), then compute the standard error by dividing sample std dev by square root of n.">
+    <rect x="20" y="865" width="760" height="90" rx="10" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="885" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c62828">STEP 1: Calculate df and Standard Error</text>
+    
+    <!-- Calculations -->
+    <text x="40" y="910" font-family="Arial, sans-serif" font-size="11" fill="#333">Degrees of freedom: ν = n - 1 = 16 - 1 = <tspan font-weight="bold" fill="#c62828">15</tspan></text>
+    <text x="40" y="935" font-family="Arial, sans-serif" font-size="11" fill="#333">Standard Error: s/√n = 5/√16 = 5/4 = <tspan font-weight="bold" fill="#c62828">1.25</tspan></text>
+    
+    <!-- Visual: calculation boxes -->
+    <rect x="350" y="900" width="180" height="45" rx="5" fill="#ffcdd2"/>
+    <text x="360" y="918" font-family="Arial, sans-serif" font-size="10" fill="#333">ν = 15</text>
+    <text x="360" y="935" font-family="Arial, sans-serif" font-size="10" fill="#333">SE = 1.25 ms</text>
+    
+    <!-- Animation arrow -->
+    <path d="M 550 910 L 650 910" stroke="#c62828" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" from="20" to="0" dur="0.8s" fill="freeze"/>
+    </path>
+  </g>
+  
+  <!-- STEP 10: Critical Value -->
+  <g class="step" id="step10" data-narration="For 95% confidence with 15 degrees of freedom, we look up t-critical value: t(0.025,15) equals 2.131 from the t-table.">
+    <rect x="20" y="965" width="760" height="90" rx="10" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="985" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#4a148c">STEP 2: Find Critical t-Value</text>
+    
+    <!-- t-table representation -->
+    <rect x="40" y="1000" width="200" height="50" rx="5" fill="#f3e5f5"/>
+    <text x="50" y="1020" font-family="Arial, sans-serif" font-size="10" fill="#333">For 95% CI:</text>
+    <text x="50" y="1040" font-family="Arial, sans-serif" font-size="10" fill="#333">α = 0.05, α/2 = 0.025</text>
+    <text x="50" y="1055" font-family="Arial, sans-serif" font-size="10" fill="#333">df = 15</text>
+    
+    <!-- Arrow and result -->
+    <path d="M 260 1025 L 350 1025" stroke="#4a148c" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <rect x="360" y="1000" width="180" height="50" rx="5" fill="#ce93d8"/>
+    <text x="450" y="1020" font-family="Courier New, monospace" font-size="16" font-weight="bold" fill="#4a148c" text-anchor="middle">t<sub>0.025,15</sub></text>
+    <text x="450" y="1045" font-family="Courier New, monospace" font-size="20" font-weight="bold" fill="#4a148c" text-anchor="middle">= 2.131</text>
+    
+    <!-- Visual hint -->
+    <text x="560" y="1015" font-family="Arial, sans-serif" font-size="9" fill="#666">From t-table or</text>
+    <text x="560" y="1030" font-family="Arial, sans-serif" font-size="9" fill="#666">statistical software</text>
+    <rect x="560" y="1035" width="120" height="2" fill="#4a148c"/>
+  </g>
+  
+  <!-- STEP 11: Final Result -->
+  <g class="step" id="step11" data-narration="The 95% confidence interval is 52 ± 2.66, giving us the range from 49.34 to 54.66 milliseconds for true mean runtime.">
+    <rect x="20" y="1065" width="760" height="90" rx="10" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1085" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">STEP 3: Final Confidence Interval</text>
+    
+    <!-- Calculation -->
+    <text x="40" y="1115" font-family="Arial, sans-serif" font-size="12" fill="#333">Margin of Error = t × SE = 2.131 × 1.25 = <tspan font-weight="bold" fill="#2e7d32">2.66</tspan></text>
+    <text x="40" y="1140" font-family="Arial, sans-serif" font-size="12" fill="#333">CI = 52 ± 2.66 = <tspan font-weight="bold" fill="#2e7d32">[49.34, 54.66]</tspan></text>
+    
+    <!-- Visual result -->
+    <rect x="350" y="1100" width="300" height="45" rx="8" fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+    <text x="500" y="1120" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32" text-anchor="middle">95% CONFIDENT</text>
+    <text x="500" y="1140" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32" text-anchor="middle">True μ is between 49.34 and 54.66 ms</text>
+  </g>
+  
+  <!-- STEP 12: Hypothesis Testing -->
+  <g class="step" id="step12" data-narration="Beyond confidence intervals, the t-distribution enables hypothesis testing through one-sample t-tests comparing sample means to population values.">
+    <rect x="20" y="1165" width="760" height="90" rx="10" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1185" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565c0">APPLICATIONS: Hypothesis Testing</text>
+    
+    <!-- Two main applications -->
+    <rect x="40" y="1205" width="330" height="40" rx="5" fill="#e3f2fd"/>
+    <text x="50" y="1222" font-family="Arial, sans-serif" font-size="10" fill="#333">1. One-Sample t-test:</text>
+    <text x="50" y="1240" font-family="Arial, sans-serif" font-size="10" fill="#1565c0">H₀: μ = μ₀ (test against hypothesized value)</text>
+    
+    <rect x="380" y="1205" width="330" height="40" rx="5" fill="#e3f2fd"/>
+    <text x="390" y="1222" font-family="Arial, sans-serif" font-size="10" fill="#333">2. Confidence Intervals:</text>
+    <text x="390" y="1240" font-family="Arial, sans-serif" font-size="10" fill="#1565c0">Estimate population mean with known uncertainty</text>
+    
+    <!-- Real-world uses -->
+    <text x="40" y="1265" font-family="Arial, sans-serif" font-size="9" fill="#666">Real-world: A/B testing, clinical trials, algorithm comparison, machine learning experiments</text>
+  </g>
+  
+  <!-- STEP 13: Key Takeaways -->
+  <g class="step" id="step13" data-narration="Remember these key points: use t when sigma is unknown, it has heavier tails than normal, and converges to Z for large samples.">
+    <rect x="20" y="1265" width="760" height="90" rx="10" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1285" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#e65100">KEY TAKEAWAYS</text>
+    
+    <!-- Points -->
+    <rect x="40" y="1305" width="175" height="40" rx="5" fill="#fff8e1"/>
+    <text x="50" y="1320" font-family="Arial, sans-serif" font-size="9" fill="#333">Use when σ is unknown</text>
+    <text x="50" y="1338" font-family="Arial, sans-serif" font-size="9" fill="#333">and estimated from sample</text>
+    
+    <rect x="225" y="1305" width="175" height="40" rx="5" fill="#fff8e1"/>
+    <text x="235" y="1320" font-family="Arial, sans-serif" font-size="9" fill="#333">Heavier tails than normal</text>
+    <text x="235" y="1338" font-family="Arial, sans-serif" font-size="9" fill="#333">→ accounts for uncertainty</text>
+    
+    <rect x="410" y="1305" width="175" height="40" rx="5" fill="#fff8e1"/>
+    <text x="420" y="1320" font-family="Arial, sans-serif" font-size="9" fill="#333">df = n - 1</text>
+    <text x="420" y="1338" font-family="Arial, sans-serif" font-size="9" fill="#333">More df = more normal</text>
+    
+    <rect x="595" y="1305" width="165" height="40" rx="5" fill="#fff8e1"/>
+    <text x="605" y="1320" font-family="Arial, sans-serif" font-size="9" fill="#333">For n &gt; 30: t ≈ Z</text>
+    <text x="605" y="1338" font-family="Arial, sans-serif" font-size="9" fill="#333">Can use normal approx</text>
+  </g>
+  
+  <!-- STEP 14: Summary -->
+  <g class="step" id="step14" data-narration="The t-distribution is essential for statistical inference with small samples, forming the foundation for t-tests used across data science and research.">
+    <rect x="20" y="1365" width="760" height="75" rx="10" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="1390" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#4a148c" text-anchor="middle">SUMMARY</text>
+    <text x="400" y="1415" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">Student's t-distribution: The foundation for inference when σ is unknown</text>
+    <text x="400" y="1435" font-family="Arial, sans-serif" font-size="10" fill="#666" text-anchor="middle">Essential for t-tests, confidence intervals, and analyzing small sample data in CS, engineering, and data science</text>
+    
+    <!-- Decorative -->
+    <circle cx="60" cy="1400" r="8" fill="#4a148c" opacity="0.3"/>
+    <circle cx="740" cy="1400" r="8" fill="#4a148c" opacity="0.3"/>
+  </g>
+</svg>

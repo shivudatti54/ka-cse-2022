@@ -1,0 +1,33 @@
+{
+  "topicId": "cryptographic-primitives",
+  "examples": [
+    {
+      "id": "pseudocode-hash-function",
+      "title": "Hash Function Algorithm",
+      "description": "Demonstrates a basic hash function",
+      "language": "pseudocode",
+      "code": "ALGORITHM HashFunction\nINPUT: data (any size)\nOUTPUT: hashValue (fixed size)\n\nBEGIN\n hashValue = SHA256(data)\n RETURN hashValue\nEND",
+      "explanation": "This pseudocode demonstrates a basic hash function using SHA256."
+    },
+    {
+      "id": "python-digital-signature",
+      "title": "Digital Signature Implementation",
+      "description": "Demonstrates creating and verifying a digital signature using ECDSA",
+      "language": "python",
+      "code": "import hashlib\nfrom ecdsa import SigningKey, VerifyingKey\n\n# Generate a private key\nprivate_key = SigningKey.generate(curve=ecdsa.SECP256k1)\n\n# Generate a public key\npublic_key = private_key.get_verifying_key()\n\n# Data to be signed\nmessage = b'Hello, World!'\n\n# Create a signature\nsignature = private_key.sign(message)\n\n# Verify the signature\nif public_key.verify(signature, message):\n print('Signature is valid')\nelse:\n print('Signature is invalid')",
+      "explanation": "This Python code demonstrates creating and verifying a digital signature using ECDSA.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "c-merkle-tree",
+      "title": "Merkle Tree Implementation",
+      "description": "Demonstrates building a Merkle tree",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <openssl/sha.h>\n\n// Structure to represent a node in the Merkle tree\ntypedef struct Node {\n unsigned char hash[SHA256_DIGEST_LENGTH];\n struct Node* left;\n struct Node* right;\n} Node;\n\n// Function to create a new node\nNode* createNode(unsigned char* data) {\n Node* node = malloc(sizeof(Node));\n SHA256(data, strlen((char*)data), node->hash);\n node->left = NULL;\n node->right = NULL;\n return node;\n}\n\n// Function to build the Merkle tree\nNode* buildMerkleTree(unsigned char** data, int size) {\n if (size == 1) {\n return createNode(data[0]);\n }\n Node* left = buildMerkleTree(data, size / 2);\n Node* right = buildMerkleTree(data + size / 2, size / 2);\n Node* node = malloc(sizeof(Node));\n unsigned char combined[SHA256_DIGEST_LENGTH * 2];\n memcpy(combined, left->hash, SHA256_DIGEST_LENGTH);\n memcpy(combined + SHA256_DIGEST_LENGTH, right->hash, SHA256_DIGEST_LENGTH);\n SHA256(combined, SHA256_DIGEST_LENGTH * 2, node->hash);\n node->left = left;\n node->right = right;\n return node;\n}",
+      "explanation": "This C code demonstrates building a Merkle tree.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

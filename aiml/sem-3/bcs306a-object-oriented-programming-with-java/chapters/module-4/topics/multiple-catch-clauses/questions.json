@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the concept of multiple catch clauses in Java. Why are they necessary for writing robust exception handling code?",
+    "expectedPoints": [
+      "Definition: Multiple catch clauses allow a try block to be followed by several catch blocks, each designed to handle a specific type of exception.",
+      "Ordering Principle: Catch blocks must be ordered from the most specific exception type to the most general (e.g., `ArithmeticException` before `Exception`).",
+      "Robustness: They enable precise handling of different error conditions, allowing the program to respond appropriately to each unique problem rather than using a generic handler for all exceptions."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Analyze the following code snippet. Identify the potential issue and explain how the multiple catch clauses handle different exception scenarios. Provide a corrected version if necessary.\n\n```java\ntry {\n    int[] numbers = new int[5];\n    numbers[10] = 30 / 0;\n} catch (Exception e) {\n    System.out.println(\"A general exception occurred\");\n} catch (ArithmeticException e) {\n    System.out.println(\"Cannot divide by zero\");\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println(\"Array index is out of bounds\");\n}\n```",
+    "expectedPoints": [
+      "Issue: The catch blocks are incorrectly ordered. The general `Exception` clause is first, which will catch all exceptions, making the subsequent more specific `ArithmeticException` and `ArrayIndexOutOfBoundsException` blocks unreachable (compilation error).",
+      "Analysis: The code attempts two operations that will throw exceptions: division by zero (`ArithmeticException`) and accessing an invalid array index (`ArrayIndexOutOfBoundsException`).",
+      "Correction: The catch blocks must be reordered from most specific to most general. The corrected order would be: `ArithmeticException`, then `ArrayIndexOutOfBoundsException`, and finally `Exception`."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Design and justify an exception handling strategy for a method that reads a numeric value from a user-provided file path. Your strategy must use a try block with multiple catch clauses. Consider and handle at a minimum: a non-existent file, a non-numeric value in the file, and an empty file. Discuss why using multiple specific catch blocks is superior to a single general catch block in this scenario.",
+    "expectedPoints": [
+      "Specific Exceptions: The strategy should catch at least `FileNotFoundException` (for invalid path), `NumberFormatException` (for non-numeric content), and `NoSuchElementException` or a custom check for `EmptyFileException` (for empty file).",
+      "Implementation Justification: Each catch block allows for a tailored recovery or error message (e.g., prompting the user for a new file vs. alerting them of bad data), improving user experience and debugging.",
+      "Superiority over General Catch: A single `catch (Exception e)` would force a generic response for all errors, making it impossible to differentiate between a missing file and corrupt data. Specific catch blocks enable precise error handling, which is crucial for maintenance and clarity."
+    ],
+    "marks": 10
+  }
+]

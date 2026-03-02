@@ -1,0 +1,45 @@
+{
+  "topicId": "digital-signatures-key-management",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "RSA Digital Signature Generation and Verification",
+      "description": "Demonstrates RSA-based digital signature creation and verification using Python",
+      "code": "import hashlib\nimport rsa\n\n# Key Generation\n(public_key, private_key) = rsa.newkeys(2048)\n\n# Message to sign\nmessage = b\"This is a confidential document.\"\n\n# Generate hash of message\nmessage_hash = hashlib.sha256(message).digest()\n\n# Sign the hash with private key\nsignature = rsa.sign(message_hash, private_key, 'SHA-256')\n\n# Verify signature with public key\ntry:\n    rsa.verify(message_hash, signature, public_key)\n    print(\"Signature is VALID - Message is authentic and intact\")\nexcept:\n    print(\"Signature is INVALID - Message may be tampered or from different sender\")\n\n# Example of tamper detection\ntampered_message = b\"This document has been modified!\"\ntampered_hash = hashlib.sha256(tampered_message).digest()\ntry:\n    rsa.verify(tampered_hash, signature, public_key)\nexcept:\n    print(\"Tampered message detected!\")",
+      "explanation": "This code demonstrates: 1) Key generation using RSA, 2) Hashing the message with SHA-256, 3) Signing the hash with private key, 4) Verification with public key. The try-except block shows how tampering is detected.",
+      "timeComplexity": "O(n\u00b2) for RSA key generation, O(n) for signing/verification",
+      "spaceComplexity": "O(n) for key storage, O(n) for signature"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "DSA Signature Generation Algorithm",
+      "description": "Pseudocode for DSA digital signature generation process",
+      "code": "// DSA Signature Generation\nINPUT: Message M, Private Key x, Domain Parameters (p, q, g)\nOUTPUT: Signature (r, s)\n\nBEGIN\n  // Step 1: Hash the message\n  H = SHA-256(M)\n  \n  // Step 2: Generate random ephemeral key k\n  k = Random(1, q-1)\n  \n  // Step 3: Compute r (the signature component)\n  r = (g^k mod p) mod q\n  IF r == 0 THEN\n    RETURN TO Step 2 // k must not result in r=0\n  ENDIF\n  \n  // Step 4: Compute s (the signature component)\n  k_inverse = k^(-1) mod q  // Modular inverse of k\n  s = k_inverse * (H + x * r) mod q\n  IF s == 0 THEN\n    RETURN TO Step 2 // s must not be 0\n  ENDIF\n  \n  // Step 5: Return signature pair\n  RETURN (r, s)\nEND",
+      "explanation": "DSA uses: 1) A hash of the message, 2) A random ephemeral key k (must be unique per signature), 3) The signer's private key x. The math uses modular arithmetic with prime modulus p and q.",
+      "timeComplexity": "O(n) for modular exponentiation",
+      "spaceComplexity": "O(1) besides inputs"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Certificate Chain Validation",
+      "description": "Pseudocode for validating a certificate chain from end-entity to trusted root",
+      "code": "// Certificate Chain Validation Algorithm\nINPUT: End Entity Certificate Cert, Trust Store (list of Root CAs)\nOUTPUT: Boolean (valid or invalid)\n\nBEGIN\n  // Build certificate chain\n  chain = [Cert]\n  current_cert = Cert\n  \n  // Follow chain to root\n  WHILE current_cert.issuer != current_cert.subject DO\n    parent_cert = FindCertificateInStore(current_cert.issuer)\n    IF parent_cert NOT FOUND THEN\n      RETURN FALSE  // Cannot verify issuer\n    ENDIF\n    chain.APPEND(parent_cert)\n    current_cert = parent_cert\n  ENDWHILE\n  \n  // Verify root is trusted\n  IF current_cert NOT IN Trust Store THEN\n    RETURN FALSE  // Chain does not end in trusted root\n  ENDIF\n  \n  // Verify each signature in chain\n  FOR i = 0 TO chain.length - 2 DO\n    issuer_cert = chain[i+1]\n    subject_cert = chain[i]\n    \n    // Verify signature on subject cert using issuer's public key\n    signature_data = subject_cert.tbs_certificate + subject_cert.extensions\n    IF NOT VerifyRSA(issuer_cert.public_key, signature_data, subject_cert.signature) THEN\n      RETURN FALSE\n    ENDIF\n  ENDFOR\n  \n  // Check for revocation (simplified)\n  FOR EACH cert IN chain DO\n    IF IsRevoked(cert) THEN\n      RETURN FALSE\n    ENDIF\n  ENDFOR\n  \n  RETURN TRUE\nEND",
+      "explanation": "This algorithm: 1) Builds a chain by finding each certificate's issuer, 2) Verifies the chain ends in a trusted root CA, 3) Validates each certificate's signature using its issuer's public key, 4) Checks revocation status.",
+      "timeComplexity": "O(n) where n is chain length (typically 2-4)",
+      "spaceComplexity": "O(n) for storing chain"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Simple Hash-based Message Authentication",
+      "description": "C code demonstrating basic HMAC (Hash-based Message Authentication Code) concept",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n// Simplified demonstration - not for production use\n// In practice, use OpenSSL's HMAC functions\n\n#define BLOCK_SIZE 64\n\nvoid xor_pad(char* dest, char* src, int len, char pad_value) {\n    for(int i = 0; i < len; i++) {\n        dest[i] = src[i] ^ pad_value;\n    }\n}\n\n// Conceptual HMAC structure\n// HMAC(K, m) = H((K \u2295 opad) || H((K \u2295 ipad) || m))\nvoid compute_hmac(char* key, int key_len, \n                  char* message, int msg_len,\n                  char* output) {\n    // In real implementation:\n    // 1. If key > block_size, hash it first\n    // 2. Pad key to block_size\n    // 3. Create inner and outer padded keys\n    // 4. Apply nested hashing\n    \n    printf(\"HMAC conceptual steps:\\n\");\n    printf(\"1. If key length > %d, hash key first\\n\", BLOCK_SIZE);\n    printf(\"2. Pad key to %d bytes\\n\", BLOCK_SIZE);\n    printf(\"3. Inner: H((K \u2295 ipad) || m)\\n\");\n    printf(\"4. Outer: H((K \u2295 opad) || inner_hash)\\n\");\n    printf(\"5. Output final hash\\n\");\n}\n\nint main() {\n    char key[] = \"secret_key\";\n    char message[] = \"Important message\";\n    char hmac_result[32];\n    \n    compute_hmac(key, strlen(key), message, strlen(message), hmac_result);\n    \n    return 0;\n}",
+      "explanation": "HMAC provides message integrity and authentication. While not exactly a digital signature, it demonstrates the concept of using hash functions with keys for authentication. Real implementations should use established libraries like OpenSSL.",
+      "timeComplexity": "O(n) where n is message length",
+      "spaceComplexity": "O(1) besides output"
+    }
+  ]
+}

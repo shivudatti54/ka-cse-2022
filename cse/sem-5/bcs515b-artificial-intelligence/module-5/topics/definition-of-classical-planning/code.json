@@ -1,0 +1,35 @@
+{
+  "topicId": "definition-of-classical-planning",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Basic Planning Problem Definition",
+      "description": "Pseudocode showing how to define a classical planning problem with initial state, goal, and actions",
+      "code": "// Planning Problem Definition\nBEGIN\n // State representation: set of propositions\n INITIAL_STATE = {At(Home), ¬At(Office), Has(Milk, False), Has(Bread, False)}\n GOAL_STATE = {At(Office), Has(Milk, True), Has(Bread, True)}\n \n // Action definition with preconditions and effects\n ACTION Buy(Item):\n PRECONDITIONS: {At(Store), Has(Item, False)}\n EFFECTS: {Add(Has(Item, True)), Delete(Has(Item, False))}\n \n ACTION Drive(From, To):\n PRECONDITIONS: {At(From)}\n EFFECTS: {Add(At(To)), Delete(At(From))}\n \n PLANNING_PROBLEM = (INITIAL_STATE, GOAL_STATE, ACTIONS)\nEND",
+      "explanation": "This defines a classical planning problem using states as sets of propositions (true/false facts), goals as desired propositions, and actions with preconditions (when applicable) and effects (state changes).",
+      "language": "pseudocode",
+      "timeComplexity": "Depends on search algorithm",
+      "spaceComplexity": "O(n) for state representation"
+    },
+    {
+      "id": "code-2",
+      "title": "Simple Forward Planning Algorithm",
+      "description": "Basic forward state-space search algorithm for classical planning",
+      "code": "// Forward Planning (Progression) Algorithm\nFUNCTION Forward-Plan(initialState, goalState, actions):\nBEGIN\n frontier = PriorityQueue containing (initialState, null, 0) // state, plan, cost\n explored = empty set\n \n WHILE frontier is not empty:\n state, plan, cost = frontier.pop()\n \n IF State-Meets-Goal(state, goalState):\n RETURN plan // Solution found!\n \n IF state NOT in explored:\n explored.add(state)\n \n // Apply each applicable action\n FOR EACH action IN actions:\n IF Is-Applicable(action, state):\n newState = Apply-Effects(action, state)\n newPlan = plan + [action]\n frontier.push((newState, newPlan, cost + Action-Cost(action)))\n \n RETURN failure // No solution found\nEND",
+      "explanation": "This is a basic forward state-space search. It starts from the initial state and explores possible states by applying actions until it finds a state that satisfies the goal. Uses a frontier (queue) to manage which states to explore next.",
+      "language": "pseudocode",
+      "timeComplexity": "O(b^d) where b=branching factor, d=depth of solution",
+      "spaceComplexity": "O(b^d)"
+    },
+    {
+      "id": "code-3",
+      "title": "Backward Planning Algorithm",
+      "description": "Goal-directed planning working backwards from goal to initial state",
+      "code": "// Backward Planning (Regression) Algorithm\nFUNCTION Backward-Plan(initialState, goalState, actions):\nBEGIN\n frontier = PriorityQueue containing (goalState, null, 0)\n explored = empty set\n \n WHILE frontier is not empty:\n state, plan, cost = frontier.pop()\n \n IF State-Meets-Goal(initialState, state):\n RETURN Reverse(plan) // Solution found!\n \n IF state NOT in explored:\n explored.add(state)\n \n // Find actions that could achieve parts of current state\n FOR EACH action IN actions:\n IF Is-Relevant(action, state):\n // Regression: find predecessor state\n predState = Regression(action, state)\n newPlan = [action] + plan\n frontier.push((predState, newPlan, cost + Action-Cost(action)))\n \n RETURN failure\nEND\n\n// Regression: what state must be true before action to get current state\nFUNCTION Regression(action, currentState):\nBEGIN\n // Remove action's add effects from current state\n // Keep preconditions that aren't already true\n // This gives states from which action leads to currentState\nEND",
+      "explanation": "Backward planning works from goal to initial state. It's often more efficient because it focuses on goal-relevant actions. The regression function computes what state must have been true before an action to achieve the current state.",
+      "language": "pseudocode",
+      "timeComplexity": "O(b^d) typically smaller than forward",
+      "spaceComplexity": "O(b^d)"
+    }
+  ]
+}

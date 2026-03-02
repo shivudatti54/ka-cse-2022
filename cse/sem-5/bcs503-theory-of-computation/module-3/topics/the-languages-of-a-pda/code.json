@@ -1,0 +1,35 @@
+{
+  "topicId": "the-languages-of-a-pda",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "PDA for L = {0ⁿ1ⁿ | n ≥ 0} - Empty Stack Acceptance",
+      "description": "Algorithm to recognize balanced zeros and ones using stack",
+      "code": "PDA for balanced 0^n 1^n:\n\nQ = {q0, q1, q2}\nΣ = {0, 1}\nΓ = {0, Z0}\nF = {q2} (or empty for empty stack acceptance)\n\nTransition Function δ:\n\n// Phase 1: Push all 0's onto stack\nδ(q0, 0, Z0) = {(q0, 0Z0)}\nδ(q0, 0, 0) = {(q0, 00)}\n\n// Transition from pushing to checking\nδ(q0, 1, 0) = {(q1, 0)}\n\n// Phase 2: Match 1's by popping 0's\nδ(q1, 1, 0) = {(q1, ε)}\n\n// Accept when input exhausted and stack empty\nδ(q1, ε, Z0) = {(q2, Z0)} // Optional final state\n\nAcceptance: Stack empty (Z0 removed)",
+      "explanation": "PDA pushes 0 onto stack for each 0 read. When first 1 is encountered, switches to checking mode. For each 1, pops one 0. If stack becomes empty (Z0 reached) exactly when input ends, string is accepted.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "PDA for Palindromes - Non-deterministic",
+      "description": "NPDA for recognizing palindromes of form ww^R",
+      "code": "PDA for palindromes L = {ww^R | w ∈ {0,1}*}:\n\nQ = {q_push, q_check, q_accept}\nΣ = {0, 1}\nΓ = {0, 1, Z0}\n\n// Push Phase: Push input symbols\nδ(q_push, 0, Z0) = {(q_push, 0Z0)}\nδ(q_push, 0, 0) = {(q_push, 00)}\nδ(q_push, 0, 1) = {(q_push, 01)}\nδ(q_push, 1, Z0) = {(q_push, 1Z0)}\nδ(q_push, 1, 0) = {(q_push, 10)}\nδ(q_push, 1, 1) = {(q_push, 11)}\n\n// Guess middle - non-deterministic ε-transition\nδ(q_push, ε, X) = {(q_check, X)} for X ∈ Γ\n\n// Check Phase: Pop and compare\nδ(q_check, 0, 0) = {(q_check, ε)}\nδ(q_check, 1, 1) = {(q_check, ε)}\n\n// Accept when stack empty\nδ(q_check, ε, Z0) = {(q_accept, Z0)}",
+      "explanation": "Non-determinism allows guessing when we've reached the middle of the string. Pushes first half, then non-deterministically switches to compare remaining input with stack contents in reverse order.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "General PDA Simulation Algorithm",
+      "description": "Generic algorithm to simulate PDA computation",
+      "code": "function simulate_PDA(PDA M, input w):\n // M = (Q, Σ, Γ, δ, q0, Z0, F)\n \n configurations = [(q0, w, Z0)] // Initial ID\n \n while configurations not empty:\n // Choose one configuration (non-deterministic choice)\n (q, input_remaining, stack) = pop(configurations)\n \n if input_remaining == ε and stack == ε:\n return ACCEPT // Empty input, empty stack\n \n if input_remaining == ε and q ∈ F:\n return ACCEPT // Input consumed, in accepting state\n \n // Get next configurations based on δ\n a = first symbol of input_remaining (or ε)\n X = top of stack (or ε)\n \n for each (p, γ) in δ(q, a, X):\n new_input = input_remaining without first symbol\n new_stack = γ + stack without top\n add (p, new_input, new_stack) to configurations\n \n return REJECT // No accepting configuration found",
+      "explanation": "Simulation explores all possible non-deterministic paths. Uses BFS or DFS to explore configuration space. Accepts if any path leads to acceptance condition. NPDA may have exponential paths in worst case.",
+      "timeComplexity": "O(n^k) for k-transitions",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

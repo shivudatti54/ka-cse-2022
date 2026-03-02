@@ -1,0 +1,55 @@
+{
+  "topicId": "cuda-trapezoidal-rule-ii",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What is the trapezoidal rule formula for numerical integration?",
+      "back": "Integral from a to b of f(x)dx is approximately (b-a)/2n * [f(x0) + 2f(x1) + 2f(x2) + ... + 2f(x_{n-1}) + f(xn)], where h = (b-a)/n."
+    },
+    {
+      "id": "fc2",
+      "front": "How is the trapezoidal rule parallelized on a GPU using CUDA?",
+      "back": "The integration interval [a,b] is divided into subintervals assigned to CUDA threads. Each thread computes a local trapezoid area, then a parallel reduction combines all partial results into the final integral."
+    },
+    {
+      "id": "fc3",
+      "front": "What is the error order of the trapezoidal rule?",
+      "back": "O(h^2), where h = (b-a)/n. Doubling the number of subintervals n reduces the error by a factor of 4."
+    },
+    {
+      "id": "fc4",
+      "front": "What is a CUDA kernel for the trapezoidal rule?",
+      "back": "A __global__ function that takes integration bounds and step size as parameters. Each thread computes f(x_i) for its assigned subinterval and stores the partial sum in shared or global memory for reduction."
+    },
+    {
+      "id": "fc5",
+      "front": "How does parallel reduction work in CUDA for summing partial integrals?",
+      "back": "Threads in a block store partial sums in shared memory. In a tree-based reduction, half the threads add their neighbor's value at each step, halving active threads until one thread holds the block sum. Block sums are then combined on the host or via atomic operations."
+    },
+    {
+      "id": "fc6",
+      "front": "What role does shared memory play in the CUDA trapezoidal rule?",
+      "back": "Shared memory is used to store partial sums from threads within a block during the parallel reduction phase. It provides much faster access than global memory, making the reduction efficient."
+    },
+    {
+      "id": "fc7",
+      "front": "What is the advantage of using CUDA over MPI for the trapezoidal rule?",
+      "back": "CUDA can launch thousands of lightweight threads on a GPU, enabling massive parallelism for function evaluations. This is much faster than MPI for embarrassingly parallel problems like numerical integration when n is very large."
+    },
+    {
+      "id": "fc8",
+      "front": "How are CUDA threads mapped to subintervals in the trapezoidal rule?",
+      "back": "Each thread computes its global index using threadIdx.x + blockIdx.x * blockDim.x. This index maps to a specific subinterval point x_i = a + i*h, and the thread evaluates f(x_i) as its contribution."
+    },
+    {
+      "id": "fc9",
+      "front": "What memory transfer is needed for CUDA trapezoidal rule?",
+      "back": "Input parameters (a, b, n) are passed to the kernel via arguments. The final result must be transferred from device to host using cudaMemcpy after the kernel completes the reduction."
+    },
+    {
+      "id": "fc10",
+      "front": "How does domain decomposition differ between MPI and CUDA trapezoidal rule?",
+      "back": "In MPI, each process handles a contiguous chunk of the interval. In CUDA, each thread handles one or a few subintervals, with thousands of threads working simultaneously on the GPU, providing finer-grained parallelism."
+    }
+  ]
+}

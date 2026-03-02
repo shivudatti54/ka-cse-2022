@@ -1,0 +1,45 @@
+{
+  "topicId": "vm-architecture",
+  "examples": [
+    {
+      "id": "create-vm-vcpu-memory",
+      "title": "Configure VM CPU and Memory with libvirt",
+      "description": "Python script to create a VM with specific CPU and memory configuration",
+      "language": "python",
+      "code": "import libvirt\n\nconn = libvirt.open('qemu:///system')\n\n# VM Configuration with detailed CPU and memory settings\nvm_xml = '''\n<domain type=\"kvm\">\n  <name>webapp-server</name>\n  \n  <!-- Memory Configuration -->\n  <memory unit=\"GiB\">8</memory>\n  <currentMemory unit=\"GiB\">4</currentMemory>\n  \n  <!-- CPU Configuration -->\n  <vcpu placement=\"static\" current=\"2\">4</vcpu>\n  <cpu mode=\"host-passthrough\">\n    <topology sockets=\"1\" cores=\"2\" threads=\"2\"/>\n  </cpu>\n  \n  <!-- Memory Balloon for Dynamic Memory -->\n  <memballoon model=\"virtio\">\n    <stats period=\"10\"/>\n  </memballoon>\n  \n  <os>\n    <type arch=\"x86_64\" machine=\"q35\">hvm</type>\n    <boot dev=\"hd\"/>\n  </os>\n  \n  <devices>\n    <!-- Virtio disk for better performance -->\n    <disk type=\"file\" device=\"disk\">\n      <driver name=\"qemu\" type=\"qcow2\" cache=\"writeback\"/>\n      <source file=\"/var/lib/libvirt/images/webapp.qcow2\"/>\n      <target dev=\"vda\" bus=\"virtio\"/>\n    </disk>\n    \n    <!-- Virtio network for better performance -->\n    <interface type=\"network\">\n      <source network=\"default\"/>\n      <model type=\"virtio\"/>\n    </interface>\n  </devices>\n</domain>\n'''\n\n# Create the domain\ndom = conn.defineXML(vm_xml)\nprint(f\"VM '{dom.name()}' defined\")\nprint(f\"  Max Memory: {dom.maxMemory()} KB\")\nprint(f\"  vCPUs: {dom.vcpusFlags(libvirt.VIR_DOMAIN_VCPU_MAXIMUM)}\")\n\n# Start the VM\ndom.create()\nprint(f\"VM '{dom.name()}' started\")\n\nconn.close()",
+      "explanation": "This script creates a KVM VM with detailed configuration: 8GB max memory with 4GB current allocation (for dynamic memory), 4 vCPUs with 2 active, host CPU passthrough, and virtio devices for optimal performance.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "create-virtual-disk",
+      "title": "Create Virtual Disks (QCOW2 and RAW)",
+      "description": "Shell commands to create different types of virtual disks",
+      "language": "bash",
+      "code": "#!/bin/bash\n# Create Virtual Disks for VMs\n\nDISK_DIR=\"/var/lib/libvirt/images\"\n\necho \"=== Creating Virtual Disks ===\"\n\n# 1. Create thin-provisioned QCOW2 disk (grows as needed)\necho \"Creating thin-provisioned QCOW2 (50GB)...\"\nqemu-img create -f qcow2 \"$DISK_DIR/thin-disk.qcow2\" 50G\nls -lh \"$DISK_DIR/thin-disk.qcow2\"  # Shows actual size ~200KB\n\n# 2. Create QCOW2 with preallocation (better performance)\necho \"\nCreating preallocated QCOW2 (50GB)...\"\nqemu-img create -f qcow2 -o preallocation=metadata \"$DISK_DIR/prealloc-disk.qcow2\" 50G\n\n# 3. Create RAW disk (thick provisioned, best performance)\necho \"\nCreating RAW disk (20GB)...\"\nqemu-img create -f raw \"$DISK_DIR/raw-disk.img\" 20G\n# To fully allocate: fallocate -l 20G \"$DISK_DIR/raw-disk.img\"\n\n# 4. Convert between formats\necho \"\nConverting QCOW2 to RAW...\"\nqemu-img convert -f qcow2 -O raw \"$DISK_DIR/thin-disk.qcow2\" \"$DISK_DIR/converted.raw\"\n\n# 5. Get disk information\necho \"\n=== Disk Information ===\"\nqemu-img info \"$DISK_DIR/thin-disk.qcow2\"\n\n# 6. Create a snapshot\necho \"\n=== Creating Snapshot ===\"\nqemu-img snapshot -c \"baseline\" \"$DISK_DIR/thin-disk.qcow2\"\nqemu-img snapshot -l \"$DISK_DIR/thin-disk.qcow2\"",
+      "explanation": "Demonstrates creating different virtual disk types: thin-provisioned QCOW2 (space-efficient), preallocated QCOW2 (better performance), RAW format (best performance), and disk conversion/snapshot operations.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "vm-migration-script",
+      "title": "Live Migration with libvirt",
+      "description": "Python script to perform live VM migration between hosts",
+      "language": "python",
+      "code": "import libvirt\nimport sys\n\ndef live_migrate_vm(vm_name, dest_host):\n    \"\"\"Perform live migration of a VM to another host\"\"\"\n    \n    # Connect to source hypervisor\n    src_conn = libvirt.open('qemu:///system')\n    if src_conn is None:\n        print(\"Failed to connect to source hypervisor\")\n        return False\n    \n    # Connect to destination hypervisor\n    dest_uri = f'qemu+ssh://root@{dest_host}/system'\n    dest_conn = libvirt.open(dest_uri)\n    if dest_conn is None:\n        print(f\"Failed to connect to destination: {dest_host}\")\n        return False\n    \n    # Get the domain to migrate\n    try:\n        dom = src_conn.lookupByName(vm_name)\n    except libvirt.libvirtError:\n        print(f\"VM '{vm_name}' not found\")\n        return False\n    \n    print(f\"Starting live migration of '{vm_name}' to {dest_host}\")\n    print(f\"  VM State: {'Running' if dom.isActive() else 'Stopped'}\")\n    print(f\"  Memory: {dom.maxMemory() // 1024} MB\")\n    \n    # Migration flags\n    flags = (\n        libvirt.VIR_MIGRATE_LIVE |           # Live migration\n        libvirt.VIR_MIGRATE_PERSIST_DEST |   # Define VM on destination\n        libvirt.VIR_MIGRATE_UNDEFINE_SOURCE  # Remove from source after\n    )\n    \n    # Optional: Set bandwidth limit (MB/s)\n    bandwidth = 100  # 100 MB/s\n    \n    try:\n        # Perform migration\n        new_dom = dom.migrate(\n            dest_conn,\n            flags,\n            None,  # New name (None = keep same)\n            None,  # URI (None = auto)\n            bandwidth\n        )\n        \n        if new_dom:\n            print(f\"Migration successful!\")\n            print(f\"VM now running on: {dest_host}\")\n            return True\n        else:\n            print(\"Migration failed\")\n            return False\n            \n    except libvirt.libvirtError as e:\n        print(f\"Migration error: {e}\")\n        return False\n    finally:\n        src_conn.close()\n        dest_conn.close()\n\n# Usage\nlive_migrate_vm('webapp-server', 'hypervisor2.example.com')",
+      "explanation": "This script performs live migration of a running VM between KVM hosts. It uses libvirt flags for live migration, persisting on destination, and removing from source. Requires shared storage and SSH connectivity between hosts.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "snapshot-management",
+      "title": "VM Snapshot Management (PowerShell)",
+      "description": "PowerShell commands for Hyper-V snapshot/checkpoint management",
+      "language": "powershell",
+      "code": "# Hyper-V Snapshot (Checkpoint) Management\n\n$VMName = \"WebServer\"\n\n# Create a snapshot before making changes\nWrite-Host \"Creating snapshot before update...\" -ForegroundColor Cyan\n$checkpoint = Checkpoint-VM -Name $VMName -SnapshotName \"Pre-Update-$(Get-Date -Format 'yyyyMMdd-HHmm')\" -Passthru\nWrite-Host \"Checkpoint created: $($checkpoint.Name)\"\n\n# List all snapshots for a VM\nWrite-Host \"`nCurrent snapshots:\" -ForegroundColor Cyan\nGet-VMSnapshot -VMName $VMName | Format-Table Name, CreationTime, ParentSnapshotName\n\n# Get snapshot tree\nWrite-Host \"`nSnapshot hierarchy:\" -ForegroundColor Cyan\nfunction Show-SnapshotTree {\n    param([string]$VMName, [string]$ParentId = $null, [int]$Indent = 0)\n    \n    $snapshots = Get-VMSnapshot -VMName $VMName | Where-Object {\n        if ($ParentId) { $_.ParentSnapshotId -eq $ParentId }\n        else { $_.ParentSnapshotId -eq $null }\n    }\n    \n    foreach ($snap in $snapshots) {\n        Write-Host (\" \" * $Indent + \"├── $($snap.Name)\") -ForegroundColor Yellow\n        Show-SnapshotTree -VMName $VMName -ParentId $snap.Id -Indent ($Indent + 4)\n    }\n}\nShow-SnapshotTree -VMName $VMName\n\n# Restore to a snapshot (revert changes)\nWrite-Host \"`nReverting to snapshot...\" -ForegroundColor Cyan\n$latestSnapshot = Get-VMSnapshot -VMName $VMName | Sort-Object CreationTime -Descending | Select-Object -First 1\nRestore-VMSnapshot -VMSnapshot $latestSnapshot -Confirm:$false\nWrite-Host \"Reverted to: $($latestSnapshot.Name)\"\n\n# Delete old snapshots (keep last 3)\nWrite-Host \"`nCleaning up old snapshots...\" -ForegroundColor Cyan\n$snapshotsToDelete = Get-VMSnapshot -VMName $VMName | \n    Sort-Object CreationTime -Descending | \n    Select-Object -Skip 3\n\nforeach ($snap in $snapshotsToDelete) {\n    Write-Host \"Removing: $($snap.Name)\"\n    Remove-VMSnapshot -VMSnapshot $snap\n}\n\nWrite-Host \"`nSnapshot management complete!\" -ForegroundColor Green",
+      "explanation": "PowerShell script for managing Hyper-V checkpoints (snapshots). Creates snapshots before updates, displays snapshot hierarchy, reverts to previous states, and cleans up old snapshots to save disk space.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    }
+  ]
+}

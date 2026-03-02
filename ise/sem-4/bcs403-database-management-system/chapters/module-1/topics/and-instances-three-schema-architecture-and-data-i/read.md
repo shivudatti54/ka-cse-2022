@@ -1,0 +1,13 @@
+sql
+CREATE DATABASE University;
+
+CREATE TABLE Student (
+StudentID INT PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Department VARCHAR(20)
+);
+
+CREATE TABLE Course (
+CourseCode VARCHAR(10) PRIMARY KEY,
+Title VARCHAR(100)
+);

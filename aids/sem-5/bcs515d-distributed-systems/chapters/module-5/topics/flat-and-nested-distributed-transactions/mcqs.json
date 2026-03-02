@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the fundamental characteristic that distinguishes a nested transaction from a flat transaction?",
+    "options": [
+      "A nested transaction can have sub-transactions, which are transactions within the transaction.",
+      "A nested transaction runs on a single server, while a flat transaction is distributed.",
+      "A nested transaction does not require a coordinator, unlike a flat transaction.",
+      "A nested transaction always commits, while a flat transaction can abort."
+    ],
+    "correctIndex": 0,
+    "explanation": "A nested transaction is structured hierarchically, allowing a parent transaction to spawn child sub-transactions. This is the key architectural difference from a simple, linear flat transaction."
+  },
+  {
+    "id": "q2",
+    "question": "In a nested transaction, what happens if a sub-transaction aborts?",
+    "options": [
+      "The entire parent transaction is forced to abort immediately.",
+      "Only the sub-transaction aborts; the parent transaction can choose to handle the failure or retry.",
+      "All other sub-transactions within the same parent are also aborted automatically.",
+      "The system automatically retries the aborted sub-transaction until it succeeds."
+    ],
+    "correctIndex": 1,
+    "explanation": "A key advantage of nested transactions is isolation of failure. The abort of a sub-transaction is a local event. The parent transaction can catch this failure, decide on a compensating action, or simply abort itself, providing greater flexibility in error handling."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following best describes the commit dependency rule in a nested transaction?",
+    "options": [
+      "A sub-transaction can commit only after its parent has committed.",
+      "A parent transaction can commit only after all of its sub-transactions have successfully committed.",
+      "A sub-transaction's commit is dependent on the commit of its sibling sub-transactions.",
+      "The top-level transaction must commit before any of its descendants can commit."
+    ],
+    "correctIndex": 0,
+    "explanation": "The results of a sub-transaction are provisional until the entire transaction hierarchy completes. A sub-transaction commits provisionally, but its effects are only made permanent (released) when its top-level parent commits. This is the fundamental commit dependency."
+  },
+  {
+    "id": "q4",
+    "question": "What is a primary motivation for using nested transactions over flat transactions in a distributed system?",
+    "options": [
+      "To reduce the overall number of messages needed for the Two-Phase Commit protocol.",
+      "To provide modularity and finer-grained control over recovery and concurrency.",
+      "To guarantee that the entire transaction will never need to abort.",
+      "To allow transactions to span more than two participant servers."
+    ],
+    "correctIndex": 1,
+    "explanation": "Nested transactions introduce modularity. Different parts of a complex operation can be encapsulated as sub-transactions. This allows for finer-grained concurrency control (e.g., locks can be held for shorter durations) and more sophisticated recovery strategies, as parents can handle the failure of specific children."
+  },
+  {
+    "id": "q5",
+    "question": "Considering the 'ACID' properties, how does the isolation property typically manifest within a nested transaction hierarchy?",
+    "options": [
+      "Sub-transactions are fully isolated from each other and operate on private snapshots of data.",
+      "The effects of a committed sub-transaction are immediately visible to its siblings and parent.",
+      "Sub-transactions are isolated from transactions outside their hierarchy, but not from their siblings.",
+      "Isolation is only provided at the top-level transaction; sub-transactions see each other's uncommitted changes."
+    ],
+    "correctIndex": 1,
+    "explanation": "Within a single nested transaction, the sub-transactions are not isolated from each other. The uncommitted results of one sub-transaction are visible to its siblings and parent within the same transaction hierarchy. This allows for internal collaboration. Isolation is maintained from transactions outside of this hierarchy."
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "code-1",
+    "language": "sql",
+    "title": "Creating Table with Constraints",
+    "description": "Example SQL to create STUDENT table with various constraints",
+    "code": "CREATE TABLE STUDENT (\n Student_ID NUMBER(5) PRIMARY KEY,\n Name VARCHAR2(50) NOT NULL,\n Email VARCHAR2(100) UNIQUE,\n Age NUMBER(3) CHECK (Age >= 18 AND Age <= 30),\n Course_ID NUMBER(3),\n Join_Date DATE DEFAULT SYSDATE,\n FOREIGN KEY (Course_ID) REFERENCES COURSE(Course_ID)\n);",
+    "explanation": "This creates STUDENT table with PRIMARY KEY on Student_ID, NOT NULL on Name, UNIQUE on Email, CHECK constraint on Age, DEFAULT on Join_Date, and FOREIGN KEY referencing COURSE table.",
+    "complexity": {
+      "time": "O(1) - DDL operation",
+      "space": "O(n) - depends on table size"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "sql",
+    "title": "ALTER TABLE Operations",
+    "description": "Various ALTER TABLE commands to modify table structure",
+    "code": "-- Add new column\nALTER TABLE STUDENT ADD Phone VARCHAR2(15);\n\n-- Modify existing column\nALTER TABLE STUDENT MODIFY Name VARCHAR2(100);\n\n-- Add constraint\nALTER TABLE STUDENT ADD CONSTRAINT Stu_Age_Chk CHECK (Age >= 18);\n\n-- Drop column\nALTER TABLE STUDENT DROP COLUMN Phone;\n\n-- Drop constraint\nALTER TABLE STUDENT DROP CONSTRAINT Stu_Age_Chk;\n\n-- Rename table\nRENAME STUDENT TO STUDENTS;",
+    "explanation": "ALTER TABLE modifies existing table structure. ADD/MODIFY/DROP columns, ADD/DROP constraints, and RENAME operations are all part of DDL.",
+    "complexity": {
+      "time": "O(n) for data modification operations",
+      "space": "Varies"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "sql",
+    "title": "DROP vs TRUNCATE vs DELETE",
+    "description": "Demonstrates the differences between these three data manipulation commands",
+    "code": "-- DROP: Removes entire table structure permanently\nDROP TABLE STUDENT;\n\n-- TRUNCATE: Removes all rows, keeps structure\nTRUNCATE TABLE STUDENT;\n\n-- DELETE: Removes rows one by one, can be rolled back\nDELETE FROM STUDENT WHERE Age < 18;\n\n-- To rollback DELETE (in transaction)\nCOMMIT; -- or ROLLBACK;",
+    "explanation": "DROP is DDL - cannot be rolled back, removes everything. TRUNCATE is DDL - removes all data, cannot be rolled back in some DBs. DELETE is DML - can be rolled back within transaction.",
+    "complexity": {
+      "time": "DROP: O(1), TRUNCATE: O(n), DELETE: O(n)",
+      "space": "DROP: releases space, TRUNCATE: releases space, DELETE: may not release space"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "sql",
+    "title": "Creating Index",
+    "description": "Creating indexes for improving query performance",
+    "code": "-- Create simple index\nCREATE INDEX idx_student_name ON STUDENT(Name);\n\n-- Create unique index\nCREATE UNIQUE INDEX idx_student_email ON STUDENT(Email);\n\n-- Create composite index\nCREATE INDEX idx_student_course_age ON STUDENT(Course_ID, Age);\n\n-- Drop index\nDROP INDEX idx_student_name;",
+    "explanation": "Indexes improve data retrieval speed. CREATE INDEX creates a search key, CREATE UNIQUE INDEX ensures uniqueness. Composite indexes use multiple columns.",
+    "complexity": {
+      "time": "Create: O(n log n), Query: O(log n)",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-5",
+    "language": "sql",
+    "title": "Creating Table with Foreign Key and CASCADE",
+    "description": "Creating parent-child tables with referential integrity",
+    "code": "-- Create parent table first\nCREATE TABLE DEPARTMENT (\n Dept_ID NUMBER(3) PRIMARY KEY,\n Dept_Name VARCHAR2(50) NOT NULL\n);\n\n-- Create child table with foreign key\nCREATE TABLE EMPLOYEE (\n Emp_ID NUMBER(5) PRIMARY KEY,\n Emp_Name VARCHAR2(50) NOT NULL,\n Dept_ID NUMBER(3) REFERENCES DEPARTMENT(Dept_ID),\n Salary NUMBER(10,2)\n);\n\n-- Create with ON DELETE CASCADE\nCREATE TABLE EMPLOYEE2 (\n Emp_ID NUMBER(5) PRIMARY KEY,\n Emp_Name VARCHAR2(50) NOT NULL,\n Dept_ID NUMBER(3) REFERENCES DEPARTMENT(Dept_ID) ON DELETE CASCADE,\n Salary NUMBER(10,2)\n);",
+    "explanation": "Parent table (DEPARTMENT) must exist before child table (EMPLOYEE). FOREIGN KEY ensures referential integrity. ON DELETE CASCADE automatically deletes child records when parent is deleted.",
+    "complexity": {
+      "time": "O(1) for creation",
+      "space": "O(n) for data"
+    }
+  },
+  {
+    "id": "code-6",
+    "language": "sql",
+    "title": "Data Type Examples",
+    "description": "Examples showing different data types and their usage",
+    "code": "-- Numeric types\nCREATE TABLE sample_numeric (\n col1 NUMBER(5), -- 5 digits total\n col2 NUMBER(5,2), -- 5 digits, 2 decimal places\n col3 INTEGER,\n col4 FLOAT\n);\n\n-- Character types\nCREATE TABLE sample_char (\n col1 CHAR(10), -- Fixed: stores 'Hi' as 'Hi '\n col2 VARCHAR2(10), -- Variable: stores 'Hi' as 'Hi'\n col3 CLOB -- Large text\n);\n\n-- Date/Time types\nCREATE TABLE sample_date (\n col1 DATE, -- Date and time\n col2 TIMESTAMP -- Date with fractional seconds\n);\n\n-- Binary types\nCREATE TABLE sample_blob (\n col1 BLOB, -- Binary data (images, etc.)\n col2 RAW(100) -- Raw binary\n);",
+    "explanation": "NUMBER(p,s) for precise numbers, CHAR for fixed-length strings, VARCHAR2 for variable strings, DATE for date/time, BLOB for binary data.",
+    "complexity": {
+      "time": "O(1) - DDL",
+      "space": "Varies by data type size"
+    }
+  }
+]

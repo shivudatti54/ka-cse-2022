@@ -1,0 +1,45 @@
+{
+  "topicId": "distributed-mutual-exclusion",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Ricart-Agrawala Algorithm Pseudocode",
+      "description": "Pseudocode for process requesting critical section entry in Ricart-Agawala algorithm",
+      "code": "PROCEDURE RequestCS():\n state := WANTED\n timestamp := logical_clock + 1\n SEND REQUEST(ts, my_id) TO ALL OTHER PROCESSES\n WAIT UNTIL received REPLY from all processes\n state := HELD\n ENTER CRITICAL SECTION\n\nPROCEDURE OnReceiveREQUEST(ts, sender_id):\n IF state = HELD OR (state = WANTED AND (ts, my_id) < (timestamp, sender_id)):\n ADD (ts, sender_id) TO DEFERRAL_QUEUE\n ELSE:\n SEND REPLY TO sender_id\n\nPROCEDURE ReleaseCS():\n EXIT CRITICAL SECTION\n state := RELEASED\n FOR EACH (ts, pid) IN DEFERRAL_QUEUE IN ORDER:\n SEND REPLY TO pid\n CLEAR DEFERRAL_QUEUE",
+      "explanation": "Shows how a process requests CS by multicasting REQUEST to all, waits for all REPLYs, enters CS, and defers replies to higher priority requests while in CS",
+      "language": "pseudocode",
+      "timeComplexity": "O(N) messages",
+      "spaceComplexity": "O(N) for queue"
+    },
+    {
+      "id": "code-2",
+      "title": "Lamport Logical Clock Update Rules",
+      "description": "Implementation of Lamport's logical clock rules for event ordering",
+      "code": "// Initialize\nlogical_clock := 0\n\n// Event: Internal event or sending message\nPROCEDURE Event():\n logical_clock := logical_clock + 1\n RETURN logical_clock\n\n// Event: Send message\nPROCEDURE SendMessage(msg):\n logical_clock := logical_clock + 1\n msg.timestamp := logical_clock\n SEND msg TO destination\n RETURN msg\n\n// Event: Receive message\nPROCEDURE ReceiveMessage(msg):\n logical_clock := max(logical_clock, msg.timestamp) + 1\n RETURN logical_clock",
+      "explanation": "Demonstrates the two fundamental rules: increment before sending/receiving, and take max on receiving",
+      "language": "pseudocode",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "title": "Token Ring Mutual Exclusion",
+      "description": "Pseudocode for token-based mutual exclusion in a logical ring",
+      "code": "// Process states\nSTATE := {IDLE, WAITING, HELD}\ntoken_present := FALSE\n\n// Token handling\nPROCEDURE OnReceiveToken():\n token_present := TRUE\n IF STATE = WAITING THEN\n ENTER CRITICAL SECTION\n STATE := HELD\n ELSE\n // Pass token to next process\n token_present := FALSE\n SEND TOKEN TO next_process_in_ring\n\nPROCEDURE RequestCS():\n STATE := WAITING\n IF NOT token_present THEN\n // Wait for token\n WHILE NOT token_present:\n WAIT\n\nPROCEDURE ExitCS():\n STATE := IDLE\n token_present := FALSE\n SEND TOKEN TO next_process_in_ring",
+      "explanation": "Shows how token circulates in ring, and only token holder can enter CS. After exiting, token is passed to next process.",
+      "language": "pseudocode",
+      "timeComplexity": "O(N) worst case (token may be far)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "title": "Maekawa Quorum-Based Algorithm",
+      "description": "Pseudocode showing quorum-based request and voting in Maekawa algorithm",
+      "code": "// Each process has a request set R[i] (quorum)\n// Any two quorums must intersect\n\nPROCEDURE RequestCS():\n state := WANTED\n timestamp := logical_clock + 1\n SEND REQUEST(ts, my_id) TO ALL processes IN R[my_id]\n SET reply_count := 0\n WHILE reply_count < |R[my_id]|:\n WAIT\n ENTER CRITICAL SECTION\n\nPROCEDURE OnReceiveREQUEST(ts, sender_id):\n IF state = HELD OR have_voted THEN\n ADD (ts, sender_id) TO pending_queue\n ELSE:\n SEND REPLY TO sender_id\n have_voted := TRUE\n\nPROCEDURE OnReceiveREPLY():\n reply_count := reply_count + 1\n\nPROCEDURE ReleaseCS():\n state := RELEASED\n FOR EACH (ts, pid) IN pending_queue IN TIMESTAMP ORDER:\n SEND REPLY TO pid\n have_voted := FALSE\n CLEAR pending_queue",
+      "explanation": "Uses quorum instead of all processes - reduces messages from N-1 to quorum size (~√N). Voting ensures mutual exclusion through quorum intersection.",
+      "language": "pseudocode",
+      "timeComplexity": "O(√N) messages",
+      "spaceComplexity": "O(√N)"
+    }
+  ]
+}

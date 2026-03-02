@@ -1,0 +1,1 @@
+To provide B.Tech/MSc students with a rigorous, mathematically-formulated understanding of ML challenges, enabling them to diagnose model failures, apply appropriate mitigation strategies, and evaluate ethical implications—skills essential for advanced ML coursework and professional practice.

@@ -1,0 +1,61 @@
+{
+  "topicId": "kerberos",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain the complete Kerberos authentication process from initial login to service access, including all three exchanges and the cryptographic elements involved.",
+      "type": "long",
+      "marks": 10,
+      "keyPoints": [
+        "AS Exchange: Client sends username to AS; AS returns TGT (encrypted with TGS secret key) and session key (encrypted with client's secret key derived from password).",
+        "Client decrypts the session key using their password-derived key.",
+        "TGS Exchange: Client sends TGT + authenticator (ID + timestamp encrypted with session key) to TGS, requesting a specific service.",
+        "TGS validates TGT and authenticator, then issues a service ticket encrypted with the service's secret key, plus a new session key.",
+        "AP Exchange: Client sends service ticket + new authenticator to the application server.",
+        "Application server decrypts the service ticket, validates the authenticator, and grants access.",
+        "Timestamps in authenticators prevent replay attacks; the 5-minute window requires clock synchronization."
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Compare Kerberos version 4 and version 5. Discuss the limitations of v4 and how v5 addresses them.",
+      "type": "long",
+      "marks": 10,
+      "keyPoints": [
+        "v4 limited to DES encryption only; v5 supports multiple encryption algorithms.",
+        "v4 had limited cross-realm authentication; v5 provides improved inter-realm trust.",
+        "v5 introduces ticket forwarding and delegation (v4 did not support this).",
+        "v5 adds renewable tickets to extend session lifetimes securely.",
+        "v5 has more flexible authorization data fields in tickets.",
+        "v5 is standardized as RFC 4120; v4 was MIT-specific.",
+        "v5 addresses the environmental assumption limitations of v4 (IP addressing, byte ordering)."
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "What is the role of the Ticket Granting Server (TGS) in Kerberos authentication?",
+      "type": "short",
+      "marks": 5,
+      "keyPoints": [
+        "TGS issues service tickets to authenticated clients who present valid TGTs.",
+        "It validates the TGT and the authenticator accompanying it.",
+        "Uses its secret key to decrypt the TGT and verify its contents.",
+        "Generates a new session key for communication between the client and the target service.",
+        "Part of the KDC along with the Authentication Server (AS)."
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Discuss the limitations and potential vulnerabilities of the Kerberos protocol.",
+      "type": "short",
+      "marks": 5,
+      "keyPoints": [
+        "Single point of failure: if the KDC is unavailable, no authentication is possible.",
+        "Clock synchronization required: authenticators rely on timestamps within a 5-minute tolerance.",
+        "Password guessing: the AS exchange response is encrypted with the user's password-derived key, vulnerable to offline dictionary attacks.",
+        "Central key storage: all secret keys are stored in the KDC, making it a high-value target.",
+        "Does not protect against compromised client machines or endpoint security issues."
+      ]
+    }
+  ]
+}

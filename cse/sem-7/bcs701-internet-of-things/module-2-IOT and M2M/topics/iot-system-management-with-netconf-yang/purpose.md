@@ -1,0 +1,1 @@
+This module provides comprehensive understanding of NETCONF-YANG framework for IoT system management, covering protocol architecture, YANG data modeling, transaction management, and comparative analysis with traditional SNMP approaches. The content prepares students for designing and implementing automated IoT management solutions.

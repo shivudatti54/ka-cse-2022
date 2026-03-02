@@ -1,0 +1,35 @@
+{
+  "topicId": "the-collections-and-framework",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "java",
+      "title": "ArrayList Operations Demo",
+      "description": "Demonstrates common ArrayList operations including add, remove, iterate",
+      "code": "import java.util.*;\n\npublic class ArrayListDemo {\n public static void main(String[] args) {\n // Create ArrayList with initial capacity\n ArrayList<String> list = new ArrayList<>(20);\n \n // Add elements\n list.add(\"Apple\"); // Appends to end\n list.add(\"Banana\");\n list.add(1, \"Mango\"); // Insert at index 1\n \n // Remove elements\n list.remove(\"Banana\"); // By object\n list.remove(0); // By index\n \n // Iterate using different methods\n // Method 1: Enhanced for-loop\n for (String s : list) {\n System.out.println(s);\n }\n \n // Method 2: Iterator\n Iterator<String> it = list.iterator();\n while (it.hasNext()) {\n String s = it.next();\n if (s.equals(\"Mango\")) {\n it.remove(); // Safe removal\n }\n }\n \n // Method 3: forEach with lambda\n list.forEach(s -> System.out.println(s));\n \n // Method 4: ListIterator for bidirectional traversal\n ListIterator<String> lit = list.listIterator();\n while (lit.hasNext()) {\n lit.next();\n }\n while (lit.hasPrevious()) {\n System.out.println(lit.previous());\n }\n }\n}",
+      "explanation": "This code demonstrates the main ways to work with ArrayList: adding elements at specific positions, removing by object or index, and various iteration techniques. The key point is using Iterator's remove() method rather than collection's remove() during iteration to avoid ConcurrentModificationException.",
+      "timeComplexity": "O(n) for iteration, O(n) for add at specific index (shifting), O(1) for add at end",
+      "spaceComplexity": "O(n) where n is number of elements, plus O(capacity) for internal array"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Custom Sorting with Comparator",
+      "description": "Shows how to sort collections using custom comparators for multiple sorting strategies",
+      "code": "import java.util.*;\n\nclass Employee {\n String name;\n int age;\n double salary;\n \n Employee(String name, int age, double salary) {\n this.name = name;\n this.age = age;\n this.salary = salary;\n }\n \n @Override\n public String toString() {\n return name + \"-\" + age + \"-$\" + salary;\n }\n}\n\npublic class ComparatorDemo {\n public static void main(String[] args) {\n List<Employee> employees = new ArrayList<>();\n employees.add(new Employee(\"John\", 30, 50000));\n employees.add(new Employee(\"Alice\", 25, 60000));\n employees.add(new Employee(\"Bob\", 30, 45000));\n \n // Natural order via Comparable (by name if implemented)\n // Using Comparator for custom sorting\n \n // Sort by age (ascending)\n Collections.sort(employees, (e1, e2) -> e1.age - e2.age);\n \n // Sort by salary (descending)\n Collections.sort(employees, (e1, e2) -> \n Double.compare(e2.salary, e1.salary));\n \n // Sort by age, then by salary (chained)\n Collections.sort(employees, \n Comparator.comparingInt(Employee::getAge)\n .thenComparingDouble(Employee::getSalary));\n \n // Using Comparator method reference\n employees.sort(Comparator.comparing(Employee::getName));\n \n // Reverse order\n employees.sort(Comparator.reverseOrder());\n }\n}",
+      "explanation": "This demonstrates Comparator's power to define multiple sorting strategies without modifying the Employee class. The thenComparing() method allows multi-level sorting. Method references (Employee::getName) provide clean, readable comparator creation.",
+      "timeComplexity": "O(n log n) for sorting",
+      "spaceComplexity": "O(n) for storing elements, O(log n) for sorting auxiliary space"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "HashMap Operations and Iteration",
+      "description": "Comprehensive HashMap usage including various iteration patterns",
+      "code": "import java.util.*;\n\npublic class HashMapDemo {\n public static void main(String[] args) {\n Map<String, Integer> map = new HashMap<>();\n \n // Basic operations\n map.put(\"One\", 1);\n map.put(\"Two\", 2);\n map.putIfAbsent(\"Three\", 3); // Only if key not present\n \n // Get with default value\n int value = map.getOrDefault(\"Four\", 0);\n \n // Merge values\n map.merge(\"One\", 10, (old, neu) -> old + neu); // Adds 10 to existing\n \n // Compute operations\n map.compute(\"Two\", (k, v) -> v == null ? 0 : v * 2);\n map.computeIfAbsent(\"Five\", k -> k.length());\n \n // Different iteration methods\n // 1. Entry set iteration\n for (Map.Entry<String, Integer> entry : map.entrySet()) {\n System.out.println(entry.getKey() + \" = \" + entry.getValue());\n }\n \n // 2. KeySet iteration\n for (String key : map.keySet()) {\n System.out.println(key + \": \" + map.get(key));\n }\n \n // 3. forEach with lambda\n map.forEach((k, v) -> System.out.println(k + \"->\" + v));\n \n // 4. Using streams (Java 8+)\n map.entrySet().stream()\n .filter(e -> e.getValue() > 5)\n .forEach(System.out::println);\n \n // Check operations\n System.out.println(map.containsKey(\"One\"));\n System.out.println(map.containsValue(10));\n \n // Remove operations\n map.remove(\"One\");\n map.remove(\"Two\", 2); // Only if key-value pair matches\n }\n}",
+      "explanation": "HashMap provides rich APIs beyond basic put/get. compute(), merge(), and computeIfAbsent() are powerful methods for atomic updates. The stream-based iteration allows functional-style processing with filtering and mapping.",
+      "timeComplexity": "O(1) average for put/get/contains, O(n) for iteration",
+      "spaceComplexity": "O(n) for storing n key-value pairs"
+    }
+  ]
+}

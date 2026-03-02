@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the system() function in UNIX system programming?",
+    "options": [
+      "To execute a shell command from within a C program",
+      "To manage system memory allocation",
+      "To create a new process without a shell",
+      "To handle inter-process communication signals"
+    ],
+    "correctIndex": 0,
+    "explanation": "The system() function takes a command string as an argument and passes it to the host environment's command processor (e.g., /bin/sh) for execution, allowing a program to run shell commands."
+  },
+  {
+    "id": "q2",
+    "question": "What does the system() function return upon successful execution of the command?",
+    "options": [
+      "The exit status of the child process that executed the command",
+      "The process ID (PID) of the child shell",
+      "A value of 0 indicating success",
+      "The number of characters in the command string"
+    ],
+    "correctIndex": 0,
+    "explanation": "The return value of system() is the termination status of the child process that ran the shell command. This status is encoded and can be examined using macros like WEXITSTATUS()."
+  },
+  {
+    "id": "q3",
+    "question": "Which of the following is a significant security risk associated with using the system() function?",
+    "options": [
+      "It is vulnerable to command injection if user input is not carefully sanitized.",
+      "It requires root privileges to execute any command.",
+      "It cannot execute commands found in the user's PATH.",
+      "It always creates a zombie process that must be reaped manually."
+    ],
+    "correctIndex": 0,
+    "explanation": "If a program constructs a command string for system() using unsanitized user input, an attacker can inject arbitrary commands by including shell metacharacters (like ;, |, or `). Using functions like execve() is often a more secure alternative."
+  },
+  {
+    "id": "q4",
+    "question": "How does the system() function handle the SIGCHLD signal while it is executing?",
+    "options": [
+      "It ignores SIGCHLD and waits for the child process to terminate.",
+      "It blocks SIGCHLD until the command completes.",
+      "It temporarily sets the disposition of SIGCHLD to SIG_IGN.",
+      "It does not handle SIGCHLD specially; the parent's signal handler remains active."
+    ],
+    "correctIndex": 2,
+    "explanation": "The system() function carefully manages signals. To avoid interfering with the caller's handling of SIGCHLD, it typically ignores SIGCHLD (sets its handler to SIG_IGN) for the duration of the wait, ensuring it can reliably wait for the child process to finish."
+  },
+  {
+    "id": "q5",
+    "question": "A program calls system(NULL). What is the expected behavior and return value?",
+    "options": [
+      "It returns a non-zero value if a command interpreter is available (e.g., /bin/sh exists and is executable), and 0 otherwise.",
+      "It returns 0 immediately without executing any command.",
+      "It is an error and causes the function to return -1.",
+      "It launches an interactive shell session for the user."
+    ],
+    "correctIndex": 0,
+    "explanation": "According to the POSIX standard, if the command argument is a null pointer, system() returns a non-zero value if a command interpreter is available on the system. This is used to check for the existence of a shell without executing a command."
+  }
+]

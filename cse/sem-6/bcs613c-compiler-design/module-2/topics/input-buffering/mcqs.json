@@ -1,0 +1,130 @@
+{
+  "topicId": "input-buffering",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "In the two-buffer scheme for input buffering, what is the primary purpose of using two buffers?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To store two different source files simultaneously"
+        },
+        {
+          "key": "B",
+          "text": "To allow one buffer to be refilled while the other is being scanned"
+        },
+        {
+          "key": "C",
+          "text": "To separate keywords from identifiers"
+        },
+        {
+          "key": "D",
+          "text": "To handle multi-line comments"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The two-buffer scheme uses two halves of a buffer that are alternately reloaded from the input. While the lexical analyzer scans characters from one buffer, the other can be refilled from the source file, reducing I/O overhead and avoiding per-character system calls.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq2",
+      "question": "What is the role of the 'forward' pointer in the two-buffer input scheme?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It marks the beginning of the current lexeme"
+        },
+        {
+          "key": "B",
+          "text": "It scans ahead to find the end of the current lexeme"
+        },
+        {
+          "key": "C",
+          "text": "It points to the next buffer to be loaded"
+        },
+        {
+          "key": "D",
+          "text": "It marks the position of the last error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The forward pointer (also called the lookahead pointer) scans ahead from the lexemeBegin pointer to determine the end of the current lexeme. Once a complete token is recognized, lexemeBegin is advanced to the position of the forward pointer.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "What is a sentinel in the context of input buffering for lexical analysis?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A special character placed at the end of each buffer to eliminate boundary check overhead"
+        },
+        {
+          "key": "B",
+          "text": "A pointer that guards against buffer overflow"
+        },
+        {
+          "key": "C",
+          "text": "A flag that indicates whether a buffer has been loaded"
+        },
+        {
+          "key": "D",
+          "text": "A counter that tracks the number of characters read"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "A sentinel is a special character (typically EOF or a character that cannot be part of any valid source program) placed at the end of each buffer half. It eliminates the need for a separate test to check whether the forward pointer has reached the end of the buffer, reducing the number of comparisons per character from two to one.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq4",
+      "question": "In a two-buffer scheme, each buffer is typically of size N characters, where N is:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Equal to the length of the longest token"
+        },
+        {
+          "key": "B",
+          "text": "The size of a disk block (e.g., 1024 or 4096 bytes)"
+        },
+        {
+          "key": "C",
+          "text": "Equal to the total size of the source file"
+        },
+        {
+          "key": "D",
+          "text": "Fixed at 256 bytes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Each buffer half is typically the size of a disk block (e.g., 1024 or 4096 bytes) because reading a full disk block in one system call is much more efficient than making multiple smaller reads. This aligns buffer operations with the underlying I/O system for optimal performance.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "What happens when the forward pointer reaches the sentinel character at the end of the first buffer half?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The scanning terminates with an error"
+        },
+        {
+          "key": "B",
+          "text": "The second buffer half is loaded and the forward pointer wraps to its beginning"
+        },
+        {
+          "key": "C",
+          "text": "The entire buffer is reloaded from the beginning"
+        },
+        {
+          "key": "D",
+          "text": "The current token is discarded and scanning restarts"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When the forward pointer encounters the sentinel at the end of the first buffer half, the system loads the next chunk of input into the second buffer half and moves the forward pointer to the beginning of the second half. This ensures continuous scanning without interruption.",
+      "difficulty": "medium"
+    }
+  ]
+}

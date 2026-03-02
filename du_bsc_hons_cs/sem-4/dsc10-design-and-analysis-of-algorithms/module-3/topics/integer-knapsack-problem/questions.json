@@ -1,0 +1,147 @@
+{
+  "topicId": "integer-knapsack-problem",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define the 0/1 Knapsack Problem. How does it differ from Fractional Knapsack?",
+      "keyPoints": [
+        "0/1 Knapsack: each item can be taken at most once (binary choice)",
+        "Fractional Knapsack: items can be taken in fractions",
+        "0/1 requires DP, Fractional can be solved by Greedy",
+        "Example: with weight limit and items having weight-value pairs"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write the recurrence relation for 0/1 Knapsack and explain its components.",
+      "keyPoints": [
+        "dp[i][w] = max(dp[i-1][w], dp[i-1][w-weight[i]] + value[i])",
+        "When weight[i] \u2264 w, we have two choices",
+        "First term: not including ith item",
+        "Second term: including ith item",
+        "If weight[i] > w, dp[i][w] = dp[i-1][w]"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the time and space complexity of the standard DP approach for Knapsack.",
+      "keyPoints": [
+        "Time complexity: O(n \u00d7 W) where n=items, W=capacity",
+        "Space complexity: O(n \u00d7 W) for 2D table",
+        "Explanation: We fill n\u00d7W subproblems, each in O(1) time",
+        "Can be optimized to O(W) space using 1D array"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Why doesn't the Greedy approach work for 0/1 Knapsack? Provide an example.",
+      "keyPoints": [
+        "Greedy chooses based on highest value-to-weight ratio",
+        "It doesn't consider the constraint that items can't be split",
+        "Example: Capacity=50, Items: (10,60), (20,100), (30,120)",
+        "Greedy picks first two (weight30, value160) vs optimal (all three weight60, value280)",
+        "Greedy fails because it doesn't explore all combinations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain how you would reconstruct the selected items after computing the DP table.",
+      "keyPoints": [
+        "Start from dp[n][W] - bottom right corner",
+        "If dp[n][w] \u2260 dp[n-1][w], item n was selected",
+        "Decrease w by weight[n] and move to dp[n-1][w]",
+        "If equal, item n was not selected, move to dp[n-1][w]",
+        "Continue until i=0"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is memoization? How is it applied to the Knapsack problem?",
+      "keyPoints": [
+        "Memoization: top-down approach storing subproblem results",
+        "Avoids recomputation of already solved subproblems",
+        "For Knapsack: create memo table initialized with -1",
+        "Before computing dp[i][w], check if already computed",
+        "Converts exponential O(2^n) to polynomial O(n\u00d7W)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Differentiate between 0/1 Knapsack and Unbounded Knapsack.",
+      "keyPoints": [
+        "0/1: each item can be taken at most once",
+        "Unbounded: each item can be taken unlimited times",
+        "Recurrence differs: 0/1 uses dp[i-1], Unbounded uses dp[i]",
+        "0/1 iterates backward, Unbounded iterates forward in space-optimized version"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Solve the following 0/1 Knapsack problem using dynamic programming: Capacity W=8, Items: (weight, value) = {(2,10), (3,15), (4,40), (5,60)}. Show the DP table and identify the selected items.",
+      "keyPoints": [
+        "Create DP table of size 5\u00d79 (0 to 4 items, 0 to 8 capacity)",
+        "Fill table row by row using recurrence",
+        "dp[4][8] gives maximum profit = 65 (items with weight 2,3,4 exceeds, so weight 5 and 3 gives 75 exceeds) actually recalculate: best is weight 4(40)+weight 3(15)+weight 2(10)=65 with weight 9 exceeds. Weight 5(60)+weight 2(10)=70 exceeds. Weight 4(40)+weight 3(15)=55 fits. Weight 5(60)+weight 2(10) =70 but weight 7. Wait 60+10=70 weight 7, that's 70! No, weight 5+2=7 fits in 8, value 70. That's the maximum. Selected: items with weight 5 and 2."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the space optimization technique for 0/1 Knapsack. Convert the 2D DP solution to a 1D array solution with proper reasoning.",
+      "keyPoints": [
+        "2D table uses dp[i][w] for first i items",
+        "1D array uses dp[w] for current items considered",
+        "Key: iterate capacity from W down to weight[i]",
+        "Reason: backward iteration ensures each item used only once",
+        "Forward iteration would allow same item multiple times",
+        "Code: for i in items: for w from W down to weight[i]: dp[w] = max(dp[w], dp[w-weight[i]] + value[i])",
+        "Trade-off: cannot reconstruct selected items easily without additional tracking"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write an algorithm for 0/1 Knapsack using both memoization (top-down) and tabulation (bottom-up) approaches. Compare their advantages and disadvantages.",
+      "keyPoints": [
+        "Memoization: recursive with cache, O(n\u00d7W) time, O(n\u00d7W) space for table + O(n\u00d7W) for recursion stack",
+        "Tabulation: iterative filling of table, O(n\u00d7W) time, O(n\u00d7W) space",
+        "Memoization only computes needed subproblems, Tabulation computes all",
+        "Memoization has overhead of function calls, Tabulation is faster",
+        "Memoization easier to implement recursively, Tabulation avoids stack overflow",
+        "Both achieve same time complexity, different space usage patterns"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Prove that 0/1 Knapsack exhibits optimal substructure and overlapping subproblems properties.",
+      "keyPoints": [
+        "Optimal Substructure: If optimal solution includes item i, then the remaining solution must be optimal for capacity W-weight[i] with first i-1 items",
+        "Proof by contradiction: if remaining wasn't optimal, we could substitute better solution to get higher value",
+        "Overlapping Subproblems: Different paths can lead to same state (i,w)",
+        "Example: choosing items {1,3} vs {2,3} both may result in same remaining capacity and items to consider",
+        "DP table stores results of these overlapping states, avoiding recomputation",
+        "Without these properties, DP would not be applicable"
+      ],
+      "marks": 10
+    }
+  ]
+}

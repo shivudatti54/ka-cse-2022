@@ -1,0 +1,45 @@
+{
+  "topicId": "process-synchronization-critical-section",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Peterson's Solution for Two Processes",
+      "description": "Software solution using shared variables for mutual exclusion",
+      "code": "// Shared variables for two processes\nboolean flag[2] = {false, false};\nint turn;\n\n// Code for Process i (where i is 0 or 1, j is other)\ndo {\n    // Entry Section\n    flag[i] = true;           // Process i wants to enter\n    turn = j;                 // Give priority to other process\n    while (flag[j] && turn == j);  // Wait while other wants CS and it's j's turn\n    \n    // Critical Section\n    critical_section();\n    \n    // Exit Section\n    flag[i] = false;          // Process i done with CS\n    \n    // Remainder Section\n    remainder_section();\n} while (true);",
+      "explanation": "Peterson's solution uses two shared variables: flag[2] to indicate desire to enter CS, and turn to break ties. Process sets flag true, sets turn to other, then waits if other wants CS and it's other's turn. Satisfies mutual exclusion, progress, and bounded waiting.",
+      "timeComplexity": "O(1) for entry/exit in best case, O(n) worst case due to waiting",
+      "spaceComplexity": "O(1) - only two shared variables needed",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-2",
+      "title": "Test-and-Set Lock Implementation",
+      "description": "Hardware atomic instruction for mutual exclusion using spinlock",
+      "code": "// Global lock variable\nboolean lock = false;\n\n// Test-and-Set function (atomic hardware instruction)\nboolean test_and_set(boolean *target) {\n    boolean temp = *target;   // Save old value\n    *target = true;          // Set to true atomically\n    return temp;             // Return old value\n}\n\n// Process entering critical section\ndo {\n    // Entry section with spinlock\n    while (test_and_set(&lock));  // Wait until lock was false\n    \n    // Critical Section\n    critical_section();\n    \n    // Exit section\n    lock = false;            // Release lock\n    \n    // Remainder Section\n    remainder_section();\n} while (true);",
+      "explanation": "Test-and-set atomically reads the lock value and sets it to true in one indivisible operation. If it returns false (lock was free), the process enters CS. If returns true, it loops and tries again. This is a spinlock implementation.",
+      "timeComplexity": "O(1) for acquiring lock in best case, O(n) worst case with contention",
+      "spaceComplexity": "O(1) - single boolean variable",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-3",
+      "title": "Semaphore Implementation for Mutual Exclusion",
+      "description": "Using semaphore for process synchronization and mutual exclusion",
+      "code": "// Semaphore structure\ntypedef struct {\n    int value;\n    Queue waiting_queue;\n} Semaphore;\n\n// Initialize semaphore to 1 for mutual exclusion\nSemaphore mutex;\nmutex.value = 1;\n\n// Wait operation (P operation)\nvoid wait(Semaphore *S) {\n    S->value--;\n    if (S->value < 0) {\n        // Block this process\n        block_current_process();\n        add_to_queue(S->waiting_queue);\n    }\n}\n\n// Signal operation (V operation)\nvoid signal(Semaphore *S) {\n    S->value++;\n    if (S->value <= 0) {\n        // Wake up a waiting process\n        Process *p = remove_from_queue(S->waiting_queue);\n        wake_up_process(p);\n    }\n}\n\n// Process using semaphore for CS\ndo {\n    wait(&mutex);           // Enter CS (decrement)\n    \n    critical_section();     // Access shared resource\n    \n    signal(&mutex);         // Exit CS (increment)\n    \n    remainder_section();\n} while (true);",
+      "explanation": "Semaphore provides atomic operations. wait() decrements value and blocks if negative. signal() increments and wakes waiting process if any. For mutual exclusion, initialize to 1 so only one process can enter CS at a time.",
+      "timeComplexity": "O(1) for both wait and signal operations",
+      "spaceComplexity": "O(n) for waiting queue where n is max blocked processes",
+      "language": "pseudocode"
+    },
+    {
+      "id": "code-4",
+      "title": "Monitor Implementation Example",
+      "description": "High-level synchronization construct with automatic mutual exclusion",
+      "code": "// Monitor definition (pseudocode)\nmonitor SharedCounter {\n    private:\n        int count = 0;\n        condition not_full, not_empty;\n    \n    public:\n        // Only one process can execute any procedure at a time\n        \n        procedure increment() {\n            while (count == MAX)      // Condition wait\n                not_full.wait();\n            count++;\n            not_empty.signal();\n        }\n        \n        procedure decrement() {\n            while (count == 0)        // Condition wait\n                not_empty.wait();\n            count--;\n            not_full.signal();\n        }\n        \n        function getCount() returns int {\n            return count;\n        }\n}\n\n// Using the monitor\nprocess Producer {\n    SharedCounter.increment();\n}\n\nprocess Consumer {\n    SharedCounter.decrement();\n}",
+      "explanation": "Monitor ensures mutual exclusion automatically - no explicit lock needed. Processes call monitor procedures and are automatically synchronized. Condition variables allow processes to wait for specific conditions inside the monitor.",
+      "timeComplexity": "O(1) for procedure calls, depends on wait/signal",
+      "spaceComplexity": "O(n) for condition variable queues",
+      "language": "pseudocode"
+    }
+  ]
+}

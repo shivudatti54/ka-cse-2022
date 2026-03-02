@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Write Miss Handling Algorithm",
+    "description": "Pseudocode demonstrating the decision logic for handling a write miss with allocation policy selection",
+    "code": "PROCEDURE HandleWriteMiss(address, data)\n blockOffset = address % BLOCK_SIZE\n setIndex = (address / BLOCK_SIZE) % NUM_SETS\n \n // Check if block is in any line of the set\n FOR each way IN cacheSet[setIndex]\n IF way.tag == address.tag AND way.valid == TRUE\n // Write hit - update existing line\n way.data[blockOffset] = data\n IF writePolicy == WRITE_BACK\n way.dirty = TRUE\n RETURN\n END FOR\n \n // Write miss - decide allocation policy\n IF allocationPolicy == WRITE_ALLOCATE\n // Fetch block from memory\n block = ReadFromMemory(address)\n \n // Find victim line to replace if cache is full\n victim = SelectEvictionVictim(cacheSet[setIndex])\n \n // Write back if dirty\n IF victim.dirty == TRUE\n WriteToMemory(victim.tag, victim.data)\n \n // Allocate new block\n victim.tag = address.tag\n victim.data = block\n victim.valid = TRUE\n victim.dirty = FALSE\n \n // Perform the write\n victim.data[blockOffset] = data\n IF writePolicy == WRITE_BACK\n victim.dirty = TRUE\n ELSE\n // No-write allocate: write directly to memory\n WriteToMemory(address, data)\n END IF\nEND PROCEDURE",
+    "explanation": "This algorithm shows how write misses are handled based on the allocation policy. For write allocate, it fetches the block, possibly evicts a victim, and writes to cache. For no-write allocate, it bypasses the cache and writes directly to main memory.",
+    "complexity": {
+      "time": "O(1) average, O(n) for eviction check",
+      "space": "O(1)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Cache Line Fill Operation",
+    "description": "Pseudocode showing the cache line fill process when allocating on a miss",
+    "code": "PROCEDURE CacheLineFill(setIndex, tag, address)\n // Select an available line in the set\n targetLine = FindEmptyLine(cacheSet[setIndex])\n \n IF targetLine == NULL\n // Cache is full - need eviction\n targetLine = EvictionPolicy.SelectVictim(cacheSet[setIndex])\n \n // Write back if dirty\n IF targetLine.dirty == TRUE\n memAddress = ConstructAddress(targetLine.tag, setIndex)\n MemoryController.Write(memAddress, targetLine.data)\n targetLine.dirty = FALSE\n END IF\n \n // Fetch block from memory\n blockStartAddress = (address / BLOCK_SIZE) * BLOCK_SIZE\n targetLine.data = MemoryController.ReadBlock(blockStartAddress, BLOCK_SIZE)\n \n // Update line metadata\n targetLine.tag = tag\n targetLine.valid = TRUE\n targetLine.dirty = FALSE\n \n RETURN targetLine\nEND PROCEDURE",
+    "explanation": "Cache line fill handles fetching a block from main memory into the cache. It handles both empty cache cases and full cache cases requiring eviction with potential write-back of dirty data.",
+    "complexity": {
+      "time": "O(BLOCK_SIZE) memory access",
+      "space": "O(BLOCK_SIZE)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Write Policy and Allocation Policy Combinations",
+    "description": "Pseudocode demonstrating all four combinations of write and allocation policies",
+    "code": "// Combination 1: Write-Through + No-Write Allocate\nPROCEDURE WT_NWA_Write(address, data)\n WriteToMemory(address, data) // Bypass cache completely\n InvalidateCacheLine(address) // Ensure consistency\nEND PROCEDURE\n\n// Combination 2: Write-Through + Write Allocate\nPROCEDURE WT_WA_Write(address, data)\n IF CacheHit(address)\n WriteToCache(address, data)\n ELSE\n block = ReadFromMemory(address)\n line = AllocateCacheLine(address, block)\n WriteToCacheLine(line, address, data)\n END IF\n WriteToMemory(address, data) // Also write through to memory\nEND PROCEDURE\n\n// Combination 3: Write-Back + No-Write Allocate (rare)\nPROCEDURE WB_NWA_Write(address, data)\n WriteToMemory(address, data) // Write directly to memory\n // Cache not involved\nEND PROCEDURE\n\n// Combination 4: Write-Back + Write Allocate (Most Common)\nPROCEDURE WB_WA_Write(address, data)\n IF CacheHit(address)\n WriteToCache(address, data)\n SetDirty(address)\n ELSE\n block = ReadFromMemory(address)\n line = AllocateCacheLine(address, block)\n WriteToCacheLine(line, address, data)\n SetDirty(address)\n END IF\n // Memory write deferred until eviction\nEND PROCEDURE",
+    "explanation": "This code demonstrates all four combinations of write policy (write-through/write-back) and allocation policy (write-allocate/no-write-allocate), with the most common being write-back with write-allocate.",
+    "complexity": {
+      "time": "Varies by combination",
+      "space": "O(1)"
+    }
+  }
+]

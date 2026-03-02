@@ -1,0 +1,33 @@
+{
+  "topicId": "image-segmentation",
+  "examples": [
+    {
+      "id": "pseudocode-thresholding",
+      "title": "Algorithm: Thresholding",
+      "description": "Applies a threshold to an image to segment it into foreground and background",
+      "language": "pseudocode",
+      "code": "ALGORITHM Thresholding(image, threshold)\nINPUT: image, threshold\nOUTPUT: segmented image\n\nBEGIN\n  FOR each pixel in image\n    IF pixel intensity > threshold\n      SET pixel to foreground\n    ELSE\n      SET pixel to background\n  END FOR\nEND",
+      "explanation": "This pseudocode demonstrates the basic thresholding algorithm, where each pixel in the image is compared to a threshold value and set to either foreground or background accordingly."
+    },
+    {
+      "id": "python-canny-edge-detector",
+      "title": "Python: Canny Edge Detector",
+      "description": "Implements the Canny edge detection algorithm to find edges in an image",
+      "language": "python",
+      "code": "import cv2\nimport numpy as np\n\n# Load the image\nimage = cv2.imread('image.jpg')\n\n# Convert the image to grayscale\ngray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)\n\n# Apply Gaussian blur to reduce noise\nblurred = cv2.GaussianBlur(gray, (5, 5), 0)\n\n# Apply the Canny edge detection algorithm\nedges = cv2.Canny(blurred, 50, 150)\n\n# Display the edges\n cv2.imshow('Edges', edges)\n cv2.waitKey(0)\n cv2.destroyAllWindows()",
+      "explanation": "This Python code implements the Canny edge detection algorithm using the OpenCV library. It loads an image, converts it to grayscale, applies Gaussian blur to reduce noise, and then applies the Canny edge detection algorithm to find the edges in the image.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-region-growing",
+      "title": "C: Region Growing",
+      "description": "Implements the region growing algorithm to segment an image into regions",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Define the structure for a pixel\ntypedef struct {\n  int x, y;\n  int intensity;\n} Pixel;\n\n// Define the structure for a region\ntypedef struct {\n  int numPixels;\n  Pixel* pixels;\n} Region;\n\n// Function to grow a region\nvoid growRegion(Region* region, Pixel* pixel, int threshold) {\n  // Check if the pixel is within the threshold\n  if (abs(pixel->intensity - region->pixels[0].intensity) <= threshold) {\n    // Add the pixel to the region\n    region->numPixels++;\n    region->pixels = realloc(region->pixels, region->numPixels * sizeof(Pixel));\n    region->pixels[region->numPixels - 1] = *pixel;\n\n    // Recursively grow the region\n    growRegion(region, pixel + 1, threshold);\n  }\n}\n\nint main() {\n  // Load the image\n  // ...\n\n  // Initialize the regions\n  Region* regions = malloc(sizeof(Region));\n  regions->numPixels = 0;\n  regions->pixels = malloc(sizeof(Pixel));\n\n  // Grow the regions\n  for (int i = 0; i < numPixels; i++) {\n    growRegion(regions, &pixels[i], threshold);\n  }\n\n  // Display the regions\n  // ...\n\n  return 0;\n}",
+      "explanation": "This C code implements the region growing algorithm to segment an image into regions. It defines structures for pixels and regions, and a function to grow a region by recursively adding pixels within a threshold. The main function initializes the regions and grows them by iterating over the pixels in the image.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

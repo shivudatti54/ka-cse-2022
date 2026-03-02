@@ -1,0 +1,117 @@
+{
+  "topicId": "modifying-a-string",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "String Immutability Concept Diagram",
+      "description": "A visual representation showing how String objects are immutable in Java, demonstrating that when a String is modified, a new object is created rather than changing the original.",
+      "elements": [
+        "Box labeled 'String str1 = \"Hello\"' with arrow pointing to memory block containing 'Hello'",
+        "Box labeled 'str1 = str1 + \" World\"' with dashed arrow pointing to NEW memory block containing 'Hello World'",
+        "Original memory block still showing 'Hello' with label 'Still exists in memory - not modified'",
+        "Arrow labeled 'Creates new object' connecting old block to new block",
+        "Box showing 'String Pool' area with multiple string literals"
+      ],
+      "purpose": "Students learn that String objects cannot be changed in place - any modification creates a new String object, which is fundamental to understanding memory usage and performance implications."
+    },
+    {
+      "id": "diagram-2",
+      "title": "StringBuilder Internal Architecture",
+      "description": "Block diagram showing the internal structure of StringBuilder class and how it manages character storage.",
+      "elements": [
+        "Rectangle labeled 'StringBuilder Object'",
+        "Inside: 'char[] value' array box showing capacity [C, a, t, ., ., ., ., .]",
+        "Label showing 'count = 3' (actual characters)",
+        "Label showing 'capacity = 8' (allocated space)",
+        "Arrow showing 'append() adds characters to available space'",
+        "Arrow showing 'automatic expansion when capacity exceeded'"
+      ],
+      "purpose": "Students understand how StringBuilder achieves mutability through its internal character array and dynamic capacity management, unlike String which creates new objects on modification."
+    },
+    {
+      "id": "diagram-3",
+      "title": "String Modification Methods Classification",
+      "description": "Hierarchical diagram showing all String modification methods and their return types.",
+      "elements": [
+        "Central box: 'String Modification Methods'",
+        "Four branch boxes: 1) 'concat() - joins strings' 2) 'substring() - extracts portion' 3) 'replace() - substitute characters' 4) 'trim()/strip() - remove whitespace'",
+        "Each method box shows: method signature, example, return type (String)",
+        "Arrow showing all methods 'Return new String - Original unchanged'"
+      ],
+      "purpose": "Students learn the complete set of String modification methods, their proper usage, and the fact that all return new String objects rather than modifying in place."
+    },
+    {
+      "id": "diagram-4",
+      "title": "String Concatenation Performance Flow",
+      "description": "Flow diagram comparing inefficient vs efficient string concatenation in loops.",
+      "elements": [
+        "Left side (INEFFICIENT): Loop icon → 'String result = \"\"' → Arrow to 'result += str' (repeated) → Box 'Creates new String object EACH iteration' → Box 'Time: O(n²) Space: O(n²)'",
+        "Right side (EFFICIENT): Loop icon → 'StringBuilder sb = new StringBuilder()' → Arrow to 'sb.append(str)' (repeated) → 'sb.toString()' → Box 'Modifies SAME object' → Box 'Time: O(n) Space: O(n)'",
+        "Arrows showing both paths lead to 'Final Result: Combined String'"
+      ],
+      "purpose": "Students understand why StringBuilder should be used for string concatenation in loops - it dramatically improves performance by avoiding creation of multiple intermediate String objects."
+    },
+    {
+      "id": "diagram-5",
+      "title": "StringBuilder vs StringBuffer Thread-Safety Architecture",
+      "description": "Side-by-side comparison diagram showing synchronized methods in StringBuffer.",
+      "elements": [
+        "Left box: 'StringBuilder' with method list: 'append()', 'insert()', 'delete()', 'reverse()' - each marked 'NOT synchronized'",
+        "Right box: 'StringBuffer' with same methods but marked 'synchronized' in green",
+        "Shared element: 'Both extend AbstractStringBuilder'",
+        "Shared element: 'Both use char[] value array'",
+        "Arrow from StringBuffer labeled 'Thread-safe - can use in multi-threaded environments'",
+        "Arrow from StringBuilder labeled 'Faster - no synchronization overhead'"
+      ],
+      "purpose": "Students learn the critical difference between StringBuilder and StringBuffer - synchronization for thread-safety - enabling proper selection based on application requirements."
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "String vs StringBuilder vs StringBuffer Comparison Table",
+      "content": "| Feature | String | StringBuilder | StringBuffer |\n|---------|--------|---------------|---------------|\n| Mutability | Immutable | Mutable | Mutable |\n| Thread-Safe | No | No | Yes |\n| Performance | Slow (creates new objects) | Fast | Moderate (synchronization overhead) |\n| Default Capacity | N/A | 16 characters | 16 characters |\n| Memory | String Pool | Heap | Heap |\n| Use Case | Fixed values, logging | Single-threaded manipulation | Multi-threaded manipulation |"
+    },
+    {
+      "type": "flowchart",
+      "title": "Choosing the Right String Class Flowchart",
+      "content": "Start → Is the string value fixed/constant? → YES → Use String class → End\nStart → NO → Is this in a multi-threaded environment? → YES → Use StringBuffer → End\nStart → NO → Use StringBuilder → End\nAlternative: Is this in a loop with many concatenations? → YES → Use StringBuilder/StringBuffer (NOT String) → End"
+    },
+    {
+      "type": "table",
+      "title": "String Modification Methods Quick Reference",
+      "content": "| Method | Signature | Description | Example |\n|--------|-----------|-------------|----------|\n| concat() | concat(String str) | Appends string to end | \"Hello\".concat(\" World\") → \"Hello World\" |\n| substring() | substring(int start) / (int start, int end) | Returns portion of string | \"HelloWorld\".substring(5) → \"World\" |\n| replace() | replace(char old, char new) / replace(CharSequence old, CharSequence new) | Replaces characters/sequences | \"Hello\".replace(\"l\",\"r\") → \"Herro\" |\n| replaceAll() | replaceAll(String regex, String replacement) | Replaces using regex | \"Hello123\".replaceAll(\"\\\\d\",\"*\") → \"Hello***\" |\n| trim() | trim() | Removes leading/trailing whitespace | \" Hello \".trim() → \"Hello\" |\n| strip() | strip() | Removes Unicode whitespace (Java 11+) | \"\\u2005Hello\\u2005\".strip() → \"Hello\" |\n| toLowerCase() | toLowerCase() | Converts to lowercase | \"HELLO\".toLowerCase() → \"hello\" |\n| toUpperCase() | toUpperCase() | Converts to uppercase | \"hello\".toUpperCase() → \"HELLO\""
+    },
+    {
+      "type": "comparison",
+      "title": "Performance Impact of String Modification Methods",
+      "content": "| Operation | Time Complexity | Memory Impact | Recommendation |\n|-----------|----------------|---------------|----------------|\n| String + operator | O(n) per operation | Creates new object each time | Avoid in loops |\n| String.concat() | O(n) | Creates new String | Use for single concatenation |\n| StringBuilder.append() | Amortized O(1) | Modifies existing array | Use in loops |\n| StringBuffer.append() | Amortized O(1) | Modifies existing array + sync | Use in multi-threaded loops |\n| String.replace() | O(n) | Creates new String | Use for simple replacements |\n| String.substring() | O(1) to O(n) | May share underlying array | Use with caution for large strings |"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Modifying Strings in Java",
+      "branches": [
+        "Immutability Concept",
+        "String Class Methods",
+        "StringBuilder Class",
+        "StringBuffer Class",
+        "Performance Considerations",
+        "Thread Safety"
+      ],
+      "purpose": "This mind map provides a comprehensive overview of string modification in Java, connecting the theoretical concept of immutability with practical implementation classes and their appropriate use cases. Students can trace from understanding why strings are immutable to selecting the right class for their specific scenario."
+    },
+    {
+      "centralConcept": "String Modification Methods",
+      "branches": [
+        "Character Extraction: charAt(), getChars(), toCharArray()",
+        "String Comparison: equals(), compareTo(), equalsIgnoreCase()",
+        "Searching: indexOf(), lastIndexOf(), contains()",
+        "Modification: concat(), replace(), substring(), trim()",
+        "Case Conversion: toLowerCase(), toUpperCase()",
+        "Data Conversion: valueOf(), format()"
+      ],
+      "purpose": "This mind map organizes all String modification methods by their functional category, helping students understand the complete API and choose the appropriate method for their specific string manipulation task."
+    }
+  ]
+}

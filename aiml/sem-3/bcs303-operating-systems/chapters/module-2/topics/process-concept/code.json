@@ -1,0 +1,35 @@
+{
+  "topicId": "process-concept",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Process Creation using fork()",
+      "description": "Demonstrates creating a child process using fork() system call in C",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/wait.h>\n#include <stdlib.h>\n\nint main() {\n    pid_t pid;\n    int status;\n    \n    printf(\"Parent process (PID: %d) starting...\\n\", getpid());\n    \n    pid = fork(); // Create child process\n    \n    if (pid < 0) {\n        // Error occurred\n        perror(\"fork failed\");\n        exit(1);\n    }\n    else if (pid == 0) {\n        // Child process\n        printf(\"Child process: PID = %d, Parent PID = %d\\n\", \n               getpid(), getppid());\n        printf(\"Child executing new program...\\n\");\n        \n        // Replace with new program using exec\n        // execlp(\"ls\", \"ls\", \"-l\", NULL);\n        \n        exit(42); // Exit with status 42\n    }\n    else {\n        // Parent process\n        printf(\"Parent: Created child with PID %d\\n\", pid);\n        \n        // Wait for child to complete\n        wait(&status);\n        \n        if (WIFEXITED(status)) {\n            printf(\"Child exited with status: %d\\n\", WEXITSTATUS(status));\n        }\n        printf(\"Parent process completed\\n\");\n    }\n    \n    return 0;\n}",
+      "explanation": "fork() creates an exact copy of the parent process. Both parent and child continue execution from the point where fork() was called. fork() returns child's PID to parent, 0 to child. wait() makes parent wait for child's termination and collect exit status using WEXITSTATUS().",
+      "timeComplexity": "O(1) for fork, O(n) for wait where n is process count",
+      "spaceComplexity": "O(n) for each process's address space"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Process Management in Python",
+      "description": "Using Python's multiprocessing module to create and manage processes",
+      "code": "import multiprocessing\nimport os\nimport time\n\ndef worker_process(name, delay):\n    \"\"\"Function executed by child process\"\"\"\n    print(f\"Process {name} (PID: {os.getpid()}) starting...\")\n    time.sleep(delay)\n    print(f\"Process {name} completed\")\n    return name * 2\n\ndef main():\n    # Get parent PID\n    print(f\"Main process PID: {os.getpid()}\")\n    \n    # Create multiple processes\n    processes = []\n    process_names = ['Alpha', 'Beta', 'Gamma', 'Delta']\n    \n    for name in process_names:\n        p = multiprocessing.Process(\n            target=worker_process,\n            args=(name, 2)\n        )\n        processes.append(p)\n        p.start()\n        print(f\"Started {name}, child PID: {p.pid}\")\n    \n    # Wait for all processes to complete\n    for p in processes:\n        p.join()\n        print(f\"Process {p.name} finished\")\n    \n    print(\"All child processes completed\")\n\nif __name__ == \"__main__\":\n    main()",
+      "explanation": "multiprocessing.Process creates new processes in Python. Each process gets its own PID and memory space. start() begins process execution, join() waits for process completion. os.getpid() returns current process ID, os.getppid() returns parent PID.",
+      "timeComplexity": "O(n) where n is number of processes",
+      "spaceComplexity": "O(n) where n is number of processes, each gets separate memory"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Process Control Block Simulation",
+      "description": "Simulating PCB structure and context switching in C",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n// Process Control Block structure\ntypedef struct {\n    int pid;           // Process ID\n    int ppid;          // Parent Process ID\n    char state[20];    // Process state\n    int pc;            // Program counter\n    int registers[5];  // CPU registers\n    int priority;      // Process priority\n    int program[10];   // Simple program instructions\n    int program_size;\n} PCB;\n\n// Initialize a new process\nPCB* create_process(int pid, int ppid, int priority) {\n    PCB* pcb = (PCB*)malloc(sizeof(PCB));\n    pcb->pid = pid;\n    pcb->ppid = ppid;\n    strcpy(pcb->state, \"NEW\");\n    pcb->pc = 0;\n    pcb->priority = priority;\n    pcb->program_size = 0;\n    \n    // Initialize registers\n    for(int i = 0; i < 5; i++) {\n        pcb->registers[i] = 0;\n    }\n    \n    return pcb;\n}\n\n// Context switch: save current process state\nvoid save_context(PCB* pcb, int pc, int* regs) {\n    pcb->pc = pc;\n    for(int i = 0; i < 5; i++) {\n        pcb->registers[i] = regs[i];\n    }\n}\n\n// Context switch: load process state\nvoid load_context(PCB* pcb, int* pc, int* regs) {\n    *pc = pcb->pc;\n    for(int i = 0; i < 5; i++) {\n        regs[i] = pcb->registers[i];\n    }\n}\n\n// Simulate process state change\nvoid change_state(PCB* pcb, char* new_state) {\n    strcpy(pcb->state, new_state);\n}\n\nint main() {\n    // Create two processes\n    PCB* p1 = create_process(100, 1, 5);\n    PCB* p2 = create_process(101, 1, 3);\n    \n    // Load programs\n    p1->program[0] = 10; p1->program[1] = 20; p1->program_size = 2;\n    p2->program[0] = 30; p2->program[1] = 40; p2->program_size = 2;\n    \n    printf(\"Created Process 1 (PID: %d, Priority: %d)\\n\", p1->pid, p1->priority);\n    printf(\"Created Process 2 (PID: %d, Priority: %d)\\n\", p2->pid, p2->priority);\n    \n    // Simulate scheduling\n    change_state(p1, \"READY\");\n    change_state(p2, \"READY\");\n    \n    // Execute P1\n    change_state(p1, \"RUNNING\");\n    printf(\"P1 executing instruction at PC=%d\\n\", p1->pc);\n    p1->pc++;\n    \n    // Context switch to P2\n    printf(\"Context switch: Saving P1, Loading P2\\n\");\n    change_state(p1, \"READY\");\n    change_state(p2, \"RUNNING\");\n    \n    // Execute P2\n    printf(\"P2 executing instruction at PC=%d\\n\", p2->pc);\n    \n    change_state(p2, \"TERMINATED\");\n    printf(\"P2 completed\\n\");\n    \n    free(p1);\n    free(p2);\n    \n    return 0;\n}",
+      "explanation": "This code simulates how OS manages processes using PCB. create_process() initializes a new process with PID, PPID, priority, and initial state. save_context() and load_context() demonstrate context switching - saving/restoring PC and registers. change_state() shows state transitions. In real OS, this happens at hardware level during timer interrupts or system calls.",
+      "timeComplexity": "O(1) for create, save, load operations",
+      "spaceComplexity": "O(1) per PCB structure"
+    }
+  ]
+}

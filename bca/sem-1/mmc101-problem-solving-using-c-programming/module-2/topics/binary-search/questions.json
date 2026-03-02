@@ -1,0 +1,146 @@
+{
+  "topicId": "binary-search",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the working principle of Binary Search with an example. Why is it faster than Linear Search?",
+      "keyPoints": [
+        "Binary Search works on sorted arrays by repeatedly dividing search space in half",
+        "Compare target with middle element; if equal, found; if less, search left half; if greater, search right half",
+        "Time complexity O(log n) vs O(n) for Linear Search",
+        "For n=1000, Linear Search needs up to 1000 comparisons, Binary Search needs only about 10"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write the algorithm for iterative Binary Search in C. Explain the significance of the condition (low <= high).",
+      "keyPoints": [
+        "Initialize low=0, high=n-1",
+        "While low <= high: calculate mid, compare with target",
+        "If found return mid; if target < arr[mid], set high = mid-1; else set low = mid+1",
+        "low <= high ensures valid search space; when low > high, search space is exhausted",
+        "Return -1 if not found"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between recursive and iterative Binary Search in terms of space complexity? Explain with code snippets.",
+      "keyPoints": [
+        "Iterative: uses O(1) space - only three variables (low, high, mid)",
+        "Recursive: uses O(log n) space due to function call stack",
+        "Each recursive call processes half the array; maximum depth equals number of halvings",
+        "For large arrays, iterative is preferred to avoid stack overflow"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Calculate the maximum number of comparisons required to find an element in: (a) 1024 elements (b) 1000 elements (c) 512 elements",
+      "keyPoints": [
+        "Maximum comparisons = ceil(log2 n)",
+        "(a) log2(1024) = 10, so 10 comparisons",
+        "(b) log2(1000) \u2248 9.97, so ceil(9.97) = 10 comparisons",
+        "(c) log2(512) = 9, so 9 comparisons",
+        "This demonstrates Binary Search efficiency for large datasets"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Why is the formula mid = low + (high - low) / 2 preferred over mid = (low + high) / 2? Explain with an example.",
+      "keyPoints": [
+        "(low + high) can cause integer overflow when low and high are large",
+        "Example: in C with 32-bit int, low=2^30, high=2^30, sum exceeds INT_MAX",
+        "mid = low + (high - low) / 2 = 2^30 + (0)/2 = 2^30, correct",
+        "Alternative: (low + high) >> 1 using bit shift also works",
+        "Ensures safe computation for large array indices"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain how Binary Search can be adapted to work on a sorted array in descending order.",
+      "keyPoints": [
+        "In ascending order: if target < mid, go left (high=mid-1)",
+        "In descending order: smaller elements are on the right",
+        "If target < arr[mid], target must be in right half - set low = mid + 1",
+        "If target > arr[mid], target must be in left half - set high = mid - 1",
+        "The decision logic is reversed from ascending order"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the advantages and limitations of Binary Search?",
+      "keyPoints": [
+        "Advantages: O(log n) time complexity, efficient for large datasets, O(1) space in iterative form",
+        "Limitations: requires sorted array, not suitable for unsorted data without pre-processing, requires random access (not good for linked lists)",
+        "Best suited for: static data that is frequently searched, databases with indexed data"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a complete C program to implement Binary Search using both iterative and recursive approaches. Compare their performance and analyze the output for various test cases.",
+      "keyPoints": [
+        "Write iterative function: while(low <= high), update low/high based on comparison",
+        "Write recursive function: base case low > high returns -1, recursive call with updated range",
+        "Include main() with sorted array, test cases: element at beginning, end, middle, not present",
+        "Show output for each case with index returned or -1",
+        "Analyze: both have O(log n) time, iterative uses O(1) space, recursive uses O(log n) space"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the Divide and Conquer approach used in Binary Search. Derive its time complexity as O(log n) mathematically and show how it compares with Linear Search complexity.",
+      "keyPoints": [
+        "Binary Search is a classic divide and conquer algorithm",
+        "At each step: divide problem into 2 subproblems of size n/2, conquer by solving one subproblem",
+        "Recurrence: T(n) = T(n/2) + O(1)",
+        "Solving: T(n) = O(log n) using Master Theorem or substitution",
+        "Comparison: Linear Search T(n) = O(n), Binary Search is exponentially faster",
+        "For n=1 million: Linear needs 1M comparisons, Binary needs only ~20"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "A university maintains student records in a sorted array by roll number. Write a C program that uses Binary Search to find a student by roll number. Include error handling for invalid inputs and demonstrate with at least 10 student records.",
+      "keyPoints": [
+        "Define structure for student with roll number and name",
+        "Initialize sorted array of 10 students by roll number",
+        "Implement binarySearch function taking array, size, and target roll number",
+        "Handle cases: student found (display details), not found, invalid roll number (<=0)",
+        "Test cases: first student, last student, middle student, not in list",
+        "Output meaningful messages for each scenario"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Modify Binary Search to find the first occurrence of a duplicate element in a sorted array. Write the algorithm and explain with an example array containing duplicates.",
+      "keyPoints": [
+        "Standard Binary Search finds any occurrence, not necessarily the first",
+        "To find first occurrence: when arr[mid] == target, don't return immediately",
+        "Instead, record position and continue searching in left half (high = mid - 1)",
+        "After loop ends, return the leftmost recorded position",
+        "Example: [2, 3, 3, 3, 4, 5] searching for 3 should return index 1 (first occurrence)"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "topicId": "amortized-analysis",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What does amortized analysis compute?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The worst-case cost of a single operation"
+        },
+        {
+          "key": "B",
+          "text": "The average cost per operation over a sequence of operations"
+        },
+        {
+          "key": "C",
+          "text": "The best-case cost of any operation"
+        },
+        {
+          "key": "D",
+          "text": "The probability distribution of operation costs"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Amortized analysis gives the average cost per operation over a worst-case sequence of operations, not the average of all possible inputs.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Using aggregate analysis, if a stack supports n operations consisting of at most n pushes and at most n/2 pops, what is the amortized cost per operation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1)"
+        },
+        {
+          "key": "B",
+          "text": "O(n)"
+        },
+        {
+          "key": "C",
+          "text": "O(log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n²)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Total work is at most 2n (each pop costs 1 and is paired with a push), so amortized cost is O(2n/n) = O(1) per operation.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In the accounting method for dynamic table insertion where the table doubles in size when full, what credit assignment ensures O(1) amortized cost per insert?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Charge $1 for each insertion, store $1 in the new element"
+        },
+        {
+          "key": "B",
+          "text": "Charge $2 for each insertion, store $1 in the new element and $1 for future expansion"
+        },
+        {
+          "key": "C",
+          "text": "Charge $3 for each insertion, store $2 in the new element and $1 for future expansion"
+        },
+        {
+          "key": "D",
+          "text": "Charge $1 for each insertion, store $0 in the new element"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Charging $3 allows $2 to be stored in each new element (for when it's later moved) and $1 for the current insertion, ensuring the $2 needed for expansion is available.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "For a binary counter with k bits (counting from 0 to 2^k - 1), using the potential method with Φ(i) = number of 1-bits in counter value i, what is the amortized cost of increment?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1)"
+        },
+        {
+          "key": "B",
+          "text": "O(k)"
+        },
+        {
+          "key": "C",
+          "text": "O(log k)"
+        },
+        {
+          "key": "D",
+          "text": "O(2^k)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Each increment flips t trailing 1s to 0 and one 0 to 1, decreasing potential by (t-1), so amortized cost = 1 + (t-1) = O(1) on average.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "A queue implementation uses a circular array. Enqueue costs O(1), but when the queue is full, it doubles the array size, copying all elements. If we perform n enqueue operations starting from an empty queue, what is the amortized cost per enqueue?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1)"
+        },
+        {
+          "key": "B",
+          "text": "O(n)"
+        },
+        {
+          "key": "C",
+          "text": "O(log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n log n)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Total cost = n (for insertions) + 1 + 2 + 4 + ... + ≤ n (for all expansions) ≤ 2n, giving amortized cost O(1).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "A stack supports Push(S, x), Pop(S), and MultiPop(S, k) which pops up to k elements. Using aggregate analysis on n operations where at most n/3 are MultiPop with k = n/3, what is the amortized cost?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1)"
+        },
+        {
+          "key": "B",
+          "text": "O(n)"
+        },
+        {
+          "key": "C",
+          "text": "O(log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n²)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Each element can be popped at most once per push, so total work ≤ 2n, amortized cost = O(2n/n) = O(1).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "For a dynamic array that grows by 50% when full, define potential function Φ = 2·(num_elements - capacity/2). What is the amortized cost of Insert if we charge 3 credits per insert?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "4"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "With this potential, when not expanding: actual cost = 1, Φ change = 0, amortized = 1. When expanding: actual cost = m+1, Φ change = -m+2, amortized = 3. Thus constant 3 credits cover all cases.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Comparing three implementations of a multiset: (A) Array with O(1) insert, O(n) delete; (B) Balanced BST with O(log n) insert and delete; (C) Dynamic array with doubling. Which statement about amortized analysis is correct?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Implementation A always has O(1) amortized cost per operation sequence"
+        },
+        {
+          "key": "B",
+          "text": "Implementation B has guaranteed O(log n) amortized per operation regardless of operation sequence"
+        },
+        {
+          "key": "C",
+          "text": "Implementation C's amortized insert cost is O(1) even if inserts and deletes are interspersed"
+        },
+        {
+          "key": "D",
+          "text": "Implementation C's amortized delete cost can be O(n) if we only delete without rebalancing"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Dynamic arrays don't automatically shrink efficiently; without shrink-on-delete strategy, deletions alone could cost O(n) per delete in worst case, making amortized analysis dependent on the pattern.",
+      "difficulty": "hard"
+    }
+  ]
+}

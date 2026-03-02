@@ -1,0 +1,55 @@
+{
+  "topicId": "implementing-file-system",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Contiguous File Allocation Algorithm",
+      "description": "Algorithm for allocating files contiguously in disk blocks",
+      "code": "ALGORITHM AllocateContiguous(filename, size)\nBEGIN\n  startBlock \u2190 -1\n  freeCount \u2190 0\n  FOR each block FROM diskStart TO diskEnd DO\n    IF free[block] == FREE THEN\n      freeCount \u2190 freeCount + 1\n      IF freeCount == 1 THEN\n        startBlock \u2190 block\n      END IF\n      IF freeCount == size THEN\n        BREAK\n      END IF\n    ELSE\n      freeCount \u2190 0\n      startBlock \u2190 -1\n    END IF\n  END FOR\n\n  IF startBlock == -1 THEN\n    RETURN FAILURE // No consecutive space found\n  END IF\n\n  FOR i FROM 0 TO size-1 DO\n    free[startBlock + i] \u2190 ALLOCATED\n  END IF\n\n  createFileEntry(filename, startBlock, size)\n  RETURN SUCCESS\nEND",
+      "explanation": "Searches disk for consecutive free blocks equal to required size. If found, marks them as allocated and creates file entry with starting block and length.",
+      "timeComplexity": "O(n) where n is number of disk blocks",
+      "spaceComplexity": "O(1) besides disk storage"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Linked Allocation File Read",
+      "description": "Reading a file using linked allocation where blocks are chained",
+      "code": "ALGORITHM ReadFileLinked(fileDescriptor, buffer, startPosition, bytesToRead)\nBEGIN\n  currentBlock \u2190 fileDescriptor.startBlock\n  offset \u2190 0\n  bytesRead \u2190 0\n\n  // Skip to starting position\n  WHILE offset < startPosition DO\n    currentBlock \u2190 FAT[currentBlock].nextBlock\n    offset \u2190 offset + BLOCK_SIZE\n  END WHILE\n\n  // Read requested bytes\n  WHILE bytesRead < bytesToRead AND currentBlock != EOF DO\n    diskData \u2190 ReadBlockFromDisk(currentBlock)\n    copyToBuffer(diskData, buffer, bytesRead)\n    bytesRead \u2190 bytesRead + BLOCK_SIZE\n    currentBlock \u2190 FAT[currentBlock].nextBlock\n  END WHILE\n\n  fileDescriptor.currentPosition \u2190 fileDescriptor.currentPosition + bytesRead\n  RETURN bytesRead\nEND",
+      "explanation": "Follows chain of pointers in FAT to access blocks sequentially. Must traverse through all previous blocks to reach random positions.",
+      "timeComplexity": "O(n) for accessing nth block, O(1) for sequential after positioned",
+      "spaceComplexity": "O(1) besides buffer and FAT cache"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Indexed Allocation Block Access",
+      "description": "Direct access to any file block using index block",
+      "code": "ALGORITHM ReadFileIndexed(fileDescriptor, buffer, blockNumber)\nBEGIN\n  // Get the index block for this file\n  indexBlock \u2190 fileDescriptor.indexBlock\n\n  // Read the index block into memory\n  indexTable \u2190 ReadBlockFromDisk(indexBlock)\n\n  // Direct access to target block using index\n  targetBlock \u2190 indexTable[blockNumber]\n\n  IF targetBlock == INVALID THEN\n    RETURN ERROR // Block doesn't exist\n  END IF\n\n  // Read the actual data block\n  data \u2190 ReadBlockFromDisk(targetBlock)\n\n  copyToBuffer(data, buffer, 0)\n  fileDescriptor.currentPosition \u2190 blockNumber * BLOCK_SIZE\n  RETURN BLOCK_SIZE\nEND",
+      "explanation": "Uses the index block to directly access any file block. Index block contains array of data block pointers, enabling O(1) random access to any block.",
+      "timeComplexity": "O(1) for any block access (one extra I/O for index)",
+      "spaceComplexity": "O(1) besides index table storage"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Bit Vector Free Space Management",
+      "description": "Implementation of free space management using bit vector (bitmap)",
+      "code": "class BitVectorFreeSpace:\n    def __init__(self, total_blocks):\n        self.total_blocks = total_blocks\n        # 0 = free, 1 = allocated\n        self.bitmap = [0] * total_blocks\n    \n    def allocate_blocks(self, num_blocks):\n        \"\"\"Find consecutive free blocks and allocate them\"\"\"\n        start_block = -1\n        consecutive_free = 0\n        \n        for i in range(self.total_blocks):\n            if self.bitmap[i] == 0:\n                consecutive_free += 1\n                if consecutive_free == 1:\n                    start_block = i\n                if consecutive_free == num_blocks:\n                    # Found enough space, mark as allocated\n                    for j in range(start_block, i + 1):\n                        self.bitmap[j] = 1\n                    return start_block\n            else:\n                consecutive_free = 0\n                start_block = -1\n        \n        return -1  # No consecutive space found\n    \n    def deallocate_blocks(self, start_block, num_blocks):\n        \"\"\"Mark blocks as free in bitmap\"\"\"\n        for i in range(start_block, start_block + num_blocks):\n            self.bitmap[i] = 0\n    \n    def get_free_blocks_count(self):\n        \"\"\"Count total free blocks\"\"\"\n        return self.bitmap.count(0)\n    \n    def display_bitmap(self):\n        \"\"\"Visual representation of disk allocation\"\"\"\n        return ''.join(['.' if b == 0 else 'X' for b in self.bitmap])\n\n# Example usage\nfs = BitVectorFreeSpace(20)\nprint(\"Initial:\", fs.display_bitmap())\nprint(\"Free blocks:\", fs.get_free_blocks_count())\n\n# Allocate 3 blocks\npos = fs.allocate_blocks(3)\nprint(f\"Allocated at position {pos}: {fs.display_bitmap()}\")\n\n# Allocate 2 more blocks\npos2 = fs.allocate_blocks(2)\nprint(f\"Allocated at position {pos2}: {fs.display_bitmap()}\")\n\n# Free first allocation\nfs.deallocate_blocks(pos, 3)\nprint(f\"After freeing: {fs.display_bitmap()}\")",
+      "explanation": "Implements bitmap-based free space management with methods to allocate consecutive blocks and deallocate them. Maintains a list where each element represents a disk block's allocation status.",
+      "timeComplexity": "O(n) for allocation search, O(k) for deallocation where k is blocks to free",
+      "spaceComplexity": "O(n) where n is total disk blocks"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Directory Entry Structure",
+      "description": "Data structure for directory entries mapping filenames to inodes",
+      "code": "STRUCTURE DirectoryEntry\nBEGIN\n  character[256] fileName      // File name (max 255 chars)\n  integer        inodeNumber  // Pointer to inode in inode table\n  character[4]   fileType     // Regular, directory, special\n  integer        entryLength // Total length of this entry\n  integer        nameLength  // Actual name length\nEND STRUCTURE\n\nALGORITHM CreateDirectoryEntry(parentDir, fileName, inodeNum)\nBEGIN\n  // Check if filename already exists in directory\n  FOR each entry IN parentDir.entries DO\n    IF entry.fileName == fileName THEN\n      RETURN ERROR // File already exists\n    END IF\n  END FOR\n\n  // Create new directory entry\n  newEntry.fileName \u2190 fileName\n  newEntry.inodeNumber \u2190 inodeNum\n  newEntry.fileType \u2190 \"REGULAR\"\n  newEntry.nameLength \u2190 length(fileName)\n  newEntry.entryLength \u2190 SIZE_OF(DirectoryEntry)\n\n  // Add to parent directory\n  AppendToDirectory(parentDir, newEntry)\n  RETURN SUCCESS\nEND\n\nALGORITHM LookupFile(parentDir, fileName)\nBEGIN\n  FOR each entry IN parentDir.entries DO\n    IF entry.fileName == fileName THEN\n      RETURN entry.inodeNumber\n    END IF\n  END FOR\n  RETURN NOT_FOUND\nEND",
+      "explanation": "Directory entries store mappings between human-readable filenames and inode numbers that the OS uses to access file metadata and data blocks. Lookup searches entries to find matching filename.",
+      "timeComplexity": "O(n) for lookup in linear directory, O(log n) with indexed structure",
+      "spaceComplexity": "O(1) per lookup besides directory storage"
+    }
+  ]
+}

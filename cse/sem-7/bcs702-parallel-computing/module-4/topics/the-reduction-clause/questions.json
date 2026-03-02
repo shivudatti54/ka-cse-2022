@@ -1,0 +1,172 @@
+{
+  "topicId": "the-reduction-clause",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the reduction clause in OpenMP and state its syntax.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Definition: A clause that allows accumulation of values across parallel threads by creating private copies and combining at the end",
+        "Syntax: #pragma omp parallel for reduction(operator:list)",
+        "operator can be +, -, *, &, |, ^, &&, ||, min, max",
+        "list contains variable names separated by commas"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List the operators supported by the reduction clause in OpenMP.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Arithmetic operators: +, -, *",
+        "Logical operators: && (AND), || (OR)",
+        "Bitwise operators: & (AND), | (OR), ^ (XOR)",
+        "Min/Max operators: min, max",
+        "Note: Division (/) and modulus (%) are not supported"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are the identity values used for different reduction operators?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "For +: 0 (additive identity)",
+        "For -: 0 (not commonly used)",
+        "For *: 1 (multiplicative identity)",
+        "For &&: 1 (true)",
+        "For ||: 0 (false)",
+        "For &: all bits set (1s)",
+        "For |: 0 (zero)",
+        "For min: largest positive value (FLT_MAX for floats)",
+        "For max: smallest negative value (-FLT_MAX for floats)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "How does the reduction clause work internally in OpenMP?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "1. OpenMP creates a private copy of each reduction variable for each thread",
+        "2. Each thread performs operations on its private copy using the identity value as initial",
+        "3. At the end of the parallel region, OpenMP combines all private copies using the specified operator",
+        "4. The final result is stored in the original variable",
+        "5. This eliminates race conditions while maintaining correct results"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are the differences between atomic directive and reduction clause?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Atomic: ensures atomicity of single update operation, prevents race on specific statement",
+        "Reduction: handles entire reduction pattern automatically with optimized combining",
+        "Performance: reduction is generally faster than atomic for accumulation patterns",
+        "Use case: atomic for simple updates, reduction for accumulation across iterations",
+        "Syntax: #pragma omp atomic vs reduction(operator:var)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Write a short note on array reduction in OpenMP.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Definition: Manual technique for reducing arrays when built-in reduction is insufficient",
+        "Method: Create private array for each thread using firstprivate",
+        "Accumulate: Each thread works on its private copy",
+        "Combine: Use critical section or atomic operations to combine results at the end",
+        "Alternative: Use multiple reduction variables (one per array element) if array is small",
+        "Use case: When custom reduction logic is needed or when operator is not supported"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What are the advantages of using reduction clause over critical sections?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "1. Automatic: No need to manually manage synchronization",
+        "2. Optimized: OpenMP can optimize combining (tree-based reduction)",
+        "3. Cleaner code: More readable and maintainable",
+        "4. Performance: Better performance due to reduced synchronization overhead",
+        "5. No deadlock: Reduces chances of deadlock compared to manual critical sections",
+        "6. Scalability: Works efficiently with varying thread counts"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a C program using OpenMP to calculate the sum of first N natural numbers using reduction clause. Explain the working.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Code with #pragma omp parallel for reduction(+:sum)",
+        "Loop from 1 to N",
+        "sum += i inside loop",
+        "Explain: Each thread gets private sum=0, accumulates its portion, combines at end",
+        "Output verification for N=100 should be 5050",
+        "Mention compilation: gcc -fopenmp program.c",
+        "Time complexity: O(N/p) where p is number of threads"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain with code how to use min and max reduction in OpenMP. Write a program to find the minimum and maximum values in an array using parallel reduction.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Use reduction(min:min_val) and reduction(max:max_val)",
+        "Initialize min_val to large value, max_val to small value",
+        "Iterate through array elements",
+        "Explain initial values for min (largest) and max (smallest)",
+        "Combine: min gives smallest, max gives largest",
+        "Alternative: Use two separate parallel sections or combine in single loop",
+        "Code demonstration with sample array"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write a program to compute the dot product of two vectors using OpenMP reduction. Also discuss floating-point considerations in reduction.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Code: double dot_product = 0.0; #pragma omp parallel for reduction(+:dot_product)",
+        "Loop: dot_product += a[i] * b[i]",
+        "Floating-point issues: Non-associative property causes slight variations",
+        "Order of floating-point operations affects precision",
+        "Different thread counts may produce slightly different results",
+        "Solutions: Use Kahan summation, or accept small variations for scientific computing",
+        "Compile and run with different thread counts to observe differences"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare private clause and reduction clause in OpenMP. When would you use each?",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Private: Creates uninitialized private copies of variables",
+        "Reduction: Creates initialized private copies and combines at end",
+        "Use private when: variable is only used within thread, no accumulation needed",
+        "Use reduction when: need to accumulate results across threads",
+        "Reduction handles initialization automatically with identity values",
+        "Private requires careful handling to avoid undefined values",
+        "Example: private for loop index, reduction for accumulating sum"
+      ]
+    }
+  ]
+}

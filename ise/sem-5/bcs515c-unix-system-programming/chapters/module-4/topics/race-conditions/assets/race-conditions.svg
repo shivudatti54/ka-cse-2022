@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" width="420" height="400" data-topic-id="race-conditions">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8EAF6"/>
+      <stop offset="100%" style="stop-color:#C5CAE9"/>
+    </linearGradient>
+    <linearGradient id="parentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3949AB"/>
+      <stop offset="100%" style="stop-color:#5C6BC0"/>
+    </linearGradient>
+    <linearGradient id="childGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00695C"/>
+      <stop offset="100%" style="stop-color:#00897B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- G1: Title with underline (begin=0.3s) -->
+  <g opacity="0" data-narration="Race conditions occur when multiple processes access shared data and the outcome depends on execution timing.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.3s" fill="freeze"/>
+    <text x="210" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#3949AB">Race Conditions</text>
+    <line x1="130" y1="34" x2="290" y2="34" stroke="#3949AB" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="210" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#5C6BC0">Unix System Programming</text>
+  </g>
+
+  <!-- G2: What is a race condition? (begin=1.5s) -->
+  <g opacity="0" data-narration="A race condition happens when two or more processes or threads access shared data concurrently, and the outcome depends on the timing and order of their execution.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze"/>
+    <rect x="12" y="56" width="396" height="52" rx="6" fill="white" fill-opacity="0.7" stroke="#3949AB" stroke-width="1"/>
+    <text x="22" y="72" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#3949AB">What is a Race Condition?</text>
+    <!-- Two processes icon -->
+    <rect x="22" y="78" width="28" height="22" rx="3" fill="#3949AB" fill-opacity="0.15" stroke="#3949AB" stroke-width="0.8"/>
+    <text x="36" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#3949AB">P1</text>
+    <rect x="56" y="78" width="28" height="22" rx="3" fill="#00695C" fill-opacity="0.15" stroke="#00695C" stroke-width="0.8"/>
+    <text x="70" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#00695C">P2</text>
+    <!-- Arrow to shared data -->
+    <line x1="88" y1="89" x2="105" y2="89" stroke="#E65100" stroke-width="1.2"/>
+    <rect x="108" y="80" width="42" height="18" rx="3" fill="#E65100" fill-opacity="0.12" stroke="#E65100" stroke-width="0.8"/>
+    <text x="129" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#E65100">Shared</text>
+    <!-- Description -->
+    <text x="160" y="82" font-family="Arial, sans-serif" font-size="8" fill="#333">Outcome depends on non-deterministic</text>
+    <text x="160" y="93" font-family="Arial, sans-serif" font-size="8" fill="#333">timing/scheduling of execution order.</text>
+    <text x="160" y="104" font-family="Arial, sans-serif" font-size="8" fill="#C62828" font-weight="bold">Result: unpredictable, hard-to-reproduce bugs</text>
+  </g>
+
+  <!-- G3: Classic fork() race example (begin=3.0s) -->
+  <g opacity="0" data-narration="A classic Unix race condition occurs after fork(). The parent and child process race to execute, and which one runs first is non-deterministic, depending on the kernel scheduler.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="3.0s" fill="freeze"/>
+    <rect x="12" y="114" width="396" height="80" rx="6" fill="white" fill-opacity="0.7" stroke="#00695C" stroke-width="1"/>
+    <text x="22" y="130" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#00695C">Classic Example: fork() Race</text>
+
+    <!-- Timeline: fork point -->
+    <circle cx="60" cy="155" r="8" fill="#3949AB"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">fork</text>
+
+    <!-- Parent timeline -->
+    <line x1="68" y1="150" x2="240" y2="140" stroke="#3949AB" stroke-width="2" stroke-linecap="round"/>
+    <rect x="245" y="132" width="68" height="16" rx="3" fill="url(#parentGrad)"/>
+    <text x="279" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white">Parent runs</text>
+    <!-- Question mark -->
+    <text x="325" y="144" font-family="Arial, sans-serif" font-size="12" fill="#E65100" font-weight="bold">?</text>
+
+    <!-- Child timeline -->
+    <line x1="68" y1="160" x2="240" y2="170" stroke="#00695C" stroke-width="2" stroke-linecap="round"/>
+    <rect x="245" y="163" width="68" height="16" rx="3" fill="url(#childGrad)"/>
+    <text x="279" y="174" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white">Child runs</text>
+    <!-- Question mark -->
+    <text x="325" y="175" font-family="Arial, sans-serif" font-size="12" fill="#E65100" font-weight="bold">?</text>
+
+    <!-- Label -->
+    <text x="348" y="155" font-family="Arial, sans-serif" font-size="8" fill="#C62828" font-weight="bold">Who runs</text>
+    <text x="348" y="166" font-family="Arial, sans-serif" font-size="8" fill="#C62828" font-weight="bold">first?</text>
+
+    <!-- Note -->
+    <text x="60" y="188" font-family="Arial, sans-serif" font-size="7.5" fill="#555" font-style="italic">Order depends on kernel scheduler -- non-deterministic. Use wait()/signals to synchronize.</text>
+  </g>
+
+  <!-- G4: TOCTOU vulnerability (begin=4.5s) -->
+  <g opacity="0" data-narration="TOCTOU, Time of Check to Time of Use, is a race where a condition is checked, then a context switch occurs, the condition changes, and the process uses a stale result. This is a major security vulnerability in Unix.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="4.5s" fill="freeze"/>
+    <rect x="12" y="200" width="396" height="66" rx="6" fill="white" fill-opacity="0.7" stroke="#E65100" stroke-width="1"/>
+    <text x="22" y="216" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#E65100">TOCTOU (Time of Check to Time of Use)</text>
+
+    <!-- Flow: Check -> Switch -> Change -> Use Stale -->
+    <rect x="22" y="224" width="72" height="28" rx="4" fill="#3949AB" fill-opacity="0.12" stroke="#3949AB" stroke-width="0.8"/>
+    <text x="58" y="236" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#3949AB" font-weight="bold">1. Check</text>
+    <text x="58" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#3949AB">access(file)</text>
+
+    <text x="100" y="241" font-family="Arial, sans-serif" font-size="14" fill="#666">&#x203A;</text>
+
+    <rect x="110" y="224" width="72" height="28" rx="4" fill="#E65100" fill-opacity="0.12" stroke="#E65100" stroke-width="0.8"/>
+    <text x="146" y="236" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#E65100" font-weight="bold">2. Switch</text>
+    <text x="146" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#E65100">context switch</text>
+
+    <text x="188" y="241" font-family="Arial, sans-serif" font-size="14" fill="#666">&#x203A;</text>
+
+    <rect x="198" y="224" width="72" height="28" rx="4" fill="#C62828" fill-opacity="0.12" stroke="#C62828" stroke-width="0.8"/>
+    <text x="234" y="236" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#C62828" font-weight="bold">3. Change</text>
+    <text x="234" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#C62828">symlink attack</text>
+
+    <text x="276" y="241" font-family="Arial, sans-serif" font-size="14" fill="#666">&#x203A;</text>
+
+    <rect x="286" y="224" width="72" height="28" rx="4" fill="#C62828" fill-opacity="0.15" stroke="#C62828" stroke-width="1.2"/>
+    <text x="322" y="236" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#C62828" font-weight="bold">4. Use Stale</text>
+    <text x="322" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#C62828">open(file)</text>
+
+    <!-- Warning badge -->
+    <rect x="365" y="226" width="36" height="24" rx="4" fill="#C62828"/>
+    <text x="383" y="237" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">SEC</text>
+    <text x="383" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="white">VULN</text>
+
+    <text x="22" y="262" font-family="Arial, sans-serif" font-size="7" fill="#C62828" font-style="italic">Fix: Use open() with O_CREAT|O_EXCL atomically, or fstat() on open fd instead of stat() on path.</text>
+  </g>
+
+  <!-- G5: Prevention techniques (begin=6.0s) -->
+  <g opacity="0" data-narration="Race conditions can be prevented using atomic operations, mutexes and locks, semaphores, signal masking, and file locking with fcntl in Unix.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="6.0s" fill="freeze"/>
+    <rect x="12" y="272" width="396" height="56" rx="6" fill="white" fill-opacity="0.7" stroke="#3949AB" stroke-width="1"/>
+    <text x="22" y="288" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#3949AB">Prevention Techniques</text>
+
+    <!-- Technique boxes in a row -->
+    <rect x="22" y="294" width="68" height="26" rx="4" fill="#3949AB"/>
+    <text x="56" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">Atomic</text>
+    <text x="56" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#C5CAE9">Operations</text>
+
+    <rect x="96" y="294" width="68" height="26" rx="4" fill="#00695C"/>
+    <text x="130" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">Mutexes</text>
+    <text x="130" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#B2DFDB">/ Locks</text>
+
+    <rect x="170" y="294" width="68" height="26" rx="4" fill="#E65100"/>
+    <text x="204" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">Semaphores</text>
+    <text x="204" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#FFE0B2">sem_wait()</text>
+
+    <rect x="244" y="294" width="68" height="26" rx="4" fill="#3949AB" fill-opacity="0.8"/>
+    <text x="278" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">Signal</text>
+    <text x="278" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#C5CAE9">Masking</text>
+
+    <rect x="318" y="294" width="82" height="26" rx="4" fill="#00695C" fill-opacity="0.9"/>
+    <text x="359" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="white" font-weight="bold">File Locking</text>
+    <text x="359" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#B2DFDB">fcntl(F_SETLK)</text>
+  </g>
+
+  <!-- G6: Unix-specific considerations (begin=7.5s) -->
+  <g opacity="0" data-narration="In Unix, signal handlers are a common source of race conditions. The errno variable is not thread-safe and requires per-thread storage. Only async-signal-safe functions should be used inside signal handlers.">
+    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="7.5s" fill="freeze"/>
+    <rect x="12" y="334" width="396" height="58" rx="6" fill="white" fill-opacity="0.7" stroke="#C62828" stroke-width="1"/>
+    <text x="22" y="350" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#C62828">Unix-Specific Concerns</text>
+
+    <!-- Three concern columns -->
+    <rect x="22" y="356" width="120" height="28" rx="4" fill="#C62828" fill-opacity="0.08" stroke="#C62828" stroke-width="0.6"/>
+    <text x="82" y="367" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#C62828" font-weight="bold">Signal Handlers</text>
+    <text x="82" y="378" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#555">Race source: async delivery</text>
+
+    <rect x="150" y="356" width="120" height="28" rx="4" fill="#E65100" fill-opacity="0.08" stroke="#E65100" stroke-width="0.6"/>
+    <text x="210" y="367" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#E65100" font-weight="bold">errno Thread Safety</text>
+    <text x="210" y="378" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#555">Use per-thread errno storage</text>
+
+    <rect x="278" y="356" width="122" height="28" rx="4" fill="#3949AB" fill-opacity="0.08" stroke="#3949AB" stroke-width="0.6"/>
+    <text x="339" y="367" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" fill="#3949AB" font-weight="bold">Async-Signal-Safe</text>
+    <text x="339" y="378" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" fill="#555">Only safe funcs in handlers</text>
+  </g>
+</svg>

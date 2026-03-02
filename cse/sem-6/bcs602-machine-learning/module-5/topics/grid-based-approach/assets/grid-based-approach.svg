@@ -1,0 +1,415 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1280">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1976d2"/>
+      <stop offset="100%" stop-color="#1565c0"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#388e3c"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff9800"/>
+      <stop offset="100%" stop-color="#f57c00"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9c27b0"/>
+      <stop offset="100%" stop-color="#7b1fa2"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+  </defs>
+  
+  <rect width="800" height="1280" fill="#f8f9fa"/>
+  
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to Module 5: Grid-based Approach in Machine Learning. This powerful technique revolutionizes clustering by operating on grid cells instead of individual data points.">
+    <rect x="40" y="15" width="720" height="50" rx="10" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="48" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="white" text-anchor="middle">Grid-based Approach in Machine Learning</text>
+    <text x="400" y="70" font-family="Arial, sans-serif" font-size="12" fill="#1565c0" text-anchor="middle" opacity="0.8">Module 5 | Clustering and Density-Based Analysis</text>
+  </g>
+
+  <!-- Step 1: Introduction - The Problem -->
+  <g class="step" id="step1" data-narration="Traditional algorithms like K-Means struggle with large datasets. Processing each point individually becomes computationally expensive and does not scale well.">
+    <rect x="40" y="80" width="350" height="90" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#d32f2f">The Problem</text>
+    <text x="60" y="118" font-family="Arial, sans-serif" font-size="10" fill="#424242">- K-Means processes each point</text>
+    <text x="60" y="133" font-family="Arial, sans-serif" font-size="10" fill="#424242">- DBSCAN struggles with scale</text>
+    <text x="60" y="148" font-family="Arial, sans-serif" font-size="10" fill="#424242">- High-dimensional data explosion</text>
+    <text x="60" y="163" font-family="Arial, sans-serif" font-size="10" fill="#424242">- Computational cost: O(n2) or worse</text>
+    
+    <rect x="410" y="80" width="350" height="90" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="430" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#388e3c">The Solution</text>
+    <text x="430" y="118" font-family="Arial, sans-serif" font-size="10" fill="#424242">- Partition space into grid cells</text>
+    <text x="430" y="133" font-family="Arial, sans-serif" font-size="10" fill="#424242">- Operate on cells, not points</text>
+    <text x="430" y="148" font-family="Arial, sans-serif" font-size="10" fill="#424242">- Reduce objects to process</text>
+    <text x="430" y="163" font-family="Arial, sans-serif" font-size="10" fill="#424242">- Complexity: O(n) - Linear!</text>
+    
+    <!-- Arrow between boxes -->
+    <path d="M385 125 L415 125" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)">
+      <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1s" fill="freeze"/>
+    </path>
+  </g>
+
+  <!-- Step 2: Core Idea -->
+  <g class="step" id="step2" data-narration="The fundamental idea is to quantize the data space into cells forming a grid structure, then perform clustering on these cells rather than individual data points.">
+    <rect x="40" y="185" width="720" height="85" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="208" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1976d2">Core Idea: Quantize Space into Grid</text>
+    
+    <!-- Grid visualization -->
+    <g transform="translate(60, 220)">
+      <!-- Grid cells -->
+      <rect x="0" y="0" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      <rect x="30" y="0" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      <rect x="60" y="0" width="30" height="30" fill="#bbdefb" stroke="#90caf9" stroke-width="0.5"/>
+      <rect x="90" y="0" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      
+      <rect x="0" y="30" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      <rect x="30" y="30" width="30" height="30" fill="#90caf9" stroke="#64b5f6" stroke-width="0.5"/>
+      <rect x="60" y="30" width="30" height="30" fill="#64b5f6" stroke="#42a5f5" stroke-width="0.5"/>
+      <rect x="90" y="30" width="30" height="30" fill="#90caf9" stroke="#64b5f6" stroke-width="0.5"/>
+      
+      <rect x="0" y="60" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      <rect x="30" y="60" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      <rect x="60" y="60" width="30" height="30" fill="#bbdefb" stroke="#90caf9" stroke-width="0.5"/>
+      <rect x="90" y="60" width="30" height="30" fill="#e3f2fd" stroke="#bbdefb" stroke-width="0.5"/>
+      
+      <!-- Data points overlay -->
+      <circle cx="15" cy="15" r="3" fill="#1976d2">
+        <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="0.5s" fill="freeze"/>
+      </circle>
+      <circle cx="75" cy="15" r="3" fill="#1976d2">
+        <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="0.7s" fill="freeze"/>
+      </circle>
+      <circle cx="45" cy="45" r="3" fill="#1976d2">
+        <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="0.9s" fill="freeze"/>
+      </circle>
+      <circle cx="75" cy="45" r="3" fill="#1976d2">
+        <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.1s" fill="freeze"/>
+      </circle>
+      <circle cx="105" cy="45" r="3" fill="#1976d2">
+        <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.3s" fill="freeze"/>
+      </circle>
+    </g>
+    
+    <text x="250" y="240" font-family="Arial, sans-serif" font-size="11" fill="#424242">Data Space</text>
+    <text x="250" y="255" font-family="Arial, sans-serif" font-size="10" fill="#616161">Partition into finite cells</text>
+    <text x="250" y="268" font-family="Arial, sans-serif" font-size="10" fill="#616161">Cluster on cells, not points</text>
+  </g>
+
+  <!-- Step 3: Key Terminology - Grid Cell -->
+  <g class="step" id="step3" data-narration="A grid cell is a rectangular unit in the partitioned space. In 2D, it is defined by intervals on both x and y axes. Each cell captures all data points that fall within its boundaries.">
+    <rect x="40" y="285" width="720" height="85" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="308" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#7b1fa2">Key Concept: Grid Cell</text>
+    
+    <!-- 2D Grid Cell visualization -->
+    <g transform="translate(60, 325)">
+      <rect x="50" y="0" width="100" height="40" fill="none" stroke="#9c27b0" stroke-width="2" stroke-dasharray="5,3">
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="1s" fill="freeze"/>
+      </rect>
+      <line x1="0" y1="20" x2="50" y2="20" stroke="#9c27b0" stroke-width="1"/>
+      <line x1="150" y1="20" x2="200" y2="20" stroke="#9c27b0" stroke-width="1"/>
+      <text x="25" y="15" font-family="Arial, sans-serif" font-size="10" fill="#9c27b0">x-interval</text>
+      
+      <rect x="50" y="0" width="100" height="40" fill="#f3e5f5" opacity="0.5"/>
+      <line x1="100" y1="0" x2="100" y2="40" stroke="#9c27b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="50" y1="20" x2="150" y2="20" stroke="#9c27b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="100" y="-5" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2" text-anchor="middle">x1 to x2</text>
+      <text x="175" y="22" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2">y-interval</text>
+      <text x="175" y="35" font-family="Arial, sans-serif" font-size="9" fill="#7b1fa2">y1 to y2</text>
+    </g>
+    
+    <text x="280" y="335" font-family="Arial, sans-serif" font-size="10" fill="#424242">Rectangular or Hyper-rectangular unit</text>
+    <text x="280" y="350" font-family="Arial, sans-serif" font-size="10" fill="#424242">Defined by intervals in each dimension</text>
+    <text x="280" y="365" font-family="Arial, sans-serif" font-size="10" fill="#424242">In 2D: x1,x2 x y1,y2</text>
+  </g>
+
+  <!-- Step 4: Cell Density -->
+  <g class="step" id="step4" data-narration="Cell density is the count of data points falling into a cell. Cells exceeding a density threshold are labeled dense and form the foundation for cluster formation.">
+    <rect x="40" y="385" width="720" height="85" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="408" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#f57c00">Key Concept: Cell Density</text>
+    
+    <!-- Density visualization -->
+    <g transform="translate(60, 420)">
+      <!-- Low density cell -->
+      <rect x="0" y="0" width="50" height="40" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+      <circle cx="25" cy="15" r="3" fill="#f44336"/>
+      <text x="25" y="32" font-family="Arial, sans-serif" font-size="9" fill="#c62828" text-anchor="middle">Density: 1</text>
+      
+      <!-- Medium density cell -->
+      <rect x="60" y="0" width="50" height="40" fill="#fff3e0" stroke="#ffb74d" stroke-width="1"/>
+      <circle cx="75" cy="15" r="3" fill="#ff9800"/>
+      <circle cx="85" cy="25" r="3" fill="#ff9800"/>
+      <circle cx="70" cy="30" r="3" fill="#ff9800"/>
+      <text x="85" y="52" font-family="Arial, sans-serif" font-size="9" fill="#e65100" text-anchor="middle">Density: 3</text>
+      
+      <!-- High density cell -->
+      <rect x="120" y="0" width="50" height="40" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+      <circle cx="130" cy="12" r="3" fill="#388e3c"/>
+      <circle cx="145" cy="12" r="3" fill="#388e3c"/>
+      <circle cx="135" cy="20" r="3" fill="#388e3c"/>
+      <circle cx="150" cy="22" r="3" fill="#388e3c"/>
+      <circle cx="128" cy="30" r="3" fill="#388e3c"/>
+      <circle cx="143" cy="32" r="3" fill="#388e3c"/>
+      <circle cx="138" cy="36" r="3" fill="#388e3c"/>
+      <text x="145" y="52" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20" text-anchor="middle" font-weight="bold">DENSE!</text>
+    </g>
+    
+    <text x="280" y="430" font-family="Arial, sans-serif" font-size="11" fill="#424242">Density = Number of points in cell</text>
+    <text x="280" y="448" font-family="Arial, sans-serif" font-size="10" fill="#424242">Threshold tau: If density greater than or equal to tau then Dense cell</text>
+    <text x="280" y="462" font-family="Arial, sans-serif" font-size="10" fill="#424242">Dense cells form cluster cores</text>
+  </g>
+
+  <!-- Step 5: Step 1 - Creating Grid -->
+  <g class="step" id="step5" data-narration="Step 1: Create the grid by dividing the data space into a user-specified number of intervals per dimension, forming a multi-dimensional grid structure.">
+    <rect x="40" y="485" width="720" height="95" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="508" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">Step 1: Creating the Grid</text>
+    <text x="60" y="528" font-family="Arial, sans-serif" font-size="11" fill="#424242">Divide data space into grid cells. For 2D: m by n grid. For n-dim: hyper-grid.</text>
+    
+    <!-- Grid creation animation -->
+    <g transform="translate(60, 540)">
+      <rect x="0" y="0" width="180" height="30" fill="none" stroke="#1976d2" stroke-width="2" stroke-dasharray="180" stroke-dashoffset="180">
+        <animate attributeName="stroke-dashoffset" from="180" to="0" dur="1s" fill="freeze"/>
+      </rect>
+      <rect x="0" y="30" width="180" height="30" fill="none" stroke="#1976d2" stroke-width="2" stroke-dasharray="180" stroke-dashoffset="180">
+        <animate attributeName="stroke-dashoffset" from="180" to="0" dur="1s" begin="0.2s" fill="freeze"/>
+      </rect>
+      <rect x="0" y="60" width="180" height="30" fill="none" stroke="#1976d2" stroke-width="2" stroke-dasharray="180" stroke-dashoffset="180">
+        <animate attributeName="stroke-dashoffset" from="180" to="0" dur="1s" begin="0.4s" fill="freeze"/>
+      </rect>
+      
+      <!-- Vertical lines -->
+      <line x1="45" y1="0" x2="45" y2="90" stroke="#1976d2" stroke-width="1" stroke-dasharray="90" stroke-dashoffset="90">
+        <animate attributeName="stroke-dashoffset" from="90" to="0" dur="0.5s" begin="0.6s" fill="freeze"/>
+      </line>
+      <line x1="90" y1="0" x2="90" y2="90" stroke="#1976d2" stroke-width="1" stroke-dasharray="90" stroke-dashoffset="90">
+        <animate attributeName="stroke-dashoffset" from="90" to="0" dur="0.5s" begin="0.7s" fill="freeze"/>
+      </line>
+      <line x1="135" y1="0" x2="135" y2="90" stroke="#1976d2" stroke-width="1" stroke-dasharray="90" stroke-dashoffset="90">
+        <animate attributeName="stroke-dashoffset" from="90" to="0" dur="0.5s" begin="0.8s" fill="freeze"/>
+      </line>
+    </g>
+    
+    <text x="280" y="555" font-family="Arial, sans-serif" font-size="10" fill="#616161">4 x 3 = 12 cells</text>
+    <text x="280" y="570" font-family="Arial, sans-serif" font-size="10" fill="#616161">Grid size affects quality vs speed</text>
+  </g>
+
+  <!-- Step 6: Step 2 - Assigning Points -->
+  <g class="step" id="step6" data-narration="Step 2: Map each data point to its corresponding grid cell based on the point attribute values. This quantizes continuous data into discrete cells.">
+    <rect x="40" y="595" width="720" height="95" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="618" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">Step 2: Assigning Points to Cells</text>
+    <text x="60" y="638" font-family="Arial, sans-serif" font-size="11" fill="#424242">Each data point is mapped to the specific cell it falls into based on coordinate values.</text>
+    
+    <!-- Point assignment visualization -->
+    <g transform="translate(60, 650)">
+      <!-- Grid -->
+      <rect x="0" y="0" width="120" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="120" y="0" width="120" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="0" y="30" width="120" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="120" y="30" width="120" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      
+      <!-- Data points with assignment -->
+      <circle cx="60" cy="15" r="5" fill="#f44336">
+        <animate attributeName="r" from="0" to="5" dur="0.3s" begin="0.5s" fill="freeze"/>
+      </circle>
+      <path d="M60 15 L60 45" stroke="#f44336" stroke-width="1" stroke-dasharray="3" fill="none">
+        <animate attributeName="stroke-dashoffset" from="30" to="0" dur="0.3s" begin="0.8s" fill="freeze"/>
+      </path>
+      <circle cx="60" cy="45" r="5" fill="#f44336" opacity="0.5"/>
+      
+      <circle cx="180" cy="45" r="5" fill="#388e3c">
+        <animate attributeName="r" from="0" to="5" dur="0.3s" begin="1.2s" fill="freeze"/>
+      </circle>
+      <path d="M180 45 L180 75" stroke="#388e3c" stroke-width="1" stroke-dasharray="3" fill="none">
+        <animate attributeName="stroke-dashoffset" from="30" to="0" dur="0.3s" begin="1.5s" fill="freeze"/>
+      </path>
+      <circle cx="180" cy="75" r="5" fill="#388e3c" opacity="0.5"/>
+    </g>
+    
+    <text x="280" y="665" font-family="Arial, sans-serif" font-size="10" fill="#616161">Point (0.3, 0.2) maps to Cell (0,0)</text>
+    <text x="280" y="680" font-family="Arial, sans-serif" font-size="10" fill="#616161">Quantize continuous to discrete</text>
+  </g>
+
+  <!-- Step 7: Step 3 and 4 - Density and Dense Cells -->
+  <g class="step" id="step7" data-narration="Step 3: Calculate the density of each cell by counting points. Step 4: Identify dense cells where density exceeds the predefined threshold.">
+    <rect x="40" y="705" width="720" height="95" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="728" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">Step 3 and 4: Density Calculation and Dense Cell Identification</text>
+    
+    <!-- Density calculation visualization -->
+    <g transform="translate(60, 745)">
+      <!-- Cell with count -->
+      <rect x="0" y="0" width="60" height="40" fill="#fff3e0" stroke="#ffb74d" stroke-width="2"/>
+      <circle cx="20" cy="12" r="3" fill="#ff9800"/>
+      <circle cx="40" cy="12" r="3" fill="#ff9800"/>
+      <circle cx="30" cy="25" r="3" fill="#ff9800"/>
+      <text x="30" y="50" font-family="Arial, sans-serif" font-size="11" fill="#e65100" text-anchor="middle" font-weight="bold">tau = 3</text>
+      
+      <text x="80" y="20" font-family="Arial, sans-serif" font-size="14" fill="#424242">equals</text>
+      
+      <!-- Result: dense -->
+      <rect x="110" y="0" width="60" height="40" fill="#e8f5e9" stroke="#66bb6a" stroke-width="2"/>
+      <text x="140" y="22" font-family="Arial, sans-serif" font-size="12" fill="#2e7d32" text-anchor="middle" font-weight="bold">DENSE</text>
+      <text x="140" y="50" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20" text-anchor="middle">(3 greater than or equal to 3)</text>
+      
+      <!-- Cell below threshold -->
+      <rect x="200" y="0" width="60" height="40" fill="#ffebee" stroke="#ef9a9a" stroke-width="1"/>
+      <circle cx="230" cy="20" r="3" fill="#f44336"/>
+      <text x="230" y="50" font-family="Arial, sans-serif" font-size="11" fill="#c62828" text-anchor="middle">tau = 1</text>
+      
+      <text x="280" y="20" font-family="Arial, sans-serif" font-size="14" fill="#424242">equals</text>
+      
+      <!-- Result: not dense -->
+      <rect x="310" y="0" width="60" height="40" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="1"/>
+      <text x="340" y="22" font-family="Arial, sans-serif" font-size="10" fill="#757575" text-anchor="middle">NOT DENSE</text>
+      <text x="340" y="50" font-family="Arial, sans-serif" font-size="9" fill="#9e9e9e" text-anchor="middle">(1 is less than 3)</text>
+    </g>
+    
+    <text x="400" y="770" font-family="Arial, sans-serif" font-size="10" fill="#616161">Dense cells form cluster seeds</text>
+    <text x="400" y="785" font-family="Arial, sans-serif" font-size="10" fill="#616161">Sparse cells become noise or outliers</text>
+  </g>
+
+  <!-- Step 8: Step 5 - Forming Clusters -->
+  <g class="step" id="step8" data-narration="Step 5: Connect adjacent dense cells to form clusters. Two cells are neighbors if they share a face, edge, or vertex. The cluster is the union of connected dense cells.">
+    <rect x="40" y="815" width="720" height="95" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="838" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">Step 5: Forming Clusters</text>
+    <text x="60" y="858" font-family="Arial, sans-serif" font-size="11" fill="#424242">Connect neighboring dense cells to form clusters. Neighbors share faces, edges, or vertices.</text>
+    
+    <!-- Cluster formation visualization -->
+    <g transform="translate(60, 868)">
+      <!-- Grid with dense cells and connections -->
+      <rect x="0" y="0" width="40" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="40" y="0" width="40" height="30" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+      <rect x="80" y="0" width="40" height="30" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+      <rect x="120" y="0" width="40" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      
+      <rect x="0" y="30" width="40" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="40" y="30" width="40" height="30" fill="#e8f5e9" stroke="#81c784" stroke-width="2"/>
+      <rect x="80" y="30" width="40" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      <rect x="120" y="30" width="40" height="30" fill="#e3f2fd" stroke="#bbdefb"/>
+      
+      <!-- Cluster boundary -->
+      <rect x="38" y="-2" width="86" height="34" fill="none" stroke="#388e3c" stroke-width="2" stroke-dasharray="4" rx="3">
+        <animate attributeName="stroke-dashoffset" from="60" to="0" dur="1s" begin="0.5s" fill="freeze"/>
+      </rect>
+      
+      <text x="60" y="-10" font-family="Arial, sans-serif" font-size="9" fill="#388e3c" font-weight="bold">Cluster 1</text>
+    </g>
+    
+    <text x="200" y="885" font-family="Arial, sans-serif" font-size="10" fill="#616161">Adjacent dense cells</text>
+    <text x="200" y="900" font-family="Arial, sans-serif" font-size="10" fill="#616161">connected together</text>
+    <text x="200" y="915" font-family="Arial, sans-serif" font-size="10" fill="#616161">Arbitrary shapes found!</text>
+  </g>
+
+  <!-- Step 9: Advantages -->
+  <g class="step" id="step9" data-narration="Grid-based methods offer fast processing with O(n) complexity, handle noise by ignoring sparse cells, discover arbitrary cluster shapes, and support incremental updates.">
+    <rect x="40" y="925" width="720" height="85" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="948" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#388e3c">Advantages of Grid-based Approach</text>
+    
+    <!-- Advantages grid -->
+    <g transform="translate(60, 958)">
+      <rect x="0" y="0" width="165" height="45" rx="6" fill="#e8f5e9" stroke="#a5d6a7"/>
+      <text x="15" y="18" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32">Fast Processing</text>
+      <text x="15" y="35" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">O(n) - independent of</text>
+      <text x="15" y="43" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">data point count</text>
+      
+      <rect x="175" y="0" width="165" height="45" rx="6" fill="#e8f5e9" stroke="#a5d6a7"/>
+      <text x="190" y="18" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32">Handles Noise</text>
+      <text x="190" y="35" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">Sparse cells ignored,</text>
+      <text x="190" y="43" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">treated as outliers</text>
+      
+      <rect x="350" y="0" width="165" height="45" rx="6" fill="#e8f5e9" stroke="#a5d6a7"/>
+      <text x="365" y="18" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32">Arbitrary Shapes</text>
+      <text x="365" y="35" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">Connect dense cells</text>
+      <text x="365" y="43" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">to find any shape</text>
+      
+      <rect x="525" y="0" width="165" height="45" rx="6" fill="#e8f5e9" stroke="#a5d6a7"/>
+      <text x="540" y="18" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2e7d32">Incremental</text>
+      <text x="540" y="35" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">Easy to add new data</text>
+      <text x="540" y="43" font-family="Arial, sans-serif" font-size="9" fill="#1b5e20">update cell counts</text>
+    </g>
+  </g>
+
+  <!-- Step 10: STING Algorithm -->
+  <g class="step" id="step10" data-narration="STING (Statistical Information Grid) is a hierarchical grid algorithm. It creates multiple resolution levels, storing statistical data in each cell for efficient query processing.">
+    <rect x="40" y="1025" width="720" height="95" rx="8" fill="white" filter="url(#shadow)"/>
+    <text x="60" y="1048" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#9c27b0">Example: STING Algorithm</text>
+    <text x="60" y="1068" font-family="Arial, sans-serif" font-size="11" fill="#424242">STING creates hierarchical grid levels. Each cell stores statistical info: mean, std dev, min, max, distribution type.</text>
+    
+    <!-- STING hierarchical visualization -->
+    <g transform="translate(60, 1080)">
+      <!-- Level 1 (coarse) -->
+      <rect x="0" y="0" width="80" height="30" fill="#f3e5f5" stroke="#ce93d8" stroke-width="2"/>
+      <text x="40" y="18" font-family="Arial, sans-serif" font-size="8" fill="#7b1fa2" text-anchor="middle">Level 1</text>
+      <rect x="80" y="0" width="80" height="30" fill="#f3e5f5" stroke="#ce93d8" stroke-width="2"/>
+      <text x="120" y="18" font-family="Arial, sans-serif" font-size="8" fill="#7b1fa2" text-anchor="middle">Level 1</text>
+      
+      <!-- Arrows down -->
+      <path d="M40 30 L20 50" stroke="#9c27b0" stroke-width="1" fill="none">
+        <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.5s" fill="freeze"/>
+      </path>
+      <path d="M120 30 L100 50" stroke="#9c27b0" stroke-width="1" fill="none">
+        <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.6s" fill="freeze"/>
+      </path>
+      
+      <!-- Level 2 (finer) -->
+      <rect x="0" y="50" width="40" height="25" fill="#e1bee7" stroke="#ba68c8" stroke-width="1"/>
+      <rect x="40" y="50" width="40" height="25" fill="#e1bee7" stroke="#ba68c8" stroke-width="1"/>
+      <rect x="80" y="50" width="40" height="25" fill="#e1bee7" stroke="#ba68c8" stroke-width="1"/>
+      <rect x="120" y="50" width="40" height="25" fill="#e1bee7" stroke="#ba68c8" stroke-width="1"/>
+      <text x="80" y="65" font-family="Arial, sans-serif" font-size="8" fill="#6a1b9a" text-anchor="middle">Level 2</text>
+      
+      <!-- Statistics stored -->
+      <rect x="170" y="45" width="130" height="35" rx="4" fill="#fff8e1" stroke="#ffb74d"/>
+      <text x="185" y="58" font-family="Arial, sans-serif" font-size="9" fill="#f57c00" font-weight="bold">Statistical Info:</text>
+      <text x="185" y="72" font-family="Arial, sans-serif" font-size="8" fill="#e65100">count, mean, std, min, max</text>
+    </g>
+  </g>
+
+  <!-- Step 11: Summary - Key Points -->
+  <g class="step" id="step11" data-narration="In summary: Grid-based approach partitions space into cells, operates on cells not points, achieves O(n) time complexity, and discovers arbitrary shaped clusters.">
+    <rect x="40" y="1135" width="720" height="65" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1158" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">Summary: Key Points</text>
+    <text x="60" y="1180" font-family="Arial, sans-serif" font-size="11" fill="white" opacity="0.9">Partition space into finite cells - operate on cells, not individual data points</text>
+    <text x="60" y="1198" font-family="Arial, sans-serif" font-size="11" fill="white" opacity="0.9">High speed and scalability with O(n) linear complexity</text>
+  </g>
+
+  <!-- Step 12: Summary - Applications -->
+  <g class="step" id="step12" data-narration="Grid-based methods are used for spatial data clustering, customer segmentation, image processing, and form the basis for algorithms like STING and CLIQUE.">
+    <rect x="40" y="1215" width="720" height="50" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="60" y="1238" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">Applications and Next Steps</text>
+    <text x="280" y="1248" font-family="Arial, sans-serif" font-size="10" fill="white" opacity="0.9">Spatial data mining - Customer segmentation - Image analysis</text>
+    <text x="280" y="1262" font-family="Arial, sans-serif" font-size="10" fill="white" opacity="0.9">STING, CLIQUE - Subspace clustering - High-dimensional data</text>
+  </g>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+  </style>
+</svg>

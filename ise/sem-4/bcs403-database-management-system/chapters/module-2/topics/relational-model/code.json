@@ -1,0 +1,24 @@
+{
+  "topicId": "relational-model",
+  "language": "sql",
+  "snippets": [
+    {
+      "id": "create-relation",
+      "title": "Creating a Relation (Table)",
+      "code": "-- Define relation schema\nCREATE TABLE Student (\n    student_id INT,           -- Attribute: student identifier\n    name VARCHAR(100),        -- Attribute: student name\n    gpa DECIMAL(3,2),         -- Attribute: grade point average\n    enrollment_date DATE      -- Attribute: enrollment date\n);\n\n-- Insert tuples (rows)\nINSERT INTO Student VALUES\n    (101, 'Alice', 3.80, '2023-09-01'),\n    (102, 'Bob', 3.25, '2023-09-01'),\n    (103, 'Carol', 3.90, '2022-09-01');",
+      "explanation": "CREATE TABLE defines relation schema; INSERT adds tuples to the relation instance"
+    },
+    {
+      "id": "relational-algebra-sql",
+      "title": "Relational Algebra in SQL",
+      "code": "-- SELECT operation (σ): Filter rows\n-- σ_GPA>3.5 (Student)\nSELECT * FROM Student WHERE gpa > 3.5;\n\n-- PROJECT operation (π): Choose columns\n-- π_name,gpa (Student)\nSELECT name, gpa FROM Student;\n\n-- Combined: π_name (σ_GPA>3.5 (Student))\nSELECT name FROM Student WHERE gpa > 3.5;\n\n-- UNION (∪): Combine relations\nSELECT name FROM Students2023\nUNION\nSELECT name FROM Students2024;\n\n-- DIFFERENCE (-): Remove tuples\nSELECT name FROM AllStudents\nEXCEPT\nSELECT name FROM Graduates;",
+      "explanation": "SQL implements relational algebra operations with different syntax"
+    },
+    {
+      "id": "natural-join",
+      "title": "Join Operations",
+      "code": "-- Two tables\nCREATE TABLE Student (id INT, name VARCHAR(50));\nCREATE TABLE Enrollment (student_id INT, course_id VARCHAR(10));\n\n-- Natural Join (on common attributes)\n-- Student ⋈ Enrollment\nSELECT * FROM Student\nNATURAL JOIN Enrollment;  -- Joins on same-named columns\n\n-- Explicit Join (recommended)\nSELECT s.id, s.name, e.course_id\nFROM Student s\nJOIN Enrollment e ON s.id = e.student_id;\n\n-- Cartesian Product (×)\nSELECT * FROM Student, Enrollment;\n-- or\nSELECT * FROM Student CROSS JOIN Enrollment;",
+      "explanation": "Joins combine related tuples from multiple relations"
+    }
+  ]
+}

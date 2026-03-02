@@ -1,0 +1,35 @@
+{
+  "topicId": "error-control",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Hamming Code Generation Algorithm",
+      "description": "Algorithm to generate Hamming code by inserting parity bits at positions that are powers of 2",
+      "code": "ALGORITHM HammingCodeGeneration(dataBits[], r)\n// r is number of redundant bits\n// dataBits is the original data (2^r - r - 1 bits)\nBEGIN\n n = LENGTH(dataBits)\n codeword = ARRAY[2^r]\n parityPos = 1\n dataPos = 3\n // Place parity bits at positions 1,2,4,8...\n FOR i FROM 0 TO 2^r-1 DO\n IF i+1 == parityPos THEN\n codeword[i] = 0 // Initialize parity to 0\n parityPos = parityPos * 2\n ELSE\n codeword[i] = dataBits[dataPos-3]\n dataPos = dataPos + 1\n END IF\n END FOR\n // Calculate parity bits\n FOR p FROM 0 TO r-1 DO\n parityPos = POWER(2, p)\n parity = 0\n FOR j FROM parityPos-1 TO 2^r-1 DO\n IF (j+1) AND parityPos != 0 THEN\n parity = parity XOR codeword[j]\n END IF\n END FOR\n codeword[parityPos-1] = parity\n END FOR\n RETURN codeword\nEND",
+      "explanation": "The algorithm inserts parity bits at positions 1,2,4,8... (powers of 2) and calculates each parity bit by XORing specific data bits based on position. The final codeword provides single-bit error correction capability.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n × r)",
+      "spaceComplexity": "O(2^r)"
+    },
+    {
+      "id": "code-2",
+      "title": "CRC Generation Algorithm",
+      "description": "Algorithm to generate CRC bits using polynomial division",
+      "code": "ALGORITHM CRCGeneration(data[], generator[])\n// data[]: original data bits\n// generator[]: generator polynomial bits (degree = m)\nBEGIN\n m = LENGTH(generator) - 1\n // Append m zeros to data\n extendedData = CONCATENATE(data, ZEROS(m))\n remainder = DIVIDE(extendedData, generator)\n // Append remainder to original data\n crcCode = CONCATENATE(data, remainder)\n RETURN crcCode\nEND\n\nALGORITHM DIVIDE(dividend[], divisor[])\nBEGIN\n remainder = COPY(dividend)\n FOR i FROM 0 TO LENGTH(dividend) - LENGTH(divisor) DO\n IF remainder[i] == 1 THEN\n FOR j FROM 0 TO LENGTH(divisor)-1 DO\n remainder[i+j] = remainder[i+j] XOR divisor[j]\n END FOR\n END IF\n END FOR\n RETURN remainder[LENGTH(remainder)-m TO END]\nEND",
+      "explanation": "CRC uses polynomial long division. The sender appends zeros (equal to generator degree), performs division, and appends the remainder. The receiver performs the same division - if remainder is zero, no error is detected.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n × m)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-4",
+      "title": "Go-Back-N ARQ Sender Protocol",
+      "description": "Pseudocode for sender side of Go-Back-N ARQ protocol",
+      "code": "ALGORITHM GoBackNSender(frame)\nBEGIN\n windowSize = N\n base = 0\n nextSeqNum = 0\n WHILE moreFrames DO\n IF nextSeqNum < base + windowSize THEN\n SEND(frame, nextSeqNum)\n IF base == nextSeqNum THEN\n START_TIMER(base) // Start timer for oldest unACKed frame\n END IF\n nextSeqNum = nextSeqNum + 1\n ELSE\n // Window full - wait for ACKs\n WAIT_FOR_ACK()\n END IF\n // Process incoming ACKs\n IF ACK(n) RECEIVED THEN\n base = n + 1 // Move window base forward\n IF base == nextSeqNum THEN\n STOP_TIMER()\n ELSE\n START_TIMER(base)\n END IF\n END IF\n IF TIMEOUT THEN\n // Retransmit all frames from base to nextSeqNum-1\n nextSeqNum = base\n FOR i FROM base TO nextSeqNum-1 DO\n RESEND(frame[i], i)\n END FOR\n START_TIMER(base)\n END IF\n END WHILE\nEND",
+      "explanation": "Go-Back-N sender maintains a window of unacknowledged frames. When timeout occurs, ALL frames from the base are retransmitted. Cumulative ACKs acknowledge all frames up to a sequence number.",
+      "language": "pseudocode",
+      "timeComplexity": "O(N) for retransmission",
+      "spaceComplexity": "O(N)"
+    }
+  ]
+}

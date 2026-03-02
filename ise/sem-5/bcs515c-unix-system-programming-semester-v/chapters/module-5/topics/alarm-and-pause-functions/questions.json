@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose of the `alarm` function in Unix system programming. Describe what happens when a previous alarm is still pending and a new `alarm` call is made.",
+    "expectedPoints": [
+      "The `alarm` function is used to schedule a `SIGALRM` signal to be delivered to the calling process after a specified number of real-time seconds.",
+      "It takes an unsigned integer argument representing the number of seconds to wait before the signal is sent.",
+      "If a previous alarm set by `alarm` is still pending, the new call returns the number of seconds remaining on the previous alarm and reschedules the alarm with the new value, effectively replacing the old alarm."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose and typical usage of the `pause` function. Explain a common problem that arises when using `alarm` and `pause` together to implement a sleep function and how `sigsuspend` can be used to solve it.",
+    "expectedPoints": [
+      "The `pause` function suspends the calling process until any signal is caught and its signal handler returns.",
+      "A common pattern is to use `alarm` to set a timer and then call `pause` to wait for the `SIGALRM` signal, implementing a primitive sleep.",
+      "A critical race condition exists in this approach: if the `SIGALRM` is delivered after the `alarm` call but *before* the `pause` call, the process will pause indefinitely.",
+      "The `sigsuspend` function solves this by allowing the process to atomically change the signal mask and pause, ensuring no signals are missed."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Design and explain a robust, race-condition-free implementation of a `sleep` function using the `alarm`, `sigaction`, `sigsuspend`, and `sigprocmask` functions. Detail the steps involved in setting up the signal handler, blocking the signal, and waiting for it.",
+    "expectedPoints": [
+      "The function must first create a new signal set and add `SIGALRM` to it using `sigemptyset` and `sigaddset`.",
+      "The current signal mask must be saved and `SIGALRM` must be blocked *before* calling `alarm` to prevent the race condition, using `sigprocmask`.",
+      "A custom signal handler for `SIGALRM` must be installed using `sigaction`, often one that does nothing (e.g., an empty function or setting a flag).",
+      "After calling `alarm(seconds)`, the process calls `sigsuspend` with an empty mask (or the original mask without `SIGALRM`), which atomically unblocks `SIGALRM` and pauses, waiting only for that signal.",
+      "Upon return from `sigsuspend`, the original signal mask is restored, any remaining alarm time is checked and canceled if necessary, and the original signal action for `SIGALRM` is restored."
+    ],
+    "marks": 10
+  }
+]

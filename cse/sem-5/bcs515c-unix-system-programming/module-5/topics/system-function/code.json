@@ -1,0 +1,55 @@
+{
+  "topicId": "system-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "fork() System Call Example",
+      "description": "Demonstrates fork() creating a child process and distinguishing parent from child",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n pid_t pid;\n \n printf(\"Before fork - Parent PID: %d\\n\", getpid());\n \n pid = fork(); // Creates new process\n \n if (pid < 0) {\n // Error occurred\n perror(\"fork failed\");\n return 1;\n }\n else if (pid == 0) {\n // Child process\n printf(\"Child: My PID = %d, Parent PID = %d\\n\", \n getpid(), getppid());\n // Typically would call exec() here\n }\n else {\n // Parent process\n printf(\"Parent: Child PID = %d, My PID = %d\\n\", \n pid, getpid());\n wait(NULL); // Wait for child to finish\n }\n \n printf(\"After fork - PID: %d\\n\", getpid());\n return 0;\n}",
+      "explanation": "fork() returns twice - once in parent (with child's PID) and once in child (with 0). Parent uses wait() to wait for child completion. Both processes execute the same code after fork().",
+      "timeComplexity": "O(1) for fork, O(n) where n is process count for scheduling",
+      "spaceComplexity": "O(n) copy-on-write of parent address space"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "File Operations - open, read, write, close",
+      "description": "Demonstrates basic file management system calls",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n\nint main() {\n int fd;\n char buffer[100];\n ssize_t bytes_read, bytes_written;\n \n // Create and open file (O_CREAT: create if not exists, O_WRONLY: write only)\n fd = open(\"test.txt\", O_CREAT | O_WRONLY | O_TRUNC, 0644);\n \n if (fd == -1) {\n perror(\"open failed\");\n return 1;\n }\n \n // Write to file\n char *msg = \"Hello, System Calls!\\n\";\n bytes_written = write(fd, msg, 22);\n printf(\"Written %zd bytes\\n\", bytes_written);\n \n // Close file\n close(fd);\n \n // Open again for reading\n fd = open(\"test.txt\", O_RDONLY);\n if (fd == -1) {\n perror(\"open for read failed\");\n return 1;\n }\n \n // Read from file\n bytes_read = read(fd, buffer, sizeof(buffer));\n printf(\"Read %zd bytes: %s\", bytes_read, buffer);\n \n // Use lseek to reposition file pointer\n lseek(fd, 0, SEEK_SET); // Go to beginning\n bytes_read = read(fd, buffer, sizeof(buffer));\n \n close(fd);\n return 0;\n}",
+      "explanation": "open() creates/opens a file and returns file descriptor. write() writes data, read() reads data, lseek() repositions the file pointer, and close() closes the file descriptor.",
+      "timeComplexity": "O(n) for read/write where n is bytes transferred, O(1) for open/close/lseek",
+      "spaceComplexity": "O(1) for file descriptor, O(n) buffer for read/write"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Parent-Child Communication using pipe()",
+      "description": "Demonstrates inter-process communication using pipe system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <string.h>\n#include <sys/wait.h>\n\nint main() {\n int pipefd[2]; // pipefd[0]: read end, pipefd[1]: write end\n pid_t pid;\n char write_msg[] = \"Message from parent to child!\";\n char read_buffer[100];\n \n // Create pipe\n if (pipe(pipefd) == -1) {\n perror(\"pipe failed\");\n return 1;\n }\n \n pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n \n if (pid == 0) {\n // Child process\n close(pipefd[1]); // Close write end\n \n // Read from pipe\n read(pipefd[0], read_buffer, sizeof(read_buffer));\n printf(\"Child received: %s\\n\", read_buffer);\n \n close(pipefd[0]);\n } \n else {\n // Parent process\n close(pipefd[0]); // Close read end\n \n // Write to pipe\n write(pipefd[1], write_msg, strlen(write_msg) + 1);\n printf(\"Parent sent message\\n\");\n \n close(pipefd[1]);\n wait(NULL); // Wait for child\n }\n \n return 0;\n}",
+      "explanation": "pipe() creates a unidirectional channel. Parent writes to pipefd[1], child reads from pipefd[0]. Both ends must be closed appropriately - parent closes read end, child closes write end.",
+      "timeComplexity": "O(n) for read/write where n is message size, blocking until data available",
+      "spaceComplexity": "O(n) buffer for message, O(1) for pipe file descriptors"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "fork() followed by exec() - Process Replacement",
+      "description": "Demonstrates the common pattern of fork() + exec() to run a new program",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/wait.h>\n#include <stdlib.h>\n\nint main() {\n pid_t pid;\n \n pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n \n if (pid == 0) {\n // Child process - replace with new program\n // execlp searches PATH for the command\n execlp(\"ls\", \"ls\", \"-l\", (char *)NULL);\n \n // If execlp returns, an error occurred\n perror(\"execlp failed\");\n exit(1);\n }\n else {\n // Parent process - wait for child to complete\n int status;\n waitpid(pid, &status, 0);\n \n if (WIFEXITED(status)) {\n printf(\"Child exited with status: %d\\n\", \n WEXITSTATUS(status));\n }\n }\n \n return 0;\n}",
+      "explanation": "fork() creates child process, then execlp() replaces child's program with 'ls -l'. execlp() only returns on error. Parent uses waitpid() to get child's exit status.",
+      "timeComplexity": "O(1) for fork, O(m+n) for exec where m=path search, n=program loading, O(p) for wait",
+      "spaceComplexity": "O(n) for new program image loaded into child address space"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Signal Handling using signal() System Call",
+      "description": "Demonstrates handling asynchronous events using signal system call",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n#include <stdlib.h>\n\n// Signal handler function\nvoid handle_sigint(int sig_num) {\n printf(\"\\nCaught signal %d (SIGINT - Ctrl+C)\\n\", sig_num);\n printf(\"Cleaning up and exiting...\\n\");\n // Perform cleanup operations\n exit(0);\n}\n\nint main() {\n // Register signal handler for SIGINT (Ctrl+C)\n signal(SIGINT, handle_sigint);\n \n printf(\"Press Ctrl+C to trigger signal handler\\n\");\n printf(\"Process PID: %d\\n\", getpid());\n \n // Infinite loop - wait for signal\n while(1) {\n printf(\"Running...\\n\");\n sleep(2);\n }\n \n return 0;\n}",
+      "explanation": "signal() associates a handler function with a signal. When the signal arrives (e.g., SIGINT from Ctrl+C), the kernel interrupts normal execution and calls the handler. This allows graceful handling of asynchronous events.",
+      "timeComplexity": "O(1) for signal registration and handling overhead",
+      "spaceComplexity": "O(1) for signal handler function pointer"
+    }
+  ]
+}

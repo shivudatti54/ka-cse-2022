@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction-to-decision-tree-learning-model",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Calculate Entropy",
+      "description": "Python function to calculate entropy of a dataset",
+      "code": "import math\nimport numpy as np\n\ndef calculate_entropy(labels):\n    \"\"\"Calculate entropy of a label distribution\"\"\"\n    total = len(labels)\n    if total == 0:\n        return 0\n    \n    # Count unique labels\n    unique_labels, counts = np.unique(labels, return_counts=True)\n    \n    entropy = 0.0\n    for count in counts:\n        probability = count / total\n        if probability > 0:\n            entropy -= probability * math.log2(probability)\n    \n    return entropy\n\n# Example usage\nlabels = ['Yes', 'Yes', 'No', 'Yes', 'No', 'No']\nentropy = calculate_entropy(labels)\nprint(f\"Entropy: {entropy:.4f}\")\nprint(\"Pure dataset (all Yes):\", calculate_entropy(['Yes', 'Yes', 'Yes']))",
+      "explanation": "This code calculates entropy which measures the impurity of a dataset. Entropy is 0 for pure datasets and maximum for uniformly distributed classes. The formula uses the probability of each class.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Calculate Information Gain",
+      "description": "Python function to calculate information gain for attribute selection",
+      "code": "import math\n\ndef calculate_information_gain(data, attribute, target):\n    \"\"\"Calculate information gain for splitting on an attribute\"\"\"\n    \n    # Calculate parent entropy\n    total = len(data)\n    parent_entropy = calculate_entropy(data[target])\n    \n    # Get unique values of attribute\n    attr_values = data[attribute].unique()\n    \n    # Calculate weighted child entropy\n    weighted_child_entropy = 0.0\n    for value in attr_values:\n        subset = data[data[attribute] == value]\n        weight = len(subset) / total\n        child_entropy = calculate_entropy(subset[target])\n        weighted_child_entropy += weight * child_entropy\n    \n    # Information Gain = Parent Entropy - Weighted Child Entropy\n    info_gain = parent_entropy - weighted_child_entropy\n    \n    return info_gain\n\ndef calculate_entropy(labels):\n    \"\"\"Calculate entropy of a label distribution\"\"\"\n    total = len(labels)\n    if total == 0:\n        return 0\n    \n    unique, counts = np.unique(labels, return_counts=True)\n    entropy = 0.0\n    for count in counts:\n        prob = count / total\n        if prob > 0:\n            entropy -= prob * math.log2(prob)\n    return entropy\n\n# Example: Choose best attribute for splitting\n# Data: Weather dataset with attributes Outlook, Humidity, Wind\n# Target: Play (Yes/No)",
+      "explanation": "Information Gain measures the reduction in entropy achieved by splitting on a particular attribute. The attribute with highest information gain is selected for splitting as it creates the most homogeneous subsets.",
+      "timeComplexity": "O(n*d)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Decision Tree Classifier using sklearn",
+      "description": "Complete implementation of decision tree classifier for classification",
+      "code": "from sklearn.tree import DecisionTreeClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nimport pandas as pd\n\n# Sample dataset (Weather - Play Tennis)\ndata = {\n    'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rainy', 'Rainy', \n                'Rainy', 'Overcast', 'Sunny', 'Sunny', 'Rainy'],\n    'Humidity': [85, 90, 78, 96, 80, 70, 65, 95, 70, 80],\n    'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Strong', \n             'Strong', 'Weak', 'Weak', 'Strong', 'Weak'],\n    'Play': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes']\n}\n\ndf = pd.DataFrame(data)\n\n# Encode categorical variables\nfrom sklearn.preprocessing import LabelEncoder\nle = LabelEncoder()\ndf['Outlook'] = le.fit_transform(df['Outlook'])\ndf['Wind'] = le.fit_transform(df['Wind'])\ndf['Play'] = le.fit_transform(df['Play'])\n\n# Features and target\nX = df[['Outlook', 'Humidity', 'Wind']]\ny = df['Play']\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\n\n# Create decision tree classifier (using Gini Index by default)\nclf = DecisionTreeClassifier(criterion='gini', max_depth=3, min_samples_split=2)\nclf.fit(X_train, y_train)\n\n# Predictions\ny_pred = clf.predict(X_test)\n\n# Accuracy\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"Accuracy: {accuracy:.2f}\")\n\n# Feature importance\nprint(\"Feature Importances:\", clf.feature_importances_)",
+      "explanation": "This demonstrates building a decision tree classifier using scikit-learn. By default, it uses Gini Index for attribute selection. Parameters like max_depth and min_samples_split help control overfitting through pre-pruning.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "ID3 Algorithm Pseudocode",
+      "description": "Pseudocode for the ID3 decision tree learning algorithm",
+      "code": "FUNCTION ID3(examples, target_attribute, attributes):\n    // Base cases\n    IF examples is empty:\n        RETURN default value (majority of target in parent)\n    \n    IF all examples have same target value:\n        RETURN leaf node with that target value\n    \n    IF attributes is empty:\n        RETURN leaf node with majority target value\n    \n    // Select best attribute\n    best_attribute = ARGMAX InformationGain(attribute, examples)\n    \n    // Create root node with best_attribute\n    tree = new DecisionNode(best_attribute)\n    \n    // For each value of best_attribute\n    FOR EACH value v IN best_attribute:\n        examples_v = {examples where best_attribute = v}\n        \n        IF examples_v is empty:\n            RETURN leaf node (majority target from examples)\n        ELSE:\n            // Recursively build subtree\n            subtree = ID3(examples_v, target_attribute, attributes - best_attribute)\n            tree.add_branch(v, subtree)\n    \n    RETURN tree\n\n// Information Gain Calculation\nFUNCTION InformationGain(attribute, examples):\n    entropy_parent = CalculateEntropy(examples.target)\n    \n    FOR EACH value v IN attribute:\n        examples_v = examples where attribute = v\n        weight = |examples_v| / |examples|\n        entropy_child = CalculateEntropy(examples_v.target)\n        weighted_entropy += weight * entropy_child\n    \n    RETURN entropy_parent - weighted_entropy\n\n// Entropy Calculation\nFUNCTION CalculateEntropy(labels):\n    IF labels is empty: RETURN 0\n    \n    counts = CountOccurrences(labels)\n    total = Sum(counts)\n    \n    entropy = 0\n    FOR EACH count IN counts:\n        probability = count / total\n        entropy -= probability * log2(probability)\n    \n    RETURN entropy",
+      "explanation": "This pseudocode implements the ID3 algorithm which builds a decision tree using Information Gain for attribute selection. It recursively selects the attribute with highest information gain at each node until stopping criteria are met.",
+      "timeComplexity": "O(n * d * log n) per level",
+      "spaceComplexity": "O(n * d)"
+    }
+  ]
+}

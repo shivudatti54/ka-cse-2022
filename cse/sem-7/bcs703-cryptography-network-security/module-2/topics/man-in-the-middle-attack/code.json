@@ -1,0 +1,35 @@
+{
+  "topicId": "man-in-the-middle-attack",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Vulnerable Diffie-Hellman Key Exchange (MITM-prone)",
+      "description": "Basic Diffie-Hellman without authentication, vulnerable to MITM attack",
+      "code": "PROCEDURE VulnerableDH()\n // Generate public parameters\n p \u2190 LARGE_PRIME()\n g \u2190 PRIMITIVE_ROOT(p)\n \n // Alice's keys\n a \u2190 RANDOM(2, p-2)\n AlicePub \u2190 POW(g, a, p)\n \n // Bob's keys\n b \u2190 RANDOM(2, p-2)\n BobPub \u2190 POW(g, b, p)\n \n // Oscar intercepts!\n o \u2190 RANDOM(2, p-2)\n OscarPub \u2190 POW(g, o, p)\n \n // Oscar replaces Bob's public value with his own\n AliceShared \u2190 POW(OscarPub, a, p) // Alice thinks this is shared with Bob\n \n // Oscar replaces Alice's public value with his own \n BobShared \u2190 POW(OscarPub, b, p) // Bob thinks this is shared with Alice\n \n // Both equal to g^(a*o) mod p or g^(b*o) mod p\n // Alice and Bob NEVER share a key directly!\n \n RETURN AliceShared, BobShared\nEND PROCEDURE",
+      "explanation": "This pseudocode demonstrates the vulnerability: Oscar intercepts and replaces public values, establishing separate shared secrets with both Alice and Bob. Neither Alice nor Bob can detect this attack without authentication.",
+      "timeComplexity": "O(log p) for modular exponentiation",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Authenticated Diffie-Hellman (STS Protocol)",
+      "description": "Station-to-Station protocol with digital signatures preventing MITM",
+      "code": "PROCEDURE STS_KeyExchange(Alice, Bob)\n // Parameters\n p \u2190 LARGE_PRIME()\n g \u2190 PRIMITIVE_ROOT(p)\n \n // Alice generates ephemeral key pair\n a \u2190 RANDOM(2, p-2)\n gA \u2190 POW(g, a, p)\n \n // Bob generates ephemeral key pair\n b \u2190 RANDOM(2, p-2)\n gB \u2190 POW(g, b, p)\n \n // Exchange public values WITH certificates\n CertA \u2190 GET_CERTIFICATE(Alice)\n CertB \u2190 GET_CERTIFICATE(Bob)\n \n // Signatures prevent MITM\n SigA \u2190 SIGN(AlicePrivate, gA || gB)\n SigB \u2190 SIGN(BobPrivate, gB || gA)\n \n // Verify certificates AND signatures\n IF NOT VERIFY_CERT(CertA) THEN ABORT\n IF NOT VERIFY_CERT(CertB) THEN ABORT\n IF NOT VERIFY_SIG(SigA, AlicePublic, gA || gB) THEN ABORT\n IF NOT VERIFY_SIG(SigB, BobPublic, gB || gA) THEN ABORT\n \n // Only now compute shared secret\n K \u2190 POW(gB, a, p) // Alice computes\n // Bob computes: POW(gA, b, p)\n // Both equal g^(ab) mod p, attacker cannot substitute\n \n RETURN K\nEND PROCEDURE",
+      "explanation": "The STS protocol prevents MITM by requiring both parties to sign the exchanged public values with their private keys. An attacker cannot forge these signatures without the private keys, so they cannot substitute their own public values.",
+      "timeComplexity": "O(log p) for exponentiation + O(n) for signatures",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Certificate Pinning Implementation",
+      "description": "Demonstrates how certificate pinning prevents MITM even with valid certificates",
+      "code": "PROCEDURE VerifyConnection(serverURL, serverCert)\n // Pinned certificate hash for this domain\n pinnedHash \u2190 GET_PINNED_HASH(serverURL)\n \n // Get hash of presented certificate\n presentedHash \u2190 HASH(serverCert)\n \n // Compare hashes\n IF pinnedHash = presentedHash THEN\n RETURN TRUE // Certificate is pinned and matches\n ELSE\n // Check if issuer is system-trusted AND cert is valid\n IF serverCert.IS_VALID AND serverCert.ISSUER_IS_TRUSTED THEN\n // Second chance: check public key hash\n pkpinnedHash \u2190 GET_PUBKEY_PINNED_HASH(serverURL)\n pkpresentedHash \u2190 HASH(serverCert.PUBLIC_KEY)\n \n IF pkpinnedHash = pkpresentedHash THEN\n RETURN TRUE\n END IF\n END IF\n \n // MITM detected - certificate doesn't match pinning\n LOG_SECURITY_EVENT(\"Certificate pinning violation for \" + serverURL)\n RETURN FALSE\n END IF\nEND PROCEDURE",
+      "explanation": "Certificate pinning adds an extra layer of security beyond normal PKI verification. Even if an attacker has a valid certificate signed by a trusted CA, the pinned certificate check will fail, preventing the MITM attack.",
+      "timeComplexity": "O(n) for hash comparison",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

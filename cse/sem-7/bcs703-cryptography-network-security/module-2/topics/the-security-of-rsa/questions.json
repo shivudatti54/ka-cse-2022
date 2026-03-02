@@ -1,0 +1,143 @@
+{
+  "topicId": "the-security-of-rsa",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain why the security of RSA depends on the difficulty of integer factorization. What would happen if someone could efficiently factor the modulus n?",
+      "keyPoints": [
+        "RSA security is based on one-way trapdoor function: easy to multiply primes, hard to reverse",
+        "If n = p \u00d7 q can be factored, attacker computes \u03c6(n) = (p-1)(q-1)",
+        "With \u03c6(n) and public exponent e, attacker computes private key d = e\u207b\u00b9 mod \u03c6(n)",
+        "Once d is known, any ciphertext encrypted with (n,e) can be decrypted",
+        "This breaks confidentiality completely - the cryptosystem is compromised"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a chosen ciphertext attack (CCA) on RSA? Explain how OAEP padding prevents such attacks.",
+      "keyPoints": [
+        "CCA allows attacker to obtain decryptions of ciphertexts of their choosing",
+        "Without padding, RSA is multiplicative: E(m\u2081) \u00d7 E(m\u2082) = E(m\u2081m\u2082) mod n",
+        "Attacker can transform ciphertexts and deduce information about target plaintext",
+        "OAEP adds random padding using hash functions before encryption",
+        "Randomness in OAEP makes encryption probabilistic, preventing ciphertext manipulation",
+        "OAEP provides semantic security under the random oracle model"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Discuss Wiener's attack on RSA. Under what conditions is RSA vulnerable to this attack, and how can it be prevented?",
+      "keyPoints": [
+        "Wiener's attack exploits small private exponent d",
+        "Applies when d < n^0.25 (approximately 2\u207f\u00b7\u00b2\u2075\u2076)",
+        "Attack uses continued fraction approximation of e/\u03c6(n) to recover d",
+        "Since \u03c6(n) \u2248 n, we have e/d \u2248 n, and d can be recovered from e and n",
+        "Prevention: Use e = 65537 which ensures d is large, or generate keys with d > n^0.25",
+        "Most standards mandate d \u2265 n^0.25"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are strong primes in RSA? Why are they used, and what properties should they have?",
+      "keyPoints": [
+        "Strong primes are chosen to resist specific factorization algorithms",
+        "Properties: (1) p-1 has a large prime factor - resists Pollard's p-1 method",
+        "(2) p+1 has a large prime factor - resists Williams' p+1 method",
+        "(3) p is not too close to q - resists Fermat's factorization attack",
+        "(4) Both primes should be similar in size (~n^0.5 each)",
+        "While not strictly required with large key sizes, strong primes provide defense in depth"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the broadcast RSA attack. If the same message is encrypted to 3 recipients using e = 3, how can an attacker recover the plaintext?",
+      "keyPoints": [
+        "Broadcast attack: same message encrypted to multiple recipients with same exponent e",
+        "When e is small (like 3) and sent to e or more recipients, attack is possible",
+        "Each recipient has different modulus: n\u2081, n\u2082, n\u2083 (pairwise coprime)",
+        "Attacker obtains ciphertexts c\u2081, c\u2082, c\u2083 where c\u1d62 = m^e mod n\u1d62",
+        "Using Chinese Remainder Theorem, attacker computes c = m^e mod (n\u2081n\u2082n\u2083)",
+        "Since m^e < n\u2081n\u2082n\u2083 (message is small), taking e-th root gives m directly",
+        "Prevention: Use random padding or e \u2265 65537"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a timing attack on RSA? How can RSA implementations be protected against such side-channel attacks?",
+      "keyPoints": [
+        "Timing attacks exploit variations in computation time during cryptographic operations",
+        "In RSA decryption using square-and-multiply, number of multiplications depends on key bits",
+        "Attacker measures execution times to deduce bits of private exponent d",
+        "Protection methods: (1) Constant-time algorithms - same execution time regardless of input",
+        "(2) Blinding - multiply ciphertext by random value before decrypting, unmask after",
+        "(3) Add random delays to mask timing variations",
+        "Modern cryptographic libraries implement these protections"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare PKCS#1 v1.5 padding and OAEP. Why is OAEP preferred over PKCS#1 v1.5 in modern implementations?",
+      "keyPoints": [
+        "PKCS#1 v1.5 (RSA-PKCS) uses deterministic padding with fixed prefix",
+        "Vulnerable to Bleichenbacher's chosen ciphertext attack (1998)",
+        "OAEP uses randomized padding with hash functions (MGF1)",
+        "OAEP provides provable security against CCA under random oracle model",
+        "OAEP is CCA2-secure while PKCS#1 v1.5 is only CPA-secure",
+        "Standards like TLS 1.3 require OAEP for RSA encryption",
+        "OAEP should be used for all new implementations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "An organization is planning to use RSA for securing communications. Discuss all security considerations they should address, including key size selection, padding schemes, and potential attacks. Recommend appropriate parameters for medium-term (10-year) security.",
+      "keyPoints": [
+        "Key Size: Minimum 2048 bits for medium-term; 3072 or 4096 for long-term security",
+        "Key Generation: Use cryptographically secure random number generator",
+        "Prime Selection: Use strong primes with large prime factors in (p-1) and (p+1)",
+        "Ensure p and q are not too close (resist Fermat factorization)",
+        "Public Exponent: Use e = 65537 (standard, balance of security and efficiency)",
+        "Padding: Must use OAEP for encryption, PSS for signatures",
+        "Implementation: Protect against timing attacks using constant-time operations",
+        "Key Storage: Protect private keys with hardware security modules if possible",
+        "Protocol: Don't use raw RSA; always use proper padding in protocols",
+        "Monitor: Stay updated on factorization algorithm advances",
+        "For 10-year security: RSA-2048 with OAEP/PSS, e=65537, from reliable library"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive the mathematical relationship between the public key (n, e) and private key (d) in RSA. Explain how knowledge of prime factorization allows computation of d, and discuss at least three attacks that exploit weaknesses in RSA parameters or implementation.",
+      "keyPoints": [
+        "Key Generation: Select primes p, q; compute n = pq, \u03c6(n) = (p-1)(q-1)",
+        "Choose e such that 1 < e < \u03c6(n) and gcd(e, \u03c6(n)) = 1",
+        "Compute d = e\u207b\u00b9 mod \u03c6(n) using extended Euclidean algorithm",
+        "Relationship: e \u00d7 d \u2261 1 (mod \u03c6(n)), meaning ed = 1 + k\u03c6(n) for some k",
+        "If n can be factored: compute \u03c6(n), then d = e\u207b\u00b9 mod \u03c6(n)",
+        "Attack 1 - Wiener's Attack: Small d < n^0.25 allows factorization using continued fractions",
+        "Attack 2 - Broadcast Attack: Small e with multiple recipients allows CRT-based plaintext recovery",
+        "Attack 3 - Timing Attack: Side-channel leaking execution time reveals d bits",
+        "Attack 4 - Partial Key Exposure: Coppersmith's algorithm recovers full d from partial bits",
+        "Attack 5 - CCA/Bleichenbacher: Exploits PKCS#1 v1.5 padding without OAEP",
+        "Prevention: Use OAEP, proper key sizes, constant-time implementation, don't reuse keys"
+      ],
+      "marks": 10
+    }
+  ]
+}

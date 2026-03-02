@@ -1,0 +1,380 @@
+{
+  "topicId": "key-exchange-protocols",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In Diffie-Hellman key exchange with p = 13 and g = 2, if Alice chooses private key a = 5 and Bob chooses private key b = 7, what is the shared secret?",
+      "options": [
+        {
+          "key": "A",
+          "text": "9"
+        },
+        {
+          "key": "B",
+          "text": "7"
+        },
+        {
+          "key": "C",
+          "text": "12"
+        },
+        {
+          "key": "D",
+          "text": "3"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Alice computes A = g^a mod p = 2^5 mod 13 = 32 mod 13 = 6. Bob computes B = g^b mod p = 2^7 mod 13 = 128 mod 13 = 9. Shared secret = B^a mod p = 9^5 mod 13 = 59049 mod 13 = 12, or equivalently A^b mod p = 6^7 mod 13 = 279936 mod 13 = 12.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which of the following is NOT a vulnerability of basic Diffie-Hellman key exchange?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Man-in-the-Middle attack"
+        },
+        {
+          "key": "B",
+          "text": "Discrete Logarithm Problem"
+        },
+        {
+          "key": "C",
+          "text": "Replay attack"
+        },
+        {
+          "key": "D",
+          "text": "No authentication of parties"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Diffie-Hellman is vulnerable to MITM attacks (due to lack of authentication), and its security relies on the hardness of the Discrete Logarithm Problem. While replay attacks are a concern, they are not a fundamental cryptographic vulnerability specific to DH - they are an protocol-level attack that can be mitigated with timestamps/nonces.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "For a 128-bit security level, what is the recommended RSA key size compared to ECC key size?",
+      "options": [
+        {
+          "key": "A",
+          "text": "RSA: 3072 bits, ECC: 256 bits"
+        },
+        {
+          "key": "B",
+          "text": "RSA: 2048 bits, ECC: 224 bits"
+        },
+        {
+          "key": "C",
+          "text": "RSA: 4096 bits, ECC: 512 bits"
+        },
+        {
+          "key": "D",
+          "text": "RSA: 1024 bits, ECC: 160 bits"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "For equivalent security (128-bit), RSA requires approximately 3072-bit keys while only 256-bit keys. This makes ECC requires ECDH significantly more efficient for bandwidth-constrained applications.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which key exchange protocol provides Perfect Forward Secrecy (PFS)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "RSA Key Transport with 2048-bit modulus"
+        },
+        {
+          "key": "B",
+          "text": "Static Diffie-Hellman"
+        },
+        {
+          "key": "C",
+          "text": "Ephemeral Diffie-Hellman (DHE)"
+        },
+        {
+          "key": "D",
+          "text": "ElGamal encryption-based exchange"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Ephemeral Diffie-Hellman (DHE or ECDHE) provides Perfect Forward Secrecy because the session keys are derived from ephemeral (temporary) private keys that are discarded after use. If long-term keys are compromised, past sessions remain secure.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "In the Station-to-Station (STS) protocol, what provides protection against MITM attacks?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Using a larger prime modulus"
+        },
+        {
+          "key": "B",
+          "text": "Digital signatures on key exchange messages"
+        },
+        {
+          "key": "C",
+          "text": "Pre-shared symmetric keys"
+        },
+        {
+          "key": "D",
+          "text": "Triple DES encryption"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "STS protocol protects against MITM attacks by having each party sign their Diffie-Hellman public values using their private key before exchange. The signatures provide mutual authentication, ensuring that the messages actually originated from the claimed party.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-6",
+      "question": "The shared secret from a Diffie-Hellman key exchange is typically used to seed a PRNG. What property must the shared secret have for this application?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It must be exactly 128 bits"
+        },
+        {
+          "key": "B",
+          "text": "It must be uniformly distributed (high entropy)"
+        },
+        {
+          "key": "C",
+          "text": "It must be compressed using SHA-1"
+        },
+        {
+          "key": "D",
+          "text": "It must be transmitted in plaintext"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "For use as a PRNG seed, the shared secret must have high entropy (be uniformly distributed). The actual bit length depends on the PRNG design, but the critical property is that an adversary cannot predict or bias the output - which DH provides under the DLP assumption.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the time complexity of the best known attack against Diffie-Hellman with a prime p?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(log p)"
+        },
+        {
+          "key": "B",
+          "text": "O(p)"
+        },
+        {
+          "key": "C",
+          "text": "O(\u221ap)"
+        },
+        {
+          "key": "D",
+          "text": "O(p\u00b2)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The best known attack against the Discrete Logarithm Problem (which underlies DH security) is Pollard's rho algorithm with time complexity O(\u221ap). This is why sufficiently large primes (2048 bits or more) are required for security.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-8",
+      "question": "In RSA key transport, if an attacker obtains the recipient's private key, what can they do?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only decrypt past communications"
+        },
+        {
+          "key": "B",
+          "text": "Only decrypt future communications"
+        },
+        {
+          "key": "C",
+          "text": "Decrypt all communications encrypted with the corresponding public key"
+        },
+        {
+          "key": "D",
+          "text": "Impersonate the recipient in future key exchanges"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "If an attacker obtains the recipient's RSA private key, they can decrypt ALL past and future communications that were encrypted with the corresponding public key. This is why RSA key transport lacks forward secrecy - unlike DHE where session keys are ephemeral.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Which statement about Elliptic Curve Diffie-Hellman (ECDH) is FALSE?",
+      "options": [
+        {
+          "key": "A",
+          "text": "ECDH provides equivalent security to DH with smaller key sizes"
+        },
+        {
+          "key": "B",
+          "text": "ECDH security is based on the Elliptic Curve Discrete Logarithm Problem"
+        },
+        {
+          "key": "C",
+          "text": "ECDH requires a larger bandwidth than classical DH for equivalent security"
+        },
+        {
+          "key": "D",
+          "text": "ECDH can provide forward secrecy when using ephemeral keys"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "ECDH actually requires SMALLER bandwidth than classical DH for equivalent security. A 256-bit ECC key provides roughly the same security as a 3072-bit RSA/DH key, making ECDH more efficient in terms of bandwidth and computation.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What is required to prevent a MITM attack in Diffie-Hellman key exchange?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Using a larger prime p"
+        },
+        {
+          "key": "B",
+          "text": "Authentication of the communicating parties"
+        },
+        {
+          "key": "C",
+          "text": "Encrypting the public values"
+        },
+        {
+          "key": "D",
+          "text": "Using a different generator g"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "MITM attacks succeed because there's no authentication of the parties exchanging public values. By adding authentication (e.g., digital signatures in STS, or pre-shared keys), each party can verify that the received public value actually came from the intended party.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "In Diffie-Hellman, if p = 23 and g = 5 (a generator), Alice sends A = 10 to Bob, and Bob sends B = 8 to Alice, what is Alice's computed shared secret?",
+      "options": [
+        {
+          "key": "A",
+          "text": "13"
+        },
+        {
+          "key": "B",
+          "text": "21"
+        },
+        {
+          "key": "C",
+          "text": "6"
+        },
+        {
+          "key": "D",
+          "text": "19"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Alice computes shared secret = B^a mod p. We need to find a such that 5^a mod 23 = 10. Testing: 5^1=5, 5^2=25=2, 5^3=10. So a=3. Shared secret = 8^3 mod 23 = 512 mod 23 = 19.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "The Gap Diffie-Hellman (GDH) assumption states that the DDH problem is easy but the DLP is hard. Under this assumption, what security notion does DH achieve?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Semantic security only without authentication"
+        },
+        {
+          "key": "B",
+          "text": "Implicit authentication of the peer"
+        },
+        {
+          "key": "C",
+          "text": "Explicit key confirmation"
+        },
+        {
+          "key": "D",
+          "text": "Non-repudiation"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Under the GDH assumption (where Decisional DH is easy but Computational DH is hard), Diffie-Hellman achieves implicit authentication - the peer is guaranteed to hold the correct private key if they can compute the correct shared secret, without requiring explicit key confirmation.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-13",
+      "question": "When using the shared secret from key exchange as a PRNG seed, what additional processing is typically applied?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Direct use without processing"
+        },
+        {
+          "key": "B",
+          "text": "Hashing through a key derivation function (KDF)"
+        },
+        {
+          "key": "C",
+          "text": "XOR with a fixed constant"
+        },
+        {
+          "key": "D",
+          "text": "Modular reduction to 64 bits"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The raw shared secret is typically processed through a Key Derivation Function (KDF) like HKDF or TLS KDF. This serves multiple purposes: expands the secret to required length, provides cryptographic hardening, and allows derivation of multiple keys (encryption, MAC) from a single secret.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What is the primary advantage of authenticated Diffie-Hellman over unauthenticated Diffie-Hellman?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Faster computation"
+        },
+        {
+          "key": "B",
+          "text": "Smaller key sizes"
+        },
+        {
+          "key": "C",
+          "prevention": "Prevents MITM attacks and provides key confirmation"
+        },
+        {
+          "key": "D",
+          "text": "Better resistance to quantum computers"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Authenticated Diffie-Hellman (like STS or using certificates/keys) prevents MITM attacks by ensuring the parties are who they claim to be. It also provides implicit or explicit key confirmation, ensuring both parties have derived the same key.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "In the context of PRNGs, what is the relationship between the entropy of the seed and the output?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Output entropy is always less than or equal to seed entropy"
+        },
+        {
+          "key": "B",
+          "text": "Output entropy is always greater than seed entropy"
+        },
+        {
+          "key": "C",
+          "text": "Output entropy is independent of seed entropy"
+        },
+        {
+          "key": "D",
+          "text": "Output entropy equals seed entropy times the expansion factor"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "By the fundamental principle of pseudorandom generation, the entropy of the output cannot exceed the entropy of the seed - a PRNG cannot create entropy, it can only stretch (expand) existing entropy. This is why using a high-entropy seed from DH is crucial for security.",
+      "difficulty": "hard"
+    }
+  ]
+}

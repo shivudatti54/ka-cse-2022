@@ -1,0 +1,150 @@
+{
+  "topicId": "deterministic-finite-automata",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Deterministic Finite Automaton and explain its formal definition with all components.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "DFA is a 5-tuple M = (Q, Σ, δ, q0, F)",
+        "Q = finite set of states",
+        "Σ = finite input alphabet",
+        "δ = transition function: Q × Σ → Q",
+        "q0 = initial state (q0 ∈ Q)",
+        "F = set of final/accepting states (F ⊆ Q)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Construct a DFA that accepts all strings over {a,b} ending with 'ab'. Explain the states and transitions.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Three states needed: q0 (initial), q1 (after seeing 'a'), q2 (after 'ab' - accepting)",
+        "Transitions: From q0 on 'a'→q1, on 'b'→q0",
+        "From q1 on 'a'→q1, on 'b'→q2",
+        "From q2 on 'a'→q1, on 'b'→q0",
+        "State q2 is final state"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the difference between DFA and NFA with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "DFA: exactly one transition per state-input pair; NFA: zero or more",
+        "In DFA, computation path is unique; in NFA, multiple paths possible",
+        "Example: NFA for 'ab' can have two paths; DFA tracks memory explicitly",
+        "Every NFA can be converted to DFA using subset construction"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is a dead state in DFA? How is it useful in DFA construction?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Dead state (trap/sink) is non-accepting",
+        "Once entered, cannot reach final state on any input",
+        "Useful for rejecting invalid strings systematically",
+        "Ensures complete transition function (total DFA)",
+        "Simplifies language definition"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Draw and explain the transition diagram for a DFA that accepts binary strings with odd number of 1s.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Two states: q0 (even=non-final), q1 (odd=accepting)",
+        "q0→q1 on input '1', q0→q0 on '0'",
+        "q1→q0 on input '1', q1→q1 on '0'",
+        "Initial state q0, final state q1",
+        "Trace example: 1101 has three 1s (odd) - accepts"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain how to determine whether a string is accepted by a DFA with an example.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Start at initial state q0",
+        "Read input string symbol by symbol",
+        "Follow transitions according to δ function",
+        "After reading complete string, check if current state ∈ F",
+        "If yes → string accepted; if no → string rejected",
+        "Example: DFA for 'ab*', string 'abbb' is accepted"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the complement of a DFA? How is it constructed?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Complement language contains strings NOT accepted by original DFA",
+        "Construction: swap final and non-final states",
+        "Original non-final states become final",
+        "Original final states become non-final",
+        "This works only for complete DFA"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Construct a DFA that accepts the language L = {w ∈ {a,b}* : number of a's in w is divisible by 3}. Show the state diagram, transition table, and trace the acceptance of strings 'baba' and 'aaab'.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Need states to track count modulo 3: q0 (0 mod 3), q1 (1 mod 3), q2 (2 mod 3)",
+        "q0 is initial and final (0 a's is divisible by 3)",
+        "Transitions: δ(q0,a)=q1, δ(q1,a)=q2, δ(q2,a)=q0; on b stay in same state",
+        "Trace 'baba': b→q0, a→q1, b→q1, a→q2 → rejected (not in F)",
+        "Trace 'aaab': a→q1, a→q2, a→q0, b→q0 → accepted (ends in q0)"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Design a DFA for accepting all strings over {0,1} that represent binary numbers divisible by 3. Explain your design with state transitions and verify with examples.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Need states for remainders 0, 1, 2 when dividing by 3",
+        "q0 (remainder 0) is initial and accepting",
+        "q1 (remainder 1), q2 (remainder 2) are non-accepting",
+        "Transitions: appending 0 doubles value: new = (old × 2) mod 3",
+        "Appending 1: new = (old × 2 + 1) mod 3",
+        "δ(q0,0)=q0, δ(q0,1)=q1; δ(q1,0)=q2, δ(q1,1)=q0; δ(q2,0)=q1, δ(q2,1)=q2",
+        "Examples: '11'=3 divisible by 3 accepts, '100'=4 rejects"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Prove that the language accepted by a DFA is regular. Also explain the closure properties of regular languages under union, intersection, and complement operations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "By definition, languages accepted by DFAs are regular languages",
+        "This is the foundational theorem of automata theory",
+        "Closure under union: Construct product DFA with states (p,q)",
+        "Accept if either component accepts",
+        "Closure under intersection: Same product construction, accept if both accept",
+        "Closure under complement: Swap final and non-final states",
+        "All operations preserve regularity"
+      ]
+    }
+  ]
+}

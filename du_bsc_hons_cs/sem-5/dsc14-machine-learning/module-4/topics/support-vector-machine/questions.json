@@ -1,0 +1,53 @@
+{
+  "topicId": "support-vector-machine",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Write down the primal optimization problem for a hard‑margin Support Vector Machine for a linearly separable dataset. Define the objective function, the margin, and the constraints.",
+      "keyPoints": [
+        "Objective: maximize margin 2/||w|| or equivalently minimize (1/2)||w||^2",
+        "Constraints: y_i (w·x_i + b) ≥ 1 for all training points i",
+        "Primal form: min_{w,b} (1/2)||w||^2 s.t. y_i (w·x_i + b) ≥ 1",
+        "Geometric interpretation: hyperplane with maximum separating margin"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the purpose of slack variables ξ_i and the regularization parameter C in a soft‑margin SVM. How does the value of C affect the trade‑off between margin size and training error?",
+      "keyPoints": [
+        "Slack variables ξ_i ≥ 0 allow points to violate the margin constraint",
+        "Primal objective: (1/2)||w||^2 + C Σ_i ξ_i",
+        "Large C → strong penalty on errors → narrower margin, higher training accuracy",
+        "Small C → tolerant of errors → wider margin, better generalization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Derive the dual optimization problem for a soft‑margin SVM starting from the primal Lagrangian. List the KKT conditions and explain how the kernel trick is incorporated to obtain a non‑linear decision function. Illustrate with the Gaussian (RBF) kernel.",
+      "keyPoints": [
+        "Lagrangian L = (1/2)||w||^2 + C Σ_i ξ_i – Σ_i α_i [y_i (w·x_i + b) – 1 + ξ_i] – Σ_i μ_i ξ_i",
+        "Dual: maximize Σ_i α_i – (1/2) Σ_i Σ_j α_i α_j y_i y_j K(x_i, x_j) subject to Σ_i α_i y_i = 0, 0 ≤ α_i ≤ C",
+        "KKT conditions: α_i = 0 ⇒ correctly classified; 0 < α_i < C ⇒ on margin (support vector); α_i = C ⇒ misclassified or on wrong side",
+        "Decision function f(x) = sign( Σ_i α_i y_i K(x_i, x) + b ), with RBF kernel K(x,z) = exp(‑γ||x‑z||^2)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Describe two strategies for multi‑class classification using SVMs (one‑vs‑one and one‑vs‑all). Then outline how SVM can be extended to regression (SVR) by writing the primal objective with ε‑insensitive loss and mention how scikit‑learn implements it.",
+      "keyPoints": [
+        "One‑vs‑All: train K binary classifiers, each distinguishes one class from the rest; final prediction by max signed distance",
+        "One‑vs‑One: train K(K‑1)/2 classifiers for each pair; final class chosen by majority voting",
+        "SVR primal: minimize (1/2)||w||^2 + C Σ_i (ξ_i + ξ_i^*) subject to y_i – (w·x_i + b) ≤ ε + ξ_i, (w·x_i + b) – y_i ≤ ε + ξ_i^*, ξ_i, ξ_i^* ≥ 0",
+        "scikit‑learn usage: from sklearn.svm import SVC, SVR; model = SVC(kernel='rbf', C=1.0, gamma='scale'); model.fit(X, y); for regression use SVR(epsilon=0.1)"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "topicId": "using-tomcat-for-servlet-development",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Tomcat Server Architecture",
+      "description": "A hierarchical block diagram showing Tomcat's container architecture and request processing pipeline",
+      "elements": [
+        "Engine container (Catalina) - top-level container managing the entire server",
+        "Host container - represents a virtual host (e.g., localhost)",
+        "Context container - represents a single web application (e.g., /MyWebApp)",
+        "Wrapper container - represents a single servlet",
+        "Connector components - HTTP connectors listening on ports 8080, 8443",
+        "Request flow arrows: Connector → Engine → Host → Context → Wrapper → Servlet"
+      ],
+      "purpose": "Students understand how Tomcat organizes web applications hierarchically and how requests are routed to the appropriate servlet through the container hierarchy."
+    },
+    {
+      "id": "diagram-2",
+      "title": "Web Application Directory Structure",
+      "description": "A tree diagram showing the complete directory structure of a deployed web application",
+      "elements": [
+        "MyWebApp.war (or directory) at root",
+        "WEB-INF/ folder (not publicly accessible) with web.xml inside",
+        "WEB-INF/classes/ folder containing compiled .class servlet files",
+        "WEB-INF/lib/ folder containing JAR dependencies",
+        "index.html (public landing page)",
+        "style.css (public stylesheet)",
+        "script.js (public JavaScript)",
+        "images/ folder with assets",
+        "*.jsp files in root"
+      ],
+      "purpose": "Students learn the standard directory structure required for Java web applications, understanding which files are publicly accessible and which are protected within WEB-INF."
+    },
+    {
+      "id": "diagram-3",
+      "title": "Servlet Request-Response Flow in Tomcat",
+      "description": "A flowchart showing step-by-step how Tomcat processes an HTTP request to a servlet",
+      "elements": [
+        "Client sends HTTP request to http://localhost:8080/MyWebApp/login",
+        "Tomcat Connector receives request on port 8080",
+        "Connector creates Request and Response objects",
+        "Request flows through: Engine → Host → Context (MyWebApp)",
+        "Tomcat reads web.xml to find servlet mapping for /login",
+        "Context classloader loads HelloServlet.class from WEB-INF/classes/",
+        "Container creates servlet instance (if not already created)",
+        "Service method invoked with Request and Response objects",
+        "Servlet processes request, writes to Response",
+        "Container sends Response back to Client via Connector",
+        "HTTP response displayed in browser"
+      ],
+      "purpose": "Students understand the complete request processing pipeline and how Tomcat coordinates the servlet lifecycle components."
+    },
+    {
+      "id": "diagram-4",
+      "title": "WAR File Deployment Process",
+      "description": "A sequential diagram showing the WAR deployment workflow using Tomcat Manager",
+      "elements": [
+        "Developer creates WAR file (MyWebApp.war) in webapps/ directory",
+        "Tomcat's WARDeployer detects new WAR file",
+        "WAR file is extracted to webapps/MyWebApp/ directory",
+        "Tomcat reads WEB-INF/web.xml for servlet mappings",
+        "Servlet class files loaded into JVM classloader",
+        "Application becomes accessible at /MyWebApp",
+        "Manager application shows deployed application status",
+        "Undeploy process: deleting WAR file removes the application"
+      ],
+      "purpose": "Students learn the automated deployment process, understanding how Tomcat extracts WAR files and makes web applications available for testing."
+    },
+    {
+      "id": "diagram-5",
+      "title": "Tomcat IDE Integration Setup",
+      "description": "A configuration diagram showing how Eclipse/IntelliJ integrates with Tomcat for development",
+      "elements": [
+        "IDE window with project structure",
+        "Server Runtime Libraries (servlet-api.jar, jsp-api.jar)",
+        "Project facet configuration for Dynamic Web Project",
+        "Tomcat server adapter in IDE preferences",
+        "Deployment assembly mapping source folders to WEB-INF/classes",
+        "Debug mode with hot-swap capability",
+        "Console output showing server logs"
+      ],
+      "purpose": "Students understand how to configure their development environment for efficient servlet development with real-time debugging capabilities."
+    }
+  ],
+  "charts": [
+    {
+      "type": "table",
+      "title": "Tomcat Directory Structure Comparison",
+      "content": "CATALINA_HOME vs CATALINA_BASE: CATALINA_HOME contains bin/ (startup.sh, catalina.sh), conf/ (server.xml, web.xml), lib/ (servlet-api.jar), logs/. CATALINA_BASE contains conf/ (custom server config), logs/ (application logs), webapps/ (deployed applications), work/ (compiled JSPs), temp/ (temporary files). Each running instance can have its own BASE while sharing HOME."
+    },
+    {
+      "type": "comparison",
+      "title": "WAR Deployment Methods Comparison",
+      "content": "Method 1: Auto-deploy - Copy MyWebApp.war to webapps/ folder, Tomcat auto-extracts and deploys. Method 2: Manager App - Upload WAR through web interface at /manager/html. Method 3: IDE Deployment - Right-click project → Run on Server, IDE handles deployment. Method 4: Ant/Maven - Use build tools to deploy via Tomcat Manager API."
+    },
+    {
+      "type": "flowchart",
+      "title": "Servlet Initialization Flow",
+      "content": "1. Tomcat starts → 2. Loads web.xml → 3. For each <servlet>: a. Load servlet class (Class.forName), b. Create servlet instance (newInstance), c. Call init(ServletConfig) method → 4. Servlet ready to handle requests → 5. On first request: create Request/Response → 6. Call service() → 7. Process doGet/doPost → 8. Return Response → 9. Servlet instance remains loaded until shutdown or undeploy."
+    },
+    {
+      "type": "table",
+      "title": "web.xml Essential Elements Reference",
+      "content": "<display-name>My Web Application</display-name> - Application name. <servlet> - Defines servlet with <servlet-name> and <servlet-class>. <servlet-mapping> - Maps URL pattern to servlet with <url-pattern>. <welcome-file-list> - Specifies default files. <error-page> - Custom error handling. <session-config> - Session timeout in minutes. <welcome-file>index.jsp</welcome-file> - Default file."
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Tomcat Servlet Development Environment",
+      "branches": [
+        "Server Components: Engine (Catalina), Host (Virtual Host), Context (Web App), Wrapper (Servlet)",
+        "Directory Structure: webapps/, WEB-INF/, classes/, lib/, web.xml",
+        "Deployment: WAR files, Auto-deploy, Manager App, IDE integration",
+        "Configuration: server.xml, context.xml, web.xml, server runtime",
+        "Request Processing: Connectors, Servlet lifecycle, Response flow",
+        "Development Tools: Eclipse/IntelliJ, Tomcat adapter, Debug mode, Hot deployment",
+        "Logging: catalina.out, localhost.log, application logs"
+      ],
+      "purpose": "Provides comprehensive overview of all components involved in servlet development using Tomcat, connecting theoretical knowledge to practical development environment."
+    },
+    {
+      "centralConcept": "Web Application Deployment in Tomcat",
+      "branches": [
+        "WAR File: .war archive, contains WEB-INF/ and public resources",
+        "Directory Structure: Standard layout with protected and public areas",
+        "Deployment Descriptor: web.xml, defines servlets and mappings",
+        "Lifecycle: Install → Start → Request handling → Stop → Undeploy",
+        "Tomcat Manager: Web UI for deploy/undeploy, view sessions, reload",
+        "IDE Integration: Eclipse WTP, IntelliJ run configuration, debugging",
+        "Class Loading: Delegation parent-first, WEB-INF/classes precedence"
+      ],
+      "purpose": "Maps out the complete deployment workflow and all configuration elements needed for successful servlet application deployment."
+    }
+  ]
+}

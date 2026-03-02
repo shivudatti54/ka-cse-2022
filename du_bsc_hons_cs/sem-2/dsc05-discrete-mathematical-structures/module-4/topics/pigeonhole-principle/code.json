@@ -1,0 +1,35 @@
+{
+  "topicId": "pigeonhole-principle",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Pigeonhole Principle Check Algorithm",
+      "description": "Algorithm to verify if pigeonhole principle guarantees collision and find minimum guaranteed count",
+      "code": "ALGORITHM PigeonholeCheck(n, m)\n// n = number of items (pigeons), m = number of containers (holes)\nBEGIN\n    IF n <= m THEN\n        PRINT \"No guarantee of repetition\"\n        RETURN 0\n    ELSE\n        min_guaranteed = 1\n        // Calculate using ceiling formula\n        min_guaranteed = (n + m - 1) / m  // Integer division = ceil(n/m)\n        PRINT \"At least one container has \", min_guaranteed, \" items\"\n        RETURN min_guaranteed\n    END IF\nEND\n\n// Example usage:\n// PigeonholeCheck(101, 100) \u2192 At least one container has 2 items\n// PigeonholeCheck(51, 12)  \u2192 At least one container has 5 items",
+      "explanation": "This algorithm implements the basic pigeonhole principle formula. For n items and m containers, it calculates the minimum guaranteed maximum using ceiling division.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Birthday Paradox Probability Calculator",
+      "description": "Calculate probability of shared birthday using combinatorial approach",
+      "code": "import math\n\ndef birthday_paradox(n_people, n_days=365):\n    \"\"\"\n    Calculate probability that at least two people share a birthday.\n    Uses the complement: P(shared) = 1 - P(all unique)\n    \"\"\"\n    # Probability of no shared birthday\n    prob_unique = 1.0\n    for i in range(n_people):\n        prob_unique *= (n_days - i) / n_days\n    \n    prob_shared = 1 - prob_unique\n    return prob_shared\n\n# Find minimum people for >50% probability\nfor n in range(1, 100):\n    prob = birthday_paradox(n)\n    if prob > 0.5:\n        print(f\"Minimum people for >50% chance: {n}\")\n        print(f\"Probability with {n} people: {prob:.4f}\")\n        break\n\n# Calculate for different group sizes\nsizes = [10, 20, 23, 30, 50, 70]\nprint(\"\\nBirthday Paradox Probabilities:\")\nfor size in sizes:\n    print(f\"{size} people: {birthday_paradox(size)*100:.2f}%\")",
+      "explanation": "This Python code demonstrates the birthday paradox. It calculates the probability of at least two people sharing a birthday by computing the complement (all unique birthdays). The result shows 23 people exceed 50% probability, demonstrating the pigeonhole principle in probabilistic context.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Hash Table Collision Detection using Pigeonhole Principle",
+      "description": "Demonstrates collision guarantee when load factor exceeds 1",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define TABLE_SIZE 100\n\n// Structure for hash table entry\ntypedef struct {\n    int key;\n    int value;\n    bool occupied;\n} HashEntry;\n\n// Simple hash function\nint hash(int key) {\n    return key % TABLE_SIZE;\n}\n\n// Insert with collision detection\nint insert(HashEntry table[], int key, int value) {\n    int collisions = 0;\n    int index = hash(key);\n    int original_index = index;\n    \n    // Linear probing for collision resolution\n    while (table[index].occupied) {\n        if (table[index].key == key) {\n            // Key exists, update value\n            table[index].value = value;\n            return collisions;\n        }\n        index = (index + 1) % TABLE_SIZE;\n        collisions++;\n        \n        if (index == original_index) {\n            printf(\"Table is full!\\n\");\n            return -1;\n        }\n    }\n    \n    table[index].key = key;\n    table[index].value = value;\n    table[index].occupied = true;\n    \n    return collisions;\n}\n\n// Pigeonhole principle checker\nvoid check_pigeonhole_guarantee(int items, int slots) {\n    if (items > slots) {\n        printf(\"PIGEONHOLE PRINCIPLE: With %d items and %d slots,\\n\", items, slots);\n        printf(\"  COLLISION IS GUARANTEED!\\n\");\n        printf(\"  At least one slot will have %d items\\n\", \n               (items + slots - 1) / slots);\n    } else {\n        printf(\"No collision guaranteed with current load\\n\");\n    }\n}\n\nint main() {\n    HashEntry table[TABLE_SIZE] = {0};\n    \n    // Test: Insert 101 items into 100-slot table\n    int num_items = 101;\n    check_pigeonhole_guarantee(num_items, TABLE_SIZE);\n    \n    // Insert sample data\n    for (int i = 0; i < num_items - 1; i++) {\n        int collisions = insert(table, i + 100, i * 10);\n    }\n    \n    printf(\"\\nTotal items inserted: %d\\n\", num_items - 1);\n    printf(\"Load factor: %.2f\\n\", (float)(num_items - 1) / TABLE_SIZE);\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates the pigeonhole principle in hash tables. The function check_pigeonhole_guarantee shows that when items exceed slots, collision is mathematically guaranteed. This explains why hash tables maintain load factor < 1 for performance.",
+      "timeComplexity": "O(n) for n insertions",
+      "spaceComplexity": "O(m) where m = TABLE_SIZE"
+    }
+  ]
+}

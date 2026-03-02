@@ -1,0 +1,35 @@
+{
+  "topicId": "networks",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Calculate Network Latency Components",
+      "description": "Algorithm to compute total one-way latency across multiple network hops",
+      "code": "PROCEDURE CalculateLatency(Hops[], Bandwidth, PacketSize)\n totalLatency \u2190 0\n FOR EACH hop IN Hops\n // Propagation delay: distance / signal speed\n propDelay \u2190 hop.distance / hop.signalSpeed\n // Transmission delay: packet size / bandwidth\n transDelay \u2190 PacketSize / hop.bandwidth\n // Processing delay (typical router processing)\n procDelay \u2190 0.001 // 1 millisecond\n // Queuing delay (random, estimate based on congestion)\n queueDelay \u2190 hop.congestionFactor * 0.005\n hopLatency \u2190 propDelay + transDelay + procDelay + queueDelay\n totalLatency \u2190 totalLatency + hopLatency\n END FOR\n RETURN totalLatency\nEND PROCEDURE",
+      "explanation": "This algorithm calculates latency by summing four delay components for each hop: propagation (travel time), transmission (push time), processing (router overhead), and queuing (congestion wait). Real networks would measure these dynamically.",
+      "timeComplexity": "O(n) where n = number of hops",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Determine Optimal Network Topology",
+      "description": "Decision algorithm to select appropriate topology based on network requirements",
+      "code": "PROCEDURE SelectTopology(NodeCount, Budget, Reliability, Scalability)\n IF Reliability = \"HIGH\" AND Budget = \"HIGH\" THEN\n RETURN \"Full Mesh\"\n ELSE IF Reliability = \"HIGH\" AND Budget = \"LOW\" THEN\n RETURN \"Partial Mesh\"\n ELSE IF NodeCount < 10 AND Budget = \"LOW\" THEN\n RETURN \"Star (for P2P)\"\n ELSE IF NodeCount < 50 THEN\n RETURN \"Star with Ring Backbone\"\n ELSE IF Scalability = \"HIGH\" THEN\n RETURN \"Tree Topology\"\n ELSE\n RETURN \"Star Topology\"\n END IF\nEND PROCEDURE\n\n// Example usage:\n// SelectTopology(100, \"MEDIUM\", \"MEDIUM\", \"HIGH\") \u2192 Returns \"Tree Topology\"",
+      "explanation": "This decision tree helps network designers choose appropriate topology based on three key factors: number of nodes (scalability requirements), budget constraints, and reliability needs. Full mesh provides best reliability but highest cost.",
+      "timeComplexity": "O(1) - constant time decision",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Calculate Channel Capacity (Nyquist & Shannon)",
+      "description": "Functions to compute maximum data rate using Nyquist and Shannon theorems",
+      "code": "// Nyquist Theorem: C = 2B \u00d7 log\u2082(M)\nFUNCTION NyquistCapacity(BandwidthHz, SignalLevels)\n maxBitsPerSymbol \u2190 LOG2(SignalLevels)\n capacity \u2190 2 * BandwidthHz * maxBitsPerSymbol\n RETURN capacity // in bits per second\nEND FUNCTION\n\n// Shannon Capacity: C = B \u00d7 log\u2082(1 + S/N)\nFUNCTION ShannonCapacity(BandwidthHz, SignalToNoiseRatioDB)\n // Convert dB to linear ratio\n snRatio \u2190 10 ^ (SignalToNoiseRatioDB / 10)\n capacity \u2190 BandwidthHz * LOG2(1 + snRatio)\n RETURN capacity // in bits per second\nEND FUNCTION\n\n// Example: B=4000Hz, S/N=30dB, M=2\nBEGIN\n nyquistResult \u2190 NyquistCapacity(4000, 2)\n shannonResult \u2190 ShannonCapacity(4000, 30)\n PRINT \"Nyquist: \" + nyquistResult + \" bps\"\n PRINT \"Shannon: \" + shannonResult + \" bps\"\nEND",
+      "explanation": "Two fundamental theorems for channel capacity: Nyquist limits ideal noiseless channels based on signal levels, Shannon accounts for noise in real channels. The lower of the two results is the practical maximum data rate.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

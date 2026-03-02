@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the Copy-on-Write (COW) technique?",
+    "options": [
+      "To defer memory allocation until a process actually modifies the data",
+      "To create an immediate physical copy of a page when a process forks",
+      "To speed up the initial process creation time",
+      "To permanently share all memory between a parent and child process"
+    ],
+    "correctIndex": 0,
+    "explanation": "COW defers the expensive operation of copying memory pages until a process (parent or child) attempts to write to the shared page, thus optimizing resource usage."
+  },
+  {
+    "id": "q2",
+    "question": "When is a physical copy of a memory page actually created in a Copy-on-Write system?",
+    "options": [
+      "Immediately when the fork() system call is executed",
+      "When either the parent or child process attempts to read from the page",
+      "When either the parent or child process attempts to write to the page",
+      "Only when the child process terminates"
+    ],
+    "correctIndex": 2,
+    "explanation": "The core mechanism of COW is that a physical copy is only made when a write operation is attempted on the shared page, triggering a protection fault and allowing the kernel to handle the copy."
+  },
+  {
+    "id": "q3",
+    "question": "How does an operating system initially enforce Copy-on-Write for shared pages between processes?",
+    "options": [
+      "By using encryption on the memory pages",
+      "By marking the shared pages as read-only in the page tables",
+      "By immediately duplicating the page table entries",
+      "By placing the processes in a suspended state"
+    ],
+    "correctIndex": 1,
+    "explanation": "After a fork(), the OS marks the shared pages as read-only for both processes. Any subsequent write attempt by either process causes a page fault, which the OS then handles by creating a writable copy."
+  },
+  {
+    "id": "q4",
+    "question": "Which of the following is a significant advantage of using Copy-on-Write for the fork() system call?",
+    "options": [
+      "It guarantees that processes will never share memory",
+      "It eliminates the need for virtual memory management",
+      "It allows for efficient process creation by sharing memory pages until modification is necessary",
+      "It simplifies the implementation of process scheduling algorithms"
+    ],
+    "correctIndex": 2,
+    "explanation": "The key advantage is efficiency. COW allows a quick fork() because it only duplicates page tables, not the physical memory. This saves both time and memory, especially if the child process performs an exec() call immediately without modifying any shared pages."
+  },
+  {
+    "id": "q5",
+    "question": "In a Copy-on-Write implementation, what happens if the child process calls exec() immediately after fork() without writing to any memory?",
+    "options": [
+      "All shared pages are copied unnecessarily, wasting resources",
+      "The parent process is terminated to free the shared pages",
+      "The read-only shared pages are simply discarded as the child's address space is replaced",
+      "The system deadlocks waiting for a write operation"
+    ],
+    "correctIndex": 2,
+    "explanation": "This scenario highlights the full efficiency of COW. Since the child did not modify any pages, no physical copies were made. When exec() loads a new program, it replaces the child's address space entirely, making the shared COW pages obsolete and freeing them without any costly copy operations."
+  }
+]

@@ -1,0 +1,398 @@
+{
+  "topicId": "coprocesses",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "What is the primary difference between a background job (&) and a coprocess in Unix?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Background jobs run faster than coprocesses"
+        },
+        {
+          "key": "B",
+          "text": "Coprocesses allow bidirectional communication while background jobs only redirect stdout"
+        },
+        {
+          "key": "C",
+          "text": "Background jobs can only run on multi-core systems"
+        },
+        {
+          "key": "D",
+          "text": "Coprocesses cannot be terminated once started"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Background jobs (&) only redirect standard output to /dev/null or the terminal, while coprocesses establish a full-duplex pipe allowing both reading from and writing to the process.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Given the coprocess definition: coproc BC { bc -l; }, which statement is correct?",
+      "options": [
+        {
+          "key": "A",
+          "text": "BC[0] is used for writing to bc, BC[1] for reading results"
+        },
+        {
+          "key": "B",
+          "text": "BC[0] is used for reading results, BC[1] for writing expressions"
+        },
+        {
+          "key": "C",
+          "text": "BC_PID contains the file descriptor for reading"
+        },
+        {
+          "key": "D",
+          "text": "BC is a string variable containing the output"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In coprocesses, the array index 0 (BC[0]) connects to the stdout of the coprocess (reading results), and index 1 (BC[1]) connects to stdin (writing expressions).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What happens when you close the write end of a coprocess (exec NAME[1]>&-)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The coprocess is immediately terminated"
+        },
+        {
+          "key": "B",
+          "text": "The coprocess receives an EOF (end-of-file) on its stdin"
+        },
+        {
+          "key": "C",
+          "text": "The coprocess starts consuming CPU in a tight loop"
+        },
+        {
+          "key": "D",
+          "text": "The shell crashes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Closing the write file descriptor sends EOF to the coprocess's stdin, allowing it to finish processing and terminate gracefully.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which command would you use to prevent the shell from printing 'Done' when a coprocess exits?",
+      "options": [
+        {
+          "key": "A",
+          "text": "disown $COPROC_PID"
+        },
+        {
+          "key": "B",
+          "text": "nohup coproc"
+        },
+        {
+          "key": "C",
+          "text": "exec coproc"
+        },
+        {
+          "key": "D",
+          "text": "trap '' EXIT"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The `disown` built-in removes the job from the shell's job table, preventing status messages when it completes.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is a major issue when using coprocesses with interactive programs?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Memory leaks"
+        },
+        {
+          "key": "B",
+          "text": "Buffering causing delayed responses"
+        },
+        {
+          "key": "C",
+          "text": "Race conditions on every call"
+        },
+        {
+          "key": "D",
+          "text": "Kernel panic"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Programs using stdio buffering may not flush output immediately. Use `stdbuf -oL` or `cat` to force line buffering, or use unbuffered I/O in custom programs.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "In the command: coproc DC { dc; }, how would you send '2 2 + p' to dc and read the result?",
+      "options": [
+        {
+          "key": "A",
+          "text": "echo \"2 2 + p\" >& ${DC[1]} and read result <& ${DC[0]}"
+        },
+        {
+          "key": "B",
+          "text": "echo \"2 2 + p\" > ${DC[0]} and read result > ${DC[1]}"
+        },
+        {
+          "key": "C",
+          "text": "cat \"2 2 + p\" | dc and pipe the result"
+        },
+        {
+          "key": "D",
+          "text": "send \"2 2 + p\" to DC_PID"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Write to the write-end (DC[1]) of the pipe and read from the read-end (DC[0]) to communicate with the coprocess.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What is the purpose of using FIFOs with coprocesses?",
+      "options": [
+        {
+          "key": "A",
+          "text": "FIFOs make the coprocess run faster"
+        },
+        {
+          "key": "B",
+          "text": "FIFOs allow named pipes for persistent communication channels accessible by multiple processes"
+        },
+        {
+          "key": "C",
+          "text": "FIFOs are required by the kernel for all coprocesses"
+        },
+        {
+          "key": "D",
+          "text": "FIFOs automatically handle buffering issues"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "FIFOs provide named pipes that can be referenced by filename, enabling communication between unrelated processes and more complex IPC scenarios.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the correct way to wait for a coprocess to complete and get its exit status?",
+      "options": [
+        {
+          "key": "A",
+          "text": "wait ${COPROC_PID}"
+        },
+        {
+          "key": "B",
+          "text": "sleep until ${COPROC_PID}"
+        },
+        {
+          "key": "C",
+          "text": "join ${COPROC_PID}"
+        },
+        {
+          "key": "D",
+          "text": "poll ${COPROC_PID}"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The `wait` command with the PID waits for the process to terminate and returns its exit status in $?.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-9",
+      "question": "Which signal is sent to a coprocess when the terminal closes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGTERM"
+        },
+        {
+          "key": "B",
+          "text": "SIGKILL"
+        },
+        {
+          "key": "C",
+          "text": "SIGHUP"
+        },
+        {
+          "key": "D",
+          "text": "SIGSTOP"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When the controlling terminal closes, SIGHUP is sent to background processes, which typically causes them to terminate unless nohup or disown is used.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What does 'coproc' keyword return in bash?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A string with the command output"
+        },
+        {
+          "key": "B",
+          "text": "An array with file descriptors and a variable with PID"
+        },
+        {
+          "key": "C",
+          "text": "A process ID only"
+        },
+        {
+          "key": "D",
+          "text": "Nothing, it runs in background only"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The coproc keyword creates an array (for file descriptors) and a variable with _PID suffix containing the process ID.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is the output of: coproc BC { bc -l; }; echo \"${BC[@]}\"",
+      "options": [
+        {
+          "key": "A",
+          "text": "The process ID of bc"
+        },
+        {
+          "key": "B",
+          "text": "The file descriptors 10 11 (or similar)"
+        },
+        {
+          "key": "C",
+          "text": "bc -l"
+        },
+        {
+          "key": "D",
+          "text": "Error: syntax error"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The array BC contains the file descriptors allocated for the pipe, typically displayed as two integers like '10 11'.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "How do you explicitly handle stdin/stdout in an unnamed coprocess syntax?",
+      "options": [
+        {
+          "key": "A",
+          "text": "command |& (the |& operator)"
+        },
+        {
+          "key": "B",
+          "text": "command & (background)"
+        },
+        {
+          "key": "C",
+          "text": "command > file 2>&1 &"
+        },
+        {
+          "key": "D",
+          "text": "$(command)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The |& operator is shorthand in bash that creates a coprocess with both stdout and stderr connected to the shell, equivalent to 'command 2>&1 &' but with pipe descriptors.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What is the main advantage of using coprocesses over multiple pipe commands?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lower memory usage"
+        },
+        {
+          "key": "B",
+          "text": "Persistent process state between commands"
+        },
+        {
+          "key": "C",
+          "text": "Faster execution speed"
+        },
+        {
+          "key": "D",
+          "text": "Simpler syntax"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Coprocesses maintain a persistent process with state, avoiding the overhead of spawning new processes for each command, which is especially useful for interpreters like bc, dc, or sqlite.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What happens if you don't close the write end after reading from a coprocess?",
+      "blocks": [
+        {
+          "key": "A",
+          "text": "The coprocess will hang waiting for more input"
+        },
+        {
+          "key": "B",
+          "text": "Buffer overflow occurs in the shell"
+        },
+        {
+          "key": "C",
+          "text": "The read will block indefinitely because the pipe buffer fills up"
+        },
+        {
+          "key": "D",
+          "text": "Nothing, it's optional"
+        }
+      ],
+      "options": [
+        {
+          "key": "A",
+          "text": "The coprocess will hang waiting for more input"
+        },
+        {
+          "key": "B",
+          "text": "Buffer overflow occurs in the shell"
+        },
+        {
+          "key": "C",
+          "text": "The read will block indefinitely because the pipe buffer fills up"
+        },
+        {
+          "key": "D",
+          "text": "Nothing, it's optional"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "If the write end isn't closed, the read will eventually block when the pipe buffer fills up because the coprocess keeps the write end open for potential future output.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Which bash built-in can force unbuffered output from a coprocess?",
+      "options": [
+        {
+          "key": "A",
+          "text": "buffer -u"
+        },
+        {
+          "key": "B",
+          "text": "stdbuf -oL"
+        },
+        {
+          "key": "C",
+          "text": "unbuffer command"
+        },
+        {
+          "key": "D",
+          "text": "Both B and C"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Both `stdbuf -oL` and the `unbuffer` command (from expect package) can force line-buffered or unbuffered output from the coprocess to ensure timely data delivery.",
+      "difficulty": "hard"
+    }
+  ]
+}

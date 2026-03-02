@@ -1,0 +1,33 @@
+{
+  "topicId": "cuda-trapezoidal-rule-iii-multi-warp-blocks",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain why __syncthreads() is unnecessary for the last 5 iterations of tree-based reduction in a CUDA block with 256 threads. What precautions are needed when removing it on pre-Volta architectures?",
+      "type": "short",
+      "marks": 5,
+      "keyPoints": [
+        "A 256-thread block has 8 warps (32 threads per warp)",
+        "When the stride drops to 32, only threads 0-31 remain active -- all within warp 0",
+        "Threads within a warp execute in lockstep (SIMT), providing implicit synchronization",
+        "The last 5 iterations (strides 32, 16, 8, 4, 2, 1) all involve only warp 0 threads",
+        "On pre-Volta hardware, the volatile keyword must be used on shared memory pointers to prevent the compiler from caching shared memory values in registers"
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Describe the two-phase warp-shuffle reduction technique for CUDA blocks with multiple warps. Write the warpReduceSum() device function and explain how blockReduceSum() combines the results. Compare the performance of this approach with the basic tree reduction.",
+      "type": "long",
+      "marks": 10,
+      "keyPoints": [
+        "Phase 1: Each warp independently reduces its 32 values using __shfl_down_sync() with deltas 16, 8, 4, 2, 1",
+        "warpReduceSum code: val += __shfl_down_sync(0xFFFFFFFF, val, delta) for each delta, returning the sum in lane 0",
+        "Lane 0 of each warp writes the warp sum to a shared memory array warpSums[warpId]",
+        "A single __syncthreads() ensures all warp sums are visible before Phase 2",
+        "Phase 2: Warp 0 loads the warp sums and performs another warpReduceSum to get the final block sum",
+        "Performance: reduces __syncthreads() from log2(blockDim.x) to 1, eliminates bank conflicts, reduces shared memory from blockDim.x entries to 32",
+        "Warp shuffles operate in registers (~1 cycle) vs shared memory (~5 cycles), and reduced shared memory usage enables higher SM occupancy"
+      ]
+    }
+  ]
+}

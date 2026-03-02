@@ -1,0 +1,25 @@
+{
+  "topicId": "planning-graphs",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "GraphPlan Algorithm",
+      "description": "Complete GraphPlan algorithm with expansion and solution extraction phases",
+      "code": "FUNCTION GraphPlan(problem):\n // Initialize planning graph\n graph = InitialPlanningGraph(problem.initial)\n \n WHILE True:\n // Check if goals are achievable\n IF GoalsInLevel(graph, problem.goals) THEN\n // Extract solution through backward search\n solution = ExtractSolution(graph, problem.goals)\n IF solution ≠ NULL THEN\n RETURN solution\n \n // Check if graph has leveled off\n IF LeveledOff(graph) THEN\n RETURN NULL // No solution exists\n \n // Expand graph by one level\n graph = ExpandGraph(graph, problem.actions)\n\nFUNCTION ExpandGraph(graph, actions):\n // Add action level\n prevProps = graph.lastPropositionalLevel\n newActions = []\n FOR each action IN actions:\n IF PreconditionsSatisfied(action, prevProps) THEN\n newActions.append(action)\n \n // Compute mutex relations for actions\n actionMutex = ComputeMutex(newActions)\n \n // Add propositional level with effects\n newProps = ComputeEffects(newActions, prevProps)\n \n // Compute mutex for propositions\n propMutex = ComputePropMutex(newProps)\n \n RETURN graph.addLevels(newActions, newProps, actionMutex, propMutex)\n\nFUNCTION ExtractSolution(graph, goals):\n level = graph.lastLevel\n goalSet = goals\n \n WHILE level > 0:\n // Select actions to achieve goals (no mutex)\n actions = SelectActions(goalSet, level, graph)\n IF actions = NULL THEN\n RETURN NULL // Backtrack\n \n // Collect preconditions for next iteration\n preconditions = []\n FOR each action IN actions:\n preconditions.add(action.preconditions)\n \n level = level - 1\n goalSet = preconditions\n \n RETURN reverse(actions)",
+      "explanation": "GraphPlan works in two phases: (1) Expansion builds the planning graph level by level, checking mutex relations at each step; (2) Solution extraction performs backward search from goals to find a consistent plan. The algorithm terminates when goals are achievable without mutex conflicts or when the graph levels off.",
+      "timeComplexity": "O(n × k) polynomial in graph size",
+      "spaceComplexity": "O(n × m) where n=levels, m=literals/actions"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Mutex Computation",
+      "description": "Computing mutex relations between actions",
+      "code": "FUNCTION ComputeMutex(actions):\n mutexPairs = []\n \n FOR each pair (a, b) IN actions WHERE a ≠ b:\n // Check Inconsistent Effects\n IF InconsistentEffects(a, b) THEN\n mutexPairs.add((a, b))\n \n // Check Interference\n ELSE IF Interference(a, b) OR Interference(b, a) THEN\n mutexPairs.add((a, b))\n \n // Check Competing Needs\n ELSE IF CompetingNeeds(a, b) THEN\n mutexPairs.add((a, b))\n \n // Check Inverse\n ELSE IF Inverse(a, b) THEN\n mutexPairs.add((a, b))\n \n RETURN mutexPairs\n\nFUNCTION InconsistentEffects(a, b):\n FOR each literal p IN a.addEffects:\n IF b.addEffects contains NOT(p) THEN\n RETURN True\n RETURN False\n\nFUNCTION Interference(a, b):\n // a interferes with b if a deletes a precondition of b\n FOR each literal p IN b.preconditions:\n IF p IN a.delEffects THEN\n RETURN True\n RETURN False\n\nFUNCTION CompetingNeeds(a, b):\n // Actions have mutually exclusive preconditions\n FOR each pair (p, q) IN a.preconditions × b.preconditions:\n IF p = NOT(q) THEN\n RETURN True\n RETURN False\n\nFUNCTION Inverse(a, b):\n // a is inverse of b\n RETURN (a.addEffects = b.delEffects) AND (a.delEffects = b.addEffects)",
+      "explanation": "Four types of mutex relations are computed: (1) Inconsistent Effects when actions add contradictory literals; (2) Interference when one action deletes another's precondition; (3) Competing Needs when actions require mutually exclusive preconditions; (4) Inverse when actions are exact opposites.",
+      "timeComplexity": "O(a² × p) where a=actions, p=preconditions/effects",
+      "spaceComplexity": "O(a²)"
+    }
+  ]
+}

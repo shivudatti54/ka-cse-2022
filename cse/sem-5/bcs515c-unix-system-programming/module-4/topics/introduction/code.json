@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic System Call Example - File Operations",
+      "description": "Demonstrates open, read, write system calls with error handling",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n#include <errno.h>\n#include <string.h>\n\nint main() {\n int fd;\n char buffer[100];\n \n // Open file (system call)\n fd = open(\"test.txt\", O_RDONLY);\n if (fd == -1) {\n fprintf(stderr, \"Error opening file: %s\\n\", strerror(errno));\n return 1;\n }\n \n // Read from file (system call)\n ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);\n if (bytes_read == -1) {\n perror(\"Read error\");\n close(fd);\n return 1;\n }\n \n buffer[bytes_read] = '\\0';\n printf(\"Read %zd bytes: %s\\n\", bytes_read, buffer);\n \n // Close file (system call)\n if (close(fd) == -1) {\n perror(\"Close error\");\n return 1;\n }\n \n return 0;\n}",
+      "explanation": "This program demonstrates three fundamental Unix system calls: open() to get a file descriptor, read() to read data, and close() to release the descriptor. It shows proper error handling using errno and perror(). The file descriptor returned by open() is used as an index in the process's file descriptor table.",
+      "timeComplexity": "O(n) for read where n is bytes read",
+      "spaceComplexity": "O(n) for buffer allocation"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Process Creation with fork()",
+      "description": "Demonstrates process creation using fork system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <wait.h>\n\nint main() {\n pid_t pid;\n int status;\n \n printf(\"Parent: PID = %d\\n\", getpid());\n \n pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n else if (pid == 0) {\n // Child process\n printf(\"Child: PID = %d, Parent PID = %d\\n\", getpid(), getppid());\n printf(\"Child: Executing new program...\\n\");\n \n // Normally would call exec() here\n return 42; // Child exit status\n }\n else {\n // Parent process\n printf(\"Parent: Created child with PID = %d\\n\", pid);\n \n // Wait for child to complete\n waitpid(pid, &status, 0);\n \n if (WIFEXITED(status)) {\n printf(\"Parent: Child exited with status %d\\n\", WEXITSTATUS(status));\n }\n }\n \n return 0;\n}",
+      "explanation": "The fork() system call creates a new process by duplicating the parent. In the parent, it returns the child's PID; in the child, it returns 0. The parent uses waitpid() to wait for child termination and retrieve exit status. This demonstrates process control system calls.",
+      "timeComplexity": "O(1) for fork, O(n) where n is process lifespan for wait",
+      "spaceComplexity": "O(1) additional space (COW optimization)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Parent-Child Communication via Pipe",
+      "description": "Demonstrates IPC using pipe system call for inter-process communication",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <string.h>\n#include <wait.h>\n\nint main() {\n int pipefd[2];\n pid_t pid;\n char parent_msg[] = \"Hello from parent!\";\n char child_buffer[100];\n \n // Create pipe before fork\n if (pipe(pipefd) == -1) {\n perror(\"pipe failed\");\n return 1;\n }\n \n pid = fork();\n \n if (pid < 0) {\n perror(\"fork failed\");\n return 1;\n }\n else if (pid == 0) {\n // Child process - read from pipe\n close(pipefd[1]); // Close write end\n \n ssize_t bytes_read = read(pipefd[0], child_buffer, sizeof(child_buffer));\n if (bytes_read > 0) {\n child_buffer[bytes_read] = '\\0';\n printf(\"Child received: %s\\n\", child_buffer);\n }\n \n close(pipefd[0]);\n }\n else {\n // Parent process - write to pipe\n close(pipefd[0]); // Close read end\n \n printf(\"Parent sending: %s\\n\", parent_msg);\n write(pipefd[1], parent_msg, strlen(parent_msg));\n \n close(pipefd[1]); // Send EOF\n \n wait(NULL); // Wait for child\n }\n \n return 0;\n}",
+      "explanation": "The pipe() system call creates a unidirectional communication channel. pipefd[0] is the read end, pipefd[1] is the write end. After fork(), the parent closes its read end and writes, while child closes write end and reads. This demonstrates classic Unix IPC and proper file descriptor management in multi-process programs.",
+      "timeComplexity": "O(n) where n is message size for write/read",
+      "spaceComplexity": "O(n) for pipe buffer and child buffer"
+    }
+  ]
+}

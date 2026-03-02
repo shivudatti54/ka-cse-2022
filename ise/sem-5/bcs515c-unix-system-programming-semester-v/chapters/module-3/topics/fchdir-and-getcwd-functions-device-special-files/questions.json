@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the purpose and primary difference between the fchdir() and chdir() system calls. When would using fchdir() be preferred?",
+    "expectedPoints": [
+      "Both functions change the current working directory of a process.",
+      "chdir() takes a pathname string as an argument.",
+      "fchdir() takes an open file descriptor (to a directory) as an argument, which is often more efficient and avoids race conditions.",
+      "fchdir() is preferred when a program already has an open file descriptor for the target directory, as it is faster and more secure."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the purpose of the getcwd() function. What is a common programming error associated with its buffer argument, and how can it be avoided?",
+    "expectedPoints": [
+      "getcwd() retrieves the absolute pathname of the current working directory.",
+      "It writes this pathname into a buffer provided by the caller.",
+      "A common error is providing a buffer that is too small for the pathname, leading to undefined behavior or a buffer overflow.",
+      "This can be avoided by using the NULL argument to let getcwd() allocate a buffer of the necessary size dynamically (which the caller must later free), or by carefully checking the maximum path length (PATH_MAX)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A program uses fchdir(fd) to change to a directory and then later calls getcwd(). However, getcwd() fails. Explain the sequence of system calls (open, fchdir, close) that would lead to this failure and why it occurs. Furthermore, how does the kernel internally resolve the pathname for getcwd() and why does this mechanism cause the failure?",
+    "expectedPoints": [
+      "The failure occurs if the program closes the file descriptor 'fd' after calling fchdir(fd) but before calling getcwd().",
+      "getcwd() operates by walking up the directory tree from the current working directory (a kernel-internal v-node) towards the root, reading the '..' entries. To read these directories, it needs permission to open and search them.",
+      "The kernel's internal current working directory is represented by the v-node that was referenced by the open file descriptor 'fd'.",
+      "When 'fd' is closed, the kernel's reference to that v-node may be lost if it was the last reference, potentially making the directory inaccessible for the path resolution performed by getcwd(), leading to failure."
+    ],
+    "marks": 10
+  }
+]

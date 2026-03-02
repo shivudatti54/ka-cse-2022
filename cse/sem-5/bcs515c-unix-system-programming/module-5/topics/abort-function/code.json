@@ -1,0 +1,45 @@
+{
+  "topicId": "abort-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic abort() Example",
+      "description": "Demonstrates basic usage of abort() function",
+      "code": "#include <stdlib.h>\n#include <stdio.h>\n\nvoid cleanup(void) {\n printf(\"This will NOT be printed\\n\");\n}\n\nint main() {\n atexit(cleanup);\n printf(\"Calling abort()...\\n\");\n abort(); // Program terminates here\n printf(\"This line never executes\\n\");\n return 0;\n}",
+      "explanation": "This program registers a cleanup function using atexit() and then calls abort(). The cleanup function is NOT called because abort() does not perform normal cleanup operations.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "exit() vs abort() Comparison",
+      "description": "Shows difference between exit() and abort() cleanup behavior",
+      "code": "#include <stdlib.h>\n#include <stdio.h>\n\nvoid my_cleanup(void) {\n printf(\"Cleanup function called\\n\");\n}\n\nint main() {\n atexit(my_cleanup);\n \n // Uncomment one of the following:\n // exit(0); // Calls cleanup, flushes buffers\n // abort(); // Does NOT call cleanup\n // _Exit(0); // Does NOT call cleanup\n \n return 0;\n}",
+      "explanation": "This code demonstrates that exit() calls the atexit cleanup function while abort() does not. _Exit() also does not call cleanup but can return an exit status.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "SIGABRT Signal Handler",
+      "description": "Demonstrates catching SIGABRT signal",
+      "code": "#include <signal.h>\n#include <stdlib.h>\n#include <stdio.h>\n\nvoid sigabrt_handler(int signum) {\n printf(\"Caught SIGABRT signal!\\n\");\n // If we return, abort() will still terminate\n}\n\nint main() {\n signal(SIGABRT, sigabrt_handler);\n printf(\"Calling abort()...\\n\");\n abort();\n printf(\"This never prints\\n\");\n return 0;\n}",
+      "explanation": "Installing a signal handler for SIGABRT allows catching the signal, but since abort() terminates after the handler returns, the program still terminates.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Using abort() for Error Handling",
+      "description": "Shows proper use of abort() for unrecoverable errors",
+      "code": "#include <stdlib.h>\n#include <stdio.h>\n\nvoid handle_fatal_error(const char* message) {\n fprintf(stderr, \"FATAL: %s\\n\", message);\n fprintf(stderr,\"Generating core dump for debugging...\\n\");\n abort(); // Abnormal termination\n}\n\nint* safe_malloc(size_t size) {\n void* ptr = malloc(size);\n if (ptr == NULL) {\n handle_fatal_error(\"Memory allocation failed\");\n }\n return ptr;\n}\n\nint main() {\n int* data = safe_malloc(100);\n printf(\"Allocated: %p\\n\", (void*)data);\n return 0;\n}",
+      "explanation": "This demonstrates using abort() appropriately for fatal error conditions where normal error handling cannot continue.",
+      "timeComplexity": "O(n) for malloc",
+      "spaceComplexity": "O(n) for allocation"
+    }
+  ]
+}

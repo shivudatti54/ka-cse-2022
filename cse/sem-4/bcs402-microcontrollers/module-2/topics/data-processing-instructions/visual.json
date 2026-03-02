@@ -1,0 +1,79 @@
+{
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "8051 Data Processing Instruction Classification",
+      "description": "Complete classification of 8051 data processing instructions showing arithmetic, logical, rotate/rotate-through-carry, and data manipulation categories.",
+      "elements": [
+        "Arithmetic: ADD, ADDC, SUBB, INC, DEC, MUL, DIV, DA",
+        "Logical: ANL, ORL, XRL, CPL, CLR",
+        "Rotate: RL, RLC, RR, RRC",
+        "Data Manipulation: SWAP, MOV, MOVX, MOVC",
+        "Bit-level: SETB, CPL bit, ANL C,bit, ORL C,bit"
+      ],
+      "purpose": "Visual overview of all data processing instruction categories in 8051, helping students understand instruction organization and select appropriate instructions for tasks."
+    },
+    {
+      "id": "d-2",
+      "title": "PSW Flag Modification by Instruction Type",
+      "description": "Table showing how different instruction categories affect the Program Status Word flags (C, AC, OV, P) in 8051.",
+      "elements": [
+        "Arithmetic: ADD/ADDC/SUBB - affect all flags",
+        "MUL/DIV - C=0 always, OV specific cases",
+        "Logical: ANL/ORL/XRL - C unchanged, AC affected",
+        "Rotate: RLC/RRC - C affected; RL/RR - C unchanged",
+        "INC/DEC - no flags except INC DPTR",
+        "CPL/CLR/SETB - no flags affected"
+      ],
+      "purpose": "Quick reference for flag behavior, essential for debugging and understanding instruction effects on conditional operations."
+    },
+    {
+      "id": "d-3",
+      "title": "Multi-Byte Addition Algorithm in 8051",
+      "description": "Step-by-step flowchart showing how to add two 16-bit or larger numbers using ADD and ADDC instructions with carry propagation.",
+      "elements": [
+        "Step 1: Load low byte of operand1 to A",
+        "Step 2: ADD low byte of operand2 (clears C automatically)",
+        "Step 3: Store low result, save C state",
+        "Step 4: Load high byte of operand1 to A",
+        "Step 5: ADDC high byte of operand2 (includes previous C)",
+        "Step 6: Store high result",
+        "Repeat steps 3-6 for additional bytes"
+      ],
+      "purpose": "Demonstrates practical application of ADDC for multi-byte arithmetic, essential for embedded applications requiring large number processing."
+    }
+  ],
+  "code": [
+    {
+      "id": "code-1",
+      "language": "8051 Assembly",
+      "title": "Multi-Byte Addition Program",
+      "description": "Adds two 16-bit numbers stored in internal RAM and stores 16-bit result.",
+      "code": "; Assume: Num1_L = 0x30, Num1_H = 0x31\n; Num2_L = 0x32, Num2_H = 0x33\n; Result: Res_L = 0x34, Res_H = 0x35\n\n ORG 0000H ; Program start address\n LJMP START ; Jump to main code\n\nSTART: MOV A, 30H ; Load low byte of Num1\n ADD A, 32H ; Add low byte of Num2 (C set/clear)\n MOV 34H, A ; Store low result\n \n MOV A, 31H ; Load high byte of Num1 \n ADDC A, 33H ; Add high byte + carry from low\n MOV 35H, A ; Store high result\n \n END ; Program end",
+      "explanation": "This program demonstrates multi-byte addition using ADD for the least significant byte and ADDC for subsequent bytes. The carry from low byte addition is automatically propagated through ADDC. After execution, the 16-bit result is stored at 0x34:0x35.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "8051 Assembly",
+      "title": "BCD Addition with DA Instruction",
+      "description": "Adds two BCD numbers and uses DA instruction to ensure valid BCD result.",
+      "code": "; Add two BCD numbers: 47 + 28 = 75 (BCD)\n; A = 0x47, B = 0x28\n\n MOV A, #47H ; Load BCD 47 (0x47 = 0100 0111)\n MOV B, #28H ; Load BCD 28 (0x28 = 0010 1000)\n ADD A, B ; Binary addition: 0x47 + 0x28 = 0x6F\n ; After ADD: A=0x6F, C=0, AC=0\n \n DA A ; Adjust: 0x6F \u2192 0x75 (BCD 75)\n ; Since lower nibble (0xF)>9, add 0x06: 0x6F+0x06=0x75\n ; Now 0x75 is valid BCD\n \n; Result: A = 0x75 (BCD representation of 75)\n END",
+      "explanation": "The DA (Decimal Adjust) instruction corrects invalid BCD results after addition. When 0x47 + 0x28 = 0x6F (not valid BCD), DA adds 0x06 to get 0x75, a valid BCD representation. This is essential for decimal displays in embedded systems.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "8051 Assembly",
+      "title": "8-bit Multiplication using MUL AB",
+      "description": "Multiplies two unsigned 8-bit numbers and extracts 16-bit result.",
+      "code": "; Multiply 150 \u00d7 200 = 30000\n; 150 = 0x96, 200 = 0xC8\n; Expected: 30000 decimal = 0x7530\n\n MOV A, #96H ; Load multiplicand (150)\n MOV B, #C8H ; Load multiplier (200)\n MUL AB ; Multiply: A\u00d7B \u2192 A=low, B=high\n ; After MUL: A=0x30 (low byte), B=0x75 (high byte)\n ; C=0 (always cleared), OV=1 (B\u22600, result>255)\n \n ; Store result\n MOV 40H, A ; Low byte (0x30) to RAM 0x40\n MOV 41H, B ; High byte (0x75) to RAM 0x41\n \n END ; Result: 0x7530 = 30000 decimal",
+      "explanation": "MUL AB performs unsigned 8-bit multiplication producing a 16-bit result. The low-order byte is returned in A, high-order byte in B. The carry flag is always cleared. Overflow is set if the result exceeds 255 (B \u2260 0 after multiplication), indicating the high byte is non-zero.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ],
+  "topicId": "data-processing-instructions"
+}

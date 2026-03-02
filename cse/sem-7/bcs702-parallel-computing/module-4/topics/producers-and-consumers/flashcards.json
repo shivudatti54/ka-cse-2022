@@ -1,0 +1,65 @@
+{
+  "topicId": "producers-and-consumers",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is the Producer-Consumer problem in parallel computing?",
+      "back": "A classic synchronization problem where one or more producer threads generate data and place it in a shared buffer, while one or more consumer threads remove and process that data. The challenge is ensuring safe concurrent access to the bounded buffer without race conditions, overflow, or underflow."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is a bounded buffer in the producer-consumer context?",
+      "back": "A fixed-size shared data structure (typically a circular queue) that temporarily stores items produced by producers until consumers can process them. Its finite size requires synchronization to prevent overflow (buffer full) or underflow (buffer empty)."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is a race condition in producer-consumer synchronization?",
+      "back": "An error that occurs when multiple threads access and modify shared data concurrently without proper coordination. In producer-consumer, this can lead to lost updates, incorrect buffer states, or corrupted data."
+    },
+    {
+      "id": "fc-4",
+      "front": "What are the two primary semaphores used in producer-consumer solution?",
+      "back": "1. **Empty semaphore**: Counts empty buffer slots (initialized to buffer size N)\n2. **Full semaphore**: Counts filled buffer slots (initialized to 0)\nThese coordinate producer and consumer access to prevent buffer overflow/underflow."
+    },
+    {
+      "id": "fc-5",
+      "front": "Why is a mutex needed alongside semaphores in producer-consumer?",
+      "back": "Semaphores provide coordination but do not guarantee mutual exclusion for actual buffer modifications. A mutex (or binary semaphore) protects the critical section where the buffer is accessed (put item/get item) to ensure only one thread modifies buffer state at a time."
+    },
+    {
+      "id": "fc-6",
+      "front": "What is the difference between blocking and non-blocking producer-consumer?",
+      "back": "**Blocking**: Producers/consumers sleep (wait) when buffer is full/empty. Uses condition variables or wait() operations.\n**Non-blocking**: Returns immediately with status (EWOULDBLOCK/EAGAIN). More complex but avoids deadlock in certain scenarios."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is a circular buffer and why is it preferred?",
+      "back": "A buffer with two pointers (head/tail) that wrap around when reaching the end. Preferred because: (1) efficient memory usage avoiding physical copying, (2) simple implementation of bounded FIFO, (3) O(1) enqueue/dequeue operations."
+    },
+    {
+      "id": "fc-8",
+      "front": "How does false sharing affect producer-consumer performance?",
+      "back": "False sharing occurs when threads access different variables that happen to share the same CPU cache line. In producer-consumer, if buffer slots are cache-line aligned, producers and consumers may inadvertently invalidate each other's cache lines, severely degrading performance even with correct synchronization."
+    },
+    {
+      "id": "fc-9",
+      "front": "What is the difference between monitor-based and semaphore-based synchronization?",
+      "back": "**Monitors**: High-level construct encapsulating shared data + operations + mutual exclusion. Automatic locking.\n**Semaphores**: Lower-level primitives requiring explicit wait/signal operations.\nMonitors are easier to use correctly; semaphores offer more flexibility but require careful design."
+    },
+    {
+      "id": "fc-10",
+      "front": "What is a bounded versus unbounded queue in producer-consumer?",
+      "back": "**Bounded**: Fixed maximum capacity. Producers block when full.\n**Unbounded**: Dynamic growth (e.g., linked list). Never blocks on produce, but consumer may wait if empty. Bounded is more common in practice to prevent unbounded memory growth."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is the throughput formula for producer-consumer with multiple producers/consumers?",
+      "back": "Throughput = min(P_rate, C_rate) where P_rate = production rate of all producers and C_rate = consumption rate of all consumers. The slower thread type determines maximum throughput. With Np producers and Nc consumers: throughput = min(Np \u00d7 p_single, Nc \u00d7 c_single)."
+    },
+    {
+      "id": "fc-12",
+      "front": "What is the Readers-Writers problem relationship to producer-consumer?",
+      "back": "Producer-consumer is a special case of readers-writers where producers are 'writers' (add data, modifying state) and consumers are 'readers' (remove data, also modifying state). Both modify the buffer, requiring exclusive access unlike pure readers."
+    }
+  ]
+}

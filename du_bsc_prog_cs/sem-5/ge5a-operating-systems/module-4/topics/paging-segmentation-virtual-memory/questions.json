@@ -1,0 +1,159 @@
+{
+  "topicId": "paging-segmentation-virtual-memory",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of paging in operating systems. What are its advantages and disadvantages?",
+      "keyPoints": [
+        "Paging divides logical memory into fixed-size pages and physical memory into frames",
+        "Eliminates external fragmentation but causes internal fragmentation",
+        "Simple memory protection through page-level access bits",
+        "Provides fast address translation with page tables",
+        "Disadvantages: internal fragmentation, page table overhead, cannot provide logical view"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a page fault? Explain the steps involved in handling a page fault.",
+      "keyPoints": [
+        "Page fault occurs when a referenced page is not in physical memory",
+        "Steps: 1) Trap to OS, 2) Check validity of reference, 3) Locate page on disk, 4) Find free frame, 5) Read page from disk, 6) Update page table, 7) Restart the interrupted instruction",
+        "Page fault handling involves I/O and context switching overhead"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the Working Set model for controlling thrashing.",
+      "keyPoints": [
+        "Working set is the set of pages a process is currently using",
+        "The model tries to keep active pages in memory to prevent thrashing",
+        "If working set size > available frames, some processes are suspended",
+        "Thrashing occurs when total working set exceeds physical memory",
+        "WSClock algorithm implements this model"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between paging and segmentation.",
+      "keyPoints": [
+        "Paging: fixed-size pages, physical view, eliminates external fragmentation",
+        "Segmentation: variable-sized segments, logical view, enables sharing and protection",
+        "Paging has internal fragmentation, segmentation has external fragmentation",
+        "Logical address: paging uses (page#, offset), segmentation uses (segment#, offset)",
+        "Segmentation provides better protection and natural code/data separation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the purpose and working of TLB (Translation Lookaside Buffer).",
+      "keyPoints": [
+        "TLB is a hardware cache for page table entries",
+        "Provides fast virtual-to-physical address translation",
+        "Contains recently used page-frame mappings",
+        "On TLB miss, page table is accessed and entry is loaded into TLB",
+        "Associative memory (parallel search) for fast lookup",
+        "Hit ratio determines performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is Belady's Anomaly? Explain with an example.",
+      "keyPoints": [
+        "Belady's anomaly is the phenomenon where increasing frames increases page faults in FIFO",
+        "Demonstrates that some page replacement algorithms don't follow intuition",
+        "Example: with 3 frames: 1,2,3,4,1,2,5,1,2,3,4,5 gives 9 faults; with 4 frames: 1,2,3,4,1,2,5,1,2,3,4,5 gives 10 faults",
+        "Does not occur in LRU or Optimal algorithms",
+        "Caused by FIFO not considering page usage frequency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain demand paging and compare it with prepaging.",
+      "keyPoints": [
+        "Demand paging loads pages only when referenced (on-demand)",
+        "Reduces initial load time and memory usage",
+        "Prepaging loads pages in advance before they are needed",
+        "Demand paging may cause initial page faults",
+        "Prepaging may waste memory if pages not used",
+        "Hybrid approach often used in practice"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the following page replacement algorithms: FIFO, LRU, and Optimal. Which one is practically implementable and why?",
+      "keyPoints": [
+        "FIFO: Removes oldest page in memory - simple but suffers from Belady's anomaly",
+        "LRU: Removes least recently used page - based on temporal locality, better performance but needs hardware support",
+        "Optimal: Removes page that will not be used for longest time - theoretical best, requires future knowledge",
+        "LRU can be approximated using reference bits and counters",
+        "Clock algorithm provides practical LRU approximation",
+        "FIFO is simplest but not always best; LRU is practical with hardware support",
+        "Optimal cannot be implemented but serves as benchmark"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the combined paging and segmentation memory management technique. How does address translation work in such a system?",
+      "keyPoints": [
+        "Combines advantages of both paging and segmentation",
+        "Logical address: segment number, page number within segment, and page offset",
+        "Segment table points to page table for each segment",
+        "Two-level translation: segment\u2192page table, then page\u2192frame",
+        "Provides logical view (segments) and efficient memory management (paging)",
+        "Protection can be at segment level and page level",
+        "Reduces external fragmentation from segmentation, internal from small pages",
+        "Address format: [Segment#][Page#][Offset]"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is thrashing? Explain its causes, symptoms, and the techniques used to prevent or recover from thrashing.",
+      "keyPoints": [
+        "Thrashing: excessive page faults causing CPU underutilization and poor performance",
+        "Causes: too many processes, insufficient frames, poor locality",
+        "Symptoms: high paging I/O, low CPU utilization, declining throughput",
+        "Prevention: Working Set model, Page Fault Frequency approach, Process suspension",
+        "Working set maintains minimum frames per process",
+        "Page Fault Frequency adjusts allocation based on fault rate",
+        "OS can suspend or swap out low priority processes",
+        "Proper frame allocation algorithms help prevent thrashing"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the different types of page tables used in virtual memory systems.",
+      "keyPoints": [
+        "Hierarchical Paging: multi-level page tables, good for large address spaces",
+        "Inverted Page Table: one entry per physical frame, saves memory but slow lookup",
+        "Hashed Page Table: uses hashing for fast lookup, handles large spaces",
+        "Segmented Page Table: combines segment table with page tables",
+        "Advantages/disadvantages: memory vs speed tradeoff",
+        "Forward mapping page tables: simple but large for big address spaces",
+        "Inverted reduces memory significantly for large systems",
+        "Modern systems use hierarchical with TLB for best performance"
+      ],
+      "marks": 10
+    }
+  ]
+}

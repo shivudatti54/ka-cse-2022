@@ -1,0 +1,35 @@
+{
+  "topicId": "recursive-recursively-enumerable-languages",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Universal Turing Machine Simulation",
+      "description": "Simulates any Turing machine M on input w to show L\u03bc is r.e.",
+      "code": "FUNCTION UniversalTM(\u27e8M\u27e9, w):\n  // \u27e8M\u27e9 is encoding of Turing machine M\n  // w is input string\n  \n  DECODE \u27e8M\u27e9 to obtain transition function \u03b4\n  INITIALIZE tape with w\n  SET current state to initial state of M\n  \n  WHILE true:\n    IF current state is accept state of M:\n      RETURN ACCEPT\n    IF current state is reject state of M:\n      // For r.e. - loops on rejection (doesn't halt here)\n      LOOP_FOREVER\n    \n    READ symbol at current tape position\n    IF \u03b4(current state, symbol) is undefined:\n      LOOP_FOREVER\n    \n    (new_state, new_symbol, direction) = \u03b4(current_state, symbol)\n    WRITE new_symbol at current position\n    MOVE head in direction\n    SET current_state = new_state\nEND\n\n// This shows L\u03bc is recursively enumerable (semi-decidable)\n// Accepts if M accepts w, loops otherwise",
+      "explanation": "The universal language L\u03bc is r.e. because we can construct this UTM that accepts if M accepts w. It halts on acceptance but may loop on rejection, demonstrating r.e. but not recursive nature.",
+      "timeComplexity": "Depends on M being simulated",
+      "spaceComplexity": "O(tape length)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Decider for Recursive Language Union",
+      "description": "Shows recursive languages are closed under union",
+      "code": "FUNCTION UnionDecider(L1, L2, w):\n  // L1 and L2 are recursive languages\n  // Returns ACCEPT if w \u2208 L1 \u222a L2, REJECT otherwise\n  \n  // Since L1 and L2 are recursive, we have deciders D1 and D2\n  result1 = DeciderL1(w)  // Always halts\n  result2 = DeciderL2(w)  // Always halts\n  \n  IF result1 = ACCEPT OR result2 = ACCEPT:\n    RETURN ACCEPT\n  ELSE:\n    RETURN REJECT\n  \n// This always halts because both deciders halt\n// Therefore L1 \u222a L2 is recursive (closed under union)",
+      "explanation": "Shows that union of two recursive languages is recursive. We run both deciders in parallel and accept if either accepts. Both always halt, so the union decider always halts.",
+      "timeComplexity": "O(max(T1(n), T2(n)))",
+      "spaceComplexity": "O(max(S1(n), S2(n)))"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Enumeration Procedure for R.E. Languages",
+      "description": "Shows how to enumerate strings in an r.e. language",
+      "code": "FUNCTION EnumerateR.E.(TM M):\n  // Enumerates all strings accepted by TM M\n  // A language is r.e. iff it can be enumerated\n  \n  n = 1\n  WHILE true:\n    // Try all strings of length up to n\n    FOR each string w of length \u2264 n:\n      // Run M on w with time limit\n      IF SimulateWithTimeout(M, w, n steps) = ACCEPT:\n        OUTPUT w  // String accepted within n steps\n    n = n + 1\n  \n// This eventually outputs every string in L(M)\n// May run forever but outputs correct strings\n// Characterizes r.e. languages",
+      "explanation": "This enumeration procedure demonstrates that a language is recursively enumerable iff there exists an enumeration procedure that eventually outputs each string in the language (may run forever but will list all strings in L).",
+      "timeComplexity": "O(n \u00d7 number of strings \u00d7 n)",
+      "spaceComplexity": "O(n) tape for simulation"
+    }
+  ]
+}

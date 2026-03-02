@@ -1,0 +1,179 @@
+{
+  "topicId": "egrep-typical-examples-involving-different-regular",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between grep, egrep, and fgrep with respect to regular expressions supported.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "grep: basic regular expressions (BRE) - metacharacters like ., *, ^, $ are literal unless escaped",
+        "egrep: extended regular expressions (ERE) - supports +, ?, |, (), {} as metacharacters",
+        "fgrep: fixed strings - treats all characters as literals, no regex processing",
+        "egrep is equivalent to grep -E"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write an egrep pattern to match valid phone numbers in the format XXX-XXX-XXXX where X is a digit.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Pattern: [0-9]{3}-[0-9]{3}-[0-9]{4}",
+        "Or equivalently: [[:digit:]]{3}-[[:digit:]]{3}-[[:digit:]]{4}",
+        "[0-9] or [[:digit:]] matches any digit",
+        "{3} and {4} are quantifiers specifying exact repetitions",
+        "The hyphens are literal characters matched as shown"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are POSIX character classes? List at least four with their meanings.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "[[:alpha:]] - matches any alphabetic character (a-z, A-Z)",
+        "[[:digit:]] - matches any digit (0-9)",
+        "[[:alnum:]] - matches any alphanumeric character (letters and digits)",
+        "[[:space:]] - matches any whitespace character (space, tab, newline)",
+        "[[:upper:]] - matches uppercase letters",
+        "[[:lower:]] - matches lowercase letters",
+        "[[:punct:]] - matches punctuation characters"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the concept of backreferences in egrep with an example.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Backreferences allow referencing a previously matched group",
+        "Syntax: \\1, \\2, etc. refer to 1st, 2nd captured group",
+        "Example: (.)\\1 matches consecutive identical characters like 'aa', 'bb'",
+        "Example: ([a-z])\\1{2} matches three consecutive same letters like 'aaa'",
+        "Useful for finding repeated words or patterns in text"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Write egrep commands to: (a) Count lines containing 'error', (b) Show line numbers of matches, (c) Search case-insensitively, (d) Match whole words only.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "(a) egrep -c 'error' filename",
+        "(b) egrep -n 'error' filename",
+        "(c) egrep -i 'error' filename",
+        "(d) egrep -w 'error' filename",
+        "These options can be combined: egrep -inw 'error' filename"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the difference between character class [abc] and grouping (abc)?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "[abc] - character class: matches any ONE character from a, b, or c",
+        "(abc) - grouping: treats abc as a single unit for applying quantifiers/anchors",
+        "Example: (ab)+ matches 'ab', 'abab', 'ababab'",
+        "Example: [ab]+ matches 'a', 'b', 'ab', 'ba', 'aab', any combination",
+        "Grouping enables backreferences: (\\w)\\1 captures and reuses matched content"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain word boundary anchors \\b with an example showing why egrep -w is different from plain pattern matching.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "\\b matches position between a word character and non-word character",
+        "Example: \\bhello\\b matches 'hello' but not 'helloo' or 'ohello'",
+        "egrep -w 'hello' achieves the same result automatically",
+        "Without -w or \\b: 'hello' in pattern matches 'hello' within larger words",
+        "Useful for exact word searches in text processing"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design an egrep pattern to validate email addresses. The pattern should match basic email format (local-part@domain.tld). Explain each component of your pattern.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Pattern: ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+        "^ - anchors to start of line",
+        "[A-Za-z0-9._%+-]+ - local part: letters, digits, special chars, one or more",
+        "@ - literal @ symbol",
+        "[A-Za-z0-9.-]+ - domain name: alphanumeric and dots/hyphens",
+        "\\. - literal dot (escaped)",
+        "[A-Za-z]{2,} - TLD: at least 2 letters",
+        "$ - anchors to end of line",
+        "This is a basic validation - real email validation is more complex"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a comprehensive note on extended regular expression metacharacters supported by egrep. Provide examples for each metacharacter.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "+ : one or more - 'a+' matches a, aa, aaa",
+        "? : zero or one - 'colou?r' matches color, colour",
+        "| : alternation - 'cat|dog' matches cat or dog",
+        "( ) : grouping - '(ab)+' groups and repeats",
+        "{n} : exactly n times - 'a{3}' matches aaa",
+        "{n,} : at least n times - 'a{2,}' matches aa, aaa, aaaa",
+        "{n,m} : between n and m - 'a{2,4}' matches aa, aaaa, aaaaa",
+        ". : any character except newline",
+        "^ : start of line anchor",
+        "$ : end of line anchor",
+        "[ ] : character class with negation [^]",
+        "\\ : escape special characters",
+        "Examples demonstrate each metacharacter's usage"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the following egrep options with examples: -i, -v, -c, -n, -l, -r, -w, -o",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "-i : case insensitive - egrep -i 'hello' matches Hello, HELLO",
+        "-v : invert match - egrep -v 'error' shows lines NOT containing error",
+        "-c : count matches - egrep -c 'pattern' prints number of matching lines",
+        "-n : show line numbers - egrep -n 'pattern' prefixes line numbers",
+        "-l : show filenames only - egrep -l 'pattern' lists files with matches",
+        "-r : recursive search - egrep -r 'pattern' searches in directories",
+        "-w : whole word - egrep -w 'hello' matches whole words only",
+        "-o : only matching - egrep -o 'pattern' shows only matched portions",
+        "Examples for each option demonstrating practical usage"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Create an egrep pattern to extract all URLs from a text file. The URLs may start with http://, https://, or www. and contain alphanumeric characters, dots, slashes, and hyphens.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Pattern: (https?://|www\\.)[a-zA-Z0-9.-]+(?:/[a-zA-Z0-9./_-]*)?",
+        "https? matches http or https (s is optional)",
+        "(http://|https://|www\\.) matches any of the three URL prefixes",
+        "[a-zA-Z0-9.-]+ matches domain name characters",
+        "(?: ... ) is non-capturing group for optional path",
+        "[a-zA-Z0-9./_-]* matches path characters after domain",
+        "This pattern handles most common URL formats",
+        "Explain each component in detail"
+      ]
+    }
+  ]
+}

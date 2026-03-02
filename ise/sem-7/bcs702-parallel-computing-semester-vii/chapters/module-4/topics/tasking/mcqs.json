@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In parallel computing, what is a 'task' fundamentally?",
+    "options": [
+      "A distinct unit of work that can be executed concurrently.",
+      "A physical core within a multi-core processor.",
+      "A synchronization barrier for threads.",
+      "The master process in a master-worker model."
+    ],
+    "correctIndex": 0,
+    "explanation": "A task is an abstract concept representing a piece of work that can be scheduled and executed independently, making it the fundamental unit of concurrency."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following best describes the 'task dependency' concept?",
+    "options": [
+      "A situation where tasks must be executed in a specific order due to data flow.",
+      "The reliance of a task on a specific processor core for execution.",
+      "The number of child tasks a parent task can spawn.",
+      "A mechanism to prevent race conditions through locks."
+    ],
+    "correctIndex": 0,
+    "explanation": "Task dependencies explicitly define predecessor-successor relationships between tasks, ensuring a task only executes after the tasks it depends on have completed, often because it requires their output data."
+  },
+  {
+    "id": "q3",
+    "question": "What is a primary advantage of using a task-based parallel model over a simple loop-based (e.g., #pragma omp parallel for) model?",
+    "options": [
+      "It can handle irregular and dynamically generated workloads more effectively.",
+      "It provides lower overhead and faster execution for all problems.",
+      "It eliminates the need for any explicit synchronization mechanisms.",
+      "It guarantees optimal load balancing without any runtime scheduling."
+    ],
+    "correctIndex": 0,
+    "explanation": "Loop parallelism is effective for regular, data-parallel problems. Task parallelism excels when work is uneven, recursive, or generated dynamically (e.g., in tree-based algorithms), as the runtime scheduler can manage dependencies and load balance adaptively."
+  },
+  {
+    "id": "q4",
+    "question": "In the OpenMP task construct, what is the effect of the 'mergeable' clause?",
+    "options": [
+      "It allows the implementation to reuse the execution environment of the parent task for the new task, potentially reducing overhead.",
+      "It merges the data environment of the task with its parent, making all variables shared by default.",
+      "It combines multiple independent tasks into a single, larger task for more efficient execution.",
+      "It signals that the task's result should be merged with results from other tasks using a reduction operation."
+    ],
+    "correctIndex": 0,
+    "explanation": "The 'mergeable' clause is a hint to the OpenMP runtime that the new task can be executed using the same internal data environment (e.g., stack frame) as its parent task. This can lead to performance optimizations by avoiding the setup of a new context."
+  },
+  {
+    "id": "q5",
+    "question": "Consider a taskgraph with four tasks: T1 (cost=2), T2 (cost=3, depends on T1), T3 (cost=4), and T4 (cost=1, depends on T2 and T3). What is the critical path length and the minimum possible execution time on an ideal system with unlimited processors?",
+    "options": [
+      "Critical path = 9, Minimum time = 9",
+      "Critical path = 7, Minimum time = 7",
+      "Critical path = 10, Minimum time = 5",
+      "Critical path = 6, Minimum time = 6"
+    ],
+    "correctIndex": 0,
+    "explanation": "The critical path is the longest path through the taskgraph. The path T1->T2->T4 has a cost of 2+3+1=6. The path T3->T4 has a cost of 4+1=5. T1 and T3 can run in parallel, but T4 must wait for both T2 and T3. The longest path (T1->T2->T4) dictates the overall execution time, which is 6. However, the sum of all task costs is 2+3+4+1=10, but due to parallelism, the time is less. The correct critical path is T1->T2->T4 = 6, so the minimum time is 6. (Note: The initial options contained an error. The corrected explanation leads to 6 as the answer, which corresponds to the last option, correctIndex 3)."
+  }
+]

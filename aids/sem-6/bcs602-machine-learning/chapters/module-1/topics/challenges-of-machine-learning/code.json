@@ -1,0 +1,45 @@
+{
+  "topicId": "challenges-of-machine-learning",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Handling Missing Data with Imputation",
+      "description": "Demonstrates different techniques for handling missing values in datasets",
+      "code": "import numpy as np\nfrom sklearn.impute import SimpleImputer\n\n# Sample data with missing values\ndata = np.array([[1, 2, np.nan], [3, np.nan, 6], [7, 8, 9], [np.nan, 11, 12]])\n\n# Mean imputation\nimputer_mean = SimpleImputer(strategy='mean')\ndata_mean = imputer_mean.fit_transform(data)\n\n# Median imputation (better for outliers)\nimputer_median = SimpleImputer(strategy='median')\ndata_median = imputer_median.fit_transform(data)\n\n# Most frequent (mode) for categorical\nimputer_mode = SimpleImputer(strategy='most_frequent')\ndata_mode = imputer_mode.fit_transform(data)\n\nprint(\"Original data:\\n\", data)\nprint(\"After mean imputation:\\n\", data_mean)",
+      "explanation": "This code shows three common approaches to handle missing data: mean imputation replaces missing values with the average, median is robust to outliers, and mode works for categorical data.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Handling Imbalanced Dataset with SMOTE",
+      "description": "Demonstrates Synthetic Minority Over-sampling Technique for imbalanced classes",
+      "code": "from sklearn.datasets import make_classification\nfrom sklearn_test_split\nfrom.model_selection import train sklearn.metrics import classification_report\nfrom imblearn.over_sampling import SMOTE\n\n# Create imbalanced dataset\nX, y = make_classification(n_samples=1000, n_classes=2, weights=[0.9, 0.1], random_state=42)\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# Before SMOTE\nprint(\"Before SMOTE:\", np.bincount(y_train))\n\n# Apply SMOTE\nsmote = SMOTE(random_state=42)\nX_resampled, y_resampled = smote.fit_resample(X_train, y_train)\n\n# After SMOTE\nprint(\"After SMOTE:\", np.bincount(y_resampled))\n\n# Train model\nmodel = LogisticRegression()\nmodel.fit(X_resampled, y_resampled)\npredictions = model.predict(X_test)\nprint(classification_report(y_test, predictions))",
+      "explanation": "SMOTE generates synthetic samples for the minority class by interpolating between existing minority samples, helping balance the dataset for better model training.",
+      "timeComplexity": "O(n*m) where n is samples and m is features",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Regularization to Prevent Overfitting",
+      "description": "Demonstrates L1 (Lasso) and L2 (Ridge) regularization techniques",
+      "code": "import numpy as np\nfrom sklearn.linear_model import Lasso, Ridge\nfrom sklearn.preprocessing import PolynomialFeatures\nfrom sklearn.pipeline import make_pipeline\n\n# Generate overfitting scenario\nnp.random.seed(42)\nX = np.linspace(0, 10, 20)\ny = X + np.sin(X) + np.random.normal(0, 0.5, 20)\n\n# Polynomial regression without regularization (overfitting)\npoly_no_reg = PolynomialFeatures(degree=10)\nmodel_no_reg = LinearRegression()\n\n# With L2 Regularization (Ridge)\nmodel_ridge = Ridge(alpha=1.0)\n\n# With L1 Regularization (Lasso)\nmodel_lasso = Lasso(alpha=0.1)\n\n# Fit models\nX_poly = poly_no_reg.fit_transform(X.reshape(-1, 1))\nmodel_no_reg.fit(X_poly, y)\nmodel_ridge.fit(X_poly, y)\nmodel_lasso.fit(X_poly, y)\n\n# Compare coefficients\nprint(\"No regularization coeffs:\", model_no_reg.coef_)\nprint(\"Ridge regularization coeffs:\", model_ridge.coef_)\nprint(\"Lasso regularization coeffs:\", model_lasso.coef_)",
+      "explanation": "Regularization adds a penalty term to the loss function. Ridge (L2) shrinks all coefficients toward zero, while Lasso (L1) can drive some coefficients to exactly zero, performing feature selection.",
+      "timeComplexity": "O(n*p^2 + p^3) where n samples, p features",
+      "spaceComplexity": "O(p)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Cross-Validation for Model Selection",
+      "description": "Demonstrates k-fold cross-validation to evaluate and select models",
+      "code": "from sklearn.datasets import load_iris\nfrom sklearn.model_selection import cross_val_score, KFold\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\n\n# Load data\niris = load_iris()\nX, y = iris.data, iris.target\n\n# Define cross-validation strategy\nkfold = KFold(n_splits=5, shuffle=True, random_state=42)\n\n# Models to compare\nmodels = {\n    'Logistic Regression': LogisticRegression(max_iter=200),\n    'Decision Tree': DecisionTreeClassifier(),\n    'SVM': SVC()\n}\n\n# Evaluate each model\nfor name, model in models.items():\n    scores = cross_val_score(model, X, y, cv=kfold, scoring='accuracy')\n    print(f\"{name}: Mean Accuracy = {scores.mean():.3f} (+/- {scores.std():.3f})\")\n    \n# Select best model\nbest_model = max(models, key=lambda x: cross_val_score(models[x], X, y, cv=kfold).mean())\nprint(f\"\\nBest model: {best_model}\")",
+      "explanation": "K-fold cross-validation splits data into k subsets, training on k-1 and testing on 1, repeating k times. This provides more reliable performance estimates and helps prevent overfitting to a particular train-test split.",
+      "timeComplexity": "O(k*n*m) where k folds, n samples, m model complexity",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

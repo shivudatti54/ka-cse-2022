@@ -1,0 +1,45 @@
+{
+  "topicId": "what-operating-systems-do",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simple Interrupt Handler Structure",
+      "description": "Demonstrates how an interrupt handler is structured and executed",
+      "code": "// Interrupt Handler Pseudocode\nINTERRUPT_HANDLERkeyboard()\nBEGIN\n  // 1. Save current process state\n  PUSH all_registers TO stack\n  PUSH flags TO stack\n  \n  // 2. Handle the interrupt\n  READ keyboard_buffer\n  PROCESS keypress\n  STORE to input_buffer\n  \n  // 3. Signal end of interrupt\n  ACKNOWLEDGE interrupt TO interrupt_controller\n  \n  // 4. Restore state and return\n  POP flags FROM stack\n  POP all_registers FROM stack\n  RETURN_FROM_INTERRUPT\nEND",
+      "explanation": "Shows the structure of an interrupt handler: save state, process interrupt, acknowledge, restore state. The CPU automatically saves program counter before jumping to handler.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "System Call Simulation",
+      "description": "Demonstrates how system calls work by simulating a file read operation",
+      "code": "import os\n\nclass SystemCall:\n    def __init__(self):\n        self.kernel_mode = False\n        self.user_mode = True\n        \n    def read_file_user(self, filename):\n        \"\"\"User mode requests file read via system call\"\"\"\n        # User mode: cannot access hardware directly\n        # Must request OS service\n        return self.syscall_read(filename)\n    \n    def syscall_read(self, filename):\n        \"\"\"Transition to kernel mode for privileged operation\"\"\"\n        print(\"Mode switch: USER \u2192 KERNEL\")\n        self.kernel_mode = True\n        self.user_mode = False\n        \n        # Kernel performs privileged operation\n        try:\n            with open(filename, 'r') as f:\n                content = f.read()\n            print(f\"File '{filename}' read successfully\")\n            print(\"Mode switch: KERNEL \u2192 USER\")\n            self.kernel_mode = False\n            self.user_mode = True\n            return content\n        except FileNotFoundError:\n            print(\"Error: File not found\")\n            return None\n\n# Usage\nos_sim = SystemCall()\nresult = os_sim.read_file_user('example.txt')",
+      "explanation": "Demonstrates the user-to-kernel mode transition required for privileged operations like file access. User programs cannot directly read from disk; they must request OS services via system calls.",
+      "timeComplexity": "O(n) - depends on file size",
+      "spaceComplexity": "O(n) - file content stored in memory"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Bootstrap Loader Simulation",
+      "description": "Shows simplified bootstrap process in C",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n// Simulated memory and hardware components\n#define MEMORY_SIZE 1024\nunsigned char memory[MEMORY_SIZE];\nunsigned char *boot_loader;\nunsigned char *kernel_start;\n\n// Bootstrap program - loads OS kernel\nvoid bootstrap_loader(void) {\n    printf(\"=== BOOTSTRAP SEQUENCE ===\\n\");\n    \n    // Step 1: Initialize basic hardware\n    printf(\"1. BIOS: Initializing basic hardware...\\n\");\n    printf(\"2. POST: Power-On Self Test passed\\n\");\n    \n    // Step 2: Locate boot device\n    printf(\"3. Searching for bootable device...\\n\");\n    printf(\"   Found: Primary Hard Disk\\n\");\n    \n    // Step 3: Load boot sector (512 bytes)\n    printf(\"4. Loading boot sector (512 bytes)...\\n\");\n    boot_loader = &memory[0];\n    \n    // Step 4: Execute boot loader\n    printf(\"5. Boot loader executing...\\n\");\n    \n    // Step 5: Load OS kernel\n    printf(\"6. Loading OS Kernel into memory at address 0x1000...\\n\");\n    kernel_start = &memory[0x1000];\n    printf(\"   Kernel loaded successfully\\n\");\n    \n    // Step 6: Jump to kernel\n    printf(\"7. Transferring control to OS Kernel...\\n\");\n    printf(\"=== BOOT COMPLETE ===\\n\\n\");\n}\n\n// Initialize and start system\nint main() {\n    bootstrap_loader();\n    \n    printf(\"System Services Starting:\\n\");\n    printf(\"  - Memory Management Unit initialized\\n\");\n    printf(\"  - Process Scheduler initialized\\n\");\n    printf(\"  - File System mounted\\n\");\n    printf(\"  - Device Drivers loaded\\n\");\n    printf(\"\\nLOGIN PROMPT READY\\n\");\n    \n    return 0;\n}",
+      "explanation": "Demonstrates the bootstrap process: BIOS initialization \u2192 POST \u2192 boot device search \u2192 boot sector load \u2192 kernel loading \u2192 control transfer. This is a simplified simulation of what happens when a computer starts.",
+      "timeComplexity": "O(1) - constant steps",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Memory Protection with Base and Limit Registers",
+      "description": "Demonstrates how OS protects memory using base and limit registers",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    unsigned int base_register;\n    unsigned int limit_register;\n    int in_kernel_mode;\n} MemoryProtectionUnit;\n\n// Global protection registers\nMemoryProtectionUnit pmu = {0, 0, 0};\n\n// Initialize memory protection\nvoid init_protection(unsigned int base, unsigned int limit) {\n    pmu.base_register = base;\n    pmu.limit_register = limit;\n    pmu.in_kernel_mode = 0;\n    printf(\"Memory Protection: Base=0x%X, Limit=%u bytes\\n\", \n           base, limit);\n}\n\n// Simulate memory access with protection check\nint access_memory(unsigned int address, int write) {\n    // Check if in kernel mode\n    if (pmu.in_kernel_mode) {\n        printf(\"KERNEL MODE: Access granted to address 0x%X\\n\", address);\n        return 1; // Access granted\n    }\n    \n    // User mode: check bounds\n    unsigned int offset = address - pmu.base_register;\n    \n    if (offset >= pmu.limit_register) {\n        printf(\"PROTECTION FAULT: Address 0x%X out of bounds!\\n\", address);\n        printf(\"   Offset %u >= Limit %u\\n\", offset, pmu.limit_register);\n        return 0; // Access denied\n    }\n    \n    printf(\"USER MODE: Access granted to address 0x%X\\n\", address);\n    return 1;\n}\n\n// System call - switches to kernel mode\nvoid kernel_access(unsigned int address) {\n    pmu.in_kernel_mode = 1;\n    printf(\"\\n=== SYSTEM CALL: Entering Kernel Mode ===\\n\");\n    access_memory(address, 1);\n    pmu.in_kernel_mode = 0;\n    printf(\"=== Returning to User Mode ===\\n\\n\");\n}\n\nint main() {\n    // Initialize with base address 0x1000 and 1024 byte limit\n    init_protection(0x1000, 1024);\n    \n    printf(\"\\n--- Testing User Mode Access ---\\n\");\n    access_memory(0x1400, 1);  // Within bounds - OK\n    access_memory(0x1800, 1);  // Out of bounds - Protection Fault\n    \n    printf(\"\\n--- Testing Kernel Mode Access ---\\n\");\n    kernel_access(0xFFFF);  // Any address works in kernel mode\n    \n    return 0;\n}",
+      "explanation": "Demonstrates memory protection using base and limit registers. In user mode, any memory access outside the allocated region causes a protection fault. In kernel mode, all memory is accessible. This is a fundamental OS protection mechanism.",
+      "timeComplexity": "O(1) - constant time checks",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

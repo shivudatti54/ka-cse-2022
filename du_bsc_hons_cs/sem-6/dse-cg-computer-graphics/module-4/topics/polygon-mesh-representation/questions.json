@@ -1,0 +1,150 @@
+{
+  "topicId": "polygon-mesh-representation",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between a manifold and a non-manifold mesh with an example of each.",
+      "keyPoints": [
+        "Manifold: each edge shared by exactly two faces, watertight, closed volume",
+        "Non-manifold: edges shared by more than two faces, holes, isolated vertices",
+        "Example manifold: sphere, cube, closed torus",
+        "Example non-manifold: Y-junction, figure with dangling edges"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the winged-edge data structure and explain its advantages for mesh traversal.",
+      "keyPoints": [
+        "Stores edges as central entities with pointers to vertices, faces, and adjacent edges",
+        "Each edge stores: two vertices, two faces, four adjacent edges",
+        "Allows O(1) access to edge neighborhood",
+        "Efficient for edge traversal around faces and vertices",
+        "Disadvantage: complex to maintain during mesh modifications"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is mesh subdivision? Compare Loop subdivision with Catmull-Clark subdivision.",
+      "keyPoints": [
+        "Subdivision increases mesh resolution by replacing polygons with smaller ones",
+        "Loop subdivision: works on triangular meshes, inserts vertex at edge midpoint",
+        "Catmull-Clark: works on quad meshes, creates smooth limit surface",
+        "Both create smoother appearance useful for character modeling and smooth surfaces"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the Euler characteristic formula for closed polyhedral meshes. What does it represent?",
+      "keyPoints": [
+        "Formula: V - E + F = 2 for convex/closed manifolds",
+        "V = number of vertices, E = number of edges, F = number of faces",
+        "Represents topological invariant of sphere-like surfaces",
+        "Used to validate mesh integrity and detect errors",
+        "For torus: V - E + F = 0"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "List three common polygon mesh file formats and explain their typical use cases.",
+      "keyPoints": [
+        "OBJ: Wavefront format, supports vertices, normals, textures, used in modeling",
+        "STL: Stereolithography, only triangles, used in 3D printing, no colors/materials",
+        "PLY: Polygon File Format, flexible, can store colors and properties",
+        "FBX: Autodesk format, supports animations, materials, used in game engines"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is mesh simplification? Explain one technique used for mesh simplification.",
+      "keyPoints": [
+        "Reduces polygon count to improve performance or memory",
+        "Common technique: Edge collapse - merge two vertices into one",
+        "Quadric error metrics measure distance from collapsed vertex to planes of neighboring faces",
+        "Prioritizes collapse with minimum visual error",
+        "Useful for Level-of-Detail (LOD) in games"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare triangle meshes and quad meshes. Why is each preferred in different contexts?",
+      "keyPoints": [
+        "Triangle mesh: only triangular faces, GPU-efficient rendering",
+        "Quad mesh: quadrilateral faces, better edge flow for deformation",
+        "Triangle preferred: real-time graphics, game engines, hardware rasterization",
+        "Quad preferred: character modeling, subdivision surfaces, organic shapes",
+        "Hybrid approaches often use quads for modeling, convert to triangles for rendering"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the half-edge data structure in detail. Explain how it stores mesh connectivity and how it facilitates efficient traversal around a face and between adjacent faces.",
+      "keyPoints": [
+        "Half-edge divides each edge into two directed half-edges",
+        "Each half-edge stores: starting vertex, face, opposite half-edge, next half-edge",
+        "Enables O(1) traversal around a face using next pointers",
+        "Can traverse between adjacent faces via opposite half-edge",
+        "Better than winged-edge for face operations, simpler structure",
+        "Disadvantage: cannot represent non-manifold edges easily",
+        "Example walkthrough: start at any half-edge, follow next pointers to loop around face"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of mesh topology. Discuss what makes a mesh 'well-formed' and explain the properties of manifold meshes. Also, explain the issues caused by non-manifold elements in mesh processing algorithms.",
+      "keyPoints": [
+        "Mesh topology refers to connectivity and relationship between vertices, edges, faces",
+        "Well-formed mesh: clean topology, no degenerate faces, consistent winding order",
+        "Manifold properties: each edge shared by exactly two faces, watertight, consistent orientation",
+        "Non-manifold issues: edges shared by >2 faces, isolated vertices, dangling edges",
+        "Problems: causes errors in subdivision, smoothing, physics simulation",
+        "Non-manifold can break algorithms expecting manifold input",
+        "Detection and repair are important preprocessing steps"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the working of Catmull-Clark subdivision algorithm. How does it handle meshes with faces other than quadrilaterals? Trace through one iteration of subdivision on a simple quad mesh.",
+      "keyPoints": [
+        "Catmull-Clark is a subdivision scheme for polygonal meshes",
+        "Creates one face point (average of face vertices), one edge point (average of edge endpoints and face points)",
+        "Vertex points updated: blend of original vertex, adjacent edge points, adjacent face points",
+        "For non-quad faces: adds face points and edge points similarly, all faces become quads",
+        "After first subdivision, all faces become quadrilaterals",
+        "Result approaches smooth limit surface similar to bi-cubic B-spline"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss various mesh data structures used in computer graphics. Compare adjacency list, winged-edge, and half-edge data structures in terms of storage complexity, traversal efficiency, and ease of modification.",
+      "keyPoints": [
+        "Adjacency List: O(V+E+F) storage, good for vertex neighbors, poor for edge operations",
+        "Winged-Edge: O(E) storage, excellent for edge operations, complex update operations",
+        "Half-Edge: O(E) storage, efficient for face traversal, cannot handle non-manifold",
+        "Adjacency Matrix: O(V\u00b2) storage, O(1) lookup but memory intensive",
+        "Choice depends on application: rendering vs modeling vs physics simulation"
+      ],
+      "marks": 10
+    }
+  ]
+}

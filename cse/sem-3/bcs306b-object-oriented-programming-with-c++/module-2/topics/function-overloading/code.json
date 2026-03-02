@@ -1,0 +1,45 @@
+{
+  "topicId": "function-overloading",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Function Overloading Example",
+      "description": "Demonstrates function overloading with different parameter types",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Function to add two integers\nint add(int a, int b) {\n cout << \"Adding two ints: \";\n return a + b;\n}\n\n// Function to add two doubles\ndouble add(double a, double b) {\n cout << \"Adding two doubles: \";\n return a + b;\n}\n\n// Function to add three integers\nint add(int a, int b, int c) {\n cout << \"Adding three ints: \";\n return a + b + c;\n}\n\nint main() {\n cout << add(5, 10) << endl; // Calls int add(int, int)\n cout << add(3.5, 2.5) << endl; // Calls double add(double, double)\n cout << add(1, 2, 3) << endl; // Calls int add(int, int, int)\n return 0;\n}",
+      "explanation": "Three overloaded add() functions with different signatures: (int,int), (double,double), (int,int,int). Compiler selects appropriate function based on argument types at compile-time.",
+      "timeComplexity": "O(1) per call",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Function Overloading with Reference Parameters",
+      "description": "Shows overloading based on reference and const-reference",
+      "code": "#include <iostream>\nusing namespace std;\n\nvoid display(int &x) {\n cout << \"Reference version: \" << x << endl;\n}\n\nvoid display(const int &x) {\n cout << \"Const reference version: \" << x << endl;\n}\n\nvoid display(int x) {\n cout << \"Value version: \" << x << endl;\n}\n\nint main() {\n int a = 10;\n const int b = 20;\n \n display(a); // Calls non-const reference version\n display(b); // Calls const reference version\n display(30); // Calls value version (rvalue)\n return 0;\n}",
+      "explanation": "Three versions: pass-by-value, pass-by-reference, pass-by-const-reference. Different argument types (lvalue, const lvalue, rvalue) call different functions.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Demonstrating Ambiguity in Overloading",
+      "description": "Shows cases where ambiguity arises and causes compilation error",
+      "code": "#include <iostream>\nusing namespace std;\n\n// This causes ambiguity - cannot differentiate\nvoid process(int x) {\n cout << \"int version: \" << x << endl;\n}\n\nvoid process(double x) {\n cout << \"double version: \" << x << endl;\n}\n\n// Uncommenting following causes ambiguity error:\n// void test(int x, int y = 10) {}\n// void test(int x) {}\n// test(5); // Ambiguous!\n\nint main() {\n // Ambiguity when both could match equally\n // process('a'); // Ambiguous - char promotes to both int and double\n \n // Explicit casting resolves ambiguity\n process(static_cast<int>('a'));\n process(static_cast<double>('a'));\n \n return 0;\n}",
+      "explanation": "Demonstrates ambiguity scenarios: when multiple overloads match equally (like char matching both int and double) or when default arguments create identical signatures. Solution: explicit type casting.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Function Overloading for Class Operations",
+      "description": "Shows practical use of overloading in a Calculator class",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Calculator {\npublic:\n // Add two integers\n int add(int a, int b) {\n return a + b;\n }\n \n // Add two doubles\n double add(double a, double b) {\n return a + b;\n }\n \n // Add three integers\n int add(int a, int b, int c) {\n return a + b + c;\n }\n \n // Concatenate strings\n string add(string s1, string s2) {\n return s1 + s2;\n }\n};\n\nint main() {\n Calculator calc;\n \n cout << calc.add(5, 10) << endl;\n cout << calc.add(3.5, 2.5) << endl;\n cout << calc.add(1, 2, 3) << endl;\n cout << calc.add(\"Hello \", \"World!\") << endl;\n \n return 0;\n}",
+      "explanation": "Demonstrates practical class-based function overloading. Same method name 'add' performs different operations based on argument types - integer addition, float addition, triple addition, and string concatenation.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

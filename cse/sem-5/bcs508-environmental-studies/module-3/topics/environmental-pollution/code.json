@@ -1,0 +1,35 @@
+{
+  "topicId": "environmental-pollution",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Air Quality Index Calculation",
+      "description": "Algorithm to calculate AQI based on pollutant concentrations",
+      "code": "ALGORITHM Calculate_AQI\nINPUT: PM25_conc, PM10_conc, SO2_conc, NO2_conc, O3_conc\nOUTPUT: AQI_value, Category\n\nBEGIN\n // Calculate individual AQI for each pollutant\n PM25_AQI = (PM25_conc / 35.4) * 100\n PM10_AQI = (PM10_conc / 154) * 100\n SO2_AQI = (SO2_conc / 75) * 100\n NO2_AQI = (NO2_conc / 100) * 100\n O3_AQI = (O3_conc / 54) * 100\n \n // AQI is the maximum among all pollutants\n AQI_value = MAX(PM25_AQI, PM10_AQI, SO2_AQI, NO2_AQI, O3_AQI)\n \n // Determine category\n IF AQI_value <= 50 THEN\n Category = \"Good\"\n ELSE IF AQI_value <= 100 THEN\n Category = \"Moderate\"\n ELSE IF AQI_value <= 150 THEN\n Category = \"Unhealthy for Sensitive Groups\"\n ELSE IF AQI_value <= 200 THEN\n Category = \"Unhealthy\"\n ELSE IF AQI_value <= 300 THEN\n Category = \"Very Unhealthy\"\n ELSE\n Category = \"Hazardous\"\n END IF\n \n RETURN AQI_value, Category\nEND",
+      "explanation": "This algorithm calculates AQI by measuring individual pollutant concentrations and taking the maximum value. It then categorizes the air quality from Good to Hazardous based on standard EPA breakpoints.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "BOD Calculation Algorithm",
+      "description": "Algorithm to calculate Biochemical Oxygen Demand for water sample",
+      "code": "ALGORITHM Calculate_BOD\nINPUT: initial_DO, final_DO, dilution_factor, volume_sample\nOUTPUT: BOD_value\n\nBEGIN\n // DO = Dissolved Oxygen in mg/L\n // Initial DO measured immediately after collection\n // Final DO measured after 5 days incubation at 20°C\n \n DO_initial = initial_DO // mg/L\n DO_final = final_DO // mg/L\n \n // Calculate BOD using formula\n BOD_raw = (DO_initial - DO_final) * dilution_factor\n \n // Apply temperature correction for non-standard conditions\n temperature = 20 // assumed incubation temperature in °C\n correction_factor = 1.0 + 0.02 * (temperature - 20)\n \n BOD_value = BOD_raw * correction_factor\n \n // Classify water quality\n IF BOD_value < 1 THEN\n Quality = \"Clean\"\n ELSE IF BOD_value < 3 THEN\n Quality = \"Moderately Polluted\"\n ELSE IF BOD_value < 8 THEN\n Quality = \"Polluted\"\n ELSE\n Quality = \"Heavily Polluted\"\n END IF\n \n RETURN BOD_value, Quality\nEND",
+      "explanation": "BOD measures oxygen required by microorganisms to decompose organic matter. Higher BOD indicates more pollution. The algorithm accounts for dilution factor and temperature correction.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Pollution Monitoring System",
+      "description": "Simple monitoring system to track pollution levels and alert",
+      "code": "CLASS PollutionMonitor\nATTRIBUTES:\n location_name\n sensor_data[] // array of pollutant readings\n threshold_values[] // maximum allowable limits\n alert_flag\n\nMETHODS:\n PROCEDURE ReadSensors()\n BEGIN\n sensor_data[0] = Read_PM25()\n sensor_data[1] = Read_PM10()\n sensor_data[2] = Read_SO2()\n sensor_data[3] = Read_NO2()\n END PROCEDURE\n\n PROCEDURE CheckThresholds()\n BEGIN\n alert_flag = FALSE\n FOR i = 0 TO 3 DO\n IF sensor_data[i] > threshold_values[i] THEN\n alert_flag = TRUE\n DISPLAY \"Alert: \" + pollutant_names[i] + \" exceeds limit!\"\n END IF\n END FOR\n END PROCEDURE\n\n PROCEDURE GenerateReport()\n BEGIN\n DISPLAY \"Location: \" + location_name\n DISPLAY \"Pollution Levels:\"\n FOR i = 0 TO 3 DO\n DISPLAY pollutant_names[i] + \": \" + sensor_data[i]\n END FOR\n IF alert_flag THEN\n DISPLAY \"STATUS: ALERT - Action Required\"\n ELSE\n DISPLAY \"STATUS: Normal - Within Limits\"\n END IF\n END PROCEDURE\n\n// Main Program\nBEGIN\n monitor = NEW PollutionMonitor(\"City Center\")\n monitor.ReadSensors()\n monitor.CheckThresholds()\n monitor.GenerateReport()\nEND",
+      "explanation": "This pseudocode demonstrates a basic pollution monitoring system that reads pollutant sensors, compares them with threshold values, and generates alerts when pollution exceeds safe limits.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

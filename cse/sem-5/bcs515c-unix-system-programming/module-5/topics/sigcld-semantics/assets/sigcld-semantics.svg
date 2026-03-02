@@ -1,0 +1,387 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1560">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd"/>
+      <stop offset="100%" style="stop-color:#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0"/>
+      <stop offset="100%" style="stop-color:#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5"/>
+      <stop offset="100%" style="stop-color:#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffebee"/>
+      <stop offset="100%" style="stop-color:#ffcdd2"/>
+    </linearGradient>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    
+    <!-- Filter for shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .title { font-size: 18px; font-weight: bold; fill: #1976d2; }
+    .subtitle { font-size: 12px; fill: #666; }
+    .body-text { font-size: 10px; fill: #333; }
+    .code-text { font-size: 9px; font-family: monospace; fill: #333; }
+    .label { font-size: 8px; fill: #666; }
+    
+    .animate-path {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: drawLine 1.5s ease-out forwards;
+    }
+    
+    .blink { animation: blink 1s infinite; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="800" height="1560" fill="#f8f9fa"/>
+  
+  <!-- STEP 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to SIGCLD Semantics in Unix/Linux. This lecture covers process management, zombie states, and proper signal handling.">
+    <rect x="20" y="10" width="760" height="45" rx="10" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="400" y="38" text-anchor="middle" class="title">SIGCLD Semantics in Unix/Linux</text>
+    <text x="400" y="52" text-anchor="middle" class="subtitle">Process Management and Signal Handling</text>
+  </g>
+  
+  <!-- STEP 1: What is SIGCLD -->
+  <g class="step" id="step1" data-narration="SIGCLD (Signal Child) is sent to the parent when a child process terminates. It's essentially an alias for SIGCHLD in modern Linux systems.">
+    <rect x="20" y="65" width="760" height="85" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="85" class="title" style="font-size:12px;">What is SIGCLD?</text>
+    <text x="40" y="102" class="body-text">Signal sent to parent when a child terminates or when wait() is called.</text>
+    <text x="40" y="118" class="body-text">In Linux, SIGCLD = SIGCHLD (POSIX standard)</text>
+    <text x="40" y="134" class="body-text" fill="#d32f2f">Default Action: <tspan font-weight="bold">IGNORE</tspan> - leads to zombies if wait() not called!</text>
+    <!-- Visual: Signal icon -->
+    <circle cx="700" cy="100" r="25" fill="#388e3c" opacity="0.2">
+      <animate attributeName="r" values="25;30;25" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M695 95 L700 110 L715 85" stroke="#388e3c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- STEP 2: Process States -->
+  <g class="step" id="step2" data-narration="A Unix process can be in Running, Sleeping, Stopped, or Zombie state. Understanding these states is essential for proper process management.">
+    <rect x="20" y="160" width="760" height="90" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="180" class="title" style="font-size:12px;">Process States in Unix</text>
+    <!-- State boxes -->
+    <rect x="40" y="195" width="120" height="40" rx="5" fill="#4caf50" opacity="0.3"/>
+    <text x="100" y="210" text-anchor="middle" class="body-text" font-weight="bold">Running</text>
+    <text x="100" y="225" text-anchor="middle" class="label">Executing</text>
+    
+    <rect x="170" y="195" width="120" height="40" rx="5" fill="#ff9800" opacity="0.3"/>
+    <text x="230" y="210" text-anchor="middle" class="body-text" font-weight="bold">Sleeping</text>
+    <text x="230" y="225" text-anchor="middle" class="label">Waiting</text>
+    
+    <rect x="300" y="195" width="120" height="40" rx="5" fill="#2196f3" opacity="0.3"/>
+    <text x="360" y="210" text-anchor="middle" class="body-text" font-weight="bold">Stopped</text>
+    <text x="360" y="225" text-anchor="middle" class="label">Suspended</text>
+    
+    <rect x="430" y="195" width="120" height="40" rx="5" fill="#f44336" opacity="0.3"/>
+    <text x="490" y="210" text-anchor="middle" class="body-text" font-weight="bold">Zombie</text>
+    <text x="490" y="225" text-anchor="middle" class="label">Defunct</text>
+    
+    <!-- Arrow showing zombie formation -->
+    <path d="M560 215 L610 215" stroke="#f44336" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <text x="590" y="205" class="label" text-anchor="middle">Child exits</text>
+  </g>
+  
+  <!-- STEP 3: Zombie Process Explanation -->
+  <g class="step" id="step3" data-narration="A zombie process has terminated but remains in the process table until the parent reads its exit status via wait(). Without proper handling, zombies accumulate and exhaust system resources.">
+    <rect x="20" y="260" width="760" height="100" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="280" class="title" style="font-size:12px;">Zombie Processes - The Problem</text>
+    <text x="40" y="300" class="body-text">A zombie is a terminated process that remains in the process table.</text>
+    <text x="40" y="318" class="body-text">The kernel keeps exit status for the parent to retrieve via wait().</text>
+    <text x="40" y="336" class="body-text">If parent never calls wait() → zombies accumulate → system instability!</text>
+    <text x="40" y="354" class="body-text" fill="#9c27b0">Orphaned zombie: Parent dies first → init (PID 1) adopts and reaps it.</text>
+    
+    <!-- Diagram: Parent - Zombie -->
+    <rect x="450" y="290" width="80" height="50" rx="5" fill="#1976d2" opacity="0.7"/>
+    <text x="490" y="310" text-anchor="middle" fill="white" class="body-text">Parent</text>
+    <text x="490" y="325" text-anchor="middle" fill="white" class="label">PID: 1234</text>
+    
+    <rect x="450" y="355" width="80" height="50" rx="5" fill="#f44336" opacity="0.7"/>
+    <text x="490" y="375" text-anchor="middle" fill="white" class="body-text">Zombie</text>
+    <text x="490" y="390" text-anchor="middle" fill="white" class="label">PID: 5678</text>
+    
+    <path d="M490 340 L490 355" stroke="#666" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrowBlue)"/>
+    <text x="540" y="370" class="label">wait() needed!</text>
+  </g>
+  
+  <!-- STEP 4: wait() System Call -->
+  <g class="step" id="step4" data-narration="The wait() system call blocks until any child terminates. It returns the child's PID and stores exit status. Call wait() to prevent zombie accumulation.">
+    <rect x="20" y="370" width="760" height="100" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="390" class="title" style="font-size:12px;">The wait() System Call</text>
+    
+    <rect x="40" y="405" width="250" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="422" class="code-text" fill="#4fc3f7">pid_t wait(int *status);</text>
+    <text x="50" y="438" class="code-text" fill="#81c784">// Blocks until child terminates</text>
+    <text x="50" y="452" class="code-text" fill="#ffb74d">// Returns child PID, stores status</text>
+    
+    <text x="310" y="420" class="body-text">Returns:</text>
+    <text x="310" y="435" class="body-text">• Child PID on success</text>
+    <text x="310" y="450" class="body-text">• -1 if no children (or error)</text>
+    <text x="310" y="465" class="body-text">• status contains exit info</text>
+    
+    <!-- Visual: wait() flow -->
+    <rect x="550" y="405" width="200" height="55" rx="5" fill="#388e3c" opacity="0.3"/>
+    <text x="650" y="420" text-anchor="middle" class="body-text" font-weight="bold">Parent Process</text>
+    <text x="650" y="438" text-anchor="middle" class="label">waits → gets exit status</text>
+    <text x="650" y="452" text-anchor="middle" class="label">→ Child reaped (no zombie!)</text>
+  </g>
+  
+  <!-- STEP 5: waitpid() System Call -->
+  <g class="step" id="step5" data-narration="waitpid() provides flexible control - specify which child to wait for, use WNOHANG for non-blocking behavior. Essential for event-driven programs.">
+    <rect x="20" y="480" width="760" height="100" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="500" class="title" style="font-size:12px;">The waitpid() System Call - More Control</text>
+    
+    <rect x="40" y="515" width="280" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="532" class="code-text" fill="#4fc3f7">pid_t waitpid(pid_t pid, int *status, int options);</text>
+    <text x="50" y="548" class="code-text" fill="#81c784">pid: -1=any child, 0=same pg, >0=specific</text>
+    <text x="50" y="562" class="code-text" fill="#ffb74d">options: WNOHANG, WUNTRACED</text>
+    
+    <text x="340" y="530" class="body-text" font-weight="bold">Key Options:</text>
+    <text x="340" y="548" class="body-text"><tspan font-weight="bold">WNOHANG</tspan>: Don't block, return 0 if no child exited</text>
+    <text x="340" y="563" class="body-text"><tspan font-weight="bold">WUNTRACED</tspan>: Report stopped children too</text>
+    <text x="340" y="578" class="body-text">Returns: child PID, 0 (WNOHANG), or -1 (error)</text>
+    
+    <!-- Visual: non-blocking indicator -->
+    <rect x="600" y="515" width="160" height="55" rx="5" fill="#9c27b0" opacity="0.3"/>
+    <text x="680" y="535" text-anchor="middle" class="body-text" font-weight="bold">Non-Blocking!</text>
+    <text x="680" y="552" text-anchor="middle" class="label">WNOHANG returns 0</text>
+    <text x="680" y="565" text-anchor="middle" class="label">instead of blocking</text>
+  </g>
+  
+  <!-- STEP 6: Status Macros -->
+  <g class="step" id="step6" data-narration="Use WIFEXITED to check normal exit, WIFSIGNALED for signal kill, WIFSTOPPED for suspended processes. Always check WIFEXITED before WEXITSTATUS.">
+    <rect x="20" y="590" width="760" height="100" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="610" class="title" style="font-size:12px;">Status Macros - Interpreting Exit Status</text>
+    
+    <!-- Macro boxes -->
+    <rect x="40" y="625" width="170" height="55" rx="5" fill="#388e3c" opacity="0.8"/>
+    <text x="125" y="645" text-anchor="middle" class="code-text" fill="white">WIFEXITED(status)</text>
+    <text x="125" y="662" text-anchor="middle" class="label" fill="white">True if exit() called</text>
+    
+    <rect x="220" y="625" width="170" height="55" rx="5" fill="#ff9800" opacity="0.8"/>
+    <text x="305" y="645" text-anchor="middle" class="code-text" fill="white">WEXITSTATUS(status)</text>
+    <text x="305" y="662" text-anchor="middle" class="label" fill="white">Exit code (0-255)</text>
+    
+    <rect x="400" y="625" width="170" height="55" rx="5" fill="#f44336" opacity="0.8"/>
+    <text x="485" y="645" text-anchor="middle" class="code-text" fill="white">WIFSIGNALED(status)</text>
+    <text x="485" y="662" text-anchor="middle" class="label" fill="white">Killed by signal</text>
+    
+    <rect x="580" y="625" width="180" height="55" rx="5" fill="#2196f3" opacity="0.8"/>
+    <text x="670" y="645" text-anchor="middle" class="code-text" fill="white">WIFSTOPPED(status)</text>
+    <text x="670" y="662" text-anchor="middle" class="label" fill="white">Stopped (needs WUNTRACED)</text>
+    
+    <text x="40" y="698" class="body-text" fill="#d32f2f">⚠ Always check WIFEXITED before WEXITSTATUS! Status contains garbage if killed by signal.</text>
+  </g>
+  
+  <!-- STEP 7: Signal Handling with signal() -->
+  <g class="step" id="step7" data-narration="Install a signal handler using signal() or sigaction() to handle SIGCLD asynchronously. This allows the parent to be notified when children terminate.">
+    <rect x="20" y="700" width="760" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="720" class="title" style="font-size:12px;">Signal Handling - Installing a Handler</text>
+    
+    <rect x="40" y="735" width="300" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="752" class="code-text" fill="#4fc3f7">void (*signal(int sig, void (*handler)(int)))(int);</text>
+    <text x="50" y="768" class="code-text" fill="#81c784">// Old style, but works</text>
+    <text x="50" y="782" class="code-text" fill="#ffb74d">// Example: signal(SIGCLD, handler);</text>
+    
+    <text x="360" y="755" class="body-text" font-weight="bold">Modern POSIX way:</text>
+    <text x="360" y="773" class="body-text">Use sigaction() instead!</text>
+    <text x="360" y="788" class="body-text">More portable, more control</text>
+    
+    <!-- Handler flow -->
+    <rect x="550" y="735" width="210" height="55" rx="5" fill="#9c27b0" opacity="0.3"/>
+    <text x="655" y="755" text-anchor="middle" class="body-text" font-weight="bold">Signal Handler Flow</text>
+    <text x="655" y="772" text-anchor="middle" class="label">Child exits → SIGCLD sent</text>
+    <text x="655" y="785" text-anchor="middle" class="label">→ Handler runs → reap child</text>
+  </g>
+  
+  <!-- STEP 8: sigaction() -->
+  <g class="step" id="step8" data-narration="The sigaction() function is the POSIX-recommended way to install signal handlers. It provides more control and portability than signal().">
+    <rect x="20" y="810" width="760" height="100" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="830" class="title" style="font-size:12px;">sigaction() - The POSIX Way</text>
+    
+    <rect x="40" y="845" width="350" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="862" class="code-text" fill="#4fc3f7">int sigaction(int sig, const struct sigaction *act,</text>
+    <text x="50" y="876" class="code-text" fill="#4fc3f7">              struct sigaction *oldact);</text>
+    <text x="50" y="890" class="code-text" fill="#81c784">// Recommended for portable code</text>
+    
+    <!-- sigaction structure -->
+    <text x="410" y="860" class="body-text" font-weight="bold">struct sigaction:</text>
+    <text x="410" y="878" class="body-text">• sa_handler: signal handler function</text>
+    <text x="410" y="893" class="body-text">• sa_mask: signals to block during handler</text>
+    <text x="410" y="908" class="body-text">• sa_flags: options (SA_RESTART, etc.)</text>
+  </g>
+  
+  <!-- STEP 9: Signal Handler with WNOHANG -->
+  <g class="step" id="step9" data-narration="In signal handlers, always use waitpid(-1, &amp;status, WNOHANG) in a loop. Multiple children may terminate before the handler executes.">
+    <rect x="20" y="920" width="760" height="100" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="40" y="940" class="title" style="font-size:12px;">Signal Handler Best Practice - WNOHANG Loop</text>
+    
+    <rect x="40" y="955" width="450" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="972" class="code-text" fill="#4fc3f7">void sigchld_handler(int sig) {</text>
+    <text x="60" y="986" class="code-text" fill="#81c784">  int status;</text>
+    <text x="60" y="1000" class="code-text" fill="#ffb74d">  pid_t pid;</text>
+    <text x="60" y="1014" class="code-text" fill="#81c784">  while ((pid = waitpid(-1, &status, WNOHANG)) > 0);</text>
+    <text x="50" y="1028" class="code-text" fill="#4fc3f7">}</text>
+    
+    <text x="500" y="975" class="body-text" font-weight="bold">Why loop?</text>
+    <text x="500" y="993" class="body-text">• Multiple children may terminate</text>
+    <text x="500" y="1010" class="body-text">• Signals coalesce - handler runs once</text>
+    <text x="500" y="1027" class="body-text">• WNOHANG prevents blocking</text>
+    <text x="500" y="1044" class="body-text" fill="#d32f2f">⚠ Never use wait() in handler!</text>
+  </g>
+  
+  <!-- STEP 10: SA_RESTART Flag -->
+  <g class="step" id="step10" data-narration="The SA_RESTART flag in sigaction() causes interrupted system calls to automatically restart. This prevents EINTR errors in blocking I/O operations.">
+    <rect x="20" y="1030" width="760" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1050" class="title" style="font-size:12px;">SA_RESTART Flag - Automatic System Call Restart</text>
+    
+    <rect x="40" y="1065" width="400" height="45" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="1082" class="code-text" fill="#4fc3f7">sa.sa_flags = SA_RESTART;</text>
+    <text x="50" y="1098" class="code-text" fill="#81c784">// Restart interrupted syscalls</text>
+    
+    <text x="460" y="1080" class="body-text">What it does:</text>
+    <text x="460" y="1098" class="body-text">• If signal arrives during read()/write()</text>
+    <text x="461" y="1114" class="body-text">• System call automatically restarts</text>
+    <text x="460" y="1130" class="body-text">• No need to handle EINTR manually</text>
+    
+    <!-- Flow diagram -->
+    <rect x="600" y="1065" width="170" height="45" rx="5" fill="#1976d2" opacity="0.3"/>
+    <text x="685" y="1085" text-anchor="middle" class="body-text" font-weight="bold">Signal arrives</text>
+    <text x="685" y="1102" text-anchor="middle" class="label">syscall restarts</text>
+  </g>
+  
+  <!-- STEP 11: Code Example - Basic wait() -->
+  <g class="step" id="step11" data-narration="This basic example shows fork(), child doing work, parent blocking on wait() to retrieve exit status. No zombie remains after wait().">
+    <rect x="20" y="1130" width="760" height="100" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1150" class="title" style="font-size:12px;">Example 1: Basic wait() Usage</text>
+    
+    <rect x="40" y="1165" width="360" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="1180" class="code-text" fill="#ffb74d">pid_t pid = fork();</text>
+    <text x="50" y="1195" class="code-text" fill="#81c784">if (pid == 0) {</text>
+    <text x="60" y="1210" class="code-text" fill="#81c784">  // Child: do work, exit(42)</text>
+    <text x="50" y="1225" class="code-text" fill="#81c784">} else {</text>
+    <text x="60" y="1238" class="code-text" fill="#4fc3f7">  wait(&status);  // Blocks</text>
+    <text x="50" y="1253" class="code-text" fill="#81c784">}</text>
+    
+    <!-- Visual: fork diagram -->
+    <rect x="420" y="1165" width="160" height="55" rx="5" fill="#388e3c" opacity="0.3"/>
+    <text x="500" y="1182" text-anchor="middle" class="body-text" font-weight="bold">Parent Process</text>
+    <text x="500" y="1200" text-anchor="middle" class="label">fork() → creates child</text>
+    <text x="500" y="1215" text-anchor="middle" class="label">wait() → reaps child</text>
+    
+    <rect x="420" y="1230" width="160" height="55" rx="5" fill="#9c27b0" opacity="0.3"/>
+    <text x="500" y="1247" text-anchor="middle" class="body-text" font-weight="bold">Child Process</text>
+    <text x="500" y="1265" text-anchor="middle" class="label">runs, exits(42)</text>
+    
+    <text x="590" y="1200" class="body-text" fill="#d32ff2f">✓ No zombie!</text>
+  </g>
+  
+  <!-- STEP 12: Code Example - SIGCHLD Handler -->
+  <g class="step" id="step12" data-narration="This example shows async handling - parent creates children, continues work. SIGCLD handler automatically reaps terminated children without blocking.">
+    <rect x="20" y="1240" width="760" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1260" class="title" style="font-size:12px;">Example 2: SIGCHLD Handler (Non-blocking)</text>
+    
+    <rect x="40" y="1275" width="340" height="55" rx="5" fill="#263238" opacity="0.9"/>
+    <text x="50" y="1292" class="code-text" fill="#4fc3f7">// Install handler first</text>
+    <text x="50" y="1308" class="code-text" fill="#81c784">sigaction(SIGCLD, &sa, NULL);</text>
+    <text x="50" y="1322" class="code-text" fill="#ffb74d">// Create children</text>
+    <text x="50" y="1336" class="code-text" fill="#4fc3f7">for (i=0; i<3; i++) fork();</text>
+    
+    <text x="400" y="1295" class="body-text" font-weight="bold">Key Points:</text>
+    <text x="400" y="1313" class="body-text">• Handler installed before fork()</text>
+    <text x="400" y="1331" class="body-text">• Parent doesn't call wait()</text>
+    <text x="400" y="1349" class="body-text">• Handler reaps zombies automatically</text>
+    <text x="400" y="1367" class="body-text">• Parent continues work non-blocking</text>
+    
+    <!-- Timeline visualization -->
+    <rect x="580" y="1275" width="190" height="55" rx="5" fill="#ff9800" opacity="0.3"/>
+    <text x="675" y="1295" text-anchor="middle" class="body-text" font-weight="bold">Timeline</text>
+    <text x="675" y="1315" text-anchor="middle" class="label">fork() fork() fork()</text>
+    <text x="675" y="1330" text-anchor="middle" class="label">SIGCHLD → handler runs</text>
+  </g>
+  
+  <!-- STEP 13: Summary - Key Takeaways -->
+  <g class="step" id="step13" data-narration="In summary: SIGCLD signals child termination, always call wait() to prevent zombies, use waitpid(WNOHANG) in handlers, and prefer sigaction() for portable code.">
+    <rect x="20" y="1350" width="760" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1370" class="title" style="font-size:12px;">Summary - Key Takeaways</text>
+    
+    <rect x="40" y="1385" width="145" height="45" rx="5" fill="#1976d2" opacity="0.2"/>
+    <text x="112" y="1405" text-anchor="middle" class="body-text" font-weight="bold">SIGCLD = SIGCHLD</text>
+    <text x="112" y="1422" text-anchor="middle" class="label">Signal on child exit</text>
+    
+    <rect x="195" y="1385" width="145" height="45" rx="5" fill="#f44336" opacity="0.2"/>
+    <text x="267" y="1405" text-anchor="middle" class="body-text" font-weight="bold">Zombie Process</text>
+    <text x="267" y="1422" text-anchor="middle" class="label">Dead but in table</text>
+    
+    <rect x="350" y="1385" width="145" height="45" rx="5" fill="#388e3c" opacity="0.2"/>
+    <text x="422" y="1405" text-anchor="middle" class="body-text" font-weight="bold">wait()/waitpid()</text>
+    <text x="422" y="1422" text-anchor="middle" class="label">Reap to prevent zombies</text>
+    
+    <rect x="505" y="1385" width="145" height="45" rx="5" fill="#ff9800" opacity="0.2"/>
+    <text x="577" y="1405" text-anchor="middle" class="body-text" font-weight="bold">WNOHANG</text>
+    <text x="577" y="1422" text-anchor="middle" class="label">Non-blocking reap</text>
+    
+    <rect x="660" y="1385" width="110" height="45" rx="5" fill="#9c27b0" opacity="0.2"/>
+    <text x="715" y="1405" text-anchor="middle" class="body-text" font-weight="bold">sigaction()</text>
+    <text x="715" y="1422" text-anchor="middle" class="label">POSIX handler</text>
+  </g>
+  
+  <!-- STEP 14: Common Mistakes -->
+  <g class="step" id="step14" data-narration="Avoid these mistakes: calling blocking wait() in handlers, not checking WIFEXITED, forgetting SA_RESTART, and not reaping children leading to zombie accumulation.">
+    <rect x="20" y="1450" width="760" height="85" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="40" y="1470" class="title" style="font-size:12px;">Common Mistakes to Avoid</text>
+    
+    <text x="40" y="1490" class="body-text"><tspan fill="#d32f2f" font-weight="bold">✗</tspan> Using wait() inside signal handler (can block!)</text>
+    <text x="40" y="1508" class="body-text"><tspan fill="#d32f2f" font-weight="bold">✗</tspan> Using WEXITSTATUS without checking WIFEXITED first</text>
+    <text x="40" y="1526" class="body-text"><tspan fill="#d32f2f" font-weight="bold">✗</tspan> Not calling wait()/waitpid() - leading to zombie accumulation</text>
+    <text x="40" y="1544" class="body-text"><tspan fill="#388e3c" font-weight="bold">✓</tspan> Always use waitpid(-1, &status, WNOHANG) in signal handlers</text>
+  </g>
+</svg>

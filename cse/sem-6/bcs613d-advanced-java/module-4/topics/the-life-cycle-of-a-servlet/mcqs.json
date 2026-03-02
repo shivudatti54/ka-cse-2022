@@ -1,0 +1,380 @@
+{
+  "topicId": "the-life-cycle-of-a-servlet",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which method is called exactly once during the servlet lifecycle?",
+      "options": [
+        {
+          "key": "A",
+          "text": "service()"
+        },
+        {
+          "key": "B",
+          "text": "init()"
+        },
+        {
+          "key": "C",
+          "text": "doGet()"
+        },
+        {
+          "key": "D",
+          "text": "destroy()"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The init() method is called exactly once when the servlet is first loaded into memory. The service() method can be called multiple times for different requests, and destroy() is called once when the servlet is being removed.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What is the correct sequence of servlet lifecycle methods?",
+      "options": [
+        {
+          "key": "A",
+          "text": "init() \u2192 service() \u2192 destroy()"
+        },
+        {
+          "key": "B",
+          "text": "constructor \u2192 init() \u2192 service() \u2192 destroy()"
+        },
+        {
+          "key": "C",
+          "text": "service() \u2192 init() \u2192 destroy()"
+        },
+        {
+          "key": "D",
+          "text": "init() \u2192 destroy() \u2192 service()"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The servlet lifecycle sequence is: 1) Constructor (by the container to create instance), 2) init() (initialize the servlet), 3) service() (handle client requests repeatedly), 4) destroy() (cleanup before unloading).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "A servlet container can create multiple instances of the same servlet class if:",
+      "options": [
+        {
+          "key": "A",
+          "text": "The servlet implements SingleThreadModel interface"
+        },
+        {
+          "key": "B",
+          "text": "The servlet is configured with load-on-startup"
+        },
+        {
+          "key": "C",
+          "text": "The servlet throws a ServletException during initialization"
+        },
+        {
+          "key": "D",
+          "text": "The web.xml defines multiple <servlet> entries for the same class"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "If multiple <servlet> entries are defined in web.xml for the same servlet class, the container will create separate instances for each definition. SingleThreadModel is deprecated and was designed for a different purpose.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which method in HttpServlet is responsible for dispatching requests to doGet(), doPost(), etc.?",
+      "options": [
+        {
+          "key": "A",
+          "text": "init()"
+        },
+        {
+          "key": "B",
+          "text": "service()"
+        },
+        {
+          "key": "C",
+          "text": "doService()"
+        },
+        {
+          "key": "D",
+          "text": "dispatch()"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The service() method in HttpServlet receives the request, determines the HTTP method (GET, POST, PUT, etc.), and dispatches to the corresponding doMethod() handler (doGet, doPost, etc.).",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-5",
+      "question": "If a servlet's init() method throws UnavailableException with a duration of 30 seconds, what happens?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The servlet is permanently unavailable"
+        },
+        {
+          "key": "B",
+          "text": "The servlet is unavailable for 30 seconds, then retried"
+        },
+        {
+          "key": "C",
+          "text": "The servlet container shuts down immediately"
+        },
+        {
+          "key": "D",
+          "text": "The exception is ignored and the servlet continues normally"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "UnavailableException indicates the servlet is temporarily unavailable. If a duration is specified, the container will not send requests to that servlet for the specified time period before retrying.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-6",
+      "question": "Which object provides servlet initialization parameters accessible via getInitParameter()?",
+      "options": [
+        {
+          "key": "A",
+          "text": "ServletContext"
+        },
+        {
+          "key": "B",
+          "text": "ServletConfig"
+        },
+        {
+          "key": "C",
+          "text": "HttpServletRequest"
+        },
+        {
+          "key": "D",
+          "text": "HttpSession"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "ServletConfig provides access to initialization parameters defined in web.xml for a specific servlet using getInitParameter(). ServletContext provides application-wide parameters.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "What happens if the destroy() method is not overridden?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The servlet container throws an error"
+        },
+        {
+          "key": "B",
+          "text": "Memory leaks will definitely occur"
+        },
+        {
+          "key": "C",
+          "text": "Nothing critical - the default implementation performs basic cleanup"
+        },
+        {
+          "key": "D",
+          "text": "The servlet cannot be unloaded"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The GenericServlet class provides a default destroy() implementation that does nothing. While not harmful, overriding it is best practice to close database connections, release file handles, etc.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-8",
+      "question": "In which scenario would the servlet's destroy() method NOT be called?",
+      "options": [
+        {
+          "key": "A",
+          "text": "When the server shuts down normally"
+        },
+        {
+          "key": "B",
+          "text": "When the web application is undeployed"
+        },
+        {
+          "key": "C",
+          "text": "When the JVM crashes"
+        },
+        {
+          "key": "D",
+          "text": "When the servlet is reloaded by the container"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "If the JVM crashes or the process is killed abruptly, the destroy() method will not be called. It's only invoked during graceful shutdown or when the servlet is being explicitly unloaded.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "A developer wants to ensure a servlet initializes database connections at startup. What should be configured?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Implement Runnable interface in the servlet"
+        },
+        {
+          "key": "B",
+          "text": "Use load-on-startup in web.xml with a positive value"
+        },
+        {
+          "key": "C",
+          "text": "Override the service() method"
+        },
+        {
+          "key": "D",
+          "text": "Make the servlet a singleton"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Setting load-on-startup to a positive value (e.g., <load-on-startup>1</load-on-startup>) ensures the servlet is initialized when the web application starts, rather than waiting for the first request.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which statement is TRUE about servlet thread safety?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Local variables in doGet() are thread-safe"
+        },
+        {
+          "key": "B",
+          "text": "Instance variables are always thread-safe"
+        },
+        {
+          "key": "C",
+          "text": "Servlet containers guarantee thread safety for all servlets"
+        },
+        {
+          "key": "D",
+          "text": "The service() method is called synchronously for each request"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Local variables (method-level variables) are thread-safe because each thread has its own stack. Instance variables are shared across requests and require synchronization. Containers do not guarantee thread safety.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is the purpose of ServletContextListener?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To monitor individual servlet lifecycle events"
+        },
+        {
+          "key": "B",
+          "text": "To respond to application-wide startup and shutdown events"
+        },
+        {
+          "key": "C",
+          "text": "To track session creation and destruction"
+        },
+        {
+          "key": "D",
+          "text": "To handle request lifecycle events"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "ServletContextListener responds to events when the web application is initialized or destroyed. It's used for application-wide resource initialization and cleanup (e.g., establishing database connection pools).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "How many times will the following code print 'Init called' if the servlet receives 1000 requests?\n\npublic class MyServlet extends HttpServlet {\n public void init() throws ServletException {\n System.out.println(\"Init called\");\n }\n}",
+      "options": [
+        {
+          "key": "A",
+          "text": "1000 times"
+        },
+        {
+          "key": "B",
+          "text": "1 time"
+        },
+        {
+          "key": "C",
+          "text": "0 times"
+        },
+        {
+          "key": "D",
+          "text": "Depends on the server"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The init() method is called only once when the servlet is first loaded into memory, regardless of how many requests are received. Even with 1000 requests, it will be printed exactly once.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Which interface should be implemented to create a servlet?",
+      "options": [
+        {
+          "key": "A",
+          "text": "HttpServlet"
+        },
+        {
+          "key": "B",
+          "text": "Servlet"
+        },
+        {
+          "key": "C",
+          "text": "GenericServlet"
+        },
+        {
+          "key": "D",
+          "text": "HttpServletRequest"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "A servlet must implement the javax.servlet.Servlet interface (or jakarta.servlet.Servlet in Jakarta EE). HttpServlet and GenericServlet are abstract classes that provide convenient implementations of this interface.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What is the default behavior if load-on-startup is not specified in web.xml?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Servlet is loaded on first request"
+        },
+        {
+          "key": "B",
+          "text": "Servlet is never loaded"
+        },
+        {
+          "key": "C",
+          "text": "Servlet is loaded with highest priority"
+        },
+        {
+          "key": "D",
+          "text": "Servlet is loaded during server startup"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Without load-on-startup, the servlet is lazy-loaded - it is loaded and initialized only when the first request for that servlet is received, not during application startup.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "In the servlet lifecycle, what happens between init() and destroy() phases?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The servlet is in an inactive state"
+        },
+        {
+          "key": "B",
+          "text": "Multiple service() calls handle client requests"
+        },
+        {
+          "key": "C",
+          "text": "The servlet instance is garbage collected"
+        },
+        {
+          "key": "D",
+          "text": "The servlet cannot accept new connections"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Between init() and destroy(), the servlet is active and ready to handle client requests. The container calls the service() method repeatedly (once per request) to process client requests.",
+      "difficulty": "easy"
+    }
+  ]
+}

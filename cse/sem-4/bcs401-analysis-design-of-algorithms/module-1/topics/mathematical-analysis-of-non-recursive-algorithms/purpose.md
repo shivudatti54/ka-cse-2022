@@ -1,0 +1,3 @@
+# Mathematical Analysis Of Non Recursive Algorithms
+
+This module provides comprehensive theoretical and practical treatment of mathematical analysis techniques for non-recursive algorithms. Students will learn systematic methods for quantifying time and space complexity through step-count analysis, summation formulation, and asymptotic notation application. The inclusion of detailed worked examples with complete mathematical derivations ensures students develop proficiency in applying analytical techniques to diverse algorithmic structures, preparing them for algorithm selection and optimization tasks in professional practice.

@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="400" viewBox="0 0 420 400" data-topic-id="runtime-polymorphism-pointers">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#d4e8f0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c5dce8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="vtoggleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90a4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d5a6b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="objectGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7eb8c9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a8fa3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="derivedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9b8bc4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b5a94;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e67e22" />
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes flowDash {
+      to { stroke-dashoffset: 0; }
+    }
+    .title { animation: fadeIn 0.8s ease-out forwards; font-family: 'Segoe UI', Arial, sans-serif; }
+    .section-base { animation: slideInLeft 0.6s ease-out 0.2s forwards; opacity: 0; }
+    .section-derived { animation: slideInRight 0.6s ease-out 0.4s forwards; opacity: 0; }
+    .vtable-box { animation: fadeIn 0.5s ease-out 0.6s forwards; opacity: 0; }
+    .object-box { animation: fadeIn 0.5s ease-out 0.8s forwards; opacity: 0; }
+    .arrow-path { animation: flowDash 1s ease-out 1s forwards; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .concept-box { animation: pulse 2s ease-in-out 1.5s infinite; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; }
+    .vptr-line { stroke: #e67e22; stroke-width: 2; fill: none; stroke-dasharray: 5,3; }
+  </style>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="420" height="400" fill="url(#bgGradient)" />
+  
+  <!-- Title -->
+  <text x="210" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50" class="title label">
+    Runtime Polymorphism Using Pointers
+  </text>
+  <text x="210" y="48" text-anchor="middle" font-size="12" fill="#5d6d7e" class="title label">
+    Virtual Function Call Mechanism
+  </text>
+  
+  <!-- Base Class Section (Left) -->
+  <g class="section-base" data-narration="Base Class VTABLE - Contains pointers to virtual functions">
+    <rect x="20" y="65" width="180" height="130" rx="8" fill="#fff" stroke="url(#vtoggleGradient)" stroke-width="2" filter="url(#shadow)" />
+    <text x="110" y="82" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50" class="label">Base Class VTABLE</text>
+    <line x1="30" y1="90" x2="190" y2="90" stroke="#4a90a4" stroke-width="1" />
+    
+    <g class="vtable-box">
+      <rect x="35" y="100" width="150" height="18" rx="3" fill="#e8f4f8" />
+      <text x="45" y="113" font-size="11" fill="#2c3e50" class="label">show() → Base::show()</text>
+      <rect x="35" y="122" width="150" height="18" rx="3" fill="#e8f4f8" />
+      <text x="45" y="135" font-size="11" fill="#2c3e50" class="label">display() → Base::display()</text>
+      <rect x="35" y="144" width="150" height="18" rx="3" fill="#e8f4f8" />
+      <text x="45" y="157" font-size="11" fill="#2c3e50" class="label">process() → Base::process()</text>
+    </g>
+  </g>
+  
+  <!-- Derived Class Section (Right) -->
+  <g class="section-derived" data-narration="Derived Class VTABLE - Overrides virtual functions">
+    <rect x="220" y="65" width="180" height="130" rx="8" fill="#fff" stroke="url(#derivedGradient)" stroke-width="2" filter="url(#shadow)" />
+    <text x="310" y="82" text-anchor="middle" font-size="14" font-weight="bold" fill="#2c3e50" class="label">Derived Class VTABLE</text>
+    <line x1="230" y1="90" x2="390" y2="90" stroke="#9b8bc4" stroke-width="1" />
+    
+    <g class="vtable-box">
+      <rect x="235" y="100" width="150" height="18" rx="3" fill="#f3eef8" />
+      <text x="245" y="113" font-size="11" fill="#4a3b7c" class="label">show() → Derived::show()</text>
+      <rect x="235" y="122" width="150" height="18" rx="3" fill="#f3eef8" />
+      <text x="245" y="135" font-size="11" fill="#4a3b7c" class="label">display() → Derived::display()</text>
+      <rect x="235" y="144" width="150" height="18" rx="3" fill="#f3eef8" />
+      <text x="245" y="157" font-size="11" fill="#4a3b7c" class="label">process() → Derived::process()</text>
+    </g>
+  </g>
+  
+  <!-- Base Object with VPTR -->
+  <g class="object-box" data-narration="Base Object contains VPTR pointing to Base VTABLE">
+    <rect x="20" y="210" width="150" height="80" rx="6" fill="url(#objectGradient)" filter="url(#shadow)" />
+    <text x="95" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff" class="label">Base Object</text>
+    <rect x="30" y="240" width="130" height="18" rx="3" fill="rgba(255,255,255,0.3)" />
+    <text x="40" y="253" font-size="11" fill="#fff" class="label">data: int a</text>
+    <rect x="30" y="262" width="130" height="18" rx="3" fill="rgba(255,255,255,0.3)" />
+    <text x="40" y="275" font-size="11" fill="#fff" class="label">vptr: 0x1000</text>
+  </g>
+  
+  <!-- Derived Object with VPTR -->
+  <g class="object-box" data-narration="Derived Object contains VPTR pointing to Derived VTABLE">
+    <rect x="250" y="210" width="150" height="80" rx="6" fill="url(#derivedGradient)" filter="url(#shadow)" />
+    <text x="325" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff" class="label">Derived Object</text>
+    <rect x="260" y="240" width="130" height="18" rx="3" fill="rgba(255,255,255,0.3)" />
+    <text x="270" y="253" font-size="11" fill="#fff" class="label">data: int b</text>
+    <rect x="260" y="262" width="130" height="18" rx="3" fill="rgba(255,255,255,0.3)" />
+    <text x="270" y="275" font-size="11" fill="#fff" class="label">vptr: 0x2000</text>
+  </g>
+  
+  <!-- Base Pointer -->
+  <g class="section-base" data-narration="Base class pointer can hold derived object address">
+    <rect x="30" y="305" width="130" height="50" rx="6" fill="#27ae60" filter="url(#shadow)" />
+    <text x="95" y="325" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff" class="label">Base* ptr</text>
+    <text x="95" y="342" text-anchor="middle" font-size="11" fill="#e8f8f5" class="label">ptr = &amp;derivedObj</text>
+  </g>
+  
+  <!-- Arrows showing resolution path -->
+  <g class="arrow-path">
+    <!-- Arrow from Base Object VPTR to Base VTABLE -->
+    <path d="M95 295 Q95 280 110 220" fill="none" stroke="#e67e22" stroke-width="2" marker-end="url(#arrowhead)" />
+    <!-- Arrow from Derived Object VPTR to Derived VTABLE -->
+    <path d="M325 295 Q325 280 310 220" fill="none" stroke="#e67e22" stroke-width="2" marker-end="url(#arrowhead)" />
+    <!-- Arrow from Base pointer to Derived Object -->
+    <path d="M160 330 Q200 330 250 330" fill="none" stroke="#e67e22" stroke-width="2" marker-end="url(#arrowhead)" />
+  </g>
+  
+  <!-- Key Concept Box -->
+  <g class="concept-box" data-narration="Runtime Resolution - Function called depends on object type at runtime">
+    <rect x="60" y="365" width="300" height="28" rx="5" fill="#f39c12" opacity="0.9" filter="url(#shadow)" />
+    <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff" class="label">
+      Runtime Resolution: ptr→show() calls Derived::show()
+    </text>
+  </g>
+  
+  <!-- Labels for VTABLEs -->
+  <g class="vtable-box">
+    <text x="110" y="198" text-anchor="middle" font-size="10" fill="#5d6d7e" class="label">VPTR</text>
+    <text x="310" y="198" text-anchor="middle" font-size="10" fill="#5d6d7e" class="label">VPTR</text>
+  </g>
+</svg>

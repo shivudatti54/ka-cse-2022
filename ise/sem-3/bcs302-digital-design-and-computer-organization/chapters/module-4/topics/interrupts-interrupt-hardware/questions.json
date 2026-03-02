@@ -1,0 +1,157 @@
+{
+  "topicId": "interrupts-interrupt-hardware",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between vectored and non-vectored interrupts with examples.",
+      "keyPoints": [
+        "Vectored interrupts provide the address of the ISR directly to the CPU (e.g., x86 INT instruction with vector)",
+        "Non-vectored interrupts require CPU to poll the interrupt controller to find the device (older systems)",
+        "Vectored is faster as no polling needed",
+        "Non-vectored uses a single handler that identifies the source"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the daisy chain interrupt priority scheme with its advantages and disadvantages.",
+      "keyPoints": [
+        "Devices connected in series, closer to CPU has higher priority",
+        "First device requesting gets priority, signals propagate through chain",
+        "Advantage: Simple hardware implementation, no priority encoder needed",
+        "Disadvantage: Fixed priority, device failure can block entire chain, more delay for distant devices"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the operation of an interrupt controller in managing multiple device interrupts.",
+      "keyPoints": [
+        "Receives multiple IRQ signals from devices",
+        "Uses priority encoder to determine highest priority request",
+        "Masks or buffers lower priority requests",
+        "Sends INTR signal to CPU and provides interrupt vector on INTA",
+        "Allows CPU to handle one interrupt at a time efficiently"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is interrupt latency? Discuss factors that affect interrupt latency in a computer system.",
+      "keyPoints": [
+        "Interrupt latency = time from interrupt request to start of ISR execution",
+        "Factors: Current CPU instruction completion, interrupt enable/disable state, priority of interrupt vs current execution",
+        "Hardware factors: interrupt controller delay, bus arbitration time",
+        "Lower latency is critical for real-time systems",
+        "Can be reduced by priority schemes and hardware optimization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the difference between level-triggered and edge-triggered interrupts with use cases.",
+      "keyPoints": [
+        "Level-triggered: interrupt active as long as level is high, requires device to lower line to de-assert",
+        "Edge-triggered: triggered by transition (0\u21921 or 1\u21920), doesn't depend on level",
+        "Level-triggered: can cause repeated service if not handled (needs masking)",
+        "Edge-triggered: better for devices that can't hold request line, more precise",
+        "Use case: Level for devices with persistent status, edge for one-shot events"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the steps involved in handling an interrupt from the initial request to returning to the main program.",
+      "keyPoints": [
+        "1. Device raises IRQ line",
+        "2. Interrupt controller receives and prioritizes",
+        "3. Controller raises INTR to CPU",
+        "4. CPU completes current instruction, saves state (PC, PSW)",
+        "5. CPU acknowledges with INTA, receives vector",
+        "6. Looks up vector in interrupt vector table",
+        "7. Jumps to ISR and executes handler",
+        "8. ISR completes, executes IRET instruction",
+        "9. CPU restores saved state",
+        "10. Returns to interrupted program"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of interrupt nesting. Under what circumstances should nesting be allowed or prevented?",
+      "keyPoints": [
+        "Nesting allows higher priority interrupts to preempt lower priority ISR execution",
+        "Requires saving sufficient state (all registers) on stack",
+        "Should allow: for time-critical high-priority events like hardware failures",
+        "Should prevent: when ISR is not re-entrant, shared resources need protection, to avoid stack overflow",
+        "Controlled via interrupt enable/disable flags in ISR"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Draw and explain the block diagram of an interrupt system showing CPU, interrupt controller, and peripheral devices. Include the signal lines and data flow.",
+      "keyPoints": [
+        "Block diagram showing: Multiple devices \u2192 IRQ lines \u2192 Interrupt Controller \u2192 INTR to CPU + INTA from CPU + Data bus for vector",
+        "Explain each signal: IRQ (device to controller), INTR (controller to CPU), INTA (CPU to controller), Data bus for vector",
+        "Role of priority encoder in controller",
+        "Interrupt vector table in memory",
+        "CPU fetches ISR address from vector table",
+        "Show complete signal flow and timing"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain priority encoding in interrupt handling. Design a 4-input priority encoder truth table and explain how it determines the highest priority interrupt.",
+      "keyPoints": [
+        "Priority encoder: combinational logic that encodes highest priority active input",
+        "For 4 inputs (IRQ3-IRQ0), IRQ3 has highest priority, IRQ0 lowest",
+        "Truth table showing all 16 combinations and 2-bit binary output",
+        "Logic: if IRQ3=1 output=11, else if IRQ2=1 output=10, etc.",
+        "Explain how this reduces latency by eliminating need for polling",
+        "Can be expanded for more inputs (8\u21923 bit, 16\u21924 bit)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Compare polling and interrupt-based I/O. Under what circumstances would you choose one over the other? Discuss the trade-offs in terms of CPU utilization, response time, and hardware complexity.",
+      "keyPoints": [
+        "Polling: CPU continuously checks device status registers",
+        "Interrupt: Device notifies CPU when service needed",
+        "CPU Utilization: Polling wastes cycles on idle devices, interrupts are efficient",
+        "Response Time: Polling can be faster for very frequent events, interrupts have latency overhead",
+        "Hardware: Polling simpler (no interrupt controller), interrupts need additional hardware",
+        "Choose polling: simple systems, predictable high-frequency events, real-time requirements",
+        "Choose interrupt: multiple slow devices, unpredictable events, power-sensitive systems"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Explain the working of the Programmable Interrupt Controller (PIC) with reference to Intel 8259A. Discuss cascaded mode operation and interrupt acknowledge cycle.",
+      "keyPoints": [
+        "8259A PIC: manages 8 IRQ lines, can be cascaded for 16 lines",
+        "Internal registers: IRR (Interrupt Request Register), ISR (In-Service Register), IMR (Interrupt Mask Register)",
+        "Cascaded mode: one PIC as master, one as slave, IRQ2 used for cascade",
+        "Priority: rotating and fixed modes supported",
+        "INTA cycle: CPU sends INTA, PIC places vector on data bus",
+        "Vector format: 8-bit with upper/lower 5 bits programmable",
+        "Explain the two INTA pulses and data transfer"
+      ],
+      "marks": 10
+    }
+  ]
+}

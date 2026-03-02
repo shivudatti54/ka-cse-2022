@@ -1,0 +1,45 @@
+{
+  "topicId": "interval-scheduling-fractional-knapsack",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Interval Scheduling Greedy Algorithm",
+      "description": "Selects maximum number of non-overlapping intervals using greedy approach",
+      "code": "ALGORITHM IntervalScheduling(intervals)\nBEGIN\n  // intervals is array of (start, finish) pairs\n  n \u2190 length(intervals)\n  \n  // Step 1: Sort intervals by finish time\n  Sort intervals by finish time in ascending order\n  \n  // Step 2: Greedy selection\n  result \u2190 empty list\n  last_finish_time \u2190 -\u221e\n  \n  FOR i \u2190 1 TO n DO\n    IF intervals[i].start \u2265 last_finish_time THEN\n      result.append(intervals[i])\n      last_finish_time \u2190 intervals[i].finish\n    END IF\n  END FOR\n  \n  RETURN result\nEND",
+      "explanation": "The algorithm works in two phases: first sorting intervals by their finish times in O(n log n), then making a single pass selecting intervals that don't conflict with previously selected ones. The key insight is that choosing the interval that finishes earliest leaves maximum space for subsequent intervals.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Interval Scheduling Implementation",
+      "description": "Python implementation of interval scheduling greedy algorithm",
+      "code": "def interval_scheduling(intervals):\n    '''\n    intervals: list of tuples (start, finish)\n    Returns: list of selected intervals\n    '''\n    if not intervals:\n        return []\n    \n    # Sort by finish time\n    sorted_intervals = sorted(intervals, key=lambda x: x[1])\n    \n    # Greedy selection\n    result = []\n    last_finish = float('-inf')\n    \n    for start, finish in sorted_intervals:\n        if start >= last_finish:\n            result.append((start, finish))\n            last_finish = finish\n    \n    return result\n\n# Example usage\nintervals = [(1, 4), (2, 3), (3, 6), (4, 5), (5, 7), (6, 8)]\nselected = interval_scheduling(intervals)\nprint(\"Selected intervals:\", selected)  # Output: [(2, 3), (4, 5), (5, 7)]",
+      "explanation": "The Python implementation follows the pseudocode exactly. The sorted() function uses the finish time as the sorting key. The greedy selection iterates once through sorted intervals, adding an interval only if it starts after or at the last finish time.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Fractional Knapsack Greedy Algorithm",
+      "description": "Solves fractional knapsack by selecting items based on value-to-weight ratio",
+      "code": "ALGORITHM FractionalKnapsack(items, capacity)\nBEGIN\n  // items is array of (value, weight) pairs\n  n \u2190 length(items)\n  \n  // Step 1: Calculate value/weight ratio for each item\n  FOR i \u2190 1 TO n DO\n    items[i].ratio \u2190 items[i].value / items[i].weight\n  END FOR\n  \n  // Step 2: Sort items by ratio in descending order\n  Sort items by ratio in descending order\n  \n  // Step 3: Greedy selection\n  total_value \u2190 0\n  remaining_capacity \u2190 capacity\n  \n  FOR i \u2190 1 TO n DO\n    IF remaining_capacity = 0 THEN\n      BREAK\n    END IF\n    \n    IF items[i].weight \u2264 remaining_capacity THEN\n      // Take entire item\n      total_value \u2190 total_value + items[i].value\n      remaining_capacity \u2190 remaining_capacity - items[i].weight\n    ELSE\n      // Take fraction of item\n      fraction \u2190 remaining_capacity / items[i].weight\n      total_value \u2190 total_value + (items[i].value * fraction)\n      remaining_capacity \u2190 0\n    END IF\n  END FOR\n  \n  RETURN total_value\nEND",
+      "explanation": "The algorithm first computes and sorts items by their value-to-weight ratio in descending order. Then it greedily selects items, taking whole items until the remaining capacity is less than the next item's weight, in which case it takes a fractional part to fill the knapsack completely.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Fractional Knapsack Implementation",
+      "description": "Python implementation with both value maximization and item selection",
+      "code": "def fractional_knapsack(items, capacity):\n    '''\n    items: list of tuples (value, weight)\n    capacity: maximum weight knapsack can hold\n    Returns: (max_value, list of (value, weight, fraction taken))\n    '''\n    # Calculate ratio and sort by descending ratio\n    item_ratios = []\n    for value, weight in items:\n        ratio = value / weight if weight > 0 else 0\n        item_ratios.append((value, weight, ratio))\n    \n    # Sort by ratio descending\n    item_ratios.sort(key=lambda x: x[2], reverse=True)\n    \n    total_value = 0\n    remaining = capacity\n    selected = []\n    \n    for value, weight, ratio in item_ratios:\n        if remaining == 0:\n            break\n        \n        if weight <= remaining:\n            # Take whole item\n            total_value += value\n            remaining -= weight\n            selected.append((value, weight, 1.0))\n        else:\n            # Take fraction\n            fraction = remaining / weight\n            total_value += value * fraction\n            selected.append((value, weight, fraction))\n            remaining = 0\n    \n    return total_value, selected\n\n# Example\nitems = [(60, 10), (100, 20), (120, 30)]\ncapacity = 50\nmax_val, selected = fractional_knapsack(items, capacity)\nprint(f\"Maximum value: {max_val}\")  # Output: 240.0\nprint(\"Selected items with fractions:\", selected)",
+      "explanation": "The implementation returns both the maximum value and details of what was selected including fractions. For the example with items (60,10), (100,20), (120,30) and capacity 50, it selects all of first two items and 2/3 of the third, giving total value 240.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

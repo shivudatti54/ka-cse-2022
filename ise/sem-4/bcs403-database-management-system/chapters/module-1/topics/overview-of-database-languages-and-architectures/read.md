@@ -1,0 +1,6 @@
+sql
+CREATE TABLE Student (
+USN VARCHAR(10) PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Department VARCHAR(20)
+);

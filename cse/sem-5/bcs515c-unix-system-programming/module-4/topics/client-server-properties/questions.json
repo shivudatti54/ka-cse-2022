@@ -1,0 +1,144 @@
+{
+  "topicId": "client-server-properties",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the property of 'statelessness' in client-server architecture and its advantages in distributed systems.",
+      "keyPoints": [
+        "Stateless server does not store client session information between requests",
+        "Each request contains all information needed for processing",
+        "Advantages: easier horizontal scaling, better fault tolerance, simplified server design",
+        "Disadvantage: increased bandwidth/coding overhead for redundant information"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the steps involved in creating a TCP server socket in Unix, mentioning the purpose of each system call.",
+      "keyPoints": [
+        "socket() - creates endpoint, returns descriptor",
+        "bind() - associates socket with specific IP/port",
+        "listen() - marks socket passive, sets connection queue",
+        "accept() - retrieves pending connection, returns new socket",
+        "fork() - creates child process for concurrent handling"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are zombie processes? How can a concurrent server prevent zombie accumulation?",
+      "keyPoints": [
+        "Zombie: terminated child process whose exit status hasn't been read by parent",
+        "Zombies consume process table entries",
+        "Prevention methods: call wait()/waitpid() after fork()",
+        "Using SIGCHLD handler with waitpid(-1, NULL, WNOHANG)",
+        "Setting SA_NOCLDWAIT flag",
+        "Using double-fork technique"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the difference between iterative and concurrent servers with respect to handling multiple client connections.",
+      "keyPoints": [
+        "Iterative server: handles one client completely before accepting next",
+        "Simple to implement but poor responsiveness under load",
+        "Concurrent server: handles multiple clients simultaneously",
+        "Uses fork(), threads, or select()/poll() for concurrency",
+        "Most production servers use concurrent design"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the significance of the SO_REUSEADDR socket option? When should it be set?",
+      "keyPoints": [
+        "Allows binding to address/port in TIME_WAIT state",
+        "Critical for servers that restart frequently",
+        "Must be set BEFORE calling bind()",
+        "Without it, server must wait 2-4 minutes for TIME_WAIT to expire",
+        "Also allows multiple sockets to bind to same port (with restrictions)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of network byte order and the need for conversion functions in socket programming.",
+      "keyPoints": [
+        "Network protocols use big-endian (network byte order)",
+        "Host machines may use little-endian or big-endian",
+        "htons()/ntohs() - convert 16-bit port numbers",
+        "htonl()/ntohl() - convert 32-bit IP addresses",
+        "Conversion ensures data interpreted correctly across different architectures"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare TCP (SOCK_STREAM) and UDP (SOCK_DGRAM) sockets for client-server communication.",
+      "keyPoints": [
+        "TCP: connection-oriented, reliable, ordered, flow control, congestion control",
+        "UDP: connectionless, unreliable, no ordering, lower latency",
+        "TCP: requires listen()/accept() for servers, connect() for clients",
+        "UDP: uses sendto()/recvfrom() without connection establishment",
+        "Choice depends on application requirements (reliability vs speed)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Design a concurrent TCP echo server in Unix that can handle multiple clients simultaneously. Explain all the steps including zombie process prevention.",
+      "keyPoints": [
+        "Create listening socket with socket()/bind()/listen()",
+        "Set SO_REUSEADDR before bind",
+        "Main loop: call accept() to get client connection",
+        "Call fork() to create child process",
+        "Child: handles echo communication, closes listenfd, exits when client disconnects",
+        "Parent: closes connfd, continues accept loop",
+        "Zombie prevention: set SIGCHLD handler with waitpid(-1, NULL, WNOHANG)",
+        "Or use SA_NOCLDWAIT, or call wait() in loop after fork"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the TCP three-way handshake mechanism. How does this ensure reliable connection establishment between client and server?",
+      "keyPoints": [
+        "Step 1: Client sends SYN with sequence number x",
+        "Step 2: Server sends SYN-ACK with sequence y and acknowledges x+1",
+        "Step 3: Client sends ACK acknowledging y+1",
+        "Connection established after step 3",
+        "SYN uses random sequence numbers to prevent old duplicate connections",
+        "ACK confirms receipt of SYN",
+        "If no response to SYN, client retransmits with exponential backoff",
+        "Both sides must confirm they can receive data"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the key properties of client-server architecture. How do these properties influence the design and scalability of distributed systems?",
+      "keyPoints": [
+        "Separation of concerns: client initiates, server responds",
+        "Statelessness: no session storage, easier scaling",
+        "Scalability: can add/remove servers based on load",
+        "Reliability: server failure doesn't affect other clients",
+        "Centralized resources: shared services and data",
+        "Network transparency: location independence",
+        "Flexibility: can upgrade servers without affecting clients",
+        "Load balancing: statelessness enables distribution"
+      ],
+      "marks": 10
+    }
+  ]
+}

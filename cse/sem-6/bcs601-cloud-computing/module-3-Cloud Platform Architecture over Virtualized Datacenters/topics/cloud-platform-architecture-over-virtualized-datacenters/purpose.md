@@ -1,0 +1,1 @@
+This module provides B.Tech/MSc/MCA students with a comprehensive understanding of cloud platform architecture built upon virtualized datacenter infrastructure. It establishes the theoretical and practical foundations required to analyze, design, and evaluate cloud computing solutions, preparing students for advanced courses in distributed systems and cloud engineering.

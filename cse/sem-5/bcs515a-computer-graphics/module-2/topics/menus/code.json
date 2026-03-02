@@ -1,0 +1,35 @@
+{
+  "topicId": "menus",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C with GLUT",
+      "title": "Basic GLUT Menu Creation",
+      "description": "Simple example demonstrating creation and attachment of a basic GLUT menu",
+      "code": "// Global variable to store menu ID\nint mainMenu;\n\n// Menu callback function\nvoid menuCallback(int value) {\n switch(value) {\n case 1: printf(\"Draw Point selected\\n\"); break;\n case 2: printf(\"Draw Line selected\\n\"); break;\n case 3: printf(\"Clear Screen selected\\n\"); break;\n case 4: exit(0); break;\n }\n glutPostRedisplay();\n}\n\nint main(int argc, char **argv) {\n glutInit(&argc, argv);\n glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);\n glutCreateWindow(\"GLUT Menu Demo\");\n \n // Create menu and register callback\n mainMenu = glutCreateMenu(menuCallback);\n \n // Add menu entries with values\n glutAddMenuEntry(\"Draw Point\", 1);\n glutAddMenuEntry(\"Draw Line\", 2);\n glutAddMenuEntry(\"Clear Screen\", 3);\n glutAddMenuEntry(\"Exit\", 4);\n \n // Attach menu to right mouse button\n glutAttachMenu(GLUT_RIGHT_BUTTON);\n \n glutDisplayFunc(display);\n glutMainLoop();\n return 0;\n}",
+      "explanation": "This code creates a basic pop-up menu attached to the right mouse button. When any menu item is selected, the menuCallback function receives the associated integer value and executes appropriate action using a switch statement.",
+      "timeComplexity": "O(1) for menu operations, O(n) where n is number of menu items in callback",
+      "spaceComplexity": "O(1) for menu system plus O(n) for callback switch handling"
+    },
+    {
+      "id": "code-2",
+      "language": "C with GLUT",
+      "title": "Hierarchical Menu with Submenus",
+      "description": "Example demonstrating creation of cascading submenus in GLUT",
+      "code": "// Menu IDs\nint shapesMenu, colorsMenu, mainMenu;\n\nvoid menuCallback(int value) {\n if (value == 1) { /* Draw point */ }\n else if (value == 2) { /* Draw line */ }\n else if (value == 3) { /* Draw triangle */ }\n else if (value == 10) { /* Set red */ }\n else if (value == 11) { /* Set green */ }\n else if (value == 12) { /* Set blue */ }\n else if (value == 99) { /* Clear screen */ }\n else if (value == 100) { /* Exit */ }\n}\n\nvoid createMenus() {\n // Create shapes submenu first\n shapesMenu = glutCreateMenu(menuCallback);\n glutAddMenuEntry(\"Point\", 1);\n glutAddMenuEntry(\"Line\", 2);\n glutAddMenuEntry(\"Triangle\", 3);\n \n // Create colors submenu\n colorsMenu = glutCreateMenu(menuCallback);\n glutAddMenuEntry(\"Red\", 10);\n glutAddMenuEntry(\"Green\", 11);\n glutAddMenuEntry(\"Blue\", 12);\n \n // Create main menu and add submenus\n mainMenu = glutCreateMenu(menuCallback);\n glutAddSubMenu(\"Shapes\", shapesMenu);\n glutAddSubMenu(\"Colors\", colorsMenu);\n glutAddMenuEntry(\"Clear Screen\", 99);\n glutAddMenuEntry(\"Exit\", 100);\n \n // Attach to right button\n glutAttachMenu(GLUT_RIGHT_BUTTON);\n}\n\nint main(int argc, char **argv) {\n glutInit(&argc, argv);\n glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);\n glutCreateWindow(\"Hierarchical Menu Demo\");\n \n createMenus();\n \n glutDisplayFunc(display);\n glutMainLoop();\n return 0;\n}",
+      "explanation": "This demonstrates hierarchical menu creation. Submenus must be created BEFORE they are added to parent menus using glutAddSubMenu(). The callback handles selections from all levels by checking different value ranges.",
+      "timeComplexity": "O(1) for menu creation, O(n) callback where n = total menu items",
+      "spaceComplexity": "O(k) where k = number of menus (main + submenus)"
+    },
+    {
+      "id": "code-3",
+      "language": "C with GLUT",
+      "title": "Dynamic Menu Management",
+      "description": "Example showing how to destroy and recreate menus dynamically during runtime",
+      "code": "int currentMenu = 0;\n\nvoid primaryMenuCallback(int value) {\n if (value == 1) {\n // Switch to alternate menu\n glutDetachMenu(GLUT_RIGHT_BUTTON);\n glutDestroyMenu(currentMenu);\n currentMenu = createAlternateMenu();\n glutAttachMenu(GLUT_RIGHT_BUTTON);\n } else if (value == 2) {\n // Exit application\n glutDestroyMenu(currentMenu);\n exit(0);\n }\n}\n\nint createPrimaryMenu() {\n int menu = glutCreateMenu(primaryMenuCallback);\n glutAddMenuEntry(\"Switch to Mode 2\", 1);\n glutAddMenuEntry(\"Exit\", 2);\n return menu;\n}\n\nint createAlternateMenu() {\n int menu = glutCreateMenu(primaryMenuCallback);\n glutAddMenuEntry(\"Option A\", 10);\n glutAddMenuEntry(\"Option B\", 11);\n glutAddMenuEntry(\"Switch to Mode 1\", 12);\n glutAddMenuEntry(\"Exit\", 2);\n return menu;\n}\n\nint main(int argc, char **argv) {\n glutInit(&argc, argv);\n glutCreateWindow(\"Dynamic Menu Demo\");\n \n currentMenu = createPrimaryMenu();\n glutAttachMenu(GLUT_RIGHT_BUTTON);\n \n glutMainLoop();\n return 0;\n}",
+      "explanation": "This demonstrates dynamic menu management: detaching a menu from a button, destroying it to free resources, creating a new menu, and reattaching. Useful for context-sensitive menus that change based on application state.",
+      "timeComplexity": "O(n) where n = menu items being created/destroyed",
+      "spaceComplexity": "O(n) for new menu allocation, O(1) for cleanup"
+    }
+  ]
+}

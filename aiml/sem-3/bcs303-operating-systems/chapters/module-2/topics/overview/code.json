@@ -1,0 +1,45 @@
+{
+  "topicId": "overview",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Process Creation Pseudocode",
+      "description": "Demonstrates how a process is created and PCB is initialized",
+      "code": "FUNCTION CreateProcess(programName)\nBEGIN\n  // Allocate new PCB from kernel memory\n  newPCB \u2190 AllocateBlock()\n  \n  // Initialize PCB fields\n  newPCB.pid \u2190 GenerateUniquePID()\n  newPCB.state \u2190 NEW\n  newPCB.programCounter \u2190 0\n  newPCB.cpuRegisters \u2190 {0}\n  newPCB.priority \u2190 DEFAULT_PRIORITY\n  newPCB.parentPid \u2190 CurrentProcess.pid\n  \n  // Allocate memory for process\n  newPCB.memoryInfo \u2190 AllocateMemory(PROCESS_SIZE)\n  \n  // Load program into memory\n  LoadProgram(newPCB, programName)\n  \n  // Add to appropriate queue\n  AddToReadyQueue(newPCB)\n  newPCB.state \u2190 READY\n  \n  RETURN newPCB.pid\nEND",
+      "explanation": "This pseudocode shows how an OS creates a new process by allocating and initializing a Process Control Block, loading the program into memory, and placing the process in the ready queue.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(PROCESS_SIZE)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Context Switching Simulation in Python",
+      "description": "Demonstrates the concept of context switching between processes",
+      "code": "class Process:\n    def __init__(self, pid, name, burst_time):\n        self.pid = pid\n        self.name = name\n        self.burst_time = burst_time\n        self.remaining_time = burst_time\n        self.state = \"NEW\"\n        \nclass ContextSwitchSimulator:\n    def __init__(self):\n        self.ready_queue = []\n        self.current_process = None\n        \n    def add_process(self, process):\n        process.state = \"READY\"\n        self.ready_queue.append(process)\n        \n    def save_context(self, process):\n        # Save current process state to its PCB\n        process.cpu_registers = self.get_registers()\n        process.program_counter = self.get_pc()\n        print(f\"Saving context for Process {process.pid}\")\n        \n    def load_context(self, process):\n        # Restore process state from its PCB\n        self.set_registers(process.cpu_registers)\n        self.set_pc(process.program_counter)\n        process.state = \"RUNNING\"\n        print(f\"Loaded context for Process {process.pid}\")\n        \n    def schedule(self):\n        if self.current_process:\n            self.save_context(self.current_process)\n            self.current_process.state = \"READY\"\n            self.ready_queue.append(self.current_process)\n            \n        if self.ready_queue:\n            self.current_process = self.ready_queue.pop(0)\n            self.load_context(self.current_process)\n\n# Example usage\nsim = ContextSwitchSimulator()\np1 = Process(1, \"P1\", 10)\np2 = Process(2, \"P2\", 5)\nsim.add_process(p1)\nsim.add_process(p2)\nsim.schedule()",
+      "explanation": "This Python code simulates context switching by saving and loading process states. The save_context method stores CPU registers and program counter to the process's PCB, while load_context restores them when a new process gets the CPU.",
+      "timeComplexity": "O(1) per context switch",
+      "spaceComplexity": "O(n) where n is number of processes"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Process Creation in C (fork)",
+      "description": "Demonstrates creating a child process using fork() system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n    pid_t pid;\n    \n    printf(\"Parent Process: PID = %d\\n\", getpid());\n    \n    // Create child process\n    pid = fork();\n    \n    if (pid < 0) {\n        // Error in fork\n        fprintf(stderr, \"Fork Failed\\n\");\n        return 1;\n    }\n    else if (pid == 0) {\n        // Child process\n        printf(\"Child Process: PID = %d, Parent PID = %d\\n\", \n               getpid(), getppid());\n        printf(\"Child executing...\\n\");\n        \n        // Execute new program (optional)\n        // execlp(\"ls\", \"ls\", \"-l\", NULL);\n        \n        return 0;\n    }\n    else {\n        // Parent process\n        printf(\"Parent: Child created with PID = %d\\n\", pid);\n        printf(\"Parent waiting for child...\\n\");\n        wait(NULL);  // Wait for child to complete\n        printf(\"Child terminated\\n\");\n    }\n    \n    return 0;\n}",
+      "explanation": "This C program demonstrates process creation using the fork() system call. fork() creates an exact copy of the parent process (child). The return value differs: 0 in child, child's PID in parent, -1 on error. The parent uses wait() to synchronize with child termination.",
+      "timeComplexity": "O(1) for fork, O(n) for execution",
+      "spaceComplexity": "O(process size)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Simple Round Robin Scheduler",
+      "description": "Demonstrates a basic round-robin CPU scheduling algorithm",
+      "code": "ALGORITHM RoundRobinScheduler\nINPUT: Time quantum Q\nVARIABLES: ReadyQueue, CurrentTime, CurrentProcess\n\nBEGIN\n  Initialize ReadyQueue as empty\n  CurrentTime \u2190 0\n  \n  // Add all new processes to ready queue\n  FOR each new process P DO\n    P.state \u2190 READY\n    Enqueue(ReadyQueue, P)\n  END FOR\n  \n  WHILE ReadyQueue is not empty OR processes remaining DO\n    // Get next process from ready queue\n    CurrentProcess \u2190 Dequeue(ReadyQueue)\n    CurrentProcess.state \u2190 RUNNING\n    \n    // Execute for quantum or until blocked\n    IF CurrentProcess.remainingTime > Q THEN\n      CurrentTime \u2190 CurrentTime + Q\n      CurrentProcess.remainingTime \u2190 CurrentProcess.remainingTime - Q\n      \n      // Time quantum expired - preempt and requeue\n      CurrentProcess.state \u2190 READY\n      Enqueue(ReadyQueue, CurrentProcess)\n      Print \"Process\", CurrentProcess.pid, \"preempted at time\", CurrentTime\n      \n    ELSE\n      // Process completes within quantum\n      CurrentTime \u2190 CurrentTime + CurrentProcess.remainingTime\n      CurrentProcess.remainingTime \u2190 0\n      CurrentProcess.state \u2190 TERMINATED\n      Print \"Process\", CurrentProcess.pid, \"completed at time\", CurrentTime\n    END IF\n    \n  END WHILE\n  \n  Print \"All processes completed. Total time:\", CurrentTime\nEND",
+      "explanation": "Round Robin scheduling gives each process an equal time slice (quantum). If a process doesn't complete within its quantum, it's preempted and moved to the back of the ready queue. This ensures fair CPU distribution and is commonly used in time-sharing systems.",
+      "timeComplexity": "O(n) where n = number of processes",
+      "spaceComplexity": "O(m) where m = capacity of ready queue"
+    }
+  ]
+}

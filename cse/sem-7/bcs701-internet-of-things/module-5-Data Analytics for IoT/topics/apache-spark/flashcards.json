@@ -1,0 +1,55 @@
+{
+  "topicId": "apache-spark",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What are the main components of Apache Spark?",
+      "back": "1. Spark Core - Foundation with RDD API\n2. Spark SQL - Structured data processing\n3. Spark Streaming - Stream processing via micro-batches\n4. MLlib - Machine learning library\n5. GraphX - Graph processing\n\nAll built on a unified in-memory computation engine"
+    },
+    {
+      "id": "fc2",
+      "front": "Explain Spark Architecture with Driver, Executors, and Cluster Manager.",
+      "back": "Driver:\n- Main control program\n- Creates SparkContext\n- Schedules tasks\n\nCluster Manager:\n- YARN/Mesos/Kubernetes\n- Allocates resources\n\nExecutors (on Workers):\n- Run tasks in threads\n- Store data in cache\n- Return results to driver"
+    },
+    {
+      "id": "fc3",
+      "front": "What is Lazy Evaluation in Spark?",
+      "back": "Transformations (map, filter) do not execute immediately.\n- Build a DAG of operations\n- Optimize execution plan\n- Execute only when an action is called\n\nBenefits:\n- Optimized performance through pipelining\n- Avoid unnecessary computations\n- Enable whole-stage code generation"
+    },
+    {
+      "id": "fc4",
+      "front": "Compare Spark vs MapReduce for IoT.",
+      "back": "Spark Advantages:\n- 10-100x faster (in-memory)\n- Unified batch+stream processing\n- Interactive queries (sub-second)\n- MLlib for predictive analytics\n- Easier programming (Python, Scala)\n\nMapReduce:\n- Disk-based, slower\n- Batch only\n- Minutes latency\n- No built-in ML support\n- Verbose code"
+    },
+    {
+      "id": "fc5",
+      "front": "What are RDD Transformations and Actions? Give examples.",
+      "back": "Transformations (Lazy):\n- map(), filter(), flatMap()\n- union(), distinct()\n- Create new RDD\n- Not executed until action\n\nActions (Eager):\n- count(), collect(), first()\n- reduce(), take(n)\n- Trigger computation\n- Return results to driver"
+    },
+    {
+      "id": "fc6",
+      "front": "What is an RDD and its three key properties?",
+      "back": "RDD = Resilient Distributed Dataset\n\n1. Resilient: Fault-tolerant via lineage tracking; lost partitions recomputed automatically from parent RDDs\n2. Distributed: Data partitioned across multiple nodes in the cluster for parallel processing\n3. Immutable: Cannot be changed once created; transformations produce new RDDs\n\nRDD is Spark's fundamental data abstraction."
+    },
+    {
+      "id": "fc7",
+      "front": "What is Spark Streaming and how does it work?",
+      "back": "Spark Streaming processes real-time data by dividing it into micro-batches.\n\n1. Receives live data streams (Kafka, MQTT)\n2. Divides into small time intervals (e.g., 1-5 seconds)\n3. Each micro-batch processed as an RDD\n4. Results combined for continuous output\n\nDStream (Discretized Stream) = continuous series of RDDs\nBenefit: Reuses batch code for streaming with unified API"
+    },
+    {
+      "id": "fc8",
+      "front": "How does Spark achieve fault tolerance?",
+      "back": "Lineage-based Recovery:\n1. Each RDD records its transformation history (lineage graph)\n2. If a partition is lost (node failure), Spark recomputes it from parent RDDs\n3. No data replication needed (unlike HDFS)\n4. Checkpointing available for long lineage chains\n\nThis is more efficient than replication-based fault tolerance for iterative computations."
+    },
+    {
+      "id": "fc9",
+      "front": "What is the difference between cache() and persist() in Spark?",
+      "back": "cache(): Stores RDD in memory only (equivalent to persist(MEMORY_ONLY))\n\npersist(level): Stores RDD with configurable storage level:\n- MEMORY_ONLY - in memory, recompute if lost\n- MEMORY_AND_DISK - memory first, spill to disk\n- DISK_ONLY - disk storage only\n- MEMORY_ONLY_SER - serialized in memory (less space)\n\nUse when an RDD is reused across multiple actions."
+    },
+    {
+      "id": "fc10",
+      "front": "How is Spark used for IoT predictive maintenance?",
+      "back": "1. Spark Streaming ingests real-time sensor data from Kafka\n2. Spark SQL structures and cleans the data\n3. MLlib trains models on historical failure data:\n - Classification: healthy vs failing\n - Regression: remaining useful life\n4. Spark Streaming applies model to new data in real-time\n5. Alerts generated for predicted failures\n\nBenefit: Unified platform for both model training (batch) and scoring (stream)."
+    }
+  ]
+}

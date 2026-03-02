@@ -1,0 +1,35 @@
+{
+  "topicId": "finite-automata-and-regular-expressions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "NFA to DFA Conversion Algorithm",
+      "description": "Algorithm to convert Non-deterministic Finite Automaton to Equivalent Deterministic Finite Automaton using Subset Construction",
+      "code": "ALGORITHM NFA_to_DFA\nINPUT: NFA = (Q, Σ, δ, q0, F)\nOUTPUT: DFA = (Q', Σ, δ', q0', F')\n\nBEGIN\n // Step 1: Find ε-closure for all states\n FOR each state q IN Q DO\n ε_closure[q] := ComputeEpsilonClosure(q)\n END FOR\n \n // Step 2: Initialize DFA\n Q' := {} // Set of DFA states\n q0' := ε_closure[q0] // Start state\n ADD q0' TO Q'\n F' := {} // Accepting states\n \n // Step 3: Process new states\n WHILE new_state IN Q' UNPROCESSED DO\n FOR each input symbol a IN Σ DO\n // Find all states reachable from current NFA states\n // on input 'a' followed by ε-closure\n new_set := {}\n FOR each state s IN current_NFA_states DO\n FOR each state t IN δ(s, a) DO\n ADD ε_closure[t] TO new_set\n END FOR\n END FOR\n \n // Add transition in DFA\n δ'(current_NFA_states, a) := new_set\n \n // If new state not in Q', add it\n IF new_set NOT IN Q' THEN\n ADD new_set TO Q'\n END IF\n END FOR\n \n // Mark current state as processed\n MARK current_NFA_states AS PROCESSED\n \n // Check if this state contains any NFA accepting state\n IF new_set ∩ F ≠ ∅ THEN\n ADD new_set TO F'\n END IF\n END WHILE\n \n RETURN DFA\nEND",
+      "explanation": "The algorithm uses subset construction where each DFA state represents a set of NFA states. The ε-closure ensures all states reachable via ε-transitions are included. The process continues until no new states are generated.",
+      "timeComplexity": "O(2^n × n × |Σ|)",
+      "spaceComplexity": "O(2^n)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Thompson's Construction Algorithm",
+      "description": "Algorithm to convert Regular Expression to NFA using recursive construction",
+      "code": "ALGORITHM ThompsonConstruction(RE)\nINPUT: Regular Expression RE\nOUTPUT: NFA = (Q, Σ, δ, q_start, q_accept)\n\nBEGIN\n IF RE is a single symbol 'a' THEN\n // Create two states with transition on 'a'\n q_start := newState()\n q_accept := newState()\n δ(q_start, 'a') := {q_accept}\n RETURN NFA with states {q_start,q_accept}\n \n ELSE IF RE is ε (empty string) THEN\n // Create two states with ε-transition\n q_start := newState()\n q_accept := newState()\n ε_transition(q_start) := {q_accept}\n RETURN NFA\n \n ELSE IF RE is Union(R1, R2) THEN\n // Build NFAs for R1 and R2\n NFA1 := ThompsonConstruction(R1)\n NFA2 := ThompsonConstruction(R2)\n // Create new start and accept states\n q_start := newState()\n q_accept := newState()\n // Add ε-transitions from new start to both sub-NFAs\n ε_transition(q_start) := {NFA1.start, NFA2.start}\n // Add ε-transitions from both sub-NFAs to new accept\n ε_transition(NFA1.accept) := {q_accept}\n ε_transition(NFA2.accept) := {q_accept}\n RETURN combined NFA\n \n ELSE IF RE is Concatenation(R1, R2) THEN\n NFA1 := ThompsonConstruction(R1)\n NFA2 := ThompsonConstruction(R2)\n // Connect accept of R1 to start of R2\n ε_transition(NFA1.accept) := {NFA2.start}\n RETURN NFA with start=NFA1.start, accept=NFA2.accept\n \n ELSE IF RE is Star(R1) THEN\n // R1* means zero or more occurrences\n NFA1 := ThompsonConstruction(R1)\n q_start := newState()\n q_accept := newState()\n // ε from new start to sub-NFA start and new accept\n ε_transition(q_start) := {NFA1.start, q_accept}\n // ε from sub-NFA accept to sub-NFA start and new accept\n ε_transition(NFA1.accept) := {NFA1.start, q_accept}\n RETURN NFA\n END IF\nEND",
+      "explanation": "Thompson's Construction builds NFAs recursively. For each operation (union, concatenation, star), it combines smaller NFAs. The algorithm guarantees that the resulting NFA has at most 2|RE| states and can be simulated efficiently.",
+      "timeComplexity": "O(|RE|)",
+      "spaceComplexity": "O(|RE|)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "DFA Minimization Algorithm",
+      "description": "Algorithm to minimize a DFA by merging equivalent states",
+      "code": "ALGORITHM MinimizeDFA(DFA)\nINPUT: DFA = (Q, Σ, δ, q0, F)\nOUTPUT: Minimal DFA\n\nBEGIN\n // Step 1: Initial Partition\n // Group states into accepting and non-accepting\n P := {F, Q - F} // Two groups\n \n REPEAT\n New_P := P\n FOR each group G IN P DO\n // Try to split group into subgroups\n FOR each state pair (p, q) IN G DO\n // Check if p and q are distinguishable\n FOR each input symbol a IN Σ DO\n δ(p, a) = p', δ(q, a) = q'\n // Find groups containing p' and q'\n group_p := FindGroup(P, p')\n group_q := FindGroup(P, q')\n \n IF group_p ≠ group_q THEN\n // p and q are distinguishable\n Split G into G1 (with p) and G2 (with q)\n Replace G with G1, G2 in New_P\n BREAK\n END IF\n END FOR\n END FOR\n END FOR\n P := New_P\n UNTIL P = New_P // No more splitting\n \n // Step 2: Construct Minimal DFA\n // Each group becomes one state in minimal DFA\n FOR each group G IN P DO\n new_state := representative of G\n // Transitions: for each input a\n δ'(new_state, a) := representative of group containing δ(rep, a)\n END FOR\n \n q0' := group containing q0\n F' := groups that contain any accepting state\n \n RETURN Minimal DFA\nEND",
+      "explanation": "The algorithm uses partition refinement. Initially, states are divided into accepting and non-accepting. Then iteratively, groups are split if states within a group behave differently on some input. States in the same final group are equivalent and can be merged.",
+      "timeComplexity": "O(n² × |Σ|)",
+      "spaceComplexity": "O(n²)"
+    }
+  ]
+}

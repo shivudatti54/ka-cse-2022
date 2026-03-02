@@ -1,0 +1,45 @@
+{
+  "topicId": "message-authentication-hash-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Simple Hash Implementation (Educational)",
+      "description": "Demonstrates basic hash concept - NOT cryptographically secure, for learning only",
+      "code": "def simple_hash(message):\n    \"\"\"\n    Educational hash - DO NOT use for security\n    Demonstrates: fixed output, deterministic, one-way\n    \"\"\"\n    h = 0\n    for char in message:\n        h = (h * 31 + ord(char)) % (2**32)\n    return format(h, '08x')\n\n# Test\nmsg1 = \"Hello World\"\nmsg2 = \"Hello World\"  # Same\nmsg3 = \"hello World\"  # One bit different\n\nprint(f\"Hash('{msg1}'): {simple_hash(msg1)}\")\nprint(f\"Hash('{msg2}'): {simple_hash(msg2)}\")\nprint(f\"Hash('{msg3}'): {simple_hash(msg3)}\")\nprint(\"Note: Small change causes different hash (avalanche)\")",
+      "explanation": "Shows basic hash properties: fixed output size, deterministic (same input\u2192same output), avalanche effect. Uses simple multiplication and modulo.",
+      "timeComplexity": "O(n) where n is message length",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "HMAC Implementation using SHA-256",
+      "description": "Shows how HMAC is computed using nested hash with secret key",
+      "code": "import hmac\nimport hashlib\n\ndef hmac_sha256(key, message):\n    \"\"\"\n    HMAC-SHA256 implementation\n    Formula: HMAC(K, m) = H((K\u2295opad) || H((K\u2295ipad) || m))\n    \"\"\"\n    # Key generation (if key shorter than block size, pad with zeros)\n    block_size = 64  # SHA-256 block size\n    if len(key) < block_size:\n        key = key + (b'\\x00' * (block_size - len(key)))\n    \n    # XOR with pads\n    ipad = bytes([k ^ 0x36 for k in key[:block_size]])\n    opad = bytes([k ^ 0x5c for k in key[:block_size]])\n    \n    # Inner hash\n    inner = hashlib.sha256(ipad + message.encode()).digest()\n    # Outer hash\n    hmac_result = hashlib.sha256(opad + inner).hexdigest()\n    \n    return hmac_result\n\n# Test\nkey = b\"secret_key\"\nmessage = \"Hello World\"\nprint(f\"HMAC-SHA256: {hmac_sha256(key, message)}\")\n\n# Using library (recommended)\nprint(f\"Using hmac library: {hmac.new(key, message.encode(), hashlib.sha256).hexdigest()}\")",
+      "explanation": "Demonstrates HMAC construction with nested hashing. Inner hash uses ipad XOR, outer uses opad XOR. Key padding ensures proper block alignment.",
+      "timeComplexity": "O(n) for processing message",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "MAC Generation and Verification Process",
+      "description": "Pseudocode for message authentication code generation and verification",
+      "code": "ALGORITHM MAC_Generate\nINPUT: Message M, Secret Key K\nOUTPUT: MAC Tag T\n\nBEGIN\n  // Method 1: Simple MAC (not recommended)\n  // T = Hash(M || K)  // Concatenation approach\n  \n  // Method 2: HMAC (recommended)\n  BLOCK_SIZE \u2190 64  // For SHA-256\n  \n  IF Length(K) < BLOCK_SIZE THEN\n    K \u2190 K || Padding(0, BLOCK_SIZE - Length(K))\n  END IF\n  \n  ipad \u2190 0x36 repeated BLOCK_SIZE times\n  opad \u2190 0x5C repeated BLOCK_SIZE times\n  \n  K_ipad \u2190 K XOR ipad\n  K_opad \u2190 K XOR opad\n  \n  inner_hash \u2190 Hash(K_ipad || M)\n  T \u2190 Hash(K_opad || inner_hash)\n  \n  RETURN T\nEND\n\nALGORITHM MAC_Verify\nINPUT: Message M, MAC Tag T, Secret Key K\nOUTPUT: Boolean (Valid/Invalid)\n\nBEGIN\n  T_computed \u2190 MAC_Generate(M, K)\n  \n  IF T_computed == T THEN\n    RETURN True  // Message authentic and intact\n  ELSE\n    RETURN False // Message tampered or wrong sender\n  END IF\nEND",
+      "explanation": "Shows MAC generation using HMAC structure and verification process. The secret key ensures only intended sender can generate valid MAC.",
+      "timeComplexity": "O(n) for both generate and verify",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Birthday Attack Simulation",
+      "description": "Demonstrates birthday paradox with hash-like collisions",
+      "code": "import random\n\ndef find_collision(num_bits=8, verbose=True):\n    \"\"\"\n    Simulate birthday attack: find collision in reduced hash space\n    num_bits: reduces hash space to 2^num_bits for demonstration\n    \"\"\"\n    hash_space = 2 ** num_bits\n    \n    # Try random inputs and check for collision\n    attempts = 0\n    seen = set()\n    \n    while True:\n        value = random.randint(0, hash_space - 1)\n        attempts += 1\n        \n        if value in seen:\n            if verbose:\n                print(f\"Collision found after {attempts} attempts\")\n                print(f\"Theoretical 50% threshold: {int(1.177 * (2 ** (num_bits/2)))}\")\n            return attempts\n        \n        seen.add(value)\n        \n        # Safety limit\n        if attempts > 2 ** (num_bits/2 + 2):\n            if verbose:\n                print(f\"Giving up after {attempts} attempts\")\n            return None\n\n# Test with different spaces\nprint(\"=== Birthday Attack Simulation ===\\n\")\n\nfor bits in [4, 8, 12, 16]:\n    print(f\"Hash space: 2^{bits} ({2**bits} values)\")\n    print(f\"Theoretical avg attempts for 50%: ~{int(1.177 * (2**(bits/2)))}\")\n    find_collision(bits)\n    print()\n\nprint(\"Observation: Collision found in ~\u221a(hash_space) attempts!\")",
+      "explanation": "Demonstrates birthday attack concept by finding collisions faster than brute force. Shows theoretical prediction matches practical results - complexity is O(2^(n/2)).",
+      "timeComplexity": "O(2^(n/2)) on average to find collision",
+      "spaceComplexity": "O(2^(n/2)) for storing seen values"
+    }
+  ]
+}

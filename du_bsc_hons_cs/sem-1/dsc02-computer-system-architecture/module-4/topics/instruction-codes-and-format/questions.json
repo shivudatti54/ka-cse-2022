@@ -1,0 +1,53 @@
+{
+  "topicId": "instruction-codes-and-format",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between zero-address, one-address, and two-address instruction formats. Provide one example instruction for each format assuming an accumulator-based architecture.",
+      "keyPoints": [
+        "Zero-address: Stack-based instructions, operands implicitly on stack (e.g., ADD pops two top elements)",
+        "One-address: Uses accumulator as implicit operand, operand field specifies memory address (e.g., LOAD X loads X to accumulator)",
+        "Two-address: One operand serves as both source and destination, reducing storage requirements (e.g., ADD X means ACC = ACC + X)",
+        "Format complexity increases from zero to two-address, affecting instruction length and CPU complexity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and explain at least four distinct addressing modes used in instruction sets. For each mode, provide a hypothetical assembly instruction and explain how the effective address is computed.",
+      "keyPoints": [
+        "Immediate: Operand value is part of instruction (e.g., MOV AX, 5) - no memory access needed",
+        "Direct/Absolute: Address field contains effective memory address (e.g., LOAD 1000) - single memory access",
+        "Register: Operand is in specified register (e.g., ADD AX, BX) - no memory access",
+        "Indirect: Address field points to memory location containing the effective address (e.g., LOAD @1000) - requires two memory accesses"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Design a complete instruction format for a hypothetical 16-bit computer system with 64KB (65536 bytes) of memory organized as word-addressable (each word = 2 bytes). Your design should include: (a) The opcode field size and number of distinct instructions supported, (b) The operand/address field specification for different addressing modes, (c) At least 3 example instructions shown in binary encoding with proper justification, (d) How the CPU decodes and executes one of your designed instructions.",
+      "keyPoints": [
+        "With 16-bit word and 64KB memory: need 16-bit addresses, 15-bit for word address (32768 words), but typically use 16-bit address field",
+        "If using 4-bit opcode: can support 16 distinct instructions, remaining 12 bits for operand/address field",
+        "Example: LOAD (0000), STORE (0001), ADD (0010), JUMP (0011) with 12-bit direct address field (4096 word addresses = 8KB)",
+        "Binary encoding: LOAD 500 decimal = 0000 0001 11110100 (opcode + 12-bit address in word form), CPU uses control unit to decode opcode and ALU to compute effective address"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Compare RISC (Reduced Instruction Set Computer) and CISC (Complex Instruction Set Computer) architectures with respect to: (a) Instruction format complexity and length variability, (b) Number of addressing modes supported, (c) Instruction execution approach (microcode vs hardwired), (d) Register usage philosophy. Also explain why the traditional RISC vs CISC distinction has become blurred in modern processors like Intel Core and ARM Cortex-A series, providing specific examples.",
+      "keyPoints": [
+        "RISC: Fixed-length instructions (typically 32-bit), simple formats, few addressing modes, register-register operations only, pipelining friendly; CISC: Variable-length (1-15 bytes), many complex addressing modes, memory-operand instructions, microprogrammed control",
+        "RISC emphasizes load-store architecture with large register files (32-128 registers); CISC traditionally had fewer registers but supported complex memory operand addressing",
+        "Modern convergence: x86-64 (CISC) uses RISC-like micro-ops internally, implements register renaming, out-of-order execution; ARM (RISC) adds SIMD extensions,Thumb-2 variable-length encoding, cache prefetching",
+        "Practical impact: Intel Core uses decoder to translate CISC to RISC-like micro-ops for execution; ARM Cortex-A supports both AArch64 (pure 64-bit) and AArch32, adding complex SIMD and cryptographic instructions previously considered CISC characteristics"
+      ],
+      "marks": 10
+    }
+  ]
+}

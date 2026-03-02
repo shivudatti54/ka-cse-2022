@@ -1,0 +1,2 @@
+# Execution Of A Complete Instruction
+This module enables students to understand the complete instruction execution process in a processor, from fetch to write-back. Students will learn to analyze datapath components, calculate execution time and CPI metrics, trace instruction execution through all five phases, and evaluate pipeline performance. This knowledge is fundamental for understanding computer architecture, processor design, and performance optimization.

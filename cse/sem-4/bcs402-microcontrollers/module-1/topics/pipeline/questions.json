@@ -1,0 +1,153 @@
+{
+  "topicId": "pipeline",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of pipeline architecture in microcontrollers with its advantages.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Definition: technique to overlap execution of multiple instructions by dividing into stages",
+        "Each stage handled by dedicated hardware unit",
+        "Advantages: increased throughput, improved performance, better resource utilization",
+        "First instruction takes k cycles, subsequent complete every cycle"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List and briefly explain the five stages of classic RISC pipeline.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "IF - Instruction Fetch: fetch instruction from memory",
+        "ID - Instruction Decode: decode instruction, read registers",
+        "EX - Execute: perform ALU operation, calculate address",
+        "MEM - Memory Access: access data memory for load/store",
+        "WB - Write Back: write result back to register file"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are the three types of pipeline hazards? Explain each with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Structural Hazard: hardware resource conflict (e.g., single memory port)",
+        "Data Hazard: instruction depends on result of previous (RAW, WAR, WAW)",
+        "Control Hazard: branch/jump changes flow (e.g., conditional branch outcome unknown)"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Define pipeline stall and pipeline flush. How do they differ?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Pipeline Stall: insertion of NOP/bubble cycles to delay instruction until hazard resolved",
+        "Pipeline Flush: clearing of incorrectly fetched instructions when hazard detected",
+        "Stall delays execution; flush discards already fetched instructions",
+        "Flush commonly occurs in branch misprediction; stall in data dependencies"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Calculate the speedup for a 5-stage pipeline executing 100 instructions. Assume ideal conditions with no hazards.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Non-pipeline time: 100 × 5 = 500 cycles",
+        "Pipeline time: 5 + 100 - 1 = 104 cycles (fill + drain + execution)",
+        "Speedup = 500/104 ≈ 4.81",
+        "As n→∞, speedup approaches 5 (number of stages)"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the technique of forwarding (data bypassing) to resolve data hazards.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Forwarding passes results directly from execute/memory stages to subsequent instructions",
+        "Eliminates need to wait until write-back stage completes",
+        "ALU result from EX/MEM stage forwarded to EX stage of dependent instruction",
+        "Load result forwarded from MEM/WB to EX stage (may still need stall for load-use hazard)"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the difference between pipeline latency and pipeline throughput?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Latency: time for single instruction to traverse all pipeline stages (in cycles)",
+        "Throughput: number of instructions completed per unit time (instructions per cycle)",
+        "Throughput = 1 IPC in ideal pipeline after filling",
+        "Latency = number of stages × clock period; Throughput = 1/latency (ideally)"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Draw and explain a 5-stage pipeline timing diagram for executing 4 instructions. Also derive the pipeline speedup formula.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Diagram showing 4 instructions I1,I2,I3,I4 across 5 stages with proper overlap",
+        "Show fill period (first 4 cycles), steady state (1 instruction/cycle), drain period",
+        "Non-pipeline cycles = n × k = 4 × 5 = 20",
+        "Pipeline cycles = k + n - 1 = 5 + 4 - 1 = 8",
+        "Speedup = (n×k)/(k+n-1), approaches k as n→∞",
+        "Explain with calculation showing approximately 4.8x speedup"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain all three types of pipeline hazards in detail. For each hazard, suggest suitable solutions to overcome them.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Structural: solution - duplicate hardware resources, multi-port memory, proper scheduling",
+        "Data: solution - forwarding/bypassing, register renaming, compiler scheduling, stall insertion",
+        "Control: solution - branch prediction, delayed branching, flush on misprediction, loop unrolling",
+        "Provide examples for each solution with timing diagrams where applicable"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of pipeline speedup and efficiency. Calculate: (a) Speedup for 8-stage pipeline with 50 instructions (b) What is maximum possible speedup?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Speedup = Non-pipeline time / Pipeline time = n×k / (k+n-1)",
+        "Efficiency = Actual speedup / Ideal speedup × 100%",
+        "Part (a): Non-pipeline = 50×8 = 400, Pipeline = 8+50-1 = 57, Speedup = 400/57 ≈ 7.02",
+        "Part (b): Maximum speedup = k = 8 (as n→∞)",
+        "Efficiency = 7.02/8 × 100% ≈ 87.75%",
+        "Discuss reasons for less than ideal speedup: fill/drain overhead"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "With a neat diagram, explain the organization of a typical microcontroller pipeline. Discuss the role of each stage and potential hazards in such pipelines.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Diagram showing: Fetch → Decode → Execute → Memory → Write-back",
+        "IF: PC, MAR, Memory, IR; ID: Register file, Control unit; EX: ALU; MEM: Data memory; WB: Register file",
+        "Harvard vs Von Neumann impact on structural hazards",
+        "Microcontroller-specific hazards: memory-mapped I/O access, interrupt handling in pipeline",
+        "Solutions: delayed load, branch delay slots, hazard detection unit"
+      ]
+    }
+  ]
+}

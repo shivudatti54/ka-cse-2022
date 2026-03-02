@@ -1,0 +1,45 @@
+{
+  "topicId": "subset-sum-problem",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Subset Sum using Dynamic Programming",
+      "description": "Standard DP solution with 2D table",
+      "code": "ALGORITHM SubsetSumDP(arr[1..n], W)\nBEGIN\n  // Create DP table\n  DECLARE dp[0..n][0..W] as BOOLEAN\n  \n  // Initialize base cases\n  FOR j FROM 0 TO W DO\n    dp[0][j] = FALSE\n  END FOR\n  dp[0][0] = TRUE\n  \n  // Fill DP table\n  FOR i FROM 1 TO n DO\n    FOR j FROM 0 TO W DO\n      dp[i][j] = dp[i-1][j]  // Not include arr[i]\n      \n      IF j >= arr[i] THEN\n        IF dp[i-1][j - arr[i]] = TRUE THEN\n          dp[i][j] = TRUE\n        END IF\n      END IF\n    END FOR\n  END FOR\n  \n  RETURN dp[n][W]\nEND",
+      "explanation": "DP table stores whether sum j is achievable using first i elements. Base case: empty set can make sum 0. For each element, either don't include it or include it if it doesn't exceed target.",
+      "timeComplexity": "O(n \u00d7 W)",
+      "spaceComplexity": "O(n \u00d7 W)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Subset Sum with Space Optimization",
+      "description": "1D DP array optimization",
+      "code": "def subset_sum_dp(arr, target):\n    n = len(arr)\n    \n    # Space optimized: 1D array\n    dp = [False] * (target + 1)\n    dp[0] = True  # Base case: sum 0 achievable\n    \n    for i in range(n):\n        # Iterate backwards to avoid using current element twice\n        for j in range(target, arr[i] - 1, -1):\n            dp[j] = dp[j] or dp[j - arr[i]]\n    \n    return dp[target]\n\n# Example usage\narr = [3, 34, 4, 12, 5, 2]\ntarget = 9\nprint(subset_sum_dp(arr, target))  # Output: True",
+      "explanation": "Using 1D array and iterating backwards ensures each element is used at most once. When iterating backwards, dp[j-arr[i]] refers to the previous row's value, not the current row's updated value.",
+      "timeComplexity": "O(n \u00d7 W)",
+      "spaceComplexity": "O(W)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Subset Sum using Backtracking",
+      "description": "Recursive backtracking with pruning",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_N 100\n\nint arr[MAX_N];\nint n, target;\n\nbool backtrack(int index, int currentSum) {\n    // Base case: found exact sum\n    if (currentSum == target) {\n        return true;\n    }\n    \n    // Pruning: exceeded target\n    if (currentSum > target) {\n        return false;\n    }\n    \n    // No more elements\n    if (index >= n) {\n        return false;\n    }\n    \n    // Pruning: check if remaining can reach target\n    int remainingSum = 0;\n    for (int i = index; i < n; i++) {\n        remainingSum += arr[i];\n    }\n    if (currentSum + remainingSum < target) {\n        return false;\n    }\n    \n    // Include current element\n    if (backtrack(index + 1, currentSum + arr[index])) {\n        return true;\n    }\n    \n    // Exclude current element\n    return backtrack(index + 1, currentSum);\n}\n\nint main() {\n    n = 6;\n    arr[0] = 3; arr[1] = 34; arr[2] = 4;\n    arr[3] = 12; arr[4] = 5; arr[5] = 2;\n    target = 9;\n    \n    if (backtrack(0, 0)) {\n        printf(\"Subset found!\\n\");\n    } else {\n        printf(\"No subset found.\\n\");\n    }\n    return 0;\n}",
+      "explanation": "Recursive function tries including and excluding each element. Pruning stops when sum exceeds target or remaining elements cannot reach target. Time is O(2^n) worst case but pruning helps significantly.",
+      "timeComplexity": "O(2^n) worst case",
+      "spaceComplexity": "O(n) for recursion stack"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Meet-in-the-Middle Subset Sum",
+      "description": "Divide and conquer approach",
+      "code": "def meet_in_the_middle(arr, target):\n    n = len(arr)\n    mid = n // 2\n    \n    # Split into two halves\n    left = arr[:mid]\n    right = arr[mid:]\n    \n    # Generate all subset sums for each half\n    left_sums = [0]\n    for num in left:\n        left_sums += [s + num for s in left_sums]\n    \n    right_sums = [0]\n    for num in right:\n        right_sums += [s + num for s in right_sums]\n    \n    # Sort one list for binary search\n    right_sums.sort()\n    \n    # Check if any pair sums to target\n    for ls in left_sums:\n        if target - ls in right_sums:\n            return True\n    \n    return False\n\n# Example\narr = [1, 2, 3, 4, 5, 6, 7, 8]\ntarget = 15\nprint(meet_in_the_middle(arr, target))  # True (e.g., 7+8 or 1+3+5+6)",
+      "explanation": "Generates 2^(n/2) subset sums for each half, then searches for complementary pairs. Much faster than pure exponential for moderate n. Space is O(2^(n/2)).",
+      "timeComplexity": "O(2^(n/2))",
+      "spaceComplexity": "O(2^(n/2))"
+    }
+  ]
+}

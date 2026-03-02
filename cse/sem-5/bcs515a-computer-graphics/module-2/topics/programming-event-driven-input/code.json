@@ -1,0 +1,41 @@
+{
+  "topicId": "programming-event-driven-input",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "javascript",
+      "title": "Basic Event Handler Registration",
+      "description": "Demonstrates how to register and use event handlers in JavaScript",
+      "code": "// Event Handler Function\nfunction handleClick(event) {\n console.log('Button clicked!');\n console.log('Event type:', event.type);\n console.log('Target:', event.target.id);\n}\n\n// Register event listener\ndocument.getElementById('myButton').addEventListener('click', handleClick);\n\n// Using arrow function (ES6)\ndocument.getElementById('myButton').addEventListener('click', (event) => {\n alert('Clicked: ' + event.target.innerText);\n});",
+      "explanation": "Shows two ways to register event listeners: using a named function and using an arrow function. The event object contains details about the triggered event.",
+      "timeComplexity": "Time: O(1) per event, Space: O(n) for listeners"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Java Event Handling with ActionListener",
+      "description": "Demonstrates event handling in Java GUI applications using ActionListener interface",
+      "code": "import java.awt.*;\nimport java.awt.event.*;\n\npublic class ButtonDemo extends Frame implements ActionListener {\n private Button btnClick;\n private TextField display;\n \n public ButtonDemo() {\n setTitle(\"Event Demo\");\n setSize(300, 200);\n \n display = new TextField(20);\n btnClick = new Button(\"Click Me\");\n \n // Register event handler\n btnClick.addActionListener(this);\n \n add(display, BorderLayout.NORTH);\n add(btnClick, BorderLayout.CENTER);\n setVisible(true);\n }\n \n // Event handler method\n @Override\n public void actionPerformed(ActionEvent e) {\n if (e.getSource() == btnClick) {\n display.setText(\"Button clicked at: \" + new java.util.Date());\n }\n }\n \n public static void main(String[] args) {\n new ButtonDemo();\n }\n}",
+      "explanation": "Java uses the ActionListener interface with actionPerformed method. The component must be registered using addActionListener(). When button is clicked, actionPerformed is invoked.",
+      "timeComplexity": "Time: O(1) per event, Space: O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "csharp",
+      "title": "C# Event Handling with Delegates",
+      "description": "Demonstrates event handling in C# using delegates and the event keyword",
+      "code": "using System;\n\npublic class Publisher {\n // Declare delegate\n public delegate void NotifyEventHandler(object sender, EventArgs e);\n \n // Declare event using delegate\n public event NotifyEventHandler OnProcessComplete;\n \n public void Process() {\n Console.WriteLine(\"Processing...\");\n \n // Raise event\n if (OnProcessComplete != null) {\n OnProcessComplete(this, EventArgs.Empty);\n }\n }\n}\n\npublic class Subscriber {\n public void HandleProcess(object sender, EventArgs e) {\n Console.WriteLine(\"Process completed! Notified via event.\");\n }\n}\n\n// Usage\nclass Program {\n static void Main() {\n Publisher pub = new Publisher();\n Subscriber sub = new Subscriber();\n \n // Subscribe to event\n pub.OnProcessComplete += sub.HandleProcess;\n \n pub.Process();\n }\n}",
+      "explanation": "C# uses delegates for type-safe event handling. The event keyword restricts external access to += and -= operators only. Delegates can point to multiple methods (multicast).",
+      "timeComplexity": "Time: O(n) for multicast delegates, Space: O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Python Event Handling with Tkinter",
+      "description": "Demonstrates GUI event handling in Python using Tkinter",
+      "code": "import tkinter as tk\nfrom tkinter import messagebox\n\ndef on_button_click(event):\n messagebox.showinfo(\"Event\", f\"Button clicked!\\nEvent type: {event.type}\")\n entry_text.set(entry.get() + \"*\")\n\ndef on_key_press(event):\n print(f\"Key pressed: {event.char}\")\n\ndef on_mouse_move(event):\n label.config(text=f\"Mouse: {event.x}, {event.y}\")\n\n# Create window\nroot = tk.Tk()\nroot.title(\"Event Handling Demo\")\n\n# StringVar for dynamic text\nentry_text = tk.StringVar()\n\n# GUI Components\nentry = tk.Entry(root, textvariable=entry_text)\nentry.pack(pady=5)\n\nbutton = tk.Button(root, text=\"Click Me\")\nbutton.pack(pady=5)\n\nlabel = tk.Label(root, text=\"Move mouse here\")\nlabel.pack(pady=5)\n\n# Bind events\nbutton.bind(\"<Button-1>\", on_button_click) # Mouse click\nentry.bind(\"<KeyPress>\", on_key_press) # Keyboard\nlabel.bind(\"<Motion>\", on_mouse_move) # Mouse move\n\nroot.mainloop()",
+      "explanation": "Python Tkinter uses bind() method to associate events with handler functions. Events are specified as strings like '<Button-1>' for mouse click. The event object contains detailed information.",
+      "timeComplexity": "Time: O(1) per event, Space: O(n) for bindings"
+    }
+  ]
+}

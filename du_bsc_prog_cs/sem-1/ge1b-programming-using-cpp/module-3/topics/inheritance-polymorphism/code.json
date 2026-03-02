@@ -1,0 +1,35 @@
+{
+  "topicId": "inheritance-polymorphism",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "C++",
+      "title": "Basic Inheritance and Method Overriding",
+      "description": "Demonstrates inheritance where a derived class inherits from a base class and overrides its method",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Base class\nclass Animal {\npublic:\n    string name;\n    \n    Animal(string n) : name(n) {}\n    \n    // Virtual method for polymorphism\n    virtual void speak() {\n        cout << name << \" makes a sound\" << endl;\n    }\n};\n\n// Derived class\nclass Dog : public Animal {\npublic:\n    Dog(string n) : Animal(n) {}\n    \n    // Override base class method\n    void speak() override {\n        cout << name << \" says: Woof! Woof!\" << endl;\n    }\n};\n\n// Another derived class\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    \n    void speak() override {\n        cout << name << \" says: Meow!\" << endl;\n    }\n};\n\nint main() {\n    Dog dog(\"Buddy\");\n    Cat cat(\"Whiskers\");\n    \n    dog.speak();  // Output: Buddy says: Woof! Woof!\n    cat.speak();  // Output: Whiskers says: Meow!\n    \n    return 0;\n}",
+      "explanation": "1. Animal is the base class with a virtual speak() method\n2. Dog and Cat inherit from Animal using ': public Animal'\n3. Each derived class provides its own implementation of speak()\n4. The virtual keyword enables runtime polymorphism",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "C++",
+      "title": "Polymorphism with Base Class Pointers",
+      "description": "Shows runtime polymorphism using base class pointers to call derived class methods",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Base class (Abstract concept)\nclass Shape {\nprotected:\n    string color;\npublic:\n    Shape(string c) : color(c) {}\n    \n    // Pure virtual function - makes Shape abstract\n    virtual double area() = 0;\n    \n    virtual void display() {\n        cout << \"Color: \" << color << \", Area: \" << area() << endl;\n    }\n    \n    virtual ~Shape() {}\n};\n\n// Derived class: Circle\nclass Circle : public Shape {\nprivate:\n    double radius;\npublic:\n    Circle(string c, double r) : Shape(c), radius(r) {}\n    \n    double area() override {\n        return 3.14159 * radius * radius;\n    }\n};\n\n// Derived class: Rectangle\nclass Rectangle : public Shape {\nprivate:\n    double length, width;\npublic:\n    Rectangle(string c, double l, double w) : Shape(c), length(l), width(w) {}\n    \n    double area() override {\n        return length * width;\n    }\n};\n\nint main() {\n    // Array of base class pointers - achieves polymorphism\n    Shape* shapes[3];\n    \n    shapes[0] = new Circle(\"Red\", 5.0);\n    shapes[1] = new Rectangle(\"Blue\", 4.0, 6.0);\n    shapes[2] = new Circle(\"Green\", 3.0);\n    \n    for (int i = 0; i < 3; i++) {\n        shapes[i]->display();\n    }\n    \n    // Clean up\n    for (int i = 0; i < 3; i++) {\n        delete shapes[i];\n    }\n    \n    return 0;\n}",
+      "explanation": "1. Shape is an abstract base class with pure virtual function area()\n2. Circle and Rectangle inherit from Shape and provide area() implementation\n3. Base class pointer (Shape*) can hold addresses of derived class objects\n4. At runtime, correct area() method is called based on actual object type\n5. Virtual destructor ensures proper cleanup of derived objects",
+      "timeComplexity": "O(1) per call",
+      "spaceComplexity": "O(n) where n is number of shapes"
+    },
+    {
+      "id": "code-3",
+      "language": "C++",
+      "title": "Multi-level Inheritance with Runtime Polymorphism",
+      "description": "Advanced example demonstrating multi-level inheritance hierarchy with virtual functions",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\n// Base class\nclass Employee {\nprotected:\n    string name;\n    int id;\n    double salary;\npublic:\n    Employee(string n, int i, double s) : name(n), id(i), salary(s) {}\n    \n    virtual void calculateBonus() = 0;\n    \n    virtual void display() {\n        cout << \"ID: \" << id << \", Name: \" << name << \", Salary: $\" << salary;\n    }\n    \n    virtual ~Employee() {}\n};\n\n// First level derived class\nclass Manager : public Employee {\nprivate:\n    int teamSize;\npublic:\n    Manager(string n, int i, double s, int ts) : Employee(n, i, s), teamSize(ts) {}\n    \n    void calculateBonus() override {\n        double bonus = salary * 0.15 + (teamSize * 100);\n        cout << \", Bonus: $\" << bonus << endl;\n    }\n};\n\n// Second level derived class from Manager\nclass SeniorManager : public Manager {\nprivate:\n    int projects;\npublic:\n    SeniorManager(string n, int i, double s, int ts, int p) \n        : Manager(n, i, s, ts), projects(p) {}\n    \n    void calculateBonus() override {\n        double bonus = salary * 0.25 + (teamSize * 150) + (projects * 500);\n        cout << \", Bonus: $\" << bonus << endl;\n    }\n};\n\n// Another branch of inheritance\nclass Developer : public Employee {\nprivate:\n    string language;\npublic:\n    Developer(string n, int i, double s, string lang) : Employee(n, i, s), language(lang) {}\n    \n    void calculateBonus() override {\n        double bonus = salary * 0.10;\n        cout << \", Bonus: $\" << bonus << endl;\n    }\n};\n\nint main() {\n    Employee* employees[4];\n    \n    employees[0] = new Manager(\"Alice\", 101, 80000, 10);\n    employees[1] = new Developer(\"Bob\", 102, 60000, \"Python\");\n    employees[2] = new SeniorManager(\"Charlie\", 103, 120000, 25, 5);\n    employees[3] = new Developer(\"Diana\", 104, 70000, \"C++\");\n    \n    cout << \"=== Employee Bonus Calculation ===\" << endl;\n    for (int i = 0; i < 4; i++) {\n        employees[i]->display();\n        employees[i]->calculateBonus();\n    }\n    \n    // Clean up\n    for (int i = 0; i < 4; i++) {\n        delete employees[i];\n    }\n    \n    return 0;\n}",
+      "explanation": "1. Employee is abstract base class with pure virtual calculateBonus()\n2. Manager inherits from Employee, Developer inherits from Employee\n3. SeniorManager inherits from Manager (multi-level inheritance)\n4. Each class overrides calculateBonus() with different bonus logic\n5. Base class pointer array demonstrates runtime polymorphism\n6. Virtual destructor ensures proper cleanup through base pointer",
+      "timeComplexity": "O(n) for processing n employees",
+      "spaceComplexity": "O(n) for storing n employees"
+    }
+  ]
+}

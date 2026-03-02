@@ -1,0 +1,173 @@
+<svg width="420" height="400" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg" data-topic-id="policy-gradient-methods">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="50%" style="stop-color:#f5f0fa"/>
+      <stop offset="100%" style="stop-color:#e6f4ea"/>
+    </linearGradient>
+    <linearGradient id="envGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8d8ea"/>
+      <stop offset="100%" style="stop-color:#7ec8e3"/>
+    </linearGradient>
+    <linearGradient id="policyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a5ff"/>
+      <stop offset="100%" style="stop-color:#9b59b6"/>
+    </linearGradient>
+    <linearGradient id="gradientGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#81f79f"/>
+      <stop offset="100%" style="stop-color:#2ecc71"/>
+    </linearGradient>
+    <linearGradient id="updateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd59a"/>
+      <stop offset="100%" style="stop-color:#f39c12"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+    </marker>
+  </defs>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 2px #3498db); }
+      50% { filter: drop-shadow(0 0 8px #3498db); }
+    }
+    .title { font-family: Georgia, serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+    .subtitle { font-family: Arial, sans-serif; font-size: 11px; fill: #7f8c8d; font-style: italic; }
+    .label { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #2c3e50; }
+    .detail { font-family: Arial, sans-serif; font-size: 11px; fill: #34495e; }
+    .formula { font-family: 'Times New Roman', serif; font-size: 12px; fill: #2c3e50; }
+    .formula-small { font-family: 'Times New Roman', serif; font-size: 10px; fill: #34495e; }
+    .box { rx: 10; ry: 10; }
+    .arrow { stroke: #3498db; stroke-width: 2; fill: none; }
+    .arrow-dashed { stroke: #e74c3c; stroke-width: 1.5; stroke-dasharray: 4,3; fill: none; }
+    .section { opacity: 0; }
+    .section-1 { animation: slideInLeft 0.6s ease-out forwards; animation-delay: 0.2s; }
+    .section-2 { animation: slideInUp 0.6s ease-out forwards; animation-delay: 0.4s; }
+    .section-3 { animation: slideInRight 0.6s ease-out forwards; animation-delay: 0.6s; }
+    .section-4 { animation: slideInLeft 0.6s ease-out forwards; animation-delay: 0.8s; }
+    .section-5 { animation: slideInUp 0.6s ease-out forwards; animation-delay: 1s; }
+    .section-6 { animation: slideInRight 0.6s ease-out forwards; animation-delay: 1.2s; }
+    .section-7 { animation: fadeIn 0.8s ease-out forwards; animation-delay: 1.4s; }
+    .pulse { animation: pulse 2s ease-in-out infinite; transform-origin: center; }
+    .pulse-slow { animation: pulse 3s ease-in-out infinite; transform-origin: center; }
+    .flow-line { animation: glow 2s ease-in-out infinite; }
+  </style>
+
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+
+  <!-- Title -->
+  <text x="210" y="25" class="title" text-anchor="middle">Policy Gradient Methods</text>
+
+  <!-- Section 1: Environment -->
+  <g class="section section-1" data-narration="Environment generates trajectories through interaction with the policy">
+    <rect x="25" y="50" width="95" height="85" class="box" fill="url(#envGradient)" filter="url(#shadow)"/>
+    <text x="72" y="72" class="label" text-anchor="middle" fill="white">Environment</text>
+    <text x="72" y="92" class="detail" text-anchor="middle" fill="white">s → a → r</text>
+    <text x="72" y="108" class="detail" text-anchor="middle" fill="white">Trajectory</text>
+    <text x="72" y="122" class="detail" text-anchor="middle" fill="white">τ = {s₀,a₀,r₀,...}</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <path d="M125 92 L150 92" class="arrow flow-line"/>
+
+  <!-- Section 2: Policy Network -->
+  <g class="section section-2" data-narration="Policy Network π(a|s;θ) outputs action probabilities given states">
+    <rect x="155" y="50" width="110" height="85" class="box" fill="url(#policyGradient)" filter="url(#shadow)"/>
+    <text x="210" y="72" class="label" text-anchor="middle" fill="white">Policy Network</text>
+    <text x="210" y="92" class="formula" text-anchor="middle" fill="white">π(a|s;θ)</text>
+    <text x="210" y="108" class="detail" text-anchor="middle" fill="white">Neural Network</text>
+    <text x="210" y="122" class="detail" text-anchor="middle" fill="white">θ: parameters</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <path d="M270 92 L295 92" class="arrow flow-line"/>
+
+  <!-- Section 3: Gradient Computation -->
+  <g class="section section-3" data-narration="Gradient computed using policy gradient theorem">
+    <rect x="300" y="50" width="100" height="85" class="box" fill="url(#gradientGradient)" filter="url(#shadow)"/>
+    <text x="350" y="72" class="label" text-anchor="middle" fill="white">∇J(θ)</text>
+    <text x="350" y="92" class="formula-small" text-anchor="middle" fill="white">Policy Gradient</text>
+    <text x="350" y="108" class="detail" text-anchor="middle" fill="white">∇logπ × Gₜ</text>
+    <text x="350" y="122" class="detail" text-anchor="middle" fill="white">Monte Carlo</text>
+  </g>
+
+  <!-- Arrow 3 (down) -->
+  <path d="M350 135 L350 160" class="arrow flow-line"/>
+
+  <!-- Section 4: Reward/Return Calculation -->
+  <g class="section section-4" data-narration="Returns computed from rewards: Gₜ = Σγᵏrₖ">
+    <rect x="25" y="170" width="95" height="70" class="box" fill="url(#updateGradient)" filter="url(#shadow)"/>
+    <text x="72" y="190" class="label" text-anchor="middle" fill="white">Returns</text>
+    <text x="72" y="210" class="formula-small" text-anchor="middle" fill="white">Gₜ = Σγᵏrₖ</text>
+    <text x="72" y="228" class="detail" text-anchor="middle" fill="white">γ: discount</text>
+  </g>
+
+  <!-- Arrow 4 -->
+  <path d="M125 205 L150 205" class="arrow flow-line"/>
+
+  <!-- Section 5: Policy Gradient Theorem -->
+  <g class="section section-5" data-narration="Policy Gradient Theorem: ∇J = E[∇logπ × Q]">
+    <rect x="155" y="170" width="110" height="70" class="box" fill="#ffffff" stroke="#9b59b6" stroke-width="2" filter="url(#shadow)"/>
+    <text x="210" y="190" class="label" text-anchor="middle">Policy Gradient</text>
+    <text x="210" y="210" class="formula" text-anchor="middle">∇J(θ) = E[∇logπ</text>
+    <text x="210" y="228" class="formula" text-anchor="middle">× Q(s,a)]</text>
+  </g>
+
+  <!-- Arrow 5 -->
+  <path d="M270 205 L295 205" class="arrow flow-line"/>
+
+  <!-- Section 6: Parameter Update -->
+  <g class="section section-6" data-narration="Parameters updated via gradient ascent: θ ← θ + α∇J">
+    <rect x="300" y="170" width="100" height="70" class="box" fill="#ffffff" stroke="#2ecc71" stroke-width="2" filter="url(#shadow)"/>
+    <text x="350" y="190" class="label" text-anchor="middle">θ Update</text>
+    <text x="350" y="210" class="formula" text-anchor="middle">θ ← θ + α∇J</text>
+    <text x="350" y="228" class="detail" text-anchor="middle">Gradient Ascent</text>
+  </g>
+
+  <!-- Loop arrow (update back to policy) -->
+  <path d="M350 300 C350 330, 210 330, 210 135" class="arrow-dashed">
+    <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <text x="280" y="295" class="detail" fill="#e74c3c">θ ← θ + α∇J</text>
+
+  <!-- Section 7: Bottom Algorithm Summary -->
+  <g class="section section-7" data-narration="REINFORCE algorithm uses full episode returns for unbiased gradient estimation">
+    <rect x="25" y="260" width="375" height="50" class="box" fill="#f8f9fa" stroke="#bdc3c7" stroke-width="1" filter="url(#shadow)"/>
+    <text x="212" y="280" class="label" text-anchor="middle">REINFORCE Algorithm</text>
+    <text x="212" y="298" class="detail" text-anchor="middle">1. Sample trajectory τ from π_θ | 2. Compute Gₜ | 3. ∇J = ΣGₜ∇logπ(aₜ|sₜ;θ) | 4. θ ← θ + α∇J</text>
+  </g>
+
+  <!-- Bottom section: Actor-Critic mention -->
+  <rect x="25" y="320" width="375" height="65" class="box" fill="#ffffff" stroke="#3498db" stroke-width="2" filter="url(#shadow)"/>
+  <text x="212" y="342" class="label" text-anchor="middle" fill="#3498db">Actor-Critic Methods</text>
+  <text x="212" y="360" class="detail" text-anchor="middle">Actor: π(a|s;θ) | Critic: V(s;w) or Q(s,a;w)</text>
+  <text x="212" y="376" class="detail" text-anchor="middle">A(s,a) = Q(s,a) - V(s) → Variance Reduction | PPO: Clipped Objective</text>
+
+  <!-- Small animated dot showing flow -->
+  <circle r="4" fill="#e74c3c">
+    <animateMotion dur="3s" repeatCount="indefinite" path="M72 92 L210 92 L350 92 L350 205 L350 300 C350 330, 210 330, 210 135 L210 92"/>
+  </circle>
+</svg>

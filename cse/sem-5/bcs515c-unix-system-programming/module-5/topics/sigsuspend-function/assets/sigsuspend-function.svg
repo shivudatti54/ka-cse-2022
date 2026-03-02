@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <g class="step" id="step0" data-narration="sigsuspend() temporarily replaces the signal mask and suspends the process until a signal arrives, providing atomic signal handling in UNIX systems.">
+    <rect x="10" y="10" width="780" height="40" rx="5" fill="#1976d2"/>
+    <text x="400" y="35" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="white">Signal Handling: The sigsuspend() Function</text>
+  </g>
+  
+  <g class="step" id="step1" data-narration="Function prototype: int sigsuspend(const sigset_t *sigmask). It takes a signal set pointer, replaces the current signal mask, and suspends execution until a signal arrives.">
+    <rect x="10" y="58" width="780" height="80" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="20" y="75" font-family="Arial" font-size="12" font-weight="bold" fill="#1976d2">What is sigsuspend()?</text>
+    <text x="20" y="92" font-family="Courier" font-size="10" fill="#333">#include &lt;signal.h&gt;</text>
+    <text x="20" y="107" font-family="Courier" font-size="10" fill="#333">int sigsuspend(const sigset_t *sigmask);</text>
+    <text x="20" y="125" font-family="Arial" font-size="9" fill="#555">Parameter: sigmask → signal set for temporary mask</text>
+    <text x="20" y="138" font-family="Arial" font-size="9" fill="#555">Returns: -1 (EINTR) on interrupt, never succeeds</text>
+  </g>
+  
+  <g class="step" id="step2" data-narration="Without sigsuspend(), a race condition occurs between sigprocmask() and pause() - signals can be lost if delivered in that critical window between these calls.">
+    <rect x="10" y="146" width="780" height="89" rx="5" fill="#ffebee" stroke="#f44336" stroke-width="1"/>
+    <text x="20" y="163" font-family="Arial" font-size="12" font-weight="bold" fill="#f44336">The Problem: Race Condition</text>
+    <text x="20" y="180" font-family="Courier" font-size="9" fill="#333">sigprocmask(SIG_BLOCK, &amp;mask, &amp;oldmask);  // Block SIGUSR1</text>
+    <text x="20" y="195" font-family="Arial" font-size="9" fill="#666">/* Race window: signal may arrive here */</text>
+    <text x="20" y="210" font-family="Courier" font-size="9" fill="#333">pause();  // Wait for signal (LOST!)</text>
+    <text x="20" y="228" font-family="Arial" font-size="9" fill="#f44336">Solution: Use sigsuspend() for atomic mask change + wait</text>
+  </g>
+  
+  <g class="step" id="step3" data-narration="Signal mask operations are essential: sigemptyset() clears a set, sigfillset() fills it, sigaddset() adds signals, sigdelset() removes them, and sigismember() checks membership.">
+    <rect x="10" y="243" width="780" height="80" rx="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+    <text x="20" y="260" font-family="Arial" font-size="12" font-weight="bold" fill="#388e3c">Signal Mask Operations</text>
+    <rect x="20" y="269" width="140" height="50" rx="3" fill="#c8e6c9"/>
+    <text x="90" y="284" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">sigemptyset()</text>
+    <text x="90" y="297" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">Empty set</text>
+    <text x="90" y="309" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">(no signals)</text>
+    <rect x="170" y="269" width="140" height="50" rx="3" fill="#c8e6c9"/>
+    <text x="240" y="284" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">sigaddset()</text>
+    <text x="240" y="297" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">Add signal</text>
+    <text x="240" y="309" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">to set</text>
+    <rect x="320" y="269" width="140" height="50" rx="3" fill="#c8e6c9"/>
+    <text x="390" y="284" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">sigprocmask()</text>
+    <text x="390" y="297" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">Change</text>
+    <text x="390" y="309" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">process mask</text>
+    <rect x="470" y="269" width="140" height="50" rx="3" fill="#c8e6c9"/>
+    <text x="540" y="284" text-anchor="middle" font-family="Arial" font-size="9" fill="#333">sigismember()</text>
+    <text x="540" y="297" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">Check if</text>
+    <text x="540" y="309" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">signal in set</text>
+  </g>
+  
+  <g class="step" id="step4" data-narration="sigsuspend() performs both replacing the signal mask and suspending the process atomically, preventing any signals from being lost in the gap between these operations.">
+    <rect x="10" y="331" width="780" height="130" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="1"/>
+    <text x="20" y="348" font-family="Arial" font-size="12" font-weight="bold" fill="#ff9800">Atomic Nature of sigsuspend()</text>
+    <text x="20" y="369" font-family="Arial" font-size="10" fill="#333">Traditional approach (RACE):</text>
+    <text x="30" y="387" font-family="Courier" font-size="9" fill="#666">1. sigprocmask() - change mask</text>
+    <text x="30" y="402" font-family="Courier" font-size="9" fill="#666">2. pause() - wait for signal</text>
+    <text x="20" y="421" font-family="Arial" font-size="10" fill="#333">sigsuspend() (ATOMIC):</text>
+    <text x="30" y="439" font-family="Courier" font-size="9" fill="#388e3c">→ Single kernel operation: mask change + suspension</text>
+    <text x="30" y="454" font-family="Courier" font-size="9" fill="#388e3c">→ No signal can be lost between these steps</text>
+  </g>
+  
+  <g class="step" id="step5" data-narration="Unlike pause() and sleep(), sigsuspend() atomically changes the signal mask while waiting, allowing precise control over which signals are handled during suspension.">
+    <rect x="10" y="469" width="780" height="80" rx="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1"/>
+    <text x="20" y="486" font-family="Arial" font-size="12" font-weight="bold" fill="#9c27b0">Comparison: sigsuspend() vs pause() vs sleep()</text>
+    <rect x="20" y="499" width="230" height="42" rx="3" fill="#e1bee7"/>
+    <text x="135" y="514" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#7b1fa2">sigsuspend()</text>
+    <text x="135" y="527" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Wait with custom mask</text>
+    <text x="135" y="539" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Atomically changes mask</text>
+    <rect x="260" y="499" width="230" height="42" rx="3" fill="#e1bee7"/>
+    <text x="375" y="514" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#7b1fa2">pause()</text>
+    <text x="375" y="527" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Wait for any signal</text>
+    <text x="375" y="539" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Does NOT change mask</text>
+    <rect x="500" y="499" width="230" height="42" rx="3" fill="#e1bee7"/>
+    <text x="615" y="514" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#7b1fa2">sleep()</text>
+    <text x="615" y="527" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Wait for timeout</text>
+    <text x="615" y="539" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">Can be interrupted</text>
+  </g>
+  
+  <g class="step" id="step6" data-narration="The code shows blocking SIGUSR1, saving old mask, calling sigsuspend with the old mask to unblock, then automatic mask restoration after the signal is delivered.">
+    <rect x="10" y="557" width="780" height="40" rx="5" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="20" y="574" font-family="Arial" font-size="12" font-weight="bold" fill="#1976d2">Example: Basic sigsuspend() Usage</text>
+    <text x="20" y="590" font-family="Courier" font-size="9" fill="#333">sigprocmask(SIG_BLOCK,&amp;mask,&amp;old); sigsuspend(&amp;old); // mask auto-restored</text>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+{
+  "topicId": "wireless-networks-mobile-ip",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Mobile IP Registration Process",
+      "description": "Demonstrates the registration steps a mobile node performs when entering a foreign network",
+      "code": "// Mobile IP Registration Algorithm\nPROCEDURE RegisterMobileNode(mn_address, home_address, fa_address)\nBEGIN\n    // Step 1: Agent Discovery\n    DISCOVERY_REQUEST \u2190 BROADCAST(solicitation)\n    agent_advertisements \u2190 RECEIVE(from_agents)\n    selected_fa \u2190 SELECT(agent_advertisements)\n    \n    // Step 2: Get Care-of Address\n    coa \u2190 selected_fa.getCareOfAddress()\n    \n    // Step 3: Send Registration Request\n    reg_request \u2190 CREATE(\n        type=REGISTRATION_REQUEST,\n        mobile_address=mn_address,\n        home_address=home_address,\n        careof_address=coa,\n        lifetime=REGISTRATION_LIFETIME\n    )\n    \n    // Step 4: Send to Home Agent via Foreign Agent\n    SEND(reg_request, to=selected_fa)\n    selected_fa.FORWARD(to=home_agent)\n    \n    // Step 5: Receive Registration Reply\n    reg_reply \u2190 RECEIVE(from=home_agent)\n    \n    // Step 6: Process Reply\n    IF reg_reply.accepted THEN\n        home_agent.CREATE_MOBILITY_BINDING(mn_address, coa)\n        RETURN SUCCESS\n    ELSE\n        RETURN FAILURE\n    ENDIF\nEND",
+      "explanation": "This pseudocode shows how a mobile node discovers agents, obtains a care-of address from the foreign agent, sends a registration request to the home agent, and receives confirmation. The home agent creates a mobility binding to tunnel packets.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Mobile IP Packet Tunneling Simulation",
+      "description": "Simulates how the Home Agent tunnels packets to the Mobile Node's current location",
+      "code": "class MobileIPSimulation:\n    def __init__(self):\n        self.home_agent_table = {}  # mobile_address -> care_of_address\n        \n    def register_mobile_node(self, mobile_addr, care_of_addr):\n        \"\"\"Register mobile node with its care-of address\"\"\"\n        self.home_agent_table[mobile_addr] = care_of_addr\n        print(f\"Registered: {mobile_addr} -> {care_of_addr}\")\n        \n    def tunnel_packet(self, src_addr, dst_addr, payload):\n        \"\"\"Tunnel packet through home agent to mobile node\"\"\"\n        if dst_addr in self.home_agent_table:\n            care_of_addr = self.home_agent_table[dst_addr]\n            \n            # Encapsulate original packet\n            tunneled_packet = {\n                'outer_src': 'home_agent',\n                'outer_dst': care_of_addr,\n                'inner_src': src_addr,\n                'inner_dst': dst_addr,\n                'payload': payload\n            }\n            return tunneled_packet\n        else:\n            return None\n            \n    def receive_tunneled_packet(self, packet):\n        \"\"\"Foreign agent receives and decapsulates packet\"\"\"\n        # Decapsulate to get original packet\n        original_packet = {\n            'src': packet['inner_src'],\n            'dst': packet['inner_dst'],\n            'payload': packet['payload']\n        }\n        return original_packet\n\n# Simulation\nsim = MobileIPSimulation()\nsim.register_mobile_node('10.0.0.5', '192.168.1.100')\ntunneled = sim.tunnel_packet('10.0.0.2', '10.0.0.5', 'Hello Mobile Node!')\nprint(f\"Tunneled: {tunneled}\")\noriginal = sim.receive_tunneled_packet(tunneled)\nprint(f\"Delivered: {original}\")",
+      "explanation": "This Python code simulates Mobile IP packet tunneling. The Home Agent encapsulates packets with new routing information to the care-of address. The Foreign Agent then decapsulates and delivers the original packet to the mobile node.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(n) for storing registration table"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Wireless Network Scan Algorithm",
+      "description": "Demonstrates how a wireless device scans for available access points",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define MAX_AP 50\n\ntypedef struct {\n    char ssid[32];\n    int channel;\n    int signal_strength;  // in dBm\n    bool encrypted;\n    char auth_type[20];\n} AccessPoint;\n\n// Active Scanning - sends probe requests\nvoid active_scan(AccessPoint ap_list[]) {\n    int ap_count = 0;\n    \n    // Send probe request on all channels\n    for (int channel = 1; channel <= 14; channel++) {\n        send_probe_request(channel);\n        \n        // Wait for probe responses\n        AccessPoint ap;\n        while (receive_probe_response(&ap)) {\n            if (ap_count < MAX_AP) {\n                ap_list[ap_count++] = ap;\n            }\n        }\n    }\n}\n\n// Passive Scanning - listens for beacon frames\nvoid passive_scan(AccessPoint ap_list[]) {\n    int ap_count = 0;\n    \n    // Monitor each channel for beacon frames\n    for (int channel = 1; channel <= 14; channel++) {\n        set_channel(channel);\n        \n        while (timeout_not_reached()) {\n            if (beacon_received(&ap_list[ap_count])) {\n                ap_count++;\n            }\n        }\n    }\n}\n\n// Select best access point based on signal strength\nAccessPoint select_best_ap(AccessPoint ap_list[], int count) {\n    AccessPoint best = ap_list[0];\n    \n    for (int i = 1; i < count; i++) {\n        if (ap_list[i].signal_strength > best.signal_strength) {\n            best = ap_list[i];\n        }\n    }\n    return best;\n}\n\nint main() {\n    AccessPoint available_aps[MAX_AP];\n    \n    printf(\"Starting Active Scan...\\n\");\n    active_scan(available_aps);\n    \n    AccessPoint best = select_best_ap(available_aps, MAX_AP);\n    printf(\"Connecting to: %s (Signal: %d dBm)\\n\", \n           best.ssid, best.signal_strength);\n    \n    return 0;\n}",
+      "explanation": "This C code demonstrates wireless network scanning - the process by which devices discover available Wi-Fi networks. It shows both active scanning (sending probe requests) and passive scanning (listening for beacon frames), then selecting the best access point based on signal strength.",
+      "timeComplexity": "O(n \u00d7 m) where n is number of channels and m is number of APs",
+      "spaceComplexity": "O(m) for storing access points"
+    }
+  ]
+}

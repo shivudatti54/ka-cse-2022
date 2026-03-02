@@ -1,0 +1,165 @@
+{
+  "topicId": "file-sharing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between shared locks and exclusive locks in file sharing. Give an example scenario where each would be used.",
+      "keyPoints": [
+        "Shared locks (read locks) allow multiple processes to read simultaneously",
+        "Exclusive locks (write locks) prevent any other access while held",
+        "Shared locks are used when multiple processes only need to read file data",
+        "Exclusive locks are needed when at least one process must modify the file",
+        "Operating systems typically allow shared locks to coexist but exclusive locks are mutually exclusive"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a race condition in file sharing? How can it be prevented?",
+      "keyPoints": [
+        "Race condition occurs when multiple processes access/modify file concurrently and outcome depends on timing",
+        "Prevention methods include file locking (advisory or mandatory)",
+        "Atomic operations ensure indivisible read-modify-write sequences",
+        "Semaphores and mutexes provide synchronization",
+        "Proper use of OS-provided file locking mechanisms prevents race conditions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between UNIX semantics and session semantics in file sharing.",
+      "keyPoints": [
+        "UNIX semantics: each read sees results of all previous writes - immediate visibility",
+        "Session semantics: changes visible only to process that made them until file is closed",
+        "UNIX semantics provides stronger consistency guarantees",
+        "Session semantics allows each process to work with its own view of the file",
+        "Most modern systems use variations of UNIX semantics for better data integrity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the readers-writers problem in the context of file sharing. What is the solution approach?",
+      "keyPoints": [
+        "Readers-writers problem manages concurrent access to shared files",
+        "Multiple readers can access simultaneously but writers need exclusive access",
+        "Solution uses reader and writer locks",
+        "Reader lock increments a counter to track active readers",
+        "Writer lock ensures no readers or other writers are active before granting access"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the difference between mandatory and advisory file locking? Discuss the advantages and disadvantages of each.",
+      "keyPoints": [
+        "Mandatory locking is enforced by the OS - cannot be bypassed",
+        "Advisory locking requires processes to voluntarily check and respect locks",
+        "Advisory is more flexible and widely used in UNIX systems",
+        "Mandatory provides stronger guarantees but less flexible",
+        "Advisory can lead to data corruption if processes ignore locks",
+        "Mandatory ensures data integrity even with uncooperative processes"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a file lease? How does it help in managing file sharing in distributed systems?",
+      "keyPoints": [
+        "File lease is a time-limited lock granted to a client process",
+        "If lease expires without renewal, OS automatically releases it",
+        "Prevents stale locks when client crashes or becomes unresponsive",
+        "Useful in distributed systems where network failures can leave locks dangling",
+        "Lease renewal mechanism allows continued access while process is active"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of atomic file operations. Why are they important in file sharing?",
+      "keyPoints": [
+        "Atomic operations complete entirely or not at all - no partial states visible",
+        "Important for maintaining file integrity during concurrent access",
+        "Examples include atomic rename, atomic write operations",
+        "Prevents inconsistent file states when multiple processes modify file",
+        "Implemented using file locking and transaction mechanisms at OS level"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Discuss the various mechanisms available for implementing file sharing in operating systems. Explain how each mechanism ensures data consistency and prevents concurrent access problems.",
+      "keyPoints": [
+        "File locking mechanisms: shared locks, exclusive locks, mandatory vs advisory",
+        "Semaphores and mutexes for synchronization",
+        "Atomic operations for indivisible read-modify-write",
+        "Session semantics vs UNIX semantics",
+        "File leasing for distributed systems",
+        "Transaction-based approaches for ACID properties",
+        "Cache coherence in distributed file systems",
+        "Deadlock prevention and detection in file sharing",
+        "Each mechanism addresses specific concurrency problems with trade-offs between complexity, performance, and data integrity"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of concurrent access control in file systems. Discuss the problems that can arise without proper synchronization and the solutions provided by modern operating systems.",
+      "keyPoints": [
+        "Problems without synchronization: race conditions, data corruption, inconsistent file states, lost updates",
+        "Modern OS solutions include multi-level locking (coarse-grained and fine-grained)",
+        "File system level locks vs application level locks",
+        "Kernel-mediated vs user-mediated locking",
+        "Use of fcntl() and flock() in UNIX for file locking",
+        "Windows mandatory locking vs UNIX advisory locking approaches",
+        "Distributed file systems face additional challenges with caching and replication",
+        "Modern solutions incorporate lease-based mechanisms and optimistic concurrency control"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "In distributed file systems, file sharing becomes more complex due to multiple clients and network latency. Discuss the challenges and solutions for file sharing in distributed environments.",
+      "keyPoints": [
+        "Cache coherence challenges when clients cache file data locally",
+        "Network partitioning can cause split-brain scenarios",
+        "Lease mechanisms help manage cache consistency",
+        "Optimistic vs pessimistic concurrency control",
+        "Version vectors track file modifications across clients",
+        "State machine replication for consistent file updates",
+        "Compromises between consistency, availability, and partition tolerance (CAP theorem)",
+        "Modern systems use eventual consistency with conflict resolution",
+        "Examples: NFS, CIFS/SMB, Andrew File System (AFS) approaches"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Design a file locking mechanism for a multi-user database system. Your design should handle both read and write operations efficiently while preventing data corruption and deadlock situations.",
+      "keyPoints": [
+        "Multi-granularity locking: database level, table level, record level",
+        "Shared locks for read operations allowing concurrent readers",
+        "Exclusive locks for write operations blocking all other access",
+        "Two-phase locking protocol to prevent deadlock",
+        "Lock escalation from fine to coarse granularity when needed",
+        "Deadlock detection using wait-for graph",
+        "Lock timeout and retry mechanisms",
+        "Write-ahead logging for recovery",
+        "Implementation using semaphores and condition variables",
+        "Performance considerations: minimize lock contention while ensuring data integrity"
+      ],
+      "marks": 10
+    }
+  ]
+}

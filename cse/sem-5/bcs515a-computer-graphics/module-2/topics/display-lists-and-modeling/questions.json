@@ -1,0 +1,170 @@
+{
+  "topicId": "display-lists-and-modeling",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between GL_COMPILE and GL_COMPILE_AND_EXECUTE modes in display lists.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "GL_COMPILE stores commands in the display list without executing them during definition",
+        "GL_COMPILE_AND_EXECUTE stores commands AND executes them immediately while creating the list",
+        "GL_COMPILE is used for normal display list creation",
+        "GL_COMPILE_AND_EXECUTE is useful for testing or one-time execution during compilation"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "List three advantages and two disadvantages of using display lists in OpenGL.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Advantages: 1) Improved performance for repeated rendering 2) Reduced network traffic in client-server systems 3) Commands are pre-processed and optimized 4) Simplifies complex geometry rendering",
+        "Disadvantages: 1) Static data only - cannot modify after compilation 2) Memory overhead for storing lists 3) Not all OpenGL commands can be stored"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the purpose of glPushMatrix() and glPopMatrix() in hierarchical modeling.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "glPushMatrix() saves the current matrix state onto the matrix stack",
+        "glPopMatrix() restores the previously saved matrix state",
+        "They allow isolation of transformations for different objects",
+        "Essential for building hierarchical/model tree structures",
+        "Prevents transformations from affecting unrelated objects"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is hierarchical modeling? How does it simplify complex scene creation?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Hierarchical modeling builds complex objects from simpler sub-components",
+        "Uses a tree structure with parent-child relationships",
+        "Transformations applied to parent automatically propagate to children",
+        "Reduces code duplication by reusing component models",
+        "Example: robot arm - moving shoulder moves entire arm including hand"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the three basic modeling transformations in computer graphics.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Translation: Moves object along X, Y, Z axes using glTranslate()",
+        "Rotation: Rotates object around an axis using glRotate()",
+        "Scaling: Resizes object along each axis using glScale()",
+        "These are affine transformations that modify object position, orientation, or size",
+        "All transformations are represented as matrices and combined in the model-view matrix"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Why is the order of matrix operations important in OpenGL transformations?",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Matrix operations in OpenGL are applied in reverse order (right to left)",
+        "To achieve translate→rotate→scale, specify in order: scale, rotate, translate",
+        "This is because matrices multiply on the left",
+        "Incorrect order produces different results",
+        "Example: rotate then translate vs translate then rotate give different final positions"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Write the OpenGL code sequence to create and execute a display list that draws a triangle.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "glNewList(1, GL_COMPILE); // Begin list ID 1",
+        "glBegin(GL_TRIANGLES);",
+        "glVertex3f(0.0, 1.0, 0.0);",
+        "glVertex3f(-1.0, -1.0, 0.0);",
+        "glVertex3f(1.0, -1.0, 0.0);",
+        "glEnd();",
+        "glEndList(); // End list definition",
+        "glCallList(1); // Execute the display list"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the complete process of creating, managing, and using display lists in OpenGL. Include function syntax, parameters, and practical considerations.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "glNewList(listID, mode) begins definition with unique ID and compile mode (GL_COMPILE or GL_COMPILE_AND_EXECUTE)",
+        "Place all OpenGL commands between glNewList and glEndList",
+        "glEndList() completes the definition and compiles commands",
+        "glCallList(listID) executes a single list",
+        "glCallLists() can execute multiple sequential lists",
+        "glDeleteLists() frees memory when lists are no longer needed",
+        "Cannot nest display lists or modify after compilation",
+        "Best for static geometry rendered repeatedly"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain hierarchical modeling with a detailed example of a robotic arm. Include how matrix operations and the matrix stack are used.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Hierarchical modeling structures complex objects as parent-child relationships",
+        "Robotic arm example: shoulder → upper arm → elbow → forearm → hand",
+        "Base (shoulder) is parent, upper arm is child",
+        "Apply glPushMatrix() before each joint transformation",
+        "glTranslate() positions each joint, glRotate() rotates at joint",
+        "glPopMatrix() returns to parent coordinate system",
+        "Moving shoulder (parent) moves entire arm (all children)",
+        "Moving hand (leaf) only moves hand itself",
+        "Matrix stack preserves parent transformations while computing child transformations",
+        "This allows articulated motion with minimal code"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the three basic modeling transformations (translation, rotation, scaling) in detail with their OpenGL function syntax, parameters, and examples.",
+      "marks": 10,
+      "difficulty": "medium",
+      "keyPoints": [
+        "glTranslate{fd}(x, y, z): Moves object by adding (x,y,z) to coordinates. Example: glTranslatef(2.0, 0.0, 0.0) moves 2 units right",
+        "glRotate{fd}(angle, x, y, z): Rotates by angle (degrees) around axis (x,y,z). Example: glRotatef(90.0, 0.0, 0.0, 1.0) rotates 90° around Z-axis",
+        "glScale{fd}(x, y, z): Scales by factors along each axis. Example: glScalef(2.0, 0.5, 1.0) doubles width, halves height",
+        "All functions modify the current matrix",
+        "glLoadIdentity() resets before transformations",
+        "Matrix multiplication order determines final transformation",
+        "Negative scale values create reflections"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Compare display lists with vertex buffer objects (VBOs). When would you choose one over the other?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Display Lists: Pre-compiled commands, read-only after compilation, good for static geometry, simpler API",
+        "VBOs: Store vertex data in GPU memory, can be dynamically updated, more flexible",
+        "Choose Display Lists when: geometry is static, rendered repeatedly, simpler implementation needed",
+        "Choose VBOs when: geometry changes frequently, need partial updates, better performance for large datasets",
+        "Modern OpenGL favors VBOs over display lists",
+        "Display lists are deprecated in modern OpenGL versions (3.0+)",
+        "VBOs offer better performance and more control over data"
+      ]
+    }
+  ]
+}

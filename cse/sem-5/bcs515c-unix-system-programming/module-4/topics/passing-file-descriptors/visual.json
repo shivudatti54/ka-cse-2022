@@ -1,0 +1,58 @@
+{
+  "topicId": "passing-file-descriptors",
+  "diagrams": [
+    {
+      "id": "d-1",
+      "title": "File Descriptor Passing Architecture",
+      "description": "Shows the relationship between two processes, Unix domain socket, and kernel structures during FD passing",
+      "elements": [
+        "Process A (sender)",
+        "Unix Domain Socket",
+        "Process B (receiver)",
+        "Kernel File Descriptor Tables",
+        "Open File Description",
+        "cmsghdr with SCM_RIGHTS",
+        "sendmsg() and recvmsg() system calls"
+      ],
+      "purpose": "Visualize how file descriptors are transferred between process address spaces while both point to the same kernel resource"
+    },
+    {
+      "id": "d-2",
+      "title": "cmsghdr Structure Layout",
+      "description": "Memory layout of control message header used to pass file descriptors",
+      "elements": [
+        "cmsghdr base",
+        "cmsg_len field (4 bytes)",
+        "cmsg_level field (4 bytes)",
+        "cmsg_type field (4 bytes)",
+        "cmsg_data area (contains int fd)",
+        "Padding bytes for alignment"
+      ],
+      "purpose": "Understand the structure needed to package file descriptors in control messages for sendmsg()/recvmsg()"
+    },
+    {
+      "id": "d-3",
+      "title": "File Descriptor Table After Passing",
+      "description": "Shows process file descriptor tables and shared open file description after passing",
+      "elements": [
+        "Process A FD table with FD 5 pointing to Open File X",
+        "Process B FD table with FD 3 pointing to Open File X",
+        "Kernel Open File Table entry X",
+        "File offset, access mode, flags shared",
+        "Each process must close their own FD"
+      ],
+      "purpose": "Understand that passing creates independent FDs to the same underlying file"
+    }
+  ],
+  "visuals": [
+    {
+      "id": "passing-file-descriptors-svg",
+      "title": "Passing File Descriptors",
+      "description": "Visual diagram for passing file descriptors",
+      "type": "animated-svg",
+      "file": "assets/passing-file-descriptors.svg",
+      "svgContent": "<placeholder>",
+      "animated": true
+    }
+  ]
+}

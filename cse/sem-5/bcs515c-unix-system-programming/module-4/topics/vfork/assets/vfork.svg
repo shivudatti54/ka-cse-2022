@@ -1,0 +1,335 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1350">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#e1bee7"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffebee"/>
+      <stop offset="100%" stop-color="#ffcdd2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1976d2"/>
+      <stop offset="100%" stop-color="#1565c0"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff9800"/>
+    </marker>
+  </defs>
+  
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+    .step { animation: fadeInSlide 0.6s ease-out; }
+    .step rect {
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+    }
+    .step text { animation: textReveal 0.4s ease-out 0.2s backwards; }
+    .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-weight: bold; }
+    .body-text { font-family: 'Consolas', monospace; }
+    .label-text { font-family: 'Segoe UI', Arial, sans-serif; }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="1350" fill="#f8f9fa"/>
+
+  <!-- STEP 0: Title -->
+  <g class="step" id="step0" data-narration="Welcome to this lecture on vfork, a special system call for efficient process creation in Unix.">
+    <rect x="50" y="10" width="700" height="45" rx="10" fill="url(#titleGrad)" filter="url(#shadow)"/>
+    <text x="400" y="42" text-anchor="middle" fill="white" font-size="22" font-weight="bold" class="title-text">vfork() - Process Creation System Call</text>
+  </g>
+
+  <!-- STEP 1: What is vfork? -->
+  <g class="step" id="step1" data-narration="vfork creates a new process without copying the parent's memory space. The child shares the parent's address space directly.">
+    <rect x="50" y="65" width="700" height="85" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="70" y="85" fill="#1976d2" font-size="13" font-weight="bold" class="title-text">What is vfork()?</text>
+    <text x="70" y="105" fill="#333" font-size="11" class="body-text">A system call that creates a new process</text>
+    <text x="70" y="120" fill="#333" font-size="11" class="body-text">WITHOUT copying the parent's address space.</text>
+    <text x="70" y="138" fill="#666" font-size="10" class="label-text">Child shares parent's memory until calling exec() or exiting</text>
+    <!-- Visual: Memory box -->
+    <rect x="550" y="78" width="180" height="58" rx="5" fill="white" stroke="#1976d2" stroke-width="2"/>
+    <text x="640" y="100" text-anchor="middle" fill="#1976d2" font-size="10" font-weight="bold">Parent's Memory</text>
+    <text x="640" y="118" text-anchor="middle" fill="#666" font-size="9">Shared with Child</text>
+    <path d="M480 107 L545 107" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)">
+      <animate attributeName="stroke-dasharray" from="0,65" to="65,0" dur="0.5s" begin="0.3s" fill="freeze"/>
+    </path>
+  </g>
+
+  <!-- STEP 2: Why vfork? -->
+  <g class="step" id="step2" data-narration="vfork was created for performance. When a child immediately calls exec to load a new program, copying memory is wasteful.">
+    <rect x="50" y="160" width="700" height="85" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="70" y="180" fill="#e65100" font-size="13" font-weight="bold" class="title-text">Why vfork()? - Performance!</text>
+    <text x="70" y="200" fill="#333" font-size="11" class="body-text">In early Unix, memory was expensive. Full fork() was too slow</text>
+    <text x="70" y="215" fill="#333" font-size="11" class="body-text">when child immediately replaces itself with exec().</text>
+    <text x="70" y="233" fill="#666" font-size="10" class="label-text">vfork = fork + exec optimization - zero memory copy!</text>
+    <!-- Visual: Timeline showing old way vs vfork -->
+    <rect x="450" y="180" width="280" height="52" rx="5" fill="white" stroke="#ff9800" stroke-width="1"/>
+    <text x="590" y="198" text-anchor="middle" fill="#e65100" font-size="10" font-weight="bold">fork() + exec()</text>
+    <text x="520" y="218" fill="#666" font-size="9">Copy memory → waste</text>
+    <text x="660" y="218" fill="#388e3c" font-size="9">vfork: No copy!</text>
+  </g>
+
+  <!-- STEP 3: Function Prototype -->
+  <g class="step" id="step3" data-narration="The vfork function has the same prototype as fork, returning the child's PID to parent, zero to child, or -1 on error.">
+    <rect x="50" y="255" width="700" height="90" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="70" y="277" fill="#2e7d32" font-size="13" font-weight="bold" class="title-text">Function Prototype</text>
+    <rect x="70" y="290" width="350" height="45" rx="5" fill="#263238" filter="url(#shadow)"/>
+    <text x="85" y="310" fill="#ff9800" font-size="11" font-family="Consolas, monospace">#include &lt;unistd.h&gt;</text>
+    <text x="85" y="328" fill="#4fc3f7" font-size="12" font-family="Consolas, monospace">pid_t vfork(void);</text>
+    
+    <text x="440" y="285" fill="#2e7d32" font-size="12" font-weight="bold">Return Values:</text>
+    <rect x="440" y="298" width="290" height="38" rx="5" fill="white" stroke="#388e3c" stroke-width="1"/>
+    <text x="455" y="315" fill="#333" font-size="10">Returns 0 to child | Child's PID to parent | -1 on error</text>
+    <text x="455" y="330" fill="#666" font-size="9">Parent sees PID&gt;0, Child sees 0</text>
+  </g>
+
+  <!-- STEP 4: fork() vs vfork() -->
+  <g class="step" id="step4" data-narration="Compare fork and vfork: fork creates a copy (or uses copy-on-write), while vfork shares memory directly with parent.">
+    <rect x="50" y="355" width="700" height="105" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="70" y="377" fill="#1565c0" font-size="13" font-weight="bold" class="title-text">fork() vs vfork() - Key Difference</text>
+    
+    <!-- fork() side -->
+    <rect x="70" y="390" width="300" height="60" rx="8" fill="white" stroke="#1976d2" stroke-width="2"/>
+    <text x="220" y="410" text-anchor="middle" fill="#1976d2" font-size="12" font-weight="bold">fork()</text>
+    <text x="220" y="428" text-anchor="middle" fill="#666" font-size="10">Creates copy of parent's</text>
+    <text x="220" y="442" text-anchor="middle" fill="#666" font-size="10">address space (with COW optimization)</text>
+    
+    <!-- Arrow in middle -->
+    <text x="395" y="425" fill="#1565c0" font-size="20" font-weight="bold">VS</text>
+    
+    <!-- vfork() side -->
+    <rect x="430" y="390" width="300" height="60" rx="8" fill="white" stroke="#e65100" stroke-width="2"/>
+    <text x="580" y="410" text-anchor="middle" fill="#e65100" font-size="12" font-weight="bold">vfork()</text>
+    <text x="580" y="428" text-anchor="middle" fill="#666" font-size="10">NO copy - child shares</text>
+    <text x="580" y="442" text-anchor="middle" fill="#666" font-size="10">parent's memory DIRECTLY</text>
+    
+    <text x="70" y="460" fill="#666" font-size="9">fork(): Both processes continue independently | vfork(): Parent blocked until child exec/exit</text>
+  </g>
+
+  <!-- STEP 5: Memory Sharing Visualization -->
+  <g class="step" id="step5" data-narration="With vfork, child and parent share code, data, heap, and stack. Any modification by child immediately affects parent.">
+    <rect x="50" y="470" width="700" height="100" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="70" y="492" fill="#7b1fa2" font-size="13" font-weight="bold" class="title-text">Memory Sharing in vfork()</text>
+    
+    <!-- Memory segments visualization -->
+    <rect x="70" y="505" width="180" height="55" rx="5" fill="white" stroke="#9c27b0" stroke-width="1"/>
+    <text x="160" y="522" text-anchor="middle" fill="#7b1fa2" font-size="9" font-weight="bold">Code Segment</text>
+    <text x="160" y="538" text-anchor="middle" fill="#666" font-size="8">Shared</text>
+    <text x="160" y="550" text-anchor="middle" fill="#666" font-size="8">Read-only</text>
+    
+    <rect x="260" y="505" width="180" height="55" rx="5" fill="white" stroke="#9c27b0" stroke-width="1"/>
+    <text x="350" y="522" text-anchor="middle" fill="#7b1fa2" font-size="9" font-weight="bold">Data Segment</text>
+    <text x="350" y="538" text-anchor="middle" fill="#666" font-size="8">Shared</text>
+    <text x="350" y="550" text-anchor="middle" fill="#666" font-size="8">Read-Write!</text>
+    
+    <rect x="450" y="505" width="180" height="55" rx="5" fill="white" stroke="#9c27b0" stroke-width="1"/>
+    <text x="540" y="522" text-anchor="middle" fill="#7b1fa2" font-size="9" font-weight="bold">Heap &amp; Stack</text>
+    <text x="540" y="538" text-anchor="middle" fill="#666" font-size="8">Shared</text>
+    <text x="540" y="550" text-anchor="middle" fill="#f44336" font-size="8">DANGEROUS!</text>
+    
+    <text x="70" y="573" fill="#666" font-size="9">⚠️ Child modifications to variables affect parent immediately! Must be careful!</text>
+  </g>
+
+  <!-- STEP 6: Execution Flow -->
+  <g class="step" id="step6" data-narration="The execution sequence: parent calls vfork, kernel creates child without copying memory, child runs in parent's space, parent blocks until child exits or execs.">
+    <rect x="50" y="580" width="700" height="105" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="70" y="602" fill="#2e7d32" font-size="13" font-weight="bold" class="title-text">Execution Flow</text>
+    
+    <!-- Flow diagram -->
+    <g transform="translate(70, 615)">
+      <rect x="0" y="0" width="100" height="35" rx="5" fill="white" stroke="#388e3c" stroke-width="1"/>
+      <text x="50" y="22" text-anchor="middle" fill="#2e7d32" font-size="9">1. Parent calls</text>
+      <text x="50" y="32" text-anchor="middle" fill="#666" font-size="8">vfork()</text>
+      
+      <text x="110" y="18" fill="#388e3c" font-size="14">→</text>
+      
+      <rect x="130" y="0" width="100" height="35" rx="5" fill="white" stroke="#388e3c" stroke-width="1"/>
+      <text x="180" y="22" text-anchor="middle" fill="#2e7d32" font-size="9">2. Kernel creates</text>
+      <text x="180" y="32" text-anchor="middle" fill="#666" font-size="8">child (no copy)</text>
+      
+      <text x="240" y="18" fill="#388e3c" font-size="14">→</text>
+      
+      <rect x="260" y="0" width="100" height="35" rx="5" fill="white" stroke="#ff9800" stroke-width="1"/>
+      <text x="310" y="22" text-anchor="middle" fill="#e65100" font-size="9">3. Child runs in</text>
+      <text x="310" y="32" text-anchor="middle" fill="#666" font-size="8">parent's memory</text>
+      
+      <text x="370" y="18" fill="#388e3c" font-size="14">→</text>
+      
+      <rect x="390" y="0" width="100" height="35" rx="5" fill="white" stroke="#f44336" stroke-width="1"/>
+      <text x="440" y="22" text-anchor="middle" fill="#c62828" font-size="9">4. Parent</text>
+      <text x="440" y="32" text-anchor="middle" fill="#666" font-size="8">BLOCKED</text>
+    </g>
+    
+    <text x="70" y="695" fill="#666" font-size="9">5. Child MUST call exec() or _exit() → 6. Parent resumes execution</text>
+  </g>
+
+  <!-- STEP 7: The exec() Requirement -->
+  <g class="step" id="step7" data-narration="Critical requirement: child must call exec to load a new program or exit with _exit. Returning without these corrupts parent's stack!">
+    <rect x="50" y="695" width="700" height="90" rx="8" fill="url(#redGrad)" filter="url(#shadow)"/>
+    <text x="70" y="717" fill="#c62828" font-size="13" font-weight="bold" class="title-text">⚠️ CRITICAL: The exec() Requirement</text>
+    
+    <rect x="70" y="732" width="320" height="42" rx="5" fill="white" stroke="#f44336" stroke-width="2"/>
+    <text x="230" y="752" text-anchor="middle" fill="#c62828" font-size="11" font-weight="bold">Child MUST do ONE of these:</text>
+    <text x="230" y="768" text-anchor="middle" fill="#666" font-size="10">call exec() to load new program OR call _exit() to terminate</text>
+    
+    <rect x="410" y="732" width="320" height="42" rx="5" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="570" y="752" text-anchor="middle" fill="#c62828" font-size="11" font-weight="bold">NEVER do this:</text>
+    <text x="570" y="768" text-anchor="middle" fill="#666" font-size="10">Return from function without exec()/_exit()</text>
+    
+    <text x="70" y="790" fill="#c62828" font-size="9" font-weight="bold">⚠️ Returning corrupts parent's stack → Undefined Behavior!</text>
+  </g>
+
+  <!-- STEP 8: _exit() vs exit() -->
+  <g class="step" id="step8" data-narration="Always use _exit() not exit() in child after vfork. Using exit flushes parent's buffers, causing duplicate output.">
+    <rect x="50" y="795" width="700" height="90" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="70" y="817" fill="#e65100" font-size="13" font-weight="bold" class="title-text">_exit() vs exit() - Critical Difference!</text>
+    
+    <rect x="70" y="835" width="280" height="40" rx="5" fill="white" stroke="#f44336" stroke-width="2"/>
+    <text x="210" y="855" text-anchor="middle" fill="#c62828" font-size="11" font-weight="bold">❌ WRONG: exit(0)</text>
+    <text x="210" y="870" text-anchor="middle" fill="#666" font-size="9">Flushes parent's I/O buffers → Duplicate output!</text>
+    
+    <rect x="370" y="835" width="280" height="40" rx="5" fill="white" stroke="#388e3c" stroke-width="2"/>
+    <text x="510" y="855" text-anchor="middle" fill="#2e7d32" font-size="11" font-weight="bold">✓ CORRECT: _exit(0)</text>
+    <text x="510" y="870" text-anchor="middle" fill="#666" font-size="9">Terminates child immediately, no buffer flush</text>
+    
+    <text x="70" y="890" fill="#666" font-size="9">After vfork in child: Always use _exit() for termination, never exit()!</text>
+  </g>
+
+  <!-- STEP 9: Code Example -->
+  <g class="step" id="step9" data-narration="Here's a complete example showing memory sharing: child modifies data, parent sees the changes after child exits.">
+    <rect x="50" y="895" width="700" height="110" rx="8" fill="url(#blueGrad)" filter="url(#shadow)"/>
+    <text x="70" y="917" fill="#1565c0" font-size="13" font-weight="bold" class="title-text">Example: Demonstrating Memory Sharing</text>
+    
+    <rect x="70" y="930" width="340" height="65" rx="5" fill="#263238" filter="url(#shadow)"/>
+    <text x="80" y="948" fill="#81d4fa" font-size="9" font-family="Consolas, monospace">pid_t pid = vfork();</text>
+    <text x="80" y="963" fill="#ff9800" font-size="9" font-family="Consolas, monospace">if (pid == 0) { // Child</text>
+    <text x="95" y="978" fill="#a5d6a7" font-size="9" font-family="Consolas, monospace">data = 20; // Modify parent's var</text>
+    <text x="95" y="990" fill="#a5d6a7" font-size="9" font-family="Consolas, monospace">_exit(0); // Terminate</text>
+    <text x="80" y="1002" fill="#ff9800" font-size="9" font-family="Consolas, monospace">}</text>
+    
+    <!-- Output visualization -->
+    <rect x="430" y="930" width="300" height="65" rx="5" fill="white" stroke="#1976d2" stroke-width="1"/>
+    <text x="580" y="950" text-anchor="middle" fill="#1565c0" font-size="10" font-weight="bold">Output:</text>
+    <text x="580" y="968" text-anchor="middle" fill="#666" font-size="9">Parent: data = 20</text>
+    <text x="580" y="985" text-anchor="middle" fill="#666" font-size="9">(Child's modification visible!)</text>
+    
+    <text x="70" y="1012" fill="#1565c0" font-size="9">Note: Parent sees 20 because child modified the SAME variable in shared memory</text>
+  </g>
+
+  <!-- STEP 10: Modern Context -->
+  <g class="step" id="step10" data-narration="Even with copy-on-write, vfork remains useful in embedded systems and scenarios requiring guaranteed zero-copy behavior.">
+    <rect x="50" y="1015" width="700" height="85" rx="8" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+    <text x="70" y="1037" fill="#7b1fa2" font-size="13" font-weight="bold" class="title-text">Modern Context: Is vfork Still Relevant?</text>
+    
+    <rect x="70" y="1052" width="220" height="38" rx="5" fill="white" stroke="#9c27b0" stroke-width="1"/>
+    <text x="180" y="1070" text-anchor="middle" fill="#7b1fa2" font-size="10" font-weight="bold">Copy-On-Write (COW)</text>
+    <text x="180" y="1084" text-anchor="middle" fill="#666" font-size="9">Reduced fork vs vfork gap</text>
+    
+    <rect x="300" y="1052" width="200" height="38" rx="5" fill="white" stroke="#388e3c" stroke-width="1"/>
+    <text x="400" y="1070" text-anchor="middle" fill="#2e7d32" font-size="10" font-weight="bold">Still Useful For</text>
+    <text x="400" y="1084" text-anchor="middle" fill="#666" font-size="9">Embedded systems</text>
+    
+    <rect x="510" y="1052" width="220" height="38" rx="5" fill="white" stroke="#ff9800" stroke-width="1"/>
+    <text x="620" y="1070" text-anchor="middle" fill="#e65100" font-size="10" font-weight="bold">Performance Critical</text>
+    <text x="620" y="1084" text-anchor="middle" fill="#666" font-size="9">Zero-copy guaranteed</text>
+    
+    <text x="70" y="1108" fill="#666" font-size="9">Legacy compatibility + specialized use cases keep vfork() relevant today</text>
+  </g>
+
+  <!-- STEP 11: Key Takeaways -->
+  <g class="step" id="step11" data-narration="Let's summarize: vfork shares memory, child must exec or exit, use _exit not exit, parent blocks until child completes.">
+    <rect x="50" y="1110" width="700" height="100" rx="8" fill="url(#greenGrad)" filter="url(#shadow)"/>
+    <text x="70" y="1132" fill="#2e7d32" font-size="14" font-weight="bold" class="title-text">✓ Key Takeaways</text>
+    
+    <g transform="translate(70, 1150)">
+      <circle cx="10" cy="-5" r="5" fill="#388e3c"/>
+      <text x="25" y="0" fill="#333" font-size="10">vfork() does NOT copy parent's address space - child shares memory</text>
+    </g>
+    <g transform="translate(70, 1168)">
+      <circle cx="10" cy="-5" r="5" fill="#388e3c"/>
+      <text x="25" y="0" fill="#333" font-size="10">Child MUST call exec() or _exit() - returning without these causes undefined behavior</text>
+    </g>
+    <g transform="translate(70, 1186)">
+      <circle cx="10" cy="-5" r="5" fill="#388e3c"/>
+      <text x="25" y="0" fill="#333" font-size="10">Use _exit() NOT exit() in child after vfork to avoid buffer corruption</text>
+    </g>
+    <g transform="translate(70, 1204)">
+      <circle cx="10" cy="-5" r="5" fill="#388e3c"/>
+      <text x="25" y="0" fill="#333" font-size="10">Parent blocks until child calls exec() or terminates</text>
+    </g>
+  </g>
+
+  <!-- STEP 12: Exam Tips -->
+  <g class="step" id="step12" data-narration="For exams: remember return values, the critical rules, and why vfork was created. Practice with code examples!">
+    <rect x="50" y="1220" width="700" height="80" rx="8" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+    <text x="70" y="1242" fill="#e65100" font-size="14" font-weight="bold" class="title-text">📝 Exam Tips</text>
+    
+    <text x="70" y="1265" fill="#333" font-size="10">• Return: 0 to child, child's PID to parent, -1 on error</text>
+    <text x="380" y="1265" fill="#333" font-size="10">• fork() vs vfork(): Memory copy vs sharing</text>
+    <text x="70" y="1285" fill="#333" font-size="10">• NEVER return from calling function in child without exec()/_exit()</text>
+    <text x="380" y="1285" fill="#333" font-size="10">• vfork() parent is BLOCKED until child completes</text>
+    <text x="70" y="1300" fill="#c62828" font-size="9" font-weight="bold">⚠️ Most common mistake: Using exit() instead of _exit() in child</text>
+  </g>
+
+  <!-- Additional decorative elements - connecting lines between sections -->
+  <g opacity="0.3">
+    <line x1="400" y1="55" x2="400" y2="65" stroke="#1976d2" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="150" x2="400" y2="160" stroke="#ff9800" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="245" x2="400" y2="255" stroke="#388e3c" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="345" x2="400" y2="355" stroke="#1565c0" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="460" x2="400" y2="470" stroke="#9c27b0" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="570" x2="400" y2="580" stroke="#388e3c" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="685" x2="400" y2="695" stroke="#f44336" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="785" x2="400" y2="795" stroke="#e65100" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="895" x2="400" y2="905" stroke="#1976d2" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="1005" x2="400" y2="1015" stroke="#9c27b0" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="400" y1="1100" x2="400" y2="1110" stroke="#388e3c" stroke-width="1" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- Section labels -->
+  <g opacity="0.6">
+    <text x="400" y="30" text-anchor="middle" fill="#666" font-size="8" font-style="italic">SECTION 1: Introduction</text>
+    <text x="400" y="350" text-anchor="middle" fill="#666" font-size="8" font-style="italic">SECTION 2: Deep Dive</text>
+    <text x="400" y="1110" text-anchor="middle" fill="#666" font-size="8" font-style="italic">SECTION 3: Summary</text>
+  </g>
+</svg>

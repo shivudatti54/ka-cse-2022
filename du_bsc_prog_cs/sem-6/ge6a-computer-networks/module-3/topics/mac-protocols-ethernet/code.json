@@ -1,0 +1,45 @@
+{
+  "topicId": "mac-protocols-ethernet",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "CSMA/CD Protocol Simulation",
+      "description": "Simulates basic CSMA/CD behavior with carrier sense and collision detection",
+      "code": "ALGORITHM CSMA_CD\nBEGIN\n  MAX_ATTEMPTS \u2190 16\n  SLOT_TIME \u2190 512 bits (51.2\u03bcs for 10Mbps Ethernet)\n  \n  FUNCTION transmit(frame)\n    attempts \u2190 0\n    WHILE attempts < MAX_ATTEMPTS DO\n      WHILE channel_busy() DO\n        wait_idle()\n      END WHILE\n      \n      start_transmission(frame)\n      WHILE transmitting DO\n        IF collision_detected() THEN\n          stop_transmission()\n          send_jam_signal()\n          wait_time \u2190 random(0, 2^attempts - 1) * SLOT_TIME\n          wait(wait_time)\n          attempts \u2190 attempts + 1\n          BREAK\n        END IF\n      END WHILE\n      \n      IF NOT collision_detected() THEN\n        RETURN SUCCESS\n      END IF\n    END WHILE\n    \n    RETURN FAILURE\n  END FUNCTION\nEND",
+      "explanation": "This pseudocode demonstrates the CSMA/CD algorithm: listen before talking, detect collisions while transmitting, send jam signal on collision, and use binary exponential backoff before retrying.",
+      "timeComplexity": "O(1) per successful transmission, O(2^n) worst case for collisions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Ethernet Frame Parser",
+      "description": "Parses and displays Ethernet frame fields from raw bytes",
+      "code": "def parse_ethernet_frame(raw_bytes):\n    '''Parse Ethernet frame and return dictionary of fields'''\n    if len(raw_bytes) < 14:\n        raise ValueError(\"Frame too short - minimum 14 bytes header\")\n    \n    # Extract fields from raw bytes\n    dest_mac = raw_bytes[0:6]\n    src_mac = raw_bytes[6:12]\n    ether_type = raw_bytes[12:14]\n    payload = raw_bytes[14:]\n    \n    # Format MAC addresses as hex: XX:XX:XX:XX:XX:XX\n    dest_mac_str = ':'.join(f'{b:02x}' for b in dest_mac)\n    src_mac_str = ':'.join(f'{b:02x}' for b in src_mac)\n    \n    # Parse EtherType (big-endian)\n    ether_type_int = (ether_type[0] << 8) | ether_type[1]\n    ether_type_map = {\n        0x0800: 'IPv4',\n        0x0806: 'ARP',\n        0x86DD: 'IPv6',\n        0x8100: 'VLAN Tag'\n    }\n    protocol = ether_type_map.get(ether_type_int, f'Unknown (0x{ether_type_int:04x})')\n    \n    return {\n        'destination_mac': dest_mac_str,\n        'source_mac': src_mac_str,\n        'ether_type': ether_type_int,\n        'protocol': protocol,\n        'payload_length': len(payload),\n        'total_frame_size': len(raw_bytes)\n    }\n\n# Example usage\nframe_bytes = bytes([\n    0xff, 0xff, 0xff, 0xff, 0xff, 0xff,  # Broadcast dest\n    0x00, 0x1a, 0x2b, 0x3c, 0x4d, 0x5e,  # Source MAC\n    0x08, 0x00,                          # IPv4 EtherType\n    # IPv4 packet would follow here...\n])\n\nresult = parse_ethernet_frame(frame_bytes)\nfor key, value in result.items():\n    print(f\"{key}: {value}\")",
+      "explanation": "This Python code parses raw Ethernet frame bytes, extracting destination/source MAC addresses, EtherType field (identifying the upper-layer protocol), and displaying the frame structure.",
+      "timeComplexity": "O(n) where n is frame size",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Binary Exponential Backoff Algorithm",
+      "description": "Implements the backoff algorithm used after collision detection in Ethernet",
+      "code": "ALGORITHM Binary_Exponential_Backoff\nBEGIN\n  MAX_BACKOFF \u2190 10        // After 10 collisions, use max 1023 slots\n  MAX_ATTEMPTS \u2190 16       // Give up after 16 attempts\n  SLOT_TIME \u2190 512 bits   // 51.2 microseconds for 10Mbps\n  \n  FUNCTION calculate_backoff(collision_count)\n    // k = min(collision_count, 10) - limit exponent to 10\n    k \u2190 MIN(collision_count, MAX_BACKOFF)\n    \n    // Generate random number from 0 to 2^k - 1\n    slots \u2190 RANDOM(0, (2^k) - 1)\n    \n    // Calculate wait time in microseconds\n    wait_time \u2190 slots * SLOT_TIME\n    \n    RETURN wait_time\n  END FUNCTION\n  \n  FUNCTION transmit_with_backoff(frame)\n    collision_count \u2190 0\n    \n    WHILE collision_count < MAX_ATTEMPTS DO\n      IF NOT channel_busy() THEN\n        TRANSMIT(frame)\n        IF collision_detected THEN\n          collision_count \u2190 collision_count + 1\n          wait_time \u2190 calculate_backoff(collision_count)\n          WAIT(wait_time)\n        ELSE\n          RETURN SUCCESS\n        END IF\n      ELSE\n        // Carrier is busy, wait a random time\n        WAIT(RANDOM(1, SLOT_TIME * 100))\n      END IF\n    END WHILE\n    \n    RETURN FAILURE  // Too many collisions\n  END FUNCTION\nEND",
+      "explanation": "This algorithm shows how Ethernet handles collisions: after each collision, the wait time doubles (exponential), reducing the probability of repeated collisions. After 10+ collisions, the maximum wait (1023 slots) is used.",
+      "timeComplexity": "O(2^n) in worst case where n is number of collisions",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "CSMA/CA Protocol with RTS/CTS",
+      "description": "Implementation of CSMA/CA with RTS/CTS exchange for wireless networks",
+      "code": "#include <stdio.h>\n#include <stdbool.h>\n\n#define DIFS 50      // DCF Interframe Space (\u03bcs)\n#define RTS_CTS 14  // RTS/CTS exchange time\n#define ACK 14      // ACK transmission time\n#define SLOT 9      // Slot time (\u03bcs)\n\ntypedef enum {IDLE, DIFS_WAIT, RTS_SENT, CTS_WAIT, DATA_SEND, ACK_WAIT} state_t;\n\nbool csma_ca_transmit(unsigned char *data, int data_len) {\n    state_t current_state = IDLE;\n    int backoff_slots;\n    int cw = 15;  // Contention window (default)\n    \n    // Step 1: Check if channel is idle\n    while (channel_sense() != IDLE) {\n        wait_channel_idle();\n    }\n    \n    // Step 2: Wait DIFS\n    delay_us(DIFS);\n    \n    // Step 3: Generate random backoff\n    backoff_slots = random() % (cw + 1);\n    delay_us(backoff_slots * SLOT);\n    \n    // Step 4: Send RTS (Request to Send)\n    send_frame(RTS, destination_addr);\n    current_state = RTS_SENT;\n    \n    // Step 5: Wait for CTS\n    if (wait_for_cts(RTS_CTS_TIMEOUT)) {\n        // Step 6: Received CTS, send data\n        send_frame(DATA, data, data_len);\n        current_state = DATA_SEND;\n        \n        // Step 7: Wait for ACK\n        if (wait_for_ack(ACK_TIMEOUT)) {\n            printf(\"Transmission successful\\\\n\");\n            return true;\n        }\n    }\n    \n    // Collision or no CTS - increase CW and retry\n    cw = min((cw + 1) * 2, 1023);\n    printf(\"RTS/CTS failed, doubling CW to %d\\\\n\", cw);\n    \n    return false;\n}\n\nint main() {\n    unsigned char data[] = \"Hello, World!\";\n    bool success = csma_ca_transmit(data, sizeof(data));\n    return success ? 0 : 1;\n}",
+      "explanation": "This C code demonstrates CSMA/CA with RTS/CTS handshake: waits for idle channel, performs backoff, sends RTS, waits for CTS, transmits data, then waits for ACK. Uses increasing contention window on failure.",
+      "timeComplexity": "O(1) average case, O(n) worst case with retries",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

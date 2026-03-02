@@ -1,0 +1,79 @@
+{
+  "topicId": "process-wait",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "What is the primary purpose of the wait() system call?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To pause the execution of the calling process until one of its children terminates"
+        },
+        { "key": "B", "text": "To terminate the calling process immediately" },
+        { "key": "C", "text": "To create a new child process" },
+        { "key": "D", "text": "To send a signal to a child process" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The wait() system call suspends execution of the calling process (the parent) until the state of one of its child processes changes, typically by terminating. This allows the parent to synchronize with and reap its children.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "Which macro would you use to check if a child process terminated normally by calling exit()?",
+      "options": [
+        { "key": "A", "text": "WEXITSTATUS" },
+        { "key": "B", "text": "WIFEXITED" },
+        { "key": "C", "text": "WTERMSIG" },
+        { "key": "D", "text": "WIFSIGNALED" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "WIFEXITED(status) is a macro that evaluates to a non-zero value (true) if the child terminated normally, i.e., by calling exit() or returning from main(). WEXITSTATUS is used to extract the exit code only after WIFEXITED is true.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "What is a zombie process in Unix?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A process that has terminated but whose status has not yet been read by its parent"
+        },
+        { "key": "B", "text": "A process that is consuming 100% of the CPU" },
+        { "key": "C", "text": "A process that is stuck in an infinite loop" },
+        { "key": "D", "text": "A process that has no parent process" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "A zombie process is a process that has completed execution (terminated) but still has an entry in the process table because its parent has not yet read its exit status via wait(). It is also known as a defunct process.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq4",
+      "question": "What is the key functional difference between the exit() and _exit() functions?",
+      "options": [
+        {
+          "key": "A",
+          "text": "exit() flushes I/O buffers and calls atexit() handlers; _exit() terminates immediately without cleanup"
+        },
+        { "key": "B", "text": "_exit() is more efficient than exit()" },
+        { "key": "C", "text": "exit() can only be called by the parent process" },
+        { "key": "D", "text": "_exit() requires a status argument, while exit() does not" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The exit() function performs standard clean-up actions for the user-level Standard I/O library, such as flushing all buffered output and calling functions registered with atexit(). The _exit() function terminates the process immediately and returns to the kernel, bypassing this user-level cleanup.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq5",
+      "question": "How does waitpid(pid, &status, WNOHANG) behave if the specified child has not yet terminated?",
+      "options": [
+        { "key": "A", "text": "It returns 0 immediately instead of blocking" },
+        { "key": "B", "text": "It blocks indefinitely until the child terminates" },
+        { "key": "C", "text": "It returns -1 and sets errno to ECHILD" },
+        { "key": "D", "text": "It sends a SIGKILL signal to the child to force termination" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The WNOHANG option tells waitpid() to return immediately in a non-blocking manner. If one or more child processes specified by pid exist but have not yet terminated, waitpid() returns 0, allowing the parent to continue its work and check again later.",
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "using-dynamic-arrays",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Dynamic Array Stack Implementation",
+      "description": "Implementation of a stack using dynamic array with push, pop, and resize functionality",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int *array;\n    int size;\n    int capacity;\n} DynamicStack;\n\nvoid initStack(DynamicStack *s, int initialCapacity) {\n    s->capacity = initialCapacity;\n    s->size = 0;\n    s->array = (int *)malloc(initialCapacity * sizeof(int));\n}\n\nvoid resize(DynamicStack *s) {\n    s->capacity *= 2;\n    s->array = (int *)realloc(s->array, s->capacity * sizeof(int));\n}\n\nvoid push(DynamicStack *s, int value) {\n    if (s->size == s->capacity) {\n        resize(s);  // O(n) operation\n    }\n    s->array[s->size++] = value;  // O(1)\n}\n\nint pop(DynamicStack *s) {\n    if (s->size == 0) {\n        printf(\"Stack Underflow\\n\");\n        return -1;\n    }\n    // Optional: shrink if size < capacity/4\n    if (s->size > 0 && s->size == s->capacity / 4) {\n        s->capacity /= 2;\n        s->array = (int *)realloc(s->array, s->capacity * sizeof(int));\n    }\n    return s->array[--s->size];  // O(1)\n}\n\nint main() {\n    DynamicStack s;\n    initStack(&s, 4);\n    push(&s, 10); push(&s, 20); push(&s, 30);\n    printf(\"Popped: %d\\n\", pop(&s));  // 30\n    return 0;\n}",
+      "explanation": "This code implements a stack using a dynamic array. When the array fills up (size equals capacity), the resize function doubles the capacity using realloc. The pop operation checks if the stack is too empty and can shrink the array to save memory.",
+      "timeComplexity": "Push: O(1) amortized, Pop: O(1)",
+      "spaceComplexity": "O(n) where n is number of elements"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Dynamic Array Class in Python",
+      "description": "Demonstrates dynamic array behavior with append operation and resize mechanism",
+      "code": "import ctypes\n\nclass DynamicArray:\n    def __init__(self, capacity=1):\n        self.size = 0\n        self.capacity = capacity\n        self.array = (capacity * ctypes.py_object)()\n    \n    def __len__(self):\n        return self.size\n    \n    def append(self, value):\n        # Resize if needed (double capacity)\n        if self.size == self.capacity:\n            self._resize(2 * self.capacity)\n        self.array[self.size] = value\n        self.size += 1\n    \n    def _resize(self, new_capacity):\n        # Create new array and copy elements\n        new_array = (new_capacity * ctypes.py_object)()\n        for i in range(self.size):\n            new_array[i] = self.array[i]\n        self.array = new_array\n        self.capacity = new_capacity\n    \n    def __getitem__(self, index):\n        if 0 <= index < self.size:\n            return self.array[index]\n        raise IndexError(\"Index out of range\")\n\n# Demonstration\narr = DynamicArray(4)\nfor i in range(20):\n    arr.append(i * 10)\n    print(f\"Size: {len(arr)}, Capacity: {arr.capacity}\")\n    \nprint(f\"Element at index 5: {arr[5]}\")",
+      "explanation": "Python's list uses dynamic arrays internally. This custom implementation shows how append works: it doubles capacity when full. The resize creates a new larger array and copies all existing elements, which is O(n) but happens infrequently.",
+      "timeComplexity": "Append: O(1) amortized, Access by index: O(1)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Dynamic Queue using Circular Array",
+      "description": "Implementation of queue using circular dynamic array with front and rear pointers",
+      "code": "public class DynamicQueue {\n    private Object[] array;\n    private int front;\n    private int rear;\n    private int size;\n    private int capacity;\n    \n    public DynamicQueue(int initialCapacity) {\n        capacity = initialCapacity;\n        array = new Object[capacity];\n        front = 0;\n        rear = -1;\n        size = 0;\n    }\n    \n    public void enqueue(Object item) {\n        if (size == capacity) {\n            resize(2 * capacity);  // Grow\n        }\n        rear = (rear + 1) % capacity;  // Circular increment\n        array[rear] = item;\n        size++;\n    }\n    \n    public Object dequeue() {\n        if (size == 0) {\n            throw new RuntimeException(\"Queue Underflow\");\n        }\n        Object item = array[front];\n        front = (front + 1) % capacity;  // Circular increment\n        size--;\n        \n        // Shrink if too empty\n        if (size > 0 && size == capacity / 4) {\n            resize(capacity / 2);\n        }\n        return item;\n    }\n    \n    private void resize(int newCapacity) {\n        Object[] newArray = new Object[newCapacity];\n        for (int i = 0; i < size; i++) {\n            newArray[i] = array[(front + i) % capacity];\n        }\n        array = newArray;\n        front = 0;\n        rear = size - 1;\n        capacity = newCapacity;\n    }\n    \n    public int size() { return size; }\n    public boolean isEmpty() { return size == 0; }\n}",
+      "explanation": "This queue uses circular array indexing with modulo operations to wrap around. The resize function grows or shrinks the array as needed, copying elements in proper order. Both enqueue and dequeue are O(1) amortized.",
+      "timeComplexity": "Enqueue: O(1) amortized, Dequeue: O(1) amortized",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Generic Dynamic Array Algorithm",
+      "description": "Pseudocode showing core dynamic array operations with growth and shrink decisions",
+      "code": "CLASS DynamicArray<T>\n    DATA array: POINTER TO T\n    DATA size: INTEGER\n    DATA capacity: INTEGER\n    DATA growthFactor: REAL := 2.0\n    DATA shrinkThreshold: REAL := 0.25\n    \n    CONSTRUCTOR(initialCapacity: INTEGER)\n        capacity \u2190 initialCapacity\n        size \u2190 0\n        array \u2190 ALLOCATE(capacity * SIZE OF T)\n    \n    PROCEDURE resize(newCapacity: INTEGER)\n        newArray \u2190 ALLOCATE(newCapacity * SIZE OF T)\n        FOR i FROM 0 TO size-1 DO\n            newArray[i] \u2190 array[i]\n        END FOR\n        DEALLOCATE(array)\n        array \u2190 newArray\n        capacity \u2190 newCapacity\n    \n    PROCEDURE append(item: T)\n        IF size = capacity THEN\n            resize(INT(growthFactor * capacity))\n        END IF\n        array[size] \u2190 item\n        size \u2190 size + 1\n    \n    PROCEDURE removeLast(): T\n        IF size = 0 THEN\n            RETURN ERROR \"Array is empty\"\n        END IF\n        item \u2190 array[size - 1]\n        size \u2190 size - 1\n        \n        IF size < shrinkThreshold * capacity AND capacity > 1 THEN\n            resize(MAX(1, INT(capacity / growthFactor)))\n        END IF\n        RETURN item\n    \n    FUNCTION get(index: INTEGER): T\n        IF index < 0 OR index >= size THEN\n            RETURN ERROR \"Index out of bounds\"\n        END IF\n        RETURN array[index]\n    \n    FUNCTION length(): INTEGER\n        RETURN size\n    \n    FUNCTION getCapacity(): INTEGER\n        RETURN capacity\n    \n    FUNCTION getLoadFactor(): REAL\n        RETURN size / capacity\nEND CLASS",
+      "explanation": "This pseudocode shows a complete dynamic array implementation with key features: growth factor controls doubling, shrink threshold prevents memory waste, and resize handles both growing and shrinking. The append and removeLast operations maintain amortized O(1) complexity.",
+      "timeComplexity": "Append: O(1) amortized, RemoveLast: O(1) amortized, Get: O(1)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "topicId": "distributed-mutual-exclusion",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the three properties that a distributed mutual exclusion algorithm must satisfy.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Safety: At most one process can be in critical section at any time",
+        "Liveness: Every request for CS is eventually granted (no starvation)",
+        "Ordering: Requests are honored in the order they were made (based on timestamps)"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe Lamport's Logical Clock with its two rules.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Rule 1: A process increments its logical clock before sending an event (Li = Li + 1)",
+        "Rule 2: When receiving a message with timestamp T, update: Li = max(Li, T) + 1",
+        "Purpose: Establishes partial ordering of events in distributed systems"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Compare the message complexity of Ricart-Agrawala and Maekawa algorithms.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Ricart-Agrawala: 2(N-1) messages per CS entry (N-1 REQUEST + N-1 REPLY)",
+        "Maekawa: O(√N) messages per CS entry (uses quorum-based approach)",
+        "Trade-off: Maekawa is more complex but more efficient in message count"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "List two advantages and two disadvantages of the Token Ring algorithm.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Advantages: Simple to implement, guaranteed fairness (each process gets token in order)",
+        "Disadvantages: Token loss can cause starvation, high latency (may wait for token even when CS is free), token regeneration overhead"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain how deferred replies work in the Ricart-Agrawala algorithm.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "When a process receives REQUEST while in CS, it defers the reply",
+        "Defers by adding the request to a queue",
+        "After exiting CS, sends REPLY to all queued requests in timestamp order",
+        "Ensures mutual exclusion is maintained"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the limitations of centralized mutual exclusion in distributed systems?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Single point of failure - coordinator crash halts entire system",
+        "Scalability issues - coordinator becomes bottleneck",
+        "Latency - every request must go through coordinator",
+        "No fault tolerance - cannot handle coordinator failure"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the concept of quorum in Maekawa's mutual exclusion algorithm.",
+      "marks": 5,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Quorum is a subset of processes from which permission must be obtained",
+        "Each process has a request set (quorum) of size approximately √N",
+        "Any two quorums must intersect (to ensure mutual exclusion)",
+        "Reduces messages from N-1 to approximately √N per CS entry"
+      ]
+    }
+  ]
+}

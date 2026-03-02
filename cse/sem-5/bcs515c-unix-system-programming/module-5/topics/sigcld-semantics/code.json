@@ -1,0 +1,45 @@
+{
+  "topicId": "sigcld-semantics",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Proper SIGCHLD Handler",
+      "description": "SIGCHLD handler that handles multiple child terminations",
+      "code": "void sigchld_handler(int sig) {\n int status;\n pid_t pid;\n \n // Reap all terminated children\n while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {\n // Process child exit status\n if (WIFEXITED(status)) {\n printf(\"Child %d exited with status %d\\n\", \n pid, WEXITSTATUS(status));\n } else if (WIFSIGNALED(status)) {\n printf(\"Child %d killed by signal %d\\n\", \n pid, WTERMSIG(status));\n }\n }\n}\n\n// Setup in main():\nstruct sigaction sa;\nsa.sa_handler = sigchld_handler;\nsa.sa_flags = SA_RESTART | SA_NOCLDSTOP;\nsigemptyset(&sa.sa_mask);\nsigaction(SIGCHLD, &sa, NULL);",
+      "explanation": "This handler properly handles multiple child terminations by using waitpid with WNOHANG in a loop. The SA_RESTART flag restarts interrupted system calls, and SA_NOCLDSTOP prevents delivery when children stop.",
+      "timeComplexity": "O(n) where n is number of terminated children",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Fork Multiple Children",
+      "description": "Parent forks multiple children and handles their termination",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <signal.h>\n#include <sys/wait.h>\n\nvoid sigchld_handler(int sig);\n\nint main() {\n pid_t pids[5];\n struct sigaction sa;\n \n // Setup signal handler\n sa.sa_handler = sigchld_handler;\n sa.sa_flags = SA_RESTART;\n sigemptyset(&sa.sa_mask);\n sigaction(SIGCHLD, &sa, NULL);\n \n // Fork 5 child processes\n for (int i = 0; i < 5; i++) {\n pids[i] = fork();\n if (pids[i] == 0) {\n // Child process\n printf(\"Child %d (PID %d) working...\\n\", i, getpid());\n sleep(i + 1); // Do some work\n printf(\"Child %d exiting with status %d\\n\", i, i*10);\n _exit(i * 10); // Exit with status\n } else if (pids[i] < 0) {\n perror(\"fork failed\");\n exit(1);\n }\n }\n \n // Parent waits for all children\n printf(\"Parent waiting for children...\\n\");\n for (int i = 0; i < 5; i++) {\n int status;\n waitpid(pids[i], &status, 0);\n }\n printf(\"All children reaped.\\n\");\n return 0;\n}\n\nvoid sigchld_handler(int sig) {\n pid_t pid;\n int status;\n while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {\n if (WIFEXITED(status)) {\n printf(\"Handler: Child %d exited with %d\\n\",\n pid, WEXITSTATUS(status));\n }\n }\n}",
+      "explanation": "This program demonstrates proper handling of multiple child processes. The parent forks 5 children, and the signal handler uses waitpid with WNOHANG to reap any terminated children, preventing zombies.",
+      "timeComplexity": "O(n) where n is number of child processes",
+      "spaceComplexity": "O(1) additional space"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Double-Fork Technique",
+      "description": "Using double-fork to prevent zombies and create daemon-like process",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid1, pid2;\n \n pid1 = fork();\n if (pid1 < 0) {\n perror(\"First fork failed\");\n exit(1);\n }\n \n if (pid1 == 0) {\n // First child process\n pid2 = fork();\n if (pid2 < 0) {\n perror(\"Second fork failed\");\n _exit(1);\n }\n \n if (pid2 == 0) {\n // Grandchild process (becomes orphan)\n // Do actual work here\n printf(\"Grandchild (PID %d) working...\\n\", getpid());\n sleep(2);\n printf(\"Grandchild finishing.\\n\");\n _exit(0);\n } else {\n // First child exits immediately\n printf(\"First child (PID %d) exiting.\\n\", getpid());\n _exit(0); // No waiting for grandchild\n }\n } else {\n // Original parent\n wait(NULL); // Wait for first child only\n printf(\"Parent: First child reaped.\\n\");\n }\n \n return 0;\n}",
+      "explanation": "The double-fork technique creates an orphan process adopted by init. The intermediate child exits immediately without waiting for the grandchild, preventing zombie creation. This is useful for launching daemons.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "SA_NOCLDWAIT Example",
+      "description": "Using SA_NOCLDWAIT to automatically reap children",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n#include <signal.h>\n#include <sys/wait.h>\n\nint main() {\n struct sigaction sa;\n \n // Set SA_NOCLDWAIT to prevent zombies\n sa.sa_handler = SIG_IGN; // Can also use custom handler\n sa.sa_flags = SA_NOCLDWAIT; // Children won't become zombies\n sigemptyset(&sa.sa_mask);\n sigaction(SIGCHLD, &sa, NULL);\n \n printf(\"Forking child with SA_NOCLDWAIT set...\\n\");\n \n pid_t pid = fork();\n if (pid == 0) {\n // Child\n printf(\"Child (PID %d) sleeping...\\n\", getpid());\n sleep(1);\n printf(\"Child exiting.\\n\");\n _exit(42);\n } else {\n // Parent - no wait() needed!\n sleep(2);\n printf(\"Parent: No zombie created due to SA_NOCLDWAIT.\\n\");\n printf(\"Child exit status is lost with SA_NOCLDWAIT.\\n\");\n }\n \n return 0;\n}",
+      "explanation": "This demonstrates SA_NOCLDWAIT flag which causes terminated children to be automatically reaped without becoming zombies. The trade-off is that exit status cannot be collected.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

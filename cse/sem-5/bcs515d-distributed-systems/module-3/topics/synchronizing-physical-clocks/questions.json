@@ -1,0 +1,176 @@
+{
+  "topicId": "synchronizing-physical-clocks",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between external and internal clock synchronization with an example.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "External synchronization binds clocks to an external time source like UTC",
+        "Internal synchronization binds clocks to each other without external reference",
+        "Example: NTP provides external sync, Berkeley algorithm provides internal sync",
+        "External ensures global consistency, internal ensures consistency among machines only"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe Cristian's algorithm for clock synchronization with its limitations.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Client requests time from time server",
+        "Server responds with its current time",
+        "Client adds half of round-trip time to server's timestamp to estimate correct time",
+        "Maximum error equals half the round-trip time",
+        "Limitation: Assumes symmetric network delay, single point of failure if server fails"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is clock drift? Explain how it affects distributed systems.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Clock drift is the rate at which a clock deviates from perfect time",
+        "Different clocks drift at different rates due to hardware variations",
+        "Causes clocks to become progressively out of sync",
+        "Requires periodic resynchronization in distributed systems",
+        "Can cause consistency issues in distributed databases and transaction ordering"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the NTP stratum hierarchy and its significance.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Stratum 0: Primary reference clocks (atomic, GPS)",
+        "Stratum 1: Servers directly synchronized to Stratum 0",
+        "Stratum 2-15: Successive levels getting less accurate",
+        "Stratum 16: Unsynchronized, not used for sync",
+        "Significance: Provides scalable, hierarchical time synchronization and handles fault tolerance"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Compare Cristian's algorithm and Berkeley algorithm for clock synchronization.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Cristian: Client-server model, server is passive; Berkeley: Master-slave, master is active",
+        "Cristian adjusts to server time; Berkeley computes average of all clocks",
+        "Cristian is simpler; Berkeley is more fault-tolerant",
+        "Both assume symmetric network delays",
+        "Berkeley handles failed masters better"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the challenges in achieving perfect clock synchronization in distributed systems?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Unknown one-way message delay",
+        "Network delays are variable and unpredictable",
+        "Clock drift between machines",
+        "Hardware limitations of oscillators",
+        "No global clock in distributed systems",
+        "Security threats like malicious time servers"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the working of the Berkeley algorithm for clock synchronization.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "A master node is designated to control synchronization",
+        "Master polls all slave nodes for their clock times",
+        "Master computes the average of all times including its own",
+        "Master calculates adjustment values (difference from average)",
+        "Master sends adjustment values to all slaves",
+        "Slaves adjust their clocks accordingly"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Describe the Network Time Protocol (NTP) architecture and explain how it achieves clock synchronization across the internet. Include details about stratum levels, synchronization modes, and accuracy.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "NTP uses hierarchical client-server architecture with stratum levels",
+        "Stratum 0: Primary reference clocks (atomic, GPS receivers)",
+        "Stratum 1: Primary servers directly connected to Stratum 0",
+        "Lower strata: Successive levels of secondary servers",
+        "Synchronization modes: Client-server, symmetric peer, broadcast",
+        "Uses selection and clustering algorithms to filter incorrect times",
+        "Provides accuracy of milliseconds on WAN, microseconds on LAN",
+        "Operates using UDP port 123",
+        "Four-message exchange for symmetric mode",
+        "Clients can use multiple servers for reliability"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the concept of physical clocks vs logical clocks in distributed systems. Why is physical clock synchronization necessary? Discuss with examples of when physical clocks are preferred over logical clocks.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Physical clocks provide absolute time (UTC), logical clocks capture causal ordering",
+        "Logical clocks (Lamport) don't give real time, only 'happens-before' relationships",
+        "Physical clocks needed for: real-time applications, legal compliance, debugging, coordination with external systems",
+        "Examples: Stock trading, flight reservations, distributed databases requiring wall-clock ordering",
+        "Physical clocks face challenges: drift, network delays, asymmetric paths",
+        "Trade-off: Physical sync harder but necessary for real-world time requirements",
+        "Hybrid approaches combine both types for better accuracy"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "A distributed system has three clocks with the following offsets from true time: Clock A = +5ms, Clock B = -3ms, Clock C = +8ms. If Cristian's algorithm is used with a time server having true time, and the round-trip time is 40ms, calculate the adjusted times for each clock and explain the synchronization process.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Half RTT = 40/2 = 20ms",
+        "Server time is true time T (say 1000ms)",
+        "Client receives T at their local time",
+        "Time correction = ServerTime + 20ms - ClientLocalTime",
+        "Clock A: Correction needed = +5ms - 20ms = -15ms (slow down)",
+        "Clock B: Correction needed = -3ms - 20ms = -23ms (slow down)",
+        "Clock C: Correction needed = +8ms - 20ms = -12ms (slow down)",
+        "Process: Client sends request → Server responds with timestamp → Client adds half RTT → Adjusts clock",
+        "Maximum error after sync = ±20ms (half RTT assumption)"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the Google True Time API used in Spanner database. How does it achieve clock synchronization and what are the guarantees provided? Explain how this differs from traditional NTP-based synchronization.",
+      "trueTimeExplanation": "True Time uses GPS receivers and atomic clocks in data centers to provide bounded uncertainty interval [earliest, latest] instead of a single time value, guaranteeing that true time lies within this interval.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "True Time uses GPS and atomic clocks as reference",
+        "Provides confidence interval: TT.now() returns [earliest, latest]",
+        "True time guaranteed to be within this interval",
+        "Uses commit-wait protocol: wait until interval has passed",
+        "Difference from NTP: NTP gives single point estimate, True Time gives bounded uncertainty",
+        "NTP accuracy: milliseconds; True Time accuracy: single-digit milliseconds",
+        "True Time handles Byzantine failures of time servers",
+        "Enables globally distributed transactions with consistency",
+        "Uses Paxos for coordination with time bounds"
+      ]
+    }
+  ]
+}

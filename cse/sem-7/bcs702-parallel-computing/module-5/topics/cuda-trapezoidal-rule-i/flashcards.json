@@ -1,0 +1,30 @@
+{
+  "topicId": "cuda-trapezoidal-rule-i",
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "What does each CUDA thread compute in the basic trapezoidal rule kernel, and how does it contribute its result?",
+      "back": "Each thread computes its global index my_i, calculates x_i = a + my_i * h, evaluates f(x_i), applies half-weight if it is a boundary point (i=0 or i=n), and then calls atomicAdd(result_p, my_f) to add its contribution to a single global accumulator variable."
+    },
+    {
+      "id": "fc2",
+      "front": "Why is atomicAdd a performance bottleneck in the CUDA trapezoidal rule?",
+      "back": "atomicAdd serializes concurrent writes to the same memory address. When thousands of threads all target the same result variable, the hardware processes them one at a time. This makes the accumulation phase O(n) instead of O(n/p), effectively negating the parallelism benefits for the summation step."
+    },
+    {
+      "id": "fc3",
+      "front": "How does the single-block CUDA trapezoidal kernel differ from the multi-block version?",
+      "back": "The single-block version uses my_i = threadIdx.x and is limited to n <= ~1024 (max threads per block). The multi-block version uses my_i = blockIdx.x * blockDim.x + threadIdx.x, which produces unique indices across all blocks and supports arbitrary n (millions of subintervals)."
+    },
+    {
+      "id": "fc4",
+      "front": "What causes floating-point non-determinism in the atomicAdd trapezoidal rule?",
+      "back": "Floating-point addition is not associative: (a+b)+c != a+(b+c) in general. Since atomicAdd processes threads in whatever order they arrive at the memory controller (which varies between runs due to scheduling), the same inputs produce slightly different accumulated sums in the least significant digits."
+    },
+    {
+      "id": "fc5",
+      "front": "What is the complete host-side workflow for the CUDA atomicAdd trapezoidal rule?",
+      "back": "1) cudaMalloc a single float on the device for the result. 2) cudaMemset it to 0. 3) Compute numBlocks = (n+1+threadsPerBlock-1)/threadsPerBlock. 4) Launch the kernel. 5) cudaMemcpy the result from device to host. 6) Multiply by h = (b-a)/n to get the final integral. 7) cudaFree the device memory."
+    }
+  ]
+}

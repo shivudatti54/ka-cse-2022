@@ -1,0 +1,35 @@
+{
+  "topicId": "deadlock-prevention",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Resource Ordering Prevention Algorithm",
+      "description": "Demonstrates how resource ordering prevents circular wait by enforcing increasing request order",
+      "code": "// Resource types with assigned order numbers\n// Example: PRINTER=1, TAPE=2, DISK=3\n\nCONSTANT MAX_RESOURCES = 4\nVAR resourceOrder[MAX_RESOURCES] = [1, 2, 3, 4]  // PRINTER, TAPE, DISK, CD\n\nFUNCTION requestResource(processID, resourceType, currentHoldings)\nBEGIN\n    VAR requestedOrder = resourceOrder[resourceType]\n    VAR minHoldingOrder = INFINITY\n    \n    // Find minimum order of currently held resources\n    FOR EACH res IN currentHoldings\n    BEGIN\n        VAR holdOrder = resourceOrder[res]\n        IF holdOrder < minHoldingOrder THEN\n            minHoldingOrder = holdOrder\n        END\n    END\n    \n    // Check if request violates ordering rule\n    IF currentHoldings IS EMPTY THEN\n        // No holdings, can request any resource\n        RETURN ALLOW\n    ELSE IF requestedOrder > minHoldingOrder THEN\n        // Requesting higher order resource - ALLOW\n        RETURN ALLOW\n    ELSE\n        // Requesting lower or equal order - DENY\n        RETURN DENY\n    END\nEND\n\n// Example: Process holds DISK(3) can request CD(4) but not PRINTER(1)",
+      "explanation": "This algorithm enforces resource ordering to prevent circular wait. A process can only request resources with higher order than what it currently holds. This prevents the formation of circular wait chains that are necessary for deadlock.",
+      "timeComplexity": "O(n) where n is number of currently held resources",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Hold and Wait Prevention - Request All Upfront",
+      "description": "Python implementation showing how requesting all resources upfront prevents Hold and Wait condition",
+      "code": "class Process:\n    def __init__(self, pid, needed_resources):\n        self.pid = pid\n        self.needed_resources = needed_resources  # All resources needed\n        self.held_resources = []\n        self.completed = False\n    \n    def request_all_or_wait(self, available_resources):\n        \"\"\"\n        Prevent hold and wait by requiring ALL resources at once.\n        Process either gets ALL needed or waits.\n        \"\"\"\n        can_grant = True\n        for res_type, count in self.needed_resources.items():\n            if available_resources.get(res_type, 0) < count:\n                can_grant = False\n                break\n        \n        if can_grant:\n            # Grant all resources\n            for res_type, count in self.needed_resources.items():\n                available_resources[res_type] -= count\n                self.held_resources.append((res_type, count))\n            print(f\"Process {self.pid}: All resources granted\")\n            return True\n        else:\n            print(f\"Process {self.pid}: Waiting - cannot get all resources\")\n            return False\n\n# Example usage\navailable = {'printer': 2, 'disk': 3, 'tape': 1}\np1 = Process('P1', {'printer': 1, 'disk': 1, 'tape': 1})\np1.request_all_or_wait(available)  # Will wait if not all available",
+      "explanation": "This implementation prevents Hold and Wait by requiring processes to request all needed resources at once. If all resources are not available, the process waits. This eliminates the 'hold' part of the condition but may lead to low resource utilization.",
+      "timeComplexity": "O(r) where r is number of resource types",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "No Preemption Prevention with Rollback",
+      "description": "C program demonstrating resource preemption with checkpointing for deadlock prevention",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\n#define MAX_RESOURCES 5\n\ntypedef struct {\n    int resource_id;\n    int quantity;\n} Resource;\n\ntypedef struct {\n    int checkpoint_data[100];\n    Resource held[MAX_RESOURCES];\n    int held_count;\n} ProcessState;\n\n// Global checkpoint storage\nProcessState checkpoints[10];\n\nint preempt_resources(int process_id, Resource *held, int held_count) {\n    /*\n     * Preemption Prevention:\n     * When a process cannot get needed resources, \n     * preempt all currently held resources.\n     */\n    \n    // Save current state as checkpoint\n    save_checkpoint(process_id);\n    \n    // Return all held resources to available pool\n    for (int i = 0; i < held_count; i++) {\n        return_resource_to_pool(held[i].resource_id, held[i].quantity);\n    }\n    \n    // Clear held resources\n    held_count = 0;\n    \n    printf(\"Process %d: Resources preempted, added to available pool\\n\", \n           process_id);\n    return 1;  // Preemption successful\n}\n\nvoid save_checkpoint(int process_id) {\n    // Save process state to enable rollback\n    // In real system, would save register values, memory, etc.\n    printf(\"Checkpoint saved for process %d\\n\", process_id);\n}\n\nint request_with_preemption(int process_id, Resource request, \n                            Resource *held, int *held_count) {\n    if (is_resource_available(request.resource_id, request.quantity)) {\n        // Grant resource normally\n        allocate_resource(process_id, request);\n        held[(*held_count)++] = request;\n        return 1;\n    } else {\n        // Cannot grant - preempt held resources\n        return preempt_resources(process_id, held, *held_count);\n    }\n}",
+      "explanation": "This code demonstrates No Preemption prevention. When a process holding resources requests more that cannot be granted, all currently held resources are preempted (returned to the pool). The process state is checkpointed to allow recovery. This prevents deadlock but requires complex checkpointing mechanisms.",
+      "timeComplexity": "O(h) where h is number of held resources",
+      "spaceComplexity": "O(n) for checkpoint storage, where n is process count"
+    }
+  ]
+}

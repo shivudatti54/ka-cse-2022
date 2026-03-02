@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" width="100%" height="100%" data-topic-id="handling-derived-class-exceptions">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a90e2"/>
+      <stop offset="100%" stop-color="#2c5aa0"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#50c878"/>
+      <stop offset="100%" stop-color="#2e8b57"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#d32f2f"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffa726"/>
+      <stop offset="100%" stop-color="#f57c00"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9c27b0"/>
+      <stop offset="100%" stop-color="#6a1b9a"/>
+    </linearGradient>
+  </defs>
+
+  <text x="210" y="20" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a237e" text-anchor="middle">Derived Class Exceptions</text>
+
+  <g data-narration="In exception hierarchies, a base class handler can catch exceptions from any derived class. This is similar to how base class pointers work with derived objects in C++ polymorphism.">
+    <rect x="20" y="40" width="180" height="70" rx="10" ry="10" fill="url(#blueGrad)" stroke="#1a237e" stroke-width="2"/>
+    <text x="110" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Base Exception</text>
+    <text x="110" y="80" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">class BaseError</text>
+    <text x="110" y="95" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">General error type</text>
+  </g>
+
+  <g data-narration="Derived exceptions inherit from base exception classes. They provide more specific error information and can be caught by handlers for either the derived or base class.">
+    <rect x="220" y="40" width="180" height="70" rx="10" ry="10" fill="url(#purpleGrad)" stroke="#4a148c" stroke-width="2"/>
+    <text x="310" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Derived Exception</text>
+    <text x="310" y="80" font-family="Arial, sans-serif" font-size="9" fill="#f3e5f5" text-anchor="middle">class DerivedError</text>
+    <text x="310" y="95" font-family="Arial, sans-serif" font-size="9" fill="#f3e5f5" text-anchor="middle">: public BaseError</text>
+  </g>
+
+  <g data-narration="CORRECT ORDER: Always catch derived exceptions first, then base exceptions. This ensures specific handlers get a chance before general ones. Catch blocks are checked from top to bottom.">
+    <rect x="20" y="130" width="180" height="70" rx="10" ry="10" fill="url(#greenGrad)" stroke="#1b5e20" stroke-width="2"/>
+    <text x="110" y="150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Correct Order</text>
+    <text x="110" y="170" font-family="Arial, sans-serif" font-size="9" fill="#e8f5e9" text-anchor="middle">catch (Derived&amp;)</text>
+    <text x="110" y="185" font-family="Arial, sans-serif" font-size="9" fill="#e8f5e9" text-anchor="middle">catch (Base&amp;)</text>
+  </g>
+
+  <g data-narration="WRONG ORDER: If you catch the base class first, it will match all derived exceptions too! The derived handler becomes unreachable code. The compiler may warn about this.">
+    <rect x="220" y="130" width="180" height="70" rx="10" ry="10" fill="url(#redGrad)" stroke="#b71c1c" stroke-width="2"/>
+    <text x="310" y="150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Wrong Order</text>
+    <text x="310" y="170" font-family="Arial, sans-serif" font-size="9" fill="#ffebee" text-anchor="middle">catch (Base&amp;) BAD!</text>
+    <text x="310" y="185" font-family="Arial, sans-serif" font-size="9" fill="#ffebee" text-anchor="middle">catch (Derived&amp;)</text>
+  </g>
+
+  <g data-narration="Always catch exceptions by reference (const&amp;) to avoid object slicing. Catching by value cuts off derived class information and loses polymorphic behavior.">
+    <rect x="20" y="220" width="180" height="70" rx="10" ry="10" fill="url(#orangeGrad)" stroke="#e65100" stroke-width="2"/>
+    <text x="110" y="240" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Catch by Reference</text>
+    <text x="110" y="260" font-family="Arial, sans-serif" font-size="9" fill="#fff3e0" text-anchor="middle">catch (const Type&amp; e)</text>
+    <text x="110" y="275" font-family="Arial, sans-serif" font-size="9" fill="#fff3e0" text-anchor="middle">Avoids slicing</text>
+  </g>
+
+  <g data-narration="Polymorphic exception handling allows derived exceptions to preserve their type information when caught by base class references. The what() method is called polymorphically.">
+    <rect x="220" y="220" width="180" height="70" rx="10" ry="10" fill="url(#blueGrad)" stroke="#1a237e" stroke-width="2"/>
+    <text x="310" y="240" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Polymorphism</text>
+    <text x="310" y="260" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">Preserves derived</text>
+    <text x="310" y="275" font-family="Arial, sans-serif" font-size="9" fill="#e0e0ff" text-anchor="middle">type information</text>
+  </g>
+
+  <path d="M 200 75 L 220 75" stroke="#4a148c" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 110 110 L 110 130" stroke="#1a237e" stroke-width="2" fill="none"/>
+  <path d="M 310 110 L 310 130" stroke="#b71c1c" stroke-width="2" fill="none"/>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <polygon points="0 0, 10 5, 0 10" fill="#4a148c"/>
+    </marker>
+  </defs>
+
+  <text x="210" y="320" font-family="Arial, sans-serif" font-size="11" fill="#424242" text-anchor="middle">Catch most derived exceptions first</text>
+  <text x="210" y="340" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="middle">Base handlers match derived exceptions</text>
+  <text x="210" y="360" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="middle">Always catch by const reference</text>
+</svg>

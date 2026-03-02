@@ -1,0 +1,55 @@
+{
+  "topicId": "floating-point",
+  "examples": [
+    {
+      "id": "float-to-ieee-python",
+      "title": "Decimal to IEEE 754 Conversion",
+      "description": "Convert a decimal number to IEEE 754 single precision binary",
+      "language": "python",
+      "code": "import struct\n\ndef float_to_ieee754(f):\n    \"\"\"Convert float to IEEE 754 single precision binary string.\"\"\"\n    # Pack float as bytes, then unpack as unsigned int\n    packed = struct.pack('>f', f)\n    integer = struct.unpack('>I', packed)[0]\n    \n    # Convert to binary string\n    binary = format(integer, '032b')\n    \n    sign = binary[0]\n    exponent = binary[1:9]\n    mantissa = binary[9:32]\n    \n    return f\"{sign} {exponent} {mantissa}\"\n\n# Examples\nprint(\"13.625:\", float_to_ieee754(13.625))\n# Output: 0 10000010 10110100000000000000000\n\nprint(\"-13.625:\", float_to_ieee754(-13.625))\n# Output: 1 10000010 10110100000000000000000\n\nprint(\"0.1:\", float_to_ieee754(0.1))\n# Output: 0 01111011 10011001100110011001101 (not exact!)\n\nprint(\"Infinity:\", float_to_ieee754(float('inf')))\n# Output: 0 11111111 00000000000000000000000",
+      "explanation": "Uses struct module to get the exact binary representation. Shows how numbers like 0.1 cannot be exactly represented.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "ieee-to-float-python",
+      "title": "IEEE 754 to Decimal Conversion",
+      "description": "Convert IEEE 754 binary representation back to decimal",
+      "language": "python",
+      "code": "def ieee754_to_float(binary_str):\n    \"\"\"Convert IEEE 754 binary string to float.\"\"\"\n    # Remove spaces\n    binary_str = binary_str.replace(' ', '')\n    \n    # Extract fields\n    sign = int(binary_str[0])\n    exponent = int(binary_str[1:9], 2)\n    mantissa_bits = binary_str[9:32]\n    \n    # Handle special cases\n    if exponent == 0 and mantissa_bits == '0' * 23:\n        return 0.0 if sign == 0 else -0.0\n    if exponent == 255:\n        if mantissa_bits == '0' * 23:\n            return float('inf') if sign == 0 else float('-inf')\n        return float('nan')\n    \n    # Calculate mantissa (add hidden 1)\n    mantissa = 1.0\n    for i, bit in enumerate(mantissa_bits):\n        if bit == '1':\n            mantissa += 2 ** (-(i + 1))\n    \n    # Calculate actual exponent\n    actual_exp = exponent - 127\n    \n    # Calculate value\n    value = mantissa * (2 ** actual_exp)\n    \n    return -value if sign == 1 else value\n\n# Examples\nprint(ieee754_to_float('0 10000010 10110100000000000000000'))\n# Output: 13.625\n\nprint(ieee754_to_float('1 10000001 10100000000000000000000'))\n# Output: -6.5",
+      "explanation": "Extracts sign, exponent, and mantissa. Adds hidden bit (1.xxx), applies bias subtraction, and computes final value.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "manual-conversion",
+      "title": "Step-by-Step Manual Conversion",
+      "description": "Convert decimal to IEEE 754 showing each step",
+      "language": "python",
+      "code": "def decimal_to_ieee754_steps(num):\n    \"\"\"Convert decimal to IEEE 754 with detailed steps.\"\"\"\n    print(f\"Converting {num} to IEEE 754:\\n\")\n    \n    # Step 1: Sign bit\n    sign = '1' if num < 0 else '0'\n    num = abs(num)\n    print(f\"Step 1 - Sign bit: {sign} ({'negative' if sign == '1' else 'positive'})\")\n    \n    # Step 2: Convert to binary\n    integer_part = int(num)\n    fraction_part = num - integer_part\n    \n    int_binary = bin(integer_part)[2:] if integer_part > 0 else '0'\n    \n    frac_binary = ''\n    while fraction_part > 0 and len(frac_binary) < 24:\n        fraction_part *= 2\n        if fraction_part >= 1:\n            frac_binary += '1'\n            fraction_part -= 1\n        else:\n            frac_binary += '0'\n    \n    binary = int_binary + '.' + frac_binary\n    print(f\"Step 2 - Binary: {binary}\")\n    \n    # Step 3: Normalize\n    if integer_part > 0:\n        exp = len(int_binary) - 1\n        mantissa = int_binary[1:] + frac_binary\n    else:\n        # Find first 1 in fraction\n        exp = -(frac_binary.index('1') + 1)\n        mantissa = frac_binary[frac_binary.index('1') + 1:]\n    \n    print(f\"Step 3 - Normalized: 1.{mantissa[:23]}... x 2^{exp}\")\n    \n    # Step 4: Biased exponent\n    biased_exp = exp + 127\n    exp_binary = format(biased_exp, '08b')\n    print(f\"Step 4 - Biased exponent: {exp} + 127 = {biased_exp} = {exp_binary}\")\n    \n    # Step 5: Mantissa (23 bits)\n    mantissa = (mantissa + '0' * 23)[:23]\n    print(f\"Step 5 - Mantissa (23 bits): {mantissa}\")\n    \n    result = f\"{sign} {exp_binary} {mantissa}\"\n    print(f\"\\nResult: {result}\")\n    \n    return result\n\n# Example\ndecimal_to_ieee754_steps(-13.625)",
+      "explanation": "Shows complete conversion process: sign determination, binary conversion, normalization, bias addition, and mantissa extraction.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "float-precision-demo",
+      "title": "Floating Point Precision Issues",
+      "description": "Demonstrating common floating point precision problems",
+      "language": "python",
+      "code": "# Common floating point precision issues\n\n# Issue 1: 0.1 + 0.2 != 0.3\nprint(\"0.1 + 0.2 =\", 0.1 + 0.2)\n# Output: 0.30000000000000004\n\nprint(\"0.1 + 0.2 == 0.3?\", 0.1 + 0.2 == 0.3)\n# Output: False\n\n# Correct comparison\nimport math\nprint(\"Using isclose:\", math.isclose(0.1 + 0.2, 0.3))\n# Output: True\n\n# Issue 2: Large number + small number\nlarge = 1e16\nsmall = 1.0\nprint(f\"\\n{large} + {small} = {large + small}\")\nprint(f\"Result - {large} = {large + small - large}\")\n# The small number gets \"lost\"\n\n# Issue 3: Repeated addition error accumulation\ntotal = 0.0\nfor _ in range(10):\n    total += 0.1\nprint(f\"\\n0.1 added 10 times = {total}\")\nprint(f\"Equals 1.0? {total == 1.0}\")\n\n# Using Decimal for exact arithmetic\nfrom decimal import Decimal\nexact = sum(Decimal('0.1') for _ in range(10))\nprint(f\"Decimal sum: {exact}\")",
+      "explanation": "Demonstrates why floating-point arithmetic can produce unexpected results and how to handle precision issues.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "float-verilog",
+      "title": "Floating Point in Verilog",
+      "description": "Basic floating point representation in hardware",
+      "language": "verilog",
+      "code": "module ieee754_example;\n    // IEEE 754 Single Precision structure\n    reg [31:0] float_num;\n    \n    // Extract fields\n    wire sign;\n    wire [7:0] exponent;\n    wire [22:0] mantissa;\n    \n    assign sign = float_num[31];\n    assign exponent = float_num[30:23];\n    assign mantissa = float_num[22:0];\n    \n    initial begin\n        // Example: 13.625 = 0x4159A000\n        float_num = 32'h4159A000;\n        \n        $display(\"IEEE 754 Analysis:\");\n        $display(\"Float value (hex): 0x%h\", float_num);\n        $display(\"Sign: %b (%s)\", sign, sign ? \"negative\" : \"positive\");\n        $display(\"Exponent: %b = %d (actual: %d)\", \n                 exponent, exponent, exponent - 127);\n        $display(\"Mantissa: %b\", mantissa);\n        \n        // Some special values\n        float_num = 32'h7F800000;  // +Infinity\n        $display(\"\\n+Infinity: 0x%h\", float_num);\n        \n        float_num = 32'hFF800000;  // -Infinity  \n        $display(\"-Infinity: 0x%h\", float_num);\n        \n        float_num = 32'h7FC00000;  // NaN\n        $display(\"NaN: 0x%h\", float_num);\n    end\nendmodule",
+      "explanation": "Shows how IEEE 754 fields are extracted using bit selection in hardware description language.",
+      "timeComplexity": "N/A (hardware)",
+      "spaceComplexity": "N/A (hardware)"
+    }
+  ]
+}

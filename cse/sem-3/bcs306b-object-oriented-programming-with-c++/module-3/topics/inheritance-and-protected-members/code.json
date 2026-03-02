@@ -1,0 +1,45 @@
+{
+  "topicId": "inheritance-and-protected-members",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Single Inheritance Example",
+      "description": "Demonstrates single inheritance with base class Person and derived class Student",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Person {\nprotected:\n string name;\n int age;\npublic:\n Person(string n, int a) : name(n), age(a) {\n cout << \"Person Constructor: \" << name << endl;\n }\n ~Person() {\n cout << \"Person Destructor: \" << name << endl;\n }\n void display() {\n cout << \"Name: \" << name << \", Age: \" << age << endl;\n }\n};\n\nclass Student : public Person {\nprivate:\n int rollNo;\n float marks;\npublic:\n Student(string n, int a, int r, float m) : Person(n, a), rollNo(r), marks(m) {\n cout << \"Student Constructor\" << endl;\n }\n ~Student() {\n cout << \"Student Destructor\" << endl;\n }\n void show() {\n display();\n cout << \"Roll No: \" << rollNo << \", Marks: \" << marks << endl;\n }\n};\n\nint main() {\n Student s(\"John\", 20, 101, 85.5);\n s.show();\n return 0;\n}",
+      "explanation": "Shows basic single inheritance, protected members usage, constructor/destructor order - base constructor runs before derived constructor, destructor runs in reverse order",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Multiple Inheritance with Ambiguity Resolution",
+      "description": "Demonstrates multiple inheritance and how to resolve ambiguity using scope resolution operator",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base1 {\nprotected:\n int x;\npublic:\n Base1() : x(10) {}\n void show() { cout << \"Base1: x = \" << x << endl; }\n};\n\nclass Base2 {\nprotected:\n int y;\npublic:\n Base2() : y(20) {}\n void show() { cout << \"Base2: y = \" << y << endl; }\n};\n\nclass Derived : public Base1, public Base2 {\npublic:\n void display() {\n // Ambiguity - which show()?\n // Using scope resolution to resolve\n Base1::show();\n Base2::show();\n cout << \"Sum: \" << x + y << endl;\n }\n};\n\nint main() {\n Derived d;\n d.display();\n // d.show(); // ERROR - ambiguous!\n return 0;\n}",
+      "explanation": "Demonstrates ambiguity in multiple inheritance when same-named functions exist in both base classes. Shows use of :: operator to specify which base class member to access",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Virtual Base Class - Diamond Problem Solution",
+      "description": "Shows how virtual inheritance solves the diamond problem",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\nprotected:\n int data;\npublic:\n Base() : data(100) {\n cout << \"Base Constructor\" << endl;\n }\n void show() { cout << \"Base data: \" << data << endl; }\n};\n\n// Virtual inheritance - prevents duplication\nclass Derived1 : virtual public Base {\npublic:\n Derived1() { cout << \"Derived1 Constructor\" << endl; }\n};\n\nclass Derived2 : virtual public Base {\npublic:\n Derived2() { cout << \"Derived2 Constructor\" << endl; }\n};\n\n// Most derived class\nclass MostDerived : public Derived1, public Derived2 {\npublic:\n MostDerived() { cout << \"MostDerived Constructor\" << endl; }\n};\n\nint main() {\n MostDerived md;\n md.show(); // No ambiguity - only one Base exists!\n cout << \"Size of MostDerived: \" << sizeof(md) << endl;\n return 0;\n}",
+      "explanation": "Virtual inheritance ensures only one copy of Base class exists in MostDerived, solving the diamond problem. Constructor of virtual base (Base) is called by most derived class (MostDerived), not by intermediate classes",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Protected Inheritance Example",
+      "description": "Demonstrates protected inheritance and its effects on member accessibility",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n int a;\nprotected:\n int b;\nprivate:\n int c;\n};\n\nclass Derived : protected Base {\n // public a becomes protected\n // protected b remains protected\n // private c inaccessible\npublic:\n void access() {\n a = 10; // OK - was public, now protected but accessible here\n b = 20; // OK - protected remains protected\n // c = 30; // ERROR - private members never accessible\n }\n};\n\nclass GrandDerived : public Derived {\npublic:\n void access2() {\n a = 10; // OK - accessible in further derived class\n b = 20; // OK - protected remains protected\n }\n};\n\nint main() {\n Derived d;\n // d.a = 5; // ERROR - a is now protected in Derived\n // d.b = 10; // ERROR - b is protected\n return 0;\n}",
+      "explanation": "Protected inheritance changes accessibility: public members become protected, protected remain protected, private remain inaccessible. These protected members are still accessible in further derived classes",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

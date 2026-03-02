@@ -1,0 +1,45 @@
+{
+  "topicId": "operating-system-operations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "System Call Mechanism",
+      "description": "Demonstrates how a system call works internally in the OS",
+      "code": "// Simplified System Call Flow\nPROCEDURE system_call(syscall_number, parameters)\nBEGIN\n    // Save current state\n    Push current CPU registers to stack\n    Push return_address to stack\n    \n    // Switch to kernel mode\n    Change CPU privilege level to kernel mode (mode bit = 0)\n    \n    // Locate and call appropriate system call handler\n    syscall_table_index = syscall_number\n    handler_address = syscall_table[syscall_table_index]\n    Call handler_address with parameters\n    \n    // Return from system call\n    Pop return address\n    Restore CPU registers\n    Change CPU privilege level to user mode (mode bit = 1)\n    Return to calling application\nEND",
+      "explanation": "This pseudocode shows the internal mechanism of a system call: saving state, switching to kernel mode, finding the appropriate handler in the system call table, executing the service, and returning to user mode.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "System Call Example in C",
+      "description": "Demonstrates a simple system call wrapper in C for file operations",
+      "code": "#include <stdio.h>\n#include <fcntl.h>\n#include <unistd.h>\n\nint main() {\n    int fd;\n    char buffer[100];\n    \n    // System call: open() - Opens a file\n    fd = open(\"example.txt\", O_RDONLY);\n    \n    if (fd == -1) {\n        perror(\"Error opening file\");\n        return 1;\n    }\n    \n    // System call: read() - Reads from file descriptor\n    ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);\n    \n    if (bytes_read == -1) {\n        perror(\"Error reading file\");\n        close(fd);\n        return 1;\n    }\n    \n    buffer[bytes_read] = '\\0';\n    printf(\"Content: %s\\n\", buffer);\n    \n    // System call: close() - Closes the file descriptor\n    close(fd);\n    \n    return 0;\n}\n\n/* Note: open(), read(), close() are wrapper functions \n * that internally invoke system call instructions like\n * 'syscall' on x86-64 or 'int 0x80' on older systems */",
+      "explanation": "This C program demonstrates three common system calls: open() to create/open a file, read() to read data, and close() to close the file descriptor. These wrappers translate to kernel mode transitions.",
+      "timeComplexity": "O(n) for read where n is bytes read",
+      "spaceComplexity": "O(n) for buffer storage"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Python OS Module System Calls",
+      "description": "Shows how Python uses system calls through the os module",
+      "code": "import os\n\n# System call wrapper examples in Python\n\n# getpid() - Get current process ID\npid = os.getpid()\nprint(f\"Process ID: {pid}\")\n\n# fork() - Create a new process (Unix/Linux only)\n# Returns 0 to child, child's PID to parent\ntry:\n    child_pid = os.fork()\n    if child_pid == 0:\n        print(\"I am the child process\")\n        os._exit(0)\n    else:\n        print(f\"Parent: created child with PID: {child_pid}\")\nexcept OSError:\n    print(\"Fork not supported on this platform\")\n\n# getcwd() - Get current working directory\ncwd = os.getcwd()\nprint(f\"Current directory: {cwd}\")\n\n# mkdir() - Create directory (system call internally)\ntry:\n    os.mkdir(\"test_dir\", 0o755)\n    print(\"Directory created\")\n    os.rmdir(\"test_dir\")  # Remove directory\n    print(\"Directory removed\")\nexcept OSError as e:\n    print(f\"Error: {e}\")\n\n# uname() - Get system information\nsystem_info = os.uname()\nprint(f\"System: {system_info.sysname}\")\nprint(f\"Node: {system_info.nodename}\")",
+      "explanation": "Python's os module provides wrappers around system calls. These functions internally trigger the appropriate system call interface to request kernel services like process creation, file operations, and system information.",
+      "timeComplexity": "Varies by operation (O(1) for getpid, O(n) for read)",
+      "spaceComplexity": "O(1) for most, O(n) for buffer operations"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Java Runtime System Calls",
+      "description": "Demonstrates how Java makes system calls through JVM",
+      "code": "import java.io.*;\nimport java.lang.Runtime;\n\npublic class SystemCallDemo {\n    public static void main(String[] args) {\n        // System call via ProcessBuilder\n        ProcessBuilder pb = new ProcessBuilder(\"ls\", \"-la\");\n        pb.directory(new File(\"/tmp\"));\n        \n        try {\n            Process process = pb.start();\n            \n            // Read stdout from the process\n            BufferedReader reader = new BufferedReader(\n                new InputStreamReader(process.getInputStream()));\n            String line;\n            while ((line = reader.readLine()) != null) {\n                System.out.println(line);\n            }\n            \n            // Wait for process completion\n            int exitCode = process.waitFor();\n            System.out.println(\"Exit code: \" + exitCode);\n            \n        } catch (IOException | InterruptedException e) {\n            e.printStackTrace();\n        }\n        \n        // Direct memory access (requires Unsafe class)\n        // This is similar to privileged instructions\n        Runtime runtime = Runtime.getRuntime();\n        System.out.println(\"Available processors: \" + \n            runtime.availableProcessors());\n        System.out.println(\"Free memory: \" + \n            runtime.freeMemory() + \" bytes\");\n    }\n}\n\n/* Java applications interact with OS through:\n * 1. JNI (Java Native Interface) for direct system calls\n * 2. ProcessBuilder for spawning OS processes\n * 3. JVM translating bytecode to native system calls\n * 4. Native methods for platform-specific operations */",
+      "explanation": "Java uses the JVM as an intermediary for system calls. ProcessBuilder spawns OS processes, while internal JVM operations translate Java methods to appropriate system calls. The JVM handles the mode switching transparently.",
+      "timeComplexity": "O(n) for process execution where n is output size",
+      "spaceComplexity": "O(n) for storing process output"
+    }
+  ]
+}

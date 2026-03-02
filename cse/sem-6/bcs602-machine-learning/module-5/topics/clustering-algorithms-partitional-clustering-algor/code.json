@@ -1,0 +1,33 @@
+{
+  "topicId": "clustering-algorithms-partitional-clustering-algor",
+  "examples": [
+    {
+      "id": "pseudocode-k-means-clustering",
+      "title": "Pseudocode: K-Means Clustering",
+      "description": "K-means clustering algorithm",
+      "language": "pseudocode",
+      "code": "ALGORITHM K-Means Clustering\nINPUT: dataset, k (number of clusters)\nOUTPUT: cluster assignments\n\nBEGIN\n // Initialize centroids randomly\n centroids = random selection of k data points\n\n // Repeat until convergence\n WHILE centroids change\n // Assign each data point to the closest centroid\n FOR each data point\n closest_centroid = find closest centroid to data point\n assign data point to closest_centroid\n\n // Update centroids as the mean of all assigned data points\n FOR each centroid\n update centroid as the mean of all assigned data points\n\n // Return cluster assignments\n RETURN cluster assignments\nEND",
+      "explanation": "K-means clustering algorithm works by initializing centroids randomly and then iteratively updating the centroids and assigning data points to the closest centroid."
+    },
+    {
+      "id": "python-k-means-clustering",
+      "title": "Python: K-Means Clustering",
+      "description": "K-means clustering algorithm implementation in Python",
+      "language": "python",
+      "code": "import numpy as np\n\ndef k_means_clustering(dataset, k):\n # Initialize centroids randomly\n centroids = np.random.choice(dataset, size=k, replace=False)\n\n # Repeat until convergence\n while True:\n # Assign each data point to the closest centroid\n cluster_assignments = np.argmin(np.linalg.norm(dataset[:, np.newaxis] - centroids, axis=2), axis=1)\n\n # Update centroids as the mean of all assigned data points\n new_centroids = np.array([dataset[cluster_assignments == i].mean(axis=0) for i in range(k)])\n\n # Check for convergence\n if np.all(centroids == new_centroids):\n break\n\n centroids = new_centroids\n\n return cluster_assignments\n\n# Example usage\nnp.random.seed(0)\ndataset = np.random.rand(100, 2)\nk = 3\ncluster_assignments = k_means_clustering(dataset, k)\nprint(cluster_assignments)",
+      "explanation": "This Python implementation of K-means clustering algorithm uses NumPy for efficient computation.",
+      "timeComplexity": "O(nkd)",
+      "spaceComplexity": "O(nk)"
+    },
+    {
+      "id": "python-dbscan-clustering",
+      "title": "Python: DBSCAN Clustering",
+      "description": "DBSCAN clustering algorithm implementation in Python",
+      "language": "python",
+      "code": "import numpy as np\nfrom sklearn.neighbors import NearestNeighbors\n\ndef dbscan_clustering(dataset, eps, min_samples):\n # Find neighbors for each data point\n nbrs = NearestNeighbors(n_neighbors=min_samples, algorithm='ball_tree').fit(dataset)\n distances, indices = nbrs.kneighbors(dataset)\n\n # Initialize cluster assignments\n cluster_assignments = np.zeros(len(dataset), dtype=int)\n\n # Iterate over data points\n for i in range(len(dataset)):\n # Find neighbors within eps distance\n neighbors = indices[i]\n neighbors = neighbors[distances[i] <= eps]\n\n # If number of neighbors is greater than or equal to min_samples, assign cluster\n if len(neighbors) >= min_samples:\n cluster_assignments[i] = 1\n for neighbor in neighbors:\n if cluster_assignments[neighbor] == 0:\n cluster_assignments[neighbor] = 1\n\n return cluster_assignments\n\n# Example usage\nnp.random.seed(0)\ndataset = np.random.rand(100, 2)\neps = 0.5\nmin_samples = 5\ncluster_assignments = dbscan_clustering(dataset, eps, min_samples)\nprint(cluster_assignments)",
+      "explanation": "This Python implementation of DBSCAN clustering algorithm uses scikit-learn's NearestNeighbors class for efficient neighbor search.",
+      "timeComplexity": "O(n log n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

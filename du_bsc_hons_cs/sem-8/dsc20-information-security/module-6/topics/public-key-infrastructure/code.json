@@ -1,0 +1,45 @@
+{
+  "topicId": "public-key-infrastructure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Generating RSA Key Pair and CSR",
+      "description": "Demonstrates generating asymmetric keys and creating a Certificate Signing Request",
+      "code": "from cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric import rsa\nfrom cryptography.x509.oid import NameOID\nimport datetime\n\n# Generate RSA key pair\nprivate_key = rsa.generate_private_key(\n    public_exponent=65537,\n    key_size=2048\n)\npublic_key = private_key.public_key()\n\n# Build subject name for CSR\nsubject = issuer = x509.Name([\n    x509.NameAttribute(NameOID.COUNTRY_NAME, \"US\"),\n    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, \"California\"),\n    x509.NameAttribute(NameOID.LOCALITY_NAME, \"San Francisco\"),\n    x509.NameAttribute(NameOID.ORGANIZATION_NAME, \"Example Corp\"),\n    x509.NameAttribute(NameOID.COMMON_NAME, \"www.example.com\"),\n])\n\n# Create CSR\ncsr = x509.CertificateSigningRequestBuilder().subject_name(\n    subject\n).add_extension(\n    x509.SubjectAlternativeName([\n        x509.DNSName(\"www.example.com\"),\n        x509.DNSName(\"example.com\"),\n    ]),\n    critical=False,\n).sign(private_key, hashes.SHA256())\n\n# Save CSR to file (to send to CA)\nwith open(\"request.csr\", \"wb\") as f:\n    f.write(csr.public_bytes(serialization.Encoding.PEM))",
+      "explanation": "This code generates a 2048-bit RSA key pair and creates a Certificate Signing Request (CSR) with the organization's identity information. The CSR is then submitted to a CA for certificate issuance.",
+      "timeComplexity": "O(n\u00b2) for key generation",
+      "spaceComplexity": "O(n) for storing keys"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Verifying Certificate Chain",
+      "description": "Code to verify a certificate against a trusted Root CA",
+      "code": "from cryptography import x509\nfrom cryptography.hazmat.backends import default_backend\nfrom cryptography.hazmat.primitives import hashes\n\ndef verify_certificate_chain(cert_path, ca_cert_path, crl_paths=None):\n    # Load certificates\n    with open(cert_path, 'rb') as f:\n        cert = x509.load_pem_x509_certificate(f.read(), default_backend())\n    \n    with open(ca_cert_path, 'rb') as f:\n        ca_cert = x509.load_pem_x509_certificate(f.read(), default_backend())\n    \n    # 1. Verify CA's signature on certificate\n    try:\n        ca_cert.public_key().verify(\n            cert.signature,\n            cert.tbs_certificate_bytes,\n            cert.signature_algorithm_parameters\n        )\n    except Exception as e:\n        return f\"Signature verification failed: {e}\"\n    \n    # 2. Check validity period\n    from datetime import datetime, timezone\n    now = datetime.now(timezone.utc)\n    if cert.not_valid_before_utc > now or cert.not_valid_after_utc < now:\n        return \"Certificate has expired or not yet valid\"\n    \n    # 3. Check revocation (simplified - should check CRL/OCSP)\n    # In production, query CRL or OCSP here\n    \n    return \"Certificate is valid and trusted\"\n\n# Example usage\nresult = verify_certificate_chain(\"server.crt\", \"ca.crt\")\nprint(result)",
+      "explanation": "This code demonstrates the three main steps of certificate verification: checking the CA's digital signature on the certificate, verifying the validity period hasn't expired, and checking revocation status (CRL/OCSP would be integrated here).",
+      "timeComplexity": "O(n) for signature verification",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Self-Signed Certificate Generation",
+      "description": "Creating a self-signed certificate for testing purposes",
+      "code": "from cryptography import x509\nfrom cryptography.x509.oid import NameOID\nfrom cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric import rsa\nfrom datetime import datetime, timedelta, timezone\nimport rsa\n\n# Generate key pair\nprivate_key = rsa.generate_private_key(65537, 2048)\n\n# Build certificate\nsubject = issuer = x509.Name([\n    x509.NameAttribute(NameOID.COMMON_NAME, \"Test Server\"),\n    x509.NameAttribute(NameOID.ORGANIZATION_NAME, \"Test Org\"),\n])\n\ncert = x509.CertificateBuilder().subject_name(\n    subject\n).issuer_name(\n    issuer\n).public_key(\n    private_key.public_key()\n).serial_number(\n    x509.random_serial_number()\n).not_valid_before(\n    datetime.now(timezone.utc)\n).not_valid_after(\n    datetime.now(timezone.utc) + timedelta(days=365)\n).add_extension(\n    x509.SubjectAlternativeName([\n        x509.DNSName(\"localhost\"),\n    ]),\n    critical=False,\n).sign(private_key, hashes.SHA256())\n\n# Save certificate and key\nwith open(\"server.crt\", \"wb\") as f:\n    f.write(cert.public_bytes(serialization.Encoding.PEM))\n\nwith open(\"server.key\", \"wb\") as f:\n    f.write(private_key.private_bytes(\n        encoding=serialization.Encoding.PEM,\n        format=serialization.PrivateFormat.TraditionalOpenSSL,\n        encryption_algorithm=serialization.NoEncryption()\n    ))",
+      "explanation": "This creates a self-signed certificate for testing or internal use. It includes the public key, identity information, validity period, and is signed using the entity's own private key. Not recommended for production as it provides no third-party trust.",
+      "timeComplexity": "O(n\u00b2)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "SSL/TLS Handshake with PKI",
+      "description": "Algorithm showing how PKI is used during TLS handshake for server authentication",
+      "code": "ALGORITHM TLS_Handshake_Server_Auth\nBEGIN\n  // Step 1: Client initiates\n  CLIENT \u2192 SERVER: ClientHello (supported cipher suites, random bytes)\n  \n  // Step 2: Server responds\n  SERVER \u2192 CLIENT: ServerHello, Certificate, (optional) CertificateRequest\n  \n  // Step 3: Client verifies certificate using PKI\n  BEGIN Certificate_Verification\n    Load trusted Root CA certificates from trust store\n    Extract server certificate from message\n    Build certificate chain (server cert \u2192 intermediate \u2192 root)\n    \n    FOR each certificate in chain DO\n      IF not root THEN\n        Verify signature using issuer's public key\n      END IF\n    END FOR\n    \n    Check certificate validity period (not_before < now < not_after)\n    Check certificate revocation status (query OCSP or CRL)\n    Verify hostname matches certificate SAN/CN\n    \n    IF any check fails THEN\n      TERMINATE connection with alert\n    END IF\n  END Certificate_Verification\n  \n  // Step 4: Key exchange\n  CLIENT: Generate pre_master_secret\n  CLIENT: Encrypt with SERVER's public key (from certificate)\n  CLIENT \u2192 SERVER: Encrypted pre_master_secret\n  \n  // Step 5: Session key derivation\n  SERVER: Decrypt pre_master_secret with private key\n  BOTH: Derive master_secret \u2192 session keys (encryption, MAC)\n  \n  // Step 6: Secure channel established\n  BOTH: Switch to encrypted communication using session keys\nEND",
+      "explanation": "This pseudocode shows the TLS handshake focusing on PKI-based server authentication. The critical PKI steps are: certificate chain validation, signature verification, validity checking, revocation status verification, and hostname validation before trusting the server's public key for key exchange.",
+      "timeComplexity": "O(n) for certificate chain verification",
+      "spaceComplexity": "O(k) where k = chain length"
+    }
+  ]
+}

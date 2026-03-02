@@ -1,0 +1,380 @@
+{
+  "topicId": "reading-dictionaries",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which of the following is the standard location of the system dictionary file on most Unix/Linux systems?",
+      "options": [
+        {
+          "key": "A",
+          "text": "/etc/dictionary"
+        },
+        {
+          "key": "B",
+          "text": "/usr/share/dict/words"
+        },
+        {
+          "key": "C",
+          "text": "/var/dict/words"
+        },
+        {
+          "key": "D",
+          "text": "/opt/dictionary"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "/usr/share/dict/words is the standard location for the system dictionary file on Unix/Linux systems. It contains a list of English words, one per line, used for spell checking and other applications.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Consider a program that reads the dictionary file /usr/share/dict/words using fgets(). After reading a line successfully, what must be done to use the word for comparison?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Nothing, fgets() automatically removes the newline"
+        },
+        {
+          "key": "B",
+          "text": "Replace the newline character with null terminator using buffer[strcspn(buffer, \"\\n\")] = '\\0'"
+        },
+        {
+          "key": "C",
+          "text": "Convert all characters to lowercase using tolower()"
+        },
+        {
+          "key": "D",
+          "text": "Trim all whitespace using trim() function"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "fgets() includes the newline character in the buffer if the line fits. To properly process the word, the newline must be replaced with a null terminator using strcspn() or similar string manipulation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What will be the output of the following code snippet that reads from a dictionary file?\n\n```c\nFILE *df = fopen(\"/usr/share/dict/words\", \"r\");\nchar word[100];\nwhile (fgets(word, 100, df) != NULL) {\n printf(\"%s\", word);\n}\nfclose(df);\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "All words in the dictionary printed on a single line"
+        },
+        {
+          "key": "B",
+          "text": "All words in the dictionary, each on a new line (double-spaced)"
+        },
+        {
+          "key": "C",
+          "text": "All words in the dictionary, each on a new line (single-spaced)"
+        },
+        {
+          "key": "D",
+          "text": "Only the first word from the dictionary"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "fgets() reads including the newline character, and printf() with %s doesn't add a newline, but the newline from the file is already in the buffer. This results in double-spaced output because each word is followed by its original newline plus printf()'s implicit behavior.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which function is most efficient for checking if a specific word exists in a dictionary file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Read the entire file into an array and use linear search"
+        },
+        {
+          "key": "B",
+          "text": "Use fgetc() to read character by character and compare"
+        },
+        {
+          "key": "C",
+          "text": "Read line by line with fgets() and use strcmp() for each word"
+        },
+        {
+          "key": "D",
+          "text": "Use fscanf() with %s format specifier"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Reading line by line with fgets() and using strcmp() is the most straightforward approach. For better performance with large dictionaries, building a hash table or using binary search on a sorted array would be more efficient.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What is the primary security concern when using dictionary files for password validation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Dictionary files may contain too few words"
+        },
+        {
+          "key": "B",
+          "text": "Dictionary attacks can easily guess weak passwords that appear in dictionaries"
+        },
+        {
+          "key": "C",
+          "text": "Dictionary files consume too much memory"
+        },
+        {
+          "key": "D",
+          "text": "Dictionary files cannot be read by regular users"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dictionary-based attacks are a major security threat. Attackers use lists of common words (dictionaries) to attempt password guessing. This is why users are advised to avoid dictionary words in passwords and why systems use salted hashes.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "In Unix, what does it mean if fopen() returns NULL when attempting to open a dictionary file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The file is empty"
+        },
+        {
+          "key": "B",
+          "text": "The file is corrupted"
+        },
+        {
+          "key": "C",
+          "text": "The file could not be opened (permissions, path, or file doesn't exist)"
+        },
+        {
+          "key": "D",
+          "text": "The file is locked by another process"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "fopen() returns NULL on failure, which could be due to incorrect file path, insufficient permissions, non-existent file, or other file system errors. Always check for NULL before using the file pointer.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Which of the following best describes the format of the Unix 'words' dictionary file?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Binary format with fixed-length records"
+        },
+        {
+          "key": "B",
+          "text": "Text file with one word per line, sorted alphabetically"
+        },
+        {
+          "key": "C",
+          "text": "CSV format with word and definition columns"
+        },
+        {
+          "key": "D",
+          "text": "XML format with metadata"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The standard Unix 'words' dictionary is a simple text file with one English word per line, typically sorted alphabetically for efficient searching. It contains no definitions or metadata.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-8",
+      "question": "What is the time complexity of searching for a word in a dictionary file of n words using linear search?",
+      "options": [
+        {
+          "key": "A",
+          "text": "O(1)"
+        },
+        {
+          "key": "B",
+          "text": "O(log n)"
+        },
+        {
+          "key": "C",
+          "text": "O(n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n\u00b2)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Linear search through a dictionary file requires checking each word until a match is found or the file ends. In the worst case, this is O(n) time complexity.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-9",
+      "question": "After successfully reading a word from the dictionary using fgets(), what does the return value indicate?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The number of characters read"
+        },
+        {
+          "key": "B",
+          "text": "A pointer to the buffer containing the line read"
+        },
+        {
+          "key": "C",
+          "text": "The word count in the file"
+        },
+        {
+          "key": "D",
+          "text": "The file size"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "fgets() returns a pointer to the string buffer on success, or NULL if at EOF or an error occurs. The return value is the same as the buffer pointer passed to the function.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which approach would provide the FASTEST word lookup in a dictionary?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Linear search through the text file"
+        },
+        {
+          "key": "B",
+          "text": "Load all words into a balanced binary search tree"
+        },
+        {
+          "key": "C",
+          "text": "Load all words into a hash table for O(1) lookup"
+        },
+        {
+          "key": "D",
+          "text": "Read random blocks from the file"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A hash table provides O(1) average-case lookup time, making it the fastest approach for exact match searches. However, it requires loading the entire dictionary into memory. Binary search tree gives O(log n), while linear search gives O(n).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What happens if you open a dictionary file with \"w\" mode instead of \"r\" mode?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The file is opened for reading only"
+        },
+        {
+          "key": "B",
+          "text": "The existing dictionary file is truncated to zero length"
+        },
+        {
+          "key": "C",
+          "text": "An error occurs because the file already exists"
+        },
+        {
+          "key": "D",
+          "text": "The file permissions are changed to read-only"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Opening a file with \"w\" mode creates a new file or truncates an existing file to zero length. This would destroy the dictionary data, so it should never be used when reading.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-12",
+      "question": "Which function is used to properly close an open file pointer in Unix C programming?",
+      "options": [
+        {
+          "key": "A",
+          "text": "close()"
+        },
+        {
+          "key": "B",
+          "text": "fclose()"
+        },
+        {
+          "key": "C",
+          "text": "closed()"
+        },
+        {
+          "key": "D",
+          "text": "fshutdown()"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "fclose() is the standard C library function for closing a file opened with fopen(). It flushes buffered data and releases resources. The close() system call is used with file descriptors, not FILE pointers.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What is the purpose of using feof() when reading dictionary files?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To check if the file exists before opening"
+        },
+        {
+          "key": "B",
+          "text": "To determine if end-of-file has been reached during reading"
+        },
+        {
+          "key": "C",
+          "text": "To handle file errors automatically"
+        },
+        {
+          "key": "D",
+          "text": "To reposition the file pointer to the beginning"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "feof() checks if the end-of-file indicator is set for the stream. It is useful for determining when to stop reading from the dictionary file. However, it is often better to check the return value of fgets() for NULL.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "A program needs to count the total number of words in a dictionary file. What is the most efficient approach?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Use fread() to read the entire file and count newlines"
+        },
+        {
+          "key": "B",
+          "text": "Read line-by-line with fgets() and increment a counter until EOF"
+        },
+        {
+          "key": "C",
+          "text": "Use fscanf() with %s in a loop"
+        },
+        {
+          "key": "D",
+          "text": "Use ftell() to get file size and divide by average word length"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Reading line-by-line with fgets() and checking for NULL return (indicating EOF or error) is the standard and efficient approach for counting lines/words in a dictionary file.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "When reading a dictionary file, what is the purpose of specifying a buffer size (e.g., 256 bytes) in fgets()?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To make the program run faster"
+        },
+        {
+          "key": "B",
+          "text": "To prevent buffer overflow if a word is longer than expected"
+        },
+        {
+          "key": "C",
+          "text": "To automatically trim long words"
+        },
+        {
+          "key": "D",
+          "text": "To read exactly 256 words"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The buffer size in fgets() prevents buffer overflow by limiting the number of characters read. If a word is longer than the buffer, it will be read in subsequent calls. This is crucial for security and stability.",
+      "difficulty": "medium"
+    }
+  ]
+}

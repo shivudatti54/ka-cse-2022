@@ -1,0 +1,35 @@
+{
+  "topicId": "main-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic main() with Command Line Arguments",
+      "description": "Demonstrates standard main() function signature with argc and argv to process command-line arguments",
+      "code": "#include <stdio.h>\n\nint main(int argc, char *argv[]) {\n printf(\"Program name: %s\\n\", argv[0]);\n printf(\"Number of arguments: %d\\n\", argc);\n \n printf(\"\\nAll arguments:\\n\");\n for (int i = 1; i < argc; i++) {\n printf(\" argv[%d]: %s\\n\", i, argv[i]);\n }\n \n return 0; // Return 0 indicates successful completion\n}",
+      "explanation": "This program demonstrates the standard main() signature. argc holds the count of arguments, and argv is an array of pointers to the argument strings. argv[0] is always the program name. The loop starts from i=1 to skip the program name.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Accessing Environment Variables via main()",
+      "description": "Shows how to access environment variables using the third parameter of main()",
+      "code": "#include <stdio.h>\n\nint main(int argc, char *argv[], char *envp[]) {\n printf(\"Command-line arguments:\\n\");\n for (int i = 0; i < argc; i++) {\n printf(\" %s\\n\", argv[i]);\n }\n \n printf(\"\\nEnvironment variables:\\n\");\n for (int i = 0; envp[i] != NULL; i++) {\n printf(\" %s\\n\", envp[i]);\n }\n \n return 0;\n}",
+      "explanation": "The third parameter envp[] provides access to environment variables. Each element points to a string in 'NAME=value' format. The array is NULL-terminated, so we iterate until we find NULL. This is an alternative to using the global 'environ' variable.",
+      "timeComplexity": "O(n) where n is number of env vars",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Program with Exit Status and Error Handling",
+      "description": "Demonstrates proper exit status handling based on command-line argument validation",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(int argc, char *argv[]) {\n if (argc < 2) {\n fprintf(stderr, \"Usage: %s <filename>\\n\", argv[0]);\n return 1; // Non-zero indicates error\n }\n \n // Check for help flag\n if (argv[1][0] == '-' && argv[1][1] == 'h') {\n printf(\"Usage: %s <filename>\\n\", argv[0]);\n printf(\"Options:\\n\");\n printf(\" -h Show this help message\\n\");\n printf(\" -v Verbose mode\\n\");\n return 0;\n }\n \n printf(\"Processing file: %s\\n\", argv[1]);\n // File processing logic would go here\n \n return 0; // Success\n}",
+      "explanation": "This program demonstrates proper exit status handling: return 1 indicates an error (missing required argument), return 0 indicates success. The program also shows how to parse command-line flags and display usage information. The exit status can be checked in shell using $?.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

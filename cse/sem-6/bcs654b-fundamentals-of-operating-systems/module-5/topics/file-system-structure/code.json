@@ -1,0 +1,35 @@
+{
+  "topicId": "file-system-structure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "File Open and Read System Call Flow",
+      "description": "Pseudocode showing what happens when a process opens and reads a file",
+      "code": "// Process requests to open a file\nfd = open(\"/home/user/file.txt\", O_RDONLY);\n\n// Kernel performs:\n// 1. Parse path, starting from root directory\n// 2. Lookup each component in directory entries\n// 3. Get inode number for target file\n// 4. Load inode into memory (VFS inode cache)\n// 5. Check file permissions against process credentials\n// 6. Allocate file descriptor in process's file descriptor table\n// 7. Allocate and initialize open file structure\n// Return file descriptor to user\n\n// Reading from file\nbytes = read(fd, buffer, 1024);\n\n// Kernel performs:\n// 1. Translate offset to physical block number using inode\n// 2. Check if block is in buffer cache\n// 3. If not, issue disk I/O request to read block\n// 4. Copy data from buffer to user buffer\n// 5. Update file offset and access time in inode\n// Return number of bytes read",
+      "explanation": "This demonstrates the layered approach in file system operations. The open() call traverses directories to locate the file's inode, while read() uses the inode's block pointers to locate and retrieve data, potentially using the buffer cache.",
+      "timeComplexity": "O(log n) for open (directory traversal), O(1) for read if cached",
+      "spaceComplexity": "O(1) for each system call, plus buffer cache space"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Indexed File Allocation - Block Lookup",
+      "description": "Algorithm to locate the k-th block of a file using indexed allocation",
+      "code": "// File is stored using indexed allocation\n// Inode contains: direct[12], singlyIndirect, doublyIndirect, triplyIndirect\n// Each block pointer is 4 bytes, block size is 4KB = 4096 bytes\n// Therefore, index block holds 4096/4 = 1024 pointers\n\nfunction getBlockNumber(inode, blockIndex):\n if blockIndex < 12: // Direct block\n return inode.direct[blockIndex]\n \n else if blockIndex < 12 + 1024: // Single indirect\n offset = blockIndex - 12\n indexBlock = readDiskBlock(inode.singlyIndirect)\n return indexBlock[offset]\n \n else if blockIndex < 12 + 1024 + 1024*1024: // Double indirect\n offset = blockIndex - 12 - 1024\n primaryIndex = readDiskBlock(inode.doublyIndirect)\n secondaryIndex = readDiskBlock(primaryIndex[offset / 1024])\n return secondaryIndex[offset % 1024]\n \n else: // Triple indirect (similar logic extends)\n // Calculate indices for all three levels\n // Read appropriate index blocks and return data block number\n\n// Example: Finding block 1500\n// 1500 >= 12, so use single indirect area\n// offset = 1500 - 12 = 1488\n// Read singly indirect block, return pointer at index 1488",
+      "explanation": "The algorithm shows how multi-level indexing allows files larger than what direct pointers can address. The trade-off is that accessing a block far into a large file requires multiple disk reads (one for each level of indirection).",
+      "timeComplexity": "O(1) for direct, O(2) for single indirect, O(3) for double indirect, O(4) for triple indirect (disk reads)",
+      "spaceComplexity": "O(1) - only stores indices during lookup"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Free Space Management - Bitmap Operations",
+      "description": "Implementation of free block allocation and deallocation using a bitmap",
+      "code": "#define BLOCK_COUNT 10000\n#define BITS_PER_BYTE 8\n\n// Bitmap: 1 = free, 0 = allocated\nchar freeBitmap[BLOCK_COUNT / BITS_PER_BYTE];\n\n// Function to allocate N consecutive free blocks\nint allocateBlocks(int numBlocks):\n for each byte in bitmap:\n // Check each bit in the byte\n // If all 8 bits are free (byte == 0xFF), we can use all 8 blocks\n // Scan for contiguous free blocks\n \n for bit position 0 to 7:\n // Check if sequence of numBlocks bits are free\n bool found = true\n for i = 0 to numBlocks-1:\n if isBitSet(currentByte, currentBit + i):\n found = false\n break\n \n if found:\n // Mark blocks as allocated\n for i = 0 to numBlocks-1:\n setBit(currentByte, currentBit + i)\n return startingBlockNumber\n \n return -1 // No suitable space found\n\n// Function to free allocated blocks\nfunction freeBlocks(startBlock, numBlocks):\n for i = 0 to numBlocks-1:\n clearBit(bitmap, startBlock + i)\n\n// Function to find first free block (for linked allocation)\nfunction findFreeBlock():\n for each byte in bitmap:\n for each bit in byte:\n if bit is set (free):\n return blockNumber\n return -1 // No free blocks",
+      "explanation": "This demonstrates bitmap-based free space management. The allocation algorithm scans for consecutive free blocks to improve locality. Modern file systems use more sophisticated algorithms to balance speed, memory usage, and fragmentation.",
+      "timeComplexity": "O(n) worst case for allocation where n is number of blocks, O(1) for freeing specific blocks",
+      "spaceComplexity": "O(BLOCK_COUNT / 8) bytes = O(n) bits"
+    }
+  ]
+}

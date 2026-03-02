@@ -1,0 +1,69 @@
+{
+  "topicId": "disk-management",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Explain the two levels of disk formatting. What is done at each level?",
+      "type": "short",
+      "keyPoints": [
+        "Low-level (physical) formatting: divides disk into sectors with header, data, and ECC fields",
+        "Done at the factory by the manufacturer",
+        "Logical (high-level) formatting: writes file system structures onto a partition",
+        "Includes superblock, inode table/FAT, root directory, free-space data structures",
+        "A partition can also be used as raw disk (no file system) for swap or database use"
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Describe the boot process from power-on to OS kernel loading. What is the role of the MBR?",
+      "type": "long",
+      "keyPoints": [
+        "CPU executes firmware (BIOS/UEFI) from ROM",
+        "Firmware reads MBR from sector 0 of boot disk",
+        "MBR contains bootstrap code (446 bytes), partition table (64 bytes), magic number (2 bytes)",
+        "Bootstrap code identifies the active partition",
+        "Loads the boot block from the active partition",
+        "Boot block loads the full OS kernel into memory",
+        "Kernel initializes system and starts user processes"
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "Explain sector sparing and sector slipping as bad block recovery techniques.",
+      "type": "short",
+      "keyPoints": [
+        "Sector sparing: controller remaps bad sector to a spare from a reserved pool",
+        "Transparent to the OS — OS sees continuous sector numbers",
+        "Disadvantage: spare may be physically far, breaking sequential access",
+        "Sector slipping: controller shifts adjacent sectors by one to fill the gap",
+        "Preserves sequential access order but requires moving data of multiple sectors"
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Compare the two approaches for swap-space management: raw partition vs file system swap. Which is preferred and why?",
+      "type": "short",
+      "keyPoints": [
+        "Raw partition: OS manages swap directly, no file system overhead, faster I/O",
+        "Disadvantage: fixed size, harder to resize, requires dedicated partition",
+        "File system swap: swap file within an existing file system, easy to create and resize",
+        "Disadvantage: slower due to file system overhead, may suffer from external fragmentation",
+        "Raw partition is preferred for performance; used by most production systems"
+      ]
+    },
+    {
+      "id": "q5",
+      "question": "Explain swap-space management in detail. How does a modern OS manage swap at the page level?",
+      "type": "long",
+      "keyPoints": [
+        "Swap space extends main memory when RAM is full",
+        "Modern systems swap individual pages, not entire processes",
+        "Swap space is divided into page-sized slots (e.g., 4 KB each)",
+        "A swap map (array) tracks usage: one entry per slot",
+        "Entry value 0 means free; positive value indicates number of sharing processes",
+        "Linux supports both swap partitions (mkswap, swapon) and swap files",
+        "Windows uses pagefile.sys as its swap file"
+      ]
+    }
+  ]
+}

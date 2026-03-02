@@ -1,0 +1,35 @@
+{
+  "topicId": "exploring-swing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "java",
+      "title": "Thread-Safe Swing Initialization Example",
+      "description": "Proper way to create and show a Swing application ensuring EDT compliance",
+      "code": "import javax.swing.*;\nimport java.awt.*;\n\npublic class SafeSwingApp {\n public static void main(String[] args) {\n // Schedule UI creation on the EDT\n SwingUtilities.invokeLater(() -> {\n createAndShowGUI();\n });\n }\n \n private static void createAndShowGUI() {\n // Set look and feel before creating components\n try {\n UIManager.setLookAndFeel(\n UIManager.getSystemLookAndFeelClassName()\n );\n } catch (Exception e) {\n e.printStackTrace();\n }\n \n JFrame frame = new JFrame(\"Safe Swing App\");\n frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n frame.setLayout(new BorderLayout());\n \n JLabel label = new JLabel(\"Hello, Swing!\", SwingConstants.CENTER);\n frame.add(label, BorderLayout.CENTER);\n \n frame.setSize(300, 200);\n frame.setLocationRelativeTo(null);\n frame.setVisible(true);\n }\n}",
+      "explanation": "This code demonstrates proper Swing initialization. All UI code runs on the EDT via invokeLater(). It also shows setting the system look and feel before creating components, which is the recommended practice.",
+      "timeComplexity": "O(1) - initialization only",
+      "spaceComplexity": "O(1) - fixed components"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Custom Painting with paintComponent",
+      "description": "Example showing how to properly override paintComponent for custom drawing",
+      "code": "import javax.swing.*;\nimport java.awt.*;\nimport java.awt.geom.Ellipse2D;\n\npublic class CustomCirclePanel extends JPanel {\n private Color fillColor = Color.BLUE;\n private int circleSize = 50;\n \n public CustomCirclePanel() {\n setPreferredSize(new Dimension(200, 200));\n setBackground(Color.WHITE);\n }\n \n @Override\n protected void paintComponent(Graphics g) {\n // Always call super first!\n super.paintComponent(g);\n \n // Cast to Graphics2D for advanced features\n Graphics2D g2d = (Graphics2D) g;\n g2d.setRenderingHint(\n RenderingHints.KEY_ANTIALIASING,\n RenderingHints.VALUE_ANTIALIAS_ON\n );\n \n // Calculate centered position\n int x = (getWidth() - circleSize) / 2;\n int y = (getHeight() - circleSize) / 2;\n \n // Draw the circle\n g2d.setColor(fillColor);\n g2d.fill(new Ellipse2D.Double(x, y, circleSize, circleSize));\n }\n \n public void setCircleColor(Color c) {\n fillColor = c;\n repaint(); // Request redraw - never call paintComponent directly!\n }\n \n public static void main(String[] args) {\n SwingUtilities.invokeLater(() -> {\n JFrame frame = new JFrame(\"Custom Painting\");\n frame.add(new CustomCirclePanel());\n frame.pack();\n frame.setVisible(true);\n });\n }\n}",
+      "explanation": "This demonstrates proper custom painting: overriding paintComponent (not paint), calling super.paintComponent(), using Graphics2D for advanced rendering, and using repaint() to trigger updates.",
+      "timeComplexity": "O(circle area) for drawing",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "SwingWorker Background Task Example",
+      "description": "Performing long-running task without freezing the UI",
+      "code": "import javax.swing.*;\nimport java.awt.*;\nimport java.util.Random;\n\npublic class SwingWorkerDemo extends JFrame {\n private JLabel statusLabel;\n private JButton startButton;\n private JProgressBar progressBar;\n \n public SwingWorkerDemo() {\n setLayout(new BorderLayout(5, 5));\n \n statusLabel = new JLabel(\"Ready\", SwingConstants.CENTER);\n progressBar = new JProgressBar(0, 100);\n startButton = new JButton(\"Start Long Task\");\n \n add(statusLabel, BorderLayout.NORTH);\n add(progressBar, BorderLayout.CENTER);\n add(startButton, BorderLayout.SOUTH);\n \n startButton.addActionListener(e -> startLongTask());\n \n setSize(300, 150);\n setDefaultCloseOperation(EXIT_ON_CLOSE);\n }\n \n private void startLongTask() {\n startButton.setEnabled(false);\n \n // Create SwingWorker\n SwingWorker<Integer, Integer> worker = new SwingWorker<>() {\n @Override\n protected Integer doInBackground() throws Exception {\n // Runs on background thread - heavy work here!\n int total = 0;\n for (int i = 0; i <= 100; i++) {\n Thread.sleep(30); // Simulate work\n publish(i); // Publish progress to EDT\n }\n return total;\n }\n \n @Override\n protected void process(Integer... chunks) {\n // Runs on EDT - update UI here\n int latest = chunks[chunks.length - 1];\n progressBar.setValue(latest);\n statusLabel.setText(\"Progress: \" + latest + \"%\");\n }\n \n @Override\n protected void done() {\n // Runs on EDT - final updates\n startButton.setEnabled(true);\n statusLabel.setText(\"Task Complete!\");\n }\n };\n \n worker.execute();\n }\n \n public static void main(String[] args) {\n SwingUtilities.invokeLater(() -> \n new SwingWorkerDemo().setVisible(true)\n );\n }\n}",
+      "explanation": "SwingWorker solves the problem of long-running tasks freezing the UI. doInBackground() runs on a worker thread, process() updates the progress bar on EDT, and done() runs when finished - all thread-safe.",
+      "timeComplexity": "O(n) where n is task duration",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

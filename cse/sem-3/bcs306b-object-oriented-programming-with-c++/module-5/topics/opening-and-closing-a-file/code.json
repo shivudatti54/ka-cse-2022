@@ -1,0 +1,45 @@
+{
+  "topicId": "opening-and-closing-a-file",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic File Writing with ofstream",
+      "description": "Demonstrates how to open a file for writing and write data to it",
+      "code": "#include <fstream>\n#include <iostream>\nusing namespace std;\n\nint main() {\n // Create and open file for writing\n ofstream outfile(\"sample.txt\");\n \n // Check if file opened successfully\n if (!outfile) {\n cout << \"Error: Could not open file!\" << endl;\n return 1;\n }\n \n // Write data to file\n outfile << \"Hello, File Handling in C++!\" << endl;\n outfile << \"This is line 2\" << endl;\n outfile << 100 << endl;\n \n // Close the file\n outfile.close();\n cout << \"Data written successfully!\" << endl;\n \n return 0;\n}",
+      "explanation": "Creates ofstream object with filename, checks for errors using ! operator, writes using << operator, closes file to flush buffer and release resources.",
+      "timeComplexity": "O(n) - linear in number of write operations",
+      "spaceComplexity": "O(1) - constant buffer space"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Basic File Reading with ifstream",
+      "description": "Demonstrates how to open a file for reading and read data from it",
+      "code": "#include <fstream>\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n // Create and open file for reading\n ifstream infile(\"sample.txt\");\n \n // Check if file opened successfully\n if (!infile.is_open()) {\n cout << \"Error: Could not open file!\" << endl;\n return 1;\n }\n \n string line;\n // Read and display file contents\n while (getline(infile, line)) {\n cout << line << endl;\n }\n \n // Close the file\n infile.close();\n \n return 0;\n}",
+      "explanation": "Uses ifstream to open file, is_open() to verify, getline() to read lines until EOF, closes file properly.",
+      "timeComplexity": "O(n) - linear in file size",
+      "spaceComplexity": "O(1) - reads one line at a time"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "File Opening with Explicit Mode",
+      "description": "Demonstrates using explicit file opening modes",
+      "code": "#include <fstream>\n#include <iostream>\nusing namespace std;\n\nint main() {\n // Open file in append mode\n ofstream outfile;\n outfile.open(\"log.txt\", ios::app);\n \n if (outfile.fail()) {\n cout << \"Failed to open file!\" << endl;\n return 1;\n }\n \n outfile << \"New log entry added\" << endl;\n outfile.close();\n \n // Open file in binary mode\n ofstream binfile;\n binfile.open(\"data.bin\", ios::binary | ios::out);\n \n if (binfile) {\n int num = 42;\n binfile.write(reinterpret_cast<char*>(&num), sizeof(num));\n binfile.close();\n }\n \n return 0;\n}",
+      "explanation": "Shows opening with ios::app for appending and ios::binary for binary operations. Uses fail() for error checking.",
+      "timeComplexity": "O(1) for open, O(k) for write operations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "cpp",
+      "title": "Read-Write with fstream",
+      "description": "Demonstrates using fstream for both reading and writing",
+      "code": "#include <fstream>\n#include <iostream>\nusing namespace std;\n\nint main() {\n // Open file for both reading and writing\n fstream file(\"data.txt\", ios::in | ios::out | ios::trunc);\n \n if (!file) {\n cout << \"Error opening file!\" << endl;\n return 1;\n }\n \n // Write to file\n file << \"First line\" << endl;\n file << \"Second line\" << endl;\n \n // Clear EOF flag and seek to beginning\n file.clear();\n file.seekg(0, ios::beg);\n \n // Read from file\n string content;\n while (getline(file, content)) {\n cout << \"Read: \" << content << endl;\n }\n \n // Close file\n file.close();\n \n return 0;\n}",
+      "explanation": "fstream requires explicit ios::in | ios::out. After writing, clear() resets EOF flag before seeking. seekg() positions read pointer.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

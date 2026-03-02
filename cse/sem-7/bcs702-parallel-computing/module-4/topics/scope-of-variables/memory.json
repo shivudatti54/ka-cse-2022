@@ -1,0 +1,74 @@
+{
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "SPOOFIR Data-Sharing Attributes",
+      "content": "S - Shared (default for globals/heap)\nP - Private (uninitialized copies)\nO - Firstprivate (initialized copies)\nO - Lastprivate (copy back last iteration)\nF - False sharing (cache line contention)\nI - Inherits (from enclosing region)\nR - Reduction (associative ops with identity)"
+    },
+    {
+      "id": "m-2",
+      "title": "Race Condition Detection",
+      "content": "When MULTIPLE threads ACCESS shared memory, with at least one WRITE, and NO synchronization EXISTS - that's a RACE!"
+    },
+    {
+      "id": "m-3",
+      "title": "Default Data Sharing Rule",
+      "content": "GHOST: Global and Static = SHARED; Heap = SHARED; Automatic variables inside parallel region = SHARED; Only variables declared WITHIN the parallel region are PRIVATE"
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "SPMD",
+      "expansion": "Single Program Multiple Data - pattern where all threads execute the same code but on different data",
+      "usage": "Used when parallel regions contain different data subsets but identical logic"
+    },
+    {
+      "term": "SIMD",
+      "expansion": "Single Instruction Multiple Data - pattern where the same operation is applied to multiple data elements simultaneously",
+      "usage": "Used in vectorization and GPU computing; relevant to understanding parallel execution models"
+    },
+    {
+      "term": "TLP",
+      "expansion": "Thread-Level Parallelism - parallelism achieved by using multiple concurrent threads",
+      "usage": "OpenMP primarily targets TLP, as opposed to data-level parallelism (DLP)"
+    },
+    {
+      "term": "FALSE SHARING",
+      "expansion": "Performance degradation when threads modify variables sharing the same cache line",
+      "usage": "Mitigated by padding variables or using private copies"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "Shared vs Private Variable Storage",
+      "visualization": "Draw a memory diagram showing: Main Memory (shared variables), with each thread having a separate Private Stack area. Shared variables point to single memory location; Private variables show separate boxes for each thread with 'X' indicating uninitialized or copies."
+    },
+    {
+      "concept": "Race Condition Timing Diagram",
+      "visualization": "Draw a Gantt chart with two threads (T1, T2) on Y-axis and time on X-axis. Show: T1 reads x=5, T2 reads x=5, T1 writes x=6, T2 writes x=6 (LOST UPDATE) - result should be 7 but is 6. This visual demonstrates why concurrent writes lose data."
+    },
+    {
+      "concept": "Reduction Operation Flow",
+      "visualization": "Draw: Original 'sum' variable in main memory. Arrow to 4 thread boxes, each showing 'sum_private = 0' (initialization). After loop: partial sums (e.g., 100, 250, 325, 175) in each thread. Final arrow combining all with '+' operation to get 850."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Shared vs Private Variables",
+      "analogy": "Think of a shared whiteboard in an office (anyone can read/write, needs coordination) vs. a personal notepad (each person has their own, no coordination needed). Without proper management of the whiteboard, different people writing simultaneously creates chaos - that's a race condition."
+    },
+    {
+      "concept": "Firstprivate",
+      "analogy": "Like giving each team member a COPY of the project brief before they start working independently. The original stays unchanged, but each person has the starting information they need."
+    },
+    {
+      "concept": "Lastprivate",
+      "analogy": "Like the 'final report' from the last person to speak in a meeting becoming the official team report. The individual contributions (private) are combined into the final output (original variable)."
+    },
+    {
+      "concept": "Reduction",
+      "analogy": "Like collecting donations from each person (threads) in a room and then one person counts the total. Each person's count is separate until combined - that's reduction!"
+    }
+  ],
+  "topicId": "scope-of-variables"
+}

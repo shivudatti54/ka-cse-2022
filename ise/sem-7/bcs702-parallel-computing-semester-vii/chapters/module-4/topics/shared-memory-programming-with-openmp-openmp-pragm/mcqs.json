@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "Which of the following OpenMP directives is used to create a parallel region?",
+    "options": [
+      "#pragma omp parallel",
+      "#pragma omp for",
+      "#pragma omp critical",
+      "#pragma omp single"
+    ],
+    "correctIndex": 0,
+    "explanation": "#pragma omp parallel is the fundamental directive that forks a team of threads to execute the enclosed block of code in parallel."
+  },
+  {
+    "id": "q2",
+    "question": "What is the purpose of the `reduction` clause in an OpenMP directive?",
+    "options": [
+      "To reduce the number of threads used in a parallel region",
+      "To perform a reduction operation (e.g., sum, max) on a variable across all threads",
+      "To reduce the size of a shared array",
+      "To specify a critical section that reduces lock contention"
+    ],
+    "correctIndex": 1,
+    "explanation": "The reduction clause efficiently combines values from private copies of a variable in each thread into a single value in the original shared variable after the parallel region, using a specified operator like + or *."
+  },
+  {
+    "id": "q3",
+    "question": "Consider the code snippet: `#pragma omp parallel for num_threads(4)`. How is the iteration space of the following for-loop typically distributed among the threads?",
+    "options": [
+      "Dynamically (chunk size = 1)",
+      "Statically in equal contiguous chunks",
+      "Statically in interleaved (round-robin) chunks",
+      "Dynamically with a default chunk size specified by the environment"
+    ],
+    "correctIndex": 1,
+    "explanation": "By default, the OpenMP `for` directive uses a static schedule, which divides the iterations into approximately equal-sized contiguous chunks and assigns one chunk to each thread."
+  },
+  {
+    "id": "q4",
+    "question": "Which OpenMP directive and clause combination is most appropriate for ensuring a specific code section is executed by only one thread at a time, without the overhead of a full critical section?",
+    "options": [
+      "#pragma omp atomic",
+      "#pragma omp critical",
+      "#pragma omp single",
+      "#pragma omp master"
+    ],
+    "correctIndex": 2,
+    "explanation": "#pragma omp single specifies that the associated structured block is executed by only one (arbitrary) thread in the team. The other threads skip it and wait at an implicit barrier at the end of the block unless a nowait clause is used."
+  },
+  {
+    "id": "q5",
+    "question": "A programmer uses `#pragma omp parallel for private(i) shared(a)` on a loop that writes to array `a`. The program runs correctly with 2 threads but produces race conditions and incorrect results with 8 threads. What is the most likely cause?",
+    "options": [
+      "The variable 'i' was incorrectly declared as private",
+      "The loop contains a data race on elements of the shared array 'a'",
+      "The reduction clause is missing for the array 'a'",
+      "The num_threads clause should be set to 8 explicitly"
+    ],
+    "correctIndex": 1,
+    "explanation": "Making the array 'a' shared means all threads can read and write to it. If multiple threads write to the same element of 'a' (a data race), the result is non-deterministic. The problem manifests with more threads because the chance of a race condition increases. The solution is to ensure the loop iterations and array accesses are independent or to protect conflicting accesses."
+  }
+]

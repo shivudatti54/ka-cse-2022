@@ -1,0 +1,33 @@
+{
+  "topicId": "transactions",
+  "examples": [
+    {
+      "id": "pseudocode-transaction-creation",
+      "title": "Algorithm: Transaction Creation",
+      "description": "Creating a Bitcoin transaction",
+      "language": "pseudocode",
+      "code": "ALGORITHM CreateTransaction\nINPUT: senderAddress, recipientAddress, amount\nOUTPUT: transaction\n\nBEGIN\n // Get sender's unspent outputs\n senderUTXOs = GetUnspentOutputs(senderAddress)\n \n // Calculate total amount of sender's UTXOs\n totalAmount = CalculateTotalAmount(senderUTXOs)\n \n // Check if sender has sufficient funds\n IF totalAmount < amount THEN\n THROW InsufficientFundsError\n END IF\n \n // Create transaction inputs\n inputs = CreateTransactionInputs(senderUTXOs, amount)\n \n // Create transaction outputs\n outputs = CreateTransactionOutputs(recipientAddress, amount)\n \n // Create transaction\n transaction = CreateTransaction(inputs, outputs)\n \n // Sign transaction with sender's private key\n SignTransaction(transaction, senderPrivateKey)\n \n RETURN transaction\nEND",
+      "explanation": "This pseudocode demonstrates the process of creating a Bitcoin transaction, including getting the sender's unspent outputs, calculating the total amount, checking for sufficient funds, creating transaction inputs and outputs, and signing the transaction with the sender's private key."
+    },
+    {
+      "id": "python-transaction-creation",
+      "title": "Python: Transaction Creation",
+      "description": "Creating a Bitcoin transaction using Python",
+      "language": "python",
+      "code": "import hashlib\nimport struct\n\nclass Transaction:\n def __init__(self, inputs, outputs):\n self.inputs = inputs\n self.outputs = outputs\n self.version = 1\n self.locktime = 0\n\n def sign(self, privateKey):\n # Sign transaction with private key\n signature = hashlib.sha256(struct.pack('I', self.version) + struct.pack('I', len(self.inputs)) + b''.join([struct.pack('32s', input.prevout) + struct.pack('I', input.n) for input in self.inputs]) + struct.pack('I', len(self.outputs)) + b''.join([struct.pack('8s', output.value) + struct.pack('32s', output.scriptPubKey) for output in self.outputs]) + struct.pack('I', self.locktime)).hexdigest()\n return signature\n\n# Example usage\ninputs = [TransactionInput('prevout1', 0), TransactionInput('prevout2', 1)]\noutputs = [TransactionOutput(10000000, 'scriptPubKey1'), TransactionOutput(5000000, 'scriptPubKey2')]\ntransaction = Transaction(inputs, outputs)\nsignature = transaction.sign('privateKey')\nprint(signature)",
+      "explanation": "This Python code defines a Transaction class with methods for signing the transaction with a private key. It demonstrates creating a transaction with inputs and outputs and signing it with a private key.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-transaction-creation",
+      "title": "C: Transaction Creation",
+      "description": "Creating a Bitcoin transaction using C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <stdint.h>\n\n// Define transaction structure\ntypedef struct {\n uint32_t version;\n uint32_t input_count;\n uint32_t output_count;\n uint32_t locktime;\n} Transaction;\n\n// Define transaction input structure\ntypedef struct {\n uint8_t prevout[32];\n uint32_t n;\n} TransactionInput;\n\n// Define transaction output structure\ntypedef struct {\n uint64_t value;\n uint8_t scriptPubKey[32];\n} TransactionOutput;\n\n// Function to sign transaction with private key\nvoid sign_transaction(Transaction* transaction, uint8_t* privateKey) {\n // Sign transaction with private key\n uint8_t signature[32];\n // ... calculate signature ...\n printf(\"Signature: %s\\n\", signature);\n}\n\nint main() {\n // Create transaction inputs and outputs\n TransactionInput inputs[] = {{\"prevout1\", 0}, {\"prevout2\", 1}};\n TransactionOutput outputs[] = {{10000000, \"scriptPubKey1\"}, {5000000, \"scriptPubKey2\"}};\n \n // Create transaction\n Transaction transaction;\n transaction.version = 1;\n transaction.input_count = 2;\n transaction.output_count = 2;\n transaction.locktime = 0;\n \n // Sign transaction with private key\n uint8_t privateKey[] = \"privateKey\";\n sign_transaction(&transaction, privateKey);\n \n return 0;\n}",
+      "explanation": "This C code defines structures for transactions, transaction inputs, and transaction outputs. It demonstrates creating a transaction with inputs and outputs and signing it with a private key.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

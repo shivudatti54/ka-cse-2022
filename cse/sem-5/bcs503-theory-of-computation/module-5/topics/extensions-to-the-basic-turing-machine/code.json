@@ -1,0 +1,35 @@
+{
+  "topicId": "extensions-to-the-basic-turing-machine",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Simulation of Multi-tape TM on Single-tape TM",
+      "description": "High-level algorithm for simulating a k-tape TM M on a single-tape TM. Uses separator symbols and position markers.",
+      "code": "// Input: Encoding of k-tape TM, input string w\n// Tape encoding: #content\u2081#content\u2082#...#content_k#\n// Position marker: X placed under head position on each virtual tape\n\nBEGIN\n  // Initialize: encode input on tape 1, others empty with markers at leftmost\n  WRITE # + w + # + # + ... + # + X  // X marks head position on tape 1\n  \n  WHILE not HALT DO\n    // Phase 1: Right-to-left scan to collect all symbols under heads\n    current_state \u2190 current_state_of_M\n    MOVE_RIGHT until rightmost #\n    // Record symbols under each head position\n    \n    // Phase 2: Find applicable transition in M's \u03b4 table\n    FOR each tape i from 1 to k DO\n      symbol_i \u2190 symbol_under_marker_i\n    END FOR\n    \n    // Look up \u03b4(current_state, symbol_1, ..., symbol_k)\n    new_state, new_symbols[], directions[] \u2190 \u03b4(current_state, symbol_1, ..., symbol_k)\n    \n    // Phase 3: Left-to-right scan to update tape and move markers\n    FOR each tape i from 1 to k DO\n      WRITE new_symbol_i\n      IF directions[i] = 'R' THEN move marker right\n      IF directions[i] = 'L' THEN move marker left\n    END FOR\n    \n    current_state \u2190 new_state\n    \n    IF current_state = q_accept THEN ACCEPT\n    IF current_state = q_reject THEN REJECT\n  END WHILE\nEND",
+      "explanation": "The simulation maintains k virtual tapes on one physical tape using separators. Each simulated step requires two passes: first scanning to read all head positions, then scanning to update and move. This creates O(n) overhead per simulated step, giving O(n\u00b2) total for O(n) original runtime.",
+      "timeComplexity": "O(n\u00b2) worst-case when simulating O(n) MTM",
+      "spaceComplexity": "O(n) - same as input plus separators and markers"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "NDTM Simulation using BFS on Configuration Tree",
+      "description": "Simulating a Non-deterministic TM using deterministic BFS exploration of its configuration tree.",
+      "code": "// Input: NDTM N = (Q, \u03a3, \u0393, \u03b4, q\u2080, q_accept, q_reject), input w\n// Uses tape to store configuration tree, BFS explores level by level\n\nBEGIN\n  // Initialize root configuration\n  WRITE (q\u2080, w, position 0)  // Initial config on tape\n  \n  WHILE configurations_exist DO\n    // Get next configuration at current BFS level\n    current_config \u2190 GET_NEXT_CONFIG()\n    \n    // Extract state, tape content, head position from config\n    state \u2190 current_config.state\n    tape \u2190 current_config.tape\n    pos \u2190 current_config.head_position\n    \n    IF state = q_accept THEN\n      ACCEPT  // Found accepting path\n      HALT\n    END IF\n    \n    IF state = q_reject THEN\n      // This branch rejects, continue exploring other branches\n      CONTINUE\n    END IF\n    \n    // Get all possible transitions from \u03b4(state, symbol_at_pos)\n    possible_moves \u2190 \u03b4(state, tape[pos])\n    \n    FOR each move in possible_moves DO\n      // Apply transition: new_state, new_symbol, direction\n      new_tape \u2190 COPY(tape)\n      new_tape[pos] \u2190 new_symbol\n      new_pos \u2190 pos + (direction = 'R' ? 1 : -1)\n      new_config \u2190 (new_state, new_tape, new_pos)\n      \n      // Add to queue for next BFS level\n      ADD_TO_QUEUE(new_config)\n    END FOR\n  END WHILE\n  \n  // No accepting configuration found in entire tree\n  REJECT\nEND",
+      "explanation": "The DTM explores the configuration tree using BFS to find any accepting path. Each configuration encodes complete state of the NDTM. The simulation explores all branches at depth d before going to depth d+1, guaranteeing that if any path accepts, it will be found.",
+      "timeComplexity": "O(b^T(n)) where b = maximum branching factor and T(n) = NDTM runtime",
+      "spaceComplexity": "O(T(n)\u00b7b^T(n)) - stores potentially exponential configurations"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Universal Turing Machine - Core Simulation Loop",
+      "description": "The main simulation loop of a UTM that interprets and executes any encoded Turing Machine M on input w.",
+      "code": "// UTM input: <M>#w where <M> is encoding of TM M, w is input\n// UTM state set includes: find_state, find_symbol, apply_transition, accept, reject\n\nBEGIN\n  // Main simulation loop\n  WHILE TRUE DO\n    // Step 1: Locate current state marker on tape\n    FIND_STATE_MARKER(current_state)\n    \n    // Step 2: Find symbol under the (simulated) head\n    current_symbol \u2190 READ_UNDER_HEAD()\n    \n    // Step 3: Look up transition in encoded \u03b4 table\n    // <M> contains \u03b4 as: (state, symbol) \u2192 (new_state, new_symbol, direction)\n    transition \u2190 LOOKUP_TRANSITION(current_state, current_symbol)\n    \n    // Step 4: Apply the transition\n    WRITE_SYMBOL(transition.new_symbol)\n    MOVE_HEAD(transition.direction)\n    REMOVE_STATE_MARKER(current_state)\n    PLACE_STATE_MARKER(transition.new_state)\n    \n    // Step 5: Check for halting states\n    IF transition.new_state = q_accept THEN\n      ACCEPT\n      HALT\n    END IF\n    \n    IF transition.new_state = q_reject THEN\n      REJECT\n      HALT\n    END IF\n    \n    // Continue simulation loop\n  END WHILE\nEND\n\n// Supporting procedures\nFIND_STATE_MARKER(s):\n  SCAN_TAPE_LEFT_TO_RIGHT\n  LOCATE marker_for_state_s\n  RETURN position\n\nLOOKUP_TRANSITION(s, a):\n  SEARCH_IN_ENCODED_TABLE(s, a)\n  RETURN (new_state, new_symbol, direction)",
+      "explanation": "The UTM is a universal interpreter. It maintains encoded rules of M and applies them to the encoded input. Each iteration represents one step of the simulated machine. The UTM halts in accept/reject when the simulated machine enters its halting states. This demonstrates that one machine can compute anything any specifically designed machine can compute.",
+      "timeComplexity": "If M runs in T(n) steps, UTM runs in O(T(n) \u00b7 |M|) - linear overhead in the size of M's encoding",
+      "spaceComplexity": "O(T(n) + |M|) - requires tape for M's description plus simulation space"
+    }
+  ]
+}

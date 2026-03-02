@@ -1,0 +1,3 @@
+# Registers
+
+The CPSR is a 32-bit control register in ARM processors containing: (1) Condition flags N, Z, C, V for signed/unsigned arithmetic status and Q for DSP saturation; (2) Interrupt disable bits I (IRQ) and F (FIQ); (3) State bit T for ARM/Thumb switching; (4) Mode field M[4:0] encoding User, FIQ, IRQ, Supervisor, Abort, Undefined, and System modes. The SPSR preserves CPSR during exceptions, enabling state restoration. Conditional execution allows most ARM instructions to execute based on flag states without branches. Assessment includes application-based MCQs requiring bit-field analysis and numerical problems predicting flag states after arithmetic operations.

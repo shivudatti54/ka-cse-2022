@@ -1,0 +1,45 @@
+{
+  "topicId": "logic-gates-boolean-algebra",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Logic Gates Implementation",
+      "description": "Python implementation of basic logic gates using built-in operators",
+      "code": "# Logic Gates Implementation in Python\n\ndef NOT(a):\n    return not a\n\ndef AND(a, b):\n    return a and b\n\ndef OR(a, b):\n    return a or b\n\ndef NAND(a, b):\n    return not (a and b)\n\ndef NOR(a, b):\n    return not (a or b)\n\ndef XOR(a, b):\n    return (a and not b) or (not a and b)\n\ndef XNOR(a, b):\n    return not XOR(a, b)\n\n# Test all gates\nprint(\"A B | NOT AND OR NAND NOR XOR XNOR\")\nfor a in [0, 1]:\n    for b in [0, 1]:\n        print(f\"{a} {b} | {int(NOT(a))}   {int(AND(a,b))}  {int(OR(a,b))}   {int(NAND(a,b))}   {int(NOR(a,b))}   {int(XOR(a,b))}   {int(XNOR(a,b))}\")",
+      "explanation": "This code implements all seven basic logic gates in Python. Each function takes boolean inputs (0/1 or True/False) and returns the corresponding output using Python's logical operators.",
+      "timeComplexity": "O(1) for each gate operation",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Truth Table Generator for 2-input Gates",
+      "description": "C program to generate truth tables for all 2-input logic gates",
+      "code": "#include <stdio.h>\n\n// Logic gate functions\nint NOT(int a) { return !a; }\nint AND(int a, int b) { return a && b; }\nint OR(int a, int b) { return a || b; }\nint NAND(int a, int b) { return !(a && b); }\nint NOR(int a, int b) { return !(a || b); }\nint XOR(int a, int b) { return (a && !b) || (!a && b); }\nint XNOR(int a, int b) { return !XOR(a, b); }\n\nint main() {\n    printf(\"A B | NOT AND OR NAND NOR XOR XNOR\\n\");\n    printf(\"--------------------------------------\\n\");\n    \n    for (int a = 0; a <= 1; a++) {\n        for (int b = 0; b <= 1; b++) {\n            printf(\"%d %d |  %d   %d   %d    %d    %d    %d    %d\\n\",\n                a, b,\n                NOT(a), AND(a,b), OR(a,b),\n                NAND(a,b), NOR(a,b), XOR(a,b), XNOR(a,b));\n        }\n    }\n    return 0;\n}",
+      "explanation": "This C program demonstrates all 2-input logic gates by generating their complete truth tables. It iterates through all 4 possible input combinations (00, 01, 10, 11) and displays the output for each gate.",
+      "timeComplexity": "O(1) - fixed 4 iterations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Boolean Expression Simplification using Consensus Theorem",
+      "description": "Pseudocode demonstrating application of Consensus Theorem",
+      "code": "ALGORITHM SimplifyUsingConsensus\n// Simplifies: AB + A'C + BC using Consensus Theorem\n// Theorem: AB + A'C + BC = AB + A'C\n\nBEGIN\n    INPUT A, B, C\n    \n    // Original Expression\n    expr1 \u2190 (A AND B) OR (NOT A AND C) OR (B AND C)\n    \n    // After applying Consensus Theorem (remove BC term)\n    expr2 \u2190 (A AND B) OR (NOT A AND C)\n    \n    // Verify by truth table\n    PRINT \"A B C | Original | Simplified\"\n    FOR each combination of A, B, C IN {0,1}:\n        result1 \u2190 (A AND B) OR (NOT A AND C) OR (B AND C)\n        result2 \u2190 (A AND B) OR (NOT A AND C)\n        PRINT A, B, C, result1, result2\n        IF result1 \u2260 result2 THEN\n            PRINT \"Error: Simplification failed\"\n        END IF\n    END FOR\n    \n    PRINT \"Simplification verified: BC term is consensus\"\nEND",
+      "explanation": "This algorithm demonstrates the Consensus Theorem which states that in the expression AB + A'C + BC, the term BC is the consensus and can be eliminated. The algorithm verifies this by comparing the truth table of the original expression with the simplified expression.",
+      "timeComplexity": "O(2^n) where n=3 variables, so O(8) = O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "NAND Gate Universal Implementation",
+      "description": "Java program showing how any gate can be implemented using only NAND gates",
+      "code": "public class NANDGateImplementation {\n    \n    // Basic NAND gate\n    public static boolean NAND(boolean a, boolean b) {\n        return !(a && b);\n    }\n    \n    // Implement NOT using NAND\n    public static boolean NOT(boolean a) {\n        return NAND(a, a);  // NAND(a, a) = a'\n    }\n    \n    // Implement AND using NAND\n    public static boolean AND(boolean a, boolean b) {\n        return NOT(NAND(a, b));  // NAND(a,b)' = a\u00b7b\n    }\n    \n    // Implement OR using NAND (using De Morgan)\n    public static boolean OR(boolean a, boolean b) {\n        return NAND(NOT(a), NOT(b));  // a' NAND b' = a + b\n    }\n    \n    // Implement NOR using NAND\n    public static boolean NOR(boolean a, boolean b) {\n        return NOT(OR(a, b));\n    }\n    \n    // Implement XOR using NAND\n    public static boolean XOR(boolean a, boolean b) {\n        boolean nand_ab = NAND(a, b);\n        boolean nand_a = NAND(a, nand_ab);\n        boolean nand_b = NAND(b, nand_ab);\n        return NAND(nand_a, nand_b);\n    }\n    \n    public static void main(String[] args) {\n        // Test all gates implemented using only NAND\n        System.out.println(\"A B | NOT | AND | OR | XOR\");\n        for (int a = 0; a <= 1; a++) {\n            for (int b = 0; b <= 1; b++) {\n                boolean A = (a == 1), B = (b == 1);\n                System.out.println(a + \" \" + b + \" |  \" + \n                    (NOT(A) ? 1 : 0) + \"  |  \" + \n                    (AND(A, B) ? 1 : 0) + \"  |  \" + \n                    (OR(A, B) ? 1 : 0) + \"  |  \" + \n                    (XOR(A, B) ? 1 : 0));\n            }\n        }\n    }\n}",
+      "explanation": "This Java program demonstrates why NAND is called a universal gate. It shows how NOT, AND, OR, and XOR can all be implemented using only NAND gates by applying De Morgan's theorems and logical transformations.",
+      "timeComplexity": "O(1) for each gate operation",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "database-access-control",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "sql",
+      "title": "GRANT and REVOKE Statements",
+      "description": "Demonstrates how to grant and revoke database privileges using SQL",
+      "code": "-- Creating roles\nCREATE ROLE clerk;\nCREATE ROLE manager;\nCREATE ROLE admin;\n\n-- Granting privileges to roles\nGRANT SELECT ON employees TO clerk;\nGRANT SELECT, INSERT ON employees TO manager;\nGRANT ALL PRIVILEGES ON employees TO admin;\n\n-- Assigning roles to users\nGRANT clerk TO john;\nGRANT manager TO sarah;\nGRANT admin TO database_admin;\n\n-- Grant with option to allow further delegation\nGRANT SELECT ON accounts TO manager WITH GRANT OPTION;\n\n-- Revoking privileges\nREVOKE INSERT ON employees FROM manager;\nREVOKE clerk FROM john;",
+      "explanation": "This example shows how to create roles, assign privileges to roles, grant roles to users, and revoke access. The WITH GRANT OPTION allows the grantee to grant those same privileges to others.",
+      "timeComplexity": "N/A (DDL statements)",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Parameterized Query to Prevent SQL Injection",
+      "description": "Demonstrates safe database queries using parameterized statements",
+      "code": "import sqlite3\n\n# UNSAFE - Vulnerable to SQL Injection\ndef unsafe_login(username, password):\n    conn = sqlite3.connect('database.db')\n    cursor = conn.cursor()\n    # DANGEROUS: Never do this!\n    query = f\"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'\"\n    cursor.execute(query)\n    result = cursor.fetchone()\n    conn.close()\n    return result\n\n# SAFE - Using parameterized query\ndef safe_login(username, password):\n    conn = sqlite3.connect('database.db')\n    cursor = conn.cursor()\n    # SAFE: Parameters are properly escaped\n    query = \"SELECT * FROM users WHERE username = ? AND password = ?\"\n    cursor.execute(query, (username, password))\n    result = cursor.fetchone()\n    conn.close()\n    return result\n\n# Example usage\n# safe_login(\"admin\", \"password123\")",
+      "explanation": "Parameterized queries (using ? placeholders) separate SQL code from data, preventing attackers from injecting malicious SQL through input fields. Always use parameterized queries in production code.",
+      "timeComplexity": "O(n) for query execution",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "sql",
+      "title": "Creating Secure Views for Data Access Control",
+      "description": "Shows how to create views to restrict access to sensitive data",
+      "code": "-- Create a view to show only non-sensitive employee information\nCREATE VIEW employee_public AS\nSELECT \n    employee_id,\n    first_name,\n    last_name,\n    department,\n    hire_date\nFROM employees;\n\n-- Create view for managers showing salary information\nCREATE VIEW employee_salary AS\nSELECT \n    employee_id,\n    first_name,\n    last_name,\n    department,\n    salary\nFROM employees\nWHERE department = 'Management';\n\n-- Grant access through views\nGRANT SELECT ON employee_public TO clerk;\nGRANT SELECT ON employee_salary TO manager;\n\n-- Deny access to base table\nDENY SELECT ON employees TO clerk;\n\n-- Query using view\nSELECT * FROM employee_public;",
+      "explanation": "Views act as virtual tables that can hide specific columns or rows. By granting access only to views and denying access to base tables, you can implement column-level and row-level security.",
+      "timeComplexity": "O(n) for view queries",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "sql",
+      "title": "Implementing Row-Level Security",
+      "description": "Demonstrates row-level security using security predicates in PostgreSQL",
+      "code": "-- Enable Row-Level Security\nALTER TABLE accounts ENABLE ROW LEVEL SECURITY;\n\n-- Create policy to restrict users to their own accounts\nCREATE POLICY account_own_policy ON accounts\n    FOR SELECT\n    USING (customer_id = current_user);\n\n-- Create policy for transactions\nCREATE POLICY transaction_policy ON transactions\n    FOR ALL\n    USING (\n        account_id IN (\n            SELECT account_id \n            FROM accounts \n            WHERE customer_id = current_user\n        )\n    );\n\n-- Alternative: Using a security barrier view\nCREATE VIEW customer_accounts AS\nSELECT * FROM accounts\nWHERE customer_id = current_user\nWITH CHECK OPTION;\n\n-- Create role-based row access\nCREATE POLICY dept_access ON employees\n    FOR SELECT\n    USING (department = current_user_dept());",
+      "explanation": "Row-Level Security (RLS) ensures users can only access rows relevant to them. PostgreSQL RLS policies automatically filter query results based on user context, providing transparent data isolation.",
+      "timeComplexity": "O(n) with policy evaluation",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

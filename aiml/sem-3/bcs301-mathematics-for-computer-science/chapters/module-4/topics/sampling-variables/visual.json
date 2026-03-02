@@ -1,0 +1,96 @@
+{
+  "topicId": "sampling-variables",
+  "visuals": [
+    {
+      "id": "sampling-variables-svg",
+      "title": "Shell Variables & Environment Overview",
+      "description": "Animated diagram showing parent shell with local and environment variables, the export mechanism, child process inheritance, variable access syntax, configuration files, and management commands.",
+      "type": "animated-svg",
+      "file": "assets/sampling-variables.svg",
+      "animated": true
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "Variable Inheritance Hierarchy",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Parent Shell\nLocal: name=\"John\"\nExported: PATH, HOME"
+          },
+          {
+            "id": "n2",
+            "label": "Child Process 1\nInherits: PATH, HOME\nNo access to: name"
+          },
+          {
+            "id": "n3",
+            "label": "Child Process 2\nInherits: PATH, HOME\nNo access to: name"
+          }
+        ],
+        "edges": [
+          { "from": "n1", "to": "n2", "label": "fork()" },
+          { "from": "n1", "to": "n3", "label": "fork()" }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Variable Types Classification",
+      "type": "hierarchy",
+      "content": {
+        "nodes": [
+          { "id": "root", "label": "Shell Variables" },
+          { "id": "local", "label": "Local Variables\n(current shell only)" },
+          { "id": "env", "label": "Environment Variables\n(inherited by children)" },
+          { "id": "special", "label": "Special Variables\n$0, $1, $#, $?, $$" },
+          { "id": "builtin", "label": "Built-in Env Vars\nPATH, HOME, USER, SHELL" }
+        ],
+        "edges": [
+          { "from": "root", "to": "local" },
+          { "from": "root", "to": "env" },
+          { "from": "root", "to": "special" },
+          { "from": "env", "to": "builtin" }
+        ]
+      }
+    },
+    {
+      "id": "d3",
+      "title": "Export Mechanism Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          { "id": "s1", "label": "VAR=value\n(local only)" },
+          { "id": "s2", "label": "export VAR\n(promote to env)" },
+          { "id": "s3", "label": "VAR available\nin child processes" }
+        ],
+        "edges": [
+          { "from": "s1", "to": "s2", "label": "export command" },
+          { "from": "s2", "to": "s3", "label": "fork/exec" }
+        ]
+      }
+    },
+    {
+      "id": "d4",
+      "title": "Shell Configuration File Load Order",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          { "id": "login", "label": "Login Shell Starts" },
+          { "id": "profile", "label": "~/.profile\nor ~/.bash_profile" },
+          { "id": "interactive", "label": "Interactive Shell Starts" },
+          { "id": "bashrc", "label": "~/.bashrc" },
+          { "id": "env_ready", "label": "Environment Ready\nPATH, PS1, aliases set" }
+        ],
+        "edges": [
+          { "from": "login", "to": "profile" },
+          { "from": "interactive", "to": "bashrc" },
+          { "from": "profile", "to": "env_ready" },
+          { "from": "bashrc", "to": "env_ready" }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+<svg width="420" height="400" viewBox="0 0 420 400" data-topic-id="pointers-dynamic-memory" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa"/>
+      <stop offset="100%" style="stop-color:#e4e8ec"/>
+    </linearGradient>
+    <linearGradient id="stackGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8d8ea"/>
+      <stop offset="100%" style="stop-color:#7ec8e3"/>
+    </linearGradient>
+    <linearGradient id="heapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#b8e0d2"/>
+      <stop offset="100%" style="stop-color:#95d5b2"/>
+    </linearGradient>
+    <linearGradient id="pointerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffd6a5"/>
+      <stop offset="100%" style="stop-color:#ffb347"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes arrowPulse {
+      0%, 100% { stroke-dashoffset: 0; }
+      50% { stroke-dashoffset: 10; }
+    }
+    @keyframes textGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px currentColor); }
+      50% { filter: drop-shadow(0 0 6px currentColor); }
+    }
+    .title { animation: fadeIn 0.8s ease-out forwards; }
+    .stack-box { animation: slideInLeft 0.6s ease-out forwards; }
+    .heap-box { animation: slideInRight 0.6s ease-out forwards; animation-delay: 0.2s; opacity: 0; }
+    .pc-box { animation: slideInUp 0.5s ease-out forwards; animation-delay: 0.4s; opacity: 0; }
+    .pointer-arrow { animation: arrowPulse 2s infinite; }
+    .pulse-element { animation: pulse 2s infinite; transform-origin: center; }
+    .label { animation: fadeIn 0.8s ease-out forwards; animation-delay: 0.5s; opacity: 0; }
+    .detail { animation: fadeIn 0.8s ease-out forwards; animation-delay: 0.7s; opacity: 0; }
+    .highlight { animation: textGlow 3s infinite; }
+  </style>
+  
+  <!-- Background -->
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="28" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="bold" fill="#2c3e50" class="title">Pointers &amp; Dynamic Memory</text>
+  <line x1="60" y1="38" x2="360" y2="38" stroke="#3498db" stroke-width="2" stroke-linecap="round" class="title"/>
+  
+  <!-- Stack Section -->
+  <g class="stack-box" data-narration="The Stack: A region of memory for local variables and function calls. Grows downward.">
+    <rect x="30" y="55" width="130" height="130" rx="8" fill="url(#stackGradient)" filter="url(#shadow)"/>
+    <text x="95" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a5276">STACK</text>
+    <rect x="40" y="85" width="110" height="22" rx="4" fill="#fff" stroke="#5dade2" stroke-width="1"/>
+    <text x="95" y="101" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">x: 10</text>
+    <rect x="40" y="112" width="110" height="22" rx="4" fill="#fff" stroke="#5dade2" stroke-width="1"/>
+    <text x="95" y="128" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">*ptr: 0x200</text>
+    <rect x="40" y="139" width="110" height="22" rx="4" fill="#fff" stroke="#5dade2" stroke-width="1"/>
+    <text x="95" y="155" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">return addr</text>
+  </g>
+  
+  <!-- Heap Section -->
+  <g class="heap-box" data-narration="The Heap: Dynamically allocated memory using malloc/calloc. Must be manually freed.">
+    <rect x="260" y="55" width="130" height="130" rx="8" fill="url(#heapGradient)" filter="url(#shadow)"/>
+    <text x="325" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e8449">HEAP</text>
+    <rect x="270" y="85" width="110" height="22" rx="4" fill="#fff" stroke="#52be80" stroke-width="1"/>
+    <text x="325" y="101" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">0x200: int[5]</text>
+    <rect x="270" y="112" width="110" height="22" rx="4" fill="#fff" stroke="#52be80" stroke-width="1"/>
+    <text x="325" y="128" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">0x208: char[20]</text>
+    <rect x="270" y="139" width="110" height="22" rx="4" fill="#fff" stroke="#52be80" stroke-width="1"/>
+    <text x="325" y="155" text-anchor="middle" font-family="Courier, monospace" font-size="12" fill="#2c3e50">0x220: struct</text>
+  </g>
+  
+  <!-- Pointer Connection -->
+  <g data-narration="Pointer stores address (0x200) from heap, enabling indirect access.">
+    <path d="M 165 140 Q 210 140 255 140" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="5,3" class="pointer-arrow"/>
+    <polygon points="255,140 248,135 248,145" fill="#e74c3c"/>
+    <rect x="175" y="150" width="70" height="18" rx="4" fill="url(#pointerGradient)" filter="url(#shadow)" class="pulse-element"/>
+    <text x="210" y="163" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#7d4e00">ptr → 0x200</text>
+  </g>
+  
+  <!-- Program Counter -->
+  <g class="pc-box" data-narration="Program Counter (PC): Tracks current execution point in code memory.">
+    <rect x="140" y="200" width="140" height="35" rx="6" fill="#d4a5c9" filter="url(#shadow)"/>
+    <text x="210" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#6c3483">Program Counter</text>
+    <text x="210" y="228" text-anchor="middle" font-family="Courier, monospace" font-size="11" fill="#4a235a">PC: 0x00401000</text>
+  </g>
+  
+  <!-- Code Example Box -->
+  <g class="label" data-narration="Code example showing pointer declaration and dynamic memory allocation.">
+    <rect x="30" y="250" width="360" height="60" rx="6" fill="#fff9e6" stroke="#f9e79f" stroke-width="1" filter="url(#shadow)"/>
+    <text x="45" y="270" font-family="Courier, monospace" font-size="11" fill="#2c3e50">
+      <tspan x="45" dy="0">int *ptr = (int*)malloc(5 * sizeof(int));</tspan>
+      <tspan x="45" dy="16">// malloc allocates on heap, returns address</tspan>
+    </text>
+  </g>
+  
+  <!-- Operations Box -->
+  <g class="detail" data-narration="Key operations: &amp; (address-of), * (dereference), malloc/free for dynamic memory.">
+    <rect x="30" y="320" width="360" height="70" rx="6" fill="#f0f4f8" stroke="#bdc3c7" stroke-width="1" filter="url(#shadow)"/>
+    <text x="45" y="342" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Key Operations:</text>
+    <text x="45" y="360" font-family="Courier, monospace" font-size="11" fill="#34495e">&amp;x = address of x  |  *ptr = dereference  |  free(ptr) = deallocate</text>
+    <text x="45" y="378" font-family="Arial, sans-serif" font-size="11" fill="#7f8c8d">Pointer arithmetic: ptr++, ptr--, ptr+n for array traversal</text>
+  </g>
+  
+  <!-- Highlight Box -->
+  <rect x="280" y="320" width="80" height="22" rx="4" fill="#ff6b6b" opacity="0.15" class="pulse-element"/>
+  <text x="320" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#c0392b" class="highlight">IMPORTANT</text>
+  
+  <!-- Legend -->
+  <g class="detail">
+    <circle cx="360" cy="365" r="4" fill="#5dade2"/>
+    <text x="372" y="369" font-family="Arial, sans-serif" font-size="9" fill="#7f8c8d">Stack</text>
+    <circle cx="360" cy="378" r="4" fill="#52be80"/>
+    <text x="372" y="382" font-family="Arial, sans-serif" font-size="9" fill="#7f8c8d">Heap</text>
+  </g>
+</svg>

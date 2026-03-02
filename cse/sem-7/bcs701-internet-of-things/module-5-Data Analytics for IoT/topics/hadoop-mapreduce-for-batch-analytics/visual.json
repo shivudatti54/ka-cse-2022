@@ -1,0 +1,125 @@
+{
+  "topicId": "hadoop-mapreduce-for-batch-analytics",
+  "diagrams": [
+    {
+      "id": "d1",
+      "title": "MapReduce Execution Flow",
+      "type": "flow",
+      "content": {
+        "nodes": [
+          {
+            "id": "input",
+            "label": "Input Data\n(HDFS)",
+            "type": "start"
+          },
+          {
+            "id": "split",
+            "label": "Input Splits",
+            "type": "process"
+          },
+          {
+            "id": "map1",
+            "label": "Mapper 1\n(k,v) pairs",
+            "type": "process"
+          },
+          {
+            "id": "map2",
+            "label": "Mapper 2\n(k,v) pairs",
+            "type": "process"
+          },
+          {
+            "id": "shuffle",
+            "label": "Shuffle & Sort\nGroup by key",
+            "type": "process"
+          },
+          {
+            "id": "reduce1",
+            "label": "Reducer 1\nAggregate",
+            "type": "process"
+          },
+          {
+            "id": "reduce2",
+            "label": "Reducer 2\nAggregate",
+            "type": "process"
+          },
+          {
+            "id": "output",
+            "label": "Output\n(HDFS)",
+            "type": "end"
+          }
+        ],
+        "edges": [
+          {
+            "from": "input",
+            "to": "split",
+            "label": "Divide"
+          },
+          {
+            "from": "split",
+            "to": "map1",
+            "label": "Split 1"
+          },
+          {
+            "from": "split",
+            "to": "map2",
+            "label": "Split 2"
+          },
+          {
+            "from": "map1",
+            "to": "shuffle",
+            "label": "Intermediate"
+          },
+          {
+            "from": "map2",
+            "to": "shuffle",
+            "label": "Intermediate"
+          },
+          {
+            "from": "shuffle",
+            "to": "reduce1",
+            "label": "Keys 1-N"
+          },
+          {
+            "from": "shuffle",
+            "to": "reduce2",
+            "label": "Keys N+1-M"
+          },
+          {
+            "from": "reduce1",
+            "to": "output",
+            "label": "Part 1"
+          },
+          {
+            "from": "reduce2",
+            "to": "output",
+            "label": "Part 2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d2",
+      "title": "Word Count Example Trace",
+      "type": "table",
+      "content": {
+        "headers": ["Phase", "Input", "Output"],
+        "rows": [
+          ["Map 1", "'hello world'", "(hello,1), (world,1)"],
+          ["Map 2", "'hello hadoop'", "(hello,1), (hadoop,1)"],
+          ["Shuffle/Sort", "Group by key", "hello:[1,1], world:[1], hadoop:[1]"],
+          ["Reduce", "Sum counts", "hello:2, world:1, hadoop:1"]
+        ]
+      }
+    }
+  ],
+  "visuals": [
+    {
+      "id": "hadoop-mapreduce-for-batch-analytics-svg",
+      "title": "MapReduce Execution Flow",
+      "description": "Hadoop MapReduce Execution Flow - covering input splits, map phase, shuffle/sort, reduce phase, and output",
+      "type": "animated-svg",
+      "file": "assets/hadoop-mapreduce-for-batch-analytics.svg",
+      "animated": true
+    }
+  ]
+}

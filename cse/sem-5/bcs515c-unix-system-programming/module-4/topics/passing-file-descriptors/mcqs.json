@@ -1,0 +1,505 @@
+{
+  "topicId": "passing-file-descriptors",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which system call is used to receive a file descriptor from another process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "accept()"
+        },
+        {
+          "key": "B",
+          "text": "recvmsg()"
+        },
+        {
+          "key": "C",
+          "text": "read()"
+        },
+        {
+          "key": "D",
+          "text": "recv()"
+        }
+      ],
+      "correctAnswer": "recvmsg()",
+      "explanation": "recvmsg() is used because it supports ancillary data (control messages), which is required to pass file descriptors via SCM_RIGHTS. accept() returns a new socket but doesn't receive existing file descriptors.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What is the control message type used to pass file descriptors?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SCM_RIGHTS"
+        },
+        {
+          "key": "B",
+          "text": "SCM_CREDENTIALS"
+        },
+        {
+          "key": "C",
+          "text": "SCM_CONNECT"
+        },
+        {
+          "key": "D",
+          "text": "SCM_MESSAGE"
+        }
+      ],
+      "correctAnswer": "SCM_RIGHTS",
+      "explanation": "SCM_RIGHTS is the standard control message type for transferring file descriptors between processes. It is defined in <sys/socket.h>.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "After passing a file descriptor, who is responsible for closing it?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only the sender"
+        },
+        {
+          "key": "B",
+          "text": "Only the receiver"
+        },
+        {
+          "key": "C",
+          "text": "Both sender and receiver must close"
+        },
+        {
+          "key": "D",
+          "text": "Kernel automatically closes"
+        }
+      ],
+      "correctAnswer": "Both sender and receiver must close",
+      "explanation": "Both processes have independent file descriptors pointing to the same open file description. Each must close their copy to release the underlying file resource.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which flag prevents file descriptors from being inherited across exec()?",
+      "options": [
+        {
+          "key": "A",
+          "text": "FD_CLOEXEC"
+        },
+        {
+          "key": "B",
+          "text": "FD_CLOSTR"
+        },
+        {
+          "key": "C",
+          "text": "FD_INHERIT"
+        },
+        {
+          "key": "D",
+          "text": "FD_NOCLOSE"
+        }
+      ],
+      "correctAnswer": "FD_CLOEXEC",
+      "explanation": "FD_CLOEXEC (close-on-exec) flag causes the file descriptor to be automatically closed when the process calls one of the exec family functions.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-5",
+      "question": "What address family is used for Unix domain sockets?",
+      "options": [
+        {
+          "key": "A",
+          "text": "AF_INET"
+        },
+        {
+          "key": "B",
+          "text": "AF_UNIX"
+        },
+        {
+          "key": "C",
+          "text": "AF_INET6"
+        },
+        {
+          "key": "D",
+          "text": "AF_LOCAL"
+        }
+      ],
+      "correctAnswer": "AF_UNIX",
+      "explanation": "Unix domain sockets use AF_UNIX address family. They provide local IPC without involving network protocols.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What structure contains the control message header for passing file descriptors?",
+      "options": [
+        {
+          "key": "A",
+          "text": "msghdr"
+        },
+        {
+          "key": "B",
+          "text": "cmsghdr"
+        },
+        {
+          "key": "C",
+          "text": "sockaddr"
+        },
+        {
+          "key": "D",
+          "text": "iovec"
+        }
+      ],
+      "correctAnswer": "cmsghdr",
+      "explanation": "cmsghdr (control message header) contains cmsg_len, cmsg_level, cmsg_type, and the cmsg_data. It wraps the actual file descriptor(s) being passed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "When a process forks, what happens to its file descriptors?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They are closed"
+        },
+        {
+          "key": "B",
+          "text": "They are copied to child"
+        },
+        {
+          "key": "C",
+          "text": "They are shared"
+        },
+        {
+          "key": "D",
+          "text": "They are reset"
+        }
+      ],
+      "correctAnswer": "They are copied to child",
+      "explanation": "fork() creates a child process with a copy of the parent's file descriptor table. Both processes reference the same open file descriptions.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which macro extracts file descriptor data from a cmsghdr?",
+      "options": [
+        {
+          "key": "A",
+          "text": "CMSG_DATA"
+        },
+        {
+          "key": "B",
+          "text": "CMSG_FIRSTHDR"
+        },
+        {
+          "key": "C",
+          "text": "CMSG_NXTHDR"
+        },
+        {
+          "key": "D",
+          "text": "CMSG_LEN"
+        }
+      ],
+      "correctAnswer": "CMSG_DATA",
+      "explanation": "CMSG_DATA(cmsg) returns a pointer to the data portion of the control message, where the actual file descriptor integer(s) are stored.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "What is the benefit of passing file descriptors vs reopening files?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Faster access"
+        },
+        {
+          "key": "B",
+          "text": "No data duplication"
+        },
+        {
+          "key": "C",
+          "text": "Preserves file position"
+        },
+        {
+          "key": "D",
+          "text": "All of the above"
+        }
+      ],
+      "correctAnswer": "All of the above",
+      "explanation": "Passing file descriptors avoids reopening, preserves the current file position, and allows sharing without duplicating data. The receiver gets immediate access to the already-open file.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "What type of socket is required for passing file descriptors?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Datagram socket"
+        },
+        {
+          "key": "B",
+          "text": "Stream socket"
+        },
+        {
+          "key": "C",
+          "text": "Unix domain socket"
+        },
+        {
+          "key": "D",
+          "text": "Raw socket"
+        }
+      ],
+      "correctAnswer": "Unix domain socket",
+      "explanation": "Unix domain sockets (AF_UNIX) support the ancillary data mechanism needed for SCM_RIGHTS control messages. Other socket types may not reliably support this.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What happens if the sender closes the file descriptor before the receiver receives it?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Receiver gets -1"
+        },
+        {
+          "key": "B",
+          "text": "Receiver gets 0"
+        },
+        {
+          "key": "C",
+          "text": "Receiver gets garbage"
+        },
+        {
+          "key": "D",
+          "text": "Receiver gets another fd"
+        }
+      ],
+      "correctAnswer": "Receiver gets -1",
+      "explanation": "If the sender closes the file descriptor before the receiver obtains it, the transfer fails and the receiver typically receives -1 indicating an error.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "Which system call is used to send a file descriptor?",
+      "options": [
+        {
+          "key": "A",
+          "text": "send()"
+        },
+        {
+          "key": "B",
+          "text": "sendmsg()"
+        },
+        {
+          "key": "C",
+          "text": "write()"
+        },
+        {
+          "key": "D",
+          "text": "sendto()"
+        }
+      ],
+      "correctAnswer": "sendmsg()",
+      "explanation": "sendmsg() allows sending ancillary data (control messages) along with regular data. This is required to include the SCM_RIGHTS message containing the file descriptor.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Can multiple file descriptors be passed in a single sendmsg() call?",
+      "options": [
+        {
+          "key": "A",
+          "text": "No, only one at a time"
+        },
+        {
+          "key": "B",
+          "text": "Yes, using array in cmsg_data"
+        },
+        {
+          "key": "C",
+          "text": "Yes, but limited to 2"
+        },
+        {
+          "key": "D",
+          "text": "No, Unix doesn't support it"
+        }
+      ],
+      "correctAnswer": "Yes, using array in cmsg_data",
+      "explanation": "Multiple file descriptors can be passed by including them as an array in the cmsg_data. The cmsg_len must be set accordingly to include all file descriptors.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "What is the purpose of msg_iov in sendmsg()?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Pass file descriptors"
+        },
+        {
+          "key": "B",
+          "text": "Point to data buffers"
+        },
+        {
+          "key": "C",
+          "text": "Specify socket options"
+        },
+        {
+          "key": "D",
+          "text": "Store credentials"
+        }
+      ],
+      "correctAnswer": "Point to data buffers",
+      "explanation": "msg_iov (I/O vector) points to an array of iovec structures describing the data buffers to be sent or received. It is used for scatter-gather I/O.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "Which function is used to allocate and initialize a cmsghdr?",
+      "options": [
+        {
+          "key": "A",
+          "text": "CMSG_INIT"
+        },
+        {
+          "key": "B",
+          "text": "CMSG_ALLOC"
+        },
+        {
+          "key": "C",
+          "text": "CMSG_DATA"
+        },
+        {
+          "key": "D",
+          "text": "CMSG_FIRSTHDR"
+        }
+      ],
+      "correctAnswer": "CMSG_FIRSTHDR",
+      "explanation": "CMSG_FIRSTHDR returns a pointer to the first cmsghdr in the control message buffer. CMSG_DATA then accesses the actual data within it.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-16",
+      "question": "File descriptors passed between processes point to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Different open file descriptions"
+        },
+        {
+          "key": "B",
+          "text": "The same open file description"
+        },
+        {
+          "key": "C",
+          "text": "Nothing - they are duplicated"
+        },
+        {
+          "key": "D",
+          "text": "A new file each time"
+        }
+      ],
+      "correctAnswer": "The same open file description",
+      "explanation": "Both file descriptors (sender's and receiver's) reference the same open file description in the kernel. Changes like file offset are visible to both.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-17",
+      "question": "What is the typical pattern in privilege separation using FD passing?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Child gets root, parent stays unprivileged"
+        },
+        {
+          "key": "B",
+          "text": "Parent accepts, passes socket to child"
+        },
+        {
+          "key": "C",
+          "text": "Both share root access"
+        },
+        {
+          "key": "D",
+          "text": "Neither gets root"
+        }
+      ],
+      "correctAnswer": "Parent accepts, passes socket to child",
+      "explanation": "In privilege separation, a privileged parent process accepts connections and passes the socket to an unprivileged child process, which then handles the request safely.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "What header file defines SCM_RIGHTS?",
+      "options": [
+        {
+          "key": "A",
+          "text": "<sys/types.h>"
+        },
+        {
+          "key": "B",
+          "text": "<sys/socket.h>"
+        },
+        {
+          "key": "C",
+          "text": "<unistd.h>"
+        },
+        {
+          "key": "D",
+          "text": "<fcntl.h>"
+        }
+      ],
+      "correctAnswer": "<sys/socket.h>",
+      "explanation": "SCM_RIGHTS is defined in <sys/socket.h> along with other socket-related constants and structures for control messages.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-19",
+      "question": "When passing a file descriptor, the cmsg_level should be set to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "SOL_SOCKET"
+        },
+        {
+          "key": "B",
+          "text": "IPPROTO_TCP"
+        },
+        {
+          "key": "C",
+          "text": "SOL_IP"
+        },
+        {
+          "key": "D",
+          "text": "SOL_PACKET"
+        }
+      ],
+      "correctAnswer": "SOL_SOCKET",
+      "explanation": "cmsg_level should be set to SOL_SOCKET (socket level) when using SCM_RIGHTS, indicating the control message is at the socket level.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-20",
+      "question": "The file descriptor passed is valid in which process context?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Only in receiver"
+        },
+        {
+          "key": "B",
+          "text": "Only in sender"
+        },
+        {
+          "key": "C",
+          "text": "Only in both if shared"
+        },
+        {
+          "key": "D",
+          "text": "Only in child"
+        }
+      ],
+      "correctAnswer": "Only in receiver",
+      "explanation": "The file descriptor number in the receiver's process will likely be different from the sender's. The kernel maps the transferred file descriptor to the receiver's descriptor table.",
+      "difficulty": "medium"
+    }
+  ]
+}

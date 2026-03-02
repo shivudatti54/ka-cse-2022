@@ -1,0 +1,144 @@
+{
+  "topicId": "performing-alu-operations",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between a half adder and a full adder with truth tables.",
+      "keyPoints": [
+        "Half adder has 2 inputs (A, B), full adder has 3 inputs (A, B, Cin)",
+        "Half adder produces SUM and CARRY outputs",
+        "Full adder handles carry from previous stage",
+        "Truth tables differ: half adder ignores input carry",
+        "Full adder is cascade of two half adders plus OR gate for carry"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the concept of select lines in ALU design. How many select lines are needed for 12 operations?",
+      "keyPoints": [
+        "Select lines determine which operation the ALU performs",
+        "Number of select lines = ceiling(log2 of number of operations)",
+        "For 12 operations: 2^4 = 16 >= 12, so 4 select lines needed",
+        "Select lines control multiplexers to choose correct result",
+        "More select lines allow more operations but increase complexity"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What are the various status flags in ALU? Explain any three flags.",
+      "keyPoints": [
+        "Status flags indicate special conditions after ALU operation",
+        "ZERO FLAG: set when result is all zeros",
+        "CARRY FLAG: set when unsigned overflow occurs",
+        "OVERFLOW FLAG: set when signed overflow occurs",
+        "SIGN FLAG: reflects MSB of result (negative indicator)",
+        "PARITY FLAG: indicates odd/even number of 1s in result"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain how subtraction is performed in ALU using adders.",
+      "keyPoints": [
+        "ALU uses two's complement method for subtraction",
+        "First compute one's complement (invert all bits of subtrahend)",
+        "Add 1 to get two's complement",
+        "Add this to the minuend using regular adder circuit",
+        "This eliminates need for separate subtractor hardware",
+        "Same adder circuit handles both addition and subtraction"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is a multiplexer and how is it used in ALU design?",
+      "keyPoints": [
+        "Multiplexer selects one input from multiple inputs based on select lines",
+        "Used in ALU to select between different operation results",
+        "2^n inputs require n select lines",
+        "Each operation result feeds into MUX inputs",
+        "Select lines choose which result appears at output",
+        "Enables single ALU to perform multiple functions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the working of a ripple carry adder with a diagram description.",
+      "keyPoints": [
+        "Constructed by cascading N full adders for N-bit addition",
+        "Each full adder handles one bit position",
+        "Carry output of each stage becomes carry input of next",
+        "Propagation delay is main disadvantage (O(N))",
+        "Simple design but slow for large bit widths",
+        "Example: 4-bit adder needs 4 full adders connected in series"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Design a 4-bit ALU that can perform four arithmetic operations (ADD, SUBTRACT, INCREMENT, DECREMENT) and four logical operations (AND, OR, XOR, NOT). Show the select line configuration and explain the operation selection mechanism.",
+      "keyPoints": [
+        "Need 3 select lines for 8 operations (2^3 = 8)",
+        "Define select code for each operation: S2S1S0",
+        "Arithmetic operations: 000=ADD, 001=SUB, 010=INC, 011=DEC",
+        "Logical operations: 100=AND, 101=OR, 110=XOR, 111=NOT",
+        "Use multiplexers to select between arithmetic and logical results",
+        "Arithmetic unit uses adder with MUX for operation selection",
+        "Logic unit uses separate logic gates for each operation",
+        "Final MUX selects between arithmetic and logical result based on S2",
+        "Carry flag for arithmetic, Zero flag for both",
+        "Control unit generates select codes based on instruction"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare ripple carry adder and carry look-ahead adder. Explain how carry look-ahead adder achieves faster computation.",
+      "keyPoints": [
+        "Ripple carry adder: simple cascade of full adders, O(N) propagation delay",
+        "Carry look-ahead: computes carries in parallel, O(1) gate delay for carry generation",
+        "Generate function Gi = Ai AND Bi (carry produced at stage i)",
+        "Propagate function Pi = Ai XOR Bi (carry propagates through stage i)",
+        "Carry out Ci+1 = Gi OR (Pi AND Ci)",
+        "Look-ahead unit computes all carries simultaneously using these formulas",
+        "Trade-off: more complex circuitry but faster operation",
+        "For large bit widths, CLA is significantly faster",
+        "Cost: More gates required for CLA implementation",
+        "Used in modern processors for critical path optimization"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the complete data flow in ALU during execution of an arithmetic instruction. Include the role of registers, control signals, and status flags.",
+      "keyPoints": [
+        "Control unit decodes instruction and generates control signals",
+        "Operands loaded from registers into ALU input latches",
+        "Operation select lines set based on instruction opcode",
+        "Input data paths enabled by control signals",
+        "ALU performs designated operation on operands",
+        "Result stored in destination register",
+        "Status flags updated based on result",
+        "Zero flag: check if result equals zero",
+        "Carry flag: check for unsigned overflow",
+        "Overflow flag: check for signed overflow",
+        "Sign flag: reflects MSB of result",
+        "Flag values stored in PSW (Program Status Word)",
+        "Next instruction uses these flags for conditional operations"
+      ],
+      "marks": 10
+    }
+  ]
+}

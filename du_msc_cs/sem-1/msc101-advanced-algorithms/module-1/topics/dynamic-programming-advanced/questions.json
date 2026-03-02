@@ -1,0 +1,53 @@
+{
+  "topicId": "dynamic-programming-advanced",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Consider the following problem: Count the number of integers between 1 and N (inclusive) where the sum of digits is a prime number. Given N ≤ 10^18, design a digit DP solution. Write the recurrence relation, identify the state parameters, and provide the complete C++ implementation using memoization. Also explain why standard DP with DP[i] = number of ways would fail for this problem.",
+      "keyPoints": [
+        "State parameters: position, sum of digits, tight flag, started flag (leading zeros)",
+        "Recurrence: dp[pos][sum][tight][started] = Σ dp[pos+1][new_sum][new_tight][true] for all valid digits",
+        "Time complexity: O(digits × max_sum × 2 × 2 × 10) where max_sum = 9 × 18 = 162",
+        "Need memoization with -1 initialization for non-tight states only; tight states require position-indexed DP"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Given N intervals [l_i, r_i] on a line, you need to select a maximum size subset of non-overlapping intervals. However, if interval i ends at position x, you can select interval j starting at x (i.e., intervals are half-open). Formulate this as a DP on intervals problem with O(N log N) complexity after sorting. Write the complete solution in Python including the recurrence, base case, and explain how to handle intervals with equal endpoints.",
+      "keyPoints": [
+        "Sort intervals by end time; let intervals[i] = (end_i, start_i)",
+        "Recurrence: dp[i] = max(dp[i-1], dp[p(i)] + 1) where p(i) = largest index j < i with intervals[j].end ≤ intervals[i].start",
+        "Use binary search to find p(i) in O(log N), achieving O(N log N) overall",
+        "Base case: dp[0] = 0 (no intervals selected)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "You are given a complete weighted graph with N ≤ 20 vertices. The weight matrix w[i][j] satisfies the triangle inequality: w[i][j] ≤ w[i][k] + w[k][j] for all i, j, k. You need to find the shortest Hamiltonian path (visit all vertices exactly once, start from vertex 0) rather than a cycle. Formulate this as a state compression DP problem. Write the complete C++ implementation with: (a) state representation using bitmask, (b) recurrence relation with proper transitions, (c) base case handling, (d) optimization using bit DP, and (e) explain why this is more efficient than brute force O(N!) enumeration. Also analyze the time and space complexity.",
+      "keyPoints": [
+        "State: dp[mask][last] = minimum cost to visit vertices in 'mask' ending at 'last'; mask includes vertex 0",
+        "Recurrence: dp[mask][last] = min(dp[mask ^ (1<<last)][prev] + w[prev][last]) for all prev in mask",
+        "Base case: dp[1][0] = 0 (only vertex 0 visited, starting at 0); answer = min(dp[(1<<N)-1][i] + w[i][0]) for all i",
+        "Time: O(N^2 × 2^N), Space: O(N × 2^N); brute force is O(N!) which is infeasible for N=20"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Consider the following optimization problem: Given N jobs in sequence, where choosing job i incurs cost C[i] and affects the next K jobs' processing times. Specifically, if you schedule job i at time t, it completes at t + P[i] and the next job's start time is max(t + P[i], S[i]) where S[i] is a separator time. You need to minimize total completion time. This problem exhibits both optimal substructure and the quadrangle inequality needed for divide-and-conquer optimization. (a) Prove that this problem satisfies the quadrangle inequality: w(a,c) + w(b,d) ≤ w(a,d) + w(b,c) for a ≤ b ≤ c ≤ d, allowing application of divide-and-conquer DP optimization. (b) Write the complete C++ implementation using divide-and-conquer optimization to achieve O(K × N log N) instead of O(K × N²). (c) Explain why Knuth optimization cannot be applied here but divide-and-conquer can, and prove the monotonicity of the argmin (optimal decision) function. (d) If K = 2 (each job affects exactly 2 subsequent jobs), calculate the actual time complexity improvement from O(N²) to O(N log N).",
+      "keyPoints": [
+        "Quadrangle inequality proof requires showing the cost function is concave/convex in the decision boundary; need to prove opt[i] ≤ opt[i+1]",
+        "Divide-and-conquer: solve(l, r, optL, optR) recursively, compute mid = (l+r)/2, try all k in [optL, optR], store best for mid, recurse on (l, mid-1, optL, opt[k]) and (mid+1, r, opt[k], optR)",
+        "Knuth requires quadrangle inequality AND monotonicity: w(a,c) + w(b,d) ≤ w(a,d) + w(b,c) AND opt[i-1] ≤ opt[i] ≤ opt[i+1]; divide-and-conquer only needs monotonicity of argmin",
+        "Complexity: O(N²) → O(N log N) for K=2; for general K: O(K×N²) → O(K×N log N); with N=10^5, this is ~10^6 vs ~10^10 operations"
+      ],
+      "marks": 10
+    }
+  ]
+}

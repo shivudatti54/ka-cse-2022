@@ -1,0 +1,53 @@
+{
+  "topicId": "vfork",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic vfork() Example",
+      "description": "Demonstrates standard vfork() usage pattern with execl()",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = vfork();\n \n if (pid == 0) {\n // Child process\n printf(\"Child: About to exec\\n\");\n execl(\"/bin/ls\", \"ls\", \"-l\", NULL);\n \n // Only reached if exec fails\n perror(\"execl failed\");\n _exit(1);\n } else if (pid > 0) {\n // Parent process\n printf(\"Parent: Child PID = %d\\n\", pid);\n wait(NULL); // Wait for child\n printf(\"Child completed\\n\");\n } else {\n // Error\n perror(\"vfork failed\");\n return 1;\n }\n return 0;\n}",
+      "explanation": "This demonstrates the correct vfork() usage pattern: child MUST call exec() immediately to replace its memory space before any modifications. Parent waits using wait().",
+      "timeComplexity": "O(1) for vfork, depends on exec",
+      "spaceComplexity": "O(1) - no memory copied"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "vfork() with _exit()",
+      "description": "Shows proper handling when child doesn't use exec()",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/wait.h>\n\nint main() {\n pid_t pid = vfork();\n \n if (pid == 0) {\n // Child process - just exit without exec\n // MUST use _exit() not exit()\n printf(\"Child: Exiting directly\\n\");\n _exit(0); // Use _exit() not exit()!\n } else if (pid > 0) {\n wait(NULL);\n printf(\"Parent: Child exited\\n\");\n }\n return 0;\n}",
+      "explanation": "If child doesn't call exec(), it must use _exit() instead of exit(). Using exit() would flush parent's stdio buffers and cause problems.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Dangerous vfork() - Undefined Behavior",
+      "description": "Shows what NOT to do with vfork()",
+      "code": "// WRONG CODE - DO NOT USE\nint main() {\n int x = 10;\n pid_t pid = vfork();\n \n if (pid == 0) {\n x = 20; // DANGEROUS! Modifies parent's variable\n // No exec() called - UNDEFINED BEHAVIOR\n return 0; // EVEN WORSE! Corrupts parent's stack\n }\n wait(NULL);\n printf(\"x = %d\\n\", x); // Unpredictable!\n return 0;\n}",
+      "explanation": "This code demonstrates undefined behavior: modifying shared memory without exec(), and returning from the function that called vfork(). This can crash or corrupt parent data.",
+      "timeComplexity": "Undefined",
+      "spaceComplexity": "Undefined"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "vfork() Algorithm Flow",
+      "description": "Step-by-step algorithm of vfork() system call",
+      "code": "ALGORITHM vfork()\nBEGIN\n 1. Create process descriptor for new process\n 2. Set up new kernel stack for child\n 3. DO NOT copy parent's page tables\n 4. Point child's page tables to parent's pages (share)\n 5. Set flag indicating vfork() was used\n 6. Return child's PID to parent\n 7. Return 0 to child\n 8. Block parent until child exits or calls exec()\nEND",
+      "explanation": "This shows the internal workings of vfork(). Steps 3-4 show why it's faster - no page table copying. Step 8 shows the parent blocking mechanism.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1) - no additional page tables"
+    },
+    {
+      "id": "code-5",
+      "language": "c",
+      "title": "Comparison: fork() vs vfork()",
+      "description": "Side-by-side comparison showing differences",
+      "code": "// fork() - Safe but slower\npid_t p1 = fork();\nif (p1 == 0) {\n // Child has its own address space\n // Can modify freely without affecting parent\n printf(\"Child: x = %d\\n\", ++x);\n exit(0);\n}\n\n// vfork() - Fast but dangerous\npid_t p2 = vfork();\nif (p2 == 0) {\n // Child shares parent's address space\n // MUST call exec() immediately\n execl(\"/bin/program\", \"program\", NULL);\n _exit(1);\n}",
+      "explanation": "This highlights the key differences: fork() creates a safe copy allowing child to modify variables freely, while vfork() requires immediate exec() call to avoid corruption."
+    }
+  ]
+}

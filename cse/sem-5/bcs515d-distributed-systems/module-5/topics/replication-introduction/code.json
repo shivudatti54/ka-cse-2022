@@ -1,0 +1,45 @@
+{
+  "topicId": "replication-introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Synchronous Replication Commit",
+      "description": "Demonstrates how synchronous replication commits transactions",
+      "code": "FUNCTION sync_commit(transaction):\n BEGIN\n // Write to master\n write_to_master(transaction)\n \n // Send to all replicas in parallel\n FOR EACH replica IN replicas:\n parallel_send(replica, transaction)\n \n // Wait for all acknowledgments\n FOR EACH replica IN replicas:\n ack = wait_for_ack(replica)\n IF NOT ack THEN:\n ROLLBACK transaction\n RAISE \"Replication failed\"\n \n // All confirmed, commit\n COMMIT transaction\n RETURN success\nEND",
+      "explanation": "Shows synchronous replication waiting for all replicas before committing, ensuring strong consistency but adding latency",
+      "timeComplexity": "O(n) where n=number of replicas",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Asynchronous Replication Process",
+      "description": "Demonstrates asynchronous replication with replication lag",
+      "code": "FUNCTION async_commit(transaction):\n BEGIN\n // Immediately write to master\n write_to_master(transaction)\n COMMIT transaction\n \n // Queue for replication (non-blocking)\n queue_for_replication(transaction)\n \n RETURN success\nEND\n\nFUNCTION replication_worker():\n BEGIN\n WHILE running:\n transaction = dequeue(replication_queue)\n FOR EACH replica IN replicas:\n send_to_replica(replica, transaction)\n mark_replicated(transaction)\n END\nEND",
+      "explanation": "Shows non-blocking commit in asynchronous replication, with separate worker for propagating changes to replicas",
+      "timeComplexity": "O(1) for commit, O(n) for propagation",
+      "spaceComplexity": "O(queue_size)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Automatic Failover Procedure",
+      "description": "Shows automatic failover from failed master to replica",
+      "code": "FUNCTION detect_failure():\n BEGIN\n WHILE monitoring:\n IF NOT ping(master) THEN:\n IF retry_count > threshold THEN:\n trigger_failover()\n wait(heartbeat_interval)\n END\n\nFUNCTION trigger_failover():\n BEGIN\n // Stop replication on candidates\n FOR EACH candidate IN candidates:\n STOP_REPLICATION(candidate)\n \n // Promote most up-to-date replica\n best_replica = select_best_candidate(candidates)\n \n // Make it new master\n PROMOTE_TO_MASTER(best_replica)\n \n // Reconfigure other replicas\n FOR EACH replica IN other_replicas:\n CHANGE_MASTER_TO(best_replica, replica)\n \n // Update application connections\n UPDATE_LOAD_BALANCER(best_replica)\n \n ALERT_ADMIN(\"Failover completed\")\nEND",
+      "explanation": "Demonstrates automatic failover mechanism including failure detection, replica promotion, and reconfiguration",
+      "timeComplexity": "O(n) where n=number of replicas",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Conflict Resolution - Last Write Wins",
+      "description": "Demonstrates one method of resolving write conflicts in multi-master replication",
+      "code": "FUNCTION resolve_conflict(local_write, remote_write):\n BEGIN\n // Compare timestamps\n IF local_write.timestamp > remote_write.timestamp THEN:\n RETURN local_write\n ELSE:\n RETURN remote_write\n END\n\nFUNCTION apply_replicated_write(write_record):\n BEGIN\n current_data = READ(write_record.key)\n \n IF current_data.last_modified == write_record.parent_version THEN:\n // No conflict, apply directly\n WRITE(write_record.key, write_record.value)\n ELSE:\n // Conflict detected, resolve\n resolved = resolve_conflict(current_data, write_record)\n WRITE(write_record.key, resolved.value)\n LOG_CONFLICT(current_data, write_record, resolved)\n END",
+      "explanation": "Shows timestamp-based conflict resolution in master-master replication, automatically choosing most recent write",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

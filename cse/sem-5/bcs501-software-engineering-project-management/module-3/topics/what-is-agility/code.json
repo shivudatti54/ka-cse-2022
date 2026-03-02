@@ -1,0 +1,55 @@
+{
+  "topicId": "what-is-agility",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Sprint Planning Algorithm",
+      "description": "Pseudocode for Sprint Planning meeting process",
+      "code": "SPRINT PLANNING\nBEGIN\n INPUT: Product Backlog, Sprint Goal (optional)\n OUTPUT: Sprint Backlog, Sprint Goal\n \n // Part 1: What can be delivered?\n ProductOwner.PresentPrioritizedBacklog()\n Team.EstimateCapacity()\n \n WHILE Team.HasCapacity() AND Backlog.HasItems() DO\n Item = Backlog.SelectTopItem()\n IF Team.CanComplete(Item) THEN\n SprintBacklog.Add(Item)\n Team.DecreaseCapacity(Item.Estimate)\n ELSE\n BREAK\n END IF\n END WHILE\n \n // Part 2: How will it be achieved?\n FOR EACH Item IN SprintBacklog DO\n TaskList = Team Decompose(Item)\n Item.AddTasks(TaskList)\n END FOR\n \n SprintBacklog.Finalize()\n RETURN SprintBacklog, SprintGoal\nEND",
+      "explanation": "Sprint Planning is time-boxed (max 8 hours). First part determines WHAT to deliver based on team capacity and backlog priority. Second part determines HOW by breaking items into tasks.",
+      "timeComplexity": "O(n) where n = backlog items considered",
+      "spaceComplexity": "O(m) where m = tasks created"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Daily Stand-up Meeting",
+      "description": "Algorithm for conducting daily Scrum meeting",
+      "code": "DAILY STANDUP\nBEGIN\n INPUT: Team Members, Sprint Backlog, Previous Day's Work\n OUTPUT: Updated Sprint Status, Impediments List\n \n TIMEBOX = 15 minutes\n StartTimer()\n \n Impediments = Empty List\n \n FOR EACH Member IN Team DO\n // Three questions format\n Yesterday = Member.GetCompletedWork()\n Today = Member.GetPlannedWork()\n Blockers = Member.GetBlockers()\n \n // Share with team\n PRINT: Member.Name + \": \" + Yesterday + \", \" + Today\n \n // Collect impediments\n IF Blockers.Length > 0 THEN\n Impediments.Add(Blockers)\n END IF\n END FOR\n \n // Scrum Master addresses impediments\n FOR EACH Impediment IN Impediments DO\n ScrumMaster.Resolve(Impediment)\n END IF\n \n RETURN SprintBacklog, Impediments\nEND",
+      "explanation": "Daily Stand-up follows the three questions format: What did I do yesterday? What will I do today? Are there any blockers? Time-boxed to 15 minutes maximum.",
+      "timeComplexity": "O(n) where n = team size",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Sprint Retrospective Process",
+      "description": "Algorithm for Sprint Retrospective meeting",
+      "code": "SPRINT RETROSPECTIVE\nBEGIN\n INPUT: Sprint Data, Previous Retrospective Actions\n OUTPUT: Improvement Actions for Next Sprint\n \n // Set the stage\n Team.ReflectOnSprint()\n \n // Gather data (What happened?)\n DataPoints = CollectMetrics()\n DataPoints.Add(TeamExperiences)\n \n // Generate insights (Why did it happen?)\n Insights = Analyze(DataPoints)\n \n // Decide actions (What will we do differently?)\n // Technique: Start-Stop-Continue\n Start = [] // New behaviors to start\n Stop = [] // Behaviors to stop\n Continue = [] // Behaviors to maintain\n \n FOR EACH Insight IN Insights DO\n Action = DetermineAction(Insight)\n Categorize(Action, Start, Stop, Continue)\n END FOR\n \n // Close retrospective\n ActionItems = PrioritizeActions(Start + Stop)\n AssignOwners(ActionItems)\n \n RETURN ActionItems\nEND",
+      "explanation": "Sprint Retrospective helps teams continuously improve. Common techniques include Start-Stop-Continue, Mad-Sad-Glad, and 4Ls (Liked, Learned, Lacked, Longed For).",
+      "timeComplexity": "O(n) where n = team inputs",
+      "spaceComplexity": "O(k) where k = action items"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Kanban Flow Management",
+      "description": "Pseudocode for Kanban pull-based system with WIP limits",
+      "code": "KANBAN BOARD\nBEGIN\n // Initialize columns with WIP limits\n Columns = {\n \"To Do\": WIP_Limit = 10,\n \"In Progress\": WIP_Limit = 5,\n \"Review\": WIP_Limit = 3,\n \"Done\": WIP_Limit = Infinite\n }\n \n // Pull item when capacity available\n FUNCTION PullItem(Column)\n IF Column.CurrentItems < Column.WIP_Limit THEN\n Item = PreviousColumn.GetNextItem()\n Column.Add(Item)\n RETURN Item\n ELSE\n RETURN NULL // Column at capacity\n END IF\n END FUNCTION\n \n // Flow items through columns\n WHILE Board.HasItems() DO\n FOR EACH Column IN Columns (except Done) DO\n IF Column.CanPull() THEN\n Item = PullItem(Column)\n IF Item != NULL THEN\n ProcessItem(Item)\n MoveToNextColumn(Item)\n END IF\n END IF\n END IF\n END WHILE\n \n // Calculate metrics\n LeadTime = CalculateAverageTime(ToDo_to_Done)\n CycleTime = CalculateAverageTime(InProgress_to_Done)\n Throughput = ItemsCompleted / TimePeriod\n \n RETURN LeadTime, CycleTime, Throughput\nEND",
+      "explanation": "Kanban uses pull-based system where items are pulled into a column only when capacity (WIP limit) is available. This prevents overloading and optimizes flow.",
+      "timeComplexity": "O(n) where n = items processed",
+      "spaceComplexity": "O(w) where w = WIP limits"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Velocity Calculation",
+      "description": "Algorithm for calculating and using team velocity",
+      "code": "VELOCITY CALCULATION\nBEGIN\n // Collect completed story points per sprint\n SprintHistory = [Sprint1_Points, Sprint2_Points, ..., SprintN_Points]\n \n // Calculate rolling average velocity\n FUNCTION CalculateVelocity(SprintHistory, Window)\n LastNSprints = SprintHistory.GetLast(Window) // typically 3-5 sprints\n Average = Sum(LastNSprints) / Window\n RETURN Average\n END FUNCTION\n \n // Use velocity for planning\n FUNCTION PlanSprint(AvailableCapacity, Backlog)\n TargetVelocity = CalculateVelocity(SprintHistory, 3)\n SelectedItems = []\n CurrentLoad = 0\n \n FOR EACH Item IN Backlog DO\n IF CurrentLoad + Item.StoryPoints <= TargetVelocity THEN\n SelectedItems.Add(Item)\n CurrentLoad += Item.StoryPoints\n ELSE\n BREAK\n END IF\n END FOR\n \n RETURN SelectedItems\n END FUNCTION\n \n // Update history after sprint\n FUNCTION UpdateHistory(CompletedPoints)\n SprintHistory.Add(CompletedPoints)\n IF SprintHistory.Length > 10 THEN\n SprintHistory.RemoveOldest()\n END IF\n END FUNCTION\n \n RETURN Velocity\nEND",
+      "explanation": "Velocity is calculated as the average story points completed over the last 3-5 sprints. It helps teams plan future sprints and improve estimation accuracy.",
+      "timeComplexity": "O(n) for velocity calc, O(m) for planning",
+      "spaceComplexity": "O(k) for sprint history storage"
+    }
+  ]
+}

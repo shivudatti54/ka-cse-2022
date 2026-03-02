@@ -1,0 +1,35 @@
+{
+  "topicId": "inline-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "cpp",
+      "title": "Basic Inline Function Example",
+      "description": "Demonstrates declaration and usage of inline functions",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Inline function declaration\ninline int square(int x) {\n return x * x;\n}\n\n// Inline function with multiple parameters\ninline int max(int a, int b) {\n return (a > b) ? a : b;\n}\n\nint main() {\n int num = 5;\n int result = square(num); // Replaced with: return num * num;\n cout << \"Square of \" << num << \" is \" << result << endl;\n \n int a = 10, b = 20;\n cout << \"Maximum is: \" << max(a, b) << endl; // Inlined\n \n return 0;\n}",
+      "explanation": "The inline keyword suggests compiler to replace function calls with the function body. For small functions like square and max, this eliminates call overhead.",
+      "timeComplexity": "O(1) - direct execution, no call overhead",
+      "spaceComplexity": "O(1) per call site (code duplication)"
+    },
+    {
+      "id": "code-2",
+      "language": "cpp",
+      "title": "Inline vs Normal Function - Performance Comparison",
+      "description": "Shows when compiler may or may not inline functions",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Small function - good inline candidate\ninline int add(int a, int b) {\n return a + b;\n}\n\n// Large function - compiler may ignore inline\ninline int calculateFactorial(int n) {\n int result = 1;\n for(int i = 1; i <= n; i++) {\n result *= i;\n }\n return result;\n}\n\n// Recursive function - should NOT be inlined\ninline int fibonacci(int n) {\n if(n <= 1) return n;\n return fibonacci(n-1) + fibonacci(n-2); // Compiler won't inline\n}\n\nint main() {\n cout << \"Add: \" << add(5, 3) << endl; // Likely inlined\n cout << \"Factorial: \" << calculateFactorial(5) << endl; // May not inline\n cout << \"Fibonacci: \" << fibonacci(5) << endl; // Not inlined\n return 0;\n}",
+      "explanation": "The compiler decides whether to actually inline based on function complexity. Small functions like add() are likely inlined, while large or recursive functions may not be.",
+      "timeComplexity": "Varies - compiler dependent",
+      "spaceComplexity": "Code bloat possible for large inlined functions"
+    },
+    {
+      "id": "code-3",
+      "language": "cpp",
+      "title": "Inline Member Functions in Class",
+      "description": "Demonstrates implicit and explicit inline for class member functions",
+      "code": "#include <iostream>\nusing namespace std;\n\n// Class with implicit inline (defined inside class)\nclass Calculator {\nprivate:\n int value;\npublic:\n // Implicitly inline - defined inside class\n int getValue() {\n return value;\n }\n \n void setValue(int v) {\n value = v;\n }\n \n // Explicitly inline - defined outside but marked\n inline int square();\n \n inline int cube();\n};\n\n// Explicit inline definition outside class\ninline int Calculator::square() {\n return value * value;\n}\n\ninline int Calculator::cube() {\n return value * value * value;\n}\n\nint main() {\n Calculator calc;\n calc.setValue(5);\n cout << \"Value: \" << calc.getValue() << endl;\n cout << \"Square: \" << calc.square() << endl;\n cout << \"Cube: \" << calc.cube() << endl;\n return 0;\n}",
+      "explanation": "Member functions defined inside class are automatically inline. Functions defined outside can use explicit 'inline' keyword. Both approaches create inline functions.",
+      "timeComplexity": "O(1) - no function call overhead",
+      "spaceComplexity": "O(n) where n = number of call sites (code duplication)"
+    }
+  ]
+}

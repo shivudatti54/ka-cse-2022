@@ -1,0 +1,35 @@
+{
+  "topicId": "block-coding",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Hamming Code Encoder (7,4)",
+      "description": "Encodes 4 data bits into 7-bit Hamming codeword with parity bits at positions 1,2,4",
+      "code": "FUNCTION EncodeHamming(data[4]):\n // data bits at positions 3,5,6,7\n codeword[7]\n codeword[3] = data[0]\n codeword[5] = data[1]\n codeword[6] = data[2]\n codeword[7] = data[3]\n \n // Parity bit at position 1 (covers 3,5,7)\n codeword[1] = codeword[3] XOR codeword[5] XOR codeword[7]\n \n // Parity bit at position 2 (covers 3,6,7)\n codeword[2] = codeword[3] XOR codeword[6] XOR codeword[7]\n \n // Parity bit at position 4 (covers 5,6,7)\n codeword[4] = codeword[5] XOR codeword[6] XOR codeword[7]\n \n RETURN codeword",
+      "explanation": "Each parity bit covers positions whose binary representation has the corresponding bit set. Position 1 (001), 2 (010), 4 (100).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Syndrome Decoding for Error Detection",
+      "description": "Calculates syndrome from received vector to detect and locate errors",
+      "code": "FUNCTION CalculateSyndrome(received[7], H[3][7]):\n syndrome[3] = {0, 0, 0}\n \n FOR i = 0 TO 2:\n FOR j = 0 TO 6:\n syndrome[i] = syndrome[i] XOR (received[j] AND H[i][j])\n END FOR\n END FOR\n \n RETURN syndrome\n\nFUNCTION DecodeHamming(received[7]):\n syndrome = CalculateSyndrome(received)\n \n // Convert syndrome to error position\n errorPos = (syndrome[2] * 4) + (syndrome[1] * 2) + (syndrome[0] * 1)\n \n IF errorPos > 0 THEN\n // Correct error by flipping bit\n received[errorPos - 1] = NOT received[errorPos - 1]\n END IF\n \n // Extract data bits from corrected codeword\n data[4] = {received[2], received[4], received[5], received[6]}\n RETURN data",
+      "explanation": "Syndrome is matrix product of parity-check matrix and received vector. Non-zero syndrome indicates error position directly in Hamming code.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "CRC Generation and Checking",
+      "description": "CRC error detection using polynomial division",
+      "code": "FUNCTION CRCEncode(data[], generator[], r):\n // Append r zero bits to data\n extended[r + length(data)]\n FOR i = 0 TO length(data)-1:\n extended[i] = data[i]\n FOR i = length(data) TO length(data)+r-1:\n extended[i] = 0\n \n // Polynomial division\n remainder = PolynomialDivision(extended, generator)\n \n // Append remainder to original data\n codeword[length(data) + r]\n FOR i = 0 TO length(data)-1:\n codeword[i] = data[i]\n FOR i = 0 TO r-1:\n codeword[length(data) + i] = remainder[i]\n \n RETURN codeword\n\nFUNCTION CRCCheck(received[], generator[]):\n remainder = PolynomialDivision(received, generator)\n \n IF AllZero(remainder) THEN\n RETURN TRUE // No error detected\n ELSE\n RETURN FALSE // Error detected\n END IF",
+      "explanation": "CRC divides data by generator polynomial using modulo-2 arithmetic. Remainder becomes CRC bits. Receiver checks if division yields zero remainder.",
+      "timeComplexity": "O(n × r)",
+      "spaceComplexity": "O(r)"
+    }
+  ]
+}

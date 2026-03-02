@@ -1,0 +1,35 @@
+{
+  "topicId": "process-concept",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Process Creation using fork()",
+      "description": "Demonstrates creating a new process in Unix-like systems using fork() system call",
+      "code": "#include <stdio.h>\n#include <unistd.h>\n#include <sys/types.h>\n\nint main() {\n    pid_t pid;\n    \n    printf(\"Before fork: Process ID = %d\\n\", getpid());\n    \n    pid = fork();  // Create new process\n    \n    if (pid < 0) {\n        // Error occurred\n        printf(\"Fork failed!\");\n        return 1;\n    }\n    else if (pid == 0) {\n        // Child process\n        printf(\"Child: PID = %d, Parent PID = %d\\n\", \n               getpid(), getppid());\n    }\n    else {\n        // Parent process\n        printf(\"Parent: PID = %d, Child PID = %d\\n\", \n               getpid(), pid);\n        wait(NULL);  // Wait for child to complete\n        printf(\"Child completed\\n\");\n    }\n    \n    return 0;\n}",
+      "explanation": "The fork() system call creates an exact copy of the parent process. It returns twice: to the parent it returns the child's PID, and to the child it returns 0. The wait() call ensures the parent waits for the child to finish execution.",
+      "timeComplexity": "O(1) for fork operation",
+      "spaceComplexity": "O(n) where n is the size of parent process memory copied"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Process States Simulation",
+      "description": "Demonstrates process states and transitions in a simplified operating system simulation",
+      "code": "import time\nimport random\n\nclass Process:\n    def __init__(self, pid):\n        self.pid = pid\n        self.state = \"NEW\"\n        self.ProgramCounter = 0\n    \n    def admit(self):\n        self.state = \"READY\"\n        print(f\"Process {self.pid}: NEW -> READY\")\n    \n    def dispatch(self):\n        self.state = \"RUNNING\"\n        print(f\"Process {self.pid}: READY -> RUNNING\")\n    \n    def preempt(self):\n        self.state = \"READY\"\n        print(f\"Process {self.pid}: RUNNING -> READY (preempt)\")\n    \n    def wait_for_io(self):\n        self.state = \"WAITING\"\n        print(f\"Process {self.pid}: RUNNING -> WAITING (I/O)\")\n    \n    def io_complete(self):\n        self.state = \"READY\"\n        print(f\"Process {self.pid}: WAITING -> READY (I/O done)\")\n    \n    def terminate(self):\n        self.state = \"TERMINATED\"\n        print(f\"Process {self.pid}: RUNNING -> TERMINATED\")\n\n# Simulation\np = Process(1001)\np.admit()\np.dispatch()\n\nif random.random() > 0.5:\n    p.wait_for_io()\n    time.sleep(1)\n    p.io_complete()\nelse:\n    p.preempt()\n\np.dispatch()\np.terminate()",
+      "explanation": "This Python code simulates the process state transitions in an operating system. It demonstrates how a process moves through different states: NEW -> READY -> RUNNING -> (either WAITING or READY) -> TERMINATED, showing the dynamic nature of process management.",
+      "timeComplexity": "O(1) per state transition",
+      "spaceComplexity": "O(1) per Process object"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Context Switching Algorithm",
+      "description": "Pseudocode demonstrating how context switching works between two processes",
+      "code": "// Data structures\nPCB1: Process Control Block for Process 1\nPCB2: Process Control Block for Process 2\n\n// Context Switch Procedure\nPROCEDURE ContextSwitch(currentProcess, nextProcess)\nBEGIN\n    // Step 1: Save current process context\n    PCB1.state = READY\n    PCB1.ProgramCounter = CPU.PC\n    PCB1.CPU_Registers = CPU.RegisterSet\n    PCB1.StackPointer = CPU.StackPtr\n    \n    // Step 2: Update scheduling queues\n    AddToReadyQueue(PCB1)\n    \n    // Step 3: Select next process\n    nextProcess = SelectFromReadyQueue()\n    \n    // Step 4: Remove next process from queue\n    RemoveFromReadyQueue(nextProcess)\n    \n    // Step 5: Restore next process context\n    nextProcess.state = RUNNING\n    CPU.PC = nextProcess.ProgramCounter\n    CPU.RegisterSet = nextProcess.CPU_Registers\n    CPU.StackPtr = nextProcess.StackPointer\n    \n    // Step 6: Begin execution\n    JUMP_TO(CPU.PC)\nEND\n\n// Main Execution Loop\nWHILE systemRunning DO\n    currentProcess = GetRunningProcess()\n    nextProcess = SelectFromReadyQueue()\n    \n    IF nextProcess != NULL THEN\n        ContextSwitch(currentProcess, nextProcess)\n    END IF\nEND WHILE",
+      "explanation": "Context switching involves saving the complete state of the currently running process into its PCB and loading the state of another process from its PCB. This includes saving all CPU registers, program counter, stack pointer, and other execution context. The scheduler decides which process to run next, and the dispatcher performs the actual context switch.",
+      "timeComplexity": "O(1) for each save/restore operation, but total overhead depends on number of registers and system architecture",
+      "spaceComplexity": "O(n) where n is number of processes in the system for PCB storage"
+    }
+  ]
+}

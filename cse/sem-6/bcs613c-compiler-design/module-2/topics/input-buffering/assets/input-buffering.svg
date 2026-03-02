@@ -1,0 +1,94 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  <text x="400" y="38" text-anchor="middle" font-size="22" font-weight="bold" fill="#1976d2" font-family="Arial">Input Buffering: Dual-Buffer Scheme</text>
+
+  <!-- Step 0: Source file feeds into buffer system -->
+  <g id="step0" class="step" data-narration="The lexical analyzer reads source code from disk. Reading one character at a time causes thousands of slow disk accesses. Input buffering loads large chunks into memory to dramatically reduce I/O overhead.">
+    <rect x="30" y="65" width="140" height="80" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="100" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#9c27b0" font-family="Arial">Source File</text>
+    <text x="100" y="115" text-anchor="middle" font-size="10" fill="#9c27b0" font-family="Arial">on Disk</text>
+    <line x1="170" y1="105" x2="215" y2="105" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="195" y="97" text-anchor="middle" font-size="9" fill="#1976d2" font-family="Arial">read</text>
+    <rect x="220" y="70" width="550" height="70" rx="10" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="495" y="95" text-anchor="middle" font-size="15" font-weight="bold" fill="#1976d2" font-family="Arial">Input Buffer System</text>
+    <text x="495" y="115" text-anchor="middle" font-size="11" fill="#1976d2" font-family="Arial">Reduces I/O calls from thousands to a handful</text>
+  </g>
+
+  <!-- Step 1: Two buffer halves side by side -->
+  <g id="step1" class="step" data-narration="The two-buffer scheme splits memory into two equal halves, typically four kilobytes each. While the lexer processes characters in buffer one, the system preloads buffer two from disk in the background.">
+    <rect x="60" y="160" width="320" height="100" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="220" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#1976d2" font-family="Arial">Buffer 1 (4 KB)</text>
+    <rect x="80" y="200" width="280" height="40" rx="4" fill="white" stroke="#1976d2" stroke-width="1"/>
+    <text x="90" y="220" font-size="11" font-family="monospace" fill="#1976d2">i n t   m a i n ( )   {</text>
+    <text x="310" y="220" font-size="11" font-weight="bold" fill="#f44336" font-family="monospace">EOF</text>
+
+    <rect x="420" y="160" width="320" height="100" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="580" y="185" text-anchor="middle" font-size="14" font-weight="bold" fill="#388e3c" font-family="Arial">Buffer 2 (4 KB)</text>
+    <rect x="440" y="200" width="280" height="40" rx="4" fill="white" stroke="#388e3c" stroke-width="1"/>
+    <text x="450" y="220" font-size="11" font-family="monospace" fill="#388e3c">  i n t   x   =   1 0</text>
+    <text x="670" y="220" font-size="11" font-weight="bold" fill="#f44336" font-family="monospace">EOF</text>
+  </g>
+
+  <!-- Step 2: lexemeBegin and forward pointers -->
+  <g id="step2" class="step" data-narration="Two pointers manage scanning. The lexeme-begin pointer marks where the current token starts. The forward pointer advances character by character to find where the token ends, then both pointers move together.">
+    <rect x="60" y="275" width="680" height="50" rx="6" fill="white" stroke="#1976d2" stroke-width="2"/>
+    <text x="78" y="305" font-size="13" font-family="monospace" fill="#1976d2">w h i l e   (   c o u n t   &lt;   1 0 )   {</text>
+    <polygon points="88,270 94,260 100,270" fill="#f44336"/>
+    <text x="94" y="255" text-anchor="middle" font-size="10" font-weight="bold" fill="#f44336" font-family="Arial">lexemeBegin</text>
+    <polygon points="148,270 154,260 160,270" fill="#388e3c"/>
+    <text x="154" y="250" text-anchor="middle" font-size="10" font-weight="bold" fill="#388e3c" font-family="Arial">forward</text>
+    <rect x="530" y="275" width="200" height="50" rx="6" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="630" y="295" text-anchor="middle" font-size="11" font-weight="bold" fill="#ff9800" font-family="Arial">Token found:</text>
+    <text x="630" y="313" text-anchor="middle" font-size="12" font-family="monospace" fill="#ff9800">"while" (keyword)</text>
+  </g>
+
+  <!-- Step 3: Sentinel at buffer end -->
+  <g id="step3" class="step" data-narration="A sentinel character, typically end-of-file, is placed at the end of each buffer half. This eliminates the need for two separate checks per character, one for buffer end and one for end-of-file, improving speed.">
+    <text x="400" y="355" text-anchor="middle" font-size="14" font-weight="bold" fill="#ff9800" font-family="Arial">Sentinel-Based End Detection</text>
+    <rect x="80" y="370" width="260" height="45" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="90" y="390" font-size="10" font-family="monospace" fill="#ff9800">d a t a . . .</text>
+    <rect x="290" y="370" width="40" height="45" rx="0" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="310" y="398" text-anchor="middle" font-size="10" font-weight="bold" fill="#f44336" font-family="monospace">eof</text>
+    <rect x="380" y="370" width="260" height="45" rx="5" fill="#fff3e0" stroke="#ff9800" stroke-width="1.5"/>
+    <text x="390" y="390" font-size="10" font-family="monospace" fill="#ff9800">d a t a . . .</text>
+    <rect x="590" y="370" width="40" height="45" rx="0" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="610" y="398" text-anchor="middle" font-size="10" font-weight="bold" fill="#f44336" font-family="monospace">eof</text>
+    <text x="700" y="398" font-size="10" fill="#f44336" font-family="Arial">Sentinels</text>
+  </g>
+
+  <!-- Step 4: Buffer switching flow -->
+  <g id="step4" class="step" data-narration="When the forward pointer hits a sentinel, buffer switching begins. If it is a true end-of-file, parsing terminates. Otherwise the exhausted buffer is refilled from disk while scanning continues in the other buffer.">
+    <rect x="60" y="435" width="150" height="55" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="135" y="458" text-anchor="middle" font-size="11" font-weight="bold" fill="#1976d2" font-family="Arial">Forward hits</text>
+    <text x="135" y="475" text-anchor="middle" font-size="11" fill="#1976d2" font-family="Arial">sentinel?</text>
+    <line x1="210" y1="455" x2="260" y2="455" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="265" y="435" width="130" height="55" rx="25" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="330" y="458" text-anchor="middle" font-size="11" font-weight="bold" fill="#ff9800" font-family="Arial">Real EOF?</text>
+    <text x="330" y="475" text-anchor="middle" font-size="10" fill="#ff9800" font-family="Arial">(decision)</text>
+    <line x1="395" y1="445" x2="460" y2="445" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="430" y="438" font-size="9" fill="#388e3c" font-family="Arial">No</text>
+    <rect x="465" y="430" width="140" height="55" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+    <text x="535" y="453" text-anchor="middle" font-size="11" font-weight="bold" fill="#388e3c" font-family="Arial">Reload buffer</text>
+    <text x="535" y="470" text-anchor="middle" font-size="10" fill="#388e3c" font-family="Arial">Switch to other</text>
+    <line x1="395" y1="475" x2="460" y2="510" stroke="#f44336" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="415" y="502" font-size="9" fill="#f44336" font-family="Arial">Yes</text>
+    <rect x="465" y="498" width="140" height="40" rx="8" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+    <text x="535" y="523" text-anchor="middle" font-size="11" font-weight="bold" fill="#f44336" font-family="Arial">End of input</text>
+  </g>
+
+  <!-- Step 5: Token spanning across buffers -->
+  <g id="step5" class="step" data-narration="Tokens can span buffer boundaries. If lexeme-begin is in buffer one and the forward pointer crosses into buffer two, the lexer assembles the complete token from both buffers, maintaining continuity across the boundary.">
+    <text x="400" y="560" text-anchor="middle" font-size="13" font-weight="bold" fill="#9c27b0" font-family="Arial">Token Spanning Buffers: "longVariable" split across Buffer 1 and Buffer 2</text>
+    <rect x="160" y="568" width="200" height="25" rx="4" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="260" y="586" text-anchor="middle" font-size="10" font-family="monospace" fill="#9c27b0">. . l o n g V a r i</text>
+    <rect x="360" y="568" width="200" height="25" rx="4" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1.5"/>
+    <text x="460" y="586" text-anchor="middle" font-size="10" font-family="monospace" fill="#9c27b0">a b l e   =   5 . .</text>
+    <line x1="360" y1="568" x2="360" y2="593" stroke="#f44336" stroke-width="2" stroke-dasharray="4,3"/>
+  </g>
+</svg>

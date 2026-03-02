@@ -1,0 +1,55 @@
+{
+  "topicId": "su-command",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "bash",
+      "title": "Basic su command usage",
+      "description": "Demonstrates basic switching to root user",
+      "code": "# Switch to root user (keeps current environment)\nsu root\n\n# Switch to root with full login environment (RECOMMENDED)\nsu -\nsu - root",
+      "explanation": "First form preserves current directory and environment variables. Second form (with -) loads root's complete environment including PATH and HOME directory.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-2",
+      "language": "bash",
+      "title": "Execute single command with su -c",
+      "description": "Running a specific command as another user without interactive shell",
+      "code": "# List root directory as root user\nsu -c 'ls -la /root' root\n\n# Create a file as another user\nsu -c 'touch /home/john/test.txt' john\n\n# Combined with other options\nsu - -c 'systemctl restart apache2' root",
+      "explanation": "The -c option executes only the specified command and returns to the original shell. Useful for one-off administrative tasks without starting a full interactive session.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "bash",
+      "title": "su with environment preservation",
+      "description": "Using -m or -p option to preserve current environment",
+      "code": "# Preserve current environment when switching\nsu -m root\nsu -p root\n\n# Check current environment after switch\nenv | grep -E 'PATH|HOME|USER'",
+      "explanation": "The -m (or -p) option preserves the current user's environment variables when switching, rather than loading the target user's environment.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-4",
+      "language": "bash",
+      "title": "Switch to specific non-root user",
+      "description": "How to switch to any non-root user account",
+      "code": "# Switch to regular user 'john'\nsu - john\n\n# Switch to user without login shell\nsu john\n\n# Execute command as specific user\nsu -c 'whoami' john\nsu -c 'id' john",
+      "explanation": "Switching to non-root users works the same way. Requires knowing the target user's password unless running as root.",
+      "timeComplexity": "N/A",
+      "spaceComplexity": "N/A"
+    },
+    {
+      "id": "code-5",
+      "language": "bash",
+      "title": "Verify current user identity",
+      "description": "Commands to check current user after su",
+      "code": "# Show current username\nwhoami\n\n# Show detailed user and group IDs\nid\n\n# Show last few login entries\nlast | head\n\n# Check process info\nps aux | grep su",
+      "explanation": "After using su, verify identity with these commands. 'whoami' shows effective user, 'id' shows UID, GID, and group memberships.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

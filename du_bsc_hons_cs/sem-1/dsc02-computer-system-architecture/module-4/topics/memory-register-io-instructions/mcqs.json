@@ -1,0 +1,205 @@
+{
+  "topicId": "memory-register-io-instructions",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In a x86-64 processor, consider the instruction 'mov DWORD PTR [rax], 0x12345678'. Assuming RAX contains the base address 0x00007FFF5A4C0000, what will be the memory representation (in hex) at the destination address (assuming little-endian)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "12 34 56 78 00 00 00 00"
+        },
+        {
+          "key": "B",
+          "text": "78 56 34 12 00 00 00 00"
+        },
+        {
+          "key": "C",
+          "text": "00 00 00 00 78 56 34 12"
+        },
+        {
+          "key": "D",
+          "text": "12 34 56 78 (only 4 bytes written)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In x86-64 little-endian, the least significant byte is stored first. The immediate value 0x12345678 is stored as bytes: 78 56 34 12.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-2",
+      "question": "Which of the following MIPS instructions uses register-indirect addressing mode to access memory?",
+      "options": [
+        {
+          "key": "A",
+          "text": "lw $t0, 100($t1)"
+        },
+        {
+          "key": "B",
+          "text": "lw $t0, 100"
+        },
+        {
+          "key": "C",
+          "text": "lw $t0, label"
+        },
+        {
+          "key": "D",
+          "text": "lw $t0, label($t1)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The instruction 'lw $t0, 100($t1)' uses base register ($t1) plus offset (100) addressing, which is register-indirect with displacement.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In the classic IN/OUT port-mapped I/O model used by x86 processors, which statement is TRUE regarding the instruction 'OUT 60h, AL'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The I/O port address (60h) is sent on the address bus, and AL content is sent on the data bus in a single bus cycle"
+        },
+        {
+          "key": "B",
+          "text": "Two separate bus cycles are required: one for the port address and one for data transfer"
+        },
+        {
+          "key": "C",
+          "text": "The accumulator register is used to implicitly specify the port address"
+        },
+        {
+          "key": "D",
+          "text": "Memory-mapped I/O is used, so the address 60h refers to a memory location"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "In port-mapped I/O, the 8-bit immediate (60h) is placed on the lower 8 lines of the address bus, and the data in AL is placed on the data bus simultaneously.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Consider a single-cycle MIPS processor datapath. For the instruction 'sw $t0, 0($t1)', identify the correct sequence of control signals:",
+      "options": [
+        {
+          "key": "A",
+          "text": "RegWrite=0, MemRead=0, MemWrite=1, ALUSrc=1, ALUOp=001, MemtoReg=X"
+        },
+        {
+          "key": "B",
+          "text": "RegWrite=1, MemRead=0, MemWrite=1, ALUSrc=1, ALUOp=010, MemtoReg=0"
+        },
+        {
+          "key": "C",
+          "text": "RegWrite=0, MemRead=1, MemWrite=0, ALUSrc=1, ALUOp=001, MemtoReg=X"
+        },
+        {
+          "key": "D",
+          "text": "RegWrite=1, MemRead=0, MemWrite=1, ALUSrc=0, ALUOp=000, MemtoReg=X"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Store word needs MemWrite=1 (write to memory), RegWrite=0 (no register write), ALUSrc=1 (use immediate offset), and ALU performs addition (ALUOp=001 for add).",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "In a processor with memory-mapped I/O, the address 0xFE00 0004 is mapped to a UART status register. If a programmer executes 'LDR R0, [R1, #4]' where R1=0xFE00 0000, what is the key implication for the instruction's execution?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The instruction will always trigger a hardware exception because memory-mapped I/O requires special instructions"
+        },
+        {
+          "key": "B",
+          "text": "The processor performs a normal memory read, but the 'memory' location is actually a peripheral device register that may have side effects (e.g., clearing status flags)"
+        },
+        {
+          "key": "C",
+          "text": "Memory-mapped I/O uses a separate bus cycle, so this LDR instruction will be slower than a normal memory access"
+        },
+        {
+          "key": "D",
+          "text": "The offset #4 causes the address to wrap around, so R0 will contain the value from address 0x00000000"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In memory-mapped I/O, the same LDR instruction accesses both memory and peripherals. Reading from a UART status register may have side effects (like clearing the receive-ready flag).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What is the key difference between 'push eax' and 'pop eax' instructions in IA-32 architecture in terms of the stack pointer operation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "push decrements ESP by 4 and stores EAX; pop reads from [ESP] and increments ESP by 4"
+        },
+        {
+          "key": "B",
+          "text": "push stores EAX at [ESP-4] then decrements ESP; pop increments ESP then reads from [ESP]"
+        },
+        {
+          "key": "C",
+          "text": "Both push and pop use the same ESP modification order; only the data direction differs"
+        },
+        {
+          "key": "D",
+          "text": "push uses ESP+4 for addressing; pop uses ESP-4 for addressing"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The IA-32 push instruction first decrements ESP by 4 (stack grows downward), then stores the value at [ESP]. Pop reads from [ESP] and then increments ESP by 4.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Which of the following addressing modes is used in the x86 instruction 'MOV EAX, [EBX+ECX*4+1000h]'?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Base-displacement addressing"
+        },
+        {
+          "key": "B",
+          "text": "Scaled-index-base addressing with displacement"
+        },
+        {
+          "key": "C",
+          "text": "Register direct addressing"
+        },
+        {
+          "key": "D",
+          "text": "Indexed absolute addressing"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "This is scaled-index-base addressing: EBX (base) + ECX*4 (scaled index) + 1000h (displacement). This is powerful for accessing array elements in structures.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "In the execution of a load instruction (e.g., MIPS 'lw'), the data memory unit outputs the fetched data. Where does this data go next in a 5-stage pipeline?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Directly to the Register File for writing in the same cycle"
+        },
+        {
+          "key": "B",
+          "text": "To the ALU result mux and then to the MEM/WB pipeline register for the next cycle"
+        },
+        {
+          "key": "C",
+          "text": "It goes to the MEM/WB pipeline register and is written to the Register File in the next cycle (WB stage)"
+        },
+        {
+          "key": "D",
+          "text": "To the Instruction Decode unit to decode the next instruction"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In a 5-stage pipeline (IF, ID, EX, MEM, WB), the load data goes to the MEM/WB register in the MEM stage, and the actual register write occurs in the WB stage of the following cycle.",
+      "difficulty": "easy"
+    }
+  ]
+}

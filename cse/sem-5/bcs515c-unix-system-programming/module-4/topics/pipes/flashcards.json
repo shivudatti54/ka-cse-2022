@@ -1,0 +1,80 @@
+{
+  "topicId": "pipes",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is a pipe in Unix/Linux?",
+      "back": "A pipe is a unidirectional communication channel that allows data to flow between two related processes, typically a parent and its child process. It is one of the fundamental IPC mechanisms in Unix."
+    },
+    {
+      "id": "fc-2",
+      "front": "What is the system call used to create a pipe?",
+      "back": "The pipe() system call is used. It takes an integer array of 2 elements and creates a pipe, storing the read end in fd[0] and write end in fd[1]."
+    },
+    {
+      "id": "fc-3",
+      "front": "What are the two ends of a pipe called?",
+      "back": "The read end (fd[0]) and the write end (fd[1]). Data written to the write end can be read from the read end."
+    },
+    {
+      "id": "fc-4",
+      "front": "What is the limitation of anonymous pipes?",
+      "back": "Anonymous pipes only work between related processes (parent-child or sibling processes that share the same parent) and are unidirectional."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is a named pipe (FIFO)?",
+      "back": "A FIFO (First-In-First-Out) is a named pipe that appears as a special file in the filesystem, allowing unrelated processes to communicate."
+    },
+    {
+      "id": "fc-6",
+      "front": "How do you create a named pipe in C?",
+      "back": "Use mkfifo() function: int mkfifo(const char *pathname, mode_t mode); or mknod() system call."
+    },
+    {
+      "id": "fc-7",
+      "front": "What is PIPE_BUF in Unix pipes?",
+      "back": "PIPE_BUF is the maximum number of bytes guaranteed to be written atomically to a pipe. It is typically 4096 bytes on most systems."
+    },
+    {
+      "id": "fc-8",
+      "front": "What do dup() and dup2() do in pipe context?",
+      "back": "They duplicate file descriptors. dup2(oldfd, newfd) specifically redirects standard input/output to the pipe ends, commonly used for pipe redirection in programs."
+    },
+    {
+      "id": "fc-9",
+      "front": "What happens when you write to a pipe with no readers?",
+      "back": "The writing process receives a SIGPIPE signal or the write() system call fails with EPIPE error."
+    },
+    {
+      "id": "fc-10",
+      "front": "What happens when you read from an empty pipe with no writers?",
+      "back": "read() returns 0 (indicating end-of-file) after all write ends are closed."
+    },
+    {
+      "id": "fc-11",
+      "front": "What is the purpose of closing unused pipe ends?",
+      "back": "Closing unused ends prevents deadlocks, ensures proper EOF detection, and releases file descriptors. Always close the read end after forking if not needed by child, and vice versa."
+    },
+    {
+      "id": "fc-12",
+      "front": "How does shell pipeline work (e.g., cmd1 | cmd2)?",
+      "back": "The shell creates a pipe, forks two child processes, redirects stdout of first process to pipe write end and stdin of second process to pipe read end, then executes both commands."
+    },
+    {
+      "id": "fc-13",
+      "front": "What is the difference between pipe() and socketpair()?",
+      "back": "pipe() creates a unidirectional pipe with two file descriptors, while socketpair() creates a pair of connected sockets for bidirectional communication."
+    },
+    {
+      "id": "fc-14",
+      "front": "How do you make a pipe bidirectional?",
+      "back": "Create two pipes: one for parent-to-child direction and another for child-to-parent direction. socketpair() is an alternative for bidirectional communication."
+    },
+    {
+      "id": "fc-15",
+      "front": "What is the buffer size of a pipe in Linux?",
+      "back": "The default pipe buffer size is 65536 bytes (64KB) in modern Linux kernels, though PIPE_BUF is still 4096 bytes for atomicity guarantees."
+    }
+  ]
+}

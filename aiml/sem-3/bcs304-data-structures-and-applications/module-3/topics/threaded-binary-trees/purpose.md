@@ -1,0 +1,2 @@
+# Threaded Binary Trees
+This module teaches Threaded Binary Trees, an optimization technique for binary trees that eliminates wasted NULL pointers and enables efficient O(1) space inorder traversal. Students learn to identify threading patterns, implement threaded tree representations, and analyze the time-space trade-offs. The content prepares students for data structure examinations and algorithmic optimization problems.

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary motivation behind using a Copy-on-Write (COW) technique in an operating system?",
+    "expectedPoints": [
+      "To optimize performance by delaying the actual copying of memory until it is absolutely necessary.",
+      "To conserve memory resources by allowing multiple processes to share the same physical pages initially.",
+      "To improve process creation speed, as in the case of the fork() system call, by avoiding immediate duplication of the entire parent's address space."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the sequence of events that occur when a process attempts to write to a Copy-on-Write page.",
+    "expectedPoints": [
+      "The Memory Management Unit (MMU) detects the write attempt to a page marked as read-only/COW and triggers a page fault exception.",
+      "The operating system's page fault handler is invoked, which identifies the fault as a COW violation.",
+      "The handler allocates a new physical frame, copies the original page content to this new frame, updates the page table of the writing process to map the virtual address to this new physical frame with read/write permissions, and then resumes the instruction that caused the fault."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Analyze the benefits and potential drawbacks of the Copy-on-Write mechanism. Discuss scenarios where it is highly advantageous and situations where its overhead might be a concern.",
+    "expectedPoints": [
+      "Benefits: Significant memory savings when forking processes that immediately execute a new program (e.g., using exec()), reduced overhead for process creation, and efficient implementation of certain memory-mapped file operations.",
+      "Drawbacks: Increased complexity in the OS's page fault handler and memory management. Overhead of handling page faults and performing the actual copy on a write, which can cause minor delays.",
+      "Advantageous Scenario: A shell forking a new process for each command; most commands are short-lived and call exec() quickly, making the initial COW fork very efficient.",
+      "Overhead Concern: A process that forks and then immediately writes to a large portion of its memory (e.g., a large array). This would trigger a flood of page faults and individual page copies, potentially making COW less efficient than a straightforward copy."
+    ],
+    "marks": 10
+  }
+]

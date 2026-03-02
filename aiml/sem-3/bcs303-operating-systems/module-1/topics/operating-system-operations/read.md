@@ -1,0 +1,346 @@
+# Operating System Operations
+
+
+## Table of Contents
+
+- [Operating System Operations](#operating-system-operations)
+- [Introduction to OS Operations](#introduction-to-os-operations)
+- [Dual-Mode Operation: User Mode vs. Kernel Mode](#dual-mode-operation-user-mode-vs-kernel-mode)
+- [System Calls: The Bridge to OS Services](#system-calls-the-bridge-to-os-services)
+  - [Common Types of System Calls](#common-types-of-system-calls)
+  - [How System Calls Work](#how-system-calls-work)
+- [Interrupts and Traps](#interrupts-and-traps)
+  - [Types of Interrupts](#types-of-interrupts)
+  - [Interrupt Handling Process](#interrupt-handling-process)
+- [Timer Management](#timer-management)
+- [Process Management Operations](#process-management-operations)
+  - [Process Creation](#process-creation)
+  - [Process Termination](#process-termination)
+  - [Process Context Switching](#process-context-switching)
+- [Memory Management Operations](#memory-management-operations)
+  - [Allocation and Deallocation](#allocation-and-deallocation)
+  - [Address Translation](#address-translation)
+  - [Protection and Sharing](#protection-and-sharing)
+- [I/O System Operations](#io-system-operations)
+  - [Device Drivers](#device-drivers)
+  - [Buffering and Caching](#buffering-and-caching)
+  - [Error Handling](#error-handling)
+- [File System Operations](#file-system-operations)
+  - [File Creation and Deletion](#file-creation-and-deletion)
+  - [File Access](#file-access)
+  - [Directory Management](#directory-management)
+- [Protection and Security Operations](#protection-and-security-operations)
+  - [Authentication](#authentication)
+  - [Authorization](#authorization)
+  - [Auditing](#auditing)
+- [Resource Management Overview](#resource-management-overview)
+- [Real-World Example: Web Server Operation](#real-world-example-web-server-operation)
+- [Exam Tips](#exam-tips)
+
+## Introduction to OS Operations
+
+An operating system (OS) is system software that manages computer hardware and software resources and provides common services for computer programs. The operations of an operating system encompass all the activities it performs to ensure efficient and secure execution of user programs while managing the computer's resources effectively.
+
+## Dual-Mode Operation: User Mode vs. Kernel Mode
+
+Modern operating systems employ a fundamental protection mechanism called **dual-mode operation** to prevent user programs from interfering with the proper operation of the system.
+
+```
++---------------------+ +---------------------+
+| User Programs | | Operating System |
+| (User Mode) |<--->| (Kernel Mode) |
+| | | |
+| - Limited | | - Privileged |
+| instructions | | instructions |
+| - Restricted | | - Full hardware |
+| memory access | | access |
++---------------------+ +---------------------+
+```
+
+**User Mode**:
+
+- Programs execute with restricted privileges
+- Cannot execute privileged instructions
+- Limited access to memory and hardware resources
+- Prevents accidental or malicious system damage
+
+**Kernel Mode (Supervisor Mode)**:
+
+- Operating system executes with full privileges
+- Can execute any instruction
+- Complete access to all hardware resources
+- Required for critical system operations
+
+The transition between these modes occurs through **system calls** or **interrupts**, which are carefully controlled by the operating system.
+
+## System Calls: The Bridge to OS Services
+
+System calls provide the interface between a running program and the operating system. They allow user programs to request services from the operating system.
+
+```
++----------------+ System Call +----------------+
+| User Program |----------------->| Operating |
+| | | System |
+| |<-----------------| |
++----------------+ Return from +----------------+
+ System Call
+```
+
+### Common Types of System Calls
+
+| Category                | Purpose                        | Examples                                 |
+| ----------------------- | ------------------------------ | ---------------------------------------- |
+| Process Control         | Create, execute, end processes | `fork()`, `exec()`, `exit()`, `wait()`   |
+| File Management         | Create, read, write files      | `open()`, `read()`, `write()`, `close()` |
+| Device Management       | Request/release devices        | `ioctl()`, `read()`, `write()`           |
+| Information Maintenance | Get/set system data            | `getpid()`, `time()`, `sysinfo()`        |
+| Communication           | Create communication links     | `pipe()`, `shmget()`, `msgget()`         |
+
+### How System Calls Work
+
+1. **Program Preparation**: User program prepares parameters for the system call
+2. **Trap Instruction**: Program executes a special instruction (trap/software interrupt)
+3. **Mode Switch**: CPU switches from user mode to kernel mode
+4. **System Call Handler**: OS identifies the requested service using a system call number
+5. **Service Execution**: OS performs the requested operation
+6. **Return to User Mode**: OS returns control to the user program with results
+
+## Interrupts and Traps
+
+Interrupts are signals that alert the processor to events requiring immediate attention. They are crucial for OS operations.
+
+### Types of Interrupts
+
+**Hardware Interrupts**: Generated by external devices
+
+- I/O completion
+- Timer expiration
+- Hardware errors
+
+**Software Interrupts (Traps)**: Generated by software
+
+- System calls
+- Division by zero
+- Page faults
+
+### Interrupt Handling Process
+
+```
++---------------------+
+| Program Execution |
++----------+----------+
+ |
+ | Interrupt Occurs
+ v
++---------------------+
+| Save CPU State |
+| (registers, PC, PSW)|
++----------+----------+
+ |
+ | Identify Interrupt
+ v
++---------------------+
+| Execute Appropriate |
+| Interrupt Handler |
++----------+----------+
+ |
+ | Restore CPU State
+ v
++---------------------+
+| Resume Program |
+| Execution |
++---------------------+
+```
+
+## Timer Management
+
+Operating systems use timers to prevent programs from monopolizing the CPU:
+
+```
++----------------------+
+| Set Timer Interval |
++----------+-----------+
+ |
+ | Program Execution
+ v
++----------------------+
+| Timer Expiration |
++----------+-----------+
+ |
+ | Interrupt Generated
+ v
++----------------------+
+| OS Regains Control |
++----------------------+
+```
+
+This mechanism enables **preemptive scheduling**, where the OS can interrupt a running process to give another process CPU time.
+
+## Process Management Operations
+
+The OS performs several key operations on processes:
+
+### Process Creation
+
+- Allocate memory and resources
+- Initialize process control block (PCB)
+- Set up address space
+- Add to scheduling queues
+
+### Process Termination
+
+- Release allocated resources
+- Remove from scheduling queues
+- Deallocate memory
+- Update parent process status
+
+### Process Context Switching
+
+When switching between processes, the OS must:
+
+1. Save the state of the current process
+2. Update the process control block
+3. Restore the state of the next process
+4. Update memory management registers
+5. Resume execution of the new process
+
+```
++---------------------+ Save State +---------------------+
+| Process A Execution |--------------->| Process A State |
+| | | Saved in PCB |
++---------------------+ +---------------------+
+ |
+ | Restore State
+ v
++---------------------+ +---------------------+
+| Process B Execution |<---------------| Process B State |
+| | | Restored from PCB |
++---------------------+ +---------------------+
+```
+
+## Memory Management Operations
+
+The OS manages memory through various operations:
+
+### Allocation and Deallocation
+
+- Assign memory to processes
+- Track allocated and free memory blocks
+- Reclaim memory when processes terminate
+
+### Address Translation
+
+- Convert logical addresses to physical addresses
+- Manage page tables and segmentation
+- Handle page faults
+
+### Protection and Sharing
+
+- Enforce memory access permissions
+- Prevent processes from accessing each other's memory
+- Enable controlled memory sharing between processes
+
+## I/O System Operations
+
+The OS manages input/output operations through:
+
+### Device Drivers
+
+- Software interfaces to hardware devices
+- Handle device-specific operations
+- Provide abstraction for applications
+
+### Buffering and Caching
+
+- Store data temporarily between devices and processes
+- Improve performance by reducing direct device access
+- Handle speed mismatches between devices and CPU
+
+### Error Handling
+
+- Detect and recover from device errors
+- Provide error messages to applications
+- Manage device timeouts and failures
+
+## File System Operations
+
+The OS provides file management through:
+
+### File Creation and Deletion
+
+- Allocate storage space
+- Create directory entries
+- Manage metadata (permissions, timestamps)
+
+### File Access
+
+- Control reading and writing operations
+- Enforce access permissions
+- Manage file pointers and seek operations
+
+### Directory Management
+
+- Create and remove directories
+- Maintain directory structures
+- Handle path resolution
+
+## Protection and Security Operations
+
+The OS implements security through:
+
+### Authentication
+
+- Verify user identities
+- Manage login sessions
+- Control access to system resources
+
+### Authorization
+
+- Enforce access control policies
+- Check permissions for resource access
+- Implement security levels
+
+### Auditing
+
+- Log security-relevant events
+- Track system usage
+- Support forensic analysis
+
+## Resource Management Overview
+
+The OS acts as a resource manager, allocating resources to processes while ensuring:
+
+- **Efficiency**: Resources are used optimally
+- **Fairness**: All processes get fair access to resources
+- **Isolation**: Processes cannot interfere with each other
+- **Protection**: System integrity is maintained
+
+## Real-World Example: Web Server Operation
+
+Consider a web server handling multiple requests:
+
+1. Client request arrives (network interrupt)
+2. OS creates new process/thread to handle request
+3. Process makes system calls to read files from disk
+4. OS manages memory for buffering file contents
+5. Process makes system calls to send data over network
+6. OS manages network device operations
+7. Process terminates after completing request
+
+This example demonstrates how multiple OS operations coordinate to handle a common task.
+
+## Exam Tips
+
+1. **Understand Mode Transitions**: Be able to explain how and why transitions occur between user and kernel mode, and what happens during these transitions.
+
+2. **System Call Mechanics**: Know the step-by-step process of how a system call works, from the user program request to the return of results.
+
+3. **Interrupt Handling**: Understand the complete interrupt handling process, including state saving and restoration.
+
+4. **Resource Management Principles**: Be prepared to explain how the OS manages different resources (CPU, memory, I/O) and the goals of this management.
+
+5. **Compare and Contrast**: Be able to compare different types of system calls, interrupts, and OS operations.
+
+6. **Real-World Applications**: Think about how OS operations enable common applications like web browsers, word processors, and games.
+
+7. **Focus on Key Concepts**: Pay special attention to dual-mode operation, system calls, process management, and memory management as these are fundamental to understanding OS operations.

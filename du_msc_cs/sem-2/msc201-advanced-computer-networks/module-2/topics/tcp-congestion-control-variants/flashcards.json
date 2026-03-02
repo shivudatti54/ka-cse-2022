@@ -1,0 +1,45 @@
+{
+  "topicId": "tcp-congestion-control-variants",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "Describe the three phases of TCP Reno's congestion control algorithm.",
+      "back": "TCP Reno operates in three phases: (1) Slow Start - cwnd grows exponentially (doubling every RTT) until ssthresh; (2) Congestion Avoidance - cwnd grows linearly (+1/cwnd per ACK); (3) Fast Recovery - after triple duplicate ACK, cwnd is halved and enters congestion avoidance. It uses packet loss as the sole congestion signal."
+    },
+    {
+      "id": "fc-2",
+      "front": "How does TCP NewReno improve upon TCP Reno during partial ACK arrivals?",
+      "back": "TCP NewReno modifies Fast Recovery to handle multiple packet losses per RTT. Unlike Reno (which exits recovery after one ACK), NewReno stays in Fast Recovery until all lost packets are recovered, using 'partial ACKs' to detect additional losses. Formula: cwnd = cwnd - (N * MSS) where N is number of newly acknowledged packets, then grow linearly."
+    },
+    {
+      "id": "fc-3",
+      "front": "What is the cubic function used by TCP Cubic, and what are its key characteristics?",
+      "back": "TCP Cubic uses W(t) = C(t - K)³ + W_max, where C=0.4, t=time since last loss, K=∛(W_max * β/C), and β=0.7. It has two regimes: concave (fast recovery approaching W_max) and convex (exploratory growth beyond W_max after WiFi/bandwidth changes). It's Linux default and Windows 10+ fallback."
+    },
+    {
+      "id": "fc-4",
+      "front": "Explain BBR (Bottleneck Bandwidth and Round-trip propagation time) congestion control model.",
+      "back": "BBR is a model-based (not loss-based) controller that estimates Bottleneck Bandwidth (BtlBw) and Round-trip propagation time (RTprop) to operate at optimal point (BtlBw/RTprop). It sends at rate = min(BtlBw, RTprop) × pacing_gain. Unlike Reno/Cubic, BBR tolerates packet queuing but not buffer bloating. Ideal for high-BDP networks."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the design goal and mechanism of TCP Hybla?",
+      "back": "TCP Hybla targets networks with high RTT (satellite, long-distance wireless). It normalizes cwnd growth to reference RTT (RTT_0=25ms) using ρ = RTT/RTT_0. In slow start: cwnd doubles every RTT but scaled by ρ; in congestion avoidance: cwnd increases by ρ² per RTT. This compensates for RTT penalty in standard TCP, achieving similar throughput regardless of path delay."
+    },
+    {
+      "id": "fc-6",
+      "front": "What parameters does Compound TCP (CTCP) use, and how does it manage congestion window?",
+      "back": "CTCP (Windows Vista/7 default) combines loss-based and delay-based approaches using two state variables: cwnd (standard) and snd_scale (delay-based). Actual cwnd = cwnd + α/snd_scale per ACK, where α = (snd_scale * cwnd)³ / (2^23). CTCP aggressively grows in high-BDP networks while maintaining fairness. It uses ECN when available and falls back to Reno-like behavior on loss."
+    },
+    {
+      "id": "fc-7",
+      "front": "What problem does TCP SACK (Selective Acknowledgment) solve, and how does it work?",
+      "back": "TCP SACK (RFC 2018) solves the 'massive retransmission' problem in Reno/NewReno when multiple packets drop in a window. Receiver explicitly lists non-contiguous received blocks in SACK options. Sender maintains a 'scoreboard' tracking reported gaps, allowing precise selective retransmission of only lost segments, reducing unnecessary retransmissions and improving recovery time."
+    },
+    {
+      "id": "fc-8",
+      "front": "Compare loss-based (TCP Reno/Cubic) vs. model-based (BBR) congestion control approaches.",
+      "back": "Loss-based variants infer congestion from packet loss (buffer overflow), causing bufferbloat in high-BDP networks. Model-based BBR measures actual BtlBw and RTprop, achieving lower latency and fairness but may underutilize shallow buffers. Hybrid approaches (CTCP, BBRv2) combine both: CTCP uses delay for growth, BBRv2 uses loss for fairness. Selection depends on network characteristics (buffer size, RTT, link type)."
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "topicId": "concurrency-control-in-distributed-transactions",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the Two-Phase Locking (2PL) protocol and its phases.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Growing phase: transaction acquires all necessary locks",
+        "Shrinking phase: transaction releases locks",
+        "No lock acquisition allowed after first lock release",
+        "Ensures conflict serializability"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a distributed deadlock? How is it different from a centralized deadlock?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Distributed deadlock involves transactions across multiple sites",
+        "Each site may have local deadlock but overall involves circular wait across sites",
+        "Global wait-for graph needed for detection",
+        "More complex to detect and resolve than centralized deadlock"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Differentiate between Wait-Die and Wound-Wait deadlock prevention schemes.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Wait-Die: older waits for younger, younger aborts when needs older's lock",
+        "Wound-Wait: older wounds (aborts) younger, younger waits for older",
+        "Both prevent circular wait without deadlock detection",
+        "Wait-Die causes more aborts for older; Wound-Wait causes more aborts for younger"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is Optimistic Concurrency Control (OCC)? When is it most suitable?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Transactions execute without restrictions",
+        "Validation performed at commit time",
+        "Three phases: read, validation, write",
+        "Suitable when conflict rate is low",
+        "Aborts and restarts transaction if validation fails"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain Timestamp-Based Concurrency Control and its advantages over locking.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Each transaction receives unique timestamp",
+        "Operations ordered by timestamps",
+        "No locks required, so no deadlocks",
+        "Better concurrency in low-conflict scenarios",
+        "RTS and WTS maintained for each data item"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the phantom problem in concurrency control? How can it be prevented?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Phantom: different results for same query due to insertions/deletions",
+        "Occurs when predicate-based locking not used",
+        "Caused by set-oriented operations not using item locks",
+        "Prevention: predicate locking or index locking",
+        "Not prevented by simple row-level locks"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare centralized and distributed lock managers.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Centralized: single site manages all locks - simple but single point of failure",
+        "Distributed: locks managed at each site - resilient but complex",
+        "Distributed has better scalability and fault tolerance",
+        "Distributed requires more communication for global lock status",
+        "Choice depends on system requirements"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Two-Phase Commit protocol and discuss its advantages and limitations in distributed transaction management.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Two phases: Prepare phase (coordinator asks participants to prepare) and Commit phase (participants commit if prepared)",
+        "Coordinator logs decisions for recovery",
+        "Ensures atomic commit across distributed sites",
+        "Limitations: blocking if coordinator fails, synchronous protocol",
+        "Blocking problem: participants can block waiting for coordinator",
+        "Suitable for distributed databases requiring atomic transactions"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the basic Timestamp Ordering protocol for concurrency control. How does the Thomas Write Rule improve it?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Each transaction gets timestamp at start",
+        "TS(T) determines serialization order",
+        "Read rule: allow if TS(T) >= WTS (item hasn't been written by younger)",
+        "Write rule: allow if TS(T) >= RTS and TS(T) >= WTS",
+        "Thomas Write Rule: allows write if TS(T) >= WTS even if TS(T) < RTS (ignore obsolete write)",
+        "Improves concurrency by not rejecting valid out-of-order writes",
+        "Maintains serializability while allowing more parallelism"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of serializability in distributed transactions. How is conflict serializability different from view serializability?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Serializability: concurrent execution equivalent to some serial order",
+        "Conflict serializability: focuses on read-write and write-read conflicts",
+        "View serializability: considers meaning of reads (initial reads, blind writes)",
+        "Conflict serializability is easier to check (precedence graph)",
+        "View serializability is more general but NP-complete to check",
+        "Distributed transactions must ensure global serializability",
+        "Local serializability not sufficient - need global ordering"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss various deadlock detection and prevention techniques in distributed database systems.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Detection: wait-for graphs - local and global graphs, cycle = deadlock",
+        "Prevention: order resources globally, no circular wait",
+        "Wait-Die: older waits, younger aborts",
+        "Wound-Wait: older wounds younger, younger waits",
+        "Timeout-based: simple but can cause false aborts",
+        "Hierarchical: reduces complexity of global detection",
+        "Choice depends on system characteristics and requirements"
+      ]
+    }
+  ]
+}

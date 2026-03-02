@@ -1,0 +1,79 @@
+{
+  "topicId": "file-handling-libraries",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "long",
+      "question": "Write a Python program that opens a binary file in read/write mode, reads its contents, uses seek to move the file pointer to a specific offset, writes new data at that offset, and then writes the modified content back to the file. Include appropriate exception handling and discuss the role of binary file modes, the with statement, and the use of file object methods such as seek(), tell(), and flush().",
+      "keyPoints": [
+        "Open binary file with mode 'r+b' (or 'wb' if overwriting) to allow both reading and writing.",
+        "Use the context manager (with statement) to guarantee the file is closed automatically.",
+        "Use read() or read(size) to obtain byte data; use tell() to obtain current pointer position.",
+        "seek(offset, whence) moves the pointer: whence=0 (start), 1 (current), 2 (end).",
+        "write() inserts bytes at the current pointer; flush() forces buffered data to disk.",
+        "Wrap file operations in try/except blocks to catch IOError, OSError, FileNotFoundError, PermissionError.",
+        "Explain difference between text mode (e.g., 'r', 'w') and binary mode (e.g., 'rb', 'wb'), and why binary mode is required for non‑text data."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-2",
+      "type": "long",
+      "question": "Write a Python script that defines a simple class (e.g., Student with attributes name, roll_number, and marks), creates a list of Student objects, serialises this list to a binary file using the pickle module, and later deserialises it back. Discuss potential exceptions (pickle.PicklingError, pickle.UnpicklingError, FileNotFoundError), how to handle them, and why pickle is preferred over JSON for binary storage of Python objects.",
+      "keyPoints": [
+        "Define a Student class with __init__ and optionally __repr__ for debugging.",
+        "Create several Student instances and store them in a list.",
+        "Use pickle.dump() in binary write mode ('wb') to serialise the list, and pickle.load() in binary read mode ('rb') to deserialise.",
+        "Wrap dump/load in try/except to catch pickle.PicklingError, pickle.UnpicklingError, FileNotFoundError, OSError.",
+        "Handle corrupted pickle files by catching pickle.UnpicklingError and informing the user.",
+        "Explain that pickle preserves Python object hierarchy (e.g., custom class instances), whereas JSON can only represent basic types.",
+        "Mention security considerations: never unpickle untrusted data."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-3",
+      "type": "long",
+      "question": "Write a program that parses an XML file containing student records (e.g., <student><name>...</name><marks>...</marks></student>) and extracts details of students whose marks exceed a threshold (e.g., 75). Write the filtered data to a CSV file using the csv module. Include error handling for XML parsing errors (xml.etree.ElementTree.ParseError) and CSV writing errors. Show how to use ElementTree's iter() and find() methods.",
+      "keyPoints": [
+        "Use xml.etree.ElementTree.parse() to load the XML document; obtain the root element.",
+        "Iterate over <student> elements using root.iter('student') or root.findall('student').",
+        "Extract child text: name = student.find('name').text, marks = int(student.find('marks').text).",
+        "Apply filter: if marks > threshold, collect the record.",
+        "Open a CSV file with csv.writer; write header ('Name', 'Marks') and rows.",
+        "Wrap XML parsing in try/except xml.etree.ElementTree.ParseError and file I/O in try/except OSError / FileNotFoundError.",
+        "Demonstrate use of context managers for both XML and CSV files."
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-4",
+      "type": "long",
+      "question": "Write a Python utility that, given a directory path (passed as a command‑line argument), lists all files and sub‑directories, filters files by specific extensions (e.g., .txt, .py), and creates a summary report named 'summary.txt' containing each file name and its size in bytes. Use the os module (os.listdir, os.path.isfile, os.path.join, os.path.getsize) for the classic approach and also show an equivalent implementation using pathlib.Path. Include handling of PermissionError and OSError.",
+      "keyPoints": [
+        "Accept directory path via sys.argv[1] or input(); verify it exists with os.path.isdir or Path.is_dir().",
+        "Classic OS approach: os.listdir to get entries; os.path.isfile and os.path.join to filter files with required extensions; os.path.getsize for size.",
+        "Pathlib approach: Path(path).iterdir(), .is_file(), .suffix, .stat().st_size for each entry.",
+        "Collect filtered files in a dictionary or list of tuples (filename, size).",
+        "Wrap directory traversal in try/except to catch PermissionError (no read access) and OSError (other OS‑level issues).",
+        "Write summary to 'summary.txt' using with open; include header, file names, and sizes.",
+        "Provide example usage and illustrate handling of edge cases (empty directory, missing read permission)."
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "long",
+      "question": "Write a short note on best practices for file handling in Python, covering the use of context managers (the with statement), proper selection of file modes, exception handling, and the advantages of the pathlib module for object‑oriented path manipulation. Include a short code snippet illustrating a robust file open‑read‑write operation incorporating these principles.",
+      "keyPoints": [
+        "Context manager (with open(...) as f:) guarantees file closure even if exceptions occur.",
+        "Choose correct mode: 'r'/'w'/'a' for text, 'rb'/'wb'/'ab' for binary, 'r+' for read/write without truncation.",
+        "Wrap file operations in try/except to catch FileNotFoundError, PermissionError, IOError, OSError.",
+        "Pathlib provides Path objects: Path('dir') / 'file.txt' for cross‑platform path construction.",
+        "Path.open() works like the built‑in open but returns a context manager; Path.read_text(), .write_text(), .read_bytes(), .write_bytes() simplify common tasks.",
+        "Example snippet demonstrates opening a file, reading its content safely, processing, and writing back using with and pathlib."
+      ],
+      "marks": 5
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In Java, which class is used to create a thread by extending it?",
+    "options": [
+      "Thread",
+      "Runnable",
+      "Process",
+      "Executor"
+    ],
+    "correctIndex": 0,
+    "explanation": "The Thread class is the fundamental class provided by Java to create and manage threads. A new thread can be created by extending the Thread class and overriding its run() method."
+  },
+  {
+    "id": "q2",
+    "question": "Which interface must be implemented to create a thread without extending the Thread class?",
+    "options": [
+      "Serializable",
+      "Cloneable",
+      "Runnable",
+      "Callable"
+    ],
+    "correctIndex": 2,
+    "explanation": "The Runnable interface defines a single method, run(), which contains the code to be executed in the thread. This is the preferred method for creating a thread because it allows the class to inherit from a class other than Thread."
+  },
+  {
+    "id": "q3",
+    "question": "What is the primary purpose of the start() method in the Thread class?",
+    "options": [
+      "To begin execution of the thread's run() method in a new call stack",
+      "To immediately execute the run() method in the current thread",
+      "To schedule the thread for execution at a later time",
+      "To initialize the thread object"
+    ],
+    "correctIndex": 0,
+    "explanation": "The start() method is responsible for creating a new call stack for the thread and then, asynchronously, calling the run() method on that new stack. This is what makes it run concurrently. Calling run() directly would execute it in the current thread, defeating the purpose of multithreading."
+  },
+  {
+    "id": "q4",
+    "question": "Consider the following code snippet. What is the output if three threads (t1, t2, t3) are started? \n\nclass Counter {\n    int count = 0;\n    public void increment() { count++; }\n}\n\nclass MyThread extends Thread {\n    Counter c;\n    public void run() { c.increment(); }\n}\n\n// In main:\nCounter sharedCounter = new Counter();\nMyThread t1 = new MyThread(); t1.c = sharedCounter;\nMyThread t2 = new MyThread(); t2.c = sharedCounter;\nMyThread t3 = new MyThread(); t3.c = sharedCounter;\nt1.start(); t2.start(); t3.start();\nt1.join(); t2.join(); t3.join();\nSystem.out.println(sharedCounter.count);",
+    "options": [
+      "The output is guaranteed to be 3",
+      "The output is guaranteed to be 0",
+      "The output could be 1, 2, or 3 due to a race condition",
+      "The code will not compile"
+    ],
+    "correctIndex": 2,
+    "explanation": "The increment operation (count++) is not atomic. It is a read-modify-write operation that can be interleaved between threads. Without synchronization, a race condition occurs where threads can overwrite each other's results, leading to unpredictable final values less than or equal to 3."
+  },
+  {
+    "id": "q5",
+    "question": "Which ExecutorService method is most suitable for executing a fixed number of Runnable tasks and waiting for them all to complete?",
+    "options": [
+      "execute()",
+      "submit(Callable)",
+      "invokeAll()",
+      "invokeAny()"
+    ],
+    "correctIndex": 2,
+    "explanation": "The invokeAll() method takes a collection of Callable tasks, executes them, and returns a list of Future objects representing the results of all tasks. It blocks until all tasks have completed, either normally or by throwing an exception, making it ideal for this scenario. While often used with Callable, it can also be used with Runnable tasks adapted to Callable."
+  }
+]

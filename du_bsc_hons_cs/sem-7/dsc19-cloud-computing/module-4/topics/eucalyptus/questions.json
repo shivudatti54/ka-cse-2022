@@ -1,0 +1,163 @@
+{
+  "topicId": "eucalyptus",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the role of Cloud Controller (CLC) in Eucalyptus architecture. Mention at least three of its functions.",
+      "keyPoints": [
+        "Entry point for all cloud requests",
+        "Manages user accounts and authentication",
+        "Handles VM scheduling and resource allocation",
+        "Provides web interface (Eucalyptus console)",
+        "Manages security groups and key pairs"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is Walrus in Eucalyptus? How does it differ from the Storage Controller (SC)?",
+      "keyPoints": [
+        "Walrus is S3-compatible object storage service",
+        "Used for storing machine images, snapshots, user data",
+        "SC provides block-level (EBS-like) storage",
+        "Walrus is for persistent object storage, SC for block volumes",
+        "Different storage paradigms - object vs block"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List any four hypervisors supported by Eucalyptus and explain why hypervisor support is important.",
+      "keyPoints": [
+        "Supported hypervisors: KVM, Xen, VMware",
+        "Allows flexibility in choosing virtualization technology",
+        "Organizations can use existing infrastructure",
+        "Enables compatibility with different hardware",
+        "Important for migration from existing virtualized environments"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the difference between Cluster mode and System mode in Eucalyptus deployment?",
+      "keyPoints": [
+        "Cluster mode uses multiple Cluster Controllers for high availability",
+        "System mode runs all components on a single machine",
+        "Cluster mode suitable for production/large deployments",
+        "System mode suitable for testing and small deployments",
+        "Cluster mode provides scalability and fault tolerance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain how Eucalyptus achieves AWS compatibility. Why is this beneficial for organizations?",
+      "keyPoints": [
+        "Provides AWS-compatible APIs (EC2, S3, IAM)",
+        "Applications written for AWS can run on Eucalyptus",
+        "Same tools and SDKs can be used",
+        "Organizations can test locally before deploying to AWS",
+        "Enables hybrid cloud strategies with minimal changes",
+        "Keeps sensitive data on-premises while using AWS-like interfaces"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Describe the function of security groups and key pairs in Eucalyptus for instance security.",
+      "keyPoints": [
+        "Security groups act as virtual firewalls",
+        "Control inbound/outbound traffic to instances",
+        "Key pairs enable secure SSH authentication",
+        "Public/private key mechanism for instance access",
+        "Provides network isolation and access control"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "How does Eucalyptus support hybrid cloud deployment? Explain with an example.",
+      "keyPoints": [
+        "Connects private clouds with public clouds like AWS",
+        "Uses elastic IPs for seamless connectivity",
+        "Hybrid VM images work across environments",
+        "Workload bursting - peak loads handled by public cloud",
+        "Example: E-commerce - normal traffic on private cloud, holiday peak on AWS",
+        "Enables data sovereignty while using public cloud resources"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Draw and explain the detailed architecture of Eucalyptus with all five main components. Explain how a user request to launch a VM flows through these components.",
+      "keyPoints": [
+        "Diagram showing: Cloud Controller (top), Walrus, Cluster Controllers, Storage Controllers, Node Controllers (bottom)",
+        "CLC: Entry point, authentication, scheduling",
+        "Walrus: S3-compatible storage for images",
+        "CC: Manages cluster, schedules VMs to NCs",
+        "NC: Runs on compute nodes, controls hypervisors, launches VMs",
+        "SC: Provides block storage volumes",
+        "User request flow: User \u2192 CLC (authenticate) \u2192 CC (find resources) \u2192 NC (launch VM) \u2192 VM accesses Walrus for image, SC for volumes",
+        "Detailed explanation of each component's role in the request lifecycle"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Compare Eucalyptus with OpenStack as private cloud platforms. Discuss their similarities, differences, and use cases.",
+      "keyPoints": [
+        "Both are open-source private/hybrid cloud platforms",
+        "Eucalyptus: simpler architecture, AWS-compatible APIs, 5 components",
+        "OpenStack: more modular, many projects (Nova, Neutron, Cinder, etc.)",
+        "Eucalyptus easier to set up initially, OpenStack more customizable",
+        "OpenStack has larger community and vendor support",
+        "Eucalyptus: good for AWS-compatible private clouds",
+        "OpenStack: large enterprises needing full customization",
+        "Both support KVM, Xen, VMware hypervisors",
+        "Eucalyptus acquired by HPE, OpenStack by OpenStack Foundation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the complete process of launching a virtual machine instance in Eucalyptus, from image registration to instance running state. Include all relevant commands and storage interactions.",
+      "keyPoints": [
+        "Steps: Register EMI (eucalyptus-register)",
+        "Bundle image (eucalyptus-bundle-image)",
+        "Upload to Walrus (eucalyptus-upload-bundle)",
+        "Create key pair (euca-create-keypair)",
+        "Create security group (euca-create-group)",
+        "Run instance (euca-run-instances)",
+        "Storage interaction: NC downloads image from Walrus",
+        "Instance uses SC for block storage if needed",
+        "State transitions: pending \u2192 running \u2192 terminated",
+        "Explain each step with purpose and storage backend involved"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the advantages and limitations of using Eucalyptus for enterprise cloud deployment. Should an organization choose Eucalyptus or go with a public cloud like AWS directly?",
+      "keyPoints": [
+        "Advantages: Data sovereignty (on-premises), AWS compatibility, cost-effective for development/testing, hybrid cloud support, familiar APIs",
+        "Limitations: Smaller community than OpenStack, fewer features than full AWS, maintenance overhead, hardware costs",
+        "Choose Eucalyptus when: Data must stay on-premises, need AWS-compatibility for testing, existing infrastructure, hybrid needs",
+        "Choose AWS directly when: No data residency concerns, need all AWS services, want fully managed infrastructure",
+        "Hybrid approach often best: Eucalyptus for sensitive workloads, AWS for burst capacity",
+        "Consider TCO: hardware, maintenance, expertise vs pay-as-you-go public cloud"
+      ],
+      "marks": 10
+    }
+  ]
+}

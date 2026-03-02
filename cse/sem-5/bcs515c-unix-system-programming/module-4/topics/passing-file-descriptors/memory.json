@@ -1,0 +1,70 @@
+{
+  "topicId": "passing-file-descriptors",
+  "mnemonics": [
+    {
+      "id": "m-1",
+      "title": "SCM_RIGHTS Steps",
+      "content": "Remember as 'SEND C MESSAGE RIGHTS': Setup socket \u2192 Create msghdr \u2192 Allocate cmsg buffer \u2192 Fill cmsghdr (level=SOL_SOCKET, type=SCM_RIGHTS) \u2192 Put FD in cmsg_data \u2192 Send with sendmsg() \u2192 Receiver uses recvmsg() to get FD \u2192 Both close when done"
+    },
+    {
+      "id": "m-2",
+      "title": "FD_CLOEXEC meaning",
+      "content": "CLOEXEC = 'CLose on EXECution' - automatically closes the file descriptor when a new program is executed via exec() system call."
+    }
+  ],
+  "acronyms": [
+    {
+      "term": "SCM",
+      "expansion": "Socket Control Message - mechanism for passing auxiliary data like file descriptors",
+      "usage": "Used in sendmsg()/recvmsg() as ancillary data"
+    },
+    {
+      "term": "FD",
+      "expansion": "File Descriptor - integer handle for I/O operations",
+      "usage": "Used to reference open files, sockets, pipes in Unix/Linux"
+    },
+    {
+      "term": "IPC",
+      "expansion": "Inter-Process Communication - methods for processes to communicate",
+      "usage": "File descriptor passing is a form of IPC"
+    },
+    {
+      "term": "CMSG",
+      "expansion": "Control Message - structure for passing control information",
+      "usage": "cmsghdr structure used for file descriptor transfer"
+    },
+    {
+      "term": "AF_UNIX",
+      "expansion": "Address Family UNIX - socket domain for local IPC",
+      "usage": "Socket family used for passing file descriptors between local processes"
+    }
+  ],
+  "visualTips": [
+    {
+      "concept": "File descriptor passing mechanism",
+      "visualization": "Imagine a 'hot potato' game where the sender holds an open file (represented as a key) and passes it through a Unix domain socket 'tunnel' to the receiver. Both now have keys to the same 'lock' (open file description). Closing your key doesn't affect the other's access."
+    },
+    {
+      "concept": "cmsghdr structure layout",
+      "visualization": "Think of cmsghdr as an envelope: cmsg_len = total length, cmsg_level = 'who sent it' (SOL_SOCKET), cmsg_type = 'what's inside' (SCM_RIGHTS), and cmsg_data is the actual letter (file descriptor number)."
+    },
+    {
+      "concept": "File descriptor table after passing",
+      "visualization": "Picture two separate desks (processes) with a drawer (kernel's open file table). Both desks have a drawer handle (FD) pointing to the SAME drawer. Moving one handle doesn't move the other, but they open the same drawer."
+    }
+  ],
+  "analogies": [
+    {
+      "concept": "Passing file descriptors",
+      "analogy": "Like giving someone the keys to your car - you still have your keys, but now both of you can drive the same car. You both have independent keys (FDs) but access the same vehicle (open file). Closing your FD is like losing your keys - the other person can still drive."
+    },
+    {
+      "concept": "SCM_RIGHTS control message",
+      "analogy": "Like sending a package with a special 'fragile' label. The regular message is the package body, but the 'fragile' label (SCM_RIGHTS) tells the carrier there's something extra (file descriptor) inside that needs special handling."
+    },
+    {
+      "concept": "FD_CLOEXEC flag",
+      "analogy": "Like an automatic door closer that shuts when someone new enters (exec). If you set this flag, the door (FD) closes automatically when a new person (program) enters your room (process)."
+    }
+  ]
+}

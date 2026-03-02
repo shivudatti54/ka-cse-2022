@@ -1,0 +1,251 @@
+{
+  "topicId": "painting-in-swing",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the three methods involved in the Swing painting mechanism: paintComponent(), paintBorder(), and paintChildren(). What is the role of the paint() method as the container?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think of the paint() method as a manager that delegates specific painting tasks to child methods",
+      "keyPoints": [
+        "paint() is the container method that invokes paintComponent(), paintBorder(), and paintChildren()",
+        "paintComponent() is overridden to perform custom drawing; it should only paint the component itself",
+        "paintBorder() draws the component's border (if any)",
+        "paintChildren() paints all contained child components in correct Z-order",
+        "Following this sequence ensures proper layering of graphics"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the purpose of the Graphics class in Swing painting? Mention at least four important methods of the Graphics class used for drawing.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Remember Graphics class is passed as parameter to paintComponent() method",
+      "keyPoints": [
+        "Graphics is an abstract class that provides methods for rendering graphical shapes",
+        "drawLine() - draws a line between two points",
+        "drawRect()/fillRect() - draws/fills rectangles",
+        "drawOval()/fillOval() - draws/fills ovals and circles",
+        "drawString() - renders text",
+        "setColor() and setFont() - customize appearance"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the concept of lightweight components in Swing. How do lightweight components differ from heavyweight AWT components in terms of painting?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Consider how lightweight components share the same painting surface",
+      "keyPoints": [
+        "Lightweight components do not have their own native window (peer)",
+        "They are painted entirely by Java code, not by the underlying OS",
+        "Lightweight components can have transparent backgrounds",
+        "They are painted in Z-order within their container",
+        "Heavyweight components have OS peers and are always opaque"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the difference between repaint() and update() methods in Swing? When is each method typically used?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Swing overrides update() to call paintComponent() directly without erasing background",
+      "keyPoints": [
+        "repaint() requests a repaint and is safe to call from any thread",
+        "update() is called by the AWT painting system and erases background before painting",
+        "In Swing, repaint() ultimately calls paint() with proper double buffering",
+        "Directly calling update() can cause flickering in Swing applications",
+        "repaint(0, x, y, w, h) can request repaint for a specific region only"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain double buffering in Swing. How does Swing implement double buffering to reduce flickering?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Think of it as painting on paper first, then showing the final result",
+      "keyPoints": [
+        "Double buffering draws to an off-screen image first, then copies to screen",
+        "This prevents user from seeing partially drawn frames",
+        "Swing enables double buffering automatically via RepaintManager",
+        "The entire component is drawn off-screen, then swapped to display",
+        "Results in smoother visual updates and eliminates flickering"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is the proper way to override paintComponent() in a Swing component? List at least three best practices.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "The super.paintComponent() call is crucial for proper background and UI rendering",
+      "keyPoints": [
+        "Always call super.paintComponent(g) as first statement to maintain look-and-feel",
+        "Never call paintComponent() directly; use repaint() instead",
+        "Perform all custom drawing after calling super.paintComponent()",
+        "Use Graphics2D for advanced rendering (casting from Graphics)",
+        "Do not modify component state inside paintComponent() as it may be called unexpectedly"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the complete painting mechanism in Swing with the sequence of method calls when a component needs to be repainted. Include the role of RepaintManager in your explanation.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Draw a flow diagram showing the hierarchy from repaint() to actual painting",
+      "keyPoints": [
+        "User action or program triggers repaint() request",
+        "repaint() schedules a paint operation with RepaintManager",
+        "RepaintManager collects multiple repaint requests into single paint operation",
+        "RepaintManager calls update() on the component",
+        "update() (overridden in Swing) calls paint() which delegates to paintComponent(), paintBorder(), paintChildren()",
+        "Double buffering is applied automatically by Swing",
+        "All painting occurs on Event Dispatch Thread (EDT)"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare the painting mechanism in AWT versus Swing. Discuss how the difference in heavyweight and lightweight components affects rendering, transparency, and Z-ordering.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "The key difference lies in who does the painting - OS or Java runtime",
+      "keyPoints": [
+        "AWT uses heavyweight components with native OS peers; Swing uses lightweight components",
+        "Heavyweight components are always opaque; lightweight can be transparent",
+        "Heavyweight components are painted by OS; lightweight by Java",
+        "Heavyweight components appear above all lightweight components (Z-order issue)",
+        "Swing components can be layered using different Z-ordering strategies",
+        "AWT update() erases background causing flicker; Swing overrides to prevent this",
+        "Swing provides pluggable look-and-feel that AWT lacks"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain how the Model-View-Controller (MVC) architecture is applied in Swing components and its impact on rendering. How does this separation facilitate custom painting?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "In Swing, the component itself acts as both View and Controller",
+      "keyPoints": [
+        "MVC separates data (Model), display (View), and logic (Controller)",
+        "Swing combines View and Controller into UI delegate for each component",
+        "Model stores data, View observes model for changes",
+        "When model changes, it fires PropertyChangeEvents",
+        "UI delegate listens and triggers repaint() when needed",
+        "This allows custom rendering by overriding paintComponent()",
+        "Pluggable look-and-feel works because UI delegate can be swapped"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of the painting containment hierarchy in Swing. How does the order of painting affect the visual appearance when components overlap?",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "The order of component addition determines Z-order in the painting hierarchy",
+      "keyPoints": [
+        "Components are organized in a containment hierarchy (Container -> children)",
+        "paint() method paints the component, then its border, then all children",
+        "Children are painted in the order they were added",
+        "Later-added components appear on top of earlier ones",
+        "Opaque components cover components behind them",
+        "Transparent components allow background to show through",
+        "Using setOpaque(false) creates transparency effect"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the three Swing look-and-feel implementations: Metal (Java), Nimbus, and System (Native). How does each affect the painting mechanism and component rendering?",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "All three use the same painting infrastructure but with different UI delegates",
+      "keyPoints": [
+        "Metal (Ocean theme) - cross-platform Java look, painted entirely by Java code",
+        "Nimbus - modern LookAndFeel with vector-based rendering, uses Synth XML files",
+        "System - uses native OS look (Windows, GTK, Aqua)",
+        "Painting is delegated to UI delegates (ComponentUI) specific to each L&F",
+        "UIManager.setLookAndFeel() switches entire application appearance",
+        "Each UI delegate overrides paint() methods for custom rendering",
+        "Pluggable L&F allows visual customization without code changes"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "Write a Java program to create a custom JPanel that draws a house (rectangle body + triangle roof) using the Graphics class. Include code showing proper overriding of paintComponent().",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Triangle roof requires three (x,y) coordinate pairs for polygon",
+      "keyPoints": [
+        "Extend JPanel class",
+        "Override paintComponent(Graphics g) with super.paintComponent(g) call",
+        "Use drawRect() for house body",
+        "Use drawPolygon() or drawLine() for triangular roof",
+        "Use setColor() to set fill colors",
+        "Use fillPolygon()/fillRect() for filled shapes",
+        "Add the panel to a JFrame and set visible"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "Design a Swing application that displays a bouncing ball animation. Explain how Timer and paintComponent() work together to create smooth animation.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "The Timer interval determines animation speed; 30-60 fps is typical",
+      "keyPoints": [
+        "Create custom JPanel with ball position variables (x, y)",
+        "Use javax.swing.Timer for animation loop",
+        "Timer calls actionPerformed() which updates ball position",
+        "Call repaint() after position update",
+        "paintComponent() clears background and draws ball at new position",
+        "Use boundary checking to reverse ball direction",
+        "Double buffering in Swing ensures smooth animation without flicker"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "short",
+      "question": "Write a program to create a gradient background panel using Graphics2D. Demonstrate the use of GradientPaint class and explain the coordinate system in Swing painting.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Graphics2D provides enhanced 2D rendering capabilities over Graphics",
+      "keyPoints": [
+        "Cast Graphics to Graphics2D: Graphics2D g2d = (Graphics2D) g",
+        "Create GradientPaint with two points and two colors",
+        "Set paint on Graphics2D: g2d.setPaint(gradient)",
+        "Fill rectangle covering entire panel for background",
+        "Swing coordinate system: (0,0) is top-left corner",
+        "Positive X extends right, positive Y extends down",
+        "Width and height obtained from getWidth() and getHeight()"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "short",
+      "question": "Create a custom progress indicator using Swing. Design a component that displays a circular progress bar showing percentage completion. Explain the painting logic.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "drawArc() takes start angle and arc angle in degrees; 0 degrees is at 3 o'clock",
+      "keyPoints": [
+        "Create custom class extending JComponent",
+        "Store progress value (0-100) as instance variable",
+        "Override paintComponent() method",
+        "Draw outer circle using drawArc() method",
+        "Calculate arc angle based on progress percentage",
+        "Draw filled arc from 0 to progress angle using fillArc()",
+        "Use setStroke() for line thickness",
+        "Draw text showing percentage using drawString()",
+        "Call super.paintComponent() and use Graphics2D for better rendering"
+      ]
+    }
+  ]
+}

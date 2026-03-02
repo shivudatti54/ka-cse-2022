@@ -1,0 +1,55 @@
+{
+  "topicId": "syntax-and-semantics-of-first-order-logic",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Checking Universal Quantifier Truth Value",
+      "description": "Algorithm to evaluate ∀x P(x) under a given interpretation",
+      "code": "FUNCTION CheckUniversalQuantifier(domain D, predicate P):\n FOR EACH element e IN D:\n IF NOT P(e) THEN\n RETURN FALSE // Counterexample found\n END IF\n END FOR\n RETURN TRUE // All elements satisfy P",
+      "explanation": "Universal quantifier ∀x P(x) is TRUE if and only if predicate P holds for EVERY element in the domain. If even one element fails, the universal statement is FALSE.",
+      "timeComplexity": "O(n) where n = |D|",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Checking Existential Quantifier Truth Value",
+      "description": "Algorithm to evaluate ∃x P(x) under a given interpretation",
+      "code": "FUNCTION CheckExistentialQuantifier(domain D, predicate P):\n FOR EACH element e IN D:\n IF P(e) THEN\n RETURN TRUE // Found satisfying element\n END IF\n END FOR\n RETURN FALSE // No element satisfies P",
+      "explanation": "Existential quantifier ∃x P(x) is TRUE if and only if predicate P holds for AT LEAST ONE element in the domain. It is FALSE only when NO element satisfies P.",
+      "timeComplexity": "O(n) where n = |D|",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Term Evaluation in Interpretations",
+      "description": "Algorithm to evaluate a term under interpretation and variable assignment",
+      "code": "FUNCTION EvaluateTerm(term t, interpretation I, assignment g):\n IF t is constant c THEN\n RETURN I_constant(c) // Return assigned element\n ELSE IF t is variable v THEN\n RETURN g(v) // Return assigned value\n ELSE IF t is function f(t1, t2, ..., tn) THEN\n args = []\n FOR i = 1 TO n:\n args.append(EvaluateTerm(ti, I, g))\n END FOR\n RETURN I_function(f)(args) // Apply function to evaluated args\n END IF",
+      "explanation": "Terms evaluate to elements in the domain. Constants map directly to domain elements via interpretation; variables get values from assignment; functions apply the interpreted function to evaluated arguments.",
+      "timeComplexity": "O(size of term)",
+      "spaceComplexity": "O(depth of term)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Atomic Formula Evaluation",
+      "description": "Algorithm to evaluate atomic predicate formulas under interpretation",
+      "code": "FUNCTION EvaluateAtomic(predicate P, term_list args, interpretation I, assignment g):\n evaluated_args = []\n FOR EACH term t IN args:\n evaluated_args.append(EvaluateTerm(t, I, g))\n END FOR\n RETURN I_predicate(P)(evaluated_args) // True if relation holds",
+      "explanation": "Atomic formulas evaluate to TRUE or FALSE. Each term is evaluated to get domain elements, then the predicate (relation) is checked on those elements according to the interpretation.",
+      "timeComplexity": "O(n) where n = number of arguments",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-5",
+      "language": "pseudocode",
+      "title": "Full Formula Evaluation (Recursive)",
+      "description": "Complete algorithm to evaluate any FOL formula under interpretation",
+      "code": "FUNCTION EvaluateFormula(formula φ, interpretation I, assignment g):\n SWITCH φ:\n CASE atomic P(t1,...,tn):\n RETURN EvaluateAtomic(P, [t1,...,tn], I, g)\n \n CASE ¬ψ:\n RETURN NOT EvaluateFormula(ψ, I, g)\n \n CASE ψ1 ∧ ψ2:\n RETURN EvaluateFormula(ψ1, I, g) AND EvaluateFormula(ψ2, I, g)\n \n CASE ψ1 ∨ ψ2:\n RETURN EvaluateFormula(ψ1, I, g) OR EvaluateFormula(ψ2, I, g)\n \n CASE ψ1 → ψ2:\n RETURN (NOT EvaluateFormula(ψ1, I, g)) OR EvaluateFormula(ψ2, I, g)\n \n CASE ∀x ψ:\n FOR EACH element e IN I.domain:\n g_new = g with x assigned to e\n IF NOT EvaluateFormula(ψ, I, g_new) THEN\n RETURN FALSE\n END IF\n END FOR\n RETURN TRUE\n \n CASE ∃x ψ:\n FOR EACH element e IN I.domain:\n g_new = g with x assigned to e\n IF EvaluateFormula(ψ, I, g_new) THEN\n RETURN TRUE\n END IF\n END FOR\n RETURN FALSE",
+      "explanation": "This recursive evaluator handles all FOL connectives and quantifiers. For quantified formulas, it iterates through all domain elements with appropriate variable assignments. This is the foundation of semantic evaluation in FOL.",
+      "timeComplexity": "O(2^n) worst case for n quantified variables",
+      "spaceComplexity": "O(depth of formula)"
+    }
+  ]
+}

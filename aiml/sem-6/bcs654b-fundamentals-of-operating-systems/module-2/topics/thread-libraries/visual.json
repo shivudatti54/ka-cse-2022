@@ -1,0 +1,120 @@
+{
+  "topicId": "thread-libraries",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Thread Library Classification Architecture",
+      "description": "A hierarchical diagram showing the classification of thread libraries into user-level and kernel-level categories with examples",
+      "elements": [
+        "Top box: Thread Libraries (main category)",
+        "Two main branches below: User-Level Thread Libraries, Kernel-Level Thread Libraries",
+        "User-Level branch examples: POSIX Pthreads (user implementation), GNU Portable Threads",
+        "Kernel-Level branch examples: Windows Win32 Threads, Linux Threads, Solaris Threads",
+        "Dotted line showing the boundary between Application Space and Operating System Kernel"
+      ],
+      "purpose": "Students learn to categorize thread libraries based on their implementation level and understand which libraries are available on different platforms"
+    },
+    {
+      "id": "diagram-2",
+      "title": "Threading Models Architecture",
+      "description": "Three block diagrams showing the three main threading models: Many-to-One, One-to-One, and Many-to-Many",
+      "elements": [
+        "Many-to-One Model: Multiple User Threads -> Single KLT -> One CPU (shows all user threads mapped to single kernel thread)",
+        "One-to-One Model: Each User Thread -> One KTL -> Multiple CPUs (shows direct mapping)",
+        "Many-to-Many Model: Multiple User Threads -> Multiple KTL (pool) -> Multiple CPUs (shows flexible mapping)",
+        "Labels: User Space boundary, Kernel Space boundary, Thread Library, OS Kernel"
+      ],
+      "purpose": "Students understand how user threads are mapped to kernel threads in different threading models and the implications for concurrency and parallelism"
+    },
+    {
+      "id": "diagram-3",
+      "title": "Pthread API and System Interaction Flow",
+      "description": "Architecture diagram showing the relationship between application code, pthread library functions, and the operating system kernel",
+      "elements": [
+        "Application Layer: C program with pthread_create(), pthread_join(), pthread_mutex_lock() calls",
+        "Pthread Library Layer: Implementation of pthread functions (libpthread.so, pthread.dll)",
+        "System Call Interface: Functions that transition from user mode to kernel mode",
+        "OS Kernel: Scheduler, Thread management unit",
+        "Arrows showing: Application calls library functions -> Library makes system calls -> Kernel manages threads"
+      ],
+      "purpose": "Students understand how thread libraries interact with the operating system and the path from user-level thread operations to kernel-level execution"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Thread Lifecycle State Diagram",
+      "description": "State diagram showing the lifecycle of a thread from creation to termination with various states",
+      "elements": [
+        "States: New/Ready, Running, Blocked/Waiting, Terminated",
+        "pthread_create() arrow: New -> Ready",
+        "Scheduler dispatch: Ready -> Running",
+        "pthread_exit() / return: Running -> Terminated",
+        "Blocking calls (I/O, mutex wait): Running -> Blocked",
+        "pthread_join(): Blocked -> Ready (when thread completes)",
+        "Time slice expiry: Running -> Ready"
+      ],
+      "purpose": "Students visualize the different states a thread can be in and understand the transitions triggered by various thread operations"
+    },
+    {
+      "id": "diagram-5",
+      "title": "Process vs Thread Structure",
+      "description": "Comparative block diagram showing the memory structure of a single-threaded process versus a multi-threaded process",
+      "elements": [
+        "Single-threaded process: Code section, Data section, Heap, Stack, Thread (single unit)",
+        "Multi-threaded process: Code section (shared), Data section (shared), Heap (shared), Stack 1 (Thread 1), Stack 2 (Thread 2), Stack 3 (Thread 3)",
+        "Highlighted differences: Each thread has its own stack, all threads share code, data, and heap",
+        "Labels indicating: Thread-specific resources, Process-wide shared resources"
+      ],
+      "purpose": "Students understand the key difference between processes and threads in terms of resource sharing and memory layout"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "User-Level vs Kernel-Level Threads Comparison",
+      "content": "Comparison table with columns: Aspect, User-Level Threads, Kernel-Level Threads. Rows: Implementation, Management, Context Switch, Blocking, Scalability, Examples. Key differences: ULT managed by user-level library (fast, no kernel involvement), KLT managed by OS kernel (true parallelism, blocking doesn't affect others), Pthreads is kernel-level, Green threads are user-level"
+    },
+    {
+      "type": "comparison",
+      "title": "Pthreads vs Windows Thread API Comparison",
+      "content": "Side-by-side comparison of POSIX Pthreads and Windows Thread API functions: Thread Creation (pthread_create vs CreateThread/_beginthreadex), Thread Termination (pthread_exit vs ExitThread), Thread Joining (pthread_join vs WaitForSingleObject), Mutex (pthread_mutex_lock vs EnterCriticalSection), Semaphore (pthread_sem_wait vs WaitForSingleObject on semaphore)"
+    },
+    {
+      "type": "flowchart",
+      "title": "Thread Creation and Execution Flow",
+      "content": "Flowchart: Start -> Define thread function -> Allocate thread attributes (optional) -> Call pthread_create() -> Thread created with ID -> Parent continues -> Child runs independently -> Parent calls pthread_join() -> Parent waits -> Child completes -> pthread_join returns -> Both continue -> End"
+    },
+    {
+      "type": "classification",
+      "title": "Thread Library Functions Classification",
+      "content": "Classification chart organizing pthread functions into categories: Thread Management (pthread_create, pthread_self, pthread_equal, pthread_join, pthread_detach, pthread_exit), Mutex Operations (pthread_mutex_init, pthread_mutex_lock, pthread_mutex_unlock, pthread_mutex_destroy), Condition Variables (pthread_cond_init, pthread_cond_wait, pthread_cond_signal, pthread_cond_broadcast), Thread Attributes (pthread_attr_init, pthread_attr_setdetachstate, pthread_attr_setstacksize)"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Thread Libraries",
+      "branches": [
+        "Definition: API for creating and managing threads",
+        "Types: User-Level (Green Threads, GNU Portable Threads), Kernel-Level (POSIX Pthreads, Windows Threads, Java Threads)",
+        "Threading Models: Many-to-One (UML), One-to-One (KSL), Many-to-Many (Two-level)",
+        "Pthread API: Creation (pthread_create), Synchronization (mutex, semaphores, condition variables), Management (join, detach)",
+        "Operations: Thread creation, Thread termination, Thread joining, Thread synchronization",
+        "Advantages: Responsiveness, Resource sharing, Economy, Scalability on multi-core",
+        "Challenges: Synchronization needed, Complex debugging, Race conditions, Deadlocks"
+      ],
+      "purpose": "Provides comprehensive overview connecting all aspects of thread libraries from types and models to API functions and challenges"
+    },
+    {
+      "centralConcept": "Pthread (POSIX Threads)",
+      "branches": [
+        "Standard: POSIX.1c, IEEE Std 1003.1c",
+        "Header: <pthread.h>",
+        "Thread Management: pthread_create(), pthread_self(), pthread_equal(), pthread_join(), pthread_detach(), pthread_exit()",
+        "Mutex: pthread_mutex_init(), pthread_mutex_lock()/unlock(), pthread_mutex_destroy()",
+        "Condition Variables: pthread_cond_init(), wait(), signal(), broadcast()",
+        "Read-Write Locks: pthread_rwlock_init(), rdlock(), wrlock(), unlock()",
+        "Thread Attributes: pthread_attr_init(), setdetachstate(), setstacksize(), setschedpolicy()"
+      ],
+      "purpose": "Focuses specifically on Pthreads as the primary standard thread library, organizing all major functions by category for quick reference"
+    }
+  ]
+}

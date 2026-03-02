@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the purpose of the chdir() system call in UNIX, and what are its two main arguments?",
+    "expectedPoints": [
+      "The chdir() system call is used to change the current working directory of the calling process.",
+      "Its primary argument is a pathname, which can be either an absolute path (starting with '/') or a relative path.",
+      "On success, chdir() returns 0; on failure, it returns -1 and sets errno to indicate the error."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the difference between how the chdir() system call affects a process versus a shell. Why doesn't a program's directory change affect the shell that launched it?",
+    "expectedPoints": [
+      "Each process, including the shell and programs it executes, has its own independent current working directory.",
+      "When a shell forks a new process to run a program, the child process inherits the parent's current working directory.",
+      "A call to chdir() within the program changes the directory only for that specific child process. When the program exits and control returns to the shell, the shell's original working directory remains unchanged because it is a separate process."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Describe a scenario where you would use the fchdir() system call instead of chdir(). Detail the steps involved, including the necessary system calls, and explain the advantage of this approach.",
+    "expectedPoints": [
+      "fchdir() is used when you need to change back to a previously visited directory reliably, especially after using chdir() to navigate to a different location.",
+      "The steps are: 1) Open the current directory using open() or openat() to get a file descriptor (fd). 2) Later, use chdir() to navigate elsewhere. 3) Use fchdir(fd) with the saved file descriptor to return to the original directory precisely.",
+      "The key advantage is that it avoids race conditions. Using the saved file descriptor is more reliable than saving a pathname string and using chdir() again, because the directory could have been renamed or moved by another process in the interim, making the pathname invalid."
+    ],
+    "marks": 10
+  }
+]

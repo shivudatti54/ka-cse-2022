@@ -1,0 +1,45 @@
+{
+  "topicId": "counting-principles-permutations-combinations",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Factorial Calculation",
+      "description": "Calculate factorial using recursion and iteration",
+      "code": "def factorial_iterative(n):\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n\ndef factorial_recursive(n):\n    if n <= 1:\n        return 1\n    return n * factorial_recursive(n - 1)\n\n# Test\nprint(f\"5! = {factorial_iterative(5)}\")  # 120\nprint(f\"5! = {factorial_recursive(5)}\")  # 120",
+      "explanation": "Two approaches: iterative multiplies 1\u00d72\u00d73\u00d7...\u00d7n, recursive multiplies n\u00d7(n-1)! until reaching base case 1.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1) for iterative, O(n) for recursive"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Permutation P(n,r) Calculation",
+      "description": "Calculate number of permutations using factorial formula",
+      "code": "import math\n\ndef permutations(n, r):\n    \"\"\"P(n,r) = n! / (n-r)!\"\"\"\n    return math.factorial(n) // math.factorial(n - r)\n\ndef permutations_direct(n, r):\n    \"\"\"P(n,r) = n \u00d7 (n-1) \u00d7 ... \u00d7 (n-r+1)\"\"\"\n    result = 1\n    for i in range(r):\n        result *= (n - i)\n    return result\n\n# Test\nprint(f\"P(5,3) = {permutations(5, 3)}\")   # 60\nprint(f\"P(5,3) = {permutations_direct(5, 3)}\")  # 60",
+      "explanation": "Two methods: using factorial formula or direct multiplication. Both give P(n,r) = n!/(n-r)! for ordered arrangements.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Combination C(n,r) Calculation",
+      "description": "Calculate number of combinations using factorial and Pascal's identity",
+      "code": "import math\n\ndef combinations(n, r):\n    \"\"\"C(n,r) = n! / (r! * (n-r)!)\"\"\"\n    return math.factorial(n) // (math.factorial(r) * math.factorial(n - r))\n\ndef combinations_pascal(n, r):\n    \"\"\"Using Pascal's identity: C(n,r) = C(n-1,r-1) + C(n-1,r)\"\"\"\n    if r == 0 or r == n:\n        return 1\n    return combinations_pascal(n - 1, r - 1) + combinations_pascal(n - 1, r)\n\n# Test\nprint(f\"C(8,3) = {combinations(8, 3)}\")       # 56\nprint(f\"C(8,3) = {combinations_pascal(8, 3)}\") # 56",
+      "explanation": "Two approaches: direct factorial formula and recursive Pascal's identity (dynamic programming). C(n,r) counts unordered selections.",
+      "timeComplexity": "O(n) for factorial, O(2^n) for naive Pascal, O(n*r) optimized",
+      "spaceComplexity": "O(1) or O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Generate All Permutations",
+      "description": "Generate all permutations using backtracking",
+      "code": "def generate_permutations(arr):\n    result = []\n    \n    def backtrack(start):\n        if start == len(arr):\n            result.append(arr[:])\n            return\n        for i in range(start, len(arr)):\n            arr[start], arr[i] = arr[i], arr[start]  # swap\n            backtrack(start + 1)\n            arr[start], arr[i] = arr[i], arr[start]  # swap back\n    \n    backtrack(0)\n    return result\n\n# Test: permutations of [1,2,3]\nperms = generate_permutations([1, 2, 3])\nfor p in perms:\n    print(p)\nprint(f\"Total: {len(perms)} (should be 3! = 6)\")",
+      "explanation": "Uses recursive backtracking to generate all permutations. Time complexity O(n\u00d7n!) as there are n! permutations each of length n.",
+      "timeComplexity": "O(n \u00d7 n!)",
+      "spaceComplexity": "O(n) for recursion stack"
+    }
+  ]
+}

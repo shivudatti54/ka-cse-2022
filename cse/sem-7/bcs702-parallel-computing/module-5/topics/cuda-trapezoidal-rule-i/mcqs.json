@@ -1,0 +1,76 @@
+{
+  "topicId": "cuda-trapezoidal-rule-i",
+  "mcqs": [
+    {
+      "id": "mcq1",
+      "question": "In the basic CUDA trapezoidal rule implementation, what function is used by each thread to accumulate its f(x_i) contribution into the global result?",
+      "options": [
+        { "key": "A", "text": "atomicAdd" },
+        { "key": "B", "text": "__syncthreads" },
+        { "key": "C", "text": "cudaMemcpy" },
+        { "key": "D", "text": "cudaReduce" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Each thread uses atomicAdd(result_p, my_f) to atomically add its computed function value to a single global memory location, ensuring thread-safe accumulation without race conditions.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq2",
+      "question": "What is the primary performance limitation of using atomicAdd for the trapezoidal rule when n is very large?",
+      "options": [
+        { "key": "A", "text": "atomicAdd causes excessive memory allocation" },
+        {
+          "key": "B",
+          "text": "atomicAdd serializes concurrent writes to the same address, creating a bottleneck"
+        },
+        { "key": "C", "text": "atomicAdd only works with integer data types" },
+        { "key": "D", "text": "atomicAdd requires shared memory which is limited in size" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "When thousands of threads all call atomicAdd on the same memory location, the hardware must serialize these operations -- only one thread can complete its atomic update at a time. This makes the accumulation phase O(n) instead of O(n/p), negating the benefit of parallelism.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq3",
+      "question": "In the multi-block CUDA trapezoidal rule kernel, how does a thread compute its global index my_i?",
+      "options": [
+        { "key": "A", "text": "my_i = threadIdx.x" },
+        { "key": "B", "text": "my_i = blockIdx.x * blockDim.x + threadIdx.x" },
+        { "key": "C", "text": "my_i = blockIdx.x + threadIdx.x * gridDim.x" },
+        { "key": "D", "text": "my_i = blockDim.x * gridDim.x" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The standard CUDA global index formula is blockIdx.x * blockDim.x + threadIdx.x. This produces a unique index for every thread across all blocks, mapping each thread to a specific subinterval point x_i = a + my_i * h.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq4",
+      "question": "Why might the atomicAdd-based CUDA trapezoidal rule produce slightly different results across multiple runs with identical inputs?",
+      "options": [
+        { "key": "A", "text": "The GPU hardware introduces random noise into computations" },
+        {
+          "key": "B",
+          "text": "Floating-point addition is not associative, and thread execution order varies between runs"
+        },
+        { "key": "C", "text": "The cudaMemset function initializes to different values each time" },
+        { "key": "D", "text": "The number of threads launched changes between runs" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Floating-point addition is not associative: (a+b)+c may differ from a+(b+c) in the least significant bits. Since atomicAdd processes threads in non-deterministic order depending on hardware scheduling, the same inputs can produce slightly different sums across runs.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq5",
+      "question": "What must the host code do after the kernel computes the accumulated sum to obtain the final integral value?",
+      "options": [
+        { "key": "A", "text": "Divide the result by n" },
+        { "key": "B", "text": "Multiply the result by h = (b-a)/n" },
+        { "key": "C", "text": "Add f(a) and f(b) to the result" },
+        { "key": "D", "text": "Take the square root of the result" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The kernel accumulates the weighted sum f(a)/2 + f(x_1) + f(x_2) + ... + f(b)/2. The trapezoidal rule formula requires multiplying this sum by h = (b-a)/n to obtain the final integral approximation. This multiplication is done on the host after copying the result back from the device.",
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "topicId": "transactions",
+  "examples": [
+    {
+      "id": "pseudocode-ethereum-transaction",
+      "title": "Algorithm: Ethereum Transaction Structure",
+      "description": "Demonstrates the components of an Ethereum transaction",
+      "language": "pseudocode",
+      "code": "ALGORITHM EthereumTransaction\nINPUT: sender, recipient, value, gasLimit, gasPrice, data\nOUTPUT: transactionHash\n\nBEGIN\n nonce = getNonce(sender)\n transaction = createTransaction(nonce, gasPrice, gasLimit, recipient, value, data)\n signature = signTransaction(transaction, senderPrivateKey)\n transactionHash = keccak256(transaction)\n RETURN transactionHash\nEND",
+      "explanation": "Step-by-step explanation of creating an Ethereum transaction"
+    },
+    {
+      "id": "python-ethereum-transaction",
+      "title": "Python: Ethereum Transaction Creation",
+      "description": "Creates an Ethereum transaction using Python",
+      "language": "python",
+      "code": "import hashlib\nfrom eth_account import Account\nfrom eth_account.signers.local import LocalAccount\nfrom web3 import Web3\n\n# Set up Web3 provider\nw3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_PROJECT_ID'))\n\n# Set up sender account\nsender_account = Account.from_key('YOUR_PRIVATE_KEY')\n\n# Set up recipient and value\nrecipient = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'\nvalue = 1 * 10**18 # 1 ETH\n\n# Set up gas limit and gas price\ngas_limit = 21000\ngas_price = 20 * 10**9 # 20 Gwei\n\n# Create transaction\nnonce = w3.eth.getTransactionCount(sender_account.address)\ntx = {\n 'nonce': nonce,\n 'gasPrice': gas_price,\n 'gas': gas_limit,\n 'to': recipient,\n 'value': value\n}\n\n# Sign transaction\nsigned_tx = w3.eth.account.sign_transaction(tx, sender_account.privateKey)\n\n# Get transaction hash\ntransaction_hash = signed_tx.hash.hex()\nprint(transaction_hash)",
+      "explanation": "Creates an Ethereum transaction using Python and the Web3 library",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "c-ethereum-transaction",
+      "title": "C: Ethereum Transaction Creation",
+      "description": "Creates an Ethereum transaction using C",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n#include <openssl/sha.h>\n\n// Define Ethereum transaction structure\ntypedef struct {\n unsigned int nonce;\n unsigned long long gasPrice;\n unsigned int gasLimit;\n unsigned char recipient[20];\n unsigned long long value;\n} EthereumTransaction;\n\n// Function to create Ethereum transaction\nEthereumTransaction createTransaction(unsigned int nonce, unsigned long long gasPrice, unsigned int gasLimit, unsigned char *recipient, unsigned long long value) {\n EthereumTransaction tx;\n tx.nonce = nonce;\n tx.gasPrice = gasPrice;\n tx.gasLimit = gasLimit;\n memcpy(tx.recipient, recipient, 20);\n tx.value = value;\n return tx;\n}\n\nint main() {\n // Set up recipient and value\n unsigned char recipient[] = {0x74, 0x2d, 0x35, 0xcc, 0x66, 0x34, 0xc0, 0x53, 0x29, 0x25, 0xa3, 0xb8, 0x44, 0xbc, 0x9e, 0x75, 0x95, 0xf0, 0xbE, 0xb};\n unsigned long long value = 1 * 10**18; // 1 ETH\n\n // Set up gas limit and gas price\n unsigned int gasLimit = 21000;\n unsigned long long gasPrice = 20 * 10**9; // 20 Gwei\n\n // Create transaction\n EthereumTransaction tx = createTransaction(0, gasPrice, gasLimit, recipient, value);\n\n // Print transaction details\n printf(\"Nonce: %u\\n\", tx.nonce);\n printf(\"Gas Price: %llu\\n\", tx.gasPrice);\n printf(\"Gas Limit: %u\\n\", tx.gasLimit);\n printf(\"Recipient: %s\\n\", tx.recipient);\n printf(\"Value: %llu\\n\", tx.value);\n\n return 0;\n}",
+      "explanation": "Creates an Ethereum transaction using C",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

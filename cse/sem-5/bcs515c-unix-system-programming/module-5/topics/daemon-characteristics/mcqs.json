@@ -1,0 +1,505 @@
+{
+  "topicId": "daemon-characteristics",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "Which of the following is the most characteristic feature of a Unix/Linux daemon?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Runs in foreground"
+        },
+        {
+          "key": "B",
+          "text": "Has a controlling terminal"
+        },
+        {
+          "key": "C",
+          "text": "Detached from any controlling terminal"
+        },
+        {
+          "key": "D",
+          "text": "Requires user login"
+        }
+      ],
+      "correctAnswer": "Detached from any controlling terminal",
+      "explanation": "The defining characteristic of a daemon is that it runs in the background without any controlling terminal, unlike regular processes that are associated with a TTY.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-2",
+      "question": "What is the typical parent process of a daemon after it detaches from its original parent?",
+      "options": [
+        {
+          "key": "A",
+          "text": "bash"
+        },
+        {
+          "key": "B",
+          "text": "init (PID 1)"
+        },
+        {
+          "key": "C",
+          "text": "systemd"
+        },
+        {
+          "key": "D",
+          "text": "sshd"
+        }
+      ],
+      "correctAnswer": "init (PID 1)",
+      "explanation": "When a daemon's parent terminates, it becomes an orphan and is adopted by init (PID 1), which is the ancestor of all processes in Unix.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-3",
+      "question": "What is the purpose of the double fork technique in daemon creation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To create multiple threads"
+        },
+        {
+          "key": "B",
+          "text": "To prevent acquiring a controlling terminal"
+        },
+        {
+          "key": "C",
+          "text": "To increase execution speed"
+        },
+        {
+          "key": "D",
+          "text": "To share file descriptors"
+        }
+      ],
+      "correctAnswer": "To prevent acquiring a controlling terminal",
+      "explanation": "Double forking ensures the daemon process cannot become a session leader, which would allow it to acquire a controlling terminal if it opens a terminal device.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-4",
+      "question": "Which of these is NOT a step in daemonizing a process?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Change working directory to /"
+        },
+        {
+          "key": "B",
+          "text": "Redirect stdin/stdout/stderr to /dev/null"
+        },
+        {
+          "key": "C",
+          "text": "Create a controlling terminal"
+        },
+        {
+          "key": "D",
+          "text": "Fork and exit parent"
+        }
+      ],
+      "correctAnswer": "Create a controlling terminal",
+      "explanation": "Daemonization specifically avoids creating a controlling terminal; instead, it detaches from any existing terminal to run independently.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-5",
+      "question": "The naming convention for daemons typically ends with which letter?",
+      "options": [
+        {
+          "key": "A",
+          "text": "a"
+        },
+        {
+          "key": "B",
+          "text": "d"
+        },
+        {
+          "key": "C",
+          "text": "n"
+        },
+        {
+          "key": "D",
+          "text": "s"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Most daemon processes follow the convention of ending with 'd' (e.g., httpd, sshd, ftpd, systemd) to identify them as daemon processes.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-6",
+      "question": "What does inetd/xinetd do?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Manages system boot process"
+        },
+        {
+          "key": "B",
+          "text": "Spawns other daemons on demand"
+        },
+        {
+          "key": "C",
+          "text": "Handles network routing"
+        },
+        {
+          "key": "D",
+          "text": "Manages user authentication"
+        }
+      ],
+      "correctAnswer": "Spawns other daemons on demand",
+      "explanation": "inetd (Internet daemon) is a super-server that listens on multiple network ports and spawns the appropriate daemon only when a connection request arrives.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-7",
+      "question": "Why do daemons change their working directory to root (/)?",
+      "options": [
+        {
+          "key": "A",
+          "text": "For faster file access"
+        },
+        {
+          "key": "B",
+          "text": "To prevent blocking filesystem unmounting"
+        },
+        {
+          "key": "C",
+          "text": "To improve security"
+        },
+        {
+          "key": "D",
+          "text": "Required by POSIX standard"
+        }
+      ],
+      "correctAnswer": "To prevent blocking filesystem unmounting",
+      "explanation": "If a daemon keeps a working directory on a mounted filesystem, that filesystem cannot be unmounted. Changing to root ensures no mounted filesystem is kept busy.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which signal is typically sent to a daemon to reload its configuration?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SIGKILL"
+        },
+        {
+          "key": "B",
+          "text": "SIGSTOP"
+        },
+        {
+          "key": "C",
+          "text": "SIGHUP"
+        },
+        {
+          "key": "D",
+          "text": "SIGQUIT"
+        }
+      ],
+      "correctAnswer": "SIGHUP",
+      "explanation": "SIGHUP (Signal Hang Up) is the conventional signal sent to daemons to request configuration reload without restarting the daemon process.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-9",
+      "question": "What is a zombie process in the context of daemons?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A terminated process whose parent hasn't reaped it"
+        },
+        {
+          "key": "B",
+          "text": "A process running with high CPU usage"
+        },
+        {
+          "key": "C",
+          "text": "A daemon in sleeping state"
+        },
+        {
+          "key": "D",
+          "text": "A malicious background process"
+        }
+      ],
+      "correctAnswer": "A terminated process whose parent hasn't reaped it",
+      "explanation": "A zombie is a terminated process entry in the process table that remains until the parent performs wait(). Daemons must reap children to prevent zombie accumulation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-10",
+      "question": "Which process in Unix has PID 1 and is the ancestor of all processes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "bash"
+        },
+        {
+          "key": "B",
+          "text": "daemon"
+        },
+        {
+          "key": "C",
+          "text": "init"
+        },
+        {
+          "key": "D",
+          "text": "systemd"
+        }
+      ],
+      "correctAnswer": "init",
+      "explanation": "init (or systemd in modern Linux) is the first user-space process started after kernel boot and has PID 1, becoming the ancestor of all other processes.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "What is the purpose of redirecting stdin, stdout, and stderr to /dev/null in a daemon?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To increase memory usage"
+        },
+        {
+          "key": "B",
+          "text": "To prevent I/O operations on terminals"
+        },
+        {
+          "key": "C",
+          "text": "To enable terminal input"
+        },
+        {
+          "key": "D",
+          "text": "To log all output"
+        }
+      ],
+      "correctAnswer": "To prevent I/O operations on terminals",
+      "explanation": "Redirecting to /dev/null ensures the daemon cannot read from or write to any terminal, preventing interference with user sessions and unwanted output.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-12",
+      "question": "What type of daemon is httpd running continuously to serve requests?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Transient daemon"
+        },
+        {
+          "key": "B",
+          "text": "Standalone daemon"
+        },
+        {
+          "key": "C",
+          "text": "Meta-daemon"
+        },
+        {
+          "key": "D",
+          "text": "One-shot daemon"
+        }
+      ],
+      "correctAnswer": "Standalone daemon",
+      "explanation": "Standalone daemons run continuously in memory, ready to serve requests immediately. They don't depend on inetd/xinetd to spawn them.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-13",
+      "question": "What is the primary advantage of using systemd over traditional init scripts?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Uses less memory"
+        },
+        {
+          "key": "B",
+          "text": "Provides parallel startup and dependency management"
+        },
+        {
+          "key": "C",
+          "text": "Only works with bash scripts"
+        },
+        {
+          "key": "D",
+          "text": "Requires manual process monitoring"
+        }
+      ],
+      "correctAnswer": "Provides parallel startup and dependency management",
+      "explanation": "systemd provides modern features like parallel service startup, socket-based activation, automatic dependency resolution, and service supervision.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-14",
+      "question": "Which system call creates a new session and makes the process a session leader?",
+      "options": [
+        {
+          "key": "A",
+          "text": "fork()"
+        },
+        {
+          "key": "B",
+          "text": "exec()"
+        },
+        {
+          "key": "C",
+          "text": "setsid()"
+        },
+        {
+          "key": "D",
+          "text": "daemon()"
+        }
+      ],
+      "correctAnswer": "setsid()",
+      "explanation": "setsid() creates a new session, makes the process the session leader, and creates a new process group with the process as leader, detaching from any controlling terminal.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-15",
+      "question": "What happens if a daemon process becomes a session leader?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It gets terminated automatically"
+        },
+        {
+          "key": "B",
+          "text": "It may acquire a controlling terminal if it opens a terminal device"
+        },
+        {
+          "key": "C",
+          "text": "It cannot fork anymore"
+        },
+        {
+          "key": "D",
+          "text": "It becomes a user process"
+        }
+      ],
+      "correctAnswer": "It may acquire a controlling terminal if it opens a terminal device",
+      "explanation": "A session leader that opens a terminal device without O_NOCTTY can acquire a controlling terminal, which is undesirable for a daemon.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-16",
+      "question": "Which of the following is a transient daemon?",
+      "options": [
+        {
+          "key": "A",
+          "text": "sshd"
+        },
+        {
+          "key": "B",
+          "text": "httpd"
+        },
+        {
+          "key": "C",
+          "text": "ftpd spawned by inetd"
+        },
+        {
+          "key": "D",
+          "text": "cron"
+        }
+      ],
+      "correctAnswer": "ftpd spawned by inetd",
+      "explanation": "Transient daemons are spawned on-demand by inetd/xinetd and exit after serving the request. ftp when spawned by inetd is an example.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-17",
+      "question": "What is the purpose of the SA_NOCLDWAIT flag in sigaction for daemons?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To ignore child signals"
+        },
+        {
+          "key": "B",
+          "text": "To prevent creation of zombie processes"
+        },
+        {
+          "key": "C",
+          "text": "To handle signals faster"
+        },
+        {
+          "key": "D",
+          "text": "To create new process groups"
+        }
+      ],
+      "correctAnswer": "To prevent creation of zombie processes",
+      "explanation": "SA_NOCLDWAIT tells the kernel not to retain child process status after termination, preventing zombie processes without requiring explicit wait() calls.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-18",
+      "question": "Which command is used to list all running daemons in Linux?",
+      "options": [
+        {
+          "key": "A",
+          "text": "daemons -list"
+        },
+        {
+          "key": "B",
+          "text": "ps aux | grep d"
+        },
+        {
+          "key": "C",
+          "text": "systemctl list-units"
+        },
+        {
+          "key": "D",
+          "text": "ls /proc/*/exe"
+        }
+      ],
+      "correctAnswer": "systemctl list-units",
+      "explanation": "In systemd-based systems, 'systemctl list-units --type=service' lists all service/daemon units. Traditional 'ps aux' can also show processes.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-19",
+      "question": "How do modern daemons typically handle configuration file changes?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Restart the entire system"
+        },
+        {
+          "key": "B",
+          "text": "Receive SIGHUP and reload configuration"
+        },
+        {
+          "key": "C",
+          "text": "Ignore configuration changes"
+        },
+        {
+          "key": "D",
+          "text": "Crash automatically"
+        }
+      ],
+      "correctAnswer": "Receive SIGHUP and reload configuration",
+      "explanation": "Well-designed daemons respond to SIGHUP by re-reading configuration files without termination, allowing configuration updates without service interruption.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-20",
+      "question": "What is the relationship between process groups and daemons?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Daemons must lead process groups"
+        },
+        {
+          "key": "B",
+          "text": "Daemons should not lead process groups"
+        },
+        {
+          "key": "C",
+          "text": "Daemons cannot create process groups"
+        },
+        {
+          "key": "D",
+          "text": "Process groups are irrelevant to daemons"
+        }
+      ],
+      "correctAnswer": "Daemons should not lead process groups",
+      "explanation": "Daemons typically detach from their process group to avoid signals sent to the group and to prevent being affected by group-level operations.",
+      "difficulty": "hard"
+    }
+  ]
+}

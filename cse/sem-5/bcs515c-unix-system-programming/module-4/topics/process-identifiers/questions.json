@@ -1,0 +1,138 @@
+{
+  "topicId": "process-identifiers",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the concept of Process Identifier (PID) and its importance in operating systems.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "PID is a unique numeric identifier assigned by the OS kernel to each process",
+        "It enables the OS to track, manage, and coordinate multiple concurrent processes",
+        "Essential for process scheduling, inter-process communication, and resource allocation",
+        "Allows parent-child relationship tracking through getpid() and getppid()"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Differentiate between zombie and orphan processes with examples.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Zombie: Terminated process whose parent hasn't read exit status using wait() - still in process table",
+        "Orphan: Running child process whose parent has terminated - adopted by init (PID 1)",
+        "Zombies consume process table entry but no resources",
+        "Orphans continue execution under init's supervision"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the role of init process (PID 1) in Unix/Linux systems.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Init is the first user-space process started after kernel boot",
+        "It has PID 1 and is the ancestor of all other user processes",
+        "It adopts orphan processes and performs wait() to prevent zombies",
+        "It is the parent of all detached daemons and orphaned processes",
+        "Responsible for system initialization and runlevel management"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the fork() system call with respect to PID handling.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "fork() creates a new process (child) that is a copy of parent",
+        "Parent receives child's PID as return value",
+        "Child receives 0 as return value to identify itself",
+        "Child gets a unique PID assigned by the kernel",
+        "fork() failure returns -1"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is the Process Table? Explain its significance with respect to PIDs.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Process Table is a kernel data structure storing information about all active processes",
+        "Each entry contains PID, process state, program counter, memory info, scheduling parameters",
+        "Allows OS to uniquely identify each process using PID",
+        "Used for process management, scheduling, and resource allocation",
+        "PID serves as the primary key/index into the process table"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain getpid() and getppid() system calls with their return values and usage.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "getpid() returns the process ID of the calling process",
+        "getppid() returns the parent process ID of the calling process",
+        "Both take no arguments and return pid_t type",
+        "Used for process identification and tracking parent-child relationships",
+        "Essential for process monitoring and debugging"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Discuss the process hierarchy in Unix/Linux systems. Explain how PIDs and PPIDs are used to establish parent-child relationships, and the role of special PIDs (0 and 1).",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "All processes (except init) have a parent - forms tree hierarchy",
+        "PID 0: Swapper/Scheduler - kernel process for memory management",
+        "PID 1: Init process - first user process, ancestor of all others",
+        "Each process has unique PID and knows its parent via getppid()",
+        "When parent dies, child becomes orphan and is adopted by init",
+        "Process table maintains this hierarchy for process management",
+        "wait() system call allows parent to retrieve child status",
+        "This hierarchy enables process monitoring, cleanup, and resource inheritance"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the life cycle of a process with respect to fork(), exec(), wait(), and exit() system calls. How do these calls relate to PID management?",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "fork() creates new process - parent gets child's PID, child gets 0",
+        "exec() replaces process image but retains same PID",
+        "Parent can use wait() to suspend until child terminates and get its PID",
+        "exit() terminates process and makes it eligible for zombie state",
+        "If parent calls wait(), zombie is cleaned up, PID released",
+        "If parent dies before wait(), child becomes orphan adopted by init",
+        "PID remains constant throughout process lifetime except at creation",
+        "Process table entry released only after wait() is called on terminated process"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "What are Process Groups and Sessions? Explain how they relate to PIDs.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Process Group: Collection of related processes identified by PGID",
+        "Group leader's PID becomes the PGID for all group members",
+        "Used for job control - signals can be sent to all group members",
+        "Session: Collection of process groups identified by SID",
+        "Session leader's PID becomes the SID",
+        "Sessions enable terminal control and login session management",
+        "Each session can have a controlling terminal",
+        "Process hierarchy: Session contains process groups, groups contain processes, each has unique PID"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Sample Mean Calculation and Parameter Estimation",
+      "description": "Demonstrates calculating sample statistics to estimate population parameters",
+      "code": "import statistics\n\n# Sample data (e.g., heights of 50 students in cm)\nsample_data = [165, 170, 168, 172, 175, 160, 158, 162, 169, 174,\n              171, 167, 163, 176, 159, 164, 173, 168, 170, 166,\n              161, 177, 169, 165, 171, 167, 172, 164, 170, 168,\n              175, 163, 169, 166, 171, 174, 162, 168, 170, 165,\n              173, 167, 164, 171, 169, 175, 163, 170, 168, 172]\n\n# Calculate sample statistics\nsample_mean = statistics.mean(sample_data)\nsample_std = statistics.stdev(sample_data)\nsample_variance = statistics.variance(sample_data)\n\n# Population parameter estimates (point estimates)\nprint(f\"Sample Size: {len(sample_data)}\")\nprint(f\"Sample Mean (x\u0304): {sample_mean:.2f} cm\")\nprint(f\"Sample Std Dev (s): {sample_std:.2f} cm\")\nprint(f\"Sample Variance (s\u00b2): {sample_variance:.2f}\")\nprint(f\"\\nPoint Estimates:\")\nprint(f\"  Population Mean (\u03bc) \u2248 {sample_mean:.2f} cm\")\nprint(f\"  Population Std Dev (\u03c3) \u2248 {sample_std:.2f} cm\")",
+      "explanation": "This code demonstrates the fundamental concept of statistical inference: using sample statistics (x\u0304, s) to estimate population parameters (\u03bc, \u03c3). The sample mean serves as the best point estimate for the unknown population mean.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Confidence Interval Calculation for Population Mean",
+      "description": "Demonstrates interval estimation using sample data",
+      "code": "import math\nimport statistics\n\ndef confidence_interval(data, confidence=0.95):\n    \"\"\"Calculate confidence interval for population mean.\"\"\"\n    n = len(data)\n    mean = statistics.mean(data)\n    std_err = statistics.stdev(data) / math.sqrt(n)\n    \n    # Critical value from t-distribution (approximation using 1.96 for large n)\n    if n >= 30:  # Use z-value for large samples\n        z_score = 1.96  # For 95% confidence\n    else:  # Use t-value for small samples (approximation)\n        z_score = 2.0\n    \n    margin_of_error = z_score * std_err\n    \n    return (mean - margin_of_error, mean + margin_of_error)\n\n# Sample data\nsample_data = [23, 25, 28, 24, 27, 26, 22, 29, 25, 24,\n              26, 28, 27, 25, 26, 24, 23, 28, 27, 25]\n\nlower, upper = confidence_interval(sample_data)\n\nprint(f\"Sample Size: {len(sample_data)}\")\nprint(f\"Sample Mean: {statistics.mean(sample_data):.2f}\")\nprint(f\"95% Confidence Interval: ({lower:.2f}, {upper:.2f})\")\nprint(f\"Interpretation: We are 95% confident that the true\")\nprint(f\"population mean lies between {lower:.2f} and {upper:.2f}\")",
+      "explanation": "This demonstrates interval estimation, a key concept in statistical inference. Instead of a single point estimate, we provide a range (confidence interval) within which the true population parameter is likely to fall with a specified probability.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Hypothesis Testing: Z-Test for Population Mean",
+      "description": "Demonstrates hypothesis testing for large samples",
+      "code": "#include <stdio.h>\n#include <math.h>\n\n// Function to perform one-sample z-test\nvoid zTest(double sampleMean, double popMean, double stdDev, int n, double alpha) {\n    // Calculate standard error\n    double standardError = stdDev / sqrt(n);\n    \n    // Calculate z-statistic\n    double z = (sampleMean - popMean) / standardError;\n    \n    // Critical z-value for two-tailed test at alpha\n    double zCritical = 1.96;  // For alpha = 0.05\n    \n    printf(\"\\n=== One-Sample Z-Test ===\\n\");\n    printf(\"H0: Population Mean = %.2f\\n\", popMean);\n    printf(\"H1: Population Mean \u2260 %.2f\\n\", popMean);\n    printf(\"Sample Mean: %.2f\\n\", sampleMean);\n    printf(\"Sample Size: %d\\n\", n);\n    printf(\"Z-Statistic: %.4f\\n\", z);\n    printf(\"Critical Value: \u00b1%.2f\\n\", zCritical);\n    \n    if (fabs(z) > zCritical) {\n        printf(\"Decision: REJECT H0\\n\");\n        printf(\"Conclusion: There is significant evidence that the population mean differs from %.2f\\n\", popMean);\n    } else {\n        printf(\"Decision: FAIL TO REJECT H0\\n\");\n        printf(\"Conclusion: There is insufficient evidence to conclude the population mean differs from %.2f\\n\", popMean);\n    }\n}\n\nint main() {\n    // Example: Testing if mean weight is 70 kg\n    double sampleMean = 72.5;  // Sample mean\n    double popMean = 70.0;     // Hypothesized population mean\n    double stdDev = 10.0;      // Population standard deviation (known)\n    int n = 100;               // Sample size (large sample)\n    double alpha = 0.05;       // Significance level\n    \n    zTest(sampleMean, popMean, stdDev, n, alpha);\n    \n    return 0;\n}",
+      "explanation": "This C program demonstrates hypothesis testing, a core component of statistical inference. It performs a z-test to determine whether there is sufficient evidence to reject the null hypothesis that the population mean equals a specified value.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Random Sampling Simulation",
+      "description": "Demonstrates random sampling concept and sampling distribution",
+      "code": "import random\nimport statistics\n\n# Create a population of 10,000 values (e.g., exam scores)\npopulation = [random.randint(40, 100) for _ in range(10000)]\ntrue_population_mean = statistics.mean(population)\nprint(f\"Population Size: {len(population)}\")\nprint(f\"True Population Mean (\u03bc): {true_population_mean:.2f}\")\nprint(\"=\"*50)\n\n# Simulate taking multiple samples\ndef take_sample(population, sample_size):\n    \"\"\"Take a random sample from population.\"\"\"\n    return random.sample(population, sample_size)\n\n# Take 1000 samples, each of size 30\nnum_samples = 1000\nsample_size = 30\nsample_means = []\n\nfor i in range(num_samples):\n    sample = take_sample(population, sample_size)\n    sample_means.append(statistics.mean(sample))\n\n# Analyze the sampling distribution\nprint(f\"\\n=== Sampling Distribution Analysis ===\")\nprint(f\"Number of Samples: {num_samples}\")\nprint(f\"Sample Size: {sample_size}\")\nprint(f\"Mean of Sample Means: {statistics.mean(sample_means):.2f}\")\nprint(f\"Std Dev of Sample Means: {statistics.stdev(sample_means):.2f}\")\nprint(f\"\\nTheoretical Standard Error (\u03c3/\u221an): {statistics.stdev(population)/sample_size:.2f}\")\nprint(\"\\nObservation: Mean of sample means \u2248 True population mean\")\nprint(\"(This demonstrates the property of unbiased estimators)\")",
+      "explanation": "This simulation demonstrates key concepts of statistical inference: random sampling, sampling distribution, and the relationship between sample statistics and population parameters. It shows that as we take many samples, the distribution of sample means centers around the true population mean.",
+      "timeComplexity": "O(n\u00d7m)",
+      "spaceComplexity": "O(n+m)"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "shared-libraries",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Creating a Shared Library",
+      "description": "Steps to create a shared library from source code",
+      "code": "// Step 1: Create object file with PIC\ngcc -fPIC -c foo.c -o foo.o\n\n// Step 2: Create shared library from object file\ngcc -shared -o libfoo.so foo.o\n\n// Verify with ldd\nldd libfoo.so",
+      "explanation": "-fPIC generates Position Independent Code required for shared libraries\n-shared flag tells gcc to create a shared library (.so) instead of executable",
+      "timeComplexity": "O(n) compilation",
+      "spaceComplexity": "O(n) library size"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Using Shared Library at Compile Time",
+      "description": "Linking a program with a shared library",
+      "code": "// Compile and link with shared library\ngcc -o myprogram main.c -L/path/to/lib -lfoo\n\n// Or with explicit rpath\ngcc -o myprogram main.c -L. -lfoo -Wl,-rpath=/home/user/lib\n\n// Check dependencies\nldd myprogram",
+      "explanation": "-L specifies library search directory\n-lfoo links against libfoo.so\n-Wl,-rpath embeds runtime path in executable",
+      "timeComplexity": "O(n) linking",
+      "spaceComplexity": "O(1) extra"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Dynamic Loading with dlopen API",
+      "description": "Explicit runtime library loading without compile-time linking",
+      "code": "#include <dlfcn.h>\n\nvoid *handle = dlopen(\"./libfoo.so\", RTLD_LAZY);\nif (!handle) {\n fprintf(stderr, \"Error: %s\\n\", dlerror());\n exit(1);\n}\n\n// Clear any existing errors\ndlerror();\n\n// Get function pointer\nint (*func)(int) = dlsym(handle, \"my_function\");\nchar *error = dlerror();\nif (error) {\n fprintf(stderr, \"Error: %s\\n\", error);\n dlclose(handle);\n exit(1);\n}\n\n// Call the function\nint result = func(10);\ndlclose(handle);",
+      "explanation": "dlopen() loads library at runtime\ndlsym() finds function address by name\ndlclose() unloads library\nRTLD_LAZY enables lazy binding",
+      "timeComplexity": "O(n) symbol lookup",
+      "spaceComplexity": "O(n) library loaded"
+    },
+    {
+      "id": "code-4",
+      "language": "bash",
+      "title": "Library Management Commands",
+      "description": "Common commands for managing shared libraries",
+      "code": "# View library dependencies\nldd ./myprogram\n\n# View symbols in library\nnm -D libfoo.so\n\n# List dynamic symbols\nobjdump -p libfoo.so | grep SONAME\n\n# Update library cache\nsudo ldconfig\n\n# View library search path\nldconfig -p\n\n# Check library type\nfile libfoo.so\n\n# Strip debug symbols\nstrip -s libfoo.so -o libfoo_stripped.so",
+      "explanation": "ldd shows what libraries a program needs\nnm displays symbol table\nldconfig updates system library cache\nstrip reduces library size by removing debug info",
+      "timeComplexity": "O(n) depending on library size",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

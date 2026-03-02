@@ -1,0 +1,45 @@
+{
+  "topicId": "how-cloud-computing-works",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Cloud Resource Provisioning Process",
+      "description": "Demonstrates the step-by-step process of provisioning a virtual machine in the cloud",
+      "code": "PROCEDURE ProvisionVM(userRequest)\nBEGIN\n  AUTHENTICATE_USER(userRequest.credentials)\n  VALIDATE_QUOTA(userRequest.requiredResources)\n  \n  // Select appropriate hypervisor\n  SELECT_HYPERVISOR(userRequest.osType)\n  \n  // Allocate resources from pool\n  ALLOCATE_CPU(userRequest.cpuCores)\n  ALLOCATE_MEMORY(userRequest.ramGB)\n  ALLOCATE_STORAGE(userRequest.storageGB)\n  \n  // Configure networking\n  CONFIGURE_NETWORK(userRequest.vpc, userRequest.subnet)\n  \n  // Create and start VM\n  CREATE_VIRTUAL_MACHINE()\n  ATTACH_STORAGE()\n  ASSIGN_IP_ADDRESS()\n  START_VM()\n  \n  // Start metering for billing\n  INITIATE_METERING()\n  \n  RETURN vmInstance\nEND",
+      "explanation": "This pseudocode shows the cloud provisioning workflow: user authentication, resource validation, hypervisor selection, resource allocation from pool, VM creation, network configuration, and billing setup.",
+      "timeComplexity": "O(1) for single VM creation",
+      "spaceComplexity": "O(n) where n = VM resources allocated"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Simple Auto Scaling Simulation",
+      "description": "Demonstrates how cloud elasticity works by scaling resources based on demand",
+      "code": "class CloudAutoScaler:\n    def __init__(self, min_instances=1, max_instances=10, target_cpu=70):\n        self.min_instances = min_instances\n        self.max_instances = max_instances\n        self.target_cpu = target_cpu\n        self.current_instances = 2\n    \n    def check_load_and_scale(self, current_cpu_usage):\n        print(f\"Current instances: {self.current_instances}, CPU: {current_cpu}%\")\n        \n        # Scale out if CPU above target\n        if current_cpu_usage > self.target_cpu and self.current_instances < self.max_instances:\n            self.current_instances += 1\n            print(f\"SCALING OUT: Added instance. Now running {self.current_instances} instances\")\n        \n        # Scale in if CPU below threshold\n        elif current_cpu_usage < (self.target_cpu - 20) and self.current_instances > self.min_instances:\n            self.current_instances -= 1\n            print(f\"SCALING IN: Removed instance. Now running {self.current_instances} instances\")\n        \n        return self.current_instances\n\n# Simulation\nscaler = CloudAutoScaler()\ncpu_readings = [85, 90, 75, 60, 45, 30, 80, 95]\n\nfor cpu in cpu_readings:\n    scaler.check_load_and_scale(cpu)",
+      "explanation": "This Python code simulates cloud auto-scaling, a key elasticity feature. When CPU usage exceeds target (70%), it adds instances (scale out); when below threshold, it removes instances (scale in).",
+      "timeComplexity": "O(n) for n monitoring cycles",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "Load Balancer Algorithm",
+      "description": "Demonstrates basic round-robin load balancing across cloud servers",
+      "code": "import java.util.*;\n\npublic class SimpleLoadBalancer {\n    private List<String> servers;\n    private int currentIndex;\n    \n    public SimpleLoadBalancer() {\n        servers = new ArrayList<>(Arrays.asList(\n            \"server-1.amazonaws.com\",\n            \"server-2.amazonaws.com\",\n            \"server-3.amazonaws.com\"\n        ));\n        currentIndex = 0;\n    }\n    \n    // Round-Robin load balancing\n    public String getNextServer() {\n        String server = servers.get(currentIndex);\n        currentIndex = (currentIndex + 1) % servers.size();\n        return server;\n    }\n    \n    // Route request to selected server\n    public void routeRequest(String request) {\n        String server = getNextServer();\n        System.out.println(\"Routing request: \" + request + \" to \" + server);\n        // In real scenario: forward request to server\n    }\n    \n    public static void main(String[] args) {\n        SimpleLoadBalancer lb = new SimpleLoadBalancer();\n        \n        // Simulate 6 incoming requests\n        for (int i = 1; i <= 6; i++) {\n            lb.routeRequest(\"Request-\" + i);\n        }\n    }\n}",
+      "explanation": "This Java code demonstrates round-robin load balancing, distributing incoming requests across multiple servers to ensure no single server is overwhelmed. In real cloud environments, more sophisticated algorithms (least connections, weighted) are used.",
+      "timeComplexity": "O(1) for server selection",
+      "spaceComplexity": "O(n) where n = number of servers"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Cloud Billing Calculation",
+      "description": "Shows how cloud providers calculate costs based on resource consumption",
+      "code": "PROCEDURE CalculateBill(usageMetrics)\nBEGIN\n  // Define rates (example)\n  COMPUTE_RATE = 0.05  // per hour per instance\n  STORAGE_RATE = 0.10  // per GB per month\n  DATA_TRANSFER_RATE = 0.08  // per GB\n  \n  // Calculate compute charges\n  computeCost = usageMetrics.instanceHours * COMPUTE_RATE\n  \n  // Calculate storage charges  \n  storageCost = usageMetrics.storageGB * STORAGE_RATE\n  \n  // Calculate data transfer charges\n  dataCost = usageMetrics.dataOutGB * DATA_TRANSFER_RATE\n  \n  // Apply discounts\n  IF usageMetrics.prepaidHours > 100 THEN\n    computeCost = computeCost * 0.90  // 10% discount\n  ENDIF\n  \n  totalCost = computeCost + storageCost + dataCost\n  \n  // Generate bill\n  PRINT \"Compute: $\" + computeCost\n  PRINT \"Storage: $\" + storageCost\n  PRINT \"Data Transfer: $\" + dataCost\n  PRINT \"Total: $\" + totalCost\n  \n  RETURN totalCost\nEND",
+      "explanation": "This pseudocode demonstrates metered billing in cloud computing. Costs are calculated based on actual consumption (compute hours, storage used, data transferred) with potential discounts for commitments, illustrating the pay-as-you-go model.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

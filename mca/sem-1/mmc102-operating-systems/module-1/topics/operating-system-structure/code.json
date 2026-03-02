@@ -1,0 +1,45 @@
+{
+  "topicId": "operating-system-structure",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "System Call - Process Creation (fork)",
+      "description": "Demonstrates how the fork() system call creates a new process in UNIX-like systems",
+      "code": "FUNCTION fork() RETURNS integer\nBEGIN\n  // This is a pseudocode representation\n  // Actual fork involves kernel trap\n  \n  SAVE current process context\n  SET mode = KERNEL_MODE\n  \n  // Kernel creates process control block\n  new_PCB = ALLOCATE process control block\n  new_PCB.parent = current_process\n  new_PCB.state = READY\n  new_PCB.program_counter = current_PC\n  \n  // Copy parent's address space to child\n  COPY_MEMORY(parent_address_space, child_address_space)\n  \n  // Return twice - once to parent, once to child\n  IF current_process is parent THEN\n    RETURN child_PID to parent\n  ELSE\n    RETURN 0 to child\n  ENDIF\nEND",
+      "explanation": "The fork() system call creates an exact copy of the calling process. Both parent and child continue execution from the same point, but the return value differs - parent gets child's PID, child gets 0. This demonstrates kernel-mode process creation.",
+      "timeComplexity": "O(n) - copying entire address space",
+      "spaceComplexity": "O(n) - new process requires separate memory allocation"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "System Call - File Open Operation",
+      "description": "Shows the sequence of operations when opening a file through system call interface",
+      "code": "FUNCTION open(filename, flags, mode) RETURNS file_descriptor\nBEGIN\n  // Step 1: User library prepares request\n  SET request_params = {filename, flags, mode}\n  \n  // Step 2: Trigger software interrupt to enter kernel\n  TRAP_TO_KERNEL(SYS_open, request_params)\n  \n  // Step 3: Kernel execution (privileged mode)\n  SET current_process = GET_CURRENT_PROCESS()\n  \n  // Validate permissions\n  IF NOT CHECK_PERMISSION(filename, current_process) THEN\n    RETURN -1 (error: EACCES)\n  ENDIF\n  \n  // Locate or create file entry\n  inode = GET_INODE(filename)\n  IF inode NOT EXISTS THEN\n    IF flags INCLUDE O_CREAT THEN\n      inode = CREATE_NEW_INODE(filename, mode)\n    ELSE\n      RETURN -1 (error: ENOENT)\n    ENDIF\n  ENDIF\n  \n  // Allocate file descriptor in process table\n  fd = ALLOCATE_FILE_DESCRIPTOR(current_process)\n  current_process.file_table[fd] = inode\n  \n  // Step 4: Return to user mode\n  RETURN fd\nEND",
+      "explanation": "The open() system call demonstrates kernel-mediated file access. It validates permissions, locates or creates file metadata, and returns a file descriptor for subsequent read/write operations. All privileged operations happen in kernel mode.",
+      "timeComplexity": "O(log n) for directory lookup + O(1) for descriptor allocation",
+      "spaceComplexity": "O(1) for file descriptor table entry"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Mode Switching - User to Kernel Transition",
+      "description": "Demonstrates how CPU switches from user mode to kernel mode using system calls",
+      "code": "// ============================================\n// USER MODE CODE\n// ============================================\nPROCEDURE user_program()\nBEGIN\n  PRINT \"Starting file read...\"\n  \n  // Library function call (looks like normal function)\n  result = read(file_descriptor, buffer, 1024)\n  \n  // Continue after system call returns\n  IF result > 0 THEN\n    PRINT \"Read successful\"\n  ENDIF\nEND\n\n// ============================================\n// KERNEL MODE (Simplified)\n// ============================================\nPROCEDURE kernel_read(fd, buffer, size)\nBEGIN\n  // Verify file descriptor is valid\n  process = GET_CURRENT_PROCESS()\n  file = process.file_table[fd]\n  \n  IF file = NULL THEN\n    RETURN -EBADF\n  ENDIF\n  \n  // Check file permissions for reading\n  IF NOT can_read(file) THEN\n    RETURN -EACCES\n  ENDIF\n  \n  // Perform actual read (interacts with storage device)\n  data = DEVICE_READ(file.inode, position)\n  COPY_TO_USER(buffer, data)\n  \n  RETURN bytes_read\nEND\n\n// ============================================\n// TRAP HANDLER (CPU Interrupt Handler)\n// ============================================\nPROCEDURE handle_system_call(syscall_number, params)\nBEGIN\n  // Save current CPU state\n  SAVE_CPU_STATE()\n  \n  // Switch to kernel privilege level\n  SET_CPU_MODE(KERNEL_PRIVILEGE)\n  \n  // Dispatch to appropriate system call handler\n  SELECT syscall_number\n    CASE SYS_read: result = kernel_read(params)\n    CASE SYS_write: result = kernel_write(params)\n    CASE SYS_open: result = kernel_open(params)\n    // ... other system calls\n  ENDSELECT\n  \n  // Restore user mode\n  SET_CPU_MODE(USER_PRIVILEGE)\n  RESTORE_CPU_STATE()\n  \n  RETURN result to user program\nEND",
+      "explanation": "This pseudocode shows the complete flow of a system call: user program calls library function \u2192 library triggers trap \u2192 CPU switches to kernel mode \u2192 kernel validates and executes request \u2192 returns to user mode. This ensures protected access to hardware resources.",
+      "timeComplexity": "O(1) for mode switch + O(n) for actual operation",
+      "spaceComplexity": "O(1) for state save/restore + O(n) for operation buffers"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Loadable Kernel Module (LKM) Structure",
+      "description": "Demonstrates the structure of dynamically loadable kernel modules",
+      "code": "// ============================================\n// KERNEL MODULE CODE (Example: Simple Character Device)\n// ============================================\n\n// Module initialization - called when module is loaded\nFUNCTION module_init() RETURNS integer\nBEGIN\n  PRINT \"Loading custom kernel module...\"\n  \n  // Register device with kernel\n  major_number = register_chrdev(MAJOR_NUMBER, \"my_device\", &file_ops)\n  IF major_number < 0 THEN\n    PRINT \"Failed to register device\"\n    RETURN major_number\n  ENDIF\n  \n  // Initialize device data\n  device_data = allocate_memory(sizeof(device_struct))\n  \n  PRINT \"Module loaded successfully with major number: \", major_number\n  RETURN 0  // Success\nEND\n\n// Module cleanup - called when module is unloaded\nFUNCTION module_exit()\nBEGIN\n  PRINT \"Unloading kernel module...\"\n  \n  // Unregister device\n  unregister_chrdev(major_number, \"my_device\")\n  \n  // Free allocated memory\n  free_memory(device_data)\n  \n  PRINT \"Module unloaded successfully\"\nEND\n\n// File operations handler\nFUNCTION device_read(file, buffer, count, offset)\nBEGIN\n  // Copy data from kernel space to user space\n  copy_to_user(buffer, kernel_data, count)\n  RETURN bytes_copied\nEND\n\n// Module metadata\nMODULE_LICENSE(\"GPL\")\nMODULE_AUTHOR(\"Example Author\")\nMODULE_DESCRIPTION(\"Sample Loadable Kernel Module\")\n\n// Entry and exit points (macros in actual C code)\nREGISTER_INIT(module_init)\nREGISTER_EXIT(module_exit)",
+      "explanation": "Loadable Kernel Modules allow adding functionality to Linux kernel at runtime without rebooting. The module_init() function runs when loading, module_exit() runs when unloading. This demonstrates modular OS design where drivers can be dynamically added/removed.",
+      "timeComplexity": "O(1) for module load/unload operations",
+      "spaceComplexity": "O(n) for device memory allocation, where n is device buffer size"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "topicId": "message-queues",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between System V message queues and POSIX message queues with respect to their implementation and function calls.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "System V uses msgget(), msgsnd(), msgrcv(), msgctl() while POSIX uses mq_open(), mq_send(), mq_receive(), mq_close()",
+        "System V uses numeric keys (ftok) for identification, POSIX uses file pathnames",
+        "POSIX queues appear as files in /dev/mqueue filesystem",
+        "System V supports message types for selective retrieval, POSIX uses priority levels",
+        "POSIX is simpler and standardized, System V offers more features but is more complex"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the Producer-Consumer problem in the context of message queues? Explain how synchronization is achieved.",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Producer creates messages and adds to shared queue, Consumer removes and processes messages",
+        "Problem: Prevent queue overflow (when full) and underflow (when empty)",
+        "Solution uses: Mutex for mutual exclusion, Semaphores for counting (empty slots, full slots)",
+        "Producer waits if queue full (empty--), Consumer waits if queue empty (full--)",
+        "This is also known as bounded buffer problem in operating systems"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the operations performed on a message queue with the help of a diagram showing producer, queue, and consumer.",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Enqueue (or Send): Producer adds message to rear of queue",
+        "Dequeue (or Receive): Consumer removes message from front of queue",
+        "Queue acts as buffer between producer and consumer",
+        "Messages typically have: message type, priority, payload/data",
+        "Queue maintains pointers (front, rear) and count of messages",
+        "Operations can be blocking or non-blocking based on flags"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What are the advantages of using message queues in distributed systems?",
+      "marks": 5,
+      "difficulty": "easy",
+      "keyPoints": [
+        "Decoupling: Producers and consumers work independently without knowing each other",
+        "Asynchrony: Sender doesn't wait for receiver, improves responsiveness",
+        "Load Leveling: Handles traffic bursts by buffering messages",
+        "Reliability: Messages persist until processed, survive system failures",
+        "Scalability: Easy to add more producers/consumers without changing existing code",
+        "Fault Tolerance: Can implement retries, dead letter queues for failed messages"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of a Circular Queue. How does it differ from a Linear Queue?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Circular queue connects end back to beginning, forming a circle",
+        "Linear queue wastes space when front elements are dequeued (can't reuse front space)",
+        "Circular queue reuses dequeued space by wrapping front pointer to beginning",
+        "Implementation uses modular arithmetic: (rear + 1) % size to calculate next position",
+        "Solves the problem of 'queue full' even when not all slots are used in linear implementation",
+        "Both support Enqueue and Dequeue operations with O(1) time complexity"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What is a Priority Queue? How does message priority work in message queue implementations?",
+      "marks": 5,
+      "difficulty": "medium",
+      "keyPoints": [
+        "Priority queue arranges messages based on priority levels rather than pure FIFO",
+        "Higher priority messages are dequeued before lower priority ones",
+        "In System V: msgtyp parameter in msgrcv() allows selecting message by type",
+        "In POSIX: mq_send() accepts priority parameter (higher value = higher priority)",
+        "Priority can be set by sender when enqueuing the message",
+        "Useful for handling urgent/important messages that need immediate processing"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write and explain the System V message queue functions: msgget(), msgsnd(), msgrcv(), and msgctl(). Include their function prototypes and parameters.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "msgget(): Creates/accesses queue - int msgget(key_t key, int msgflg); Returns queue ID",
+        "msgsnd(): Sends message - int msgsnd(int msqid, const void *msgp, size_t msgsz, int msgflg); msgp contains msgtyp and message data",
+        "msgrcv(): Receives message - int msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, int msgflg); msgtyp selects message type",
+        "msgctl(): Control operations - int msgctl(int msqid, int cmd, struct msqid_ds *buf); cmd can be IPC_STAT, IPC_SET, IPC_RMID",
+        "Example struct: struct msgbuf { long mtype; char mtext[100]; };",
+        "IPC_CREAT flag creates queue, IPC_EXCL prevents creation if exists"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the concept of message persistence and reliability in message queues. Discuss various delivery semantics (at-most-once, at-least-once, exactly-once).",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Message persistence: How long messages survive system failures",
+        "Transient messages: Lost on broker/system crash - faster performance",
+        "Persistent messages: Written to disk - survive crashes, slower but reliable",
+        "Delivery semantics:",
+        "At-most-once: Message may be lost but never duplicated - suitable for non-critical data",
+        "At-least-once: Message never lost but may be duplicated - requires idempotent processing",
+        "Exactly-once: Message processed exactly once - requires duplicate detection and acknowledgment",
+        "Implementation requires: acknowledgments, transaction logs, message IDs, consumer idempotency"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Write a C program demonstrating the creation and usage of a POSIX message queue with producer-consumer pattern.",
+      "marks": 10,
+      "difficulty": "hard",
+      "keyPoints": [
+        "Producer process creates queue with mq_open() using O_CREAT",
+        "Producer sends messages using mq_send() in a loop",
+        "Consumer opens same queue (by name) using mq_open()",
+        "Consumer receives messages using mq_receive()",
+        "Queue attributes set maximum messages and message size",
+        "Both processes use O_WRONLY/O_RDONLY flags",
+        "Use mq_close() to close and mq_unlink() to destroy queue",
+        "Handle errors with perror() for system call failures",
+        "mq_getattr() can retrieve queue properties",
+        "Non-blocking mode possible with O_NONBLOCK flag"
+      ]
+    }
+  ]
+}

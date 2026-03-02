@@ -1,0 +1,234 @@
+{
+  "topicId": "q-learning",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define Q-learning and state whether it is an on-policy or off-policy algorithm. Justify your answer.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Remember that off-policy methods learn the optimal policy independently of the agent's actions",
+      "keyPoints": [
+        "Q-learning is a model-free reinforcement learning algorithm",
+        "Used to learn the optimal policy in an MDP",
+        "It is an off-policy algorithm",
+        "Learns from experiences without following the same policy for exploration and exploitation",
+        "Can learn from actions taken different from the current policy"
+      ]
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Write and explain the Q-learning update rule. Define each parameter in the equation.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "The update rule combines current Q-value with TD error adjusted by learning rate",
+      "keyPoints": [
+        "Q(s,a) ← Q(s,a) + α[r + γmax Q(s',a') - Q(s,a)]",
+        "α (alpha) is the learning rate",
+        "γ (gamma) is the discount factor",
+        "r is the immediate reward",
+        "max Q(s',a') is the maximum Q-value in the next state",
+        "The term in brackets is the TD error"
+      ]
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Explain the ε-greedy exploration strategy used in Q-learning. Why is exploration necessary?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "The exploration-exploitation trade-off is fundamental in RL",
+      "keyPoints": [
+        "With probability ε, choose a random action (exploration)",
+        "With probability 1-ε, choose the best action (exploitation)",
+        "Prevents getting stuck in suboptimal policies",
+        "Ensures the agent discovers better paths/solutions",
+        "ε is typically decayed over time"
+      ]
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the role of the discount factor (γ) in Q-learning? What happens when γ = 0 and γ = 1?",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Think about how the agent values rewards received now versus later",
+      "keyPoints": [
+        "Discount factor determines the importance of future rewards",
+        "γ ∈ [0,1] typically",
+        "γ = 0: Only immediate reward matters (myopic)",
+        "γ = 1: Future rewards are as important as immediate rewards",
+        "Lower values make the agent focus on short-term gains"
+      ]
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "State two advantages and two disadvantages of Q-learning.",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "Consider the practical limitations of the algorithm",
+      "keyPoints": [
+        "Advantages: Model-free (doesn't require environment model), Simple to implement, Converges to optimal policy, Off-policy can learn from explorations",
+        "Disadvantages: Can overestimate Q-values, Slow convergence in large state spaces, Requires exploration throughout, May not scale well to continuous spaces"
+      ]
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the concept of Temporal Difference (TD) error in Q-learning.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "The TD error measures the surprise element in the learning process",
+      "keyPoints": [
+        "TD error is the difference between predicted and actual value",
+        "Formula: δ = r + γmax Q(s',a') - Q(s,a)",
+        "Represents how much the Q-value needs to be updated",
+        "Drives the Q-value updates in Q-learning",
+        "Can be positive or negative"
+      ]
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the step-by-step procedure of the Q-learning algorithm. Include initialization, action selection, and update steps.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Outline the complete algorithm flow from start to convergence",
+      "keyPoints": [
+        "Step 1: Initialize Q(s,a) arbitrarily (often to zero)",
+        "Step 2: For each episode: get initial state s",
+        "Step 3: For each step of episode: choose action a using policy (ε-greedy)",
+        "Step 4: Take action a, observe reward r and next state s'",
+        "Step 5: Update Q(s,a) using the update rule",
+        "Step 6: Set s ← s'",
+        "Step 7: Repeat until convergence"
+      ]
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare Q-learning with SARSA (State-Action-Reward-State-Action) algorithm. Under what circumstances would you prefer one over the other?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "The key difference is in how they handle the next action selection",
+      "keyPoints": [
+        "Q-learning is off-policy, SARSA is on-policy",
+        "Q-learning learns optimal policy, SARSA learns policy being followed",
+        "Q-learning: max Q(s',a'), SARSA: Q(s',a') following policy",
+        "Q-learning more aggressive exploration, SARSA more conservative",
+        "Prefer Q-learning when optimal policy needed and environment safe",
+        "Prefer SARSA when learning while acting (real-world robotics)"
+      ]
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive the Q-learning update rule from the Bellman optimality equation. Explain the mathematical foundation.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Start from the Bellman equation and work towards the update formula",
+      "keyPoints": [
+        "Bellman optimality: Q*(s,a) = r + γmax Q*(s',a')",
+        "Current estimate: Q(s,a) should approach r + γmax Q(s',a')",
+        "Update: Q_new(s,a) = Q_old(s,a) + α[target - Q_old(s,a)]",
+        "Target = r + γmax Q(s',a')",
+        "Update becomes: Q(s,a) ← Q(s,a) + α[r + γmax Q(s',a') - Q(s,a)]",
+        "α controls step size towards target"
+      ]
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Discuss the conditions required for Q-learning to converge to the optimal Q-function. What factors affect convergence?",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Convergence guarantees depend on specific conditions",
+      "keyPoints": [
+        "All state-action pairs must be visited infinitely often",
+        "Learning rate α must satisfy: Σα_t = ∞ and Σα_t² < ∞",
+        "Discount factor γ ∈ [0,1)",
+        "Environment must be finite MDP",
+        "Small enough learning rate for estimates to stabilize",
+        "Sufficient exploration during learning"
+      ]
+    },
+    {
+      "id": "q-11",
+      "type": "short",
+      "question": "Consider a 2×2 grid world with states: S1(start), S2, S3, S4(goal). Actions: UP, DOWN, LEFT, RIGHT. Reward: +10 at goal, -1 for each step. Using Q-learning with α=0.1, γ=0.9, initial Q-values = 0, and ε=0.1 (ε-greedy), if the agent takes action RIGHT from S1 to S2 and receives reward -1, calculate the updated Q-value for Q(S1, RIGHT). The maximum Q-value in S2 is 0.",
+      "marks": 5,
+      "difficulty": "medium",
+      "hint": "Substitute values directly into the update formula",
+      "keyPoints": [
+        "Apply Q-learning update: Q(s,a) ← Q(s,a) + α[r + γmax Q(s',a') - Q(s,a)]",
+        "Q(S1,RIGHT) = 0 + 0.1[-1 + 0.9(0) - 0]",
+        "Q(S1,RIGHT) = 0.1[-1] = -0.1",
+        "New Q(S1,RIGHT) = -0.1",
+        "Step-by-step calculation shown"
+      ]
+    },
+    {
+      "id": "q-12",
+      "type": "short",
+      "question": "In a simple Markov Decision Process, we have two states S1 and S2, and two actions A1 and A2. Given Q(S1,A1)=2.0, Q(S1,A2)=1.5, Q(S2,A1)=3.0, Q(S2,A2)=2.5. If the agent is in S1, takes action A1, reaches S2 with reward r=4, and using γ=0.5, calculate the new Q(S1,A1) value with learning rate α=0.2.",
+      "marks": 10,
+      "difficulty": "medium",
+      "hint": "Find the maximum Q-value in the next state first",
+      "keyPoints": [
+        "Identify max Q(s',a'): max(Q(S2,A1), Q(S2,A2)) = max(3.0, 2.5) = 3.0",
+        "Apply formula: Q_new = Q_old + α[r + γ(max Q) - Q_old]",
+        "Q_new = 2.0 + 0.2[4 + 0.5(3.0) - 2.0]",
+        "Q_new = 2.0 + 0.2[4 + 1.5 - 2.0] = 2.0 + 0.2[3.5]",
+        "Q_new = 2.0 + 0.7 = 2.7"
+      ]
+    },
+    {
+      "id": "q-13",
+      "type": "short",
+      "question": "A robot using Q-learning has current Q-values: Q(stateA, left)=2, Q(stateA, right)=5, Q(stateA, up)=3, Q(stateA, down)=1. Using ε-greedy with ε=0.3, determine: (i) Probability of selecting each action, (ii) If RIGHT is selected and reward is 10, new state has all Q-values=4, with α=0.1, γ=0.9, compute the updated Q(stateA, RIGHT).",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Handle ε-greedy probabilities first, then apply Q-learning update",
+      "keyPoints": [
+        "(i) ε-greedy: P(best) = 1-ε+ε/|A| = 0.7+0.075=0.775 for RIGHT",
+        "P(other actions) = ε/|A| = 0.075 each",
+        "(ii) max Q(s',a') = 4 (all equal)",
+        "Update: Q_new = 5 + 0.1[10 + 0.9(4) - 5]",
+        "Q_new = 5 + 0.1[10 + 3.6 - 5] = 5 + 0.1[8.6] = 5 + 0.86 = 5.86"
+      ]
+    },
+    {
+      "id": "q-14",
+      "type": "long",
+      "question": "Design a Q-learning based solution for an autonomous vehicle navigating through traffic. Specify the state representation, action space, reward function, and algorithm parameters. Justify your choices.",
+      "marks": 10,
+      "difficulty": "hard",
+      "hint": "Think about real-world constraints and safety in autonomous driving",
+      "keyPoints": [
+        "State: vehicle position, velocity, nearby vehicle positions, traffic light status",
+        "Actions: accelerate, brake, steer left, steer right, maintain speed",
+        "Reward: +ve for reaching destination, -ve for collision, -ve per time step, -ve for traffic violations",
+        "Parameters: γ close to 1 (long-horizon), α moderate, ε decaying over time",
+        "Justification: Complex state space requires function approximation typically"
+      ]
+    },
+    {
+      "id": "q-15",
+      "type": "short",
+      "question": "What is the exploration-exploitation dilemma in Q-learning? How does Q-learning address this problem?",
+      "marks": 5,
+      "difficulty": "easy",
+      "hint": "This is a fundamental concept in all reinforcement learning",
+      "keyPoints": [
+        "Exploration: trying new actions to discover better policies",
+        "Exploitation: using known good actions to maximize reward",
+        "Dilemma: cannot do both simultaneously",
+        "Q-learning uses ε-greedy to balance both",
+        "Alternative: softmax exploration, UCB",
+        "Annealing ε over time to shift from exploration to exploitation"
+      ]
+    }
+  ]
+}

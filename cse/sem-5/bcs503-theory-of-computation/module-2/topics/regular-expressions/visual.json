@@ -1,0 +1,116 @@
+{
+  "topicId": "regular-expressions",
+  "diagrams": [
+    {
+      "id": "diagram-1",
+      "title": "Operator Precedence Hierarchy",
+      "description": "Vertical pyramid showing the hierarchy of regex operators from highest to lowest precedence",
+      "elements": [
+        "Top level: Parentheses () with label 'Highest - Evaluate First'",
+        "Second level: Kleene star * with label 'High Precedence'",
+        "Third level: Concatenation (implicit, shown as adjacent symbols) with label 'Medium Precedence'",
+        "Bottom level: Union | with label 'Lowest - Evaluate Last'",
+        "Dotted downward arrows connecting each level",
+        "Color gradient from red (highest) to green (lowest)"
+      ],
+      "purpose": "Helps students understand the correct order of evaluation when parsing complex regex expressions like ab*|c = (a(b*))|c"
+    },
+    {
+      "id": "diagram-2",
+      "title": "Thompson's Construction: Basic Building Blocks",
+      "description": "Four separate NFA diagrams showing the base cases for Thompson's construction algorithm",
+      "elements": [
+        "Diagram A: Single character 'a' - state 0 (start) with transition 'a' to state 1 (accept)",
+        "Diagram B: Empty string 'ε' - state 0 with ε-transition to state 1 (accept)",
+        "Diagram C: Empty set '∅' - single state that is not accepting, no transitions",
+        "Diagram D: Union operation (R1|R2) - shows parallel NFAs with new start and accept states connected by ε-transitions"
+      ],
+      "purpose": "Visualizes the foundation for converting any regex to equivalent NFA using recursive construction"
+    },
+    {
+      "id": "diagram-3",
+      "title": "Thompson's Construction: Compound Operations",
+      "description": "Three NFA diagrams showing concatenation and Kleene star constructions",
+      "elements": [
+        "Concatenation (R1R2): Start state of R1 connected to accept state of R1 which has ε-transition to start state of R2, with R2's accept state becoming the final accept",
+        "Kleene Star (R*): R's start and accept states connected in a cycle with ε-transitions, new start state with ε to original start and original accept, ε-loop back to start",
+        "All diagrams show clear state numbering (0,1,2...) and labeled transitions"
+      ],
+      "purpose": "Shows students how to build complex NFAs from simpler components using the recursive construction method"
+    },
+    {
+      "id": "diagram-4",
+      "title": "Regex Examples: Pattern Matching Visualization",
+      "description": "Three example regex patterns with visual representation of matched and rejected strings",
+      "elements": [
+        "Example 1: regex 'a*b*' - shows matched: '', 'a', 'aa', 'b', 'ab', 'aab' (green checkmarks), rejected: 'ba', 'aba' (red X marks)",
+        "Example 2: regex '(ab)*' - shows matched: '', 'ab', 'abab', rejected: 'a', 'b', 'aba'",
+        "Example 3: regex 'a(b|c)*' - shows matched: 'a', 'ab', 'ac', 'abc', 'acb', rejected: 'b', 'c', 'ba'",
+        "Each example includes the language set notation in braces"
+      ],
+      "purpose": "Reinforces understanding by showing concrete examples of what strings each regex pattern matches"
+    },
+    {
+      "id": "diagram-5",
+      "title": "Algebraic Laws of Regular Expressions",
+      "description": "Visual display of the fundamental algebraic identities and laws that regex obey",
+      "elements": [
+        "Commutative: R1|R2 = R2|R1 shown with curved double-headed arrow",
+        "Associative: (R1|R2)|R3 = R1|(R2|R3) with grouped parentheses",
+        "Distributive: R1(R2|R3) = R1R2|R1R3 and (R1|R2)R3 = R1R3|R2R3",
+        "Identities: εR = Rε = R, ∅R = R∅ = ∅",
+        "Idempotent: R|R = R",
+        "Annihilator: ∅R = R∅ = ∅",
+        "Kleene star properties: ε* = ε, ∅* = ε, R** = R*"
+      ],
+      "purpose": "Provides visual reference for algebraic manipulation of regex expressions used in proofs and simplifications"
+    }
+  ],
+  "charts": [
+    {
+      "type": "comparison",
+      "title": "Basic vs Extended Operators Equivalence Table",
+      "content": "Two-column table mapping each extended operator to its basic operator equivalent: R+ maps to RR*, R? maps to R|ε, [abc] maps to a|b|c, . maps to (a|b|c|...|z), R{n} maps to R repeated n times, R{n,m} maps to union from R^n to R^m, R* maps to R{0,∞}, R{1,∞} maps to R+"
+    },
+    {
+      "type": "flowchart",
+      "title": "Regex to NFA Conversion Algorithm",
+      "content": "Step-by-step flowchart: 1) Parse input regex into parse tree, 2) For each leaf node create basic NFA (a, ε, or ∅), 3) For each internal node apply corresponding construction (union → parallel NFAs with ε-edges, concatenation → connect accept to start, Kleene star → add cycle with ε-edges), 4) Return final NFA with single start and accept state"
+    },
+    {
+      "type": "table",
+      "title": "Operator Precedence Examples",
+      "content": "Three-column table with regex expression, incorrect interpretation, and correct interpretation: 'ab*|c' incorrectly parsed as '(ab)*|c' but correctly as '(a(b*))|c'; 'a|bc' incorrectly as '(a|b)c' but correctly as 'a|(bc)'; '(ab)*c' correctly as '((ab)*)c' due to parentheses forcing evaluation first"
+    },
+    {
+      "type": "comparison",
+      "title": "Regex Operators Quick Reference",
+      "content": "Five-row table with columns for Symbol, Name, Mathematical Notation, Meaning, and Example: 'a' as Literal matches character a; 'ε' as Empty string matches empty string; '∅' as Empty set matches nothing; 'R1|R2' as Union matches strings from R1 or R2; 'R1R2' as Concatenation matches R1 followed by R2; 'R*' as Kleene Star matches zero or more repetitions of R"
+    }
+  ],
+  "mindMaps": [
+    {
+      "centralConcept": "Regular Expressions",
+      "branches": [
+        "Syntax & Operators: literals (a,z,0,9), ε (empty string), ∅ (empty language), union (|), concatenation (implicit), Kleene star (*)",
+        "Operator Properties: precedence order (), *, concat, |; algebraic laws (associative, distributive, identities)",
+        "Extended Operators: R+ (one or more), R? (zero or one), [abc] (character class), . (any char), {n} (exact count), {n,m} (range)",
+        "Conversion to Automata: Thompson's construction algorithm, building blocks, recursive composition, NFA equivalence",
+        "Language Representation: describes regular languages, finite vs infinite sets, pattern matching capability",
+        "Applications: lexical analysis (compilers), text search (grep), input validation (forms), log parsing, data extraction"
+      ],
+      "purpose": "Comprehensive overview connecting regex syntax, theoretical properties, conversion methods, and practical applications for complete topic understanding"
+    }
+  ],
+  "visuals": [
+    {
+      "id": "regular-expressions-svg",
+      "title": "Regular Expressions",
+      "description": "Visual diagram for regular expressions",
+      "type": "animated-svg",
+      "file": "assets/regular-expressions.svg",
+      "svgContent": "<placeholder>",
+      "animated": true
+    }
+  ]
+}

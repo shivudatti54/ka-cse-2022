@@ -1,0 +1,45 @@
+{
+  "topicId": "sequence-modeling-rnn",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Basic RNN Forward Pass",
+      "description": "Implementation of forward propagation in a basic RNN cell",
+      "code": "import numpy as np\n\ndef rnn_step_forward(x, prev_h, Wxh, Whh, bh):\n    \"\"\"Single RNN time step forward pass.\"\"\"\n    # Compute hidden state\n    hidden_raw = np.dot(Wxh, x) + np.dot(Whh, prev_h) + bh\n    h = np.tanh(hidden_raw)\n    return h\n\ndef rnn_forward(x, h0, Wxh, Whh, Why, bh, by):\n    \"\"\"Full RNN forward pass through sequence.\"\"\"\n    T = x.shape[0]\n    D, H = Wxh.shape\n    N = x.shape[1]\n    \n    # Store cache for backprop\n    h = np.zeros((T+1, N, H))\n    h[-1] = h0\n    \n    # Forward pass through each time step\n    for t in range(T):\n        h[t] = rnn_step_forward(x[t], h[t-1], Wxh, Whh, bh)\n    \n    # Output layer\n    y = np.dot(Why, h[T-1]) + by\n    \n    return y, h",
+      "explanation": "This code demonstrates the core RNN forward pass where each hidden state depends on current input and previous hidden state through the tanh activation function.",
+      "timeComplexity": "O(T \u00d7 D \u00d7 H + T \u00d7 H\u00b2)",
+      "spaceComplexity": "O(T \u00d7 H)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "LSTM Forward Pass",
+      "description": "Implementation of complete LSTM forward propagation with all gates",
+      "code": "import numpy as np\n\ndef lstm_step_forward(x, prev_h, prev_c, Wf, Wi, Wo, Wc, Uf, Ui, Uo, Uc, bf, bi, bo, bc):\n    \"\"\"Single LSTM time step forward pass.\"\"\"\n    N, H = prev_h.shape\n    \n    # Concatenate prev_h and x\n    concat = np.concatenate((prev_h, x), axis=1)\n    \n    # Forget gate: what to discard from cell state\n    f = sigmoid(np.dot(Wf, concat) + bf)\n    \n    # Input gate: what new information to store\n    i = sigmoid(np.dot(Wi, concat) + bi)\n    \n    # Candidate cell state\n    c_tilde = np.tanh(np.dot(Wc, concat) + bc)\n    \n    # Output gate: what to output\n    o = sigmoid(np.dot(Wo, concat) + bo)\n    \n    # Update cell state\n    next_c = f * prev_c + i * c_tilde\n    \n    # Compute hidden state\n    next_h = o * np.tanh(next_c)\n    \n    return next_h, next_c\n\ndef sigmoid(x):\n    \"\"\"Numerically stable sigmoid.\"\"\"\n    return np.where(x >= 0, \n                    1 / (1 + np.exp(-x)), \n                    np.exp(x) / (1 + np.exp(x)))",
+      "explanation": "LSTM uses three gates (forget, input, output) to control information flow. The cell state acts as a memory highway, allowing gradients to flow unchanged through time.",
+      "timeComplexity": "O(T \u00d7 H \u00d7 (D + H))",
+      "spaceComplexity": "O(T \u00d7 H)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "Attention Mechanism",
+      "description": "Implementation of attention mechanism for Seq2Seq decoder",
+      "code": "import numpy as np\n\ndef attention_forward(encoder_h, decoder_h, Wa, Ua, va):\n    \"\"\"\n    Compute attention context and weights.\n    encoder_h: (T, N, H) encoder hidden states\n    decoder_h: (N, H) current decoder hidden state\n    \"\"\"\n    T = encoder_h.shape[0]\n    N = encoder_h.shape[1]\n    H = encoder_h.shape[2]\n    \n    # Repeat decoder state T times for concatenation\n    decoder_h_repeated = np.repeat(decoder_h[np.newaxis, :, :], T, axis=0)\n    \n    # Compute energy scores\n    energy = np.tanh(np.dot(encoder_h, Wa) + np.dot(decoder_h_repeated, Ua) + va)\n    \n    # Flatten and compute attention scores\n    energy_flat = energy.reshape(T * N, -1)\n    scores = np.dot(energy_flat, va.T).reshape(T, N)\n    \n    # Softmax to get attention weights\n    scores_max = np.max(scores, axis=0)\n    exp_scores = np.exp(scores - scores_max)\n    attention_weights = exp_scores / np.sum(exp_scores, axis=0)\n    \n    # Compute context vector as weighted sum\n    context = np.zeros((N, encoder_h.shape[2]))\n    for t in range(T):\n        context += np.dot(attention_weights[t, :, np.newaxis], encoder_h[t]).reshape(N, -1)\n    \n    return context, attention_weights\n\ndef softmax(x):\n    \"\"\"Numerically stable softmax.\"\"\"\n    exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))\n    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)",
+      "explanation": "Attention computes a weighted combination of all encoder hidden states, where weights are learned based on relevance to current decoder step.",
+      "timeComplexity": "O(T \u00d7 N \u00d7 H)",
+      "spaceComplexity": "O(T \u00d7 N \u00d7 H)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "BPTT Algorithm",
+      "description": "Pseudocode for Backpropagation Through Time training",
+      "code": "ALGORITHM BPTT\nINPUT: Sequence x[1...T], initial hidden state h0\nOUTPUT: Gradients for weights\n\n// Forward Pass\nh[0] = h0\nFOR t = 1 TO T DO\n    h[t] = tanh(Wxh\u00b7x[t] + Whh\u00b7h[t-1] + bh)  // hidden state\n    y[t] = Why\u00b7h[t] + by                       // output\nEND FOR\n\n// Compute Loss\nL = 0\nFOR t = 1 TO T DO\n    L = L + loss(y[t], target[t])\nEND FOR\n\n// Backward Pass (Backward Through Time)\nInitialize gradients to zero\nFOR t = T DOWN TO 1 DO\n    // Gradient from loss\n    dL_dy = gradient_of_loss(y[t], target[t])\n    \n    // Gradient to hidden state\n    dh_next = Why\u1d40 \u00b7 dL_dy\n    \n    // Gradient through tanh\n    dh_raw = dh_next * (1 - h[t]\u00b2)  // derivative of tanh\n    \n    // Accumulate gradients\n    dWhy += dL_dy \u00b7 h[t]\u1d40\n    dbh += dh_raw\n    dWxh += dh_raw \u00b7 x[t]\u1d40\n    dWhh += dh_raw \u00b7 h[t-1]\u1d40\n    \n    // Propagate to previous time step\n    dh_next = Whh\u1d40 \u00b7 dh_raw\n    \n    // Gradient clipping for exploding gradients\n    IF ||dh_next|| > threshold THEN\n        dh_next = threshold * dh_next / ||dh_next||\n    END IF\nEND FOR\n\n// Update weights (e.g., using Adam or SGD)\nweights = weights - learning_rate * gradients\n\nRETURN weights_updated",
+      "explanation": "BPTT unrolls the RNN through time and computes gradients by backpropagating errors from the output back through each time step. Gradients are accumulated and used to update weights.",
+      "timeComplexity": "O(T \u00d7 (D\u00d7H + H\u00b2 + H\u00d7O))",
+      "spaceComplexity": "O(T \u00d7 H)"
+    }
+  ]
+}

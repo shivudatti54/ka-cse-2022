@@ -1,0 +1,35 @@
+{
+  "topicId": "polyalphabetic-ciphers",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python-like pseudocode",
+      "title": "Vigen\u00e8re Encryption and Decryption",
+      "description": "Implementation of Vigen\u00e8re cipher with both encryption and decryption functions",
+      "code": "FUNCTION ENCRYPT_VIGENERE(plaintext, key):\n ciphertext = \"\"\n key = REPEAT_KEY(key, LENGTH(plaintext))\n FOR i FROM 0 TO LENGTH(plaintext) - 1:\n p = CHAR_TO_NUM(plaintext[i])\n k = CHAR_TO_NUM(key[i])\n c = (p + k) MOD 26\n ciphertext = ciphertext + NUM_TO_CHAR(c)\n RETURN ciphertext\n\nFUNCTION DECRYPT_VIGENERE(ciphertext, key):\n plaintext = \"\"\n key = REPEAT_KEY(key, LENGTH(ciphertext))\n FOR i FROM 0 TO LENGTH(ciphertext) - 1:\n c = CHAR_TO_NUM(ciphertext[i])\n k = CHAR_TO_NUM(key[i])\n p = (c - k + 26) MOD 26\n plaintext = plaintext + NUM_TO_CHAR(p)\n RETURN plaintext\n\nFUNCTION REPEAT_KEY(key, length):\n repeated = \"\"\n FOR i FROM 0 TO length - 1:\n repeated = repeated + key[i MOD LENGTH(key)]\n RETURN repeated",
+      "explanation": "The encryption function converts letters to numbers (A=0, B=1, ..., Z=25), adds the key letter, takes mod 26. Decryption reverses this by subtracting the key letter. The key is repeated to match plaintext length.",
+      "timeComplexity": "O(n) where n is message length",
+      "spaceComplexity": "O(n) for output string"
+    },
+    {
+      "id": "code-2",
+      "language": "python-like pseudocode",
+      "title": "Kasiski Examination Implementation",
+      "description": "Algorithm to find potential key lengths from repeated sequences in ciphertext",
+      "code": "FUNCTION KASISKI_EXAMINATION(ciphertext):\n sequences = FIND_REPEATED_SEQUENCES(ciphertext, min_length=3)\n distances = []\n FOR EACH seq IN sequences:\n positions = FIND_ALL_POSITIONS(ciphertext, seq)\n FOR i FROM 0 TO LENGTH(positions) - 2:\n FOR j FROM i+1 TO LENGTH(positions) - 1:\n dist = positions[j] - positions[i]\n distances.append(dist)\n \n factors = COUNT_FACTORS(distances)\n probable_lengths = SORT_BY_FREQUENCY(factors)\n RETURN probable_lengths[:5]\n\nFUNCTION COUNT_FACTORS(distances):\n factor_counts = EMPTY_MAP\n FOR d IN distances:\n FOR f FROM 2 TO SQRT(d):\n IF d MOD f == 0:\n factor_counts[f] = factor_counts.get(f, 0) + 1\n factor_counts[d//f] = factor_counts.get(d//f, 0) + 1\n RETURN factor_counts",
+      "explanation": "Finds all repeated sequences of 3+ characters, calculates distances between repetitions, then counts how often each factor (potential key length) appears. The most common factors are likely key lengths.",
+      "timeComplexity": "O(n\u00b2 \u00d7 m) where n is ciphertext length, m is max distance",
+      "spaceComplexity": "O(n) for storing positions and factors"
+    },
+    {
+      "id": "code-3",
+      "language": "python-like pseudocode",
+      "title": "Friedman Test (IC-based Key Length Estimation)",
+      "description": "Uses Index of Coincidence to estimate the likely key length of a polyalphabetic cipher",
+      "code": "FUNCTION FRIEDMAN_TEST(ciphertext):\n n = LENGTH(ciphertext)\n freq = CALCULATE_FREQUENCIES(ciphertext)\n \n # Calculate Index of Coincidence\n IC = 0\n FOR f IN freq:\n IC = IC + (f * (f - 1))\n IC = IC / (n * (n - 1))\n \n # Expected IC values\n IC_english = 0.065\n IC_random = 0.0385\n \n # Estimate key length using Friedman formula\n IF IC <= IC_random:\n RETURN \"Key length very long or ciphertext random\"\n \n numerator = 0.0265 * n\n denominator = (IC_english * IC) - (IC_english * IC_random) + IC_random\n k = numerator / denominator\n \n RETURN ROUND(k), IC\n\nFUNCTION CALCULATE_FREQUENCIES(text):\n freq = [0] * 26\n FOR char IN text:\n IF char IS LETTER:\n freq[CHAR_TO_NUM(char)] = freq[CHAR_TO_NUM(char)] + 1\n RETURN freq",
+      "explanation": "Calculates the actual IC of the ciphertext, then uses the Friedman formula to estimate the key length. Lower IC suggests longer key period. Returns estimated key length and calculated IC for analysis.",
+      "timeComplexity": "O(n) to count frequencies",
+      "spaceComplexity": "O(1) for 26-element frequency array"
+    }
+  ]
+}

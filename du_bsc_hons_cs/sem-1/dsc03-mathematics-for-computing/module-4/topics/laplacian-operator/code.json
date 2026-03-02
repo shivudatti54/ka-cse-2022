@@ -1,0 +1,35 @@
+{
+  "topicId": "laplacian-operator",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "Python",
+      "title": "1D Discrete Laplacian (Finite Difference Method)",
+      "description": "Implementation of the discrete Laplacian operator in one dimension using finite differences. This demonstrates the basic mathematical concept of ∇²f = f(x+1) - 2f(x) + f(x-1).",
+      "code": "import numpy as np\n\ndef laplacian_1d(f, h=1.0):\n    \"\"\"\n    Compute the 1D Laplacian using central finite differences.\n    \n    Args:\n        f: Array of function values at discrete points\n        h: Spacing between points (default 1.0)\n    \n    Returns:\n        Array of Laplacian values\n    \"\"\"\n    n = len(f)\n    result = np.zeros(n)\n    \n    for i in range(1, n - 1):\n        # ∇²f = (f(x+h) - 2f(x) + f(x-h)) / h²\n        result[i] = (f[i+1] - 2*f[i] + f[i-1]) / (h**2)\n    \n    return result\n\n# Example: f(x) = x², then ∇²f = 2\nx = np.linspace(0, 10, 11)\nf = x**2  # f(x) = x²\n\nlaplacian_result = laplacian_1d(f, h=1.0)\n\nprint(\"x values:\", x)\nprint(\"f(x) = x²:\", f)\nprint(\"Laplacian ∇²f:\", laplacian_result)\nprint(\"Expected (constant 2):\", [2.0]*len(x))",
+      "explanation": "The Laplacian in 1D measures the second derivative. For f(x)=x², the second derivative is constant 2. We use the central difference formula: ∇²f ≈ (f(x+h) - 2f(x) + f(x-h))/h². The function iterates through interior points, computing the discrete second derivative at each location.",
+      "timeComplexity": "O(n) where n is the number of points",
+      "spaceComplexity": "O(n) for the result array"
+    },
+    {
+      "id": "code-2",
+      "language": "Python",
+      "title": "2D Laplacian for Image Edge Detection",
+      "description": "Application of the Laplacian operator in image processing for edge detection. Uses convolution with Laplacian kernels (3x3) to detect rapid intensity changes.",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndef apply_laplacian(image, kernel='standard'):\n    \"\"\"\n    Apply 2D Laplacian operator to an image using convolution.\n    \n    Args:\n        image: 2D numpy array (grayscale image)\n        kernel: 'standard' or 'diagonal' kernel type\n    \n    Returns:\n        Edge-detected image\n    \"\"\"\n    # Standard Laplacian kernel (4-neighbor)\n    laplacian_standard = np.array([\n        [0, 1, 0],\n        [1, -4, 1],\n        [0, 1, 0]\n    ])\n    \n    # Diagonal Laplacian kernel (8-neighbor)\n    laplacian_diagonal = np.array([\n        [1, 1, 1],\n        [1, -8, 1],\n        [1, 1, 1]\n    ])\n    \n    kernel = laplacian_standard if kernel == 'standard' else laplacian_diagonal\n    \n    # Get dimensions\n    rows, cols = image.shape\n    result = np.zeros_like(image)\n    \n    # Convolution operation (excluding borders)\n    for i in range(1, rows - 1):\n        for j in range(1, cols - 1):\n            # Apply kernel\n            region = image[i-1:i+2, j-1:j+2]\n            result[i, j] = np.sum(region * kernel)\n    \n    return result\n\n# Create a simple test image with edges\ndef create_test_image():\n    img = np.zeros((10, 10))\n    img[2:8, 2:8] = 255  # Bright square in center\n    return img\n\n# Test with synthetic image\ntest_image = create_test_image()\nedges = apply_laplacian(test_image, kernel='standard')\n\nprint(\"Original Image (central square):\")\nprint(test_image)\nprint(\"\\nLaplacian Edge Detection Result:\")\nprint(edges.astype(int))\nprint(\"\\nEdges detected at boundary where intensity changes rapidly!\")",
+      "explanation": "The 2D Laplacian operator ∇²f = ∂²f/∂x² + ∂²f/∂y² detects edges by computing second-order derivatives. We use convolution with a 3x3 kernel. The standard kernel uses 4-neighbors while the diagonal version uses 8-neighbors. High positive or negative values in the result indicate edges (rapid intensity changes).",
+      "timeComplexity": "O(m×n×k²) where m×n is image size and k×k is kernel size",
+      "spaceComplexity": "O(m×n) for the output image"
+    },
+    {
+      "id": "code-3",
+      "language": "Python",
+      "title": "Graph Laplacian for Spectral Clustering Basics",
+      "description": "Implementation of the Graph Laplacian matrix (L = D - W) used in spectral clustering and graph theory. Demonstrates how to construct the Laplacian from an adjacency matrix.",
+      "code": "import numpy as np\n\ndef build_graph_laplacian(adjacency_matrix):\n    \"\"\"\n    Build the Graph Laplacian matrix L = D - W\n    \n    Args:\n        adjacency_matrix: Weight matrix W where W[i,j] > 0 if edge exists\n    \n    Returns:\n        degree_matrix: D (diagonal)\n        laplacian_matrix: L = D - W\n    \"\"\"\n    n = adjacency_matrix.shape[0]\n    \n    # Degree matrix: D[i,i] = sum of weights connected to node i\n    degree_matrix = np.diag(adjacency_matrix.sum(axis=1))\n    \n    # Graph Laplacian: L = D - W\n    laplacian = degree_matrix - adjacency_matrix\n    \n    return degree_matrix, laplacian\n\ndef normalize_laplacian(laplacian):\n    \"\"\"\n    Compute normalized Laplacian: L_norm = D^(-1/2) * L * D^(-1/2)\n    \"\"\"\n    degree = np.diag(laplacian)\n    # Avoid division by zero\n    degree_inv_sqrt = np.diag(1.0 / np.sqrt(degree + 1e-10))\n    return degree_inv_sqrt @ laplacian @ degree_inv_sqrt\n\n# Example: Simple graph with 4 nodes\n# Graph structure:\n#   0 --- 1\n#   |     |\n#   2 --- 3\n\nadjacency = np.array([\n    [0, 1, 1, 0],  # Node 0: connected to 1, 2\n    [1, 0, 0, 1],  # Node 1: connected to 0, 3\n    [1, 0, 0, 1],  # Node 2: connected to 0, 3\n    [0, 1, 1, 0]   # Node 3: connected to 1, 2\n])\n\nD, L = build_graph_laplacian(adjacency)\nL_norm = normalize_laplacian(L)\n\neigenvalues, eigenvectors = np.linalg.eigh(L)\n\nprint(\"Adjacency Matrix W:\")\nprint(adjacency)\nprint(\"\\nDegree Matrix D:\")\nprint(D)\nprint(\"\\nGraph Laplacian L = D - W:\")\nprint(L)\nprint(\"\\nNormalized Laplacian L_norm:\")\nprint(np.round(L_norm, 4))\nprint(\"\\nEigenvalues of L (smallest 4):\")\nprint(np.round(eigenvalues, 4))\nprint(\"\\nFiedler eigenvalue:\", round(eigenvalues[1], 4), \"(2nd smallest)\")\nprint(\"This indicates the graph has 2 connected components!\")",
+      "explanation": "The Graph Laplacian L = D - W is fundamental in spectral graph theory. D is the degree matrix (diagonal), W is the adjacency matrix. Key properties: (1) L is symmetric positive semi-definite, (2) Smallest eigenvalue is 0, (3) Number of zero eigenvalues = number of connected components. The Fiedler eigenvalue (2nd smallest) indicates graph connectivity. The normalized Laplacian L_norm = D^(-1/2) L D^(-1/2) is used in spectral clustering.",
+      "timeComplexity": "O(n³) for eigenvalue decomposition of n×n matrix",
+      "spaceComplexity": "O(n²) for storing matrices"
+    }
+  ]
+}

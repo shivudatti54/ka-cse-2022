@@ -1,0 +1,45 @@
+{
+  "topicId": "analog-digital-signals-data-rate",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Nyquist Bit Rate Calculator",
+      "description": "Calculate maximum bit rate using Nyquist theorem for noiseless channel",
+      "code": "def nyquist_bit_rate(bandwidth, signal_levels):\n    \"\"\"\n    Calculate maximum bit rate using Nyquist Theorem\n    Formula: Maximum bit rate = 2B \u00d7 log\u2082(M)\n    \n    Args:\n        bandwidth: Bandwidth in Hz\n        signal_levels: Number of discrete signal levels (M)\n    \n    Returns:\n        Maximum bit rate in bits per second\n    \"\"\"\n    max_bit_rate = 2 * bandwidth * (signal_levels ** 0.5).bit_length() - 1\n    # Correct formula using math.log2\n    import math\n    max_bit_rate = 2 * bandwidth * math.log2(signal_levels)\n    return max_bit_rate\n\n# Example: Bandwidth = 3000 Hz, M = 4 (4 signal levels)\nbandwidth = 3000  # Hz\nsignal_levels = 4\n\nbit_rate = nyquist_bit_rate(bandwidth, signal_levels)\nprint(f\"Bandwidth: {bandwidth} Hz\")\nprint(f\"Signal Levels: {signal_levels}\")\nprint(f\"Maximum Bit Rate: {bit_rate} bps ({bit_rate/1000:.1f} kbps)\")",
+      "explanation": "This program calculates the maximum theoretical bit rate for a noiseless channel using Nyquist theorem. It uses log base 2 to determine how many bits can be represented by each signal level.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Shannon Channel Capacity Calculator",
+      "description": "Calculate channel capacity using Shannon's theorem for noisy channels",
+      "code": "def shannon_capacity(bandwidth, snr_db):\n    \"\"\"\n    Calculate maximum channel capacity using Shannon's Theorem\n    Formula: C = B \u00d7 log\u2082(1 + S/N)\n    \n    Args:\n        bandwidth: Bandwidth in Hz\n        snr_db: Signal-to-Noise Ratio in decibels (dB)\n    \n    Returns:\n        Channel capacity in bits per second\n    \"\"\"\n    import math\n    \n    # Convert SNR from dB to linear ratio\n    snr_linear = 10 ** (snr_db / 10)\n    \n    # Calculate channel capacity\n    capacity = bandwidth * math.log2(1 + snr_linear)\n    \n    return capacity, snr_linear\n\n# Example: Bandwidth = 3000 Hz, SNR = 30 dB\nbandwidth = 3000  # Hz\nsnr_db = 30  # dB\n\ncapacity, snr_linear = shannon_capacity(bandwidth, snr_db)\nprint(f\"Bandwidth: {bandwidth} Hz\")\nprint(f\"SNR: {snr_db} dB (Linear: {snr_linear})\")\nprint(f\"Channel Capacity: {capacity:.2f} bps ({capacity/1000:.2f} kbps)\")",
+      "explanation": "This program implements Shannon's theorem to calculate the theoretical maximum channel capacity. It first converts the SNR from decibels to a linear ratio, then applies the logarithmic formula.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "NRZ-L Encoding Simulation",
+      "description": "Implement Non-Return-to-Zero (NRZ-L) line encoding",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nvoid nrz_l_encode(char *data, int length, int *signal) {\n    /*\n     * NRZ-L (Non-Return-to-Zero Level) Encoding\n     * Binary 0: High voltage level\n     * Binary 1: Low voltage level\n     * Signal stays constant for entire bit duration\n     */\n    for (int i = 0; i < length; i++) {\n        // If bit is '0', signal = 1 (positive voltage)\n        // If bit is '1', signal = 0 (negative voltage)\n        signal[i] = (data[i] == '0') ? 1 : 0;\n    }\n}\n\nvoid print_signal(int *signal, int length) {\n    printf(\"Signal: \");\n    for (int i = 0; i < length; i++) {\n        printf(\"%d \", signal[i]);\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    char data[] = \"10110010\";\n    int length = strlen(data);\n    int signal[20];\n    \n    printf(\"Data: %s\\n\", data);\n    nrz_l_encode(data, length, signal);\n    print_signal(signal, length);\n    \n    return 0;\n}",
+      "explanation": "This C program simulates NRZ-L encoding where the signal level remains constant throughout each bit duration. Binary 0 is represented by one voltage level (e.g., positive) and binary 1 by another (e.g., negative).",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "Manchester Encoding Simulation",
+      "description": "Implement Manchester line encoding with transitions",
+      "code": "def manchester_encode(data):\n    \"\"\"\n    Manchester Encoding Implementation\n    \n    Binary 0: High-to-Low transition in middle of bit period\n    Binary 1: Low-to-High transition in middle of bit period\n    \n    This provides clock synchronization as there's a transition\n    in every bit period.\n    \n    Args:\n        data: Binary string (e.g., \"1011\")\n    \n    Returns:\n        Encoded signal as list of values (1 or -1)\n    \"\"\"\n    encoded = []\n    \n    for bit in data:\n        if bit == '0':\n            # High-to-Low: first half = 1, second half = -1\n            encoded.extend([1, -1])\n        else:  # bit == '1'\n            # Low-to-High: first half = -1, second half = 1\n            encoded.extend([-1, 1])\n    \n    return encoded\n\n# Example usage\ndata = \"10110010\"\nencoded_signal = manchester_encode(data)\n\nprint(f\"Original Data: {data}\")\nprint(f\"Encoded Signal Length: {len(encoded_signal)} bits\")\nprint(f\"Encoded Signal: {encoded_signal}\")\n\n# Visual representation\nprint(\"\\nVisual:\")\nfor i, bit in enumerate(data):\n    if bit == '0':\n        print(f\"Bit {bit}: \u250c\u2500\u2510\", end=\"\")\n    else:\n        print(f\"Bit {bit}: \u2514\u2500\u2518\", end=\"\")\nprint()",
+      "explanation": "Manchester encoding provides self-clocking because every bit has a transition in the middle. It solves the problem of DC balance and clock synchronization that NRZ encoding has, though it requires double the bandwidth.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

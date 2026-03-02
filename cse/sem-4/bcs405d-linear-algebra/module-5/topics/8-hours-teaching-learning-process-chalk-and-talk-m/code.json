@@ -1,0 +1,38 @@
+[
+  {
+    "id": "code-1",
+    "language": "pseudocode",
+    "title": "Find Eigenvalues using Power Iteration",
+    "description": "Power iteration method to find dominant eigenvalue and eigenvector",
+    "code": "// Power Iteration Algorithm\n// Finds dominant eigenvalue and corresponding eigenvector\n\nPROCEDURE PowerIteration(A, tolerance, maxIterations)\n BEGIN\n n \u2190 A.rows\n // Random initial vector\n v \u2190 [1, 1, ..., 1] // unit vector\n eigenvalue_old \u2190 0\n \n FOR k \u2190 1 TO maxIterations DO\n // Multiply matrix by vector\n w \u2190 A * v\n \n // Normalize to prevent overflow\n eigenvalue \u2190 max(abs(w))\n v \u2190 w / eigenvalue\n \n // Check convergence\n IF |eigenvalue - eigenvalue_old| < tolerance THEN\n BREAK\n END IF\n eigenvalue_old \u2190 eigenvalue\n END FOR\n \n RETURN eigenvalue, v\n END PROCEDURE",
+    "explanation": "Power iteration repeatedly multiplies matrix A by a vector and normalizes. It converges to the dominant eigenvector. The eigenvalue is the scaling factor each iteration.",
+    "complexity": {
+      "time": "O(n\u00b2 \u00d7 k) where k is iterations",
+      "space": "O(n)"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Verify Cayley-Hamilton Theorem",
+    "description": "Algorithm to verify CHT by computing characteristic polynomial and substituting matrix A",
+    "code": "// Verify Cayley-Hamilton Theorem\n// p(A) = 0 where p(\u03bb) = det(A - \u03bbI)\n\nPROCEDURE VerifyCHT(A)\n BEGIN\n n \u2190 A.rows\n I \u2190 IdentityMatrix(n)\n \n // Find characteristic polynomial coefficients\n // For 2x2: \u03bb\u00b2 - tr(A)\u03bb + det(A) = 0\n // General: use Faddeev-LeVerrier algorithm\n \n trA \u2190 Trace(A)\n detA \u2190 Determinant(A)\n \n // Characteristic polynomial: \u03bb\u00b2 - tr(A)\u03bb + det(A)\n // Substitute A: A\u00b2 - tr(A)A + det(A)I\n \n A_squared \u2190 MatrixMultiply(A, A)\n term1 \u2190 A_squared\n term2 \u2190 ScalarMultiply(A, trA)\n term3 \u2190 ScalarMultiply(I, detA)\n \n result \u2190 MatrixSubtract(term1, term2)\n result \u2190 MatrixSubtract(result, term3)\n \n // If CHT holds, result should be zero matrix\n IF IsZeroMatrix(result) THEN\n RETURN \"CHT Verified: p(A) = 0\"\n ELSE\n RETURN \"CHT Failed\"\n END IF\n END PROCEDURE",
+    "explanation": "Computes p(A) where p(\u03bb) is the characteristic polynomial and verifies it equals zero matrix. Uses formula for 2\u00d72 case for simplicity.",
+    "complexity": {
+      "time": "O(n\u00b3)",
+      "space": "O(n\u00b2)"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "pseudocode",
+    "title": "Diagonalize Matrix using Eigendecomposition",
+    "description": "Find P and D such that A = PDP\u207b\u00b9 using eigenvalue decomposition",
+    "code": "// Diagonalization Algorithm\n// A = PDP\u207b\u00b9 where D = eigenvalues, P = eigenvectors\n\nPROCEDURE Diagonalize(A)\n BEGIN\n n \u2190 A.rows\n \n // Find all eigenvalues (using QR algorithm or direct method)\n eigenvalues \u2190 FindEigenvalues(A)\n \n // Find corresponding eigenvectors\n eigenvectors \u2190 EmptyMatrix(n, n)\n \n FOR i \u2190 1 TO n DO\n \u03bb \u2190 eigenvalues[i]\n // Solve (A - \u03bbI)v = 0\n M \u2190 MatrixSubtract(A, ScalarMultiply(IdentityMatrix(n), \u03bb))\n v \u2190 NullSpaceVector(M) // Find non-trivial solution\n eigenvectors[*, i] \u2190 v\n END FOR\n \n // Form P and D\n P \u2190 eigenvectors\n D \u2190 DiagonalMatrix(eigenvalues)\n \n // Verify diagonalization\n P_inv \u2190 MatrixInverse(P)\n reconstructed \u2190 MatrixMultiply(MatrixMultiply(P, D), P_inv)\n \n IF MatrixEquals(reconstructed, A, tolerance) THEN\n RETURN P, D, \"Diagonalization successful\"\n ELSE\n RETURN NULL, NULL, \"Matrix not diagonalizable\"\n END IF\n END PROCEDURE",
+    "explanation": "Eigendecomposition: finds all eigenvalues and eigenvectors, forms diagonal matrix D with eigenvalues and matrix P with eigenvectors as columns. Verifies A = PDP\u207b\u00b9.",
+    "complexity": {
+      "time": "O(n\u00b3) for direct methods",
+      "space": "O(n\u00b2)"
+    }
+  }
+]

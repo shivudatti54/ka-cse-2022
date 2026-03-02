@@ -1,0 +1,33 @@
+{
+  "topicId": "classical-problems-of-synchronization",
+  "examples": [
+    {
+      "id": "pseudocode-producer-consumer",
+      "title": "Algorithm: Producer-Consumer",
+      "description": "Demonstrates synchronization between producers and consumers using semaphores",
+      "language": "pseudocode",
+      "code": "ALGORITHM ProducerConsumer\nINPUT: buffer, mutex, empty, full\nOUTPUT: none\n\nBEGIN\n // Producer Process\n do {\n // Produce an item\n wait(empty);\n wait(mutex);\n // Add item to buffer\n signal(mutex);\n signal(full);\n } while (true);\n\n // Consumer Process\n do {\n wait(full);\n wait(mutex);\n // Remove item from buffer\n signal(mutex);\n signal(empty);\n // Consume the item\n } while (true);\nEND",
+      "explanation": "This pseudocode demonstrates the producer-consumer problem, where producers add items to a buffer and consumers remove items from the buffer. The semaphores mutex, empty, and full are used to synchronize access to the buffer."
+    },
+    {
+      "id": "python-producer-consumer",
+      "title": "Python: Producer-Consumer",
+      "description": "Implementation of the producer-consumer problem using Python and semaphores",
+      "language": "python",
+      "code": "import threading\nimport time\n\n# Initialize semaphores\nmutex = threading.Semaphore(1)\nempty = threading.Semaphore(10)\nfull = threading.Semaphore(0)\n\n# Initialize buffer\nbuffer = []\n\n# Producer function\ndef producer():\n for i in range(10):\n # Produce an item\n time.sleep(1)\n empty.acquire()\n mutex.acquire()\n # Add item to buffer\n buffer.append(i)\n mutex.release()\n full.release()\n\n# Consumer function\ndef consumer():\n for i in range(10):\n full.acquire()\n mutex.acquire()\n # Remove item from buffer\n item = buffer.pop(0)\n mutex.release()\n empty.release()\n # Consume the item\n print(item)\n time.sleep(1)\n\n# Create threads\nproducer_thread = threading.Thread(target=producer)\nconsumer_thread = threading.Thread(target=consumer)\n\n# Start threads\nproducer_thread.start()\nconsumer_thread.start()\n\n# Wait for threads to finish\nproducer_thread.join()\nconsumer_thread.join()",
+      "explanation": "This Python code implements the producer-consumer problem using semaphores. The producer function produces items and adds them to the buffer, while the consumer function removes items from the buffer and consumes them.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "c-dining-philosophers",
+      "title": "C: Dining Philosophers",
+      "description": "Implementation of the dining philosophers problem using C and semaphores",
+      "language": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <pthread.h>\n#include <semaphore.h>\n\n// Initialize semaphores\nsem_t chopsticks[5];\n\n// Philosopher function\nvoid* philosopher(void* arg) {\n int i = (int)arg;\n while (1) {\n // Think\n printf(\"Philosopher %d is thinking\\n\", i);\n sleep(1);\n\n // Pick up left chopstick\n sem_wait(&chopsticks[i]);\n\n // Pick up right chopstick\n sem_wait(&chopsticks[(i+1)%5]);\n\n // Eat\n printf(\"Philosopher %d is eating\\n\", i);\n sleep(1);\n\n // Put down right chopstick\n sem_post(&chopsticks[(i+1)%5]);\n\n // Put down left chopstick\n sem_post(&chopsticks[i]);\n }\n return NULL;\n}\n\nint main() {\n // Initialize semaphores\n for (int i = 0; i < 5; i++) {\n sem_init(&chopsticks[i], 0, 1);\n }\n\n // Create threads\n pthread_t threads[5];\n for (int i = 0; i < 5; i++) {\n pthread_create(&threads[i], NULL, philosopher, (void*)i);\n }\n\n // Wait for threads to finish\n for (int i = 0; i < 5; i++) {\n pthread_join(threads[i], NULL);\n }\n\n return 0;\n}",
+      "explanation": "This C code implements the dining philosophers problem using semaphores. The philosopher function represents a philosopher who picks up two chopsticks, eats, and then puts down the chopsticks.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "topicId": "transactions-and-acid-properties",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Define a database transaction and explain its importance in DBMS.",
+      "keyPoints": [
+        "A transaction is a logical unit of work consisting of multiple database operations executed as a single unit",
+        "Ensures data integrity when multiple related operations must succeed or fail together",
+        "Examples: banking transfer, airline booking, e-commerce order processing",
+        "Provides reliability and consistency in database operations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the four ACID properties of transactions with one example for each.",
+      "keyPoints": [
+        "Atomicity: All-or-nothing execution (e.g., money transfer either completes fully or not at all)",
+        "Consistency: Database transforms from one valid state to another (e.g., account balance never goes negative)",
+        "Isolation: Concurrent transactions appear independent (e.g., two people booking different seats)",
+        "Durability: Committed changes are permanent (e.g., saved transaction survives system crash)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List and briefly describe the five states of a transaction.",
+      "keyPoints": [
+        "Active: Transaction is currently executing",
+        "Partially Committed: Final operation has been executed, waiting for confirmation",
+        "Committed: Transaction has successfully completed and changes are saved",
+        "Aborted: Transaction failed and has been rolled back",
+        "Terminated: Transaction has ended (either committed or aborted)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is a serial schedule? Why is it considered consistent but not efficient?",
+      "keyPoints": [
+        "Serial schedule: Transactions execute one after another with no interleaving of operations",
+        "Consistent because no interference between transactions - no lost updates, dirty reads, or inconsistent analysis",
+        "Not efficient because it doesn't utilize system resources optimally - long transactions block shorter ones",
+        "Reduces throughput and increases waiting time"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Differentiate between COMMIT and ROLLBACK operations in SQL.",
+      "keyPoints": [
+        "COMMIT: Permanently saves all changes made during the transaction to the database",
+        "ROLLBACK: Undoes all changes and restores database to state before transaction began",
+        "COMMIT makes changes visible to other transactions; ROLLBACK ensures no changes are visible",
+        "Used when: COMMIT on success, ROLLBACK on error or to undo partial work"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "What are the three main concurrency problems? Explain each briefly.",
+      "keyPoints": [
+        "Lost Update Problem: One transaction's update is overwritten by another transaction's update",
+        "Uncommitted Dependency (Dirty Read): Reading data written by an uncommitted transaction",
+        "Inconsistent Analysis (Non-Repeatable Read): Reading inconsistent values when another transaction updates data"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Define a recoverable schedule and a cascadeless schedule.",
+      "keyPoints": [
+        "Recoverable Schedule: A transaction never reads data written by an uncommitted transaction; if T2 reads T1's uncommitted data, T2 must commit after T1",
+        "Cascadeless Schedule (Strict): No transaction reads or writes data written by an uncommitted transaction; prevents cascading rollbacks",
+        "Cascadeless is a stricter form of recoverable schedule"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Two-Phase Commit (2PC) protocol used in distributed databases. Discuss its phases and how it ensures atomicity.",
+      "keyPoints": [
+        "2PC ensures atomic commitment across multiple databases/nodes",
+        "Phase 1 (Prepare): Coordinator asks all participants if they can commit; participants lock resources and write to log, respond with 'prepared' or 'abort'",
+        "Phase 2 (Commit): If all vote 'prepared', coordinator sends 'commit'; participants commit and release locks; if any votes 'abort', coordinator sends 'rollback'",
+        "Ensures atomicity: either all participants commit or all abort",
+        "Limitations: Blocking problem if coordinator fails, synchronous operations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Consider two transactions T1 and T2 as follows: T1: R(X), W(X), R(Y), W(Y); T2: R(X), W(X). Show with schedules why serial schedules are always consistent and discuss how concurrency control achieves consistency in non-serial schedules.",
+      "keyPoints": [
+        "Serial schedule T1\u2192T2: T1 reads/writes X and Y, then T2 reads/writes X - no interference, always consistent",
+        "Serial schedule T2\u2192T1: T2 reads/writes X first, then T1 reads/writes X and Y - also consistent",
+        "Interleaved schedule problems: Lost update (both write X), Dirty read (T2 reads T1's uncommitted X), Inconsistent analysis (T1 reads X twice while T2 modifies it)",
+        "Concurrency control mechanisms (locking, timestamp ordering, optimistic concurrency) prevent these problems",
+        "Goal: Allow efficient interleaving while maintaining consistency equivalent to some serial schedule"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is a deadlock? Discuss strategies for deadlock detection and prevention in database systems.",
+      "keyPoints": [
+        "Deadlock: Circular wait condition where two or more transactions wait indefinitely for each other to release locks",
+        "Detection: Wait-for graph (cycles indicate deadlock), timeout-based detection",
+        "Prevention: No circular wait - impose ordering on lock acquisition; Wait-Die and Wound-Wait schemes",
+        "Resolution: Choose a victim transaction, rollback it, release locks; victim selection based on cost",
+        "Prevention techniques: Lock ordering (always acquire locks in same order), lock timeout, immediate validation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the concept of transaction isolation levels in SQL. How do different isolation levels address concurrency problems?",
+      "keyPoints": [
+        "READ UNCOMMITTED: Allows dirty reads, lowest isolation, addresses no concurrency problems",
+        "READ COMMITTED: Only reads committed data, prevents dirty reads but not non-repeatable reads",
+        "REPEATABLE READ: Prevents dirty and non-repeatable reads but may allow phantom reads",
+        "SERIALIZABLE: Highest isolation, ensures serializable schedule, prevents all concurrency problems",
+        "Higher isolation = more locking = reduced concurrency but better consistency"
+      ],
+      "marks": 10
+    }
+  ]
+}

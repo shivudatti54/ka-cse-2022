@@ -1,0 +1,45 @@
+{
+  "topicId": "sigaction-function",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic sigaction Setup for SIGINT",
+      "description": "Demonstrates how to set up a signal handler for SIGINT (Ctrl+C) using sigaction()",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <stdlib.h>\n\nvoid sigint_handler(int signo) {\n printf(\"\\nCaught SIGINT (Ctrl+C)\\n\");\n printf(\"Signal number: %d\\n\", signo);\n}\n\nint main() {\n struct sigaction sa;\n \n // Initialize sigaction structure\n sa.sa_handler = sigint_handler;\n sigemptyset(&sa.sa_mask); // No signals blocked during handler\n sa.sa_flags = 0; // No special flags\n \n // Set up signal handler for SIGINT\n if (sigaction(SIGINT, &sa, NULL) == -1) {\n perror(\"sigaction\");\n exit(EXIT_FAILURE);\n }\n \n printf(\"Press Ctrl+C to trigger handler\\n\");\n while(1) {\n pause(); // Wait for signals\n }\n return 0;\n}",
+      "explanation": "This program sets up a signal handler for SIGINT using sigaction(). The sa.sa_handler points to the custom handler, sa.sa_mask is empty (no blocking), and sa_flags is 0 for default behavior. sigaction() returns -1 on error which is handled.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "Extended Signal Handler with SA_SIGINFO",
+      "description": "Shows how to use SA_SIGINFO flag to get sender process information",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <stdlib.h>\n\nvoid extended_handler(int signo, siginfo_t *info, void *context) {\n printf(\"Signal received: %d\\n\", signo);\n printf(\"Sender PID: %d\\n\", info->si_pid);\n printf(\"Sender UID: %d\\n\", info->si_uid);\n printf(\"Signal code: %d\\n\", info->si_code);\n}\n\nint main() {\n struct sigaction sa;\n \n sa.sa_sigaction = extended_handler; // Use extended handler\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = SA_SIGINFO; // Enable siginfo_t\n \n if (sigaction(SIGUSR1, &sa, NULL) == -1) {\n perror(\"sigaction\");\n exit(EXIT_FAILURE);\n }\n \n printf(\"My PID: %d\\n\", getpid());\n printf(\"Send SIGUSR1 to test\\n\");\n \n while(1) pause();\n return 0;\n}",
+      "explanation": "When SA_SIGINFO flag is set, sa_sigaction is used instead of sa_handler. The handler receives three parameters: signal number, siginfo_t pointer (containing sender info), and context. This allows the program to know which process sent the signal.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Signal Blocking During Handler Execution",
+      "description": "Demonstrates using sa_mask to block signals while handler is running",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <stdlib.h>\n#include <unistd.h>\n\nvoid handler_with_blocking(int signo) {\n sigset_t mask;\n sigemptyset(&mask);\n sigaddset(&mask, SIGINT); // Block SIGINT during handler\n sigprocmask(SIG_BLOCK, &mask, NULL);\n \n printf(\"Handler started - SIGINT now blocked\\n\");\n sleep(5); // Critical section\n printf(\"Handler finished\\n\");\n \n sigemptyset(&mask);\n sigprocmask(SIG_UNBLOCK, &mask, NULL); // Unblock SIGINT\n}\n\nint main() {\n struct sigaction sa;\n \n sa.sa_handler = handler_with_blocking;\n sigemptyset(&sa.sa_mask);\n // SIGINT will be blocked during handler due to handler logic\n sa.sa_flags = 0;\n \n sigaction(SIGINT, &sa, NULL);\n \n printf(\"Handler will block SIGINT for 5 seconds\\n\");\n while(1) pause();\n return 0;\n}",
+      "explanation": "This demonstrates signal blocking during handler execution. The sa_mask in sigaction can specify signals to block automatically. Additionally, sigprocmask() can be used inside the handler for more granular control over which signals are blocked during critical sections.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Signal Mask Manipulation with sigprocmask",
+      "description": "Shows how to block and unblock signals using sigprocmask()",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <stdlib.h>\n\nvoid handler(int signo) {\n printf(\"Signal %d received\\n\", signo);\n}\n\nint main() {\n sigset_t mask, oldmask;\n struct sigaction sa;\n \n // Setup handler\n sa.sa_handler = handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0;\n sigaction(SIGUSR1, &sa, NULL);\n \n // Create signal set and add SIGUSR1\n sigemptyset(&mask);\n sigaddset(&mask, SIGUSR1);\n \n // Block SIGUSR1\n sigprocmask(SIG_BLOCK, &mask, &oldmask);\n printf(\"SIGUSR1 is now blocked\\n\");\n \n // Raise signal (will be blocked, queued)\n raise(SIGUSR1);\n printf(\"Signal raised but blocked\\n\");\n \n // Unblock SIGUSR1 - handler executes now\n sigprocmask(SIG_SETMASK, &oldmask, NULL);\n printf(\"SIGUSR1 unblocked - handler should have run\\n\");\n \n return 0;\n}",
+      "explanation": "sigprocmask() manipulates the process signal mask. SIG_BLOCK adds signals to block, SIG_UNBLOCK removes them, and SIG_SETMASK replaces the mask. When a blocked signal is raised, it's held until unblocked, then the handler executes.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- step0: Title -->
+  <g class="step" id="step0" data-narration="This topic covers essential process wait operations in operating systems, focusing on parent-child synchronization using wait system calls for proper resource management.">
+    <rect x="0" y="10" width="800" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="400" y="38" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#1976d2">Process Wait Operations in Operating Systems</text>
+  </g>
+  
+  <!-- step1: wait() System Call -->
+  <g class="step" id="step1" data-narration="The wait system call suspends the parent until a child terminates, returning the child's PID and storing exit status information.">
+    <rect x="20" y="60" width="760" height="80" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="5"/>
+    <text x="40" y="82" font-family="Arial" font-size="14" font-weight="bold" fill="#1976d2">wait() System Call</text>
+    <text x="40" y="100" font-family="Courier" font-size="11" fill="#333">pid_t wait(int *status);</text>
+    <text x="40" y="118" font-family="Arial" font-size="10" fill="#555">Suspends parent until child terminates • Returns child's PID • Stores exit status</text>
+  </g>
+  
+  <!-- step2: Process Termination Status Macros -->
+  <g class="step" id="step2" data-narration="Status macros examine how the child terminated: WIFEXITED checks normal exit, WEXITSTATUS gets the exit code, WIFSIGNALED checks for signal termination.">
+    <rect x="20" y="150" width="760" height="80" fill="#e8f5e9" stroke="#388e3c" stroke-width="1" rx="5"/>
+    <text x="40" y="172" font-family="Arial" font-size="14" font-weight="bold" fill="#388e3c">Process Termination Status Macros</text>
+    <rect x="40" y="182" width="170" height="38" fill="#c8e6c9" rx="3"/>
+    <text x="50" y="196" font-family="Arial" font-size="10" font-weight="bold" fill="#2e7d32">Normal Exit</text>
+    <text x="50" y="210" font-family="Courier" font-size="9" fill="#333">WIFEXITED(status)</text>
+    <text x="50" y="222" font-family="Courier" font-size="9" fill="#333">WEXITSTATUS(status)</text>
+    <rect x="220" y="182" width="170" height="38" fill="#ffcdd2" rx="3"/>
+    <text x="230" y="196" font-family="Arial" font-size="10" font-weight="bold" fill="#c62828">Signal Termination</text>
+    <text x="230" y="210" font-family="Courier" font-size="9" fill="#333">WIFSIGNALED(status)</text>
+    <text x="230" y="222" font-family="Courier" font-size="9" fill="#333">WTERMSIG(status)</text>
+  </g>
+  
+  <!-- step3: waitpid() System Call -->
+  <g class="step" id="step3" data-narration="waitpid provides flexible process waiting: target specific children by PID, use WNOHANG for non-blocking checks, and WUNTRACED to detect stopped processes.">
+    <rect x="20" y="240" width="760" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="5"/>
+    <text x="40" y="262" font-family="Arial" font-size="14" font-weight="bold" fill="#e65100">waitpid() System Call</text>
+    <text x="40" y="280" font-family="Courier" font-size="11" fill="#333">pid_t waitpid(pid_t pid, int *status, int options);</text>
+    <rect x="40" y="290" width="120" height="22" fill="#ffe0b2" rx="3"/>
+    <text x="50" y="304" font-family="Arial" font-size="9" fill="#333">pid &gt; 0: specific child</text>
+    <rect x="170" y="290" width="120" height="22" fill="#ffe0b2" rx="3"/>
+    <text x="180" y="304" font-family="Arial" font-size="9" fill="#333">pid = 0: same group</text>
+    <rect x="300" y="290" width="120" height="22" fill="#ffe0b2" rx="3"/>
+    <text x="310" y="304" font-family="Arial" font-size="9" fill="#333">pid = -1: any child</text>
+    <rect x="430" y="290" width="100" height="22" fill="#ffcc80" rx="3"/>
+    <text x="440" y="304" font-family="Arial" font-size="9" fill="#333">WNOHANG: non-block</text>
+  </g>
+  
+  <!-- step4: Zombie and Orphan Processes -->
+  <g class="step" id="step4" data-narration="Zombie processes occur when children terminate but parents do not call wait. Orphans are adopted by init process which calls wait to prevent zombies.">
+    <rect x="20" y="330" width="760" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="5"/>
+    <text x="40" y="352" font-family="Arial" font-size="14" font-weight="bold" fill="#7b1fa2">Zombie and Orphan Processes</text>
+    <rect x="40" y="366" width="330" height="36" fill="#e1bee7" rx="4"/>
+    <text x="50" y="380" font-family="Arial" font-size="10" font-weight="bold" fill="#6a1b9a">Zombie Process</text>
+    <text x="50" y="394" font-family="Arial" font-size="9" fill="#444">Child terminated but parent hasn't called wait()</text>
+    <rect x="380" y="366" width="330" height="36" fill="#d1c4e9" rx="4"/>
+    <text x="390" y="380" font-family="Arial" font-size="10" font-weight="bold" fill="#4527a0">Orphan Process</text>
+    <text x="390" y="394" font-family="Arial" font-size="9" fill="#444">Parent terminated; adopted by init (PID 1)</text>
+  </g>
+  
+  <!-- step5: Example Flow -->
+  <g class="step" id="step5" data-narration="The fork-wait pattern demonstrates parent-child synchronization: parent forks child, child performs work and calls exit, parent waits to collect status and prevent zombies.">
+    <rect x="20" y="420" width="760" height="80" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="5"/>
+    <text x="40" y="442" font-family="Arial" font-size="14" font-weight="bold" fill="#1976d2">Fork-Wait Pattern Example</text>
+    <rect x="40" y="456" width="100" height="36" fill="#bbdefb" rx="4"/>
+    <text x="90" y="474" text-anchor="middle" font-family="Arial" font-size="10" fill="#0d47a1">fork()</text>
+    <line x1="140" y1="474" x2="180" y2="474" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="190" y="456" width="100" height="18" fill="#90caf9" rx="3"/>
+    <text x="240" y="469" text-anchor="middle" font-family="Arial" font-size="9" fill="#0d47a1">Child: exit(42)</text>
+    <rect x="190" y="478" width="100" height="18" fill="#90caf9" rx="3"/>
+    <text x="240" y="490" text-anchor="middle" font-family="Arial" font-size="9" fill="#0d47a1">Parent: wait()</text>
+    <line x1="290" y1="474" x2="330" y2="474" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="340" y="456" width="160" height="36" fill="#64b5f6" rx="4"/>
+    <text x="420" y="470" text-anchor="middle" font-family="Arial" font-size="9" fill="#fff">WIFEXITED(status)</text>
+    <text x="420" y="484" text-anchor="middle" font-family="Arial" font-size="9" fill="#fff">returns true</text>
+  </g>
+  
+  <!-- step6: Key Points Summary -->
+  <g class="step" id="step6" data-narration="Remember: always call wait in parent to prevent zombies, use WNOHANG for non-blocking checks, and use status macros before extracting exit codes.">
+    <rect x="20" y="510" width="760" height="70" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="5"/>
+    <text x="40" y="532" font-family="Arial" font-size="14" font-weight="bold" fill="#e65100">Key Points Summary</text>
+    <text x="40" y="550" font-family="Arial" font-size="10" fill="#333">• wait() blocks until any child terminates • waitpid(-1,&amp;status,0) equals wait(&amp;status)</text>
+    <text x="40" y="566" font-family="Arial" font-size="10" fill="#333">• Always call wait() to prevent zombie accumulation • WNOHANG returns 0 if child still running</text>
+    <text x="520" y="550" font-family="Arial" font-size="10" fill="#333">• Check WIFEXITED before WEXITSTATUS</text>
+    <text x="520" y="566" font-family="Arial" font-size="10" fill="#333">• init (PID 1) cleans up orphans</text>
+  </g>
+</svg>

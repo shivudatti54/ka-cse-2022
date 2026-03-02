@@ -1,0 +1,45 @@
+{
+  "topicId": "shortest-path-dijkstra",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Dijkstra's Algorithm Pseudocode",
+      "description": "Standard pseudocode for Dijkstra's single-source shortest path algorithm",
+      "code": "DIJKSTRA(graph G, source s)\nBEGIN\n  // Initialization\n  FOR each vertex v IN G.V\n    DO dist[v] \u2190 \u221e\n        predecessor[v] \u2190 NIL\n        visited[v] \u2190 FALSE\n  END FOR\n\n  dist[s] \u2190 0\n  PQueue \u2190 Insert all vertices with their distances\n\n  // Main Algorithm\n  WHILE PQueue is not empty\n    DO u \u2190 Extract-Min(PQueue)\n        visited[u] \u2190 TRUE\n\n        // Relax all edges from u\n        FOR each neighbor v OF u\n          DO IF visited[v] = FALSE\n            THEN w \u2190 weight(u, v)\n                 IF dist[u] + w < dist[v]\n                   THEN dist[v] \u2190 dist[u] + w\n                        predecessor[v] \u2190 u\n                        Decrease-Key(PQueue, v, dist[v])\n                 END IF\n            END IF\n        END FOR\n  END WHILE\n\n  RETURN dist, predecessor\nEND",
+      "explanation": "The algorithm initializes all distances to infinity except the source. It then repeatedly extracts the vertex with minimum distance (greedy choice), marks it as visited, and relaxes all its edges. If a shorter path is found through u, the distance is updated.",
+      "timeComplexity": "O((V + E) log V) with binary heap",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Dijkstra's Algorithm in Python",
+      "description": "Implementation using heapq priority queue",
+      "code": "import heapq\n\ndef dijkstra(graph, source):\n    # graph: dict where graph[u] = [(v, weight), ...]\n    n = len(graph)\n    dist = [float('inf')] * n\n    predecessor = [-1] * n\n    visited = [False] * n\n\n    dist[source] = 0\n    # Priority queue: (distance, vertex)\n    pq = [(0, source)]\n\n    while pq:\n        d, u = heapq.heappop(pq)\n\n        # Skip if already processed with shorter distance\n        if visited[u]:\n            continue\n\n        visited[u] = True\n\n        # Relax edges from u\n        for v, weight in graph[u]:\n            if not visited[v]:\n                new_dist = dist[u] + weight\n                if new_dist < dist[v]:\n                    dist[v] = new_dist\n                    predecessor[v] = u\n                    heapq.heappush(pq, (new_dist, v))\n\n    return dist, predecessor\n\n# Example usage:\n# graph = [[(1,4),(2,2)], [(3,5),(2,1)], [(3,8),(4,10)], [(4,2)], [(3,2)]]\n# dist, pred = dijkstra(graph, 0)",
+      "explanation": "Python implementation uses heapq for efficient priority queue operations. The visited array prevents processing vertices multiple times. When a shorter path is found, we push the new distance to the heap (lazy deletion pattern).",
+      "timeComplexity": "O((V + E) log V)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "Dijkstra's Algorithm in C",
+      "description": "Implementation using arrays for dense graphs",
+      "code": "#include <stdio.h>\n#include <limits.h>\n\n#define V 5\n#define INF INT_MAX\n\nvoid dijkstra(int graph[V][V], int src) {\n    int dist[V];\n    int visited[V];\n    int predecessor[V];\n\n    // Initialization\n    for (int i = 0; i < V; i++) {\n        dist[i] = INF;\n        visited[i] = 0;\n        predecessor[i] = -1;\n    }\n\n    dist[src] = 0;\n\n    // Find shortest path for all vertices\n    for (int count = 0; count < V - 1; count++) {\n        // Pick minimum distance vertex from unvisited\n        int u = -1;\n        int min = INF;\n        for (int v = 0; v < V; v++) {\n            if (!visited[v] && dist[v] < min) {\n                min = dist[v];\n                u = v;\n            }\n        }\n\n        if (u == -1) break; // Remaining vertices unreachable\n        visited[u] = 1;\n\n        // Update distances of adjacent vertices\n        for (int v = 0; v < V; v++) {\n            if (!visited[v] && graph[u][v] && dist[u] != INF &&\n                dist[u] + graph[u][v] < dist[v]) {\n                dist[v] = dist[u] + graph[u][v];\n                predecessor[v] = u;\n            }\n        }\n    }\n\n    // Print results\n    printf(\"Vertex\\tDistance\\tPath\\n\");\n    for (int i = 0; i < V; i++) {\n        printf(\"%d\\t%d\\t\\t\", i, dist[i]);\n        // Backtrack path (not shown for brevity)\n        printf(\"\\n\");\n    }\n}\n\nint main() {\n    int graph[V][V] = {{0, 4, 2, 0, 0},\n                      {0, 0, 1, 5, 0},\n                      {0, 0, 0, 8, 10},\n                      {0, 0, 0, 0, 2},\n                      {0, 0, 0, 0, 0}};\n    dijkstra(graph, 0);\n    return 0;\n}",
+      "explanation": "C implementation using arrays is simpler but O(V\u00b2) complexity. It scans all vertices to find the minimum (no heap). Good for dense graphs where this is comparable to heap-based approaches. Uses adjacency matrix representation.",
+      "timeComplexity": "O(V\u00b2)",
+      "spaceComplexity": "O(V)"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "Dijkstra's Algorithm in Java",
+      "description": "Implementation using PriorityQueue with adjacency list",
+      "code": "import java.util.*;\n\npublic class Dijkstra {\n    static class Edge {\n        int to;\n        int weight;\n        Edge(int to, int weight) {\n            this.to = to;\n            this.weight = weight;\n        }\n    }\n\n    static class Node implements Comparable<Node> {\n        int vertex;\n        int distance;\n        Node(int vertex, int distance) {\n            this.vertex = vertex;\n            this.distance = distance;\n        }\n        @Override\n        public int compareTo(Node other) {\n            return Integer.compare(this.distance, other.distance);\n        }\n    }\n\n    public static int[] dijkstra(List<List<Edge>> graph, int source) {\n        int n = graph.size();\n        int[] dist = new int[n];\n        Arrays.fill(dist, Integer.MAX_VALUE);\n        dist[source] = 0;\n\n        PriorityQueue<Node> pq = new PriorityQueue<>();\n        pq.add(new Node(source, 0));\n\n        while (!pq.isEmpty()) {\n            Node current = pq.poll();\n            int u = current.vertex;\n\n            // Skip if we've already found a better path\n            if (current.distance > dist[u]) {\n                continue;\n            }\n\n            // Relax edges\n            for (Edge edge : graph.get(u)) {\n                int v = edge.to;\n                int newDist = dist[u] + edge.weight;\n\n                if (newDist < dist[v]) {\n                    dist[v] = newDist;\n                    pq.add(new Node(v, newDist));\n                }\n            }\n        }\n        return dist;\n    }\n\n    public static void main(String[] args) {\n        int n = 5;\n        List<List<Edge>> graph = new ArrayList<>(n);\n        for (int i = 0; i < n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        // Add edges: (u, v, weight)\n        graph.get(0).add(new Edge(1, 4));\n        graph.get(0).add(new Edge(2, 2));\n        graph.get(1).add(new Edge(2, 1));\n        graph.get(1).add(new Edge(3, 5));\n        graph.get(2).add(new Edge(3, 8));\n        graph.get(2).add(new Edge(4, 10));\n        graph.get(3).add(new Edge(4, 2));\n\n        int[] dist = dijkstra(graph, 0);\n        System.out.println(\"Shortest distances from source 0:\");\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"To \" + i + \": \" + dist[i]);\n        }\n    }\n}",
+      "explanation": "Java implementation uses PriorityQueue with custom Node class implementing Comparable. The graph is represented as adjacency list. The check 'if (current.distance > dist[u])' handles the case where multiple entries for the same vertex exist in the queue.",
+      "timeComplexity": "O((V + E) log V)",
+      "spaceComplexity": "O(V + E)"
+    }
+  ]
+}

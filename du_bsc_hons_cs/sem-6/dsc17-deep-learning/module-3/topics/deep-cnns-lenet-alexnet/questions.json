@@ -1,0 +1,175 @@
+{
+  "topicId": "deep-cnns-lenet-alexnet",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the architecture of LeNet-5 and its components.",
+      "keyPoints": [
+        "LeNet-5 has 7 layers: 2 convolutional, 2 pooling, and 3 fully connected",
+        "Input: 32x32 grayscale images",
+        "First conv layer: 6 filters of 5x5, followed by average pooling",
+        "Second conv layer: 16 filters of 5x5, followed by average pooling",
+        "Two fully connected layers with 120 and 84 neurons",
+        "Output layer: 10 neurons for digit classification (0-9)",
+        "Used sigmoid/tanh activation functions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What are the advantages of using convolutional layers over fully connected layers for image processing?",
+      "keyPoints": [
+        "Preserve spatial structure of images (2D topology)",
+        "Parameter sharing reduces number of weights significantly",
+        "Translation invariance through pooling",
+        "Hierarchical feature learning",
+        "More efficient computationally for high-dimensional inputs",
+        "Better suited for image-specific patterns like edges and textures"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Describe the key innovations introduced by AlexNet.",
+      "keyPoints": [
+        "First CNN to win ImageNet competition (2012)",
+        "Used ReLU activation instead of sigmoid/tanh",
+        "Implemented dropout for regularization",
+        "Data augmentation (random crops, flips)",
+        "GPU training with two GTX 580 GPUs",
+        "Local Response Normalization (LRN)",
+        "8 layers: 5 conv + 3 fully connected",
+        "Reduced top-5 error from ~50% to ~26%"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is max pooling and why is it preferred over average pooling?",
+      "keyPoints": [
+        "Max pooling takes the maximum value in each pooling window",
+        "Provides translation invariance",
+        "Preserves strongest activations (most distinctive features)",
+        "Reduces spatial dimensions by factor of pool size",
+        "More robust to small translations and distortions",
+        "Average pooling smooths features, losing important activations"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the concept of receptive field in CNNs.",
+      "keyPoints": [
+        "Receptive field is the region in input image that affects a neuron's output",
+        "Increases as we go deeper into the network",
+        "Early layers have small RFs (see edges), deep layers have large RFs (see objects)",
+        "Determines what patterns a neuron can detect",
+        "Calculated based on kernel size, stride, and padding"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "How does ReLU activation solve the vanishing gradient problem?",
+      "explanation": "ReLU has derivative of 1 for positive inputs, avoiding gradient saturation that occurs with sigmoid/tanh.",
+      "keyPoints": [
+        "ReLU: f(x) = max(0, x) - simple and efficient",
+        "Gradient is 1 for positive inputs, 0 for negative",
+        "Avoids saturation that makes gradients near zero in sigmoid/tanh",
+        "Sparsity: some neurons output zero, adding regularization",
+        "Enables training of much deeper networks",
+        "Reduces computational cost compared to sigmoid/tanh"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Discuss the role of data augmentation and dropout in preventing overfitting in AlexNet.",
+      "keyPoints": [
+        "Data augmentation: creates modified training examples",
+        "Random 224x224 crops from 256x256 images",
+        "Horizontal flipping of images",
+        "RGB channel intensity alteration",
+        "Increases effective training set size",
+        "Dropout: randomly sets 50% neurons to zero during training",
+        "Forces network to learn redundant representations",
+        "Ensemble effect without actual model averaging",
+        "Both techniques significantly improve generalization"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast LeNet-5 and AlexNet architectures, highlighting the evolution of deep learning for computer vision.",
+      "keyPoints": [
+        "LeNet (1998): 7 layers, 60K parameters, MNIST (32x32), sigmoid/tanh, CPU training",
+        "AlexNet (2012): 8 layers, 60M parameters, ImageNet (227x227), ReLU, GPU training",
+        "Scale difference: 1000x more parameters",
+        "Key innovations in AlexNet: ReLU, dropout, data augmentation, LRN, GPU",
+        "LeNet used average pooling; AlexNet used max pooling",
+        "LeNet for 10-class digit recognition; AlexNet for 1000-class object recognition",
+        "Evolution shows: larger datasets, GPU compute, regularization techniques",
+        "Impact: AlexNet started deep learning revolution, showed importance of scale"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the forward and backward propagation in a convolutional neural network with mathematical details.",
+      "keyPoints": [
+        "Forward: Input \u2192 Conv \u2192 ReLU \u2192 Pool \u2192 Conv \u2192 ReLU \u2192 Pool \u2192 FC \u2192 Output",
+        "Convolution: y[i,j] = \u03a3 \u03a3 w[a,b] \u00b7 x[i+a, j+b]",
+        "Each filter creates one feature map through parameter sharing",
+        "Pooling: reduces dimensions, max or average operation",
+        "FC: y = Wx + b, standard matrix multiplication",
+        "Backward: gradient descent through chain rule",
+        "Gradient w.r.t. weights: \u2202L/\u2202w = \u03a3 \u03a3 \u2202L/\u2202y \u00b7 x",
+        "Gradient w.r.t. input: computed through convolution with flipped kernel",
+        "Pool backprop: for max pooling, route gradient to max position; for avg, distribute equally",
+        "FC backprop: standard gradient computation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Describe the complete training pipeline of AlexNet including preprocessing, architecture details, and inference.",
+      "keyPoints": [
+        "Preprocessing: resize to 256x256, random 224x224 crops, horizontal flip, subtract mean",
+        "Architecture: 227x227x3 input, Conv1 (96 filters 11x11, stride 4), MaxPool1, Conv2 (256 5x5), MaxPool2, Conv3-5 (384, 384, 256 filters 3x3), MaxPool3, FC6-7 (4096 each), FC8 (1000)",
+        "Training: SGD with momentum 0.9, learning rate 0.01, batch size 128, weight decay 0.0005",
+        "Dropout 0.5 in FC layers",
+        "Trained on 1.2 million ImageNet images for 90 epochs",
+        "Inference: forward pass through network, softmax on 1000 classes",
+        "Output: class probabilities, select top-5 predictions",
+        "Used data parallelism across 2 GPUs (model parallelism for some layers)"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Discuss the challenges in training very deep CNNs and how modern architectures address them.",
+      "keyPoints": [
+        "Vanishing/exploding gradients: solved by ReLU, batch normalization",
+        "Degradation problem: solved by residual connections (ResNet)",
+        "Overfitting: solved by dropout, data augmentation, weight decay",
+        "Computational cost: solved by efficient architectures (1x1 conv, depthwise separable)",
+        "Memory: solved by gradient checkpointing, model parallelism",
+        "Feature hierarchy: skip connections help gradient flow",
+        "Batch Normalization: normalizes layer inputs, stabilizes training",
+        "Skip/Residual connections: allows gradient to flow directly, enables 100+ layer networks"
+      ],
+      "marks": 10
+    }
+  ]
+}

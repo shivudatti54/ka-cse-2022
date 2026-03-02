@@ -1,0 +1,124 @@
+{
+  "topicId": "kruskals-algorithm",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the role of Union-Find data structure in Kruskal's Algorithm. How does it help in cycle detection?",
+      "keyPoints": [
+        "Union-Find maintains disjoint sets of vertices",
+        "Find operation checks if two vertices belong to same set",
+        "If Find(u) == Find(v), adding edge (u,v) creates cycle",
+        "Union operation merges two components after adding edge",
+        "With path compression and union by rank, operations are nearly O(1)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Derive the time complexity of Kruskal's Algorithm. Explain each component.",
+      "keyPoints": [
+        "Sorting edges: O(E log E) or O(E log V)",
+        "Union-Find operations: O(E \u00d7 \u03b1(V)) \u2248 O(E)",
+        "Overall: O(E log E) dominated by sorting",
+        "For dense graphs where E = O(V\u00b2), this becomes O(E log V)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the cut property of MSTs? How does Kruskal's Algorithm exploit this property?",
+      "keyPoints": [
+        "Cut: partition of vertices into two non-empty sets",
+        "Cut property: minimum weight edge crossing any cut belongs to some MST",
+        "Kruskal's sorts edges and considers them in increasing order",
+        "Each selected edge is minimum crossing current cut between two components",
+        "Greedy choice leads to globally optimal MST"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Differentiate between Kruskal's and Prim's Algorithms for finding MST.",
+      "keyPoints": [
+        "Kruskal's: edge-based, starts with V components, merges components",
+        "Prim's: vertex-based, starts from one vertex, grows single tree",
+        "Kruskal's better for sparse graphs (E close to V)",
+        "Prim's better for dense graphs (E close to V\u00b2)",
+        "Both are greedy algorithms with same output (any MST)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "For a graph with 8 vertices, what is the maximum number of edges that can be in the MST? Justify your answer.",
+      "keyPoints": [
+        "MST always has V-1 edges for V vertices",
+        "With 8 vertices, maximum edges in MST = 8-1 = 7",
+        "This is because MST is a tree (acyclic connected graph)",
+        "Adding any more edge would create a cycle",
+        "MST is a subset of edges that connects all vertices with minimum total weight"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Trace through Kruskal's Algorithm step by step for the following graph. Show the order in which edges are considered and which are included in MST. Vertices: A,B,C,D,E. Edges: (A,B,4), (A,C,3), (A,D,2), (B,C,1), (B,D,5), (C,D,6), (C,E,4), (D,E,7).",
+      "keyPoints": [
+        "Sort all edges by weight: B-C(1), A-D(2), A-C(3), A-B(4), C-E(4), B-D(5), C-D(6), D-E(7)",
+        "Initialize 5 separate sets for A,B,C,D,E",
+        "Consider B-C(1): Find(B)\u2260Find(C), add edge, Union B and C",
+        "Consider A-D(2): Find(A)\u2260Find(D), add edge, Union A and D",
+        "Consider A-C(3): Find(A)\u2260Find(C), add edge, Union A,D with C,B",
+        "Consider A-B(4): Find(A)=Find(B), skip (would create cycle)",
+        "Consider C-E(4): Find(C)\u2260Find(E), add edge, Union all vertices",
+        "Now have V-1=4 edges: B-C, A-D, A-C, C-E",
+        "Total MST weight = 1+2+3+4 = 10",
+        "Algorithm terminates as all vertices now in one component"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Explain the Union-Find data structure with path compression and union by rank. Show why these optimizations make Kruskal's Algorithm efficient.",
+      "keyPoints": [
+        "Union-Find maintains forest of trees representing components",
+        "Make-set: creates new set for each vertex initially",
+        "Find(x): returns root of tree containing x, with path compression",
+        "Union(x,y): merges two sets, using rank to keep trees shallow",
+        "Path compression: during Find, all nodes point directly to root",
+        "Union by rank: attach smaller tree under larger tree's root",
+        "Without optimizations: O(V) per operation, O(EV) total",
+        "With optimizations: amortized O(\u03b1(V)) per operation, where \u03b1 is inverse Ackermann",
+        "\u03b1(V) is practically constant (<5 for all realistic V)",
+        "This makes Kruskal's overall O(E log E) dominated by sorting"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Prove that Kruskal's Algorithm always produces a Minimum Spanning Tree. Use the cut property.",
+      "keyPoints": [
+        "State the Cut Property: For any cut (S, V-S), minimum weight edge crossing it belongs to some MST",
+        "Kruskal's maintains invariant: after processing edges, selected edges form a subset of some MST",
+        "Consider the first edge e that Kruskal's adds but is NOT in some MST",
+        "Create a cut where e crosses between two components in Kruskal's partial forest",
+        "Let f be minimum weight edge crossing this cut (exists by assumption MST contains some edge)",
+        "Since Kruskal's picks minimum available, weight(e) \u2264 weight(f)",
+        "If weight(e) < weight(f), replacing f with e gives lower weight spanning tree - contradiction",
+        "If weight(e) = weight(f), we can exchange f with e and still have MST",
+        "Therefore e must belong to some MST - invariant holds",
+        "By induction, all selected edges form an MST",
+        "Algorithm terminates with V-1 edges forming complete spanning tree that is minimum"
+      ],
+      "marks": 10
+    }
+  ]
+}

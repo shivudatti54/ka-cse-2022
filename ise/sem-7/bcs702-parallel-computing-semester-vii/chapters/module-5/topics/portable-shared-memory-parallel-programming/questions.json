@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sa1",
+    "question": "What is the primary goal of Portable Shared Memory Parallel Programming models, and name two examples of such systems?",
+    "expectedPoints": [
+      "The primary goal is to provide a shared memory programming abstraction on hardware that may not have physical shared memory (e.g., distributed memory clusters).",
+      "This allows programmers to use a familiar paradigm (like threads) without manually managing data distribution and message passing.",
+      "Two examples are: Intel's Threading Building Blocks (TBB), Unified Parallel C (UPC), or the original Stanford University DSM system."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Explain the key challenge of maintaining memory consistency in a software Distributed Shared Memory (DSM) system and how a specific consistency model (e.g., Sequential Consistency or Release Consistency) attempts to solve it.",
+    "expectedPoints": [
+      "The key challenge is the high performance cost of ensuring all processors see a consistent view of shared data across a network, which involves expensive communication and synchronization.",
+      "Strict consistency models (like Sequential Consistency) require that all memory operations appear to happen in a single total order, which is simple for the programmer but requires frequent, fine-grained communication to invalidate or update cached copies of data, harming performance.",
+      "Weaker models (like Release Consistency) reduce this cost by relaxing the rules. It distinguishes between ordinary accesses and synchronization operations (acquire/release locks). Updates to shared data are only guaranteed to be propagated at synchronization points, significantly reducing the number of required communications."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "Compare and contrast the implementation approaches and performance trade-offs between a page-based Software DSM system and a higher-level library like Threading Building Blocks (TBB). Discuss how they handle data locality, synchronization, and the programmer's burden.",
+    "expectedPoints": [
+      "Implementation: Page-based DSM (e.g., early Ivy systems) uses the virtual memory system; a page fault on a non-local page triggers network communication to fetch it. TBB is a library that provides high-level constructs like parallel_for and concurrent containers; it manages threads and task scheduling on top of the native OS threads, without directly managing memory pages.",
+      "Data Locality: Page-based systems suffer from false sharing (unrelated data on the same page causes unnecessary transfers). TBB promotes data locality through work-stealing task schedulers that aim to keep data in a thread's cache and by encouraging data partitioning for parallel loops.",
+      "Synchronization: Page-based DSM often relies on underlying hardware/OS for low-level page protection, requiring locks or barriers for consistency. TBB provides mutexes and atomic operations but is designed to minimize explicit synchronization through its task-based, shared-nothing-by-default model.",
+      "Programmer's Burden: Page-based DSM exposes the distributed nature less, but the programmer must be aware of page boundaries to avoid false sharing. TBB requires the programmer to explicitly structure code into tasks and use its containers but removes the burden of low-level thread and data distribution management."
+    ],
+    "marks": 10
+  }
+]

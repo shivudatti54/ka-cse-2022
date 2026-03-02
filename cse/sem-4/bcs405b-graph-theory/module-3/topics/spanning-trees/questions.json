@@ -1,0 +1,153 @@
+[
+  {
+    "id": "q-1",
+    "type": "short",
+    "question": "Define Spanning Tree and Minimum Spanning Tree. State two applications of spanning trees.",
+    "expectedPoints": [
+      "Spanning Tree: subgraph with all vertices, connected and acyclic with (n-1) edges",
+      "Minimum Spanning Tree: spanning tree with minimum total edge weight",
+      "Applications: Network design, circuit analysis, transportation planning"
+    ],
+    "marks": 5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "q-2",
+    "type": "short",
+    "question": "State and explain the Cut Property used in MST algorithms.",
+    "expectedPoints": [
+      "Cut Property: For any cut (partition of vertices), the minimum weight edge crossing the cut belongs to some MST",
+      "Explanation: This edge is the cheapest way to connect the two partitions",
+      "Used in Prim's algorithm to select edges"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-3",
+    "type": "short",
+    "question": "Explain Kruskal's algorithm with its time complexity. Why is Union-Find data structure used?",
+    "expectedPoints": [
+      "Algorithm: Sort edges, add smallest edge that doesn't form cycle, repeat until (V-1) edges",
+      "Time Complexity: O(E log V) or O(E log E)",
+      "Union-Find detects cycles efficiently using find() and union() operations"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-4",
+    "type": "short",
+    "question": "Explain Prim's algorithm. How does it differ from Kruskal's algorithm?",
+    "expectedPoints": [
+      "Prim's: Start from arbitrary vertex, grow tree by adding minimum weight edge connecting tree to new vertex",
+      "Difference: Kruskal is edge-based (starts with V trees), Prim is vertex-based (starts from one vertex)",
+      "Kruskal better for sparse graphs, Prim for dense graphs"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-5",
+    "type": "short",
+    "question": "State and prove that any spanning tree of a graph with n vertices has exactly (n-1) edges.",
+    "expectedPoints": [
+      "A tree with n vertices has (n-1) edges by definition",
+      "Proof: Adding an edge to a tree creates a cycle; removing one edge from a cycle maintains connectivity",
+      "A spanning tree is a maximal acyclic subgraph, hence must have exactly (n-1) edges"
+    ],
+    "marks": 5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-6",
+    "type": "short",
+    "question": "What is the Cycle Property in MST? How is it useful in algorithms?",
+    "expectedPoints": [
+      "Cycle Property: Maximum weight edge in any cycle cannot belong to any MST",
+      "Useful: Can be used to verify MST or discard edges during construction",
+      "Used in reverse-delete algorithm for MST"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-7",
+    "type": "short",
+    "question": "Using Cayley's formula, how many spanning trees does K\u2085 (complete graph with 5 vertices) have?",
+    "expectedPoints": [
+      "Cayley's formula: n^(n-2) for complete graph K\u2099",
+      "For K\u2085: 5^(5-2) = 5\u00b3 = 125 spanning trees",
+      "Formula derived from Kirchhoff's matrix tree theorem"
+    ],
+    "marks": 5,
+    "difficulty": "medium"
+  },
+  {
+    "id": "q-8",
+    "type": "long",
+    "question": "Apply Kruskal's algorithm to find the Minimum Spanning Tree for the following weighted graph: Vertices A,B,C,D,E with edges: AB-3, AC-4, AD-7, BC-2, BD-6, BE-5, CD-8, DE-1. Show all steps.",
+    "expectedPoints": [
+      "Sort edges: DE(1), BC(2), AB(3), AC(4), BE(5), BD(6), AD(7), CD(8)",
+      "Add DE(1) - no cycle",
+      "Add BC(2) - no cycle",
+      "Add AB(3) - no cycle (different components)",
+      "Add AC(4) - connects A to C via B already in tree? Check: A,B,C in one component after AB, adding AC creates cycle",
+      "Skip AC(4), Add BE(5) - no cycle",
+      "Add BD(6) - would create cycle? B already connected to D via DE? No, D and E connected, B separate, so add BD",
+      "MST Complete with 4 edges: DE, BC, AB, BE or DE, BC, AB, BD (2 valid MSTs depending on order)",
+      "Total weight: 1+2+3+5=11 or 1+2+3+6=12"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-9",
+    "type": "long",
+    "question": "Apply Prim's algorithm starting from vertex A to find the MST. Graph: vertices A,B,C,D,E with edges: AB-10, AC-3, AD-8, BC-4, BD-2, CD-7, CE-5, DE-6.",
+    "expectedPoints": [
+      "Start at A: edges from A are AB(10), AC(3), AD(8) - pick AC(3)",
+      "Tree: A-C, edges: AB(10), AD(8), BC(4), CD(7) - pick BC(4)",
+      "Tree: A-C-B, edges: AB(10), AD(8), BD(2), CD(7) - pick BD(2)",
+      "Tree: A-C-B-D, edges: AB(10), AD(8), CD(7), DE(6), CE(5) - pick CE(5)",
+      "Tree: A-C-B-D-E, edges: AB(10), AD(8), DE(6) - pick DE(6)",
+      "MST edges: AC(3), BC(4), BD(2), CE(5), DE(6)",
+      "Total weight: 3+4+2+5+6 = 20",
+      "Alternative order if starting from A directly connected: AD(8) then... yields same result"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-10",
+    "type": "long",
+    "question": "Prove that Kruskal's algorithm always produces a Minimum Spanning Tree.",
+    "expectedPoints": [
+      "Use Cut Property proof: At each step Kruskal adds minimum weight edge that doesn't form cycle",
+      "When edge e is added, vertices u and v are in different components",
+      "Consider cut separating these two components",
+      "By Cut Property, minimum edge crossing this cut must be in SOME MST",
+      "Kruskal picks minimum among edges not forming cycle, which is exactly this minimum crossing edge",
+      "Therefore the edge picked by Kruskal must be in some MST",
+      "By induction, after adding V-1 edges, we have an MST",
+      "Thus Kruskal's algorithm is correct"
+    ],
+    "marks": 10,
+    "difficulty": "hard"
+  },
+  {
+    "id": "q-11",
+    "type": "long",
+    "question": "Compare Kruskal's and Prim's algorithms for finding MST. Under what conditions would you choose each?",
+    "expectedPoints": [
+      "Similarity: Both are greedy algorithms, produce same MST (or equivalent)",
+      "Kruskal: Edge-based, O(E log V), starts with V separate trees",
+      "Prim's: Vertex-based, O(V\u00b2) or O(E log V), starts from one vertex",
+      "Choose Kruskal when: Graph is sparse (E << V\u00b2), edges are already sorted, need easy parallelization",
+      "Choose Prim's when: Graph is dense, one vertex given as start, graph represented as adjacency matrix",
+      "Both have same worst case but different practical performance"
+    ],
+    "marks": 10,
+    "difficulty": "medium"
+  }
+]

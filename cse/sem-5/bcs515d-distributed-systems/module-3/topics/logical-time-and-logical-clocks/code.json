@@ -1,0 +1,45 @@
+{
+  "topicId": "logical-time-and-logical-clocks",
+  "examples": [
+    {
+      "id": "code-1",
+      "title": "Lamport Clock Implementation",
+      "description": "Pseudocode showing how each process maintains and updates Lamport timestamps",
+      "code": "// Lamport Logical Clock\n// Each process Pi maintains integer Ci\n\n// On local event at process Pi:\nCi = Ci + 1\ntimestamp = Ci\n// record event with timestamp\n\n// On sending message M from Pi:\nCi = Ci + 1\ntimestamp = Ci\nsend(M, timestamp)\n\n// On receiving message M at Pi with timestamp T:\nCi = max(Ci, T) + 1\ntimestamp = Ci\ndeliver(M)\n\n// Total order delivery:\nwhen a message is received:\n place in priority queue sorted by timestamp\ndeliver in increasing timestamp order",
+      "explanation": "Shows increment on local events, embedding timestamp in messages, and update rule on receive using max+1. Also shows how total ordering is achieved by delivering in timestamp order.",
+      "language": "pseudocode",
+      "timeComplexity": "O(1) per event",
+      "spaceComplexity": "O(1) per process"
+    },
+    {
+      "id": "code-2",
+      "title": "Vector Clock Implementation",
+      "description": "Pseudocode showing vector clock maintenance and comparison operations",
+      "code": "// Vector Clock for n processes\n// Process Pi maintains vector Vi[0..n-1]\n\n// Initialize:\nVi[j] = 0 for all j\n\n// On local event at Pi:\nVi[i] = Vi[i] + 1\n// event has vector Vi\n\n// On sending message M from Pi:\nVi[i] = Vi[i] + 1\nsend(M, Vi)\n\n// On receiving message M at Pi with vector Vm:\nfor j = 0 to n-1:\n Vi[j] = max(Vi[j], Vm[j])\nVi[i] = Vi[i] + 1\ndeliver(M)\n\n// Compare vectors V1 and V2:\nisLessThanOrEqual(V1, V2):\n for all j: if V1[j] > V2[j] return false\n return true\n\n// Events e1, e2 concurrent if:\n// not (V1 ≤ V2 or V2 ≤ V1)",
+      "explanation": "Shows vector clock mechanics: increment own component, update all components on receive using max, and comparison rules to determine causality vs concurrency.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) per receive",
+      "spaceComplexity": "O(n) per process"
+    },
+    {
+      "id": "code-3",
+      "title": "Causal Order Broadcast",
+      "description": "Pseudocode implementing causal broadcast using vector clocks",
+      "code": "// Causal Order Broadcast\n// Each process Pi maintains vector Vi\n// and deliver queue Q\n\n// Initialize:\nVi[j] = 0 for all j\n\n// Broadcast message M:\nVi[i] = Vi[i] + 1\nsend((M, Vi), to all processes)\n\n// On receive (M, Vm) from Pj:\n// Check if prerequisites satisfied\nready = true\nfor k = 0 to n-1:\n if k ≠ i and Vm[k] > Vi[k] + (j == i ? 0 : 0):\n // Wait for missing events from Pk\n ready = false\n break\n\nif ready:\n Vi[j] = Vm[j]\n Vi[i] = Vi[i] + 1\n deliver(M)\nelse:\n queue message for later delivery",
+      "explanation": "Shows how causal broadcast works: a message is only delivered when all causally preceding messages have been delivered. Uses vector clocks to track dependencies.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) per message",
+      "spaceComplexity": "O(n) queue per process"
+    },
+    {
+      "id": "code-4",
+      "title": "Detecting Version Conflicts",
+      "description": "Pseudocode showing conflict detection in distributed data stores using vector clocks",
+      "code": "// Version Conflict Detection using Vector Clocks\n// Each document has version vector VV\n\n// Update document at Pi:\nVi[i] = Vi[i] + 1\nVV = Vi\nsave(document, VV)\n\n// Receive update with version Vnew:\n// Check if our version is ancestor of new\nisAncestor(myVV, newVV):\n for all j: if myVV[j] > newVV[j] return false\n return true\n\n// Check for conflict\nif isAncestor(myVV, newVV):\n // New version supersedes ours - accept\n myVV = newVV\n apply(newVV.data)\nelse if isAncestor(newVV, myVV):\n // Our version supersedes new - ignore\n discard(newVV)\nelse:\n // Concurrent versions - CONFLICT!\n // Need conflict resolution\n conflict = true\n invokeConflictResolution(myVV, newVV)",
+      "explanation": "Shows practical application: detecting when concurrent edits conflict (neither version is ancestor of other) vs when one is an update to the other. Essential for eventually consistent systems.",
+      "language": "pseudocode",
+      "timeComplexity": "O(n) for comparison",
+      "spaceComplexity": "O(n) per version"
+    }
+  ]
+}

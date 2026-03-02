@@ -1,0 +1,133 @@
+{
+  "topicId": "depth-first-search",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Prove that DFS on a graph with n vertices and m edges has time complexity O(n + m) for adjacency list representation.",
+      "keyPoints": [
+        "Each vertex is visited exactly once \u2192 O(n) operations",
+        "Each adjacency list is traversed once, examining each edge \u2192 O(m) operations",
+        "Total = O(n + m) = O(V + E)",
+        "For adjacency matrix: O(V\u00b2) as each vertex checks all possible neighbors"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the four types of edges in DFS with examples. In which type of graph does each occur?",
+      "keyPoints": [
+        "Tree edge: to unvisited vertex; exists in all graphs",
+        "Back edge: to ancestor (GRAY); indicates cycle in directed graphs",
+        "Forward edge: to descendant (BLACK via tree edge); only in directed",
+        "Cross edge: neither ancestor nor descendant; only in directed",
+        "Undirected graphs only have tree and back edges (others appear as back)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "State and prove the Parenthesis Theorem of DFS. How is it used in edge classification?",
+      "keyPoints": [
+        "Theorem: For vertices u,v, intervals [d[u],f[u]] and [d[v],f[v]] are either disjoint or one contains the other",
+        "If u is ancestor of v: d[u] < d[v] < f[v] < f[u] \u2192 interval of v contained in u",
+        "If neither is ancestor: intervals are disjoint",
+        "Used for edge classification: v is descendant of u iff [d[v],f[v]] \u2282 [d[u],f[u]]"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "How does DFS detect cycles in directed and undirected graphs? Explain with algorithm logic.",
+      "keyPoints": [
+        "Directed: Cycle iff back edge found (edge to GRAY vertex)",
+        "Undirected: Cycle if edge to visited non-parent vertex",
+        "Use vertex colors: WHITE=unvisited, GRAY=in progress, BLACK=finished",
+        "When exploring u, if neighbor v is GRAY \u2192 back edge \u2192 cycle exists"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain Kosaraju's algorithm for finding Strongly Connected Components using DFS.",
+      "keyPoints": [
+        "Step 1: Run DFS on G, store vertices by decreasing finish time",
+        "Step 2: Compute transpose graph G\u1d40 (reverse all edges)",
+        "Step 3: Process vertices in order from step 1, running DFS on G\u1d40",
+        "Each DFS tree in step 3 is one SCC",
+        "Time complexity: O(V + E)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Derive topological ordering of a DAG using DFS. Prove why reverse finish time gives valid order.",
+      "keyPoints": [
+        "In DAG, for edge (u,v), vertex v discovered after u but finishes before u",
+        "Therefore f[u] > f[v] for all edges",
+        "Reverse order of finish times ensures for any edge (u,v), u appears before v",
+        "Algorithm: Run DFS, record finish times, output vertices in decreasing f[] order"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Compare recursive and iterative DFS implementations. When would you choose one over the other?",
+      "keyPoints": [
+        "Recursive: uses call stack, cleaner code, risk of stack overflow for V > 10\u2074",
+        "Iterative: uses explicit stack, no overflow, slightly complex code handling",
+        "Both have same time O(V+E) and space O(V) excluding stack",
+        "Choose recursive for simplicity when graph depth guaranteed < system stack limit",
+        "Choose iterative for large graphs or embedded systems with limited stack"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Let G be a directed graph with vertices {1,2,3,4,5} and edges: (1,2), (2,3), (3,1), (2,4), (4,5). Perform DFS starting from vertex 1 with adjacency list ordered by increasing vertex number. Give: (i) Discovery and finish times (ii) Edge classification (iii) Is there a cycle? Justify using DFS properties.",
+      "keyPoints": [
+        "DFS from 1: d[1]=1, discover 2\u21923\u21921 (back edge!)",
+        "d[2]=2, d[3]=3, f[3]=4, f[2]=5, f[1]=6, then 4\u21925",
+        "Edges: Tree: (1,2), (2,3), (2,4), (4,5). Back: (3,1) forms cycle",
+        "Cycle exists because back edge (3,1) found\u2014vertex 1 is GRAY when exploring from 3",
+        "Classification: Tree edges form path 1\u21922\u21923 then branch to 4\u21925",
+        "Finish times help verify cycle: 1's interval [1,6] contains 3's [3,4] as 3 is descendant\u2014edge to ancestor is back edge"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Prove the correctness of DFS: Show that DFS visits all and only vertices reachable from the source vertex. Use the White-Path Theorem.",
+      "keyPoints": [
+        "Theorem: All vertices reachable from source s are visited",
+        "Proof by induction on discovery order: Base s visited initially. Inductive: assume all vertices at distance k visited. For vertex v at distance k+1, path s\u2192...\u2192u\u2192v where u visited. When u processed, v is WHITE (unvisited) and path from u to v is all WHITE. By White-Path Theorem, v becomes descendant of u and is discovered. Thus all reachable visited",
+        "Only reachable visited: Vertex discovered only via tree edge from already-visited vertex, so must be reachable",
+        "Thus DFS visits exactly the reachable set"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Design an algorithm to find all articulation points in an undirected graph using DFS. Explain with an example graph.",
+      "keyPoints": [
+        "Articulation point: removal disconnects graph",
+        "Key insight: Vertex u is articulation point if it has child v such that no back edge from v's subtree to ancestor of u",
+        "Use discovery times and low values: low[u] = min{d[u], d[w] for all back edges (u,w), low[child] for tree edges",
+        "Root is articulation iff it has \u22652 children in DFS tree",
+        "Non-root u is articulation iff it has child v with low[v] \u2265 d[u]",
+        "Algorithm: DFS compute d[] and low[], then check articulation conditions",
+        "Example: In graph with vertices A-B-C-D where A-B, B-C, B-D: B is articulation point because removal disconnects C and D"
+      ],
+      "marks": 10
+    }
+  ]
+}

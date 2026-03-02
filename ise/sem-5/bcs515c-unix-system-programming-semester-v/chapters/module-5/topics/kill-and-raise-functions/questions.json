@@ -1,0 +1,36 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary purpose of the `kill` function in Unix System Programming. What are its two main arguments and what do they represent?",
+    "expectedPoints": [
+      "The primary purpose is to send a signal to a process or a group of processes.",
+      "The first argument, `pid`, specifies the process ID (or group ID) to which the signal is sent.",
+      "The second argument, `sig`, specifies the signal number to be sent (e.g., SIGTERM=15, SIGKILL=9)."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa2",
+    "question": "Describe the difference between using `kill(pid, sig)` to send a signal to another process and using `raise(sig)` to send a signal. Include a discussion on the permissible values for the `pid` argument in `kill` and their effects.",
+    "expectedPoints": [
+      "`kill(pid, sig)` sends a signal to another process (or group) specified by `pid`. `raise(sig)` is equivalent to `kill(getpid(), sig)` and sends a signal to the current process.",
+      "`pid` > 0: Signal is sent to the process with that ID.",
+      "`pid` == 0: Signal is sent to every process in the sender's process group.",
+      "`pid` == -1: Signal is sent to every process the sender has permission to signal (with exceptions).",
+      "`pid` < -1: Signal is sent to the process group with ID equal to |pid|."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa3",
+    "question": "A programmer writes `raise(SIGKILL);` in their code. Analyze the correctness and the consequences of this action from the perspective of signal handling and process state. Compare this to the more common use of the `kill` function to terminate a child process, explaining the key differences in behavior and best practices.",
+    "expectedPoints": [
+      "Using `raise(SIGKILL)` is syntactically correct but is a poor practice. SIGKILL (signal 9) cannot be caught, blocked, or ignored.",
+      "The consequence is that the process will terminate immediately and ungracefully, skipping any cleanup routines registered with `atexit()` or signal handlers for other signals.",
+      "In contrast, terminating a child process with `kill(child_pid, SIGTERM)` is preferred as it allows the child to catch the signal, perform cleanup, and exit gracefully.",
+      "Best practice is to use SIGTERM first to allow for graceful shutdown, reserving SIGKILL as a last resort for unresponsive processes.",
+      "The `raise` function is typically used for the process to signal itself for synchronization or error handling (e.g., `raise(SIGSEGV)`), not for forceful termination."
+    ],
+    "marks": 10
+  }
+]

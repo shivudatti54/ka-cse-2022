@@ -1,0 +1,130 @@
+{
+  "topicId": "popen",
+  "flashcards": [
+    {
+      "id": "fc-1",
+      "front": "What is the primary purpose of popen() in Unix?",
+      "back": "popen() creates a pipe and forks a process to execute a shell command, enabling inter-process communication through a FILE stream."
+    },
+    {
+      "id": "fc-2",
+      "front": "What are the two parameters of popen()?",
+      "back": "1. command: Shell command to execute\n2. type: 'r' for reading or 'w' for writing direction"
+    },
+    {
+      "id": "fc-3",
+      "front": "What does 'r' mode in popen() indicate?",
+      "back": "The parent process reads output from the command's stdout through the pipe."
+    },
+    {
+      "id": "fc-4",
+      "front": "What does 'w' mode in popen() indicate?",
+      "back": "The parent process writes data to the command's stdin through the pipe."
+    },
+    {
+      "id": "fc-5",
+      "front": "What is the return type of popen()?",
+      "back": "FILE pointer to the stream connected to the command's stdin/stdout, or NULL on error."
+    },
+    {
+      "id": "fc-6",
+      "front": "Which header file is required for popen()?",
+      "back": "#include <stdio.h>"
+    },
+    {
+      "id": "fc-7",
+      "front": "What does popen() return on failure?",
+      "back": "NULL and sets errno to indicate the specific error."
+    },
+    {
+      "id": "fc-8",
+      "front": "How should you close a stream created by popen()?",
+      "back": "Use pclose() instead of fclose() to properly wait for the child process and collect exit status."
+    },
+    {
+      "id": "fc-9",
+      "front": "What does pclose() return?",
+      "back": "Exit status of the command (or -1 if error occurs during waiting)."
+    },
+    {
+      "id": "fc-10",
+      "front": "Why use popen() instead of pipe()+fork()+exec()?",
+      "back": "popen() simplifies process creation and pipe management with a single function call."
+    },
+    {
+      "id": "fc-11",
+      "front": "Can popen() handle bidirectional communication?",
+      "back": "No, popen() only supports unidirectional communication (either read or write mode)."
+    },
+    {
+      "id": "fc-12",
+      "front": "What security risk exists with popen()?",
+      "back": "Command injection vulnerabilities if using untrusted input in the command string."
+    },
+    {
+      "id": "fc-13",
+      "front": "What three system calls does popen() internally use?",
+      "back": "pipe(), fork(), and execl() (via /bin/sh)."
+    },
+    {
+      "id": "fc-14",
+      "front": "Why does popen() use /bin/sh?",
+      "back": "To parse and execute the command string using the system shell."
+    },
+    {
+      "id": "fc-15",
+      "front": "How does pclose() prevent zombie processes?",
+      "back": "It calls waitpid() internally to collect the child process's exit status."
+    },
+    {
+      "id": "fc-16",
+      "front": "Give an example of popen() reading command output.",
+      "back": "FILE *fp = popen(\"ls -l\", \"r\"); then read using fgets() from fp."
+    },
+    {
+      "id": "fc-17",
+      "front": "Give an example of popen() writing to a command.",
+      "back": "FILE *fp = popen(\"grep error\", \"w\"); then write using fprintf() to fp."
+    },
+    {
+      "id": "fc-18",
+      "front": "How is popen() different from system()?",
+      "back": "popen() allows data exchange via streams, while system() only returns exit status."
+    },
+    {
+      "id": "fc-19",
+      "front": "What happens if you don't call pclose()?",
+      "back": "Resource leaks occur and child process becomes a zombie."
+    },
+    {
+      "id": "fc-20",
+      "front": "How to check if executed command succeeded?",
+      "back": "Check return value of pclose(): returns 0 for success or command's exit status."
+    },
+    {
+      "id": "fc-21",
+      "front": "Why is popen() considered higher-level than pipe()?",
+      "back": "It handles pipe creation, process forking, and shell execution automatically."
+    },
+    {
+      "id": "fc-22",
+      "front": "What is a key limitation of popen()?",
+      "back": "Cannot perform bidirectional communication between parent and child processes."
+    },
+    {
+      "id": "fc-23",
+      "front": "How to achieve bidirectional communication instead of popen()?",
+      "back": "Use pipe() to create two pipes, fork(), and manually handle both directions."
+    },
+    {
+      "id": "fc-24",
+      "front": "What happens to signals in a popen() child process?",
+      "back": "Child process has default signal handling unless explicitly changed in command."
+    },
+    {
+      "id": "fc-25",
+      "front": "When should vfork() be preferred over popen()?",
+      "back": "When needing better control over process execution or resource usage optimization."
+    }
+  ]
+}

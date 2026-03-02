@@ -1,0 +1,35 @@
+{
+  "topicId": "introduction",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "verilog",
+      "title": "Basic Digital Design Example - 2-to-1 Multiplexer",
+      "description": "Verilog code demonstrating a simple digital circuit at behavioral and structural levels",
+      "code": "// Behavioral Level Description\nmodule mux2to1_behavioral(input [3:0] a, b, input sel, output [3:0] y);\n always @(*) begin\n if (sel == 0)\n y = a;\n else\n y = b;\n end\nendmodule\n\n// Structural Level Description using gates\nmodule mux2to1_structural(input [3:0] a, b, input sel, output [3:0] y);\n wire [3:0] sel_b, out_and_a, out_and_b;\n \n // Invert selection signal\n not (sel_b[0], sel[0]);\n not (sel_b[1], sel[0]);\n not (sel_b[2], sel[0]);\n not (sel_b[3], sel[0]);\n \n // AND gates for selection\n and (out_and_a[0], a[0], sel_b[0]);\n and (out_and_a[1], a[1], sel_b[1]);\n and (out_and_a[2], a[2], sel_b[2]);\n and (out_and_a[3], a[3], sel_b[3]);\n \n and (out_and_b[0], b[0], sel[0]);\n and (out_and_b[1], b[1], sel[0]);\n and (out_and_b[2], b[2], sel[0]);\n and (out_and_b[3], b[3], sel[0]);\n \n // OR gates to combine\n or (y[0], out_and_a[0], out_and_b[0]);\n or (y[1], out_and_a[1], out_and_b[1]);\n or (y[2], out_and_a[2], out_and_b[2]);\n or (y[3], out_and_a[3], out_and_b[3]);\nendmodule",
+      "explanation": "This example shows two implementations of a 2-to-1 multiplexer: (1) Behavioral - describes functionality using if-else, synthesis tool decides gate implementation, (2) Structural - explicitly specifies gates. Both implement y = sel ? b : a. This demonstrates HDL abstraction levels.",
+      "timeComplexity": "O(1) - combinational logic, no iterations",
+      "spaceComplexity": "O(1) - fixed number of gates regardless of input size"
+    },
+    {
+      "id": "code-2",
+      "language": "vhdl",
+      "title": "RTL Description - Simple Register",
+      "description": "VHDL code showing Register-Transfer Level design with clock synchronization",
+      "code": "library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\nentity simple_register is\n Port ( d : in STD_LOGIC_VECTOR (7 downto 0);\n clk : in STD_LOGIC;\n rst : in STD_LOGIC;\n q : out STD_LOGIC_VECTOR (7 downto 0));\nend simple_register;\n\narchitecture behavioral of simple_register is\nbegin\n process(clk, rst)\n begin\n if rst = '1' then\n q <= (others => '0'); -- Asynchronous reset\n elsif rising_edge(clk) then\n q <= d; -- Register loads on clock rising edge\n end if;\n end process;\nend behavioral;",
+      "explanation": "This VHDL code implements an 8-bit register with asynchronous reset at RTL. Key concepts: (1) Process block with sensitivity list (clk, rst), (2) rising_edge(clk) specifies synchronous operation, (3) if rst = '1' provides asynchronous reset, (4) Data transfers from input to output on clock edge - this is the essence of register-transfer level design.",
+      "timeComplexity": "O(1) - single clock cycle operation",
+      "spaceComplexity": "O(1) - fixed 8-bit register storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Digital Design Flow Algorithm",
+      "description": "Pseudocode illustrating the top-down digital design methodology",
+      "code": "PROCEDURE digital_design_flow(specifications):\n // Step 1: Analyze requirements\n functional_spec \u2190 analyze_requirements(specifications)\n \n // Step 2: High-level architecture design\n architecture \u2190 define_architecture(functional_spec)\n blocks \u2190 partition_system(architecture)\n \n // Step 3: RTL Design\n rtl_description \u2190 describe_behavioral(blocks)\n \n // Step 4: Synthesis\n gate_level_netlist \u2190 synthesize(rtl_description)\n optimized_netlist \u2190 optimize_for_ppa(gate_level_netlist)\n \n // Step 5: Verification\n verification_results \u2190 simulate(optimized_netlist)\n IF verification_results FAIL THEN\n RETURN TO Step 3 (redesign)\n END IF\n \n // Step 6: Physical Design\n layout \u2190 place_and_route(optimized_netlist)\n \n // Step 7: Timing Analysis\n timing_closure \u2190 analyze_timing(layout)\n IF NOT timing_closure THEN\n RETURN TO Step 4 (re-synthesis)\n END IF\n \n // Step 8: Fabrication\n chip \u2190 fabricate(layout)\n \n RETURN chip\n\nPROCEDURE analyze_requirements(specs):\n // Extract functional requirements, performance targets,\n // power constraints, and area budgets from specifications\n RETURN functional_specification",
+      "explanation": "This pseudocode represents the standard ASIC/FPGA design flow. Key stages: (1) Requirements analysis, (2) Architecture definition, (3) RTL design using HDLs, (4) Synthesis to gates with optimization, (5) Verification through simulation, (6) Physical design (place and route), (7) Timing analysis, (8) Fabrication. The loop-back arrows represent common design iterations due to verification failures or timing violations.",
+      "timeComplexity": "O(n\u00b2) for synthesis and place-route on large designs",
+      "spaceComplexity": "O(n) for design database"
+    }
+  ]
+}

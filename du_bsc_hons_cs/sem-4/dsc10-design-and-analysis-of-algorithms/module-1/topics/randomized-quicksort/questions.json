@@ -1,0 +1,159 @@
+{
+  "topicId": "randomized-quicksort",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain why Randomized Quicksort is preferred over deterministic Quicksort in practical applications. What problem does randomization solve?",
+      "keyPoints": [
+        "Deterministic quicksort has O(n\u00b2) worst-case on sorted/reverse-sorted input",
+        "Randomized quicksort selects pivot randomly, making performance independent of input order",
+        "Probability of worst-case O(n\u00b2) is ~1/n! (practically impossible)",
+        "Provides predictable average-case O(n log n) regardless of input distribution",
+        "Solves the adversarial input problem"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Derive the expected time complexity of Randomized Quicksort using recurrence relation analysis.",
+      "keyPoints": [
+        "Recurrence: T(n) = T(k) + T(n-k-1) + \u0398(n)",
+        "Where k is elements less than pivot",
+        "All pivot positions are equally likely (1/n each)",
+        "Expected value: E[T(n)] = (1/n)\u03a3[E[T(k)] + E[T(n-k-1)]] + \u0398(n)",
+        "Solving gives E[T(n)] = 2T(n/2) + \u0398(n) = O(n log n)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the difference between Lomuto and Hoare partition schemes? Which one is used in Randomized Quicksort and why?",
+      "keyPoints": [
+        "Lomuto: uses last element as pivot, simple implementation, O(n) swaps per partition",
+        "Hoare: uses two pointers moving inward, more efficient with fewer swaps",
+        "Randomized Quicksort typically uses Lomuto with random pivot swapped to end",
+        "Hoare is original partition method, more complex but faster",
+        "Both achieve O(n) partition time"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the concept of tail recursion optimization in Quicksort. How does it help in reducing space complexity?",
+      "keyPoints": [
+        "After partition, two recursive calls are made for subarrays",
+        "Tail recursion: first sort smaller subarray recursively, then iteratively continue for larger",
+        "Limits worst-case stack depth to O(log n) instead of O(n)",
+        "Reduces worst-case space from O(n) to O(log n)",
+        "Optimization doesn't change time complexity but improves practical performance"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Why is Randomized Quicksort considered an in-place sorting algorithm? What is its space complexity?",
+      "keyPoints": [
+        "In-place means only O(1) or O(log n) extra space needed",
+        "Randomized Quicksort only uses O(log n) average stack space for recursion",
+        "Partitioning is done within the array, no auxiliary array needed",
+        "Worst-case space can be O(n) with unbalanced partitions",
+        "With tail recursion optimization, worst-case becomes O(log n)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Compare Randomized Quicksort with MergeSort on the basis of: (a) Time Complexity (b) Space Complexity (c) Stability (d) In-place property",
+      "keyPoints": [
+        "Time: Both have average O(n log n), Quicksort worst-case O(n\u00b2), MergeSort always O(n log n)",
+        "Space: Quicksort O(log n) average, MergeSort O(n)",
+        "Stability: MergeSort is stable, Quicksort is not",
+        "In-place: Quicksort is in-place, MergeSort requires O(n) auxiliary space",
+        "Quicksort generally faster in practice due to cache efficiency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "What is the probability that Randomized Quicksort exhibits its worst-case O(n\u00b2) behavior? Explain mathematically.",
+      "keyPoints": [
+        "Worst-case occurs when pivot is always smallest or largest element",
+        "Probability of worst-case pivot sequence: 1/(n \u00d7 (n-1) \u00d7 ... \u00d7 2 \u00d7 1) = 1/n!",
+        "For n=10, probability \u2248 1/3.6 million; for n=20, \u2248 1/2.4\u00d710\u00b9\u2078",
+        "Expected number of comparisons in worst-case: n(n-1)/2",
+        "This probability is so small that worst-case is considered practically impossible"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Explain the Randomized Quicksort algorithm in detail. Write the pseudocode and analyze its time and space complexity. Also explain how randomization helps avoid worst-case behavior.",
+      "keyPoints": [
+        "Algorithm: Select random pivot, partition array around it, recursively sort subarrays",
+        "Pseudocode with RANDOMIZED-PARTITION function",
+        "Expected time O(n log n), worst-case O(n\u00b2)",
+        "Space: O(log n) average, O(n) worst-case with recursion stack",
+        "Randomization ensures no input can reliably cause worst-case",
+        "Probability analysis of worst-case ~1/n!",
+        "Include tail recursion optimization explanation",
+        "Comparison with deterministic quicksort showing improved guarantees"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Derive the expected number of comparisons in Randomized Quicksort. Show that it is approximately 2n ln n \u2248 1.39n log\u2082n. How does this compare with MergeSort's comparisons?",
+      "keyPoints": [
+        "Let C(n) be expected comparisons for n elements",
+        "Recurrence: C(n) = (n-1) + (2/n)\u03a3[C(k) + C(n-1-k)] for k=0 to n-1",
+        "Simplify to: C(n) = (n-1) + (2/n)\u03a3C(k) for k=0 to n-1",
+        "Solve by substitution to get C(n) = 2n ln n - O(n)",
+        "For n=1000: ~13,856 comparisons vs MergeSort's ~10,000 log\u20821000 \u2248 9,966",
+        "MergeSort uses slightly fewer comparisons but Quicksort is in-place",
+        "Average case analysis involves linearity of expectation"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "What is the 3-way partition (Dutch National Flag) algorithm? How does it solve the problem of duplicate elements in Randomized Quicksort? Explain with an example and analyze its time complexity.",
+      "keyPoints": [
+        "Problem: With many duplicates, standard partition creates unbalanced subarrays",
+        "3-way partition divides array into three parts: < pivot, = pivot, > pivot",
+        "Algorithm uses three pointers: low, mid, high",
+        "Swaps elements based on comparison with pivot",
+        "Time complexity: O(n) for partition, O(n log n) average, O(n) best with all duplicates",
+        "Improves worst-case from O(n\u00b2) to O(n) with many duplicates",
+        "Example: [4, 2, 4, 6, 4, 1] with pivot 4 becomes [<4, =4, >4]"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Write a complete implementation of Randomized Quicksort in Python/C/Java. Include functions for random pivot selection, partitioning, and the recursive sort. Analyze the best case, average case, and worst-case scenarios with examples.",
+      "keyPoints": [
+        "Complete code with comments explaining each part",
+        "Random pivot: generate random index between low and high",
+        "Partition function implementation",
+        "Recursive quicksort function",
+        "Base case: if low < high",
+        "Time complexity analysis: Best O(n log n), Average O(n log n), Worst O(n\u00b2)",
+        "Space complexity: O(log n) average recursion depth",
+        "Example walkthrough showing partition and recursion steps",
+        "Tail recursion optimization optional"
+      ],
+      "marks": 10
+    }
+  ]
+}

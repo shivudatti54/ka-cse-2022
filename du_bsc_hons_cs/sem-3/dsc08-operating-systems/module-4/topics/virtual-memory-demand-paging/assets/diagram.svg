@@ -1,0 +1,171 @@
+<svg width="420" height="400" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg" data-topic-id="virtual-memory-demand-paging">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4f8"/>
+      <stop offset="50%" style="stop-color:#d4e8f0"/>
+      <stop offset="100%" style="stop-color:#c4dcf0"/>
+    </linearGradient>
+    <linearGradient id="boxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f0f7fa"/>
+    </linearGradient>
+    <linearGradient id="cpuGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7eb8da"/>
+      <stop offset="100%" style="stop-color:#5a9bc4"/>
+    </linearGradient>
+    <linearGradient id="pageTableGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#9dd6b8"/>
+      <stop offset="100%" style="stop-color:#7bc4a0"/>
+    </linearGradient>
+    <linearGradient id="diskGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a5c9"/>
+      <stop offset="100%" style="stop-color:#b884ad"/>
+    </linearGradient>
+    <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0d9a0"/>
+      <stop offset="100%" style="stop-color:#e0c080"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000020"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes flowPulse {
+      0%, 100% { stroke-dashoffset: 0; }
+      50% { stroke-dashoffset: 10; }
+    }
+    .fade-in { animation: fadeIn 1s ease-out forwards; }
+    .slide-in { animation: slideIn 0.8s ease-out forwards; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    .title-text { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #2c5282; }
+    .label-text { font-family: Arial, sans-serif; font-size: 12px; fill: #2d3748; }
+    .detail-text { font-family: Arial, sans-serif; font-size: 10px; fill: #4a5568; }
+    .arrow-line { stroke: #718096; stroke-width: 2; fill: none; }
+    .arrow-head { fill: #718096; }
+    .flow-line { stroke: #4299e1; stroke-width: 2; fill: none; stroke-dasharray: 8,4; animation: flowPulse 1.5s linear infinite; }
+    .fault-line { stroke: #e53e3e; stroke-width: 2; fill: none; stroke-dasharray: 6,3; }
+  </style>
+  
+  <rect width="420" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="210" y="25" text-anchor="middle" class="title-text fade-in">Virtual Memory: Demand Paging</text>
+  <line x1="50" y1="35" x2="370" y2="35" stroke="#4299e1" stroke-width="2" class="fade-in"/>
+  
+  <!-- Section 1: CPU -->
+  <g class="slide-in" style="animation-delay: 0.2s" data-narration="CPU generates a memory reference for a virtual address">
+    <rect x="30" y="55" width="70" height="50" rx="8" fill="url(#cpuGradient)" filter="url(#shadow)"/>
+    <text x="65" y="75" text-anchor="middle" class="label-text" fill="white" font-weight="bold">CPU</text>
+    <text x="65" y="90" text-anchor="middle" class="detail-text" fill="white">Memory</text>
+    <text x="65" y="102" text-anchor="middle" class="detail-text" fill="white">Reference</text>
+  </g>
+  
+  <!-- Arrow from CPU to Page Table -->
+  <path d="M 100 80 L 145 80" class="arrow-line"/>
+  <polygon points="140,75 145,80 140,85" class="arrow-head"/>
+  
+  <!-- Section 2: Page Table Check -->
+  <g class="slide-in" style="animation-delay: 0.4s" data-narration="Page Table is checked to see if the requested page is in physical memory">
+    <rect x="145" y="55" width="85" height="50" rx="8" fill="url(#pageTableGradient)" filter="url(#shadow)"/>
+    <text x="187" y="75" text-anchor="middle" class="label-text" fill="white" font-weight="bold">Page Table</text>
+    <text x="187" y="90" text-anchor="middle" class="detail-text" fill="white">Valid Bit?</text>
+  </g>
+  
+  <!-- Decision branches -->
+  <text x="195" y="120" class="detail-text" fill="#2d3748">Hit</text>
+  <path d="M 230 105 L 280 105" class="arrow-line"/>
+  <polygon points="275,100 280,105 275,110" class="arrow-head"/>
+  
+  <text x="195" y="140" class="detail-text" fill="#c53030">Fault</text>
+  <path d="M 210 130 L 210 165" class="fault-line"/>
+  <polygon points="205,160 210,165 215,160" class="arrow-head" fill="#e53e3e"/>
+  
+  <!-- Section 3: Memory Access (Hit case) -->
+  <g class="slide-in" style="animation-delay: 0.6s" data-narration="If page is in memory (valid bit=1), access the physical frame directly">
+    <rect x="280" y="80" width="60" height="45" rx="8" fill="#9f7aea" filter="url(#shadow)"/>
+    <text x="310" y="100" text-anchor="middle" class="label-text" fill="white" font-weight="bold">Physical</text>
+    <text x="310" y="115" text-anchor="middle" class="detail-text" fill="white">Memory</text>
+  </g>
+  
+  <!-- Section 4: Free Frame List (for page fault) -->
+  <g class="slide-in" style="animation-delay: 0.8s" data-narration="On page fault, get a free frame from the free frame list">
+    <rect x="155" y="165" width="75" height="45" rx="8" fill="url(#frameGradient)" filter="url(#shadow)"/>
+    <text x="192" y="185" text-anchor="middle" class="label-text" fill="#744210" font-weight="bold">Free Frame</text>
+    <text x="192" y="200" text-anchor="middle" class="detail-text" fill="#744210">List</text>
+  </g>
+  
+  <!-- Arrow from Free Frame to Disk -->
+  <path d="M 192 210 L 192 240" class="arrow-line"/>
+  <polygon points="187,235 192,240 197,235" class="arrow-head"/>
+  
+  <!-- Section 5: Disk/Secondary Storage -->
+  <g class="slide-in" style="animation-delay: 1s" data-narration="The required page is fetched from disk (swap space) into the free frame">
+    <rect x="145" y="240" width="95" height="55" rx="8" fill="url(#diskGradient)" filter="url(#shadow)"/>
+    <text x="192" y="262" text-anchor="middle" class="label-text" fill="white" font-weight="bold">Disk</text>
+    <text x="192" y="277" text-anchor="middle" class="detail-text" fill="white">Swap Space</text>
+    <text x="192" y="290" text-anchor="middle" class="detail-text" fill="white">/ Page File</text>
+  </g>
+  
+  <!-- Arrow from Disk to Page Table update -->
+  <path d="M 240 267 L 290 267" class="flow-line"/>
+  <polygon points="285,262 290,267 285,272" fill="#4299e1"/>
+  
+  <!-- Section 6: Page Table Update -->
+  <g class="slide-in" style="animation-delay: 1.2s" data-narration="Page table is updated with frame number and valid bit set to 1">
+    <rect x="290" y="245" width="80" height="45" rx="8" fill="url(#pageTableGradient)" filter="url(#shadow)"/>
+    <text x="330" y="265" text-anchor="middle" class="label-text" fill="white" font-weight="bold">Update</text>
+    <text x="330" y="280" text-anchor="middle" class="detail-text" fill="white">Page Table</text>
+  </g>
+  
+  <!-- Arrow from Update back to Memory -->
+  <path d="M 330 290 L 330 105 L 280 105" class="flow-line" style="animation-delay: 0.5s"/>
+  <polygon points="275,100 280,105 285,100" fill="#4299e1"/>
+  
+  <!-- Restart instruction box -->
+  <g class="pulse" style="animation-delay: 1.5s" data-narration="The instruction is restarted from the beginning with the page now in memory">
+    <rect x="290" y="55" width="80" height="35" rx="5" fill="#48bb78" filter="url(#shadow)"/>
+    <text x="330" y="72" text-anchor="middle" class="label-text" fill="white" font-weight="bold" font-size="11">Restart</text>
+    <text x="330" y="85" text-anchor="middle" class="detail-text" fill="white" font-size="9">Instruction</text>
+  </g>
+  
+  <!-- Key Concepts Box -->
+  <g class="fade-in" style="animation-delay: 1.3s" data-narration="Key terms: Page Fault, Valid Bit, Frame, Swap Space">
+    <rect x="320" y="320" width="90" height="70" rx="5" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+    <text x="365" y="340" text-anchor="middle" class="label-text" fill="#2c5282" font-weight="bold" font-size="11">Key Terms</text>
+    <text x="365" y="355" class="detail-text" fill="#4a5568">• Page Fault</text>
+    <text x="365" y="367" class="detail-text" fill="#4a5568">• Valid Bit</text>
+    <text x="365" y="379" class="detail-text" fill="#4a5568">• Frame</text>
+    <text x="365" y="391" class="detail-text" fill="#4a5568">• Swap Space</text>
+  </g>
+  
+  <!-- Page Fault Handler Box -->
+  <g class="fade-in" style="animation-delay: 1.4s" data-narration="The OS page fault handler orchestrates loading the page from disk to memory">
+    <rect x="10" y="320" width="110" height="70" rx="5" fill="white" stroke="#fc8181" stroke-width="1" filter="url(#shadow)"/>
+    <text x="65" y="340" text-anchor="middle" class="label-text" fill="#c53030" font-weight="bold" font-size="11">Page Fault</text>
+    <text x="65" y="352" text-anchor="middle" class="label-text" fill="#c53030" font-weight="bold" font-size="11">Handler</text>
+    <text x="65" y="367" class="detail-text" fill="#4a5568" text-anchor="middle">OS traps, finds</text>
+    <text x="65" y="379" class="detail-text" fill="#4a5568" text-anchor="middle">frame, loads</text>
+    <text x="65" y="391" class="detail-text" fill="#4a5568" text-anchor="middle">from disk</text>
+  </g>
+  
+  <!-- Legend -->
+  <g class="fade-in" style="animation-delay: 1.5s">
+    <rect x="130" y="320" width="50" height="20" rx="3" fill="#48bb78"/>
+    <text x="155" y="335" class="detail-text" fill="white" text-anchor="middle">Success</text>
+    <rect x="185" y="320" width="50" height="20" rx="3" fill="#e53e3e"/>
+    <text x="210" y="335" class="detail-text" fill="white" text-anchor="middle">Page Fault</text>
+  </g>
+</svg>

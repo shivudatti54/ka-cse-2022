@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#388e3c"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff9800"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+
+  <!-- Step 0: Title -->
+  <g class="step" id="step0" data-narration="Atomic Commit Protocols ensure distributed database transactions either commit at all participating nodes or abort at all nodes, maintaining strong ACID properties.">
+    <rect x="0" y="10" width="800" height="40" fill="#e3f2fd"/>
+    <text x="400" y="38" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#1976d2">Atomic Commit Protocols in Distributed Systems</text>
+  </g>
+
+  <!-- Step 1: Introduction - Why we need atomic commit -->
+  <g class="step" id="step1" data-narration="In distributed databases, transactions span multiple nodes across different locations. Without atomic commit, some nodes might commit while others abort, causing serious inconsistency.">
+    <rect x="20" y="58" width="760" height="80" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="78" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Why Atomic Commit?</text>
+    <rect x="40" y="85" width="150" height="45" fill="#e3f2fd" rx="3"/>
+    <text x="50" y="100" font-family="Arial" font-size="9" fill="#1976d2">Transaction spans</text>
+    <text x="50" y="112" font-family="Arial" font-size="9" fill="#1976d2">multiple databases</text>
+    <text x="50" y="124" font-family="Arial" font-size="8" fill="#666">DB1, DB2, DB3...</text>
+    <line x1="200" y1="108" x2="250" y2="108" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="260" y="85" width="180" height="45" fill="#ffebee" rx="3"/>
+    <text x="270" y="100" font-family="Arial" font-size="9" fill="#f44336">Problem: Inconsistent</text>
+    <text x="270" y="112" font-family="Arial" font-size="9" fill="#f44336">state possible</text>
+    <text x="270" y="124" font-family="Arial" font-size="8" fill="#666">DB1 commits, DB2 aborts</text>
+    <line x1="450" y1="108" x2="500" y2="108" stroke="#388e3c" stroke-width="2" marker-end="url(#arrow-green)"/>
+    <rect x="510" y="85" width="250" height="45" fill="#e8f5e9" rx="3"/>
+    <text x="520" y="100" font-family="Arial" font-size="9" fill="#388e3c">Solution: Atomic Commit</text>
+    <text x="520" y="112" font-family="Arial" font-size="9" fill="#388e3c">Protocol (2PC / 3PC)</text>
+    <text x="520" y="124" font-family="Arial" font-size="8" fill="#666">All-or-Nothing guarantee</text>
+  </g>
+
+  <!-- Step 2: Two-Phase Commit Overview -->
+  <g class="step" id="step2" data-narration="Two-Phase Commit (2PC) uses a coordinator and participants. Phase 1 collects votes, Phase 2 sends the global decision to all participants.">
+    <rect x="20" y="146" width="760" height="93" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="166" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Two-Phase Commit (2PC)</text>
+    <!-- Coordinator -->
+    <rect x="350" y="175" width="100" height="45" fill="#9c27b0" rx="5"/>
+    <text x="400" y="195" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="white">Coordinator</text>
+    <text x="400" y="208" text-anchor="middle" font-family="Arial" font-size="8" fill="white">Transaction Manager</text>
+    <!-- Participants -->
+    <rect x="80" y="175" width="90" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="3"/>
+    <text x="125" y="193" text-anchor="middle" font-family="Arial" font-size="9" fill="#1976d2">DB1</text>
+    <rect x="230" y="175" width="90" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="3"/>
+    <text x="275" y="193" text-anchor="middle" font-family="Arial" font-size="9" fill="#1976d2">DB2</text>
+    <rect x="480" y="175" width="90" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="3"/>
+    <text x="525" y="193" text-anchor="middle" font-family="Arial" font-size="9" fill="#1976d2">DB3</text>
+    <rect x="630" y="175" width="90" height="35" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="3"/>
+    <text x="675" y="193" text-anchor="middle" font-family="Arial" font-size="9" fill="#1976d2">DB4</text>
+    <!-- Phase labels -->
+    <rect x="40" y="225" width="720" height="5" fill="#fff3e0"/>
+    <text x="200" y="232" font-family="Arial" font-size="9" fill="#ff9800" font-weight="bold">Phase 1: Voting</text>
+    <text x="550" y="232" font-family="Arial" font-size="9" fill="#ff9800" font-weight="bold">Phase 2: Decision</text>
+  </g>
+
+  <!-- Step 3: 2PC Message Flow -->
+  <g class="step" id="step3" data-narration="In voting phase, coordinator sends prepare to all participants who vote YES or NO. In decision phase, coordinator commits if all YES, otherwise aborts.">
+    <rect x="20" y="247" width="760" height="80" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="267" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">2PC Message Flow</text>
+    <!-- Arrow flow diagram -->
+    <rect x="60" y="278" width="80" height="25" fill="#fff3e0" rx="3"/>
+    <text x="100" y="293" text-anchor="middle" font-family="Arial" font-size="8" fill="#ff9800">Coordinator</text>
+    <text x="100" y="302" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">sends PREPARE</text>
+    <line x1="140" y1="290" x2="180" y2="290" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="190" y="278" width="80" height="25" fill="#e3f2fd" rx="3"/>
+    <text x="230" y="293" text-anchor="middle" font-family="Arial" font-size="8" fill="#1976d2">Participants</text>
+    <text x="230" y="302" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">vote YES/NO</text>
+    <line x1="270" y1="290" x2="310" y2="290" stroke="#388e3c" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <rect x="320" y="278" width="80" height="25" fill="#fff3e0" rx="3"/>
+    <text x="360" y="293" text-anchor="middle" font-family="Arial" font-size="8" fill="#ff9800">Coordinator</text>
+    <text x="360" y="302" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">makes decision</text>
+    <line x1="400" y1="290" x2="440" y2="290" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="450" y="278" width="80" height="25" fill="#e8f5e9" rx="3"/>
+    <text x="490" y="293" text-anchor="middle" font-family="Arial" font-size="8" fill="#388e3c">All Participants</text>
+    <text x="490" y="302" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">COMMIT or ABORT</text>
+    <!-- Outcome box -->
+    <rect x="580" y="275" width="180" height="45" fill="#f3e5f5" rx="3"/>
+    <text x="590" y="289" font-family="Arial" font-size="9" fill="#9c27b0" font-weight="bold">Outcomes:</text>
+    <text x="590" y="303" font-family="Arial" font-size="8" fill="#666">All YES → COMMIT</text>
+    <text x="590" y="315" font-family="Arial" font-size="8" fill="#666">Any NO → ABORT</text>
+  </g>
+
+  <!-- Step 4: Three-Phase Commit -->
+  <g class="step" id="step4" data-narration="Three-Phase Commit adds a pre-commit phase between voting and decision, eliminating the blocking problem when coordinator fails after participants vote YES.">
+    <rect x="20" y="335" width="760" height="103" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="355" font-family="Arial" font-size="13" font-weight="bold" fill="#9c27b0">Three-Phase Commit (3PC) - Non-Blocking</text>
+    <!-- Three phases visualization -->
+    <rect x="60" y="368" width="200" height="40" fill="#fff3e0" rx="3"/>
+    <text x="160" y="383" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#ff9800">Phase 1: Can Commit</text>
+    <text x="160" y="398" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">Coordinator asks "Can commit?"</text>
+    <line x1="260" y1="388" x2="290" y2="388" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="300" y="368" width="200" height="40" fill="#e3f2fd" rx="3"/>
+    <text x="400" y="383" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#1976d2">Phase 2: Pre-Commit</text>
+    <text x="400" y="398" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">Coordinator sends "pre-commit"</text>
+    <line x1="500" y1="388" x2="530" y2="388" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="540" y="368" width="200" height="40" fill="#e8f5e9" rx="3"/>
+    <text x="640" y="383" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#388e3c">Phase 3: Do Commit</text>
+    <text x="640" y="398" text-anchor="middle" font-family="Arial" font-size="7" fill="#666">Coordinator sends "commit"</text>
+    <!-- Key advantage -->
+    <rect x="60" y="413" width="720" height="18" fill="#f3e5f5" rx="3"/>
+    <text x="70" y="426" font-family="Arial" font-size="8" fill="#9c27b0">Key: If coordinator fails after pre-commit, participants communicate to decide - no blocking!</text>
+  </g>
+
+  <!-- Step 5: Roles and Responsibilities -->
+  <g class="step" id="step5" data-narration="The coordinator initiates the protocol, collects votes, and makes global decisions. Participants execute transactions locally, vote YES or NO, and maintain persistent logs for recovery.">
+    <rect x="20" y="446" width="760" height="80" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="466" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">Coordinator vs Participant Roles</text>
+    <!-- Coordinator box -->
+    <rect x="50" y="481" width="320" height="38" fill="#9c27b0" rx="5"/>
+    <text x="60" y="496" font-family="Arial" font-size="10" font-weight="bold" fill="white">Coordinator:</text>
+    <text x="60" y="510" font-family="Arial" font-size="8" fill="white">Initiates commit, collects votes, makes decision, logs for recovery</text>
+    <!-- Participant box -->
+    <rect x="390" y="481" width="380" height="38" fill="#1976d2" rx="5"/>
+    <text x="400" y="496" font-family="Arial" font-size="10" font-weight="bold" fill="white">Participant:</text>
+    <text x="400" y="510" font-family="Arial" font-size="8" fill="white">Executes transaction locally, votes YES/NO, commits/aborts, maintains transaction log</text>
+  </g>
+
+  <!-- Step 6: Failure Handling & Comparison -->
+  <g class="step" id="step6" data-narration="2PC blocks when coordinator fails after voting; 3PC solves this but adds complexity. Both handle participant failure through transaction logs and recovery procedures.">
+    <rect x="20" y="534" width="760" height="60" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="5"/>
+    <text x="40" y="554" font-family="Arial" font-size="13" font-weight="bold" fill="#1976d2">2PC vs 3PC: Failure Handling</text>
+    <!-- 2PC vs 3PC comparison -->
+    <rect x="50" y="566" width="180" height="24" fill="#ffebee" rx="3"/>
+    <text x="60" y="578" font-family="Arial" font-size="8" fill="#f44336" font-weight="bold">2PC: Blocks on coordinator failure</text>
+    <rect x="260" y="566" width="180" height="24" fill="#e8f5e9" rx="3"/>
+    <text x="270" y="578" font-family="Arial" font-size="8" fill="#388e3c" font-weight="bold">3PC: Non-blocking with pre-commit</text>
+    <rect x="470" y="566" width="180" height="24" fill="#f3e5f5" rx="3"/>
+    <text x="480" y="578" font-family="Arial" font-size="8" fill="#9c27b0" font-weight="bold">Both: Need transaction logs</text>
+  </g>
+</svg>

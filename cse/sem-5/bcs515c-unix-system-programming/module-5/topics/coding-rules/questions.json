@@ -1,0 +1,101 @@
+{
+  "topicId": "coding-rules",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain why standard library functions like printf() should not be called from within a signal handler. What is the recommended alternative?",
+      "keyPoints": [
+        "printf() uses internal locks and static buffers that may be in an inconsistent state when signal arrives",
+        "Calling printf() from handler can cause deadlock or buffer corruption",
+        "It is not async-signal-safe per POSIX standard",
+        "Alternative: Use simple flag setting with volatile sig_atomic_t, or use self-pipe trick",
+        "Perform actual I/O in main program loop after handler sets flag"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is sig_atomic_t and why must shared variables between main program and signal handlers be declared with both volatile and sig_atomic_t?",
+      "keyPoints": [
+        "sig_atomic_t guarantees atomic read/write operations without interruption",
+        "volatile prevents compiler from optimizing away reads/writes by keeping values in registers",
+        "Together they ensure: (1) no partial reads/writes occur, (2) values are always read from memory",
+        "Without both: race conditions and stale values are possible",
+        "Example: volatile sig_atomic_t flag;"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "List three functions that ARE safe to call from a signal handler and three that are NOT safe. Justify your choices.",
+      "keyPoints": [
+        "SAFE: _exit(), signal(), fflush(), write(), atomic operations on sig_atomic_t",
+        "NOT SAFE: printf(), malloc(), free(), fprintf(), fopen()",
+        "Justification: Async-signal-safe functions do not use static buffers or locks",
+        "Non-safe functions may hold locks or use buffers that could be in use by main program",
+        "POSIX standard defines the list of async-signal-safe functions"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is the self-pipe trick and how does it solve the problem of communicating from signal handlers to main program?",
+      "keyPoints": [
+        "Create a pipe before establishing signal handlers",
+        "Signal handler writes a single byte to pipe's write end when signal arrives",
+        "Main program uses select()/poll() to monitor pipe's read end",
+        "Converts asynchronous signal to synchronous I/O event",
+        "Allows safe integration with event-driven programs",
+        "Handler only does async-signal-safe write() operation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain what happens when a system call is interrupted by a signal and returns EINTR. How should a robust program handle this?",
+      "keyPoints": [
+        "Interrupted system calls return -1 with errno set to EINTR",
+        "Two handling approaches: (1) Loop restarting the call, (2) Use SA_RESTART flag",
+        "SA_RESTART automatically restarts certain system calls (not all)",
+        "Example: while((n = read(fd, buf, len)) < 0 && errno == EINTR);",
+        "Important for signals like SIGALRM used for timeouts"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "long",
+      "question": "Write a signal-safe pattern for handling SIGINT in a program that needs to do complex cleanup operations (like flushing buffers, closing files, releasing resources) in response to the signal.",
+      "keyPoints": [
+        "Handler should only set a flag: volatile sig_atomic_t shutdown_requested = 0",
+        "Handler: void handler(int sig) { shutdown_requested = 1; }",
+        "Do NOT perform complex cleanup in handler - it's unsafe",
+        "Main program loop checks flag and performs cleanup: while(!shutdown_requested) { /* work */ }",
+        "After loop: perform all cleanup (fflush, fclose, free, etc.)",
+        "Alternative: use self-pipe trick for more complex event handling",
+        "Make sure to reset handler to SIG_DFL before cleanup if needed"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Compare setjmp/longjmp with sigsetjmp/siglongjmp for use in signal handling. Explain why the latter is preferred when dealing with signals.",
+      "keyPoints": [
+        "setjmp/longjmp does not save/restore signal mask - signals may be left blocked",
+        "sigsetjmp(sigbuf, savemask) saves signal mask when savemask != 0",
+        "siglongjmp restores the saved signal mask",
+        "With setjmp: a signal handler using longjmp may leave signals permanently blocked",
+        "sigsetjmp/siglongjmp properly saves/restores signal mask for correct behavior",
+        "If siglongjmp jumps out of handler, blocked signals become unblocked properly",
+        "Use sigsetjmp with non-zero savemask when signal masks need preservation"
+      ],
+      "marks": 10
+    }
+  ]
+}

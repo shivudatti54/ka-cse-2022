@@ -1,0 +1,146 @@
+{
+  "topicId": "the-programmers-interface",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between a Vertex Buffer Object (VBO) and an Index Buffer Object (IBO). How do they work together in rendering geometry?",
+      "keyPoints": [
+        "VBO stores raw vertex data (positions, normals, UVs, colors) in GPU memory",
+        "IBO stores indices that reference vertices in the VBO",
+        "IBO enables vertex reuse - same vertex can be shared by multiple triangles",
+        "Together they form indexed rendering - the GPU looks up vertices by their index",
+        "This reduces memory compared to non-indexed rendering where each triangle has unique vertices"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Describe the evolution of graphics APIs from fixed-function pipeline to programmable pipeline. What are the advantages of the programmable pipeline?",
+      "keyPoints": [
+        "Fixed-function pipeline had hardcoded transformation and lighting stages",
+        "Programmable pipeline allows custom shader programs for any pipeline stage",
+        "Advantages: unlimited visual effects, realistic rendering, GPU parallelism, hardware abstraction",
+        "Shader languages (GLSL, HLSL) allow developers to control GPU behavior",
+        "Modern APIs (Vulkan, DirectX 12) provide even lower-level control"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "What is the role of the Vertex Shader in the graphics pipeline? Explain its input and output data.",
+      "keyPoints": [
+        "Vertex shader processes each vertex individually before rasterization",
+        "Inputs: vertex attributes (position, normal, UV), uniforms (matrices, time)",
+        "Outputs: transformed position (to clip space), varyings to fragment shader (colors, UVs, normals)",
+        "Performs model-view-projection transformation, lighting calculations, skinning",
+        "Cannot create or destroy vertices - 1:1 input-output ratio"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the state machine model used by OpenGL. How does it affect how graphics programs are written?",
+      "keyPoints": [
+        "OpenGL operates as a state machine - current state affects all subsequent operations",
+        "State includes: current color, matrix mode, blending, depth testing, texture bindings, etc.",
+        "State persists until explicitly changed - programs must manage state carefully",
+        "State changes can be expensive - batching similar draw calls improves performance",
+        "Modern OpenGL uses objects (VAOs, FBOs) to encapsulate state"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What are uniforms in shader programming? How are they used to pass data from CPU to GPU?",
+      "keyPoints": [
+        "Uniforms are global variables in shaders that remain constant across all vertices/fragments in a draw call",
+        "Set by the CPU application before issuing draw calls using API functions like glUniformMatrix4fv()",
+        "Used for: transformation matrices, light positions, material properties, time values",
+        "Unlike attributes (per-vertex), uniforms are constant for the entire draw operation",
+        "Stored in uniform storage on GPU, accessible by all shader stages"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between immediate mode and retained mode rendering. Give examples of APIs or approaches that use each.",
+      "keyPoints": [
+        "Immediate mode: geometry sent directly each frame, no persistent storage (legacy OpenGL glBegin/glEnd, old DirectX immediate mode)",
+        "Retained mode: scene graph maintained in memory, system handles rendering automatically (HTML5 Canvas 2D, scene graph libraries like OpenSceneGraph)",
+        "Immediate mode: simpler but less efficient, harder to optimize",
+        "Retained mode: better for complex scenes, automatic culling and optimization",
+        "Modern graphics APIs are neither purely immediate nor retained - they use retained data (VBOs) with immediate draw calls"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Explain the purpose and workflow of creating a shader program in OpenGL.",
+      "keyPoints": [
+        "Step 1: Create shader objects with glCreateShader() for each shader type",
+        "Step 2: Load shader source code and compile with glShaderSource() and glCompileShader()",
+        "Step 3: Check compilation status with glGetShaderiv() for errors",
+        "Step 4: Create program object with glCreateProgram()",
+        "Step 5: Attach compiled shaders with glAttachShader()",
+        "Step 6: Link program with glLinkProgram() - combines shaders into executable",
+        "Step 7: Use program with glUseProgram() before draw calls",
+        "Step 8: Clean up shader objects with glDeleteShader() after linking"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare OpenGL, DirectX, and Vulkan as graphics programmer interfaces. Discuss their design philosophies, portability, performance characteristics, and use cases.",
+      "keyPoints": [
+        "OpenGL: Cross-platform, state-machine model, intermediate abstraction, good for cross-platform development",
+        "DirectX: Windows/Xbox exclusive, COM-based object-oriented design, tight hardware optimization, dominant in gaming",
+        "Vulkan: Low-overhead explicit control, cross-platform, requires manual resource management, best for performance-critical applications",
+        "OpenGL has higher-level abstraction hiding complexity; Vulkan exposes it for control",
+        "Performance: Vulkan offers most control but steep learning curve; OpenGL simpler but some overhead",
+        "Use cases: OpenGL for cross-platform apps, DirectX for Windows games, Vulkan for high-performance/gpu-intensive apps"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the complete graphics rendering pipeline from vertex data input to final pixel output. Explain each major stage and how data flows through it.",
+      "keyPoints": [
+        "Input Assembly: Reads vertices from VBOs/IBOs, assembles into primitives (points, lines, triangles)",
+        "Vertex Shader: Transforms vertices, applies MVP matrix, calculates per-vertex attributes",
+        "Tessellation (optional): Subdivides primitives for smoother surfaces",
+        "Geometry Shader (optional): Can create/modify primitives",
+        "Rasterization: Converts primitives to fragments, interpolates per-vertex attributes to per-fragment",
+        "Fragment Shader: Calculates final fragment color using interpolated values, textures, lighting",
+        "Per-Fragment Operations: Depth test, stencil test, blending with framebuffer",
+        "Output Merger: Writes final color/depth to framebuffer",
+        "Each stage is programmable or fixed-function depending on API version"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain what Framebuffer Objects (FBOs) are and describe at least three practical applications where they are essential in computer graphics.",
+      "keyPoints": [
+        "FBO is a collection of renderable textures (color, depth, stencil) serving as rendering destination instead of screen",
+        "Created with glGenFramebuffers(), bound with glBindFramebuffer()",
+        "Applications: 1) Post-processing: render scene to texture, apply effects (blur, bloom) in second pass",
+        "2) Shadow mapping: render depth from light's perspective to texture for shadow calculations",
+        "3) Render-to-texture: create reflections by rendering scene from reflected camera view",
+        "4) Multi-pass rendering: complex effects requiring intermediate results",
+        "5) Off-screen rendering: GUI rendering, screenshot capture, pixel manipulation",
+        "FBOs enable flexible rendering pipelines beyond single-pass screen output"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "topicId": "text-search",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "NFA Simulation for Pattern Matching",
+      "description": "Simulating the NFA constructed from a pattern on input text. Tracks all possible active states at each position.",
+      "code": "function NFA_SEARCH(pattern P[1..m], text T[1..n]):\n  // Build NFA with m+1 states\n  NFA = buildPatternNFA(P)\n  active_states = {start_state}\n  matches = []\n  \n  for i from 1 to n:\n    // Compute \u03b5-closure\n    active_states = epsilonClosure(active_states)\n    // Process current character\n    new_states = {}\n    for each state q in active_states:\n      for each transition \u03b4(q, T[i]):\n        add target to new_states\n    active_states = new_states\n    \n    // Check if accepting state (complete match) is reached\n    if accepting_state in active_states:\n      add (i - m + 1) to matches  // Match ends at position i\n  \n  return matches",
+      "explanation": "This NFA simulation maintains a set of all possible states the automaton could be in after reading each character. When the accepting state (representing complete pattern match) is in the active set, a match ending at current position is recorded. Time complexity: O(mn) in worst case due to multiple active states.",
+      "timeComplexity": "O(mn)",
+      "spaceComplexity": "O(m)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "DFA Construction for Pattern Matching",
+      "description": "Constructs the deterministic finite automaton transition table from a pattern using the standard algorithm.",
+      "code": "function BUILD_DFA(pattern P[1..m], alphabet \u03a3):\n  // Initialize DFA with (m+1) states 0 to m\n  create array DFA[0..m][\u03a3]\n  \n  // For each state q and symbol a, compute next state\n  for q from 0 to m:\n    for each a in \u03a3:\n      // Find longest prefix of P that's suffix of (P[1..q] + a)\n      temp = P[1..q] + a  // Concatenate\n      while not isPrefixOf(P, temp):\n        temp = temp[2..]  // Remove first char\n      DFA[q][a] = length_of_longest_prefix_matched(temp)\n  \n  return DFA",
+      "explanation": "The key insight is that each state represents the length of the longest prefix of pattern that matches a suffix of the processed input. When reading symbol a in state q, we find the longest prefix of pattern that is a suffix of (current matched prefix + a). This ensures the automaton always knows how much of the pattern is currently matched.",
+      "timeComplexity": "O(m|\u03a3|)",
+      "spaceComplexity": "O(m|\u03a3|)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "DFA-based Text Search",
+      "description": "Simulating the DFA on input text to find all pattern occurrences in O(n) time.",
+      "code": "function DFA_SEARCH(pattern P[1..m], text T[1..n]):\n  DFA = BUILD_DFA(P, alphabet(T))\n  state = 0  // Start state\n  matches = []\n  \n  for i from 1 to n:\n    symbol = T[i]\n    state = DFA[state][symbol]  // Deterministic transition\n    \n    if state == m:  // Accepting state reached\n      // Pattern ends at position i\n      match_start = i - m + 1\n      add match_start to matches\n  \n  return matches",
+      "explanation": "This is the core DFA-based pattern search algorithm. Each character of the text causes exactly one table lookup and state transition, giving O(n) time complexity. The match is reported when the automaton reaches state m (the accepting state). No backtracking or reprocessing of text characters ever occurs.",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(m|\u03a3|) for DFA table + O(1) for algorithm"
+    }
+  ]
+}

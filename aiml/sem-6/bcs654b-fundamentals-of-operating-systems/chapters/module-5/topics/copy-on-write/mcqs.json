@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary goal of the Copy-on-Write (COW) technique?",
+    "options": [
+      "To defer memory allocation until the first modification",
+      "To immediately duplicate data for a new process",
+      "To prevent processes from sharing memory",
+      "To reduce the size of the operating system kernel"
+    ],
+    "correctIndex": 0,
+    "explanation": "COW's main purpose is to optimize performance and memory usage by sharing resources and only creating a private copy when a process needs to modify the data."
+  },
+  {
+    "id": "q2",
+    "question": "In a Copy-on-Write system, when is a physical copy of a memory page actually created?",
+    "options": [
+      "When a process first tries to write to a shared page",
+      "As soon as a new process is forked",
+      "When the parent process terminates",
+      "When the system is low on available memory"
+    ],
+    "correctIndex": 0,
+    "explanation": "The 'write' in Copy-on-Write is the key event. A duplicate physical page is only allocated when a process (parent or child) attempts to modify the shared page, triggering a page fault handled by the OS."
+  },
+  {
+    "id": "q3",
+    "question": "Which common operating system operation most famously utilizes Copy-on-Write to achieve efficiency?",
+    "options": [
+      "The fork() system call",
+      "The open() system call",
+      "The exec() system call",
+      "The exit() system call"
+    ],
+    "correctIndex": 0,
+    "explanation": "The fork() call creates a new process. Using COW, the entire address space of the parent is not copied immediately; instead, parent and child share pages until one modifies them, making forking very efficient."
+  },
+  {
+    "id": "q4",
+    "question": "What is a potential downside or complexity introduced by implementing Copy-on-Write?",
+    "options": [
+      "Increased bookkeeping overhead for the kernel to track shared pages",
+      "Immediate consumption of large amounts of physical memory",
+      "Inability for processes to share any memory resources",
+      "Slower performance for read-only operations"
+    ],
+    "correctIndex": 0,
+    "explanation": "While COW saves physical memory, the OS must maintain additional data structures to track which pages are shared and are candidates for copying on write. This adds complexity and a small amount of overhead."
+  },
+  {
+    "id": "q5",
+    "question": "After a Copy-on-Write event, where one process modifies a shared page, what is the state of the corresponding page table entries in the parent and child processes?",
+    "options": [
+      "They point to different physical frames, and both are marked as writable",
+      "They both point to the original shared physical frame",
+      "The parent's entry points to the new frame, and the child's points to the original",
+      "Both entries are invalidated and must be reloaded from disk"
+    ],
+    "correctIndex": 0,
+    "explanation": "Once a write occurs, the OS allocates a new physical frame for the writing process and copies the data. The page table entry for that process is updated to point to this new, private copy and is marked writable. The other process's entry remains unchanged, still pointing to the original shared frame."
+  }
+]

@@ -1,0 +1,153 @@
+{
+  "topicId": "raster-scan-line-algorithms",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the DDA algorithm for line drawing. What are its advantages and disadvantages compared to Bresenham's algorithm?",
+      "keyPoints": [
+        "DDA computes intermediate points using incremental calculation based on slope",
+        "Uses floating-point arithmetic to calculate x = x + 1/m and y = y + m",
+        "Advantage: Simple to understand and implement",
+        "Disadvantage: Uses floating-point operations (slower) and accumulates rounding errors",
+        "Bresenham's uses only integer arithmetic and is more efficient"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is the scan-line polygon fill algorithm? Explain how it handles concave polygons.",
+      "keyPoints": [
+        "Identifies scan lines that intersect the polygon",
+        "For each scan line, finds intersection points with polygon edges",
+        "Sorts intersections in pairs from left to right",
+        "Fills pixels between each pair",
+        "For concave polygons, may generate multiple intersection pairs per scan line",
+        "Requires edge table and active edge list for efficiency"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write and explain the decision logic for Bresenham's line algorithm when drawing lines with slope between 0 and 1.",
+      "keyPoints": [
+        "Initialize P\u2080 = 2\u0394y - \u0394x where \u0394y = y1-y0, \u0394x = x1-x0",
+        "At each step, if Pk < 0: select pixel (xk+1, yk), update Pk+1 = Pk + 2\u0394y",
+        "If Pk \u2265 0: select pixel (xk+1, yk+1), update Pk+1 = Pk + 2\u0394y - 2\u0394x",
+        "Repeat until endpoint is reached",
+        "This logic ensures the closest pixel to the true line is selected"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "Explain the difference between boundary fill and flood fill algorithms. Under what circumstances would you use each?",
+      "keyPoints": [
+        "Boundary fill: fills region bounded by a specific color border",
+        "Flood fill: replaces all connected pixels of target color with new color",
+        "Boundary fill used for: drawings with defined outlines, cartoons, clip art",
+        "Flood fill used for: image editing, paint applications, region recoloring",
+        "Flood fill requires a seed point; boundary fill does not"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "What is aliasing in computer graphics? Explain any one anti-aliasing technique used to reduce aliasing effects.",
+      "keyPoints": [
+        "Aliasing: stair-step effect on diagonal lines due to discrete pixel representation",
+        "Anti-aliasing: technique to smooth jagged edges",
+        "Wu's Algorithm: uses intensity variation to create smooth lines",
+        "Pre-calculate pixel intensity based on distance from true line",
+        "Higher intensity pixels near the line, lower intensity away from line",
+        "Result: visually smoother appearance at cost of more computation"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Explain the Bresenham's circle algorithm. How does it determine the next pixel position?",
+      "keyPoints": [
+        "Draws circle using only integer arithmetic",
+        "Initial decision parameter: P\u2080 = 1 - r for radius r",
+        "At each step, if Pk < 0: plot (xk+1, yk), Pk+1 = Pk + 2xk+1 + 1",
+        "If Pk \u2265 0: plot (xk+1, yk-1), Pk+1 = Pk + 2xk+1 + 1 - 2yk-1",
+        "Algorithm exploits 8-way symmetry to draw complete circle",
+        "More efficient than trigonometric approaches"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a detailed algorithm for the DDA line drawing method. Explain how it handles: (a) lines with slope magnitude less than 1, and (b) lines with slope magnitude greater than 1. Also discuss why DDA may produce different results for lines drawn in opposite directions.",
+      "keyPoints": [
+        "Initialize: x = x1, y = y1, steps = max(|dx|, |dy|)",
+        "Calculate: xin = dx/steps, yin = dy/steps",
+        "Plot first point, then iterate: x = xxin, y = y + yin, plot round(x), round(y)",
+        "For |m| < 1: step in x direction, calculate y incrementally",
+        "For |m| > 1: swap roles, step in y direction, calculate x incrementally",
+        "Opposite direction drawing: rounding errors accumulate differently",
+        "This can cause lines drawn (x1,y1)\u2192(x2,y2) and (x2,y2)\u2192(x1,y1) to differ",
+        "Algorithm is simple but slower than Bresenham due to floating-point operations"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Compare and contrast the DDA algorithm and Bresenham's line algorithm. Include in your answer: (i) the mathematical basis of each algorithm, (ii) computational complexity, (iii) accuracy considerations, and (iv) practical applications.",
+      "keyPoints": [
+        "DDA: uses slope to incrementally compute coordinates, requires floating-point arithmetic",
+        "Bresenham: uses decision variable based on line equation, uses only integer operations",
+        "DDA time: O(n) with floating-point ops; Bresenham: O(n) with integer ops (faster in practice)",
+        "DDA accumulates rounding errors; Bresenham is exact for pixel positions",
+        "Bresenham is industry standard for line drawing due to efficiency",
+        "DDA used in educational contexts and simple implementations",
+        "Both produce same pixel sets for same direction; differ for opposite directions",
+        "Bresenham extends to circles, ellipses with same principles"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Describe the scan-line fill algorithm for polygon filling. Explain the data structures required (edge table and active edge list) and how the algorithm processes each scan line to fill the polygon correctly.",
+      "keyPoints": [
+        "Preprocessing: build edge table sorted by y-coordinate of lower endpoint",
+        "For each scan line: create active edge list from edges crossing that line",
+        "Active edge list stores: x-intersection, inverse slope (1/m), and edge endpoint",
+        "Sort active edge list by x-coordinate of intersection",
+        "Process intersections in pairs: fill between pairs on current scan line",
+        "Update active edge list: remove edges ending at current line, update x for others",
+        "Repeat for each scan line from bottom to top of polygon",
+        "Handles both convex and concave polygons correctly",
+        "Complexity: O(n + m) where n is edges, m is scan lines"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Explain the concept of raster graphics and the need for scan conversion algorithms. Discuss how line drawing algorithms like Bresenham's ensure that pixels selected are the closest possible to the true line geometry.",
+      "keyPoints": [
+        "Raster graphics: discrete pixel grid representing images",
+        "Scan conversion: process of converting geometric primitives to pixel representation",
+        "Bresenham's algorithm: at each step, chooses between two candidate pixels",
+        "Decision based on comparing line's position to midpoint between candidates",
+        "Decision parameter P tracks relative position of line from midpoint",
+        "Pk < 0: line closer to lower pixel; Pk \u2265 0: line closer to upper pixel",
+        "This ensures optimal pixel selection minimizing error",
+        "Algorithm equivalent to minimizing maximum deviation from true line",
+        "Works for all slopes by handling octants separately",
+        "Proves mathematically that selected pixels form closest approximation"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "topicId": "dynamic-memory-allocation",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Explain the difference between malloc() and calloc() with examples.",
+      "keyPoints": [
+        "malloc() allocates uninitialized memory (contains garbage values)",
+        "calloc() allocates zero-initialized memory",
+        "malloc() takes single argument (size in bytes)",
+        "calloc() takes two arguments (number of elements and size of each element)",
+        "Syntax: malloc(size) vs calloc(n, size)",
+        "Example: malloc(10*sizeof(int)) vs calloc(10, sizeof(int))"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "What is a memory leak? How can it be prevented?",
+      "keyPoints": [
+        "Memory leak: allocated memory not freed before losing reference",
+        "Caused by: not calling free(), overwriting pointer, pointer going out of scope",
+        "Prevention: always pair malloc with free",
+        "Set pointer to NULL after freeing",
+        "Use tools like valgrind to detect leaks",
+        "Check for all code paths (including error conditions)"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Write a C program to dynamically allocate memory for an array of 10 integers and initialize them to zero.",
+      "keyPoints": [
+        "Use calloc() for zero-initialization: calloc(10, sizeof(int))",
+        "Or use malloc() then loop to initialize",
+        "Check for NULL after allocation",
+        "Always free memory after use",
+        "Show complete program with includes, main function, allocation, initialization, printing, and free"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is a dangling pointer? How does it occur and how can it be prevented?",
+      "keyPoints": [
+        "Dangling pointer: points to memory that has been freed",
+        "Occurs when: freeing memory but still referencing it",
+        "Also occurs when: returning address of local variable (stack)",
+        "Prevention: set pointer to NULL after calling free()",
+        "Never access pointer after free()",
+        "Use defensive programming practices"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the use of realloc() function. What happens if realloc() fails?",
+      "keyPoints": [
+        "realloc() resizes previously allocated memory block",
+        "Can expand or shrink existing allocation",
+        "Returns pointer may be same or different location",
+        "If fails, returns NULL but original memory is unchanged",
+        "IMPORTANT: always store in temp variable first",
+        "Check temp before assigning to avoid losing original pointer",
+        "Can also be used like malloc by passing NULL as first argument"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "Differentiate between stack and heap memory allocation.",
+      "keyPoints": [
+        "Stack: fixed size at compile time, automatic allocation/deallocation",
+        "Heap: variable size at runtime, manual allocation (malloc) and deallocation (free)",
+        "Stack is faster, heap is slower",
+        "Stack has limited size, heap has larger available memory",
+        "Stack allocation: function calls, local variables",
+        "Heap allocation: dynamic data structures, variable-sized data",
+        "Stack overflow vs heap exhaustion"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "short",
+      "question": "Write a C program to dynamically allocate memory for a string, copy a given string into it, and display the result.",
+      "keyPoints": [
+        "Use strlen() to find string length",
+        "Allocate strlen+1 bytes for string + null terminator",
+        "Use malloc() or calloc() for allocation",
+        "Check for NULL allocation failure",
+        "Use strcpy() to copy string",
+        "Use strcmp() if comparing needed",
+        "Free memory after use"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Write a complete C program that dynamically allocates memory for N integers, accepts values from user, displays them, finds maximum, and properly frees all allocated memory. Include error handling for allocation failure.",
+      "keyPoints": [
+        "Include necessary headers (stdio.h, stdlib.h)",
+        "Prompt user for N (validate N > 0)",
+        "Allocate memory using malloc/calloc: int *arr = malloc(N * sizeof(int))",
+        "Check for NULL after allocation",
+        "Accept N integers from user using loop",
+        "Find maximum using simple traversal",
+        "Display all elements and maximum",
+        "IMPORTANT: free(arr) before exiting",
+        "Handle all error conditions gracefully"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain with code how to create and use a dynamically allocated 2D array (3x4 matrix) in C. Include allocation, accessing elements, and proper deallocation.",
+      "keyPoints": [
+        "Two approaches: array of pointers OR single contiguous block",
+        "Method 1: int **matrix = malloc(rows * sizeof(int*)); then allocate each row",
+        "Method 2: int *matrix = malloc(rows * cols * sizeof(int)); use matrix[i*cols + j]",
+        "Initialize elements using nested loops",
+        "Access using matrix[i][j] (method 1) or *(matrix + i*cols + j) (method 2)",
+        "Free in reverse order of allocation",
+        "Method 1: free each row first, then free pointer array",
+        "Method 2: single free is sufficient"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-10",
+      "type": "long",
+      "question": "Write a C program demonstrating dynamic memory allocation with proper error handling. Include: allocation, validation, using the memory, and freeing. Show common pitfalls and how to avoid them.",
+      "keyPoints": [
+        "Always check malloc/calloc/realloc return value for NULL",
+        "Use temp variable with realloc to prevent memory loss",
+        "Set pointers to NULL after freeing",
+        "Never access freed memory (dangling pointer)",
+        "Never free same memory twice (double free)",
+        "Handle all code paths including error conditions",
+        "Show proper sequence: allocate, validate, use, free, set NULL",
+        "Comment code to explain each step"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-11",
+      "type": "long",
+      "question": "Create a menu-driven C program for dynamic integer array operations: create, insert, delete, display, and free. Use proper dynamic memory management throughout.",
+      "keyPoints": [
+        "Initialize array with malloc (initial capacity)",
+        "Track current size and capacity",
+        "Insert: check capacity, realloc if needed",
+        "Delete: shift elements, optionally shrink with realloc",
+        "Display: iterate through valid elements",
+        "Free: call free() and set to NULL",
+        "Each operation should handle edge cases",
+        "Show complete code with functions for each operation"
+      ],
+      "marks": 10
+    }
+  ]
+}

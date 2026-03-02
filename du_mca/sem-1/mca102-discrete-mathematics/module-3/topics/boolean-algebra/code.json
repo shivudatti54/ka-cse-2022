@@ -1,0 +1,45 @@
+{
+  "topicId": "boolean-algebra",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "python",
+      "title": "Boolean Expression Evaluator",
+      "description": "Program to evaluate Boolean expressions using truth tables",
+      "code": "# Boolean Expression Evaluator for 3 variables\ndef evaluate_expression(A, B, C):\n    # Example: F = A\u00b7B + A'\u00b7C + B\u00b7C\n    A_not = not A\n    C_not = not C\n    term1 = A and B\n    term2 = A_not and C\n    term3 = B and C\n    F = term1 or term2 or term3\n    return F\n\n# Generate truth table\nprint(\"A B C | F\")\nprint(\"-\" * 10)\nfor A in [0, 1]:\n    for B in [0, 1]:\n        for C in [0, 1]:\n            F = evaluate_expression(A, B, C)\n            print(f\"{A} {B} {C} | {int(F)}\")",
+      "explanation": "This program evaluates a Boolean expression for all 8 combinations of 3 variables, generating a complete truth table.",
+      "timeComplexity": "O(2^n) where n=3",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "K-Map Simplification Algorithm",
+      "description": "Algorithm to find prime implicants in K-map and simplify Boolean function",
+      "code": "// K-Map Simplification for 2 variables\n#include <stdio.h>\n\nint main() {\n    // F = \u03a3(0,1,3) - SOP form\n    int kmap[2][2] = {{1, 1},  // m0, m1\n                      {0, 1}}; // m2, m3\n    \n    // Check groups of 2 (horizontal and vertical)\n    // Group 1: m0,m1 (row 0) - eliminates B\n    // Group 2: m0,m2 (column 0) - eliminates A\n    // Group 3: m1,m3 (column 1) - eliminates A, adds B'\n    \n    // Simplified: F = A' + B'\n    \n    printf(\"K-Map for F(A,B) = \u03a3(0,1,3)\\n\");\n    printf(\"Simplified: F = A' + B'\\n\");\n    \n    return 0;\n}",
+      "explanation": "Demonstrates K-map grouping for a 2-variable function, showing how adjacent 1s are grouped to eliminate variables.",
+      "timeComplexity": "O(2^n)",
+      "spaceComplexity": "O(2^n)"
+    },
+    {
+      "id": "code-3",
+      "language": "python",
+      "title": "De Morgan's Theorem Verification",
+      "description": "Program to verify De Morgan's theorems by comparing truth tables",
+      "code": "def verify_de_morgans():\n    print(\"Verifying De Morgan's Theorems\\n\")\n    print(\"A B | (A\u00b7B)' | A'+B' | (A+B)' | A'\u00b7B'\")\n    print(\"-\" * 45)\n    \n    for A in [0, 1]:\n        for B in [0, 1]:\n            # Left side of theorems\n            ab = A and B\n            left1 = not ab  # (A\u00b7B)'\n            a_or_b = A or B\n            left2 = not a_or_b  # (A+B)'\n            \n            # Right side of theorems\n            A_not = not A\n            B_not = not B\n            right1 = A_not or B_not  # A' + B'\n            right2 = A_not and B_not  # A' \u00b7 B'\n            \n            print(f\"{A} {B} |   {int(left1)}    |   {int(right1)}   |   {int(left2)}    |   {int(right2)}\")\n    \n    print(\"\\nTheorems verified: LHS equals RHS in all cases!\")\n\nverify_de_morgans()",
+      "explanation": "This program systematically verifies both De Morgan's theorems by computing both sides of each equation and showing they produce identical results for all input combinations.",
+      "timeComplexity": "O(4) - constant for 4 combinations",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "pseudocode",
+      "title": "Quine-McCluskey Method Algorithm",
+      "description": "Simplified pseudocode for Boolean minimization using Quine-McCluskey method",
+      "code": "ALGORITHM QuineMcCluskey\nBEGIN\n  INPUT: List of minterms\n  OUTPUT: Prime implicants and minimal expression\n  \n  STEP 1: Convert minterms to binary representation\n  STEP 2: Group minterms by number of 1s\n  \n  STEP 3: REPEAT\n    FOR each group G[i] and G[i+1] compare terms\n      IF terms differ in exactly one bit THEN\n        combine and mark both as used\n        create new term with '-' in that position\n      END IF\n    END FOR\n  UNTIL no new terms created\n  \n  STEP 4: Collect all unmarked terms as Prime Implicants\n  \n  STEP 5: Build Prime Implicant Chart\n  STEP 6: Select essential prime implicants\n  STEP 7: Cover remaining minterms\n  \n  OUTPUT: Minimal Sum of Products expression\nEND",
+      "explanation": "Quine-McCluskey is an algorithmic method for Boolean minimization that works systematically, useful for functions with more than 4 variables where K-maps become impractical.",
+      "timeComplexity": "O(3^n) in worst case",
+      "spaceComplexity": "O(2^n)"
+    }
+  ]
+}

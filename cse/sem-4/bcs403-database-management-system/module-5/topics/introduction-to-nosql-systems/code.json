@@ -1,0 +1,50 @@
+[
+  {
+    "id": "code-1",
+    "language": "javascript-mongodb",
+    "title": "Document Database Example (MongoDB)",
+    "description": "Example showing flexible schema in MongoDB document database",
+    "code": "// Different documents in same collection with varying fields\ndb.users.insertMany([\n {\n _id: 1,\n name: \"John Doe\",\n email: \"john@example.com\",\n age: 25\n },\n {\n _id: 2,\n name: \"Jane Smith\",\n email: \"jane@example.com\",\n address: {\n city: \"Bangalore\",\n country: \"India\"\n },\n hobbies: [\"reading\", \"coding\"]\n },\n {\n _id: 3,\n name: \"Bob Wilson\",\n email: \"bob@example.com\",\n courses: [\n {name: \"DBMS\", grade: \"A\"},\n {name: \"Algorithms\", grade: \"B+\"}\n ]\n }\n]);\n\n// Query - can access any field\ndb.users.find({age: {$gt: 20}});",
+    "explanation": "MongoDB stores documents in BSON format. Documents in the same collection can have different fields, demonstrating flexible schema. Document databases allow nested objects and arrays.",
+    "complexity": {
+      "time": "O(log n) for indexed queries",
+      "space": "Variable based on document size"
+    }
+  },
+  {
+    "id": "code-2",
+    "language": "pseudocode",
+    "title": "Key-Value Store Operations",
+    "description": "Basic operations in a key-value store like Redis",
+    "code": "// KEY-VALUE STORE OPERATIONS\n\n// SET - Store a value with key\nSET user:1001:name \"John Doe\"\nSET user:1001:email \"john@example.com\"\nSET user:1001:age \"25\"\n\n// GET - Retrieve value by key\nGET user:1001:name // Returns \"John Doe\"\n\n// Complex data as value\nSET session:abc123 '{\"user_id\": 1001, \"cart\": [\"item1\", \"item2\"]}'\n\n// Hash operations (for structured data)\nHSET user:1002 name \"Jane\" email \"jane@example.com\"\nHGETALL user:1002\n\n// TTL (Time To Live) - useful for caching\nSET cache:popular-products ' [...] ' EX 3600\n\n// INCREMENT - atomic counter\nSET counter:views 0\nINCR counter:views",
+    "explanation": "Key-value stores provide simple get/put operations. Values can be strings, lists, sets, or hashes. Excellent for caching, session storage, and simple lookups.",
+    "complexity": {
+      "time": "O(1) for basic operations",
+      "space": "O(n) for stored values"
+    }
+  },
+  {
+    "id": "code-3",
+    "language": "sql-cassandra",
+    "title": "Column-Family Store Example (Cassandra)",
+    "description": "Creating column families in Apache Cassandra",
+    "code": "// COLUMN-FAMILY STORE (CASSANDRA)\n\n// Create keyspace\nCREATE KEYSPACE IF NOT EXISTS social_app\nWITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 3};\n\n// Create column family (table)\nCREATE TABLE IF NOT EXISTS social_app.users (\n user_id uuid PRIMARY KEY,\n username text,\n email text,\n created_at timestamp,\n // Dynamic columns can be added\n);\n\n// Create column family for user posts (wide row)\nCREATE TABLE IF NOT EXISTS social_app.user_posts (\n user_id uuid,\n post_id timeuuid,\n content text,\n timestamp timestamp,\n PRIMARY KEY (user_id, post_id)\n) WITH CLUSTERING ORDER BY (post_id DESC);\n\n// Insert data\nINSERT INTO social_app.users (user_id, username, email, created_at)\nVALUES (uuid(), 'john_doe', 'john@example.com', now());\n\n// Query posts by user (efficient range query)\nSELECT * FROM social_app.user_posts\nWHERE user_id = ?\nLIMIT 10;",
+    "explanation": "Column-family stores like Cassandra use wide rows. Each row can have millions of columns. Data is organized by row key and column name, optimized for read/write of large datasets.",
+    "complexity": {
+      "time": "O(1) for key lookup, O(n) for range scans",
+      "space": "O(columns per row)"
+    }
+  },
+  {
+    "id": "code-4",
+    "language": "cypher-neo4j",
+    "title": "Graph Database Example (Neo4j)",
+    "description": "Creating nodes and relationships in Neo4j graph database",
+    "code": "// GRAPH DATABASE (NEO4J) - Cypher Query Language\n\n// Create nodes\nCREATE (john:Person {name: 'John', age: 25})\nCREATE (jane:Person {name: 'Jane', age: 28})\nCREATE (bob:Person {name: 'Bob', age: 30})\nCREATE (google:Company {name: 'Google'})\n\n// Create relationships\nCREATE (john)-[:WORKS_AT {since: 2020}]->(google)\nCREATE (jane)-[:WORKS_AT {since: 2019}]->(google)\nCREATE (john)-[:FRIENDS_WITH]->(jane)\nCREATE (john)-[:FRIENDS_WITH]->(bob)\n\n// Find all friends of John\nMATCH (john:Person {name: 'John'})-[:FRIENDS_WITH]->(friend)\nRETURN friend.name\n\n// Find friends who work at Google\nMATCH (john:Person {name: 'John'})-[:FRIENDS_WITH]->(friend)\nMATCH (friend)-[:WORKS_AT]->(company:Company)\nWHERE company.name = 'Google'\nRETURN friend.name, company.name\n\n// Count John's friends\nMATCH (john:Person {name: 'John'})-[:FRIENDS_WITH]->(friend)\nRETURN count(friend) as friend_count",
+    "explanation": "Graph databases use nodes (entities) and edges (relationships). Relationships are first-class citizens with properties. Ideal for social networks, recommendation engines, fraud detection.",
+    "complexity": {
+      "time": "O(1) for indexed lookup, O(depth) for traversal",
+      "space": "O(nodes + relationships)"
+    }
+  }
+]

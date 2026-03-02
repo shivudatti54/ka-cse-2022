@@ -1,0 +1,45 @@
+{
+  "topicId": "kill-and-raise-functions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "Basic kill() Usage",
+      "description": "Parent process sends signal to child process",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n#include <unistd.h>\n#include <sys/types.h>\n#include <wait.h>\n\nvoid child_handler(int sig) {\n printf(\"Child received signal %d\\n\", sig);\n exit(0);\n}\n\nint main() {\n pid_t pid = fork();\n \n if (pid == 0) {\n // Child process\n signal(SIGUSR1, child_handler);\n printf(\"Child waiting for signal...\\n\");\n while(1) sleep(1);\n } else {\n // Parent process\n sleep(1);\n printf(\"Parent sending SIGUSR1 to child\\n\");\n kill(pid, SIGUSR1);\n wait(NULL);\n printf(\"Child terminated\\n\");\n }\n return 0;\n}",
+      "explanation": "Creates child process that waits for signal. Parent sends SIGUSR1 using kill() to terminate child gracefully.",
+      "timeComplexity": "O(n) for process creation",
+      "spaceComplexity": "O(1) additional memory"
+    },
+    {
+      "id": "code-2",
+      "language": "c",
+      "title": "raise() Function Demonstration",
+      "description": "Process sends signal to itself using raise()",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <stdlib.h>\n\nvoid cleanup_handler(int sig) {\n printf(\"\\nCleanup: Closing files and releasing resources...\\n\");\n printf(\"Signal %d received, terminating gracefully\\n\", sig);\n exit(0);\n}\n\nint main() {\n printf(\"Program started, setting signal handler...\\n\");\n \n // Set handler for SIGTERM\n signal(SIGTERM, cleanup_handler);\n \n printf(\"Sending SIGTERM to self using raise()...\\n\");\n raise(SIGTERM);\n \n // This line never executes\n printf(\"This won't print\\n\");\n return 0;\n}",
+      "explanation": "Demonstrates raise() function which sends signal to calling process itself. Useful for graceful self-termination.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "c",
+      "title": "kill() with signal 0 for process checking",
+      "description": "Using kill() with signal 0 to check if process exists",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n#include <errno.h>\n\nint process_exists(pid_t pid) {\n if (kill(pid, 0) == 0) {\n return 1; // Process exists\n } else {\n if (errno == ESRCH) {\n return 0; // No such process\n } else if (errno == EPERM) {\n return 1; // Exists but no permission\n }\n return 0;\n }\n}\n\nint main() {\n pid_t my_pid = getpid();\n pid_t invalid_pid = 99999;\n \n printf(\"Checking process %d exists: %s\\n\", \n my_pid, process_exists(my_pid) ? \"YES\" : \"NO\");\n \n printf(\"Checking process %d exists: %s\\n\", \n invalid_pid, process_exists(invalid_pid) ? \"YES\" : \"NO\");\n \n return 0;\n}",
+      "explanation": "Shows how to use kill() with signal 0 for checking process existence without actually sending a signal.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "c",
+      "title": "Signal Handling with sigaction",
+      "description": "Modern way to handle signals using sigaction()",
+      "code": "#include <stdio.h>\n#include <signal.h>\n#include <unistd.h>\n#include <stdlib.h>\n\nvoid handler(int sig) {\n printf(\"Caught signal %d\\n\", sig);\n}\n\nint main() {\n struct sigaction sa;\n \n // Set up sigaction structure\n sa.sa_handler = handler;\n sigemptyset(&sa.sa_mask);\n sa.sa_flags = 0;\n \n // Register handler for SIGINT\n if (sigaction(SIGINT, &sa, NULL) == -1) {\n perror(\"sigaction\");\n exit(1);\n }\n \n printf(\"Press Ctrl+C to trigger handler\\n\");\n while(1) {\n sleep(1);\n }\n \n return 0;\n}",
+      "explanation": "Demonstrates sigaction() which is the preferred method for signal handling over signal(). It provides more control.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

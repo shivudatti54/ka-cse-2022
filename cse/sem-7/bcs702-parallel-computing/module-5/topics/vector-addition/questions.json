@@ -1,0 +1,123 @@
+{
+  "topicId": "vector-addition",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "short",
+      "question": "Write the complete CUDA kernel for vector addition with proper boundary checking and explain each line.",
+      "keyPoints": [
+        "Define kernel with __global__ qualifier",
+        "Calculate global index using blockIdx, blockDim, threadIdx",
+        "Check boundary condition (i < n)",
+        "Perform addition c[i] = a[i] + b[i]",
+        "Explain stride pattern for handling large vectors"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-2",
+      "type": "short",
+      "question": "Explain the host-device memory model in CUDA. Why can't we directly access device pointers from the host?",
+      "keyPoints": [
+        "Separate physical memory spaces for host (CPU) and device (GPU)",
+        "Device pointers are invalid on host side",
+        "Need explicit cudaMemcpy for data transfer",
+        "cudaMalloc allocates in device memory space",
+        "Host cannot directly read/write GPU memory addresses"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-3",
+      "type": "short",
+      "question": "Calculate the number of blocks and threads needed to add two vectors of size n=50,000 using a block size of 256 threads. Explain your answer.",
+      "keyPoints": [
+        "Minimum threads needed = 50,000",
+        "Threads per block = 256",
+        "Blocks required = ceil(50000/256) = 196 blocks",
+        "Total threads launched = 196 \u00d7 256 = 50,176",
+        "Boundary check ensures only 50,000 elements processed"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-4",
+      "type": "short",
+      "question": "What is memory coalescing? How does the vector addition kernel achieve coalesced memory access?",
+      "keyPoints": [
+        "Coalesced access: consecutive threads access consecutive memory addresses",
+        "In vector addition, thread i accesses a[i] and b[i]",
+        "Threads in same warp read adjacent memory locations",
+        "Memory controller combines requests into fewer transactions",
+        "Improves bandwidth utilization significantly"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-5",
+      "type": "short",
+      "question": "Explain the purpose of cudaDeviceSynchronize() in CUDA programs. When is it necessary?",
+      "keyPoints": [
+        "Kernel launches are asynchronous - host continues without waiting",
+        "cudaDeviceSynchronize() forces host to wait for device completion",
+        "Necessary before reading results from device memory",
+        "Not always required - depends on code flow",
+        "Useful for timing and error checking"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-6",
+      "type": "short",
+      "question": "If a CUDA kernel is launched with gridDim=1024 and blockDim=1024 for vector addition, but n=1000, how many threads actually perform computation?",
+      "keyPoints": [
+        "Total threads launched = 1024 \u00d7 1024 = 1,048,576",
+        "Only 1000 elements exist in the vectors",
+        "Boundary condition (i < n) prevents out-of-bounds access",
+        "Exactly 1000 threads perform actual computation",
+        "Remaining threads idle after boundary check"
+      ],
+      "marks": 5
+    },
+    {
+      "id": "q-7",
+      "type": "long",
+      "question": "Write a complete CUDA program for vector addition that includes: (a) memory allocation on device, (b) data transfer from host to device, (c) kernel launch with appropriate grid/block configuration, (d) result transfer from device to host, and (e) proper memory deallocation. Also explain each step.",
+      "keyPoints": [
+        "cudaMalloc for d_a, d_b, d_c allocation",
+        "cudaMemcpy with cudaMemcpyHostToDevice for inputs",
+        "Kernel launch syntax: add<<<blocks, threads>>>(d_a, d_b, d_c, n)",
+        "cudaMemcpy with cudaMemcpyDeviceToHost for results",
+        "cudaFree for all three device pointers",
+        "Error handling and cudaDeviceSynchronize usage"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-8",
+      "type": "long",
+      "question": "Derive the effective memory bandwidth formula for vector addition and calculate the expected time for adding two vectors of 1 million floats on a GPU with 400 GB/s memory bandwidth.",
+      "keyPoints": [
+        "Total data movement = 3 \u00d7 n \u00d7 sizeof(float) bytes",
+        "For n=1M floats: 3 \u00d7 1M \u00d7 4 bytes = 12 MB = 12 \u00d7 10^-3 GB",
+        "Time = Data / Bandwidth = 0.012 GB / 400 GB/s = 3 \u00d7 10^-5 s = 30 microseconds",
+        "Practical efficiency ~80%, so actual time ~37.5 microseconds",
+        "Compare to CPU: GPU significantly faster for large vectors"
+      ],
+      "marks": 10
+    },
+    {
+      "id": "q-9",
+      "type": "long",
+      "question": "Explain the thread indexing mechanism in CUDA and derive the formula to map 2D thread indices to a 1D array index for vector addition. How would you modify the kernel to handle the case where vector length is not evenly divisible by block size?",
+      "keyPoints": [
+        "Global index = blockIdx.x \u00d7 blockDim.x + threadIdx.x",
+        "For non-uniform division, use boundary check: if (i < n)",
+        "Optional: stride pattern for vectors much larger than grid",
+        "Show complete kernel with boundary handling",
+        "Explain why boundary check prevents out-of-bounds access"
+      ],
+      "marks": 10
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "topicId": "coprocessor-instructions",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "arm-assembly",
+      "title": "CDP Instruction Example",
+      "description": "Example of CDP instruction performing coprocessor operation",
+      "code": "; CDP instruction format: CDP p<n>, <opcode1>, Cd, Cn, Cm, <opcode2>\n; Example: Initialize floating-point coprocessor\nCDP p10, 0, c5, c0, c0, 0 ; Load floating-point control register\nCDP p10, 7, c5, c0, c0, 0 ; Enable floating-point unit",
+      "explanation": "CDP performs data processing within coprocessor registers. Here CP10 (VFP) control register is initialized using CDP instructions with different opcodes.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "arm-assembly",
+      "title": "LDC Instruction Example",
+      "description": "Loading floating-point constant from memory to coprocessor",
+      "code": "; Load floating-point value to VFP register\nLDC p11, c8, [r0] ; Load from memory at address in R0\n ; to VFP register d8 (c8 = lower 32-bits)\nLDC p11, c9, [r0, #4]! ; Pre-indexed: load next value",
+      "explanation": "LDC transfers data from memory to coprocessor register. Here floating-point values are loaded from memory to VFP (CP11) data registers.",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "arm-assembly",
+      "title": "MRC/MCR Instruction Example",
+      "description": "Reading and writing system control coprocessor registers",
+      "code": "; Read CP15 control register (MRC)\nMRC p15, 0, r0, c1, c0, 0 ; Read CP15 c1 to ARM register r0\n ; c1 = Control Register\n\n; Write to CP15 control register (MCR)\nMOV r1, #0x1000\nMCR p15, 0, r1, c1, c0, 0 ; Write r1 to CP15 c1\n ; Enable MMU or cache",
+      "explanation": "MRC reads from coprocessor to ARM register (useful for system status), MCR writes from ARM to coprocessor (useful for system configuration).",
+      "timeComplexity": "O(1)",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-4",
+      "language": "arm-assembly",
+      "title": "NEON SIMD Vector Addition",
+      "description": "Using NEON for parallel addition of 4 floating-point values",
+      "code": "; R0 = address of array A, R1 = address of array B, R2 = result\n; Assuming 4 float values (16 bytes = 128 bits)\nVLD1.32 {d0, d1}, [r0] ; Load 4 floats from array A to Q0\nVLD1.32 {d2, d3}, [r1] ; Load 4 floats from array B to Q1\nVADD.f32 q2, q0, q1 ; Add Q0 + Q1 → Q2 (4 additions!)\nVST1.32 {d4, d5}, [r2] ; Store results to array B\n; Instead of 4 scalar ADD operations, we do 1 SIMD operation",
+      "explanation": "NEON SIMD processes 4 floating-point values in parallel with single instruction. This provides 4x speedup over scalar processing.",
+      "timeComplexity": "O(n/4)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

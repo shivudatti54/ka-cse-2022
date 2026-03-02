@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sa1",
+    "question": "Explain the primary difference between using the `apply` method on a pandas Series versus a DataFrame. When would you choose one over the other?",
+    "expectedPoints": [
+      "The `apply` method on a Series operates on each individual element, passing one value at a time to the function.",
+      "The `apply` method on a DataFrame can operate on rows or columns (axis=1 for rows, axis=0 for columns), passing an entire Series (a row or a column) to the function.",
+      "Use Series.apply for element-wise transformations (e.g., converting data types, string operations). Use DataFrame.apply for operations that require the context of an entire row or column (e.g., calculating a new column based on multiple existing ones)."
+    ],
+    "marks": 5
+  },
+  {
+    "id": "sa2",
+    "question": "Describe a simple scenario where using the `map` method on a pandas Series is more appropriate and efficient than using `apply`. Provide a brief code example to illustrate the difference.",
+    "expectedPoints": [
+      "The `map` method is ideal for simple, element-wise substitution or transformation based on a lookup (e.g., replacing values using a dictionary).",
+      "It is generally more efficient than `apply` for these specific lookup operations because it is optimized for this purpose.",
+      "Example: `df['category_code'].map({1: 'A', 2: 'B'})` is more efficient and readable than using `apply` with a lambda like `df['category_code'].apply(lambda x: 'A' if x == 1 else 'B')` for a simple mapping."
+    ],
+    "marks": 2
+  },
+  {
+    "id": "sa3",
+    "question": "A data scientist needs to create a new column in a DataFrame that is a weighted average of three other columns. The weights are not fixed and must be passed as an argument to the function. Compare and contrast three different methods to achieve this: using a lambda with `apply`, using a pre-defined function with `apply`, and using vectorized operations. Discuss the performance implications and readability of each approach.",
+    "expectedPoints": [
+      "Lambda with `apply`: e.g., `df.apply(lambda row: (row['col1']*w1 + row['col2']*w2 + row['col3']*w3) / sum(weights), axis=1)`. Readable for simple one-off calculations but can be slow on large datasets due to row-wise iteration.",
+      "Pre-defined function with `apply`: Defining a function `calc_weighted_avg(row, weights)` and using `df.apply(calc_weighted_avg, weights=my_weights, axis=1)`. More readable and reusable for complex logic, but still suffers from the performance overhead of `apply`.",
+      "Vectorized operations: e.g., `(df['col1']*w1 + df['col2']*w2 + df['col3']*w3) / sum(weights)`. This is the most efficient and preferred method. It leverages pandas' underlying NumPy arrays for fast, bulk operations without the overhead of Python-level loops. It is also highly readable for those familiar with array programming."
+    ],
+    "marks": 10
+  }
+]

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <g class="step" id="step0" data-narration="This lesson covers kill() and raise() functions in Unix/Linux for sending signals between processes for inter-process communication and process control in operating systems.">
+    <rect x="0" y="10" width="800" height="40" fill="#e3f2fd" rx="0"/>
+    <text x="400" y="38" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#1976d2">Kill and Raise Functions in Unix/Linux</text>
+  </g>
+  
+  <g class="step" id="step1" data-narration="Signals are software interrupts that notify processes of events asynchronously. Common signals include SIGTERM(15), SIGKILL(9), SIGCHLD(17), SIGSTOP(19), and SIGUSR1 for user-defined purposes.">
+    <rect x="20" y="58" width="760" height="80" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="8"/>
+    <text x="40" y="78" font-family="Arial" font-size="12" font-weight="bold" fill="#1976d2">Signals in Unix/Linux</text>
+    <rect x="40" y="88" width="340" height="40" fill="#e3f2fd" rx="4"/>
+    <text x="50" y="105" font-family="Arial" font-size="9" fill="#1976d2">Software interrupts notifying</text>
+    <text x="50" y="118" font-family="Arial" font-size="9" fill="#1976d2">processes of async events</text>
+    <rect x="400" y="88" width="340" height="40" fill="#fff3e0" rx="4"/>
+    <text x="410" y="102" font-family="Arial" font-size="9" font-weight="bold" fill="#ff9800">Common Signals:</text>
+    <text x="410" y="115" font-family="Arial" font-size="8" fill="#333">SIGTERM(15) SIGKILL(9) SIGCHLD(17)</text>
+    <text x="500" y="115" font-family="Arial" font-size="8" fill="#333">SIGSTOP(19) SIGUSR1</text>
+  </g>
+  
+  <g class="step" id="step2" data-narration="kill(pid, sig) sends a signal to a process or group. Positive pid targets a specific process, zero targets the caller's group, negative targets process group.">
+    <rect x="20" y="146" width="760" height="80" fill="#ffffff" stroke="#e8f5e9" stroke-width="2" rx="8"/>
+    <text x="40" y="166" font-family="Arial" font-size="12" font-weight="bold" fill="#388e3c">The kill() Function</text>
+    <rect x="40" y="180" width="200" height="36" fill="#e8f5e9" rx="4"/>
+    <text x="50" y="198" font-family="Courier" font-size="10" fill="#388e3c">int kill(pid_t pid, int sig)</text>
+    <rect x="260" y="180" width="240" height="36" fill="#fff3e0" rx="4"/>
+    <text x="270" y="194" font-family="Arial" font-size="9" fill="#333">pid &gt; 0: to process</text>
+    <text x="270" y="208" font-family="Arial" font-size="9" fill="#333">pid = 0: to caller's group</text>
+    <text x="400" y="194" font-family="Arial" font-size="9" fill="#333">pid = -1: to all processes</text>
+    <text x="400" y="208" font-family="Arial" font-size="9" fill="#333">pid &lt; -1: to group |pid|</text>
+    <rect x="520" y="180" width="220" height="36" fill="#ffebee" rx="4"/>
+    <text x="530" y="198" font-family="Arial" font-size="9" fill="#f44336">Returns: 0 on success, -1 on error</text>
+    <text x="530" y="212" font-family="Arial" font-size="8" fill="#333">Errors: ESRCH, EPERM, EINVAL</text>
+  </g>
+  
+  <g class="step" id="step3" data-narration="The raise() function sends a signal to the current process itself. It is essentially equivalent to calling kill(getpid(), sig) for self-signaling within the same process context and return values.">
+    <rect x="20" y="234" width="760" height="80" fill="#ffffff" stroke="#f3e5f5" stroke-width="2" rx="8"/>
+    <text x="40" y="254" font-family="Arial" font-size="12" font-weight="bold" fill="#9c27b0">The raise() Function</text>
+    <rect x="40" y="268" width="180" height="36" fill="#f3e5f5" rx="4"/>
+    <text x="50" y="286" font-family="Courier" font-size="10" fill="#9c27b0">int raise(int sig)</text>
+    <rect x="240" y="268" width="280" height="36" fill="#e3f2fd" rx="4"/>
+    <text x="250" y="284" font-family="Arial" font-size="9" fill="#1976d2">Sends signal to CURRENT process</text>
+    <text x="250" y="298" font-family="Arial" font-size="9" fill="#1976d2">Equivalent to: kill(getpid(), sig)</text>
+    <rect x="540" y="268" width="200" height="36" fill="#e8f5e9" rx="4"/>
+    <text x="550" y="286" font-family="Arial" font-size="9" fill="#388e3c">Returns: 0 on success</text>
+    <text x="550" y="300" font-family="Arial" font-size="9" fill="#388e3c">Non-zero on failure</text>
+  </g>
+  
+  <g class="step" id="step4" data-narration="Signal handlers are user-defined functions that execute when a signal is delivered to a process. Register them using the signal() function to customize how your program responds to different signal types and events.">
+    <rect x="20" y="322" width="760" height="80" fill="#ffffff" stroke="#ffebee" stroke-width="2" rx="8"/>
+    <text x="40" y="342" font-family="Arial" font-size="12" font-weight="bold" fill="#f44336">Signal Handlers</text>
+    <rect x="40" y="356" width="280" height="36" fill="#ffebee" rx="4"/>
+    <text x="50" y="372" font-family="Courier" font-size="9" fill="#f44336">signal(sig, handler_function)</text>
+    <text x="50" y="386" font-family="Arial" font-size="8" fill="#333">Registers handler for specified signal</text>
+    <rect x="340" y="356" width="200" height="36" fill="#e3f2fd" rx="4"/>
+    <text x="350" y="370" font-family="Arial" font-size="9" fill="#1976d2">Handler Options:</text>
+    <text x="350" y="384" font-family="Arial" font-size="8" fill="#333">SIG_IGN - Ignore signal</text>
+    <text x="450" y="384" font-family="Arial" font-size="8" fill="#333">SIG_DFL - Default action</text>
+    <rect x="560" y="356" width="180" height="36" fill="#fff3e0" rx="4"/>
+    <text x="570" y="374" font-family="Arial" font-size="9" fill="#ff9800">Handler signature:</text>
+    <text x="570" y="388" font-family="Arial" font-size="8" fill="#333">void handler(int sig)</text>
+  </g>
+  
+  <g class="step" id="step5" data-narration="Process groups allow broadcast signaling to multiple related processes simultaneously. Use negative pid in kill() to send signals to all processes belonging to a specific process group ID for efficient communication.">
+    <rect x="20" y="410" width="760" height="80" fill="#ffffff" stroke="#e3f2fd" stroke-width="2" rx="8"/>
+    <text x="40" y="430" font-family="Arial" font-size="12" font-weight="bold" fill="#1976d2">Process Groups and Job Control</text>
+    <rect x="40" y="444" width="100" height="36" fill="#e3f2fd" rx="4"/>
+    <text x="50" y="458" font-family="Arial" font-size="8" fill="#1976d2">Parent</text>
+    <text x="50" y="472" font-family="Arial" font-size="8" fill="#1976d2">PID: 1000</text>
+    <path d="M140 462 L180 462" stroke="#1976d2" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="180" y="444" width="80" height="36" fill="#e8f5e9" rx="4"/>
+    <text x="190" y="456" font-family="Arial" font-size="8" fill="#388e3c">Child 1</text>
+    <text x="190" y="470" font-family="Arial" font-size="8" fill="#388e3c">PGID: 1001</text>
+    <rect x="280" y="444" width="80" height="36" fill="#e8f5e9" rx="4"/>
+    <text x="290" y="456" font-family="Arial" font-size="8" fill="#388e3c">Child 2</text>
+    <text x="290" y="470" font-family="Arial" font-size="8" fill="#388e3c">PGID: 1001</text>
+    <path d="M200 480 L200 490 L380 490 L380 480" stroke="#1976d2" stroke-width="1" fill="none" stroke-dasharray="4"/>
+    <rect x="380" y="444" width="80" height="36" fill="#e8f5e9" rx="4"/>
+    <text x="390" y="456" font-family="Arial" font-size="8" fill="#388e3c">Child 3</text>
+    <text x="390" y="470" font-family="Arial" font-size="8" fill="#388e3c">PGID: 1001</text>
+    <rect x="500" y="444" width="240" height="36" fill="#fff3e0" rx="4"/>
+    <text x="510" y="462" font-family="Arial" font-size="9" fill="#ff9800">kill(-1001, SIGUSR1) sends</text>
+    <text x="510" y="476" font-family="Arial" font-size="9" fill="#ff9800">signal to ALL group members</text>
+  </g>
+  
+  <g class="step" id="step6" data-narration="Key exam points: kill takes pid and sig parameters, raise sends to self. Remember pid interpretation rules and common signal numbers for SIGKILL=9 and SIGTERM=15 in Unix systems.">
+    <rect x="20" y="498" width="760" height="90" fill="#ffffff" stroke="#f3e5f5" stroke-width="2" rx="8"/>
+    <text x="40" y="518" font-family="Arial" font-size="12" font-weight="bold" fill="#9c27b0">Exam Tips Summary</text>
+    <rect x="40" y="528" width="230" height="50" fill="#e3f2fd" rx="4"/>
+    <text x="50" y="542" font-family="Arial" font-size="9" fill="#1976d2">kill() vs raise():</text>
+    <text x="50" y="556" font-family="Arial" font-size="8" fill="#333">• kill(pid, sig) - to OTHER processes</text>
+    <text x="50" y="570" font-family="Arial" font-size="8" fill="#333">• raise(sig) - to CURRENT process</text>
+    <rect x="290" y="528" width="230" height="50" fill="#e8f5e9" rx="4"/>
+    <text x="300" y="542" font-family="Arial" font-size="9" fill="#388e3c">Memory Aid:</text>
+    <text x="300" y="556" font-family="Arial" font-size="8" fill="#333">raise = self, kill = external</text>
+    <text x="300" y="570" font-family="Arial" font-size="8" fill="#333">neg pid = broadcast to group</text>
+    <rect x="540" y="528" width="200" height="50" fill="#fff3e0" rx="4"/>
+    <text x="550" y="542" font-family="Arial" font-size="9" fill="#ff9800">Common Signal Numbers:</text>
+    <text x="550" y="556" font-family="Arial" font-size="8" fill="#333">SIGKILL=9, SIGTERM=15</text>
+    <text x="550" y="570" font-family="Arial" font-size="8" fill="#333">SIGSTOP=19, SIGCHLD=17</text>
+  </g>
+</svg>

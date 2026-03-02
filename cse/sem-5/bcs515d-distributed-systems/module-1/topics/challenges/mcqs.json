@@ -1,0 +1,380 @@
+{
+  "topicId": "challenges",
+  "mcqs": [
+    {
+      "id": "mcq-1",
+      "question": "In the CAP theorem, a system that chooses Availability over Consistency during a network partition will:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Return the most recent data available across all nodes"
+        },
+        {
+          "key": "B",
+          "text": "Block all requests until partition is resolved"
+        },
+        {
+          "key": "C",
+          "text": "Return potentially stale data to ensure every request gets a response"
+        },
+        {
+          "key": "D",
+          "text": "Automatically terminate the transaction without notification"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "When choosing Availability over Consistency during a partition, the system continues serving requests but may return stale or inconsistent data. This is because the system cannot guarantee all nodes have the same data during the partition and still respond to every request. Example: Dynamo, Cassandra choose availability during partitions.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-2",
+      "question": "A distributed system experiences a network partition. Node A writes value 'X' to its local copy, while Node B (now isolated) writes value 'Y' to its local copy. When the partition heals, what consistency model will result in automatic reconciliation?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Strong consistency"
+        },
+        {
+          "key": "B",
+          "text": "Eventual consistency"
+        },
+        {
+          "key": "C",
+          "text": "Sequential consistency"
+        },
+        {
+          "key": "D",
+          "text": "Linearizability"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Eventual consistency guarantees that if no new updates are made, all replicas will eventually return the same value. It allows temporary divergence and provides automatic conflict resolution (often 'last-writer-wins' or vector clocks). Strong consistency models require additional coordination that may not be possible during partition.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-3",
+      "question": "In a distributed system with 3 nodes, what is the minimum number of Byzantine (arbitrarily faulty) nodes the system can tolerate while still reaching correct consensus?",
+      "options": [
+        {
+          "key": "A",
+          "text": "1 node"
+        },
+        {
+          "key": "B",
+          "text": "2 nodes"
+        },
+        {
+          "key": "C",
+          "text": "3 nodes"
+        },
+        {
+          "key": "D",
+          "text": "0 nodes"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "For Byzantine fault tolerance, a system with n nodes can tolerate f Byzantine nodes only if n \u2265 3f + 1. With 3 nodes, we can tolerate f = (3-1)/3 \u2248 0.66, so only 1 Byzantine node. With n=4, we could tolerate 1; with n=7, we could tolerate 2.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-4",
+      "question": "The Two-Phase Commit protocol can block indefinitely if:",
+      "options": [
+        {
+          "key": "A",
+          "text": "All participants vote 'Yes' but coordinator crashes before sending 'Commit'"
+        },
+        {
+          "key": "B",
+          "text": "A participant votes 'No' during prepare phase"
+        },
+        {
+          "key": "C",
+          "text": "The network is very fast"
+        },
+        {
+          "key": "D",
+          "text": "All participants are in the same data center"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "In 2PC, after participants vote 'Yes' (prepared), they hold locks and cannot commit or rollback until they receive the coordinator's decision. If coordinator crashes at this point, participants wait indefinitely - this is the 'blocking' problem. This is why 3PC (Three-Phase Commit) was developed to avoid blocking, though it has other limitations.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-5",
+      "question": "Which type of transparency is concerned with hiding the fact that a resource may be moved from one location to another during its lifetime?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Location transparency"
+        },
+        {
+          "key": "B",
+          "text": "Migration transparency"
+        },
+        {
+          "key": "C",
+          "text": "Relocation transparency"
+        },
+        {
+          "key": "D",
+          "text": "Access transparency"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Relocation transparency hides that a resource is moving while it is in use. Migration transparency hides that a resource moves when not in use. Location transparency hides where the resource is located initially. Access transparency hides differences in how resources are accessed.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-6",
+      "question": "In a distributed system with Lamport timestamps, if event A happens-before event B, what is the relationship between their timestamps?",
+      "options": [
+        {
+          "key": "A",
+          "text": "L(A) > L(B)"
+        },
+        {
+          "key": "B",
+          "text": "L(A) < L(B)"
+        },
+        {
+          "key": "C",
+          "text": "L(A) = L(B)"
+        },
+        {
+          "key": "D",
+          "text": "L(A) and L(B) are incomparable"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Lamport timestamps provide a total ordering consistent with happened-before. If A \u2192 B (A happens-before B), then L(A) < L(B). The converse is not always true: if L(A) < L(B), events could be concurrent. Each process increments its counter before each event, and messages carry the sender's counter.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-7",
+      "question": "A company wants to build a globally distributed database that can tolerate network partitions while remaining available. According to CAP theorem, which property must they sacrifice?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Consistency"
+        },
+        {
+          "key": "B",
+          "text": "Availability"
+        },
+        {
+          "key": "C",
+          "text": "Partition tolerance"
+        },
+        {
+          "key": "D",
+          "text": "All of the above"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Partition tolerance is not optional in wide-area distributed systems - network partitions WILL happen. Therefore, during a partition, you must choose between Consistency and Availability. To be always available, you sacrifice strong consistency (choose eventual consistency).",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-8",
+      "question": "Which of the following is NOT a dimension of scalability in distributed systems?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Size scalability"
+        },
+        {
+          "key": "B",
+          "text": "Geographic scalability"
+        },
+        {
+          "key": "C",
+          "text": "Temporal scalability"
+        },
+        {
+          "key": "D",
+          "text": "Administrative scalability"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The three main dimensions of scalability are: Size (number of users/resources), Geographic (distance between nodes), and Administrative (number of organizations). Temporal scalability is not a standard dimension in distributed systems literature.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-9",
+      "question": "In a distributed deadlock detection algorithm, a wait-for graph contains a cycle. This indicates:",
+      "options": [
+        {
+          "key": "A",
+          "text": "A live lock situation"
+        },
+        {
+          "key": "B",
+          "text": "A deadlock involving all processes in the cycle"
+        },
+        {
+          "key": "C",
+          "text": "A potential deadlock that may require further investigation"
+        },
+        {
+          "key": "D",
+          "text": "No deadlock since distributed systems can have false cycles"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In centralized systems, a cycle in wait-for graph definitively indicates deadlock. In distributed systems, due to timing and information propagation delays, a detected cycle may be a 'false cycle' that no longer exists. The cycle indicates potential deadlock requiring further verification through additional messages or timeouts.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-10",
+      "question": "The challenge of 'heterogeneity' in distributed systems primarily refers to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "The system's ability to handle high loads"
+        },
+        {
+          "key": "B",
+          "text": "Diversity across hardware, OS, networks, and programming languages"
+        },
+        {
+          "key": "C",
+          "text": "Multiple points of failure in the system"
+        },
+        {
+          "key": "D",
+          "text": "Inconsistent data across different nodes"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Heterogeneity refers to the diversity of components in a distributed system: different hardware architectures, operating systems, network protocols, programming languages, and data representations. This challenge requires middleware, standard protocols (like TCP/IP, HTTP), and interface definition languages to bridge these differences.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "mcq-11",
+      "question": "A client sends a request to a server and receives no response within the timeout period. From the client's perspective, this could indicate:",
+      "options": [
+        {
+          "key": "A",
+          "text": "The server definitely crashed"
+        },
+        {
+          "key": "B",
+          "text": "The request was definitely processed"
+        },
+        {
+          "key": "C",
+          "text": "The request may have failed, the server may be slow, or the response was lost"
+        },
+        {
+          "key": "D",
+          "text": "Network is functioning perfectly"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In distributed systems, it's impossible to distinguish between: (1) request lost, (2) server slow, (3) server crashed, (4) response lost. This is the 'uncertainty principle' of distributed systems. The client cannot determine the actual cause without additional mechanisms like acknowledgments or heartbeats.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-12",
+      "question": "Which protocol is used to achieve atomic commitment of distributed transactions and can suffer from the blocking problem?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Paxos"
+        },
+        {
+          "key": "B",
+          "text": "Two-Phase Commit"
+        },
+        {
+          "key": "C",
+          "text": "Three-Phase Commit"
+        },
+        {
+          "key": "D",
+          "text": "Raft"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Two-Phase Commit (2PC) is the classic atomic commitment protocol but can block indefinitely if the coordinator fails after participants prepare. Three-Phase Commit eliminates blocking but requires synchronous communication. Paxos and Raft are consensus algorithms that handle failures better but are more complex.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-13",
+      "question": "Vector clocks are used in distributed systems to:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Synchronize physical clocks across nodes"
+        },
+        {
+          "key": "B",
+          "text": "Capture causality between events in different processes"
+        },
+        {
+          "key": "C",
+          "text": "Encrypt messages between nodes"
+        },
+        {
+          "key": "D",
+          "text": "Load balance requests across servers"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Vector clocks track the causal history of events across processes. Each process maintains a vector of logical counters (one per process). If all entries in A's vector \u2264 corresponding entries in B's vector, A causally precedes B. This helps detect concurrency and resolve conflicts in eventually consistent systems.",
+      "difficulty": "hard"
+    },
+    {
+      "id": "mcq-14",
+      "question": "When designing a distributed system across multiple administrative domains, which challenge becomes most significant?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Clock synchronization"
+        },
+        {
+          "key": "B",
+          "text": "Security and trust management"
+        },
+        {
+          "key": "C",
+          "text": "Locality of reference"
+        },
+        {
+          "key": "D",
+          "text": "Single point of failure"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Across administrative domains (different organizations, companies, countries), security and trust become paramount. Each domain may have different security policies, authentication mechanisms, and levels of trust. Establishing cross-domain authentication, authorization, and secure communication requires careful trust management and often complex negotiation.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "mcq-15",
+      "question": "The 'fallacies of distributed computing' were formulated by:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Leslie Lamport"
+        },
+        {
+          "key": "B",
+          "text": "Peter Deutsch"
+        },
+        {
+          "key": "C",
+          "text": "Tanenbaum"
+        },
+        {
+          "key": "D",
+          "text": "Jim Gray"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Peter Deutsch formulated the 'Fallacies of Distributed Computing' in 1994, describing assumptions architects make that prove false and cause project failures: the network is reliable, latency is zero, bandwidth is infinite, the network is secure, topology doesn't change, there is one administrator, and transport cost is zero.",
+      "difficulty": "medium"
+    }
+  ]
+}

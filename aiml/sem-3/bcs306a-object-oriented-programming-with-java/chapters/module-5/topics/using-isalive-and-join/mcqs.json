@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "In Java multithreading, what is the primary purpose of the Thread.isAlive() method?",
+    "options": [
+      "To check if a thread has started and has not yet terminated",
+      "To force a thread to wait for another thread to finish",
+      "To check if a thread is currently in the running state",
+      "To determine the priority level of a thread"
+    ],
+    "correctIndex": 0,
+    "explanation": "The isAlive() method returns a boolean value indicating whether the thread has been started and has not yet completed its run method. It does not specifically check for the 'running' state, as a thread can be alive but in a blocked or waiting state."
+  },
+  {
+    "id": "q2",
+    "question": "What will happen if the main thread calls the join() method on a Thread object 't' without any arguments?",
+    "options": [
+      "The main thread will wait indefinitely for 't' to finish.",
+      "The main thread will wait for a default system-specific time period for 't' to finish.",
+      "The 't' thread will be forced to terminate immediately.",
+      "The 't' thread will wait for the main thread to finish."
+    ],
+    "correctIndex": 0,
+    "explanation": "The join() method, when called without a timeout parameter, causes the current thread (in this case, the main thread) to wait indefinitely for the target thread ('t') to complete its execution. This is a common way to ensure the main thread finishes last."
+  },
+  {
+    "id": "q3",
+    "question": "Consider the following code snippet. What is the most likely output?\n\n```java\nThread t = new Thread(() -> System.out.print(\"Hello\"));\nt.start();\nSystem.out.print(t.isAlive() ? \"Alive\" : \"Not Alive\");\n```",
+    "options": [
+      "The output is nondeterministic; it could be 'HelloAlive', 'AliveHello', or 'HelloNot Alive'.",
+      "\"HelloNot Alive\"",
+      "\"AliveHello\"",
+      "\"HelloAlive\""
+    ],
+    "correctIndex": 0,
+    "explanation": "Because the new thread and the main thread run concurrently (asynchronously), the order of execution is not guaranteed. The main thread might check isAlive() before, during, or after the new thread prints 'Hello'. Furthermore, isAlive() might return true if checked while the new thread is running, or false if checked after it has already finished, leading to multiple possible outputs."
+  },
+  {
+    "id": "q4",
+    "question": "In a scenario with three threads (T1, T2, Main), the Main thread calls T1.join() and then T2.join(). How does this affect the execution order?",
+    "options": [
+      "The Main thread will wait for T1 to finish, then wait for T2 to finish, and then proceed. T1 and T2 run concurrently with each other.",
+      "The Main thread will wait for both T1 and T2 to finish simultaneously before proceeding.",
+      "T1 will wait for T2 to finish, then T2 will wait for the Main thread to finish.",
+      "The execution order of T1 and T2 becomes strictly sequential; T2 cannot start until T1 finishes."
+    ],
+    "correctIndex": 0,
+    "explanation": "Calling join() on T1 makes the Main thread block until T1 terminates. Once T1 is done, the Main thread calls join() on T2 and blocks again until T2 terminates. Crucially, the initial calls to start T1 and T2 likely happened earlier, so T1 and T2 have been running concurrently with each other before the Main thread begins waiting for them."
+  },
+  {
+    "id": "q5",
+    "question": "A developer writes: `thread.join(100);` and then checks `thread.isAlive()`, which returns true. What does this imply?",
+    "options": [
+      "The join() call timed out after 100ms, and the thread is still running.",
+      "The join() call successfully finished after 100ms, meaning the thread terminated.",
+      "The join() call was interrupted, and the thread is still running.",
+      "The join() call will now wait indefinitely since the timeout was ineffective."
+    ],
+    "correctIndex": 0,
+    "explanation": "The join(long millis) method waits at most the specified number of milliseconds for the thread to die. If the timeout elapses and the thread is still running, the calling thread continues its execution. Therefore, if isAlive() returns true immediately after a timed join, it confirms that the timeout occurred and the target thread did not finish within the allotted time."
+  }
+]

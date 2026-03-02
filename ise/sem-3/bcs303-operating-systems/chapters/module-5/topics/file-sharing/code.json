@@ -1,0 +1,45 @@
+{
+  "topicId": "file-sharing",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "c",
+      "title": "File Locking in C using fcntl",
+      "description": "Demonstrates how to implement file locking for concurrent access control using POSIX fcntl functions",
+      "code": "#include <fcntl.h>\n#include <unistd.h>\n#include <stdio.h>\n\nstruct flock lockFile(int fd, int type) {\n    struct flock lock;\n    lock.l_type = type;    // F_RDLCK (shared), F_WRLCK (exclusive), F_UNLCK (unlock)\n    lock.l_whence = SEEK_SET;\n    lock.l_start = 0;\n    lock.l_len = 0;  // Lock entire file\n    lock.l_pid = getpid();\n    \n    if (fcntl(fd, F_SETLKW, &lock) == -1) {\n        perror(\"Lock failed\");\n    }\n    return lock;\n}\n\nint main() {\n    int fd = open(\"shared.txt\", O_RDWR | O_CREAT, 0644);\n    \n    // Acquire exclusive (write) lock\n    struct flock lock = lockFile(fd, F_WRLCK);\n    \n    // Critical section: write to file\n    write(fd, \"Data from process\", 17);\n    \n    // Release lock\n    lock.l_type = F_UNLCK;\n    fcntl(fd, F_SETLK, &lock);\n    \n    close(fd);\n    return 0;\n}",
+      "explanation": "This C program demonstrates mandatory file locking using fcntl(). The lockFile() function sets a lock on the file, where F_WRLCK requests an exclusive lock. F_SETLKW blocks until lock is acquired, F_SETLK returns immediately if unsuccessful. The entire file is locked (l_len=0 means end-of-file).",
+      "timeComplexity": "O(1) for lock acquisition",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "python",
+      "title": "Readers-Writers Problem Solution",
+      "description": "Implements a solution to the readers-writers problem using Python threading with locks and semaphores",
+      "code": "import threading\nimport time\n\nclass ReadersWritersFile:\n    def __init__(self):\n        self.readers_count = 0\n        self.readers_lock = threading.Lock()  # Protects readers_count\n        self.resource_lock = threading.Lock()  # For writers exclusive access\n        self.file_content = \"\"\n    \n    def read_file(self, reader_id):\n        # Reader acquires readers lock first\n        self.readers_lock.acquire()\n        self.readers_count += 1\n        \n        if self.readers_count == 1:\n            # First reader locks resource (blocks writers)\n            self.resource_lock.acquire()\n        \n        self.readers_lock.release()\n        \n        # Reading section - can have multiple readers\n        print(f\"Reader {reader_id} reads: {self.file_content}\")\n        time.sleep(0.1)\n        \n        # Reader releases\n        self.readers_lock.acquire()\n        self.readers_count -= 1\n        \n        if self.readers_count == 0:\n            # Last reader releases resource (allows writers)\n            self.resource_lock.release()\n        \n        self.readers_lock.release()\n    \n    def write_file(self, writer_id, data):\n        # Writer needs exclusive access\n        self.resource_lock.acquire()\n        \n        # Writing section - exclusive\n        self.file_content = data\n        print(f\"Writer {writer_id} writes: {data}\")\n        time.sleep(0.1)\n        \n        self.resource_lock.release()\n\n# Usage demonstration\nfile = ReadersWritersFile()\n\ndef reader_thread(reader_id):\n    file.read_file(reader_id)\n\ndef writer_thread(writer_id):\n    file.write_file(writer_id, f\"Message from Writer {writer_id}\")",
+      "explanation": "This Python implementation solves the readers-writers problem. Multiple readers can access simultaneously, but writers get exclusive access. The first reader locks the resource (blocking writers), and the last reader releases it. Writers must wait until all readers finish.",
+      "timeComplexity": "O(1) per read/write operation",
+      "spaceComplexity": "O(1) + O(n) for readers_count storage"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "Deadlock Prevention - Lock Ordering",
+      "description": "Demonstrates a deadlock prevention technique using a consistent lock ordering policy",
+      "code": "ALGORITHM SafeFileAccess(files, operation)\nBEGIN\n  // Prevent deadlock by enforcing consistent lock ordering\n  // Sort files by their unique identifier before acquiring locks\n  \n  SORTED_FILES := QUICKSORT(files)  // Sort by file ID/path\n  \n  FOR EACH file IN SORTED_FILES\n  BEGIN\n    IF operation = \"WRITE\" THEN\n      LOCK_MODE := EXCLUSIVE\n    ELSE\n      LOCK_MODE := SHARED\n    \n    ATTEMPT_LOCK(file, LOCK_MODE)\n    \n    IF LOCK_FAILED THEN\n      // Release all previously acquired locks (rollback)\n      FOR EACH acquired IN ACQUIRED_LOCKS\n        RELEASE_LOCK(acquired)\n      \n      // Wait and retry\n      WAIT(RANDOM_BACKOFF)\n      RETURN FAILURE\n    \n    ADD file TO ACQUIRED_LOCKS\n  END\n  \n  // All locks acquired successfully - proceed with operation\n  PERFORM_FILE_OPERATION(files, operation)\n  \n  // Release all locks\n  FOR EACH lock IN ACQUIRED_LOCKS\n    RELEASE_LOCK(lock)\n  \n  RETURN SUCCESS\nEND",
+      "explanation": "This pseudocode implements deadlock prevention through lock ordering. By always acquiring locks in a consistent sorted order (by file ID), circular wait condition is eliminated. If lock acquisition fails, all previously acquired locks are released (rollback) rather than waiting, preventing deadlock.",
+      "timeComplexity": "O(n log n) due to sorting, where n is number of files",
+      "spaceComplexity": "O(n) for storing acquired locks list"
+    },
+    {
+      "id": "code-4",
+      "language": "java",
+      "title": "File Sharing with Java NIO",
+      "description": "Demonstrates file locking in Java using NIO channels and FileLock for controlled concurrent access",
+      "code": "import java.io.RandomAccessFile;\nimport java.nio.channels.FileChannel;\nimport java.nio.channels.FileLock;\nimport java.io.IOException;\n\npublic class SharedFileAccess {\n    private RandomAccessFile file;\n    private FileChannel channel;\n    private FileLock lock;\n    \n    public boolean lockFile(boolean shared) throws IOException {\n        // Open file in read-write mode\n        file = new RandomAccessFile(\"shared.txt\", \"rw\");\n        channel = file.getChannel();\n        \n        // Try to acquire lock (non-blocking)\n        lock = channel.tryLock(0, Long.MAX_VALUE, shared);\n        \n        if (lock == null) {\n            System.out.println(\"Could not acquire lock - file is locked\");\n            return false;\n        }\n        \n        System.out.println(shared ? \"Shared lock acquired\" : \"Exclusive lock acquired\");\n        return true;\n    }\n    \n    public void writeToFile(String data) throws IOException {\n        if (lock == null || !lock.isValid()) {\n            throw new IOException(\"No valid lock held\");\n        }\n        \n        file.writeBytes(data);\n        System.out.println(\"Written: \" + data);\n    }\n    \n    public String readFromFile() throws IOException {\n        if (lock == null || !lock.isValid()) {\n            throw new IOException(\"No valid lock held\");\n        }\n        \n        // Reset to beginning\n        file.seek(0);\n        \n        byte[] data = new byte[(int) file.length()];\n        file.readFully(data);\n        return new String(data);\n    }\n    \n    public void unlockFile() throws IOException {\n        if (lock != null && lock.isValid()) {\n            lock.release();\n            System.out.println(\"Lock released\");\n        }\n        if (channel != null) channel.close();\n        if (file != null) file.close();\n    }\n    \n    public static void main(String[] args) {\n        try {\n            SharedFileAccess access = new SharedFileAccess();\n            \n            // Acquire exclusive lock\n            if (access.lockFile(false)) {\n                access.writeToFile(\"Hello from Java!\");\n                access.unlockFile();\n            }\n            \n            // Acquire shared lock (for reading)\n            if (access.lockFile(true)) {\n                String content = access.readFromFile();\n                System.out.println(\"Read: \" + content);\n                access.unlockFile();\n            }\n            \n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}",
+      "explanation": "This Java program demonstrates file locking using NIO (New I/O) FileLock. The lockFile() method with 'shared=true' acquires a shared lock (multiple readers), while 'shared=false' acquires an exclusive lock. tryLock() returns immediately (non-blocking), returning null if unavailable. FileLock.release() releases the lock.",
+      "timeComplexity": "O(1) for lock acquisition (non-blocking)",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

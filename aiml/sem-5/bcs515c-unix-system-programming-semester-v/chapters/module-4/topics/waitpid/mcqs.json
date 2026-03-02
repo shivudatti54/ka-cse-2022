@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "question": "What is the primary purpose of the waitpid() system call?",
+    "options": [
+      "To wait for a specific child process to terminate or change state",
+      "To wait for any child process to terminate",
+      "To pause the execution of the parent process indefinitely",
+      "To create a new child process"
+    ],
+    "correctIndex": 0,
+    "explanation": "The waitpid() system call is designed to allow a parent process to wait for a specific child process, identified by its PID, to terminate or change state, providing more control than the generic wait()."
+  },
+  {
+    "id": "q2",
+    "question": "Which of the following options, when used with waitpid(), would cause it to return immediately if no child process has terminated?",
+    "options": [
+      "WNOHANG",
+      "WUNTRACED",
+      "WCONTINUED",
+      "WEXITED"
+    ],
+    "correctIndex": 0,
+    "explanation": "The WNOHANG option is a non-blocking flag that instructs waitpid() to return immediately with a status of 0 if the specified child process has not yet terminated or changed state."
+  },
+  {
+    "id": "q3",
+    "question": "A programmer wants to wait for a child process with PID 1234 to terminate and also reap any zombie processes. Which waitpid() call is correct?",
+    "options": [
+      "waitpid(1234, &status, 0)",
+      "waitpid(-1, &status, 0)",
+      "waitpid(1234, NULL, WNOHANG)",
+      "waitpid(0, &status, WUNTRACED)"
+    ],
+    "correctIndex": 0,
+    "explanation": "waitpid(1234, &status, 0) correctly specifies the target PID (1234), provides a variable to store the status, and uses 0 for options (meaning no special flags, making it a blocking call). This will wait for that specific process and reap it."
+  },
+  {
+    "id": "q4",
+    "question": "What does the WUNTRACED option allow waitpid() to do?",
+    "options": [
+      "Return for children that have stopped (but not traced via ptrace)",
+      "Return only for children that have terminated",
+      "Return immediately without blocking",
+      "Return for children that have been continued after a stop"
+    ],
+    "correctIndex": 0,
+    "explanation": "The WUNTRACED option causes waitpid() to also return for child processes that have stopped (e.g., by receiving a SIGSTOP signal) and whose status has not yet been reported, not just for terminated children."
+  },
+  {
+    "id": "q5",
+    "question": "Consider the code: `pid_t w = waitpid(-1, &status, WNOHANG | WUNTRACED | WCONTINUED);`. Under which condition will it NOT return 0?",
+    "options": [
+      "If a child specified by the pid argument has stopped",
+      "If no child process state has changed",
+      "If the system call is interrupted by a signal",
+      "If the process has no unwaited-for children"
+    ],
+    "correctIndex": 0,
+    "explanation": "The call uses WNOHANG, so it is non-blocking. It will return 0 only if no child process matching the criteria (terminated, stopped, or continued) is found. If a child has stopped (due to WUNTRACED), its PID will be returned, not 0."
+  }
+]

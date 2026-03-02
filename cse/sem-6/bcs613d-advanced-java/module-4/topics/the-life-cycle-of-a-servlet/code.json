@@ -1,0 +1,35 @@
+{
+  "topicId": "the-life-cycle-of-a-servlet",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "java",
+      "title": "Basic Servlet demonstrating Lifecycle Methods",
+      "description": "A complete HttpServlet demonstrating init(), service() dispatch, and destroy() lifecycle phases",
+      "code": "import java.io.*;\nimport jakarta.servlet.*;\nimport jakarta.servlet.http.*;\n\npublic class LifecycleServlet extends HttpServlet {\n \n // Instance variable - shared across all requests (NOT thread-safe!)\n private int requestCount = 0;\n \n @Override\n public void init() throws ServletException {\n // Called ONCE when servlet is first loaded\n System.out.println(\"LifecycleServlet: init() called - Initializing resources\");\n // Initialize database connections, load config, etc.\n }\n \n @Override\n protected void service(HttpServletRequest request, HttpServletResponse response) \n throws ServletException, IOException {\n // Called for EVERY request - dispatches to doGet/doPost\n System.out.println(\"LifecycleServlet: service() called - Handling request #\" + (++requestCount));\n super.service(request, response); // Dispatches to doGet(), doPost(), etc.\n }\n \n @Override\n protected void doGet(HttpServletRequest request, HttpServletResponse response) \n throws ServletException, IOException {\n response.setContentType(\"text/html\");\n PrintWriter out = response.getWriter();\n out.println(\"<html><body>\");\n out.println(\"<h2>Request Count: \" + requestCount + \"</h2>\");\n out.println(\"</body></html>\");\n }\n \n @Override\n public void destroy() {\n // Called ONCE when servlet is unloaded\n System.out.println(\"LifecycleServlet: destroy() called - Cleaning up resources\");\n // Close database connections, release file handles, etc.\n }\n}",
+      "explanation": "This code demonstrates all three lifecycle phases: init() is called once during initialization, service() is called for each request (which then dispatches to doGet()), and destroy() is called once when the servlet is unloaded. The instance variable requestCount shows shared state across requests.",
+      "timeComplexity": "O(1) per request",
+      "spaceComplexity": "O(1) - servlet instance exists for application lifetime"
+    },
+    {
+      "id": "code-2",
+      "language": "java",
+      "title": "Thread-Safe Hit Counter using AtomicLong",
+      "description": "Servlet implementing a thread-safe hit counter using AtomicLong",
+      "code": "import java.io.*;\nimport java.util.concurrent.atomic.AtomicLong;\nimport jakarta.servlet.*;\nimport jakarta.servlet.http.*;\n\npublic class ThreadSafeCounterServlet extends HttpServlet {\n \n // AtomicLong is thread-safe - uses CAS operations\n private AtomicLong hitCounter = new AtomicLong(0);\n \n // Synchronized method alternative\n private long syncCounter = 0;\n \n @Override\n public void init() throws ServletException {\n System.out.println(\"Initializing ThreadSafeCounterServlet\");\n }\n \n @Override\n protected void doGet(HttpServletRequest request, HttpServletResponse response) \n throws ServletException, IOException {\n \n // Method 1: Using AtomicLong (preferred)\n long currentHits = hitCounter.incrementAndGet();\n \n // Method 2: Synchronized block (alternative)\n synchronized(this) {\n syncCounter++;\n }\n \n response.setContentType(\"text/html\");\n PrintWriter out = response.getWriter();\n out.println(\"<html><body>\");\n out.println(\"<h1>Page Hits: \" + currentHits + \"</h1>\");\n out.println(\"</body></html>\");\n }\n \n @Override\n public void destroy() {\n // Log final count or save to database\n System.out.println(\"Final hit count: \" + hitCounter.get());\n }\n}",
+      "explanation": "This servlet demonstrates two approaches for thread-safe counter: 1) AtomicLong uses lock-free Compare-And-Swap operations, providing better performance than synchronized blocks. 2) The synchronized block shows traditional approach. Both prevent race conditions when multiple threads increment simultaneously.",
+      "timeComplexity": "O(1) per request",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-3",
+      "language": "java",
+      "title": "ServletContextListener for Application Initialization",
+      "description": "Demonstrates using ServletContextListener to initialize resources at application startup",
+      "code": "import jakarta.servlet.*;\nimport jakarta.servlet.annotation.WebListener;\nimport java.sql.Connection;\nimport java.sql.DriverManager;\nimport java.sql.SQLException;\n\n@WebListener\npublic class AppInitializationListener implements ServletContextListener {\n \n private Connection dbConnection;\n \n @Override\n public void contextInitialized(ServletContextEvent sce) {\n // Called when web application starts\n System.out.println(\"Web Application Starting - Initializing resources\");\n \n try {\n // Initialize database connection pool\n Class.forName(\"com.mysql.cj.jdbc.Driver\");\n dbConnection = DriverManager.getConnection(\n \"jdbc:mysql://localhost:3306/mydb\", \"root\", \"password\");\n \n // Store connection in ServletContext for access by all servlets\n ServletContext context = sce.getServletContext();\n context.setAttribute(\"dbConnection\", dbConnection);\n \n System.out.println(\"Database connection established\");\n } catch (ClassNotFoundException | SQLException e) {\n System.err.println(\"Failed to initialize: \" + e.getMessage());\n }\n }\n \n @Override\n public void contextDestroyed(ServletContextEvent sce) {\n // Called when web application shuts down\n System.out.println(\"Web Application Shutting Down - Cleaning up\");\n \n // Clean up database connection\n if (dbConnection != null) {\n try {\n dbConnection.close();\n System.out.println(\"Database connection closed\");\n } catch (SQLException e) {\n System.err.println(\"Error closing connection: \" + e.getMessage());\n }\n }\n }\n}",
+      "explanation": "This ServletContextListener demonstrates application-wide lifecycle management: contextInitialized() runs once when the application starts (setting up database connections), and contextDestroyed() runs once when the application shuts down (releasing resources). The connection is stored in ServletContext for all servlets to access.",
+      "timeComplexity": "O(1) - initialization happens once at startup",
+      "spaceComplexity": "O(1)"
+    }
+  ]
+}

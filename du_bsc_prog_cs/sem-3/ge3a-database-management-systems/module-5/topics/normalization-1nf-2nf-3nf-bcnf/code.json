@@ -1,0 +1,45 @@
+{
+  "topicId": "normalization-1nf-2nf-3nf-bcnf",
+  "examples": [
+    {
+      "id": "code-1",
+      "language": "pseudocode",
+      "title": "Check 1NF Compliance",
+      "description": "Algorithm to verify if a relation is in First Normal Form",
+      "code": "FUNCTION IsIn1NF(relation R)\nBEGIN\n    FOR EACH attribute A IN R\n    BEGIN\n        FOR EACH tuple t IN R\n        BEGIN\n            IF NOT IsAtomic(t[A]) THEN\n                RETURN FALSE\n            END\n        END\n    END\n    RETURN TRUE\nEND\n\nFUNCTION IsAtomic(value)\nBEGIN\n    IF value IS NULL THEN RETURN TRUE\n    IF value IS ARRAY OR value IS SET THEN RETURN FALSE\n    IF TypeOf(value) CONTAINS MULTIPLE VALUES THEN RETURN FALSE\n    RETURN TRUE\nEND",
+      "explanation": "This algorithm checks each attribute value in every tuple to ensure it contains only atomic (indivisible) values. Arrays, sets, and multivalued attributes violate 1NF.",
+      "timeComplexity": "O(n \u00d7 m) where n=tuples, m=attributes",
+      "spaceComplexity": "O(1)"
+    },
+    {
+      "id": "code-2",
+      "language": "pseudocode",
+      "title": "Check 2NF Violation Detection",
+      "description": "Algorithm to detect partial dependencies in a relation with composite key",
+      "code": "FUNCTION Check2NF(relation R, set PK, set FDs)\nBEGIN\n    violations = EMPTY LIST\n    nonPrimeAttributes = GetNonPrimeAttributes(R, PK)\n    \n    FOR EACH FD X \u2192 Y IN FDs\n    BEGIN\n        IF X IS PROPER SUBSET OF PK THEN\n            // Partial dependency exists\n            dependentAttrs = GetAttributes(Y)\n            FOR EACH attr IN dependentAttrs\n            BEGIN\n                IF attr IN nonPrimeAttributes THEN\n                    ADD (X \u2192 attr) TO violations\n                END\n            END\n        END\n    END\n    \n    IF violations IS EMPTY THEN\n        RETURN \"In 2NF\"\n    ELSE\n        RETURN violations\nEND\n\nFUNCTION GetNonPrimeAttributes(relation R, set PK)\nBEGIN\n    allAttrs = GET ALL ATTRIBUTES(R)\n    RETURN allAttrs - PK\nEND",
+      "explanation": "This algorithm identifies partial dependencies by checking if any determinant is a proper subset of the primary key and determines if non-prime attributes depend on it.",
+      "timeComplexity": "O(f \u00d7 k) where f=functional dependencies, k=key attributes",
+      "spaceComplexity": "O(f)"
+    },
+    {
+      "id": "code-3",
+      "language": "pseudocode",
+      "title": "3NF Decomposition Algorithm",
+      "description": "Algorithm to decompose a relation into Third Normal Form",
+      "code": "ALGORITHM DecomposeTo3NF(R, F)\nBEGIN\n    // Step 1: Find minimal cover of F\n    Fmin = MinimalCover(F)\n    \n    // Step 2: Group FDs by left-hand side\n    groups = EMPTY SET\n    FOR EACH FD X \u2192 Y IN Fmin\n    BEGIN\n        found = FALSE\n        FOR EACH group G IN groups\n        BEGIN\n            IF G.LHS == X THEN\n                ADD Y TO G.RHS\n                found = TRUE\n                BREAK\n            END\n        END\n        IF NOT found THEN\n            ADD NEW GROUP(X, Y) TO groups\n        END\n    END\n    \n    // Step 3: Create relations\n    relations = EMPTY SET\n    FOR EACH group G IN groups\n    BEGIN\n        relationName = \"R_\" + G.LHS\n        ADD Relation(relationName, G.LHS \u222a G.RHS) TO relations\n    END\n    \n    // Step 4: Add key relation if needed\n    IF NOT ANY R IN relations CONTAINS PK(R) THEN\n        ADD Relation(\"R_Key\", PK) TO relations\n    \n    RETURN relations\nEND\n\nFUNCTION MinimalCover(F)\nBEGIN\n    // 1. Break RHS into single attributes\n    // 2. Remove extraneous LHS attributes\n    // 3. Remove redundant FDs\n    RETURN Fmin\nEND",
+      "explanation": "This algorithm performs 3NF decomposition using the minimal cover of functional dependencies. It groups FDs by their left-hand side, creates relations, and ensures at least one relation contains the primary key for lossless join.",
+      "timeComplexity": "O(n\u00b3) in worst case for minimal cover computation",
+      "spaceComplexity": "O(n)"
+    },
+    {
+      "id": "code-4",
+      "language": "python",
+      "title": "BCNF Decomposition Implementation",
+      "description": "Python implementation of BCNF decomposition algorithm",
+      "code": "from collections import defaultdict\n\ndef find_closure(attrs, fds):\n    \"\"\"Find closure of attribute set under given FDs\"\"\"\n    closure = set(attrs)\n    changed = True\n    while changed:\n        changed = False\n        for lhs, rhs in fds:\n            if lhs <= closure and not rhs <= closure:\n                closure = closure.union(rhs)\n                changed = True\n    return closure\n\ndef is_superkey(attrs, key, fds):\n    \"\"\"Check if attrs form a superkey\"\"\"\n    return key <= find_closure(attrs, fds)\n\ndef decompose_to_bcnf(relation, attrs, fds):\n    \"\"\"Decompose relation to BCNF\"\"\"\n    result = []\n    \n    # Check if relation is already in BCNF\n    bcnf_violated = False\n    for lhs, rhs in fds:\n        if not is_superkey(lhs, attrs, fds):\n            bcnf_violated = True\n            break\n    \n    if not bcnf_violated:\n        result.append((relation, attrs, fds))\n        return result\n    \n    # Find violating FD and decompose\n    for lhs, rhs in fds:\n        if not is_superkey(lhs, attrs, fds):\n            # Decompose: R1 = lhs + rhs, R2 = lhs + (rest)\n            new_rhs = find_closure(lhs, fds)\n            r1_attrs = new_rhs\n            r2_attrs = lhs.union(attrs - new_rhs)\n            \n            # Create new FDs for decomposed relations\n            r1_fds = [(l, r) for l, r in fds if l <= r1_attrs and r <= r1_attrs]\n            r2_fds = [(l, r) for l, r in fds if l <= r2_attrs and r <= r2_attrs]\n            \n            # Recursively decompose\n            result.extend(decompose_to_bcnf(relation + \"_1\", r1_attrs, r1_fds))\n            result.extend(decompose_to_bcnf(relation + \"_2\", r2_attrs, r2_fds))\n            break\n    \n    return result\n\n# Example usage\nrelation = \"R\"\nattributes = {'A', 'B', 'C', 'D'}\nfds = [({'A'}, {'B'}), ({'A'}, {'C'}), ({'C'}, {'D'})]\n\ndecomposed = decompose_to_bcnf(relation, attributes, fds)\nprint(\"BCNF Decomposition:\", decomposed)",
+      "explanation": "This Python code implements BCNF decomposition by finding violating functional dependencies where the determinant is not a superkey, then recursively decomposing the relation until all violations are resolved.",
+      "timeComplexity": "O(n \u00d7 2^k) where n=FDs, k=attributes",
+      "spaceComplexity": "O(k) for recursion stack"
+    }
+  ]
+}
