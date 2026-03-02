@@ -1,2 +1,0 @@
-# Introduction To Hashing
-Hashing transforms comparison-based search (Ω(log n)) into direct addressing (O(1) average), using arithmetic computation instead of binary navigation. The hash function maps keys to table indices; collisions are inevitable and resolved via chaining or open addressing. Under Simple Uniform Hashing, expected probe count equals 1/(1-α), making load factor management critical. Selection between linear/quadratic probing or double hashing involves trade-offs between implementation simplicity, cache performance, and clustering behavior.

@@ -1,9 +1,0 @@
-sql
-CREATE TABLE student_log_text (
-    id INT,
-    name STRING,
-    dept STRING
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE;

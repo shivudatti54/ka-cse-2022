@@ -1,1 +1,0 @@
-This module introduces B.Tech/MSc/MCA students to the fundamentals of Unix System Programming, providing essential knowledge of system calls, process management, memory layout, and error handling required for developing system-level software on Unix and Unix-like operating systems.

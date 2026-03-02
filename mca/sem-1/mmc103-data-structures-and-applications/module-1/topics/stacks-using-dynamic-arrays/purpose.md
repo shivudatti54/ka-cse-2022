@@ -1,2 +1,0 @@
-# Stacks Using Dynamic Arrays
-This content provides a comprehensive study of dynamic array stack implementations for undergraduate-level computer science students (students, students, students). It establishes the theoretical foundation for amortized analysis, presents complete algorithmic specifications with formal proofs, and demonstrates practical implementation in C. The material bridges conceptual understanding with coding proficiency while maintaining academic rigor appropriate for Standard tier.

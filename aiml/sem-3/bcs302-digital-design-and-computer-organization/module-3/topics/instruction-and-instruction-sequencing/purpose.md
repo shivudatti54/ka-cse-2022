@@ -1,2 +1,0 @@
-# Instruction And Instruction Sequencing
-To provide students with comprehensive knowledge of computer instructions, their binary encoding, execution cycle, and sequencing mechanisms. This module enables students to understand how processors fetch, decode, and execute instructions, analyze instruction set architectures, and evaluate performance using quantitative methods. The content bridges theoretical concepts with practical analysis through encoding examples and numerical problems.

@@ -1,2 +1,0 @@
-# Dynamic Hashing
-This study material covers Dynamic Hashing techniques—specifically Extendible Hashing and Linear Hashing—for the Data Structures and Applications course. It addresses the limitations of static hashing and provides rigorous algorithmic explanations, formal proofs of key properties, complexity analysis, and comparative evaluation. The content targets students/students/students requiring formal academic treatment with theoretical depth and analytical problems.

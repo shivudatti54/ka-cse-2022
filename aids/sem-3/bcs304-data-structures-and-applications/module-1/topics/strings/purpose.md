@@ -1,2 +1,0 @@
-# Strings
-This module covers strings as a formal Abstract Data Type (ADT), examining multiple representations (fixed array, dynamic array, linked list) with complete time/space complexity analysis, fundamental string algorithms including naive pattern matching, KMP, and Rabin-Karp with proofs of complexity, and application-oriented multiple choice questions. The content is designed for students/students/students requiring thorough theoretical treatment with algorithmic proofs.

@@ -1,7 +1,0 @@
-Here are 3-4 sentences explaining the purpose and importance of learning "Sketching" in the context of UI/UX:
-
-**1. Why this topic matters**: Effective sketching is a crucial skill in UI/UX design as it enables designers to rapidly prototype and communicate their ideas, iterate quickly, and explore different design solutions. By learning sketching, designers can develop a deeper understanding of their users' needs and create more effective design solutions. This skill is essential for user-centered design and can help designers overcome creative blocks.
-
-**2. Real-world applications**: Sketching is a fundamental tool in UI/UX design, and its applications are diverse. Designers use sketching to create wireframes, prototypes, and concept art, which can be used to test and refine their designs. Sketching also helps designers to communicate their ideas effectively with stakeholders, clients, and team members.
-
-**3. How it connects to other concepts**: Sketching is closely related to other UI/UX concepts, such as design thinking, ideation, and user personas. By learning sketching, designers can develop a deeper understanding of their users and create more effective designs that meet their needs. Additionally, sketching is a key component of the design process, and designers must consider the intersections and relationships between sketching, prototyping, and testing to create effective design solutions.

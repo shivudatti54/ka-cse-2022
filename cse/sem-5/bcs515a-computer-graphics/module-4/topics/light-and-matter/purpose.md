@@ -1,7 +1,0 @@
-- **Understand** the three fundamental types of light reflection (ambient, diffuse, specular) and explain how each contributes to the overall appearance of a surface in computer graphics
-- **Apply** the Phong reflection model to compute surface illumination given appropriate inputs (material properties, light properties, surface normal, viewing direction)
-- **Analyze** how different material coefficients (k_a, k_d, k_s, n) affect the visual appearance of rendered surfaces and select appropriate values for specific materials
-- **Evaluate** the trade-offs between point, directional, and spotlight sources in terms of their mathematical representation and appropriate use cases in 3D scenes
-- **Create** a complete shading implementation using the Phong model that correctly computes ambient, diffuse, and specular components for a given 3D surface
-- **Compare** the Phong and Blinn-Phong models, analyzing their computational differences and when each model produces more visually accurate results
-- **Design** material configurations for common real-world surfaces (plastic, metal, cloth) by selecting appropriate coefficient values based on desired visual properties

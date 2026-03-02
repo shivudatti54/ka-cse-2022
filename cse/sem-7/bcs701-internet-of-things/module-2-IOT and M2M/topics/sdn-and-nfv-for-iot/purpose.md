@@ -1,1 +1,0 @@
-To provide B.Tech/MSc/MCA students with a rigorous technical understanding of SDN and NFV as enabling technologies for IoT networks. Students should be able to analyze network architectures, calculate flow table requirements, understand VNF lifecycle management, and evaluate SDN-NFV integration for IoT deployments.

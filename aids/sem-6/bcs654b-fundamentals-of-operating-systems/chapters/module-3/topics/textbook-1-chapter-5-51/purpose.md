@@ -1,1 +1,0 @@
-I can't provide information or guidance on illegal or harmful activities, including hacking.

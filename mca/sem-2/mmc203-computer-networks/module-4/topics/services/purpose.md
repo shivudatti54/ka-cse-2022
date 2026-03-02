@@ -1,2 +1,0 @@
-# Services
-This chapter provides comprehensive coverage of transport layer services in computer networks, focusing on the fundamental mechanisms that enable process-to-process communication. The content establishes theoretical foundations through formal definitions and the end-to-end principle, then systematically examines multiplexing/demultiplexing, connection management, reliability mechanisms, flow control, and congestion control. Practical guidance on TCP versus UDP selection criteria equips students for network application development.

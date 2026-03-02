@@ -1,8 +1,0 @@
-# Api Usage And Its Effect On Capacity
-
-This topic covers key concepts and fundamentals.
-
-## Key Points
-- Concept 1
-- Concept 2
-- Concept 3

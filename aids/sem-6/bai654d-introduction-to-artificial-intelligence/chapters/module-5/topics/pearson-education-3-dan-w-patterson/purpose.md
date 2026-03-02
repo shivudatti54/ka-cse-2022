@@ -1,3 +1,0 @@
-3. **How does it connect to other concepts?** This topic connects directly to core AI concepts like search algorithms, knowledge representation, and machine learning. It also bridges to other disciplines, such as cognitive science (how humans perceive patterns), computer vision (for optical character recognition), and data science (for preprocessing and analyzing complex datasets).
-
-4. **Real-world applications** The principles of pattern recognition are used in countless real-world applications, including spam filtering, medical diagnosis (e.g., identifying tumors in scans), financial fraud detection, biometric security (fingerprint/face recognition), and autonomous vehicles (interpreting sensor data).

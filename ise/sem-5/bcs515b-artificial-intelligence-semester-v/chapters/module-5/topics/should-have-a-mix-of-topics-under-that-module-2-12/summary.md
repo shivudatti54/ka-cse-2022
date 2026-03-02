@@ -1,8 +1,0 @@
-# Should Have A Mix Of Topics Under That Module 2 12
-
-This topic covers key concepts and fundamentals.
-
-## Key Points
-- Concept 1
-- Concept 2
-- Concept 3

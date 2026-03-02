@@ -1,2 +1,0 @@
-json
-{"question": "Explain the concept of deterministic seasonality in time series models. How does it differ from stochastic seasonality, and what are the implications for forecasting? Provide an example of a model that incorporates deterministic seasonality."}

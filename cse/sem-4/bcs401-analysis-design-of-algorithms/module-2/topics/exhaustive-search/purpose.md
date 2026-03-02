@@ -1,3 +1,0 @@
-# Exhaustive Search
-
-This content provides comprehensive coverage of exhaustive search algorithms at the Standard level (students, students, students). It establishes theoretical foundations including formal proofs of optimality, analyzes solution space growth rates, and covers key algorithms including DFS, BFS, backtracking, branch and bound, and the Travelling Salesman Problem. The material emphasizes analytical depth with complexity derivations, comparative analysis, and numerical examples appropriate for semester 4+ students. This serves as both a theoretical foundation and practical reference for understanding when exhaustive search is feasible versus when advanced techniques are required.

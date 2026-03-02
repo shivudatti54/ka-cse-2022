@@ -1,2 +1,0 @@
-# Introduction To Hashing
-This module introduces hashing as a fundamental technique for achieving constant-time average-case dictionary operations. It establishes the theoretical foundation (hash functions, collision resolution, uniform hashing assumption) and provides practical implementation insights. The content bridges algorithmic theory with students application, preparing students for advanced topics like universal hashing and cryptographic hash functions.

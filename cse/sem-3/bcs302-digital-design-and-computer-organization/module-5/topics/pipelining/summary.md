@@ -1,5 +1,0 @@
-- **Pipelining** is an instruction-level parallelism technique that overlaps execution across k stages, achieving near-ideal throughput of 1 instruction/cycle
-- **Speedup formula**: S = n×k×τ / (k+n-1)×τ → approaches k as n → ∞
-- **Pipeline Hazards**: Structural (resource conflicts), Data (RAW/WAR/WAR dependencies), Control (branch misprediction)
-- **Resolution Techniques**: Harvard architecture (structural), forwarding/bypassing (data), branch prediction (control)
-- **Effective CPI**: 1 + (stalls × hazard frequency), demonstrating quantitative impact of hazards on performance

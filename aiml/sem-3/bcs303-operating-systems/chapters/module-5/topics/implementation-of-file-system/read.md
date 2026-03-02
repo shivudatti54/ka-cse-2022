@@ -1,1 +1,0 @@
-[Boot Block | Superblock | Free Space Management | i-node (FCB) table | Data Blocks (Root Dir & Files)]

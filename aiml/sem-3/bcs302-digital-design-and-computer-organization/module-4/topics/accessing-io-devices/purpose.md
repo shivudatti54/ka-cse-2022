@@ -1,2 +1,0 @@
-# Accessing Io Devices
-To provide students with comprehensive theoretical and practical knowledge of I/O device access mechanisms, including mathematical performance analysis and comparative evaluation of access methods.

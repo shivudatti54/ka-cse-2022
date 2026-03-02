@@ -1,2 +1,0 @@
-# Process Management
-This chapter provides comprehensive coverage of process management concepts in operating systems for undergraduate and graduate students. It establishes the theoretical foundation required to understand process scheduling, resource allocation, and inter-process communication. The content prepares students for advanced topics in operating system design and helps develop skills necessary for system programming and software students roles.

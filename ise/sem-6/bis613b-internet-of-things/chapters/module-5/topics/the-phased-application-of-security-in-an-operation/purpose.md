@@ -1,8 +1,0 @@
-**Why this topic matters:**
-Learning "The phased application of security in an operational environment" is crucial for the Internet of Things (IoT) as it enables organizations to develop a comprehensive security strategy that addresses the unique challenges of operational technology (OT) environments. By understanding this concept, IT and OT teams can ensure the secure implementation of IoT devices and systems, mitigating potential security risks.
-
-**Real-world applications:**
-The phased application of security in an operational environment has real-world applications in industries such as manufacturing, energy, healthcare, and transportation, where IoT devices are increasingly being integrated. For example, in a manufacturing setting, this approach can help secure the production line, prevent equipment tampering, and ensure product quality. By implementing a phased security approach, organizations can minimize downtime, reduce costs, and ensure business continuity.
-
-**Connection to other concepts:**
-The phased application of security in an operational environment connects to other concepts in IoT security, such as the need for context-aware security, the importance of device identity and authentication, and the role of security by design. It also intersects with IT security practices, such as incident response, vulnerability management, and threat intelligence, to create a holistic approach to IoT security that addresses both IT and OT environments. Additionally, this concept is closely related to the concept of "security in layers," which involves implementing security measures at multiple levels, from device-level security to network-level security.

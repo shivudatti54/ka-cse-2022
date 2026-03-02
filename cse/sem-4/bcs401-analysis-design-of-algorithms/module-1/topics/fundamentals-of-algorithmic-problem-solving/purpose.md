@@ -1,3 +1,0 @@
-# Fundamentals Of Algorithmic Problem Solving
-
-This module introduces the foundational concepts of algorithmic problem solving required for the Analysis and Design of Algorithms course. Students will develop understanding of formal problem specification, algorithm properties, design paradigms (brute force, divide and conquer, greedy, dynamic programming), correctness verification through invariants and induction, and asymptotic complexity analysis. The module prepares students for advanced algorithm analysis and enables them to select appropriate design strategies for various computational problems.

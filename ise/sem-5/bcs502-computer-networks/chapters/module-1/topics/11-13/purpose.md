@@ -1,5 +1,0 @@
-The topic of 1.1-1.3, which typically covers the fundamentals of data communications, networks, and network types, is crucial in understanding the underlying structure and operation of computer networks. This knowledge matters because it provides a foundation for understanding the various protocols and technologies used in modern networks, enabling individuals to design, implement, and troubleshoot networks efficiently.
-
-Real-world applications of this topic include network administration, cybersecurity, and computer systems engineering, where professionals need to comprehend the basics of network communication and protocols to ensure reliable and secure data transfer.
-
-This topic connects to other concepts in computer networks, such as network models, protocols, and topology, by providing a common language and understanding of the core principles that govern network communication. By grasping these fundamentals, individuals can build upon them to explore more advanced topics, such as network architectures, network protocols, and network security.

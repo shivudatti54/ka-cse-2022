@@ -1,1 +1,0 @@
-To provide comprehensive understanding of transaction recovery mechanisms in database management systems, covering log-based recovery, write-ahead logging protocol, checkpointing, and the ARIES algorithm. This content prepares students to analyze and implement recovery strategies in practical database systems.

@@ -1,1 +1,0 @@
-# decentralized-autonomous-organizations - Summary

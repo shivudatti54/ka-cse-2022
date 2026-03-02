@@ -1,7 +1,0 @@
-- Understand the fundamental concepts and operational principles of major rendering strategies including scan line algorithms, z-buffer method, and painter's algorithm
-- Analyze the advantages, limitations, and computational complexity of each rendering strategy to determine appropriate use cases
-- Apply BSP tree construction and traversal algorithms to solve visibility problems in 3D scenes
-- Evaluate the trade-offs between hardware rendering and software rendering for different application scenarios
-- Compare immediate mode and retained mode rendering paradigms and select the appropriate approach for specific graphics applications
-- Create simple implementations of depth buffering and painter's algorithm to reinforce theoretical concepts
-- Design an efficient rendering pipeline that combines multiple strategies for optimal scene visualization

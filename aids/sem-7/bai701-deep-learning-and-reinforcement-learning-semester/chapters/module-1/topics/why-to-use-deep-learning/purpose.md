@@ -1,9 +1,0 @@
-### Learning Purpose: Why Use Deep Learning?
-
-1.  **Importance:** Deep Learning (DL) is a transformative subset of machine learning that powers many of today's most advanced AI applications. Understanding *why* it is used—its capabilities and advantages over traditional methods—is fundamental. It provides the context and motivation for investing time in learning its often complex mechanics. This topic establishes the "big picture" before diving into technical details.
-
-2.  **Learning Outcomes:** Students will learn the key drivers for adopting DL, primarily its ability to automatically discover intricate patterns and hierarchical representations from raw, high-dimensional data (like images, text, and sound). They will contrast this with the limitations of manual feature engineering in traditional machine learning and understand the concepts of scalability and performance with data.
-
-3.  **Connection to Other Concepts:** This topic is the gateway to the entire field. It logically follows an introduction to Machine Learning and Artificial Intelligence, providing a compelling reason for the subsequent deep dive into neural network architectures (CNNs, RNNs), optimization techniques, and hardware (GPUs/TPUs) that enable DL's success.
-
-4.  **Real-World Applications:** Students will recognize the tangible impact of DL in technologies they interact with daily, including voice assistants (Siri, Alexa), recommendation systems (Netflix, YouTube), medical image analysis, autonomous vehicles, and sophisticated natural language processing (chatbots, translators). This bridges the gap between theoretical concepts and practical, world-changing innovation.

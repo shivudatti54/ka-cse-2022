@@ -1,9 +1,0 @@
-hello
-hell
-helllo
-heello
-heeeello
-shell
-shall
-hill
-sell

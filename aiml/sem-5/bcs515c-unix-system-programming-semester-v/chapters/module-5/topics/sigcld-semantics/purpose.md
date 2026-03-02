@@ -1,9 +1,0 @@
-### Learning Purpose: SIGCLD Semantics
-
-1.  **Importance:** Understanding SIGCLD semantics is crucial because signal handling, especially for child process termination, is a foundational aspect of robust UNIX system programming. Misunderstanding its historical behavior is a common source of bugs, such as zombie process accumulation or erroneous `wait` calls, which can cripple application stability and performance.
-
-2.  **Learning Outcomes:** Students will learn the specific, non-standard behavior of the `SIGCLD` signal (as opposed to the standard `SIGCHLD`). This includes analyzing its unreliable nature in older System V implementations, the implications of resetting its handler to `SIG_DFL`, and how to correctly handle child process termination to avoid reentrancy issues and ensure all exit statuses are collected.
-
-3.  **Connection to Other Concepts:** This topic connects directly to core concepts like process creation (`fork`), process termination (`exit`, `_exit`), and the `wait` family of system calls. It deepens the understanding of signal mechanics, reentrancy, and portability issues across different UNIX flavors (BSD vs. System V), building upon prior knowledge of process control and signal management.
-
-4.  **Real-World Applications:** This knowledge is essential for developing reliable daemons, network servers, and shell applications that must manage multiple child processes efficiently. Correctly handling child termination prevents resource leaks (zombies) and ensures parent processes are accurately notified of their children's exit status, which is vital for process supervision and job control in system-level software.

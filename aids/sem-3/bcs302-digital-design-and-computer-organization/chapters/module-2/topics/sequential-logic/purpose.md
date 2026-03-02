@@ -1,9 +1,0 @@
-# Learning Purpose: Sequential Logic
-
-**1. Importance:** Sequential logic is the foundational concept that enables digital systems to have memory and operate over time. Unlike combinational logic, which only reacts to current inputs, sequential circuits use clocks and feedback loops to store state information. This is critical for building functional components like registers, memory units, and finite state machines, which are the core of any modern processor.
-
-**2. Student Learning:** Students will learn the fundamental building blocks of sequential circuits: latches and flip-flops (SR, D, JK). They will understand the role of a clock signal in synchronizing state changes and analyze the operation of key sequential devices like registers and shift registers. Students will also be introduced to the concept and analysis of finite state machines (FSMs).
-
-**3. Connection to Other Concepts:** This module directly builds upon the combinational logic learned in Module 1. Students will combine these concepts to design complex systems, understanding how sequential elements use the output of combinational circuits (e.g., adders, multiplexers) to determine their next state. This is a prerequisite for understanding computer memory (Module 3) and central processing unit (CPU) design (later modules).
-
-**4. Real-World Applications:** Sequential logic is the bedrock of all modern computing. It is used to create memory cells in RAM and cache, control units within CPUs, counters in digital watches, and the state machines that manage everything from elevator operation and traffic light controllers to communication protocols and vending machines.

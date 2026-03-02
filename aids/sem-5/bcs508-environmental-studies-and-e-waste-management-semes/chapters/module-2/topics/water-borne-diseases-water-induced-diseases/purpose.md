@@ -1,9 +1,0 @@
-# Learning Purpose: Water Borne & Water Induced Diseases
-
-**1. Importance:** This topic is critically important as water-related diseases remain a leading cause of morbidity and mortality worldwide, particularly in vulnerable communities. Understanding them is fundamental to environmental health and public safety. It directly connects the management of our water resources and waste (including e-waste, which can leach toxins into water) to human wellbeing, making it a core concern in environmental studies.
-
-**2. Student Learning:** Students will learn to differentiate between water-borne diseases (caused by pathogenic microorganisms in contaminated water, e.g., cholera, typhoid) and water-induced diseases (where water facilitates the life cycle of a vector, e.g., malaria, dengue). They will analyze the environmental factors that propagate these diseases and evaluate prevention and mitigation strategies, including water purification, sanitation, and public health initiatives.
-
-**3. Connection to Other Concepts:** This topic is a direct application of knowledge from Module 1 on water resource management and pollution. It also provides a critical link to e-waste management, as improper disposal can lead to heavy metals and persistent organic pollutants leaching into groundwater and surface water, indirectly impacting human health and ecosystems.
-
-**4. Real-World Applications:** This knowledge empowers students to contribute to public health policy, design effective community awareness campaigns on water safety, and develop sustainable waste management solutions that protect water quality. It is essential for careers in public health, environmental consulting, urban planning, and global development.

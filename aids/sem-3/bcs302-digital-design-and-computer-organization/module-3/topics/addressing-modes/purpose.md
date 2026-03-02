@@ -1,2 +1,0 @@
-# Addressing Modes
-This module enables students/students to comprehensively understand addressing modes in Instruction Set Architecture, including effective address calculations, comparative analysis, and performance implications. It provides rigorous theoretical foundations with mathematical formulations and assesses application-level understanding through hard-level problem solving.

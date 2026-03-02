@@ -1,2 +1,0 @@
-# Dynamic Allocated Arrays
-This module teaches dynamic array data structures - a fundamental concept in data structures and algorithms. The content targets students/M.Sc/students , requiring formal mathematical analysis including amortized complexity proofs. Students will understand implementation details, memory management, and performance characteristics essential for efficient software development. The hard-level assessment questions validate deep analytical understanding of space-time tradeoffs and mathematical reasoning about algorithm complexity.

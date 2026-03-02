@@ -1,9 +1,0 @@
-# Learning Purpose: Module 5 - Some (Sequential Logic Elements)
-
-**1. Importance:** This topic is crucial because virtually all modern computing systems rely on sequential logic. Unlike combinational circuits (the focus of previous modules), sequential elements have memory. This ability to "remember" past states is fundamental to creating counters, shift registers, memory units, and, ultimately, the central processing unit (CPU) itself, enabling the step-by-step execution of programs.
-
-**2. Student Learning:** Students will learn the operational principles of fundamental sequential logic elements, specifically latches and flip-flops (SR, D, JK, T). They will understand the critical differences between level-triggered and edge-triggered devices and master the process of analyzing and designing basic sequential circuits using state tables and state diagrams.
-
-**3. Connection to Other Concepts:** This module builds directly on the combinational logic design from earlier modules. Students will synthesize these concepts by learning how to use flip-flops (sequential) in conjunction with gates (combinational) to form finite state machines (FSMs). This is the essential bridge to subsequent modules on computer organization, such as building registers, memory, and simple CPUs.
-
-**4. Real-World Applications:** These elements are the basic building blocks for computer memory (RAM, cache), storage registers within a CPU, and control units that manage the flow of operations. They are also used in everyday devices like digital clocks, counters, and communication systems for serial-to-parallel data conversion.

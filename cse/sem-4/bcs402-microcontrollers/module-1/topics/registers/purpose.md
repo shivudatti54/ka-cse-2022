@@ -1,3 +1,0 @@
-# Registers
-
-This study material provides comprehensive theoretical coverage of the Current Program Status Register (CPSR) in ARM architecture for students/students/students. It establishes the foundational understanding required for embedded systems programming, covering bit-field organization, condition flag behavior with mathematical proofs, processor control mechanisms, and the SPSR interaction during exception handling. The content prepares students for university examinations by developing both conceptual understanding and problem-solving skills through assembly-level examples and conditional execution analysis.

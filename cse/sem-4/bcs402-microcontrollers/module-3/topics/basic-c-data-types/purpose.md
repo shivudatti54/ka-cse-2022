@@ -1,3 +1,0 @@
-# Basic C Data Types
-
-This chapter aims to provide students/students with a comprehensive understanding of C data types with specific focus on microcontroller applications. The objectives include: (1) Understanding fundamental data types, their memory representation, and range calculations using formal proofs; (2) Mastering type qualifiers (const, volatile) essential for embedded systems; (3) Learning to use fixed-width integer types from stdint.h for portable code across different microcontroller architectures; (4) Analyzing memory optimization strategies specific to resource-constrained embedded environments.
